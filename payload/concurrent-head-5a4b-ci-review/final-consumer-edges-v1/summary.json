@@ -1,0 +1,87 @@
+{
+  "arch_M6_N_name_status": {
+    "bytes": 31394,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/architecture-M6-N-name-status.original.txt",
+    "sha256": "5d7b6443f24fc9d1571709155bfe93cd05d3dcd348016c99c477d0d497416841"
+  },
+  "arch_source_map_keys": [
+    "actual_blobs",
+    "declared_input_results",
+    "declared_slots",
+    "immutable_git_blob_checks_only",
+    "revision",
+    "tests_or_readers_executed",
+    "unique_paths"
+  ],
+  "arch_source_map_receipt": {
+    "bytes": 29391,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/architecture-source-map-check.original.json",
+    "sha256": "0e071cb3bf825173082f801b836729193c6d1c3ee3a7e16cfb6bf871b7fbb279"
+  },
+  "extra_sources": {
+    "config/pon/pq-root-dependency-register-v3.json": {
+      "C0": {
+        "bytes": 54959,
+        "oid": "1e59559f598ed1935432b81eb00419f604341dba",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/C0-config--pon--pq-root-dependency-register-v3.json.stdout",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+      },
+      "M6": {
+        "bytes": 54959,
+        "oid": "1e59559f598ed1935432b81eb00419f604341dba",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/M6-config--pon--pq-root-dependency-register-v3.json.stdout",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+      },
+      "N": {
+        "bytes": 54959,
+        "oid": "1e59559f598ed1935432b81eb00419f604341dba",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-config--pon--pq-root-dependency-register-v3.json.stdout",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+      }
+    },
+    "docs/security/PQ128_LIFETIME_BUDGET_V1.md": {
+      "C0": {
+        "bytes": 31715,
+        "oid": "e3682e7af54d60b85ad35a2a5c92706c837a1051",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/C0-docs--security--PQ128_LIFETIME_BUDGET_V1.md.stdout",
+        "sha256": "107a5a40bb546d198a6ab138529c1baa04d0e79025812ee8e99f97e6b96d7513"
+      },
+      "M6": {
+        "bytes": 34109,
+        "oid": "c9b43d27d1408969017c2b8d3afd19080c216278",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/M6-docs--security--PQ128_LIFETIME_BUDGET_V1.md.stdout",
+        "sha256": "085784f77f915f990496ea64f029dbce452642646c3b717a151f02fa7e9895c0"
+      },
+      "N": {
+        "bytes": 31715,
+        "oid": "e3682e7af54d60b85ad35a2a5c92706c837a1051",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-docs--security--PQ128_LIFETIME_BUDGET_V1.md.stdout",
+        "sha256": "107a5a40bb546d198a6ab138529c1baa04d0e79025812ee8e99f97e6b96d7513"
+      }
+    },
+    "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs": {
+      "C0": {
+        "bytes": 10842,
+        "oid": "06add57cd798a627630a6f5467d7891ab58c323d",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/C0-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+      },
+      "M6": {
+        "bytes": 10842,
+        "oid": "06add57cd798a627630a6f5467d7891ab58c323d",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/M6-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+      },
+      "N": {
+        "bytes": 12283,
+        "oid": "f021a33e2969305241099998f703172d29b15251",
+        "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+      }
+    }
+  },
+  "source_refs_config_network_writes": false,
+  "source_unchanged": true,
+  "status": "CAPTURED_READONLY_FOR_REVIEW",
+  "tests_run": false
+}

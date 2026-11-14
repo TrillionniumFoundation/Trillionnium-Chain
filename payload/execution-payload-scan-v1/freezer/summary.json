@@ -1,0 +1,143 @@
+{
+  "all_file_content_sha256_verified": true,
+  "all_fixed_inputs_unchanged": true,
+  "descriptor_copy": {
+    "bytes": 3614,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/descriptor.json",
+    "sha256": "515cda73fe9ffe680c30378193fd355f14bfb4e165c099bc76af56ab339f5277"
+  },
+  "descriptor_path": "/private/tmp/chain-consolidation-20261114-root/final-execution-group-descriptor-2a6206-prescan-v1.json",
+  "descriptor_sha256": "515cda73fe9ffe680c30378193fd355f14bfb4e165c099bc76af56ab339f5277",
+  "errors": [],
+  "file_count": 2100,
+  "groups": [
+    {
+      "bytes": 41440877,
+      "count": 629,
+      "manifest_bytes": 244514,
+      "path": "/private/tmp/chain-consolidation-20261114-root/followup-payload-base-stage-v1/base-files.json",
+      "sha256": "58767b53610c99d6426c86d00af786cd70a63ae4bd3a980179daa5a8e3f18367"
+    },
+    {
+      "bytes": 798640,
+      "count": 78,
+      "manifest_bytes": 28445,
+      "path": "/private/tmp/chain-native-bridge-history-binding-review-20261114/materialize-source-followup-components-v1/files.json",
+      "sha256": "47cf503b98c9c052430130e43b7cc6319e1bf061f2a0e1be05b4be2176238fea"
+    },
+    {
+      "bytes": 320499,
+      "count": 72,
+      "manifest_bytes": 26479,
+      "path": "/private/tmp/chain-consolidation-20261114-root/post-c0-root-receipts-materialization-v1/files.json",
+      "sha256": "29dfd0a65f01e017e2aaacb42552ee53b409e97b4d4d43f10477cb3c6fffa59c"
+    },
+    {
+      "bytes": 46942469,
+      "count": 182,
+      "manifest_bytes": 68714,
+      "path": "/private/tmp/chain-prci-completed-originals-materialization-20261114-v1/files.json",
+      "sha256": "bc2b979b87a34fa01c38d18dda7a4c0adfa07403dc0b760fa7d8d0857f5f20e7"
+    },
+    {
+      "bytes": 2430342,
+      "count": 59,
+      "manifest_bytes": 24334,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/materialize-followup-v1/files.json",
+      "sha256": "6bef3a1d7200ba055509cef4b54d1bc4a97961e4755fd986fd93ff4f5e3de03c"
+    },
+    {
+      "bytes": 1185656,
+      "count": 111,
+      "manifest_bytes": 41373,
+      "path": "/private/tmp/chain-prci-post-m4-root-observations-materialization-20261114-v1/baseline-1020-v2/files.json",
+      "sha256": "c96252a825ae567ce5fcbb448821b9a313c1d1b956c45ae0cb7c0f524b1e3c8e"
+    },
+    {
+      "bytes": 36448686,
+      "count": 293,
+      "manifest_bytes": 113755,
+      "path": "/private/tmp/chain-external-source-capsule-provenance-materialization-20261114-v1/files.json",
+      "sha256": "ea61e39a66ed91ed523a160ea2341771fd73020b33587f83b4f0f190f7b950b2"
+    },
+    {
+      "bytes": 122431,
+      "count": 43,
+      "manifest_bytes": 15869,
+      "path": "/private/tmp/chain-consolidation-20261114-root/post-m5-root-closures-materialization-v1/files.json",
+      "sha256": "0c4c69442209f66b917d82b8ef64ba3f31a9031a7d5f16a298f72660e5423db3"
+    },
+    {
+      "bytes": 12319039,
+      "count": 46,
+      "manifest_bytes": 17771,
+      "path": "/private/tmp/chain-prci-closed-observations-after-M5-materialization-20261114-v1/files.json",
+      "sha256": "2e58ff0833fb6f049f5025a25f9d2349d7240454b324876a0da66c44490aaee9"
+    },
+    {
+      "bytes": 274203,
+      "count": 40,
+      "manifest_bytes": 15084,
+      "path": "/private/tmp/chain-prci-M5-original-external-evidence-materialization-20261114-v2/files.json",
+      "sha256": "a395d7d1a9b979aeea20922ce4bc12ae93e7f1a536b0b8c7669f6c4663c38d39"
+    },
+    {
+      "bytes": 1060072,
+      "count": 250,
+      "manifest_bytes": 101746,
+      "path": "/private/tmp/chain-owned-process-control-count-materialization-20261114-v1/files.json",
+      "sha256": "9354959add8440c432bddd5e1e08c4ee391b0b5542eca9349b1aeaba2889f7b6"
+    },
+    {
+      "bytes": 4918041,
+      "count": 93,
+      "manifest_bytes": 42491,
+      "path": "/private/tmp/chain-architecture-pure-cost-proposals-materialization-20261114-v1/files.json",
+      "sha256": "a865667209fb8e9d8b329a387984d384802e494db1283d1778ab9cd62e342036"
+    },
+    {
+      "bytes": 109972,
+      "count": 77,
+      "manifest_bytes": 28779,
+      "path": "/private/tmp/chain-consolidation-20261114-root/M6-root-source-closure-materialization-v1/files.json",
+      "sha256": "908c2151740ecdfa8921aa5f9ccf16108f9735d01afdfca2ffed290d0109a80e"
+    },
+    {
+      "bytes": 1445111,
+      "count": 80,
+      "manifest_bytes": 30090,
+      "path": "/private/tmp/chain-prci-M6-original-repository-truth-materialization-20261114-v1/files.json",
+      "sha256": "624a90d3b863930c77557dd0d61c85b0f0762ba99c62f800bb5044c7a7e67c8d"
+    },
+    {
+      "bytes": 367964,
+      "count": 47,
+      "manifest_bytes": 17795,
+      "path": "/private/tmp/chain-prci-M6-original-external-evidence-materialization-20261114-v1/files.json",
+      "sha256": "454ff3c445546a35f30ca76b92d427e292fe950b4cd85d3e5fe69048890f5fa1"
+    }
+  ],
+  "manifest": {
+    "bytes": 855220,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4"
+  },
+  "network_requests": false,
+  "origin_paths_dereferenced": false,
+  "output_dir": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1",
+  "payload_mutated": false,
+  "payload_root": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "physical_exact_roster_verified": true,
+  "producer_copy": {
+    "bytes": 15047,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/producer.py",
+    "sha256": "38642c29417a4f37e9f1ca6693c71d0d1bc08a9904950470049efdfc66700139"
+  },
+  "schema": "trnm-execution-manifest-freezer-receipt-v1",
+  "source_or_Git_access": false,
+  "stable_payload_file_and_directory_identities": true,
+  "status": "FROZEN",
+  "tests_or_lanes_run": false,
+  "total_bytes": 150184002,
+  "unique_origin_count": 2097
+}

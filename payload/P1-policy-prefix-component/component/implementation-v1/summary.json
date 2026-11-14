@@ -1,0 +1,133 @@
+{
+  "base": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "candidate_source": {
+    "bytes": 438782,
+    "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+    "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+  },
+  "changed_scope": [
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "current_pins_modified": false,
+  "errors": [],
+  "native_or_hosted_performance_proved": false,
+  "original_preimage_proof": {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/original-preimage-proof.json",
+    "sha256": "cce254e487a72a71c099250783ebb240e3eea91b567224ae4b578c88f4453443"
+  },
+  "original_source": {
+    "bytes": 433736,
+    "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+  },
+  "patch": {
+    "bytes": 16945,
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/source-diff.stdout",
+    "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37"
+  },
+  "schema": "trnm-public-policy-prefix-implementation-v1",
+  "status": "RUST_CANDIDATE_PREPARED_NOT_TESTED",
+  "steps": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "label": "preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 176,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/preflight.stdout",
+        "sha256": "2e2cc8c651ed80aea9b31e2484dd67b974fce0253bfd36b004f670dcee642dfc"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "label": "initial-status",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/initial-status.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/initial-status.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "exit": 0,
+      "label": "rustfmt-changed-file",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/rustfmt-changed-file.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/rustfmt-changed-file.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "exit": 0,
+      "label": "source-diff",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/source-diff.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 16945,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/source-diff.stdout",
+        "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "label": "diff-check",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/implementation-v1/diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "tests_run": false
+}

@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "bytes": 13397,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/preparation-producer.py",
+      "sha256": "96baf7fbfd98f3180d4d339c70498893fcdecaadff49529fe0f6e048bce8c7e3"
+    },
+    {
+      "bytes": 26725,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/preparation-inputs.json",
+      "sha256": "3e8a190e44387577742e8aff13daaf3216ff0f072aa910a05ca06885672db56e"
+    },
+    {
+      "bytes": 25585,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/M6-full-packager.py.original",
+      "sha256": "744d34e71ed6036af795a6971fd1e3d855bebc195f9634dc9cd3509ac8a67c1a"
+    },
+    {
+      "bytes": 28914,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_ed0d35_v1.py",
+      "sha256": "cef78f3610541a8056b297fd5256a2493227d3aa78cd0d964a92c57c687889d8"
+    },
+    {
+      "bytes": 19795,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/full-M6-to-M8.patch",
+      "sha256": "b78e9e41eec191251d33805a5a6389d4e5b05751b1b509300987987bd9b419c3"
+    },
+    {
+      "bytes": 8897,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/M6-external-packager.py.original",
+      "sha256": "62f177ea0964b01a87c862fa38bb0ff2d4814e6443963e9ae79f7629e02a895f"
+    },
+    {
+      "bytes": 14207,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_ed0d35_v1.py",
+      "sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f"
+    },
+    {
+      "bytes": 18388,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/external-M6-to-M8.patch",
+      "sha256": "af7e41a6b0c032e8e878733017875bb1ae7ad6d5f5f8f217d5394679f46434ba"
+    },
+    {
+      "bytes": 38183,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/both-packagers-precise.patch",
+      "sha256": "6e5621b6665bd614b9391fcf5d564b99249821b448ca19b3b438a19c69e1a69f"
+    },
+    {
+      "bytes": 3461,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/closed-log-manifest-contract.json",
+      "sha256": "0a74c98f482e01f29c7d8fe2c08b4c161df514e93b461c6d6d489bb3286f96fb"
+    },
+    {
+      "bytes": 4038,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/static-identity-proof.json",
+      "sha256": "58953363d166eccf0bb25eb4d430b2d9f8b07df7b81a979fc4f078fa0f394076"
+    },
+    {
+      "bytes": 2268,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/README.md",
+      "sha256": "d8d10ff808815452d2b537026b53c8533cb4d23912f5cd9d9d69e22d4a239f7f"
+    }
+  ],
+  "schema": "trnm-M8-packager-preparation-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

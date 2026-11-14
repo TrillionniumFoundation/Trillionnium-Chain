@@ -1,0 +1,9 @@
+{"label": "head", "exit": 0}
+{"label": "tree", "exit": 0}
+{"label": "status-before", "exit": 0}
+{"label": "preflight", "exit": 0}
+{"label": "source-before", "exit": 0}
+{"label": "original-31-controls", "exit": 0}
+{"label": "source-after", "exit": 0}
+{"label": "status-after", "exit": 0}
+{"summary": {"path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-original-w1-v2-controls-linux-v1/summary.json", "bytes": 7754, "sha256": "edb1e9f855450b5f330332b5dbdae17ea6546ad75d2f1dff81106b9b2382ee71"}, "status": "passed", "head": "2a86462a1ab20c68151719ba4635e3c294391e64", "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4", "errors": []}

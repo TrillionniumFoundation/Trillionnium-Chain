@@ -1,0 +1,17 @@
+{
+  "archive_manifest": {
+    "bytes": 7773,
+    "path": "/private/tmp/chain-execution-payload-scan-materialization-20261114-v1/ARCHIVE_MANIFEST.json",
+    "sha256": "82e993147a1abb949b9954bcc763529c223f3ab460ff3bebfb728db3f68984ef"
+  },
+  "maximum_added_bytes": 4194304,
+  "metadata_self_hash_excluded": true,
+  "new_result_group_was_scanned": false,
+  "observed_unix_ns": 1794649959826017000,
+  "original_rows_only": true,
+  "scanner_session_id": "dpty-181c42ad4d2bac61760768f91b36e40f0ee020b369e369ad8f30f4d5020fc588",
+  "schema": "trnm-execution-payload-scan-archive-seal-v1",
+  "status": "ZERO_HITS_COMPLETE_EXPLICIT_SCOPE",
+  "terminal_exit_code": 0,
+  "terminal_output_complete": true
+}

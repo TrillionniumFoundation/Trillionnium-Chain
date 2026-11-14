@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-R1-full-original-copy-seal-v1",
+  "sealed_at": "2026-11-14T11:57:16.241488+00:00",
+  "status": "verified",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "original_status": "passed",
+  "original_lane_exit": 0,
+  "original_lane_seconds": 543.61,
+  "original_summary_sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+  "original_files": 51,
+  "required_flat_originals": 39,
+  "nested_originals": 12,
+  "original_bytes": 887502,
+  "zip_members": 55,
+  "all_originals_and_driver_expanded": true,
+  "source_identity_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+  "tests_rerun": false,
+  "stage_written": false,
+  "hosted_qualification": false,
+  "future_revision_qualification": false,
+  "remote_publication_claim": false
+}

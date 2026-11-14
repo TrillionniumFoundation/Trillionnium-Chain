@@ -1,0 +1,92 @@
+[
+  {
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-payload-base-stage-v1/base-files.json",
+    "count": 629,
+    "bytes": 41440877,
+    "sha256": "58767b53610c99d6426c86d00af786cd70a63ae4bd3a980179daa5a8e3f18367"
+  },
+  {
+    "path": "/private/tmp/chain-native-bridge-history-binding-review-20261114/materialize-source-followup-components-v1/files.json",
+    "count": 78,
+    "bytes": 798640,
+    "sha256": "47cf503b98c9c052430130e43b7cc6319e1bf061f2a0e1be05b4be2176238fea"
+  },
+  {
+    "path": "/private/tmp/chain-consolidation-20261114-root/post-c0-root-receipts-materialization-v1/files.json",
+    "count": 72,
+    "bytes": 320499,
+    "sha256": "29dfd0a65f01e017e2aaacb42552ee53b409e97b4d4d43f10477cb3c6fffa59c"
+  },
+  {
+    "path": "/private/tmp/chain-prci-completed-originals-materialization-20261114-v1/files.json",
+    "count": 182,
+    "bytes": 46942469,
+    "sha256": "bc2b979b87a34fa01c38d18dda7a4c0adfa07403dc0b760fa7d8d0857f5f20e7"
+  },
+  {
+    "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/materialize-followup-v1/files.json",
+    "count": 59,
+    "bytes": 2430342,
+    "sha256": "6bef3a1d7200ba055509cef4b54d1bc4a97961e4755fd986fd93ff4f5e3de03c"
+  },
+  {
+    "path": "/private/tmp/chain-prci-post-m4-root-observations-materialization-20261114-v1/baseline-1020-v2/files.json",
+    "count": 111,
+    "bytes": 1185656,
+    "sha256": "c96252a825ae567ce5fcbb448821b9a313c1d1b956c45ae0cb7c0f524b1e3c8e"
+  },
+  {
+    "path": "/private/tmp/chain-external-source-capsule-provenance-materialization-20261114-v1/files.json",
+    "count": 293,
+    "bytes": 36448686,
+    "sha256": "ea61e39a66ed91ed523a160ea2341771fd73020b33587f83b4f0f190f7b950b2"
+  },
+  {
+    "path": "/private/tmp/chain-consolidation-20261114-root/post-m5-root-closures-materialization-v1/files.json",
+    "count": 43,
+    "bytes": 122431,
+    "sha256": "0c4c69442209f66b917d82b8ef64ba3f31a9031a7d5f16a298f72660e5423db3"
+  },
+  {
+    "path": "/private/tmp/chain-prci-closed-observations-after-M5-materialization-20261114-v1/files.json",
+    "count": 46,
+    "bytes": 12319039,
+    "sha256": "2e58ff0833fb6f049f5025a25f9d2349d7240454b324876a0da66c44490aaee9"
+  },
+  {
+    "path": "/private/tmp/chain-prci-M5-original-external-evidence-materialization-20261114-v2/files.json",
+    "count": 40,
+    "bytes": 274203,
+    "sha256": "a395d7d1a9b979aeea20922ce4bc12ae93e7f1a536b0b8c7669f6c4663c38d39"
+  },
+  {
+    "path": "/private/tmp/chain-owned-process-control-count-materialization-20261114-v1/files.json",
+    "count": 250,
+    "bytes": 1060072,
+    "sha256": "9354959add8440c432bddd5e1e08c4ee391b0b5542eca9349b1aeaba2889f7b6"
+  },
+  {
+    "path": "/private/tmp/chain-architecture-pure-cost-proposals-materialization-20261114-v1/files.json",
+    "count": 93,
+    "bytes": 4918041,
+    "sha256": "a865667209fb8e9d8b329a387984d384802e494db1283d1778ab9cd62e342036"
+  },
+  {
+    "path": "/private/tmp/chain-consolidation-20261114-root/M6-root-source-closure-materialization-v1/files.json",
+    "count": 77,
+    "bytes": 109972,
+    "sha256": "908c2151740ecdfa8921aa5f9ccf16108f9735d01afdfca2ffed290d0109a80e"
+  },
+  {
+    "path": "/private/tmp/chain-prci-M6-original-repository-truth-materialization-20261114-v1/files.json",
+    "count": 80,
+    "bytes": 1445111,
+    "sha256": "624a90d3b863930c77557dd0d61c85b0f0762ba99c62f800bb5044c7a7e67c8d"
+  },
+  {
+    "path": "/private/tmp/chain-prci-M6-original-external-evidence-materialization-20261114-v1/files.json",
+    "count": 47,
+    "bytes": 367964,
+    "sha256": "454ff3c445546a35f30ca76b92d427e292fe950b4cd85d3e5fe69048890f5fa1"
+  }
+]

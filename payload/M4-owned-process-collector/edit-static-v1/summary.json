@@ -1,0 +1,40 @@
+{
+  "schema": "trnm-M4-source-static-validation-v1",
+  "observed_at": "2026-11-14T08:42:24.958052+00:00",
+  "base": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "worktree": "/private/tmp/chain-M4-owned-process-collector-20261114",
+  "project_preflight": {
+    "returncode": 0,
+    "python_path_prefix": "/opt/homebrew/bin"
+  },
+  "python_compile": {
+    "mode": "compile(raw,filename,exec,dont_inherit=True,optimize=0)",
+    "files": 2,
+    "passed": true,
+    "module_imported": false
+  },
+  "original14_preserved": true,
+  "new_controls": 2,
+  "linux_suite_executed": false,
+  "linux_suite_pending_coordinator": true,
+  "full_lane_passed": false,
+  "source_files": [
+    {
+      "path": "scripts/w1_owned_process_collector_v1.py",
+      "bytes": 48204,
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc",
+      "git_blob": "7049001ace23192d6d32e4f438ca85e4b0ac16cc"
+    },
+    {
+      "path": "scripts/test_w1_owned_process_collector_v1.py",
+      "bytes": 26853,
+      "sha256": "20ba82854ae08211195a4a7ceb677b72cda3f0ebb152c4e4c94ea77438528224",
+      "git_blob": "0593d08df667d56460250ae336fdbd7897daf693"
+    }
+  ],
+  "patch": {
+    "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/source-and-tests.patch",
+    "bytes": 6317,
+    "sha256": "a8c3d5ecbf2b563efde4ac4bb535309e9657145e59c45c3957ca2ecf7e131b91"
+  }
+}

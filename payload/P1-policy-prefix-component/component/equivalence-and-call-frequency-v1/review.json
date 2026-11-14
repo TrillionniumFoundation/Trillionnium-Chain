@@ -1,0 +1,234 @@
+{
+  "schema": "trnm-public-policy-prefix-equivalence-and-frequency-v1",
+  "source_base": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "source_base_tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+  "original_source": {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "bytes": 433736,
+    "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
+    "blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64"
+  },
+  "candidate_source": {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "bytes": 438782,
+    "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "blob": "b62de39bdba906c9d989498a6299df9a14d900e8"
+  },
+  "exact_original_reconstruction": true,
+  "declared_changes": [
+    "import OnceLock",
+    "add private immutable resource constant and hash-prefix helper",
+    "replace only PublicPolicy::id computation with same six framed suffixes",
+    "add test-only original algorithm oracle and three tests"
+  ],
+  "all_preexisting_test_source_bytes_preserved": true,
+  "preexisting_top_level_test_count": 84,
+  "original_test_names": [
+    "public_server_meter_clone_and_original_dispatch_use_the_same_real_bucket",
+    "process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission",
+    "w1_negative_cache_explicit_settings_are_bounded_before_service_startup",
+    "client_cpu_observation_is_opt_in_does_not_mint_a_ticket_or_change_old_json",
+    "client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting",
+    "client_solution_cpu_measurement_closes_original_error_interval",
+    "authenticated_caller_observation_requires_real_signature_on_tcp",
+    "request_observer_matches_independent_client_received_signed_frame_lengths",
+    "request_observer_records_actual_partial_read_eof_and_quantum_writes",
+    "request_observer_retains_partial_output_bytes_after_actual_write_error",
+    "paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers",
+    "paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof",
+    "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+    "disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+    "completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+    "early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+    "trailing_input_after_complete_body_cancels_without_starting_work",
+    "eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
+    "queue_backpressure_preserves_deadline_and_releases_permits_on_drop",
+    "dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases",
+    "connection_is_not_observed_closed_before_its_original_slot_releases",
+    "accepted_setup_error_closes_socket_before_releasing_slot_and_observation",
+    "finished_queue_and_failed_send_keep_output_owned_until_request_closes",
+    "shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error",
+    "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+    "paid_envelope_malformed_body_is_accounted_before_signed_refusal",
+    "paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated",
+    "abandoned_public_work_preserves_cancel_then_deadline_order_without_admission",
+    "cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill",
+    "live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice",
+    "live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority",
+    "live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund",
+    "live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+    "live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads",
+    "live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle",
+    "aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state",
+    "worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts",
+    "public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure",
+    "failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu",
+    "cpu_budget_missing_measurement_or_dropped_permit_disables_future_starts",
+    "cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
+    "cpu_budget_missing_start_clock_refuses_before_full_verification",
+    "resource_revision_r20_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+    "r4_typed_full_and_poison_keep_lane_body_reservations_atomic",
+    "r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
+    "r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions",
+    "r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
+    "r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection",
+    "r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry",
+    "r4_cookie_time_refusal_counts_expiry_only_after_original_deadline",
+    "r4_unrelated_eof_after_deadline_keeps_its_original_error_class",
+    "r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
+    "r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown",
+    "pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata",
+    "v2_magic_profile_and_signature_domains_are_rejected_exactly",
+    "canonical_streaming_rejects_escaped_packets_and_extra_fields",
+    "hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors",
+    "failed_output_closes_only_that_connection_and_later_honest_request_succeeds",
+    "fixed_preface_checks_all_bounds_before_paid_body_allocation",
+    "cookie_binds_every_authority_and_resource_field_and_restart_epoch",
+    "spent_cache_never_evicts_live_tokens_when_full",
+    "reservations_survive_queues_and_release_on_disconnect_and_dropped_output",
+    "honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry",
+    "slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline",
+    "paid_dispatch_known_sample_cannot_hide_failed_reservation_return",
+    "paid_dispatch_known_settlement_keeps_original_cpu_decomposition",
+    "cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement",
+    "paid_malformed_work_encoding_settles_without_starting_full_verification",
+    "queued_cpu_start_uses_real_refill_and_the_original_single_reservation",
+    "impossible_refill_retains_one_budget_refusal_without_start_or_refund",
+    "cancellation_during_refill_wait_never_returns_or_refunds_a_permit",
+    "unavailable_and_expired_cpu_wait_never_start_native_dispatch",
+    "expiry_while_waiting_does_not_close_another_actual_reservation",
+    "shared_clock_uncertainty_during_wait_is_not_retried_until_deadline",
+    "unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite",
+    "completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+    "completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+    "timely_completion_transfers_output_under_original_total_and_service_caps",
+    "rejected_completion_releases_output_before_connection_slot_and_close_observation",
+    "completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+    "late_completion_cannot_revive_work_deadline_or_lose_native_outcome",
+    "timely_completion_keeps_output_bytes_and_original_total_deadline",
+    "queued_completion_expiry_keeps_worker_reservations_until_actual_release",
+    "completion_for_closed_connection_releases_only_its_output_reservation"
+  ],
+  "new_test_names": [
+    "cached_policy_id_matches_original_hash_for_public_fields",
+    "cached_policy_id_retains_all_six_framed_suffix_parts",
+    "cached_policy_id_clones_are_independent_across_callers"
+  ],
+  "preimage": {
+    "framing": [
+      "TRNM-PON1 NUL",
+      "u16 little-endian tag byte length",
+      "tag bytes",
+      "u32 little-endian PROFILE length",
+      "PROFILE bytes",
+      "u32 little-endian resource literal length",
+      "resource literal bytes",
+      "six original u32-length-prefixed suffix parts in original order"
+    ],
+    "resource_literal_bytes": 5027,
+    "resource_literal_sha256": "624232b02e70ecbb1a2d80972a40aafefe63f12a8fc02d70a61112b6a6b42caf",
+    "immutable_prefix_bytes": 5105,
+    "complete_cached_blocks": 79,
+    "buffered_prefix_bytes": 49,
+    "dynamic_suffix_bytes": 61,
+    "full_preimage_bytes": 5166,
+    "full_padded_blocks": 81,
+    "warm_suffix_and_padding_blocks": 2,
+    "cached_state_is_unfinalized": true,
+    "cold_initialization_does_not_avoid_prefix_work": true,
+    "measured_time_savings": null,
+    "original_development_hash": "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b"
+  },
+  "production_call_sites": [
+    {
+      "function": "PublicServer::cookie",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "base_line": 855,
+      "base_policy_id_calls_per_entry": 1,
+      "stage": "WaitChallenge success transition at 2935"
+    },
+    {
+      "function": "PublicServer::validate",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "base_line": 893,
+      "base_policy_id_calls_per_entry_max": 1,
+      "stages": [
+        "complete Solution at 3020",
+        "decode_task_body at 1874, invoked at 2556"
+      ]
+    },
+    {
+      "function": "response",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "base_line": 1007,
+      "base_policy_id_calls_per_entry_max": 1,
+      "stage": "worker ResponseEncoding at 2685"
+    },
+    {
+      "function": "call_public_authenticated_with_timing",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "base_line": 3724,
+      "base_policy_id_calls_per_entry": 1,
+      "reuse": [
+        "cookie validation receives expected_profile at 3806",
+        "response compares saved expected_profile at 3883"
+      ]
+    }
+  ],
+  "frequency_bound": {
+    "scope": "one complete successful paid RPC on the reviewed core client/server state-machine path",
+    "server_base_id_calls": 4,
+    "client_base_id_calls": 1,
+    "early_refusals_may_use_fewer_calls": true,
+    "wait_challenge_or_grant_poll_does_not_recompute_id": true,
+    "universal_public_API_or_campaign_call_upper_bound_proved": false,
+    "historical_1099_1553_are_counter_derived_lower_bounds_not_id_instrumentation": true,
+    "host_checks_equal_policy_id_calls": false
+  },
+  "hash_use_scope": {
+    "existing_manifest_uses": 19,
+    "existing_manifest_sources": 31,
+    "public_v3_is_in_that_fixed_roster": false,
+    "profile_byte_commitment_is_CPQ1_SHA512_not_this_policy": true,
+    "new_helper_semantics": "Same existing domain-framed PublicPolicy byte commitment. No algorithm/domain/width/authorization/migration change. Direct SHA implementation equivalence is established separately by exact framing and original-algorithm Rust controls.",
+    "complete_callgraph_coverage_proved": false,
+    "hash_use_manifest_reader_pins_need_change": false
+  },
+  "unchanged_contracts": [
+    "all fresh Host reads and callback cadence",
+    "four-second window and sixteen pressure workers",
+    "nonce order and deadline cadence",
+    "r20 authorization/grant policy and literal",
+    "all serialized fields and returned hash bytes",
+    "frozen V1 mathematical sources and qualification flags"
+  ],
+  "artifacts": {
+    "original_wire_function": {
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/equivalence-and-call-frequency-v1/pon-wire-hash.original.rs",
+      "bytes": 302,
+      "sha256": "3deffc1a9d3a340f7380c5c4a0cccbb15131174c180fe4c78e1df8644c6b02e5"
+    },
+    "candidate_helper": {
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/equivalence-and-call-frequency-v1/hash-public-policy.candidate.rs",
+      "bytes": 6021,
+      "sha256": "1a3ee59d381e3f2e66a4e30e7e6c09adc14bfe2b8a1c679d5207d203b1b1fb94"
+    },
+    "original_id": {
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/equivalence-and-call-frequency-v1/PublicPolicy-id.original.rs",
+      "bytes": 5354,
+      "sha256": "69691f107d88f7ad9c8d8f065c14c8dfa8c505322d688a62871dce330fb43d72"
+    },
+    "candidate_id": {
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/equivalence-and-call-frequency-v1/PublicPolicy-id.candidate.rs",
+      "bytes": 374,
+      "sha256": "a1ba408a4dd4a20af38acd7853ed8dcb1a93ee8284fba2242573617747b016f9"
+    },
+    "added_tests": {
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/equivalence-and-call-frequency-v1/cached-policy-id-controls.candidate.rs",
+      "bytes": 3995,
+      "sha256": "c66ade117fee486253744e146a47c5f6af7f716632d6a0de6f5780033deb083c"
+    }
+  },
+  "rust_tests_outcome": "recorded separately in actual Linux receipt; no inference here",
+  "hosted_performance_proved": false
+}

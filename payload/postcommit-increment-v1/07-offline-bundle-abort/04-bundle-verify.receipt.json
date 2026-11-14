@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "-c",
+    "core.commitGraph=false",
+    "bundle",
+    "verify",
+    "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-14T06:14:05.416253+00:00",
+  "label": "04-bundle-verify",
+  "started_at": "2026-11-14T06:14:05.326342+00:00"
+}

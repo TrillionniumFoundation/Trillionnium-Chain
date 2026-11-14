@@ -1,0 +1,151 @@
+{
+  "schema": "trnm-M4-closed-gate-component-commit-v3",
+  "head": "b71b84bbccd9bc403384921802e7edcf2e682242",
+  "tree": "d4b694838d70191a5206f7cec3253c8f63613e8e",
+  "parent": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "branch": "fix/chain-m4-closed-exec-gate-20261114",
+  "clean": true,
+  "paths": [
+    {
+      "path": "scripts/w1_owned_process_collector_v1.py",
+      "bytes": 48204,
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc",
+      "git_blob": "7049001ace23192d6d32e4f438ca85e4b0ac16cc"
+    },
+    {
+      "path": "scripts/test_w1_owned_process_collector_v1.py",
+      "bytes": 26879,
+      "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa",
+      "git_blob": "0c683b183d64d71e8ae6c6f44dca857b4f6e77b3"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/EVIDENCE_INDEX.json",
+      "bytes": 3060,
+      "sha256": "09dbe9e1409876e73dc25975e532a6d954d993b5e73b1e6e1ee566f683af3454",
+      "git_blob": "4983ed8780e792eee63d652fd7f3c307f3ca6362"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/README.md",
+      "bytes": 3285,
+      "sha256": "85685ace94a88ae4f055eec6311effa678b47b10e2c4a2783c0e0ea5c5a1078b",
+      "git_blob": "29770b41ad3acf4e075bbe4adb1c50caf54b651c"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-failure-extract.json",
+      "bytes": 6337,
+      "sha256": "c59d9e7fcd3fb25f84199bdb066ef5f4fc563d3e2edeff0d92c761c0debf73c7",
+      "git_blob": "e826e0ab8bf8e884011830a3b0327f9b38a32d3b"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-relevant-functions.json",
+      "bytes": 12788,
+      "sha256": "e6cec3f95ade7cd6da7c7777af0ce31821a0cbfa01cc9bfa22a8ca0efdea19c3",
+      "git_blob": "4887874834dea9a288019125b0b8c2180b15d064"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-repository-truth-1a7afc-failure-v1.zip",
+      "bytes": 152665,
+      "sha256": "c67721b25a546d73b25b498c6afbeb1e6338fb267eea202403d2e167f2bf469a",
+      "git_blob": "f1f247d747e7d3d090b8c843cdb619fa6ca378c7"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-run-EVIDENCE_INDEX.json",
+      "bytes": 14929,
+      "sha256": "d9be663934186c7c79b68f408841a2bc686b33a47dfba569307c3ad5f436b66e",
+      "git_blob": "3f061f7016b9ec34d401f6121b4c372d4419fb5b"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-run-copy-verification.json",
+      "bytes": 2793,
+      "sha256": "f296c259e471a0bf1fce198b36482cba809f0bb784007242803000bc9507e4c1",
+      "git_blob": "f3be92293a74e61c4b1b6d58848ced943cfae3b3"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original-run-package-summary.json",
+      "bytes": 1111,
+      "sha256": "bff939e4545e35a75cb31991a4e2864c41dde622f097562901aec40be3415dcf",
+      "git_blob": "4391f5168058e833c2a9da07a0baa6707c602b90"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/original14-source-ast-proof.json",
+      "bytes": 5423,
+      "sha256": "d383d2a4588d1c02c8e583b053a0f2671df7c5cb7aa393f874b149c9cf50581c",
+      "git_blob": "09c4c13f650b3794efdeb2a012b2ea9698ef6a3e"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/preflight-before-edit-summary.json",
+      "bytes": 835,
+      "sha256": "1ebaa4450d80a580b1f9d5513e2fddf31337d0a41254cec020820562dfa7a826",
+      "git_blob": "f2d06c705f3109db761a758823cb309b2d24e011"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/preflight-before-edit.stderr.raw",
+      "bytes": 253,
+      "sha256": "7aba2ef6719a8e581c9042bb0116e857656e02a73790192ddd4fc0d3f96bf2b9",
+      "git_blob": "b309b1f4ca0b8e22afe35aa1b36e2f300142f6df"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/preflight-correct-python.stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/preflight-correct-python.stdout.raw",
+      "bytes": 169,
+      "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17",
+      "git_blob": "d9940adab04544781ac3f60ca4e342f2b36adc58"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/source-and-tests-current.patch.json",
+      "bytes": 6831,
+      "sha256": "d4479ff677a44f4561b17922ae3ce5420034fe55de05997db4200f6776430c56",
+      "git_blob": "c0d016f9c302f98c23c46216e7a57e3eb6b10990"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/source-and-tests-initial.patch.json",
+      "bytes": 6681,
+      "sha256": "4e4f76f335dfa7a237f8f0aa07984a90234a4cb93b0e129075ed1e11455e7159",
+      "git_blob": "6799a53ea1b04a82f901870f322582386f0c0a08"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/source-static-validation-v2.json",
+      "bytes": 1581,
+      "sha256": "4c231364a4c90bf99af5d71cb1b6a579679dcef51c7add290a8db84622234970",
+      "git_blob": "fb629d6e0964cab2bf7c17e0a7de50f23bef3196"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/source-static-validation.json",
+      "bytes": 1392,
+      "sha256": "23096bd61d45ccfda5e169e9c142dcb45348a19c48ea16e90969ed4f4da113ea",
+      "git_blob": "211b44a6b6deb9824c9f090f8c61efd2f89832e3"
+    },
+    {
+      "path": "docs/audit/20261114-m4-closed-exec-gate/staging-failure-observations.json",
+      "bytes": 2000,
+      "sha256": "1994d4d8cff284975e1c47475a6b0286fe5f26dc0a109425f16ac0d9c3a8f2ae",
+      "git_blob": "bfb512b08a34e3d35d2db5492e47043d6ac439c4"
+    }
+  ],
+  "runtime_patch_matches_approved_design": true,
+  "original14_source_and_ast_preserved": true,
+  "added_deterministic_signal_controls": 2,
+  "portable_mock_create_true": true,
+  "syntax_compilation_passed": true,
+  "staged_preflight_passed": true,
+  "changed_source_linux_tests_executed": false,
+  "full_lane_passed": false,
+  "remote_write": false,
+  "coordinator_linux_validation_pending": true,
+  "patch": {
+    "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit.patch",
+    "bytes": 274079,
+    "sha256": "8f05556057bb3291eb5c9309d7d00160bafb08a95e0d226f4d56145180777ce2"
+  },
+  "two_source_patch": {
+    "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/source-and-tests.patch",
+    "bytes": 6467,
+    "sha256": "2dd93726b371e584947a4af909d6b2895f88828c207d41d4a60638afbfd96dbf"
+  },
+  "committed_at": "2026-11-14T08:47:50.666000+00:00"
+}

@@ -1,0 +1,68 @@
+{
+  "Host_or_test_run": false,
+  "all_verified": false,
+  "artifacts": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14105076236/zip"
+      ],
+      "artifact_id": 14105076236,
+      "artifact_name": "cost-x64-dc42ce4df5cff79cc61c5addbaf01074b56b06ca-1",
+      "download": {
+        "bytes": 2259914,
+        "path": "/private/tmp/chain-architecture-C0-cross-cost-original-artifacts-20261114-v1/14105076236.zip.partial",
+        "sha256": "100150355444aed2b51971043a3cbb14766409c71b19d74be63fd074f11a014a"
+      },
+      "exit": -15,
+      "expected_bytes": 9927259,
+      "expected_digest": "sha256:be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599",
+      "finished_at": "2026-11-14T08:02:04.743255+00:00",
+      "started_at": "2026-11-14T08:00:04.726581+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-C0-cross-cost-original-artifacts-20261114-v1/14105076236.download.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout": true,
+      "timeout_seconds": 120,
+      "verified": false
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14104567861/zip"
+      ],
+      "artifact_id": 14104567861,
+      "artifact_name": "cost-arm64-dc42ce4df5cff79cc61c5addbaf01074b56b06ca-1",
+      "download": {
+        "bytes": 2161608,
+        "path": "/private/tmp/chain-architecture-C0-cross-cost-original-artifacts-20261114-v1/14104567861.zip.partial",
+        "sha256": "828d3d640c5a556a419a4f7a971ea4bfc6985f906cb6b81bebf18a4ba09a2f6c"
+      },
+      "exit": -15,
+      "expected_bytes": 9927566,
+      "expected_digest": "sha256:242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909",
+      "finished_at": "2026-11-14T08:02:04.743469+00:00",
+      "started_at": "2026-11-14T08:00:04.726770+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-C0-cross-cost-original-artifacts-20261114-v1/14104567861.download.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout": true,
+      "timeout_seconds": 120,
+      "verified": false
+    }
+  ],
+  "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "metadata": {
+    "path": "/private/tmp/chain-architecture-C0-cross-cost-artifact-discovery-20261114-v1/summary.json",
+    "sha256": "ab40cf4de90d13a08e4a7999aad6eb8e3e3c213869ee1a7dfeafda52ddb4e768"
+  },
+  "run_id": 43567821538,
+  "schema": "C0-cross-cost-original-artifacts-v1",
+  "source_or_remote_write": false
+}

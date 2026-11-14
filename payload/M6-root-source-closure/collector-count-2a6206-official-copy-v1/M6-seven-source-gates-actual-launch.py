@@ -1,0 +1,3 @@
+import pathlib,hashlib,sys
+p=pathlib.Path('/private/tmp/chain-consolidation-20261114-root/run_final_prepublication_gates_v1.py');b=p.read_bytes();assert len(b)==10580 and hashlib.sha256(b).hexdigest()=='e7bc466fcf570a20745954c8627b8af9227582484b251dfcf7900e7942fa7496'
+sys.argv=[str(p),'--head','2a62061177852dc3ebd200fa8d7c66c661a119a1','--tree','f8d170ff75990e879e93888a95e5408f36b36f6c','--evidence-dir','/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a6206-v1'];exec(compile(b,str(p),'exec'),{'__name__':'__main__','__file__':str(p)})

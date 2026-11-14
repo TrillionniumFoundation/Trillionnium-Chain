@@ -1,0 +1,20 @@
+[fix/chain-m4-closed-exec-gate-20261114 b71b84bbc] fix(ci): preserve closed exec gate refusal before cleanup escalation
+ 20 files changed, 1043 insertions(+)
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/EVIDENCE_INDEX.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/README.md
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-failure-extract.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-relevant-functions.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-repository-truth-1a7afc-failure-v1.zip
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-run-EVIDENCE_INDEX.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-run-copy-verification.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original-run-package-summary.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/original14-source-ast-proof.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/preflight-before-edit-summary.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/preflight-before-edit.stderr.raw
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/preflight-correct-python.stderr.raw
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/preflight-correct-python.stdout.raw
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/source-and-tests-current.patch.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/source-and-tests-initial.patch.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/source-static-validation-v2.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/source-static-validation.json
+ create mode 100644 docs/audit/20261114-m4-closed-exec-gate/staging-failure-observations.json

@@ -1,0 +1,318 @@
+{
+  "Host_run": false,
+  "ROG_accessed": false,
+  "actual_CI_contract_pass": true,
+  "base": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "collector_production_and_test_files_edited": false,
+  "full_Linux_lane_run": false,
+  "inline_cases": 10,
+  "inline_fixture_scope": "Synthetic count/OK/skip/missing-log fixtures only; no collector process or native workload was executed.",
+  "original_CI_method_count": 4,
+  "original_CI_methods_run": [
+    "W1PostwinLaneTests.test_actual_postwin_lanes_retain_real_controls",
+    "W1PostwinLaneTests.test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed",
+    "W1PostwinLaneTests.test_required_postwin_commands_cannot_change_or_duplicate_lane",
+    "W1PostwinLaneTests.test_postwin_count_and_original_budget_controls_cannot_be_softened"
+  ],
+  "original_inline_16_refusal_preserved": true,
+  "schema": "trnm-owned-collector-exact-count-validation-v1",
+  "source_unchanged_during_validation": true,
+  "status": "SELECTED_STATIC_AND_CI_CONTRACT_PASS",
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "original-rejects-actual16",
+      "seconds": 0.01475058399955742,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-rejects-actual16.stderr",
+        "sha256": "7c3b62a6796453cd72da70ca18578157d0c5ba96da90af80c42de06cdb2c575d"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-rejects-actual16.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "updated-accepts-exact16",
+      "seconds": 0.014926791991456412,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-accepts-exact16.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-accepts-exact16.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-old14",
+      "seconds": 0.014662834000773728,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-old14.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-old14.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-incomplete15",
+      "seconds": 0.014351374993566424,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-incomplete15.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-incomplete15.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-excess17",
+      "seconds": 0.014383834000909701,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-excess17.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-excess17.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-zero",
+      "seconds": 0.014006166995386593,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-zero.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-zero.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-skipped",
+      "seconds": 0.013978750008391216,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-skipped.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-skipped.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-failed",
+      "seconds": 0.013875666001695208,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-failed.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-failed.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-duplicate-count",
+      "seconds": 0.014368792006280273,
+      "stderr": {
+        "bytes": 68,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-duplicate-count.stderr",
+        "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-duplicate-count.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+        "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "label": "updated-rejects-missing-log",
+      "seconds": 0.021119042008649558,
+      "stderr": {
+        "bytes": 1045,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-missing-log.stderr",
+        "sha256": "78422b6a9d9c28e9798afa24e0f9d6d6a763889c0a989f7d56b9d8cd4dcee5d1"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-missing-log.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/rg",
+        "-n",
+        "--fixed-strings",
+        "-e",
+        "owned-process-collector",
+        "-e",
+        "test_w1_owned_process_collector_v1",
+        ".github",
+        "scripts"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "consumer-search",
+      "seconds": 0.01705733400012832,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/consumer-search.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1709,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/consumer-search.stdout",
+        "sha256": "304318da96a2054d83e0fee66fce9f7e5d0ca31f730cadcd361d997edaa70b41"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v",
+        "W1PostwinLaneTests.test_actual_postwin_lanes_retain_real_controls",
+        "W1PostwinLaneTests.test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed",
+        "W1PostwinLaneTests.test_required_postwin_commands_cannot_change_or_duplicate_lane",
+        "W1PostwinLaneTests.test_postwin_count_and_original_budget_controls_cannot_be_softened"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "original-ci-postwin-four-controls",
+      "seconds": 1.2295272089977516,
+      "stderr": {
+        "bytes": 740,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-ci-postwin-four-controls.stderr",
+        "sha256": "910ffe5048a7d38da71051d40398b46bce4ea7ced184981416ee9f388fc288a2"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-ci-postwin-four-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "actual-ci-contract",
+      "seconds": 0.07728533301269636,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/actual-ci-contract.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 852,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/actual-ci-contract.stdout",
+        "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+      }
+    }
+  ],
+  "updated_inline_accepts_only_exact16": true
+}

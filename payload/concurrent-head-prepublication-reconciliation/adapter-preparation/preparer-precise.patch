@@ -1,0 +1,161 @@
+--- /private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v4.py
++++ /private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v5.py
+@@ -8,10 +8,10 @@
+ 
+ ROOT = pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+ SOURCE = pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
+-SELF = ROOT / "prepare_pr847_audit_update_v4.py"
+-FOLLOWUP = ROOT / "publish_followup_candidate_execution_archive_v1.py"
+-FOLLOWUP_BYTES = 71594
+-FOLLOWUP_SHA = "8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d"
++SELF = ROOT / "prepare_pr847_audit_update_v5.py"
++FOLLOWUP = ROOT / "publish_followup_candidate_execution_archive_v2.py"
++FOLLOWUP_BYTES = 73492
++FOLLOWUP_SHA = "0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2"
+ PUBLISHER = ROOT / "publish_candidate_and_archive_v4.py"
+ PUBLISHER_SHA = "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038"
+ TEMPLATE = ROOT / "pr847-audit-body-template-v3.md"
+@@ -148,15 +148,17 @@
+     pubdir = F["validate_spec"](spec)
+     require(spec["publisher_sha256"] == FOLLOWUP_SHA, "unreviewed follow-up producer")
+     head, tree = spec["candidate_head"], spec["candidate_tree"]
++    expected_remote_head = spec["expected_remote_head"]
+     pub_raw = pinned(value["publication_receipt"], "confirmed-publication.json")
+     pub = strict_json(pub_raw)
+     require(value["publication_receipt"]["path"] == str(pubdir / "summary.json"),
+             "terminal publication receipt path differs from reviewed spec")
+-    require(pub["schema"] == "trnm-followup-candidate-execution-publication-receipt-v1"
++    require(pub["schema"] == "trnm-followup-candidate-execution-publication-receipt-v2"
+             and pub["status"] == "confirmed" and pub["push_started"] is True
+             and pub["source_after_valid"] is True and pub["exact_hook_verified"] is True
+             and pub["head"] == head and pub["tree"] == tree
+-            and pub["expected_previous_head"] == F["BASE_HEAD"] and pub["errors"] == [],
++            and pub["previous_own_published_head"] == F["BASE_HEAD"]
++            and pub["expected_remote_head"] == expected_remote_head and pub["errors"] == [],
+             "complete confirmed follow-up publication required")
+     require(pub["driver"] == {"path": str(FOLLOWUP), "bytes": FOLLOWUP_BYTES, "sha256": FOLLOWUP_SHA}
+             and pub["spec"] == value["publication_spec"], "publication producer/spec binding differs")
+@@ -172,7 +174,10 @@
+     require(pub["required_head_and_prospective_ci_must_still_pass"] is True
+             and pub["archive_preserves_history_not_semantic_equivalence"] is True,
+             "publication qualification/history boundary differs")
+-    expected, old_parents, frozen_raw, old_originals, old_snapshots = F["original_frozen_state"]()
++    published_heads, old_parents, frozen_raw, old_originals, old_snapshots = F["original_frozen_state"]()
++    expected = F["bind_expected_remote_heads"](published_heads, expected_remote_head)
++    published_heads_raw = (json.dumps(published_heads, indent=2, sort_keys=True) + "\n").encode()
++    expected_remote_heads_raw = (json.dumps(expected, indent=2, sort_keys=True) + "\n").encode()
+     snapshots.extend(old_snapshots)
+     payload = F["load_manifest"](spec["execution_manifest"])
+     snapshots.extend(payload["snapshots"])
+@@ -203,7 +208,9 @@
+     require(local("spec.json") == spec_raw
+             and local("validated-execution-manifest.json") == payload["raw"]
+             and local("validated-local-gate-receipt.json") == gate_raw
+-            and local("validated-rog-lane-receipt.json") == rog_raw,
++            and local("validated-rog-lane-receipt.json") == rog_raw
++            and local("expected-published-dc42-heads.json") == published_heads_raw
++            and local("expected-reviewed-remote-heads.json") == expected_remote_heads_raw,
+             "publisher retained inputs differ")
+     steps = pub["steps"]
+     require(isinstance(steps, list) and 0 < len(steps) <= F["MAX_FILES"] * 3,
+@@ -230,6 +237,32 @@
+             snapshots.append(record)
+             data[channel] = raw
+         return data["stdout"]
++
++    # The reviewed remote advance and the independently tested ROG start have
++    # separate C0 lineages; the remote advance need not precede the ROG start.
++    for label, ancestor, descendant in (
++        ("published-to-reviewed-remote", F["BASE_HEAD"], expected_remote_head),
++        ("reviewed-remote-to-candidate", expected_remote_head, head),
++        ("published-to-rog-start", F["BASE_HEAD"], spec["rog_invocation"]["expected_start_head"]),
++        ("rog-start-to-candidate", spec["rog_invocation"]["expected_start_head"], head),
++    ):
++        require(step(label, ["git", "--no-replace-objects", "merge-base",
++                "--is-ancestor", ancestor, descendant], 60) == b"",
++                "recorded ancestry proof differs: " + label)
++    publication_pr_query = "{number,state,draft,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,auto_merge}"
++    publication_pr_argv = ["gh", "api", "repos/" + REPO + "/pulls/847", "--jq", publication_pr_query]
++    publication_pr = strict_json(step("pr-before", publication_pr_argv, 180))
++    require(isinstance(publication_pr, dict) and set(publication_pr) == {
++            "number", "state", "draft", "head", "head_ref", "base", "base_ref", "auto_merge"}
++            and type(publication_pr["number"]) is int and publication_pr["number"] == 847
++            and publication_pr["state"] == "open" and type(publication_pr["draft"]) is bool
++            and publication_pr["head"] == expected_remote_head
++            and publication_pr["head_ref"] == HEAD_REF and publication_pr["base"] == BASE
++            and publication_pr["base_ref"] == "main" and publication_pr["auto_merge"] is None
++            and pub["pr_before"] == publication_pr,
++            "publication original PR does not bind the reviewed remote head")
++    require(strict_json(step("pr-prepush", publication_pr_argv, 180)) == publication_pr,
++            "publication prepush PR changed from its exact original")
+ 
+     archive = pub["archive"]
+     require(isinstance(archive, dict) and set(archive) == {
+@@ -268,7 +301,7 @@
+                 "original complete ref readbacks differ")
+     expected_hook = {"origin": URL + ".git", "remote_heads": expected, "old_archive_tags": old_tags,
+         "new_tag_ref": tagref, "updates": {
+-            "refs/heads/" + HEAD_REF: {"local_ref": head, "new": head, "old": F["BASE_HEAD"]},
++            "refs/heads/" + HEAD_REF: {"local_ref": head, "new": head, "old": expected_remote_head},
+             tagref: {"local_ref": tagref, "new": archive["tag_oid"], "old": F["ZERO"]}}}
+     hook_expected_raw = local("hooks/expected.json")
+     require(strict_json(hook_expected_raw) == expected_hook, "actual exact hook scope differs")
+@@ -367,9 +400,32 @@
+         "metadata/local-gates.json": gate_raw,
+         "metadata/rog-full-lane.json": rog_raw,
+         "metadata/frozen-0170-branches.json": frozen_raw,
++        "metadata/published-dc42-expected-heads.json": published_heads_raw,
++        "metadata/reviewed-remote-expected-heads.json": expected_remote_heads_raw,
+         "metadata/live-source-before.json": source_pair["before"],
+     }.items():
+         archive_bytes(name, data)
++    archive_scope = {
++        "schema": "trnm-followup-execution-archive-scope-v2",
++        "candidate_head": head, "candidate_tree": tree,
++        "previous_own_published_head": F["BASE_HEAD"],
++        "expected_remote_head": expected_remote_head,
++        "old_history_archive": pub["old_archive_verified"],
++        "exact_ordered_parents": [F["OLD_ARCHIVE_COMMIT"], head],
++        "frozen_remote_branch_names": 908, "original_distinct_tips": 892,
++        "payload_manifest_sha256": sha(payload["raw"]),
++        "payload_files": len(payload["payload"]),
++        "payload_bytes": payload["manifest"]["total_bytes"],
++        "local_gate_receipt_sha256": sha(gate_raw), "rog_lane_receipt_sha256": sha(rog_raw),
++        "original_rog_producer_sha256": sha(rog_producer),
++        "main_merged": False, "branches_deleted": False, "protection_changed": False,
++        "hosted_ci_qualification": False, "qualification_granted": False,
++        "archive_preserves_history_not_semantic_equivalence": True,
++        "current_publication_outcome_included": False,
++        "new_full_fsck_performed": False,
++    }
++    archive_bytes("metadata/archive-scope.json",
++                  (json.dumps(archive_scope, indent=2, sort_keys=True) + "\n").encode())
+     retained.append(("archive-file-index.json", str(pubdir / "archive-file-index.json"), index_raw))
+     collector = value["collector_disposition"]
+     require(isinstance(collector, dict), "explicit collector disposition required")
+@@ -432,6 +488,7 @@
+         retained.append((fixed_path.name, str(fixed_path), fixed_raw))
+     facts = {
+         "head": head, "tree": tree, "base": BASE, "pr_number": 847, "head_ref": HEAD_REF,
++        "previous_own_published_head": F["BASE_HEAD"], "expected_remote_head": expected_remote_head,
+         "publication_spec": value["publication_spec"], "publication_receipt": value["publication_receipt"],
+         "publication_status": "confirmed", "publication_transport_exit": pub["push_exit"],
+         "publication_observation_phase": "after", "archive": archive,
+@@ -469,7 +526,7 @@
+     parser.add_argument("--inputs-sha256", required=True)
+     parser.add_argument("--evidence-dir", required=True)
+     args = parser.parse_args()
+-    ev = evidence_directory(args.evidence_dir, "prepare-pr847-audit-update-v4")
++    ev = evidence_directory(args.evidence_dir, "prepare-pr847-audit-update-v5")
+     ctx = validate_inputs(args.inputs, args.inputs_sha256)
+     H, F = ctx["H"], ctx["F"]
+     env = safe_environment(H)
+@@ -488,7 +545,7 @@
+     dependency_raw = (json.dumps(ctx["dependency_index"], sort_keys=True, indent=2) + "\n").encode()
+     with (ev / "dependencies.json").open("xb") as stream:
+         stream.write(dependency_raw)
+-    result = {"schema": "prepared-pr847-audit-update-v4", "status": "HOLD", "remote_writes": False,
++    result = {"schema": "prepared-pr847-audit-update-v5", "status": "HOLD", "remote_writes": False,
+         "started_at": now(), "driver": {"path": str(SELF), "sha256": sha(read_regular(SELF))},
+         "inputs": ctx["input_pin"], "validated_facts": ctx["facts"],
+         "dependencies": {"path": str(ev / "dependencies.json"), "bytes": len(dependency_raw),

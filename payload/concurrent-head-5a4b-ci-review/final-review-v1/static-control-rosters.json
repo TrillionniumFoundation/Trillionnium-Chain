@@ -1,0 +1,202 @@
+{
+  "scripts/ci/test_ci_contract.py": {
+    "M6": 225,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "CiContractTests.test_pq_lifetime_budget_commands_cannot_disappear_or_move",
+      "W1PostwinLaneTests.test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 223,
+    "same_source_methods": 223,
+    "selected": 225
+  },
+  "scripts/ci/test_pon_budget_controls.py": {
+    "M6": 39,
+    "added_methods": [
+      "BudgetControlsTests.test_history_v3_cancellation_keeps_durable_first_and_unstarted_successor",
+      "BudgetControlsTests.test_history_v3_requires_real_original_refill_and_successor_completion",
+      "BudgetControlsTests.test_history_v3_requires_two_distinct_ordered_packets_and_exact_tip",
+      "BudgetControlsTests.test_history_versions_and_qualification_cannot_transfer_outcomes"
+    ],
+    "changed_AST_methods": [
+      "BudgetControlsTests.test_history_continue_still_requires_complete_import_and_clean_close"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 38,
+    "same_source_methods": 38,
+    "selected": 43
+  },
+  "scripts/ci/test_pq_chain_claim_guard.py": {
+    "M6": 57,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "TestClaimGuard.test_explicit_unknown_claims_keep_hold"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 56,
+    "same_source_methods": 56,
+    "selected": 57
+  },
+  "scripts/ci/test_pq_lifetime_budget.py": {
+    "M6": 58,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "CheckedInContractTests.test_default_research_register_contains_no_known_security_bound"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 57,
+    "same_source_methods": 57,
+    "selected": 58
+  },
+  "scripts/ci/test_pq_lifetime_composition.py": {
+    "M6": 60,
+    "added_methods": [
+      "SourceInspectionTests.test_real_inspection_binds_66_current_declared_sources_and_four_scopes"
+    ],
+    "changed_AST_methods": [
+      "InventoryContractTests.test_checked_in_manifest_matches_the_frozen_contract",
+      "InventoryContractTests.test_superseded_child_manifest_identities_are_refused",
+      "SourceInspectionTests.test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match",
+      "SourceInspectionTests.test_missing_each_child_manifest_or_legacy_lock_is_refused"
+    ],
+    "removed_names": [
+      "SourceInspectionTests.test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes"
+    ],
+    "same_AST_methods": 55,
+    "same_source_methods": 55,
+    "selected": 60
+  },
+  "scripts/ci/test_pq_lifetime_current_v2.py": {
+    "M6": 0,
+    "added_methods": [
+      "CurrentCorrespondenceTests.test_changed_current_source_is_refused",
+      "CurrentCorrespondenceTests.test_changed_metadata_during_source_read_is_refused",
+      "CurrentCorrespondenceTests.test_current_map_cannot_rewrite_frozen_identity",
+      "CurrentCorrespondenceTests.test_current_map_keeps_frozen_model_and_current_bytes_separate",
+      "CurrentCorrespondenceTests.test_current_map_missing_or_symlinked_is_refused",
+      "CurrentCorrespondenceTests.test_duplicate_map_json_keys_are_refused",
+      "CurrentCorrespondenceTests.test_exact_report_is_revalidated_against_current_bytes",
+      "CurrentCorrespondenceTests.test_frozen_lock_missing_or_modified_is_refused",
+      "CurrentCorrespondenceTests.test_frozen_manifest_missing_or_modified_is_refused",
+      "CurrentCorrespondenceTests.test_frozen_map_cannot_be_substituted_for_current_map",
+      "CurrentCorrespondenceTests.test_malformed_current_digest_encodings_are_refused",
+      "CurrentCorrespondenceTests.test_map_and_report_hashes_cannot_be_laundered_together",
+      "CurrentCorrespondenceTests.test_map_byte_pin_rejects_semantically_equivalent_reformatting",
+      "CurrentCorrespondenceTests.test_missing_and_extra_current_paths_are_refused",
+      "CurrentCorrespondenceTests.test_missing_current_source_is_refused",
+      "CurrentCorrespondenceTests.test_old_v1_report_is_not_a_current_report",
+      "CurrentCorrespondenceTests.test_original_v1_reader_does_not_relabel_current_bytes",
+      "CurrentCorrespondenceTests.test_oversize_map_is_refused",
+      "CurrentCorrespondenceTests.test_report_bytes_are_bounded_and_strict",
+      "CurrentCorrespondenceTests.test_report_cannot_survive_a_later_source_change",
+      "CurrentCorrespondenceTests.test_report_false_zero_swaps_extra_and_missing_fields_are_refused",
+      "CurrentCorrespondenceTests.test_source_and_map_cannot_be_changed_together",
+      "CurrentCorrespondenceTests.test_symlink_source_with_matching_bytes_is_refused",
+      "CurrentCorrespondenceTests.test_symlinked_source_parent_is_refused",
+      "CurrentCorrespondenceTests.test_unknown_fields_and_qualification_promotions_are_refused"
+    ],
+    "changed_AST_methods": [],
+    "removed_names": [],
+    "same_AST_methods": 0,
+    "same_source_methods": 0,
+    "selected": 25
+  },
+  "scripts/ci/test_public_readiness_evidence.py": {
+    "M6": 77,
+    "added_methods": [
+      "NativeDurableSchemaTests.test_current_endpoint_witness_gate_cannot_be_removed_or_deferred"
+    ],
+    "changed_AST_methods": [
+      "DurableStoreTests.test_authenticated_domain_cannot_relabel_legacy_tables",
+      "DurableStoreTests.test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata",
+      "DurableStoreTests.test_changed_published_state_and_injected_schema_reject",
+      "DurableStoreTests.test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity",
+      "DurableStoreTests.test_current_v2_schema_and_complete_index_positive_control",
+      "DurableStoreTests.test_growth_domains_cannot_relabel_legacy_tables",
+      "DurableStoreTests.test_owned_sqlite_control_and_changed_packet_or_work_reject",
+      "DurableStoreTests.test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing",
+      "DurableStoreTests.test_real_sqlite_internal_autoindexes_and_statistics_remain_supported",
+      "DurableStoreTests.test_resealed_wrong_half_link_is_not_accepted_as_derived_structure",
+      "DurableStoreTests.test_v2_schema_metadata_cannot_use_legacy_hash_domain",
+      "DurableStoreTests.test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 65,
+    "same_source_methods": 65,
+    "selected": 78
+  },
+  "scripts/ci/test_sp27_receiver_controls.py": {
+    "M6": 16,
+    "added_methods": [
+      "SyntheticHealthReadbackControls.test_execution_binding_accepts_exact_synthetic_process",
+      "SyntheticHealthReadbackControls.test_execution_binding_rejects_changed_process_with_unchanged_logs"
+    ],
+    "changed_AST_methods": [],
+    "removed_names": [],
+    "same_AST_methods": 16,
+    "same_source_methods": 16,
+    "selected": 18
+  },
+  "scripts/ci/test_sp27_strata_controls.py": {
+    "M6": 20,
+    "added_methods": [
+      "SyntheticCampaignControls.test_execution_binding_accepts_exact_synthetic_process",
+      "SyntheticCampaignControls.test_execution_binding_rejects_changed_process_with_unchanged_logs"
+    ],
+    "changed_AST_methods": [],
+    "removed_names": [],
+    "same_AST_methods": 20,
+    "same_source_methods": 20,
+    "selected": 22
+  },
+  "scripts/ci/test_throughput_cost_coverage.py": {
+    "M6": 27,
+    "added_methods": [
+      "SourceReceiptTypeControls.test_changed_after_source_types_refuse_equal_python_values",
+      "SourceReceiptTypeControls.test_exact_typed_head_and_merge_source_pairs_are_accepted",
+      "SourceReceiptTypeControls.test_source_shape_original_types_and_error_order_are_preserved"
+    ],
+    "changed_AST_methods": [],
+    "removed_names": [],
+    "same_AST_methods": 27,
+    "same_source_methods": 27,
+    "selected": 30
+  },
+  "scripts/ci/test_w1_qrom_closure_current_controls.py": {
+    "M6": 31,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "CurrentSemanticsCorrespondenceTests.test_actual_report_has_only_the_reviewed_lock_provenance_delta",
+      "CurrentSemanticsCorrespondenceTests.test_any_other_report_field_change_is_refused",
+      "CurrentSemanticsCorrespondenceTests.test_changed_current_lock_bytes_cannot_be_relabelled_in_report"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 28,
+    "same_source_methods": 28,
+    "selected": 31
+  },
+  "scripts/ci/test_w1_qrom_current_ci.py": {
+    "M6": 13,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "CurrentCiTests.test_actual_current_mapping_and_original_refusal_are_separate",
+      "CurrentCiTests.test_drift_rejects_missing_changes_and_unrelated_process_failures"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 11,
+    "same_source_methods": 11,
+    "selected": 13
+  },
+  "scripts/ci/test_w1_qrom_semantics_audit.py": {
+    "M6": 22,
+    "added_methods": [],
+    "changed_AST_methods": [
+      "W1SemanticsAuditTests.test_reconstruction_does_not_promote_compiler_trace_or_qrom_claims"
+    ],
+    "removed_names": [],
+    "same_AST_methods": 21,
+    "same_source_methods": 21,
+    "selected": 22
+  }
+}

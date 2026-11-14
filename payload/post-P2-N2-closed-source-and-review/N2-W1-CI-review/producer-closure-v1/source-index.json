@@ -1,0 +1,25 @@
+{
+  "schema": "prci-n2-producer-static-closure-v1",
+  "observed_at": "2026-11-14T11:32:27.608361+00:00",
+  "revisions": {
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "P2": "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+  },
+  "sources": [
+    {
+      "repository_path": "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/producer-closure-v1/formal--pon-nakamoto-v1--experiments--w1_stage_measure.py.source",
+      "bytes": 35951,
+      "sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9",
+      "N2_blob": "760423dccb6a816466e442a69c91b3b84f5a623a",
+      "P2_blob": "760423dccb6a816466e442a69c91b3b84f5a623a",
+      "N2_equals_P2": true
+    }
+  ],
+  "method_roster": {
+    "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/producer-closure-v1/method-roster-comparison.json",
+    "bytes": 7064,
+    "sha256": "70dee07ae1f481ef017db0fb9b3bc9ed367221005d279779d875563674cc0887"
+  },
+  "no_source_code_executed": true
+}

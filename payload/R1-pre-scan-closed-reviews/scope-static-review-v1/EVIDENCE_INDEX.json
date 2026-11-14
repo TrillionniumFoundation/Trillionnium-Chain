@@ -1,0 +1,54 @@
+{
+  "file_count": 5,
+  "files": [
+    {
+      "bytes": 3788,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v1/prepare_scope_and_scan.py"
+      },
+      "path": "prepare_scope_and_scan.py.original",
+      "sha256": "bd6531cd52adcc65bb301b35a1480a936046b839298eb0424ccc2275709630e6"
+    },
+    {
+      "bytes": 711,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v1/PLAN.txt"
+      },
+      "path": "PLAN.txt.original",
+      "sha256": "c0e55abf3e92c68ccdb63b2407462a4b21086e5e1d96981c5b6123d625210ebe"
+    },
+    {
+      "bytes": 14664,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py"
+      },
+      "path": "scan_frozen_execution_payload_v2.py.original",
+      "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6"
+    },
+    {
+      "bytes": 8620,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v1/review.json"
+      },
+      "path": "review.json",
+      "sha256": "6c49751c887b6b1c01eae2801f7dcbcfc062253b7ca3569cf00bb6bdf445107a"
+    },
+    {
+      "bytes": 3192,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "d90718b459aa4f24d21f9c413295d53218db30df2004c86ca2aeb5d01fec5f32"
+    }
+  ],
+  "no_reviewed_code_executed": true,
+  "root": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v1",
+  "schema": "trnm-R1-payload-scope-static-review-index-v1",
+  "total_bytes": 30975
+}

@@ -1,0 +1,23 @@
+{
+  "run": 43567821538,
+  "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "items": [
+    {
+      "arch": "x64",
+      "artifact": 14105076236,
+      "bytes": 9927259,
+      "sha256": "be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599",
+      "prefix_bytes": 2259914,
+      "prefix_sha256": "100150355444aed2b51971043a3cbb14766409c71b19d74be63fd074f11a014a"
+    },
+    {
+      "arch": "arm64",
+      "artifact": 14104567861,
+      "bytes": 9927566,
+      "sha256": "242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909",
+      "prefix_bytes": 2161608,
+      "prefix_sha256": "828d3d640c5a556a419a4f7a971ea4bfc6985f906cb6b81bebf18a4ba09a2f6c"
+    }
+  ],
+  "partial_prefixes_not_complete_zip": true
+}

@@ -1,0 +1,46 @@
+{
+  "ancestry_command_ast": {
+    "published-to-reviewed-remote": "['git', '--no-replace-objects', 'merge-base', '--is-ancestor', BASE_HEAD, expected_remote_head]",
+    "published-to-rog-start": "['git', '--no-replace-objects', 'merge-base', '--is-ancestor', BASE_HEAD, rog_start]",
+    "reviewed-remote-to-candidate": "['git', '--no-replace-objects', 'merge-base', '--is-ancestor', expected_remote_head, head]",
+    "rog-start-to-candidate": "['git', '--no-replace-objects', 'merge-base', '--is-ancestor', rog_start, head]"
+  },
+  "apply_edit_readback_ready_tail_byte_identical": true,
+  "candidate_modules_or_helpers_executed": false,
+  "final_candidate_or_success_receipts_not_fabricated": true,
+  "git_network_source_stage_or_ref_operations": false,
+  "hook_template_unchanged_exact_two_updates": true,
+  "new_expected_remote_only_replaces_candidate_in_copied_map": true,
+  "new_programs_all_syntax_valid_and_pinned": true,
+  "original_seven_and_18_command_validators_unchanged": true,
+  "preparer_requires_both_C0_and_remote_map_bytes": true,
+  "preparer_requires_four_exact_ancestry_original_stdout_stderr_records": true,
+  "preparer_requires_recorded_PR_head_N_before_and_prepush": true,
+  "proof_label_clarification": {
+    "actual_scope_of_that_original_segment": "old archive tag/commit verification and old_archive_verified record, before archive_scope construction",
+    "independent_correct_ordered_parent_creation_block": {
+      "bytes": 1279,
+      "raw_source_identical": true,
+      "sha256": "110f0be8d954964c3e9da6883bf4d50dc4b9a8071cf636a67782b0ffb46f20b5"
+    },
+    "original_label": "publisher_exact_two_parent_git_creation",
+    "original_proof_bytes_unchanged": true,
+    "original_proof_sha256": "cdc8a7597aa19afe1ea9cae2f9b86f61d8df4707ebcd6f4dc4ba3f925825b56c"
+  },
+  "reviewed_at": "2026-11-14T10:08:21.225806+00:00",
+  "rog_start_lineage_keeps_C0_and_does_not_require_remote_ancestor": true,
+  "schema": "trnm-concurrent-publication-readback-review-v1",
+  "source_diff": {
+    "bytes": 22991,
+    "path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/all-three-precise.patch",
+    "sha256": "0d7fb044b15ed0f14847f2d30913ec50af37f7b509db7f4ebb81710c6cad039a"
+  },
+  "status": "STATIC_REVIEW_COMPLETE_NOT_EXECUTED",
+  "template_v3_byte_identical": true,
+  "tests_native_or_runtime_qualification_claimed": false,
+  "unchanged_function_counts": {
+    "apply": 8,
+    "preparer": 10,
+    "publisher": 23
+  }
+}

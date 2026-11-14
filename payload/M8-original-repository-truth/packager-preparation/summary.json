@@ -1,0 +1,42 @@
+{
+  "actual_terminal_received": false,
+  "combined_patch": {
+    "bytes": 38183,
+    "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/both-packagers-precise.patch",
+    "sha256": "6e5621b6665bd614b9391fcf5d564b99249821b448ca19b3b438a19c69e1a69f"
+  },
+  "finished_at": "2026-11-14T10:37:00.490011+00:00",
+  "index": {
+    "bytes": 2980,
+    "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "1c9651272601ac818316d96a33456064c461170976f390ce034e2da39c309af5"
+  },
+  "live_ROG_receipts_read": false,
+  "manifest_contract": {
+    "bytes": 3461,
+    "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/closed-log-manifest-contract.json",
+    "sha256": "0a74c98f482e01f29c7d8fe2c08b4c161df514e93b461c6d6d489bb3286f96fb"
+  },
+  "new_producers": [
+    {
+      "bytes": 28914,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_ed0d35_v1.py",
+      "sha256": "cef78f3610541a8056b297fd5256a2493227d3aa78cd0d964a92c57c687889d8"
+    },
+    {
+      "bytes": 14207,
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_ed0d35_v1.py",
+      "sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f"
+    }
+  ],
+  "proof": {
+    "bytes": 4038,
+    "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/static-identity-proof.json",
+    "sha256": "58953363d166eccf0bb25eb4d430b2d9f8b07df7b81a979fc4f078fa0f394076"
+  },
+  "root_review_required_before_execution": true,
+  "schema": "trnm-M8-packager-preparation-summary-v1",
+  "stage_source_Git_network_or_test_actions": false,
+  "started_at": "2026-11-14T10:37:00.458015+00:00",
+  "status": "PREPARED_NOT_EXECUTED"
+}

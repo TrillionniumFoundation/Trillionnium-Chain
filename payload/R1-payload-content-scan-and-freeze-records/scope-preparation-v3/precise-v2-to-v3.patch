@@ -1,0 +1,20 @@
+--- /private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/prepare_scope_and_scan.py
++++ /private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v3/prepare_scope_and_scan.py
+@@ -16,7 +16,7 @@
+ assert type(inputs)is dict and set(inputs)=={"baseline_manifest","full_manifest","phase"}
+ phase=inputs["phase"];assert type(phase)is str and phase in ("content","scan-records")
+ program_path=pathlib.Path(__file__)
+-assert program_path==ROOT/"R1-payload-scope-static-review-input-v2/prepare_scope_and_scan.py"
++assert program_path==ROOT/"R1-payload-scope-static-review-input-v3/prepare_scope_and_scan.py"
+ program_raw,program_identity=mod.absolute_snapshot(program_path,16384)
+ assert program_raw==sys.argv[1].encode()
+ E=ROOT/("R1-execution-payload-scope-"+phase+"-v1");E.mkdir(mode=0o700,exist_ok=False)
+@@ -35,7 +35,7 @@
+  data,payload,rows=mod.validate_manifest(raw)
+  assert payload==ROOT/"execution-receipts-followup-v1"
+  return data,rows,identity
+-P=str(ROOT/"frozen-execution-payload-2a8646-content-v1/frozen-execution-payload-manifest-v1.json")
++P=str(ROOT/"frozen-execution-payload-2a8646-content-v2/frozen-execution-payload-manifest-v1.json")
+ F=str(ROOT/"frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json")
+ baseline,old,old_id=read_manifest(inputs["baseline_manifest"]);full,rows,full_id=read_manifest(inputs["full_manifest"])
+ if phase=="content":assert inputs["full_manifest"]["path"]==P

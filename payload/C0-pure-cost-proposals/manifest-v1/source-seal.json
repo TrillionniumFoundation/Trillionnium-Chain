@@ -1,0 +1,853 @@
+{
+  "all_source_fds_verified_before_stage_write": true,
+  "cap_bytes": 10485760,
+  "file_count": 90,
+  "manifest": {
+    "bytes": 44720,
+    "path": "/private/tmp/chain-architecture-pure-cost-proposals-materialization-20261114-v1/ARCHIVE_MANIFEST.json",
+    "sha256": "88f6f8c5580e8acf4be7e6a8b55ff4bcc9077db9f880a9c7caad6ad96be15e9c"
+  },
+  "network_or_native_or_benchmark_executed": false,
+  "readme": {
+    "bytes": 1626,
+    "path": "/private/tmp/chain-architecture-pure-cost-proposals-materialization-20261114-v1/README.md",
+    "sha256": "409b5bae8e94b78e96ae2cd9f95ee11f3d6b2a1e8ecad83c872c7fddfba87907"
+  },
+  "reference_only_original_reports": [
+    {
+      "bytes": 12119117,
+      "copied": false,
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+      "reason": "complete original already archived; selected leaves retain origin pointers",
+      "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0"
+    },
+    {
+      "bytes": 16002976,
+      "copied": false,
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+      "reason": "complete original already archived; selected leaves retain origin pointers",
+      "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333"
+    }
+  ],
+  "schema": "trnm-readonly-pure-cost-roster-seal-v1",
+  "sealed_at_utc": "2026-11-14T09:30:19.364543+00:00",
+  "source_file_set_and_identities_unchanged": true,
+  "source_identities": {
+    "candidate-impact-final-v1/EVIDENCE_INDEX.json": {
+      "bytes": 2146,
+      "ctime_ns": 1794647965688887167,
+      "device": 16777233,
+      "inode": 606856317,
+      "mode": 384,
+      "mtime_ns": 1794647965688887167,
+      "nlink": 1
+    },
+    "candidate-impact-final-v1/README.md": {
+      "bytes": 6379,
+      "ctime_ns": 1794647965688770126,
+      "device": 16777233,
+      "inode": 606856316,
+      "mode": 384,
+      "mtime_ns": 1794647965688770126,
+      "nlink": 1
+    },
+    "candidate-impact-final-v1/review.json": {
+      "bytes": 4142,
+      "ctime_ns": 1794647965688672209,
+      "device": 16777233,
+      "inode": 606856315,
+      "mode": 384,
+      "mtime_ns": 1794647965688672209,
+      "nlink": 1
+    },
+    "nonce-candidate-final-v1/EVIDENCE_INDEX.json": {
+      "bytes": 2794,
+      "ctime_ns": 1794648289770152813,
+      "device": 16777233,
+      "inode": 606860228,
+      "mode": 384,
+      "mtime_ns": 1794648289770152813,
+      "nlink": 1
+    },
+    "nonce-candidate-final-v1/README.md": {
+      "bytes": 7751,
+      "ctime_ns": 1794648289770068063,
+      "device": 16777233,
+      "inode": 606860227,
+      "mode": 384,
+      "mtime_ns": 1794648289770068063,
+      "nlink": 1
+    },
+    "nonce-candidate-final-v1/review.json": {
+      "bytes": 6343,
+      "ctime_ns": 1794648289769972980,
+      "device": 16777233,
+      "inode": 606860226,
+      "mode": 384,
+      "mtime_ns": 1794648289769972980,
+      "nlink": 1
+    },
+    "nonce-contract-selected-v1/profile-vectors.json.original": {
+      "bytes": 48967,
+      "ctime_ns": 1794648166579657910,
+      "device": 16777233,
+      "inode": 606858607,
+      "mode": 384,
+      "mtime_ns": 1794648166579657910,
+      "nlink": 1
+    },
+    "nonce-contract-selected-v1/summary.json": {
+      "bytes": 8820,
+      "ctime_ns": 1794648166583379988,
+      "device": 16777233,
+      "inode": 606858608,
+      "mode": 384,
+      "mtime_ns": 1794648166583379988,
+      "nlink": 1
+    },
+    "nonce-production-callers-v1/exact-callers-search.stdout": {
+      "bytes": 17793,
+      "ctime_ns": 1794648189940223685,
+      "device": 16777233,
+      "inode": 606858831,
+      "mode": 384,
+      "mtime_ns": 1794648189940223685,
+      "nlink": 1
+    },
+    "nonce-production-callers-v1/summary.json": {
+      "bytes": 22636,
+      "ctime_ns": 1794648189940418601,
+      "device": 16777233,
+      "inode": 606858832,
+      "mode": 384,
+      "mtime_ns": 1794648189940418601,
+      "nlink": 1
+    },
+    "nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--main.rs.txt": {
+      "bytes": 1433,
+      "ctime_ns": 1794648189893543373,
+      "device": 16777233,
+      "inode": 606858828,
+      "mode": 384,
+      "mtime_ns": 1794648189893543373,
+      "nlink": 1
+    },
+    "nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--peer_polling.rs.txt": {
+      "bytes": 1303,
+      "ctime_ns": 1794648189915412260,
+      "device": 16777233,
+      "inode": 606858829,
+      "mode": 384,
+      "mtime_ns": 1794648189915412260,
+      "nlink": 1
+    },
+    "nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--public_submit.rs.txt": {
+      "bytes": 2409,
+      "ctime_ns": 1794648189940115726,
+      "device": 16777233,
+      "inode": 606858830,
+      "mode": 384,
+      "mtime_ns": 1794648189940115726,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/normative-exact-search.stdout": {
+      "bytes": 37108,
+      "ctime_ns": 1794648060036541946,
+      "device": 16777233,
+      "inode": 606857134,
+      "mode": 384,
+      "mtime_ns": 1794648060036541946,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/summary.json": {
+      "bytes": 14972,
+      "ctime_ns": 1794648060036745530,
+      "device": 16777233,
+      "inode": 606857135,
+      "mode": 384,
+      "mtime_ns": 1794648060036745530,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.0.txt": {
+      "bytes": 631,
+      "ctime_ns": 1794648059868253135,
+      "device": 16777233,
+      "inode": 606857122,
+      "mode": 384,
+      "mtime_ns": 1794648059868253135,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.1.txt": {
+      "bytes": 6547,
+      "ctime_ns": 1794648059878212538,
+      "device": 16777233,
+      "inode": 606857124,
+      "mode": 384,
+      "mtime_ns": 1794648059878212538,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.2.txt": {
+      "bytes": 1936,
+      "ctime_ns": 1794648059888407857,
+      "device": 16777233,
+      "inode": 606857126,
+      "mode": 384,
+      "mtime_ns": 1794648059888407857,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.3.txt": {
+      "bytes": 969,
+      "ctime_ns": 1794648059894714973,
+      "device": 16777233,
+      "inode": 606857127,
+      "mode": 384,
+      "mtime_ns": 1794648059894714973,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.4.txt": {
+      "bytes": 10456,
+      "ctime_ns": 1794648059901070840,
+      "device": 16777233,
+      "inode": 606857128,
+      "mode": 384,
+      "mtime_ns": 1794648059901070840,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.5.txt": {
+      "bytes": 9388,
+      "ctime_ns": 1794648059907170123,
+      "device": 16777233,
+      "inode": 606857129,
+      "mode": 384,
+      "mtime_ns": 1794648059907170123,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.0.txt": {
+      "bytes": 4260,
+      "ctime_ns": 1794648059928376427,
+      "device": 16777233,
+      "inode": 606857130,
+      "mode": 384,
+      "mtime_ns": 1794648059928376427,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.1.txt": {
+      "bytes": 4472,
+      "ctime_ns": 1794648059934463961,
+      "device": 16777233,
+      "inode": 606857131,
+      "mode": 384,
+      "mtime_ns": 1794648059934463961,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.2.txt": {
+      "bytes": 4640,
+      "ctime_ns": 1794648059940564994,
+      "device": 16777233,
+      "inode": 606857132,
+      "mode": 384,
+      "mtime_ns": 1794648059940564994,
+      "nlink": 1
+    },
+    "nonce-proposal-inputs-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs.0.txt": {
+      "bytes": 685,
+      "ctime_ns": 1794648059966528959,
+      "device": 16777233,
+      "inode": 606857133,
+      "mode": 384,
+      "mtime_ns": 1794648059966528959,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--pq-root-dependency-register-v3.json.original": {
+      "bytes": 54959,
+      "ctime_ns": 1794647676455220115,
+      "device": 16777233,
+      "inode": 606806527,
+      "mode": 384,
+      "mtime_ns": 1794647676455220115,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--pq128-lifetime-budget-v1.json.original": {
+      "bytes": 18358,
+      "ctime_ns": 1794647676478406625,
+      "device": 16777233,
+      "inode": 606806529,
+      "mode": 384,
+      "mtime_ns": 1794647676478406625,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--pq128-lifetime-composition-v2.json.original": {
+      "bytes": 13166,
+      "ctime_ns": 1794647676500426970,
+      "device": 16777233,
+      "inode": 606806530,
+      "mode": 384,
+      "mtime_ns": 1794647676500426970,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--pq128-lifetime-example-v1.json.original": {
+      "bytes": 22575,
+      "ctime_ns": 1794647676525898852,
+      "device": 16777233,
+      "inode": 606806531,
+      "mode": 384,
+      "mtime_ns": 1794647676525898852,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--pq128-source-lock-v1.json.original": {
+      "bytes": 3017,
+      "ctime_ns": 1794647676547997655,
+      "device": 16777233,
+      "inode": 606806532,
+      "mode": 384,
+      "mtime_ns": 1794647676547997655,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-lifetime-current-source-v2.json.original": {
+      "bytes": 6997,
+      "ctime_ns": 1794647676570209208,
+      "device": 16777233,
+      "inode": 606806535,
+      "mode": 384,
+      "mtime_ns": 1794647676570209208,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-closure-current-required-tests-v2.json.original": {
+      "bytes": 15482,
+      "ctime_ns": 1794647676592481177,
+      "device": 16777233,
+      "inode": 606806536,
+      "mode": 384,
+      "mtime_ns": 1794647676592481177,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-closure-required-tests-v1.json.original": {
+      "bytes": 13952,
+      "ctime_ns": 1794647676613517316,
+      "device": 16777233,
+      "inode": 606806537,
+      "mode": 384,
+      "mtime_ns": 1794647676613517316,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-current-required-tests-v1.json.original": {
+      "bytes": 10175,
+      "ctime_ns": 1794647676635025995,
+      "device": 16777233,
+      "inode": 606806538,
+      "mode": 384,
+      "mtime_ns": 1794647676635025995,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-current-source-observation-v1.json.original": {
+      "bytes": 9971,
+      "ctime_ns": 1794647676656419882,
+      "device": 16777233,
+      "inode": 606806539,
+      "mode": 384,
+      "mtime_ns": 1794647676656419882,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-current-v2.json.original": {
+      "bytes": 50313,
+      "ctime_ns": 1794647676678509310,
+      "device": 16777233,
+      "inode": 606806540,
+      "mode": 384,
+      "mtime_ns": 1794647676678509310,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-v1.json.original": {
+      "bytes": 6875,
+      "ctime_ns": 1794647676700281281,
+      "device": 16777233,
+      "inode": 606806541,
+      "mode": 384,
+      "mtime_ns": 1794647676700281281,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-required-tests-v1.json.original": {
+      "bytes": 10677,
+      "ctime_ns": 1794647676724155456,
+      "device": 16777233,
+      "inode": 606806542,
+      "mode": 384,
+      "mtime_ns": 1794647676724155456,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--config--pon--w1-qrom-supplemental-tests-v1.json.original": {
+      "bytes": 3970,
+      "ctime_ns": 1794647676745665968,
+      "device": 16777233,
+      "inode": 606806543,
+      "mode": 384,
+      "mtime_ns": 1794647676745665968,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_BUDGET_V1.md.original": {
+      "bytes": 34109,
+      "ctime_ns": 1794647676767993813,
+      "device": 16777233,
+      "inode": 606806546,
+      "mode": 384,
+      "mtime_ns": 1794647676767993813,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.original": {
+      "bytes": 22739,
+      "ctime_ns": 1794647676789379784,
+      "device": 16777233,
+      "inode": 606806547,
+      "mode": 384,
+      "mtime_ns": 1794647676789379784,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--check_pq_research_integration.py.original": {
+      "bytes": 113472,
+      "ctime_ns": 1794647676812889877,
+      "device": 16777233,
+      "inode": 606806548,
+      "mode": 384,
+      "mtime_ns": 1794647676812889877,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--pq_authority_surface_scan.py.original": {
+      "bytes": 9848,
+      "ctime_ns": 1794647676837045302,
+      "device": 16777233,
+      "inode": 606806549,
+      "mode": 384,
+      "mtime_ns": 1794647676837045302,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--pq_chain_claim_guard.py.original": {
+      "bytes": 14584,
+      "ctime_ns": 1794647676858882897,
+      "device": 16777233,
+      "inode": 606806550,
+      "mode": 384,
+      "mtime_ns": 1794647676858882897,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--pq_lifetime_budget.py.original": {
+      "bytes": 20543,
+      "ctime_ns": 1794647676884487321,
+      "device": 16777233,
+      "inode": 606806551,
+      "mode": 384,
+      "mtime_ns": 1794647676884487321,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--pq_lifetime_composition.py.original": {
+      "bytes": 26814,
+      "ctime_ns": 1794647676906098416,
+      "device": 16777233,
+      "inode": 606806552,
+      "mode": 384,
+      "mtime_ns": 1794647676906098416,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--pq_root_dependency_register.py.original": {
+      "bytes": 25957,
+      "ctime_ns": 1794647676927854511,
+      "device": 16777233,
+      "inode": 606806553,
+      "mode": 384,
+      "mtime_ns": 1794647676927854511,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--test_pon_public_v3_policy_read.py.original": {
+      "bytes": 13674,
+      "ctime_ns": 1794647676949032108,
+      "device": 16777233,
+      "inode": 606806554,
+      "mode": 384,
+      "mtime_ns": 1794647676949032108,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_controls.py.original": {
+      "bytes": 9498,
+      "ctime_ns": 1794647676970645453,
+      "device": 16777233,
+      "inode": 606806555,
+      "mode": 384,
+      "mtime_ns": 1794647676970645453,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_current_controls.py.original": {
+      "bytes": 14367,
+      "ctime_ns": 1794647676991852674,
+      "device": 16777233,
+      "inode": 606806556,
+      "mode": 384,
+      "mtime_ns": 1794647676991852674,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--w1_qrom_current_ci.py.original": {
+      "bytes": 24631,
+      "ctime_ns": 1794647677014197769,
+      "device": 16777233,
+      "inode": 606806557,
+      "mode": 384,
+      "mtime_ns": 1794647677014197769,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--w1_qrom_proof_chain_controls.py.original": {
+      "bytes": 8484,
+      "ctime_ns": 1794647677039127609,
+      "device": 16777233,
+      "inode": 606806558,
+      "mode": 384,
+      "mtime_ns": 1794647677039127609,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--ci--w1_qrom_supplemental_controls.py.original": {
+      "bytes": 10275,
+      "ctime_ns": 1794647677060354581,
+      "device": 16777233,
+      "inode": 606806559,
+      "mode": 384,
+      "mtime_ns": 1794647677060354581,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_lifetime_current_observation.py.original": {
+      "bytes": 9216,
+      "ctime_ns": 1794647677082039509,
+      "device": 16777233,
+      "inode": 606806560,
+      "mode": 384,
+      "mtime_ns": 1794647677082039509,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_bcs_budget.py.original": {
+      "bytes": 11977,
+      "ctime_ns": 1794647677106736392,
+      "device": 16777233,
+      "inode": 606806561,
+      "mode": 384,
+      "mtime_ns": 1794647677106736392,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_composition_budget.py.original": {
+      "bytes": 21292,
+      "ctime_ns": 1794647677132169066,
+      "device": 16777233,
+      "inode": 606806562,
+      "mode": 384,
+      "mtime_ns": 1794647677132169066,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_conditional_budget.py.original": {
+      "bytes": 14985,
+      "ctime_ns": 1794647677153880536,
+      "device": 16777233,
+      "inode": 606806563,
+      "mode": 384,
+      "mtime_ns": 1794647677153880536,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_current_implementation_audit.py.original": {
+      "bytes": 17150,
+      "ctime_ns": 1794647677175610673,
+      "device": 16777233,
+      "inode": 606806564,
+      "mode": 384,
+      "mtime_ns": 1794647677175610673,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_historical_fixture.py.original": {
+      "bytes": 9762,
+      "ctime_ns": 1794647677199837682,
+      "device": 16777233,
+      "inode": 606806565,
+      "mode": 384,
+      "mtime_ns": 1794647677199837682,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_implementation_audit.py.original": {
+      "bytes": 21678,
+      "ctime_ns": 1794647677220682612,
+      "device": 16777233,
+      "inode": 606806566,
+      "mode": 384,
+      "mtime_ns": 1794647677220682612,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_joint_oracle_diagnostic.py.original": {
+      "bytes": 9863,
+      "ctime_ns": 1794647677241994749,
+      "device": 16777233,
+      "inode": 606806567,
+      "mode": 384,
+      "mtime_ns": 1794647677241994749,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/src--scripts--w1_qrom_semantics_audit.py.original": {
+      "bytes": 35649,
+      "ctime_ns": 1794647677263062179,
+      "device": 16777233,
+      "inode": 606806568,
+      "mode": 384,
+      "mtime_ns": 1794647677263062179,
+      "nlink": 1
+    },
+    "pin-impact-closure-v1/summary.json": {
+      "bytes": 43593,
+      "ctime_ns": 1794647677270426085,
+      "device": 16777233,
+      "inode": 606806569,
+      "mode": 384,
+      "mtime_ns": 1794647677270426085,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/downstream-exact-hash-search.stdout": {
+      "bytes": 869,
+      "ctime_ns": 1794647747010108584,
+      "device": 16777233,
+      "inode": 606807171,
+      "mode": 384,
+      "mtime_ns": 1794647747010108584,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/src--scripts--ci--pq_authority_effect_register.py.original": {
+      "bytes": 11127,
+      "ctime_ns": 1794647746862913160,
+      "device": 16777233,
+      "inode": 606807167,
+      "mode": 384,
+      "mtime_ns": 1794647746862913160,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/src--scripts--ci--test_pq_authority_effect_register.py.original": {
+      "bytes": 16302,
+      "ctime_ns": 1794647746884117631,
+      "device": 16777233,
+      "inode": 606807168,
+      "mode": 384,
+      "mtime_ns": 1794647746884117631,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_budget.py.original": {
+      "bytes": 34544,
+      "ctime_ns": 1794647746904609645,
+      "device": 16777233,
+      "inode": 606807169,
+      "mode": 384,
+      "mtime_ns": 1794647746904609645,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_composition.py.original": {
+      "bytes": 41465,
+      "ctime_ns": 1794647746924968242,
+      "device": 16777233,
+      "inode": 606807170,
+      "mode": 384,
+      "mtime_ns": 1794647746924968242,
+      "nlink": 1
+    },
+    "pin-impact-final-inputs-v1/summary.json": {
+      "bytes": 11152,
+      "ctime_ns": 1794647747010296459,
+      "device": 16777233,
+      "inode": 606807172,
+      "mode": 384,
+      "mtime_ns": 1794647747010296459,
+      "nlink": 1
+    },
+    "pin-impact-v1/exact-path-and-pin-search.stdout": {
+      "bytes": 9524,
+      "ctime_ns": 1794647529154638004,
+      "device": 16777233,
+      "inode": 606804365,
+      "mode": 384,
+      "mtime_ns": 1794647529154638004,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--applicability-v1.json.original": {
+      "bytes": 64941,
+      "ctime_ns": 1794647529171029232,
+      "device": 16777233,
+      "inode": 606804366,
+      "mode": 384,
+      "mtime_ns": 1794647529171029232,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--module-contracts-v1.json.original": {
+      "bytes": 73351,
+      "ctime_ns": 1794647529198873902,
+      "device": 16777233,
+      "inode": 606804367,
+      "mode": 384,
+      "mtime_ns": 1794647529198873902,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--module-maturity-v1.json.original": {
+      "bytes": 215980,
+      "ctime_ns": 1794647529225666449,
+      "device": 16777233,
+      "inode": 606804368,
+      "mode": 384,
+      "mtime_ns": 1794647529225666449,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--pq-cross-branch-corpus-v1.json.original": {
+      "bytes": 522809,
+      "ctime_ns": 1794647529249819874,
+      "device": 16777233,
+      "inode": 606804369,
+      "mode": 384,
+      "mtime_ns": 1794647529249819874,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--pq128-lifetime-budget-v1.json.original": {
+      "bytes": 18358,
+      "ctime_ns": 1794647529272880801,
+      "device": 16777233,
+      "inode": 606804370,
+      "mode": 384,
+      "mtime_ns": 1794647529272880801,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--config--pon--pq128-source-lock-v1.json.original": {
+      "bytes": 3017,
+      "ctime_ns": 1794647529295207187,
+      "device": 16777233,
+      "inode": 606804371,
+      "mode": 384,
+      "mtime_ns": 1794647529295207187,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--formal--pon-nakamoto-v1--contracts--work-cost-contract-v1.json.original": {
+      "bytes": 507048,
+      "ctime_ns": 1794647529318149239,
+      "device": 16777233,
+      "inode": 606804372,
+      "mode": 384,
+      "mtime_ns": 1794647529318149239,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--campaign-01--result.json.original": {
+      "bytes": 196363,
+      "ctime_ns": 1794647529352305359,
+      "device": 16777233,
+      "inode": 606804373,
+      "mode": 384,
+      "mtime_ns": 1794647529352305359,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--final-evidence-files.json.original": {
+      "bytes": 233135,
+      "ctime_ns": 1794647529387374395,
+      "device": 16777233,
+      "inode": 606804374,
+      "mode": 384,
+      "mtime_ns": 1794647529387374395,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--independent_cleanup.json.original": {
+      "bytes": 320566,
+      "ctime_ns": 1794647529421266557,
+      "device": 16777233,
+      "inode": 606804375,
+      "mode": 384,
+      "mtime_ns": 1794647529421266557,
+      "nlink": 1
+    },
+    "pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--inputs--manifest.json.original": {
+      "bytes": 792215,
+      "ctime_ns": 1794647529455366427,
+      "device": 16777233,
+      "inode": 606804376,
+      "mode": 384,
+      "mtime_ns": 1794647529455366427,
+      "nlink": 1
+    },
+    "pin-impact-v1/node-Cargo.toml.original": {
+      "bytes": 2357,
+      "ctime_ns": 1794647529494173207,
+      "device": 16777233,
+      "inode": 606804377,
+      "mode": 384,
+      "mtime_ns": 1794647529494173207,
+      "nlink": 1
+    },
+    "pin-impact-v1/search-summary.json": {
+      "bytes": 17637,
+      "ctime_ns": 1794647529502226946,
+      "device": 16777233,
+      "inode": 606804378,
+      "mode": 384,
+      "mtime_ns": 1794647529502226946,
+      "nlink": 1
+    },
+    "profile-prefix-preimage-proof.json": {
+      "bytes": 3147,
+      "ctime_ns": 1794647386089179627,
+      "device": 16777233,
+      "inode": 606803083,
+      "mode": 384,
+      "mtime_ns": 1794647386089179627,
+      "nlink": 1
+    },
+    "source-index.json": {
+      "bytes": 2466,
+      "ctime_ns": 1794647239941120286,
+      "device": 16777233,
+      "inode": 606802017,
+      "mode": 384,
+      "mtime_ns": 1794647239941120286,
+      "nlink": 1
+    },
+    "ticket-loop-original-trace-v1/arm64-selected-original-leaves.json": {
+      "bytes": 393876,
+      "ctime_ns": 1794647992678226571,
+      "device": 16777233,
+      "inode": 606856569,
+      "mode": 384,
+      "mtime_ns": 1794647992678226571,
+      "nlink": 1
+    },
+    "ticket-loop-original-trace-v1/summary.json": {
+      "bytes": 17710,
+      "ctime_ns": 1794647992678641071,
+      "device": 16777233,
+      "inode": 606856570,
+      "mode": 384,
+      "mtime_ns": 1794647992678641071,
+      "nlink": 1
+    },
+    "ticket-loop-original-trace-v1/x64-selected-original-leaves.json": {
+      "bytes": 281350,
+      "ctime_ns": 1794647992604665588,
+      "device": 16777233,
+      "inode": 606856566,
+      "mode": 384,
+      "mtime_ns": 1794647992604665588,
+      "nlink": 1
+    },
+    "trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.raw": {
+      "bytes": 7198,
+      "ctime_ns": 1794647239878493719,
+      "device": 16777233,
+      "inode": 606802016,
+      "mode": 384,
+      "mtime_ns": 1794647239878493719,
+      "nlink": 1
+    },
+    "trillionnium--crates--trnm-protocol--src--pon_wire.rs.raw": {
+      "bytes": 32654,
+      "ctime_ns": 1794647239850503765,
+      "device": 16777233,
+      "inode": 606802015,
+      "mode": 384,
+      "mtime_ns": 1794647239850503765,
+      "nlink": 1
+    }
+  },
+  "source_or_git_or_original_evidence_mutated": false,
+  "source_root": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1",
+  "stage_write_performed": false,
+  "total_bytes": 4844788
+}

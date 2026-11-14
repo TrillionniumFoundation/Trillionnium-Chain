@@ -1,0 +1,113 @@
+{
+  "schema": "trnm-readonly-inspection-query-receipts-v1",
+  "successful_native_tests_rerun": false,
+  "terminals": [
+    {
+      "bytes": 211,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/source-export-assumption-error.output.log",
+      "label": "source-export-assumption-error",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-57c33138a04735e34540b28763e3c5074d71f5f56952e90631a229ed29ca27ec/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-57c33138a04735e34540b28763e3c5074d71f5f56952e90631a229ed29ca27ec",
+      "sha256": "08d2e1fc0475c91948a2d01b58e69fc0e20d624c6bd170d84bf6dcee5af0c2d3"
+    },
+    {
+      "bytes": 8723,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/source-export-recovery.output.log",
+      "label": "source-export-recovery",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-5a62a1bc4742ec23f9e124af26f9ce1829dc8f210add961ebb07832e6985f09a/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-5a62a1bc4742ec23f9e124af26f9ce1829dc8f210add961ebb07832e6985f09a",
+      "sha256": "e982aa0e81aeaccc2d304210e94b2985c6be2b31e9a7b972baddb40f366a5e8a"
+    },
+    {
+      "bytes": 1319,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/additional-source-path-error.output.log",
+      "label": "additional-source-path-error",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-30cffe6a8d546ba5386c037a23b2d0cb4a2fdcf94712677c6763be4c21ff554f/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-30cffe6a8d546ba5386c037a23b2d0cb4a2fdcf94712677c6763be4c21ff554f",
+      "sha256": "4354c13c35b9529f8903ddadf35f09ef2e8541161100e8c58eabc3af41304e5f"
+    },
+    {
+      "bytes": 3316,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/additional-source-recovery.output.log",
+      "label": "additional-source-recovery",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-52b2d2be5f0354eb7f5291c1da28b6b3bae6abbe3ff3568494a9b8cc60066f83/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-52b2d2be5f0354eb7f5291c1da28b6b3bae6abbe3ff3568494a9b8cc60066f83",
+      "sha256": "5f99b5f4d55985938ef3f010be5a72a462e9eb5b1c6c74cd0eb7f5579ea2e031"
+    },
+    {
+      "bytes": 2289,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/classical-source-parser-error.output.log",
+      "label": "classical-source-parser-error",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-40bf2d7f0de1ef8258a4f56524b2a5292de760ee429581ac1382e3a567db8baf/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-40bf2d7f0de1ef8258a4f56524b2a5292de760ee429581ac1382e3a567db8baf",
+      "sha256": "c41317be76c7dabe2c80e5af06022e01cc5e319e6ad52e767b37263f63c8a2f7"
+    },
+    {
+      "bytes": 1082,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/classical-source-recovery.output.log",
+      "label": "classical-source-recovery",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-fe1e4c2d18abe84ec18ada6285fb2d6fc373a8bad9628f038e220112a26c119c/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-fe1e4c2d18abe84ec18ada6285fb2d6fc373a8bad9628f038e220112a26c119c",
+      "sha256": "362290af84dd4999be3ee55ccb77d66524e75aecd0cf85b2dec53e2296f7c020"
+    },
+    {
+      "bytes": 206,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/telemetry-shape-error.output.log",
+      "label": "telemetry-shape-error",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-5078c6fae80ade1a9e6374e0bd2964676ae2fc7aa66c7377644a3a4bb76dbcee/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-5078c6fae80ade1a9e6374e0bd2964676ae2fc7aa66c7377644a3a4bb76dbcee",
+      "sha256": "01d632c07ef20e92d4155cda76949c86180fa9001bb729608bfdafa29113ca1f"
+    },
+    {
+      "bytes": 12971,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/telemetry-shape-recovery.output.log",
+      "label": "telemetry-shape-recovery",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-b7de44820c07e0890803e7c059c216c2efa8516261506a123aa1a742cd681d42/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-b7de44820c07e0890803e7c059c216c2efa8516261506a123aa1a742cd681d42",
+      "sha256": "cc9885fb6661008027d9122c4cc714a828b39c28f81515af1571c1a81a0f9331"
+    },
+    {
+      "bytes": 1859,
+      "copy": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/review-final-v1/inspection-receipts/existing-entrypoints-search.output.log",
+      "label": "existing-entrypoints-search",
+      "original": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-d22a4a6ace446d83a2d51416431d7a3aae08df99bcf6cea78d445e8c34617dc5/output.log",
+      "scope": "read-only source/telemetry inspection, not a native test",
+      "session_id": "dpty-d22a4a6ace446d83a2d51416431d7a3aae08df99bcf6cea78d445e8c34617dc5",
+      "sha256": "a8c0050402fbc1191f6fd4bdeb21b016c1a9d67970dab766823195d596f188a4"
+    }
+  ],
+  "two_short_crate_view_errors": [
+    {
+      "content": [
+        {
+          "text": "Path not found: ssh://mac/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto--src--lib.rs.raw (resolved to ssh://mac/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto--src--lib.rs.raw)",
+          "type": "text"
+        }
+      ],
+      "isError": true,
+      "structuredContent": {
+        "error_code": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "content": [
+        {
+          "text": "Path not found: ssh://mac/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto--src--owned_ed25519.rs.raw (resolved to ssh://mac/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto--src--owned_ed25519.rs.raw)",
+          "type": "text"
+        }
+      ],
+      "isError": true,
+      "structuredContent": {
+        "error_code": "INVALID_ARGUMENT"
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "trnm-N-x64-original-native-artifact-custody-v1",
+  "status": "whole_zip_and_members_verified",
+  "artifact": {
+    "id": 14109658844,
+    "name": "cost-x64-5a4b7fe8de1adce803184f262fd9f704ead1930c-1",
+    "size_in_bytes": 9884207,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14109658844",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14109658844/zip",
+    "expired": false,
+    "created_at": "2026-11-14T10:21:47Z",
+    "expires_at": "2026-12-14T10:21:45Z",
+    "updated_at": "2026-11-14T10:21:47Z",
+    "digest": "sha256:10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4",
+    "workflow_run": {
+      "id": 43582713392,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "head_sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+    }
+  },
+  "transport": {
+    "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/transport.json",
+    "bytes": 1421,
+    "sha256": "bc18a9a09c106bc6f65e8e9f5c93da9f28518a63c836e859f15cf1074bff4583"
+  },
+  "zip": {
+    "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip",
+    "bytes": 9884207,
+    "sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+  },
+  "index": {
+    "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/ZIP_MEMBER_INDEX.json",
+    "bytes": 47816,
+    "sha256": "989f6ec25dc46aae82ce6a418693a0bca1b69a50b25ccb77d7ddddc3ef3b9199"
+  },
+  "member_count": 161,
+  "uncompressed_bytes": 70941434,
+  "source_stage_git_CI_mutations": false,
+  "package_code_executed": false,
+  "inner_failure_not_yet_interpreted": true,
+  "finished_at": "2026-11-14T11:02:18.579024+00:00"
+}

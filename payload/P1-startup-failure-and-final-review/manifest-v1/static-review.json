@@ -1,0 +1,12 @@
+{
+  "approved_prefix": "P1-startup-failure-and-final-review",
+  "ast_compile_only": true,
+  "bytes": 10070,
+  "expected_stage_bytes": 207594299,
+  "expected_stage_files": 4149,
+  "not_executed": true,
+  "producer_path": "/private/tmp/chain-P1-startup-and-final-review-materialization-20261114-v1/materialize_v1.py",
+  "review": "Two fixed sealed complete source roots plus actual finalizer receipts and exact producer provenance; new prefix create-only, old4149 files and existing dirs identity fences, stable single-file FD read/close and target SHA readback, exact union, no source/Git/network/tests/live/N2 read or mutation.",
+  "schema": "trnm-P1-startup-stage-materializer-static-v1",
+  "sha256": "7af7b66db319d7e9be53fb8d32ecee0f754cd7b40aa8246b92250ac652193df6"
+}

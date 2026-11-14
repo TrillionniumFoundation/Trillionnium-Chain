@@ -1,0 +1,65 @@
+{
+  "schema": "trnm-N-x64-cost-outer-log-causal-boundary-v1",
+  "reviewed_at": "2026-11-14T10:59:42.147888+00:00",
+  "source_run": 43582713392,
+  "source_job": 132415017426,
+  "source_head_from_run_metadata": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "source_tree_from_run_metadata": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+  "observed_window": [
+    "2026-11-14T10:53:45.499634+00:00",
+    "2026-11-14T10:53:57.481502+00:00"
+  ],
+  "original_log": {
+    "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.log",
+    "bytes": 184799,
+    "sha256": "154555d87f24fbaed2609d14b18837c228256c65af29633eb42f611b9e291c81",
+    "lines": 1436
+  },
+  "facts": {
+    "host_command_lines": [
+      1339,
+      1340
+    ],
+    "controller_line": 1355,
+    "github_exit1_line": 1356,
+    "controller_schema": "trnm-ci-original-public-host-controller-v2",
+    "controller_failure": null,
+    "final_host_errors": [],
+    "format_preparation_exit": 0,
+    "compile_preparation_exit": 0,
+    "format_preparation_timed_out": false,
+    "compile_preparation_timed_out": false,
+    "systemd_run_exit": 1,
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ]
+  },
+  "failure_boundary": "The controlled systemd invocation returned 1 after successful format/compile preparation; the outer log does not expose the native inner failure assertion.",
+  "CONFIRMATION_TARGET_text_present": false,
+  "original_4s_and_16_workers_actual_execution_verified": false,
+  "native_source_before_after_bytes_read": false,
+  "host_or_cpu_performance_cause_proven": false,
+  "only_recommended_next_artifact": {
+    "id": 14109658844,
+    "name": "cost-x64-5a4b7fe8de1adce803184f262fd9f704ead1930c-1",
+    "bytes_from_upload_log": 9884207,
+    "zip_sha256_from_upload_log": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4",
+    "line_references": [
+      1418,
+      1420,
+      1421,
+      1422
+    ],
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392/artifacts/14109658844",
+    "reason": "Need the original from-zero manifest/native stdout-stderr/source-before-after to identify the actual inner error and whether the unchanged acceptance window/workers ran.",
+    "artifact_API_metadata_not_yet_requested": true,
+    "artifact_not_downloaded": true
+  },
+  "other_arch_scope": "arm64 only original job/failed-step metadata observed; no arm log or artifact fetched",
+  "four_seconds_failure_not_inferred_from_failed_job": true,
+  "stage_source_CI_or_remote_mutations": false,
+  "hosted_qualification": false
+}

@@ -1,0 +1,5 @@
+[
+  "scripts/ci/runtime-release-requirements.txt",
+  "scripts/ci/model-runtime-cpu-requirements.txt",
+  "formal/pon-nakamoto-v1/requirements.txt"
+]

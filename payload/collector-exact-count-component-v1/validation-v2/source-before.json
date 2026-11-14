@@ -1,0 +1,7 @@
+{
+  "scripts/ci/check_ci_contract.py": "caff843dd3e1f4bf23a9160a87fcccc9690455bfcbf95781625c74fcdb4bb37a",
+  "scripts/ci/ci_job.sh": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9",
+  "scripts/ci/test_ci_contract.py": "6ad902b690ab50bd27c939a727bd8917adaa9c6e569cdad19554b462ed0f9250",
+  "scripts/test_w1_owned_process_collector_v1.py": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa",
+  "scripts/w1_owned_process_collector_v1.py": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+}

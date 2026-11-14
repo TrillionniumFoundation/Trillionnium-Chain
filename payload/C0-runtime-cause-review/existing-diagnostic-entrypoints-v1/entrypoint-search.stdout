@@ -1,0 +1,158 @@
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:formal/throughput-v1/test_execution_report.py:60:                cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:formal/throughput-v1/test_execution_report.py:61:                cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/run_from_zero_native.py:196:        require(captured.get('cpu_includes_reactor_authentication_or_response_signing') is True
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/run_from_zero_native.py:197:                and captured.get('cpu_includes_reactor_authentication') is False
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/run_from_zero_native.py:212:                and captured.get('cpu_includes_reactor_authentication_or_response_signing') is False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:228:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:229:            cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1040:                cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1041:                cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1373:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1374:            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1388:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1389:            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1614:                    cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1615:                    cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1641:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1642:            cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1662:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1663:            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1693:                        cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1694:                        cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1701:        for key in ('cpu_includes_reactor_authentication_or_response_signing',
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pon_public_v3_phase_read.py:1702:                    'cpu_includes_reactor_authentication',
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:102:                cpu_includes_reactor_authentication_or_response_signing=False)))
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:229:                observation_has_consensus_authority=False, cpu_includes_reactor_authentication_or_response_signing=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:412:                      cpu_includes_reactor_authentication_or_response_signing=False)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:415:                       cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:416:                       cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:432:        for key in ('cpu_includes_reactor_authentication_or_response_signing',
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:433:                    'cpu_includes_reactor_authentication',
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:1537:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_run_from_zero_native.py:1538:            cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:57:                pq_authentication_thread_cpu_ns=0, pq_authentication_unavailable=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:66:            cpu_includes_reactor_authentication_or_response_signing=True,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:67:            cpu_includes_reactor_authentication=False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:207:        self.assertEqual(pq['pq_authentication_thread_cpu_ns'], 0)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:210:        value['phases'][0]['service_outcome']['Ok'].pop('pq_authentication_thread_cpu_ns')
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:212:        self.assertIsNone(pq['pq_authentication_thread_cpu_ns'])
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:213:        self.assertEqual(pq['missing_fields'], ['pq_authentication_thread_cpu_ns'])
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_throughput_cost_coverage.py:217:                                ('pq_authentication_thread_cpu_ns', True),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/throughput_cost_coverage.py:33:             'pq_authentication_thread_cpu_ns', 'pq_authentication_unavailable')
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/pon_public_v3_phase_read.py:830:                'includes_reactor_cpu': False,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/pon_public_v3_phase_read.py:1443:        require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/pon_public_v3_phase_read.py:1444:                and observer.get('cpu_includes_reactor_authentication') is False
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution.rs:3:use super::public_v3::request_observation::ThreadCpuStamp;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution.rs:152:    cpu: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution.rs:160:            cpu: ThreadCpuStamp::start(),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution.rs:186:        self.value.thread_cpu_ns = self.cpu.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:4:    request_observation::{TaskObservation, ThreadCpuStamp},
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:381:    cpu: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:438:            cpu: ThreadCpuStamp::start(),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:465:        let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:8:use public_v3::request_observation::ThreadCpuStamp;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:30:        let stamp = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:34:use request_observation::{ConnectionObservation, ReactorIoStamp, TaskObservation, ThreadCpuStamp};
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:169:    stamp: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:220:            let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:256:        let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:322:        let outer = self.stamp.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:485:    pub pq_authentication_thread_cpu_ns: u64,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:1849:    let stamp = mutation_cpu.and_then(|_| ThreadCpuStamp::start());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:1878:        cpu.record_phase(&cpu.body_decode_ns, stamp.and_then(ThreadCpuStamp::finish));
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:1955:                .then(ThreadCpuStamp::start)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:2002:            let cpu = cpu.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:2517:                                                    .and_then(|_| ThreadCpuStamp::start());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:2680:                                    accounting.as_ref().and_then(|_| ThreadCpuStamp::start());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:2719:                                        response_cpu.and_then(ThreadCpuStamp::finish),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:2748:                                None => read_cpu.and_then(ThreadCpuStamp::finish),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3436:        m.pq_authentication_thread_cpu_ns = auth.actual_thread_cpu_ns;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3511:        let started = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3513:        self.solution_search_thread_cpu_ns = started.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3564:    let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:3575:        client_thread_cpu_ns: cpu.and_then(ThreadCpuStamp::finish),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:4111:        let source_thread_cpu = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:4556:        let observer = PublicRequestObserver::new_with_authenticated_callers(2).unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs:6899:            stamp: Some(ThreadCpuStamp::start().unwrap()),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs:294:                let stamp = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs:504:                    let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs:520:                    let cpu_ns = cpu.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs:158:            let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs:170:            let cpu = stamp.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs:189:        let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs:202:        let elapsed = stamp.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:3:    PqPublicIdentity, PublicPolicy, PublicServer, Settings, ThreadCpuStamp, MAX_AUTHENTICATIONS,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:390:                let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:398:                let cpu_ns = stamp.and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:572:    assert!(metrics.pq_authentication_thread_cpu_ns > 0);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:419:    cpu: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:430:            cpu: ThreadCpuStamp::start(),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:438:            thread_cpu_ns: self.cpu.and_then(ThreadCpuStamp::finish),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:739:    pub cpu_includes_reactor_authentication_or_response_signing: bool,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:740:    pub cpu_includes_reactor_authentication: bool,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:771:    pub fn new_with_authenticated_callers(capacity: usize) -> super::Result<Self> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:919:            cpu_includes_reactor_authentication_or_response_signing: true,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:920:            cpu_includes_reactor_authentication: false,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1455:            cpu: ThreadCpuStamp::start(),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1469:    cpu: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1503:        let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1562:pub(in crate::ingress) struct ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1566:impl ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1628:        let observer = PublicRequestObserver::new_with_authenticated_callers(1).unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1654:        let expected = br#"{"schema":"public-v3-local-request-resource-observation-v4","capacity":2,"accepted_connections_seen":0,"records_not_retained":0,"measurement_failures":0,"counter_overflow":false,"records":[],"observation_has_consensus_authority":false,"cpu_intervals_are_nested_not_additive":true,"cpu_includes_reactor_authentication_or_response_signing":true,"cpu_includes_reactor_authentication":false,"dispatch_cpu_includes_paid_body_decode":true,"dispatch_cpu_includes_response_signing":true,"submit_phase_cpu_excludes_scoped_workers":true,"phase_parent_links_are_inclusive":true,"cpu_wait_is_outside_dispatch":true,"monotonic_epoch_is_observer_local":true,"stream_bytes_are_physical_network_bytes":false}"#;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2275:    fn reactor_io_cpu_clock_cannot_migrate_between_threads() {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2326:        assert!(snapshot.cpu_includes_reactor_authentication_or_response_signing);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2327:        assert!(!snapshot.cpu_includes_reactor_authentication);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2800:        let Some(outer) = ThreadCpuStamp::start() else {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2803:        let inner = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2812:        let wrong_thread = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2817:        let impossible_end = ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:3:use super::request_observation::ThreadCpuStamp;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:29:    let mut stamp = ThreadCpuStamp::start().ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:478:    pub(super) threads: HashMap<thread::ThreadId, ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:500:    pub(super) fn new(budget: Arc<Mutex<PaidMutationCpuBudget>>, owner: ThreadCpuStamp) -> Self {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:643:    pub(super) fn register_worker(&self, stamp: Option<ThreadCpuStamp>) {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:811:            .and_then(ThreadCpuStamp::checkpoint);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:970:    pub(super) stamp: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:978:        let measured = self.stamp.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1000:        let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1055:        let stamp = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1088:    stamp: Option<ThreadCpuStamp>,
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1155:        let outer = self.stamp.take().and_then(ThreadCpuStamp::finish);
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs:96:    let actual = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:93:    let actual = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:97:        let sample = ThreadCpuStamp::start().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:44:struct ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:48:impl ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:62:fn cpu_elapsed(stamp: Option<ThreadCpuStamp>) -> Option<u64> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:63:    stamp.and_then(ThreadCpuStamp::finish)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:111:    let total_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:113:    let setup_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:122:    let search_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:145:    let encoding_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:208:        let client_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:281:    let preparation_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:327:        let worker_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:354:    let honest_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:684:    let construction_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:708:        let full_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:756:        let admission_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:824:    let wrong_owner = ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:834:        let actual = ThreadCpuStamp::start().expect("Linux thread CPU clock required");
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:841:        let reversed = ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:883:    let prep_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:922:    let build_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:979:            let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1011:        let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1347:            let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1381:        let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1431:    let replay_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1446:            let page_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1487:                        let final_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1696:    let construction_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:149:    let setup_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs:318:            let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs:350:        let cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs:399:    let replay_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs:414:            let page_cpu = ThreadCpuStamp::start();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs:455:                        let final_cpu = ThreadCpuStamp::start();

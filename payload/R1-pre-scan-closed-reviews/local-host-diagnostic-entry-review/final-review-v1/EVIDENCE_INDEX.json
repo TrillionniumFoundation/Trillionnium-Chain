@@ -1,0 +1,811 @@
+{
+  "file_count": 89,
+  "files": [
+    {
+      "bytes": 23756,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/bounded-N-phase-timing-v1.json"
+      },
+      "path": "bounded-N-phase-timing-v1.json",
+      "sha256": "b4fb1391088e7668ac1fd0a7b7755d8435d012e9d2a32bb21a97018a336bd078"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/commit.stderr"
+      },
+      "path": "commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 363,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/commit.stdout"
+      },
+      "path": "commit.stdout",
+      "sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+    },
+    {
+      "bytes": 35462,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/.github--workflows--trnm-required-baseline.yml.raw"
+      },
+      "path": "entry-excerpts-v1/.github--workflows--trnm-required-baseline.yml.raw",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/.github--workflows--trnm-required-baseline.yml.raw.stderr"
+      },
+      "path": "entry-excerpts-v1/.github--workflows--trnm-required-baseline.yml.raw.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 325,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/config--systemd--trnmponpublic.slice.raw"
+      },
+      "path": "entry-excerpts-v1/config--systemd--trnmponpublic.slice.raw",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/config--systemd--trnmponpublic.slice.raw.stderr"
+      },
+      "path": "entry-excerpts-v1/config--systemd--trnmponpublic.slice.raw.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2958,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/fixture-outline.json"
+      },
+      "path": "entry-excerpts-v1/fixture-outline.json",
+      "sha256": "e871749f6a0b09f139968ffdb32bc4826a544ca06cb016ca4424a9cb42316d97"
+    },
+    {
+      "bytes": 7481,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/native-confirmation-acceptance.txt"
+      },
+      "path": "entry-excerpts-v1/native-confirmation-acceptance.txt",
+      "sha256": "3e68f70a8188737ec65b7a2411d00dc20d2d2637796795dd878cf2b2df322ae6"
+    },
+    {
+      "bytes": 24201,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/native-entry.txt"
+      },
+      "path": "entry-excerpts-v1/native-entry.txt",
+      "sha256": "ab37d36e82c8af3c0c1de1c5d268368344f7ebc34b1939059bf9b66f73835e15"
+    },
+    {
+      "bytes": 2069,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/source-index.json"
+      },
+      "path": "entry-excerpts-v1/source-index.json",
+      "sha256": "0b39640c847a6f72faf65fc8b09b278c4753d1c1c5740a7cf66aaec2febfd726"
+    },
+    {
+      "bytes": 80539,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/N-pressure-compact.json"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/N-pressure-compact.json",
+      "sha256": "8098c0aa3aff020d272ee7cf7c078a37d89b039afa95482bdce856ef6f3311a7"
+    },
+    {
+      "bytes": 4459,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/fixture-call-and-pressure-constants.txt"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/fixture-call-and-pressure-constants.txt",
+      "sha256": "8dad22d834da78f36812262f000cb0f328a5404aff40c920f09a21367508cb17"
+    },
+    {
+      "bytes": 37756,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/ingress-resource-entry.txt"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/ingress-resource-entry.txt",
+      "sha256": "99d02aa2668af2a781435482fd7c3b23af35c765493f5914e2da5103b1e05484"
+    },
+    {
+      "bytes": 221433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/ingress.rs.raw"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/ingress.rs.raw",
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/ingress.rs.stderr"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/ingress.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5993,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/kernel-optional-loopback.txt"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/kernel-optional-loopback.txt",
+      "sha256": "d18687ad0e0d3664a5d2b08bca503932c18ac0039be983d4942615757eaee48d"
+    },
+    {
+      "bytes": 8570,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/serve-entry.txt"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/serve-entry.txt",
+      "sha256": "3fca8b2f1c28d9ab83ab3e65fe2217bcf7e1793fc812cbed9bf923f9d4686788"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-entry-and-timing-excerpts-v1/source-identity.json"
+      },
+      "path": "final-entry-and-timing-excerpts-v1/source-identity.json",
+      "sha256": "e39ae3a97cdcf1cbdae096ea8e9877758e1b51c9ff024122d363abd7317f459e"
+    },
+    {
+      "bytes": 11548,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-review-v1/README.md"
+      },
+      "path": "final-review-v1/README.md",
+      "sha256": "5bd2317b4531ca5272398614a6c27ad04097069ec4ac733f9b0938d3649ecf81"
+    },
+    {
+      "bytes": 6068,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-review-v1/readonly-execution-summary.json"
+      },
+      "path": "final-review-v1/readonly-execution-summary.json",
+      "sha256": "5202cb49c89ab21c3ae9c7a7ac46d8cc31202808eb8908f0fc9eb4498ce3f8bb"
+    },
+    {
+      "bytes": 19291,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/final-review-v1/review.json"
+      },
+      "path": "final-review-v1/review.json",
+      "sha256": "03aa32e38b400f09f41b677c65ccdb2f6dbd20e7fd4055033fcb05744261b486"
+    },
+    {
+      "bytes": 11964,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/fixture-and-original-results-v1/fixture-confirmation-loop.txt"
+      },
+      "path": "fixture-and-original-results-v1/fixture-confirmation-loop.txt",
+      "sha256": "a5b29e4e024b6ab0464b210106e1ee4c7dc43f8d575b1e92312bc39963db08b0"
+    },
+    {
+      "bytes": 11679,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/fixture-and-original-results-v1/fixture-confirmation-result.txt"
+      },
+      "path": "fixture-and-original-results-v1/fixture-confirmation-result.txt",
+      "sha256": "d5b9edd065aa03ffd9dfed568ef8d7b34ed32beab610f1dfac1cc21acf767a0f"
+    },
+    {
+      "bytes": 6411,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/fixture-and-original-results-v1/fixture-confirmation-test.txt"
+      },
+      "path": "fixture-and-original-results-v1/fixture-confirmation-test.txt",
+      "sha256": "4d0bb48e3921b64713c4df271a41a5004ad9476a0f92b26e0d5e45e6b8472028"
+    },
+    {
+      "bytes": 12596,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/fixture-and-original-results-v1/fixture-environment.txt"
+      },
+      "path": "fixture-and-original-results-v1/fixture-environment.txt",
+      "sha256": "57121cc6c63a320faee9e507e94f466e7ba4e517cae11f3f8ba2da174e93336c"
+    },
+    {
+      "bytes": 871701,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/host-ownership-and-N-results-v1/N-confirmation-phase-extract.json"
+      },
+      "path": "host-ownership-and-N-results-v1/N-confirmation-phase-extract.json",
+      "sha256": "4ddc61afe3cc42e7a9b6eb598b4b64194d5eaa0eff92260d6453822ac3a011cf"
+    },
+    {
+      "bytes": 806,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/host-ownership-and-N-results-v1/git-commands.json"
+      },
+      "path": "host-ownership-and-N-results-v1/git-commands.json",
+      "sha256": "3adb8018090306e3125268e9dcbe9cde8cf3a57fda122b75fd2406f812ab8fd9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/host-ownership-and-N-results-v1/host-locations.stderr"
+      },
+      "path": "host-ownership-and-N-results-v1/host-locations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1327,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/host-ownership-and-N-results-v1/host-locations.stdout"
+      },
+      "path": "host-ownership-and-N-results-v1/host-locations.stdout",
+      "sha256": "507648a1e883018e7578b1db6deb289582e16ca54366cb70ab40923bdf3c49aa"
+    },
+    {
+      "bytes": 31024,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/history_import.rs.excerpt.txt"
+      },
+      "path": "kernel-host-contract-v1/history_import.rs.excerpt.txt",
+      "sha256": "e47b8f61d6f89e33889458069949e6a55f0e23a199403a05ea0d5526ac8e5368"
+    },
+    {
+      "bytes": 29869,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/host_kernel_parent.rs.excerpt.txt"
+      },
+      "path": "kernel-host-contract-v1/host_kernel_parent.rs.excerpt.txt",
+      "sha256": "c115d821abbf3829a01975e5f058a3426777a187490699d5fa28d6c35d785be8"
+    },
+    {
+      "bytes": 90477,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/pressure-import-only.json"
+      },
+      "path": "kernel-host-contract-v1/pressure-import-only.json",
+      "sha256": "9f389e21d8715fc2b20ad00191f043c8cb8d66703ca7643ba502b7c4a23f8806"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/public-entry-callsite-locations.stderr"
+      },
+      "path": "kernel-host-contract-v1/public-entry-callsite-locations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2913,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/public-entry-callsite-locations.stdout"
+      },
+      "path": "kernel-host-contract-v1/public-entry-callsite-locations.stdout",
+      "sha256": "4785737a5cc0055907d79c958b274e913903ed71998f43b5a22bef7bd2424f41"
+    },
+    {
+      "bytes": 2254,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/source-index.json"
+      },
+      "path": "kernel-host-contract-v1/source-index.json",
+      "sha256": "ef4335480d7602c77bbfa58aefab5f3fc72fb6c477f74ca32afc35e14f5cc7af"
+    },
+    {
+      "bytes": 67363,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw"
+      },
+      "path": "kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw",
+      "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw.stderr"
+      },
+      "path": "kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 27612,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw"
+      },
+      "path": "kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw",
+      "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw.stderr"
+      },
+      "path": "kernel-host-contract-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1830,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/native-definition-index.json"
+      },
+      "path": "native-definition-index.json",
+      "sha256": "5c7c0bf72f0861f53c5dbca2c70a3fa7ef32e87f2b6e2012360c373d113f550d"
+    },
+    {
+      "bytes": 19820,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/native-selected-lines.json"
+      },
+      "path": "native-selected-lines.json",
+      "sha256": "0e5fce9775b3ac8a2042b98f89481bb18d62c3723fefffa141fe5832f3031fa5"
+    },
+    {
+      "bytes": 587925,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/N-timing-and-import-phases.json"
+      },
+      "path": "production-host-entry-v1/N-timing-and-import-phases.json",
+      "sha256": "8f5c32cb90281fd966287ea676357c6a4e7bc3841ef11b194deb16b726fc663c"
+    },
+    {
+      "bytes": 448,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/host-locations.command.json"
+      },
+      "path": "production-host-entry-v1/host-locations.command.json",
+      "sha256": "c19ad7d5d423d4d72ec39a13c23650fd45b57b3c745e5341ca751393591bc729"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/host-locations.stderr"
+      },
+      "path": "production-host-entry-v1/host-locations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6168,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/host-locations.stdout"
+      },
+      "path": "production-host-entry-v1/host-locations.stdout",
+      "sha256": "b727cff03dd5c402296fe05000438542c5844f8b268c94e095e0294988482708"
+    },
+    {
+      "bytes": 13097,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/public-v3-entry-excerpts.txt"
+      },
+      "path": "production-host-entry-v1/public-v3-entry-excerpts.txt",
+      "sha256": "4e50ce18bbfd7f1fb1f90684cf04b8921b97f6996097d25dfa65f4babd53e76c"
+    },
+    {
+      "bytes": 421,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/public-v3.command.json"
+      },
+      "path": "production-host-entry-v1/public-v3.command.json",
+      "sha256": "44ef7c9e344a07f0d16849131ff1290df8a3dcec1079a28c50fe52754368474a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/public-v3.stderr"
+      },
+      "path": "production-host-entry-v1/public-v3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 438782,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/production-host-entry-v1/public-v3.stdout"
+      },
+      "path": "production-host-entry-v1/public-v3.stdout",
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    },
+    {
+      "bytes": 24165,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0270-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0270-actual-PTY.terminal",
+      "sha256": "b08e1394dafc535b8bfce9f7b54fd3c43ebfe723c1454db157d7e036f378f9de"
+    },
+    {
+      "bytes": 3116,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0270-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0270-actual-tool-record.json",
+      "sha256": "43e297a48f1e7b3ba2f441c4820a67dae7715b7eb3967d8777ee4c61e7343bc7"
+    },
+    {
+      "bytes": 3356,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0270-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0270-readonly-inspection.py",
+      "sha256": "90e7aa82db90cea2676c8dea19d083fed919c3e1d383bec8c4f4f292efd0a15d"
+    },
+    {
+      "bytes": 4333,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0271-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0271-actual-PTY.terminal",
+      "sha256": "9c86c93c0271f1828c9a5102efb2552cd78b4a1158f7e8dd1fda1d5b97abd562"
+    },
+    {
+      "bytes": 2039,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0271-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0271-actual-tool-record.json",
+      "sha256": "34256650321ad8212a40e20785bc7957b54d0e41d19ff9e2938efcd3cbe862ea"
+    },
+    {
+      "bytes": 2773,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0271-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0271-readonly-inspection.py",
+      "sha256": "cca07c4f3d8bbc215ae08455d8fbe4a24b39cb39674bfafb964fb283c86060f2"
+    },
+    {
+      "bytes": 809,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0272-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0272-actual-PTY.terminal",
+      "sha256": "177f26c51a1144d521a4b3c2f624f49c4184fa73b802fec6ac102c8a09cdae07"
+    },
+    {
+      "bytes": 2031,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0272-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0272-actual-tool-record.json",
+      "sha256": "ec05aa80e5706e8f6cca4f6b331ac66c6b7acf57114e6a897ea9352561bffd54"
+    },
+    {
+      "bytes": 3226,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0272-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0272-readonly-inspection.py",
+      "sha256": "cc540c53098ad53683db30e60985e5fe08074ac3434d67189d36bda554addce7"
+    },
+    {
+      "bytes": 18765,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0273-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0273-actual-PTY.terminal",
+      "sha256": "d26d033a6e98cb93a3e6337cebaa7977aa400de41a42633e43d5e64e7aad93c5"
+    },
+    {
+      "bytes": 3116,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0273-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0273-actual-tool-record.json",
+      "sha256": "6f12a5f5b14f315f3b67d6f4852f9eb7d7494dda8bba8a033ca8b23576528f07"
+    },
+    {
+      "bytes": 4579,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0273-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0273-readonly-inspection.py",
+      "sha256": "e1c6122f2eaf18e4b40d7e0480e7a81f93298579c536aca21113729dd8e2ac75"
+    },
+    {
+      "bytes": 6556,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0274-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0274-actual-PTY.terminal",
+      "sha256": "e44f59d1b03f33a7c6e50fa408b1dbd76b0a4ff90d6882f279c17a2344801987"
+    },
+    {
+      "bytes": 2033,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0274-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0274-actual-tool-record.json",
+      "sha256": "97cc79fa95ac7453277f47cabbe656dcabf26ed1d122a02fb70c2cbb96aedfc0"
+    },
+    {
+      "bytes": 3581,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0274-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0274-readonly-inspection.py",
+      "sha256": "ca5185bcb6dafe8ac020ba2e4c1edc0075cd85d8e9222eed918988ac3b415832"
+    },
+    {
+      "bytes": 4491,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0275-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0275-actual-PTY.terminal",
+      "sha256": "66f08abb0d6e5feacd6a115619e66efdfbe4189fb8801d1ea037fc3ad02ec4b8"
+    },
+    {
+      "bytes": 2033,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0275-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0275-actual-tool-record.json",
+      "sha256": "55bbb0f9dd6398349f14cd5c99ed9c002b230b681dd9d3a5afc9ce8a29e42b83"
+    },
+    {
+      "bytes": 3540,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0275-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0275-readonly-inspection.py",
+      "sha256": "93a8c9698009365b13207d19e1db315021c8d17cde45b40637fd3f79036f0601"
+    },
+    {
+      "bytes": 1248,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0276-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0276-actual-PTY.terminal",
+      "sha256": "032f217898a1940edb2fd3efe6485454f99eedb86b1a780de59b5b5bc35a6325"
+    },
+    {
+      "bytes": 2033,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0276-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0276-actual-tool-record.json",
+      "sha256": "9a5b9edbb7f13868e323ae0d5ccc2a2679b0bf357b22dd7481912fdc9950d0a1"
+    },
+    {
+      "bytes": 4607,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0276-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0276-readonly-inspection.py",
+      "sha256": "8cea63cb6d647419a9e2a4d6bb554a18dcea3f1d34a138355fb5fff8c9d30101"
+    },
+    {
+      "bytes": 14519,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0277-actual-PTY.terminal"
+      },
+      "path": "readonly-capture-provenance/0277-actual-PTY.terminal",
+      "sha256": "807507f3d72d9e62c83af817da3b842a5e5aea0b841adb67547edfc1e4de1fa8"
+    },
+    {
+      "bytes": 2039,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0277-actual-tool-record.json"
+      },
+      "path": "readonly-capture-provenance/0277-actual-tool-record.json",
+      "sha256": "534b64c1a483f43f5825581e6fbc49e25417b2bfaf0f3eb8db765b96de4906cb"
+    },
+    {
+      "bytes": 2258,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0277-readonly-inspection.py"
+      },
+      "path": "readonly-capture-provenance/0277-readonly-inspection.py",
+      "sha256": "5c1c2a4714dc65f083b588a3426cec516f0a477fc40b08342e4ee26c041d9688"
+    },
+    {
+      "bytes": 1993,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/copy-provenance.json"
+      },
+      "path": "reused-exact-source-captures/copy-provenance.json",
+      "sha256": "374ae2c5e6edad7fe2b4ea891f871edbddaa58859510a2c4380fd8d20314df75"
+    },
+    {
+      "bytes": 46605,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--ci_job.sh.bbe1c63b258cb59042d1b389f598d54290cd5d9f.raw"
+      },
+      "path": "reused-exact-source-captures/scripts--ci--ci_job.sh.bbe1c63b258cb59042d1b389f598d54290cd5d9f.raw",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    {
+      "bytes": 28366,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw"
+      },
+      "path": "reused-exact-source-captures/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw",
+      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+    },
+    {
+      "bytes": 115087,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw"
+      },
+      "path": "reused-exact-source-captures/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw",
+      "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+    },
+    {
+      "bytes": 8058,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/summary.json"
+      },
+      "path": "reused-exact-source-captures/summary.json",
+      "sha256": "763be7d2f5c5dfe41889e181e767db9f81dc0d822964dd248f8642dad73667a3"
+    },
+    {
+      "bytes": 13543,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-capture-v1/scripts--ci--public_host_ci_observation.py.raw"
+      },
+      "path": "source-capture-v1/scripts--ci--public_host_ci_observation.py.raw",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
+    },
+    {
+      "bytes": 79324,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-capture-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.raw"
+      },
+      "path": "source-capture-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.raw",
+      "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    },
+    {
+      "bytes": 3807,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-index.json"
+      },
+      "path": "source-index.json",
+      "sha256": "5230cce295e8c4cc28f750ab4628a993944c307e74d115b0e041170d8c1bf7b3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-paths.stderr"
+      },
+      "path": "source-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4123,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-paths.stdout"
+      },
+      "path": "source-paths.stdout",
+      "sha256": "bc9e8dc648edb31b6f1446077e93fcf6f739beed9db96e293a25c9e59b2c7aff"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-scripts--ci--public_host_ci_observation.py.stderr"
+      },
+      "path": "source-scripts--ci--public_host_ci_observation.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13543,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-scripts--ci--public_host_ci_observation.py.stdout"
+      },
+      "path": "source-scripts--ci--public_host_ci_observation.py.stdout",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.stderr"
+      },
+      "path": "source-trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 79324,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/source-trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.stdout"
+      },
+      "path": "source-trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.stdout",
+      "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    },
+    {
+      "bytes": 1605,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/tool-process-start-declaration.txt"
+      },
+      "path": "tool-process-start-declaration.txt",
+      "sha256": "d6df640aca2d676d46ec3ef138c970226fc391953fef2c5aabe2df8253e63a80"
+    }
+  ],
+  "index_excludes_itself_and_seal": true,
+  "qualification_granted": false,
+  "root": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1",
+  "schema": "trnm-r1-local-host-diagnostic-evidence-index-v1",
+  "total_bytes": 3245979
+}

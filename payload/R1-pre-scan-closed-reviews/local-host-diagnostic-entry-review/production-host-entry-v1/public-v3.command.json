@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "-c",
+    "protocol.allow=never",
+    "cat-file",
+    "blob",
+    "2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "exit": 0,
+  "stdout_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+}

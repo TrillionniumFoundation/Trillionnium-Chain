@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-R1-external-auxiliary-copy-v1",
+  "method": "official h_read_multiple_files exact UTF-8 bytes with independent SHA and version",
+  "files": [
+    {
+      "target": "closed-roster-observation/closed-original-logs.json",
+      "bytes": 393,
+      "sha256": "1b7516652195970c9e3e1781f457c8655fb131935b7c4ad4ad149366893f409c",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-external-closed-roster-observation-prci-v1/closed-original-logs.json",
+      "source_host": "rog",
+      "version": "66306:36449061:393:1794657629887136398:1794657629887136398"
+    },
+    {
+      "target": "closed-roster-observation/closed-roster-observation.json",
+      "bytes": 19314,
+      "sha256": "3ae783af551b519b3b134e4fa9ea0aa88cbc197c542ac3b884b777d87e5da0f9",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-external-closed-roster-observation-prci-v1/closed-roster-observation.json",
+      "source_host": "rog",
+      "version": "66306:36449064:19314:1794657629888046512:1794657629888046512"
+    },
+    {
+      "target": "closed-roster-observation/producer.py",
+      "bytes": 5649,
+      "sha256": "a4c1fed53a5c8b7102946055f8b4671b65efd9b96c11c797d4e3136e92f422ff",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-external-closed-roster-observation-prci-v1/producer.py",
+      "source_host": "rog",
+      "version": "66306:36449059:5649:1794657629886264766:1794657629886264766"
+    },
+    {
+      "target": "rog-launch-producer.py",
+      "bytes": 2612,
+      "sha256": "027c1493549d9805939e8fa7ced931d9bef060e2a41169417d63f59655d9a77e",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a8646-launch-v1-prci/launch-producer.py",
+      "source_host": "rog",
+      "version": "66306:36449070:2612:1794657660548772384:1794657660548772384"
+    }
+  ]
+}

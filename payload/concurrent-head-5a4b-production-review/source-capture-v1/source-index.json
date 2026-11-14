@@ -1,0 +1,1675 @@
+{
+  "bounded_output_bytes": 4194304,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--binary",
+        "--full-index",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--"
+      ],
+      "exit_code": 0,
+      "name": "C0-N-full",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-full.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 304752,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-full.stdout",
+        "sha256": "f1078f90ce306af2f3fbc8f60c1793d6c1c129d0c0b6b7cdb1d57fa75a60d0cd"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--full-index",
+        "--unified=30",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs"
+      ],
+      "exit_code": 0,
+      "name": "C0-N-rust",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-rust.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12160,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-rust.stdout",
+        "sha256": "0fdb5b0bb180c3c9554bf1db3df90a9a839d09af88a2abd259eaae09bc8325af"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--full-index",
+        "--unified=12",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq128-lifetime-composition-current-v3.json",
+        "config/pon/pq128-source-correspondence-current-v2.json",
+        "config/pon/w1-lifetime-current-source-v2.json",
+        "scripts/ci/pq_lifetime_current_v2.py",
+        "scripts/ci/pq_lifetime_composition.py",
+        "scripts/ci/pq_chain_claim_guard.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/w1_lifetime_current_observation.py",
+        "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+        "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+      ],
+      "exit_code": 0,
+      "name": "C0-N-proof-readers",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-proof-readers.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 93404,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-N-proof-readers.stdout",
+        "sha256": "0d0223cc903e2df02fa21690b397f0b7aba52fcdf0caa49fe1910122a306d708"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq128-lifetime-composition-current-v3.json",
+        "config/pon/pq128-source-correspondence-current-v2.json",
+        "config/pon/w1-lifetime-current-source-v2.json",
+        "scripts/ci/pq_lifetime_current_v2.py",
+        "scripts/ci/pq_lifetime_composition.py",
+        "scripts/ci/pq_chain_claim_guard.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/w1_lifetime_current_observation.py",
+        "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+        "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+      ],
+      "exit_code": 0,
+      "name": "C0-selected-tree",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-selected-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1382,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0-selected-tree.stdout",
+        "sha256": "b01bd8a2f5631c96607fd800c8a1e054efb6e713efa662b0e01f69c55a3e1a06"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "c2f7552fded037e2e6ff6a91609112ad7aa6b301"
+      ],
+      "exit_code": 0,
+      "name": "C0--config--pon--hash-use-contract-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--hash-use-contract-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 72224,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--hash-use-contract-v1.json.stdout",
+        "sha256": "50c12b630049933110a400590d64f8bfb764a76bdf8737c71a53a71245a0fc92"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "128fabbf8ccb038c26636f5689fe239a90ac663f"
+      ],
+      "exit_code": 0,
+      "name": "C0--config--pon--pq-authority-effects-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--pq-authority-effects-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14196,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--pq-authority-effects-v1.json.stdout",
+        "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "7424efa09f64f8359e0b144a99478b41ce7913d2"
+      ],
+      "exit_code": 0,
+      "name": "C0--config--pon--w1-lifetime-current-source-v2.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--w1-lifetime-current-source-v2.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6997,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--w1-lifetime-current-source-v2.json.stdout",
+        "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "ca055cb12a2db06dd19c3ef83d7682839baac1c3"
+      ],
+      "exit_code": 0,
+      "name": "C0--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 20466,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+        "sha256": "de525dcdc63dd3a77eed496a813d26f4ea5ee3bafa8067f9a1f5b583248f41bb"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1b5ccd314220d3af5396cbd6f391380dc137f7ef"
+      ],
+      "exit_code": 0,
+      "name": "C0--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 39183,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+        "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "dc9ab3677b72dc0ce5fc25041aed3858f2121efe"
+      ],
+      "exit_code": 0,
+      "name": "C0--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9888,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+        "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "bbf1200e2d410ff439dfb7367cee193902a91394"
+      ],
+      "exit_code": 0,
+      "name": "C0--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 7324,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+        "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d8641eb1cdc0edf01e6b155460de9173245432db"
+      ],
+      "exit_code": 0,
+      "name": "C0--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14936,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+        "sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6"
+      ],
+      "exit_code": 0,
+      "name": "C0--scripts--ci--pq_authority_effect_register.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_authority_effect_register.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11127,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_authority_effect_register.py.stdout",
+        "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "89d2b42488f11e7cef44b59453fb6aad8962bff6"
+      ],
+      "exit_code": 0,
+      "name": "C0--scripts--ci--pq_chain_claim_guard.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_chain_claim_guard.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14584,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_chain_claim_guard.py.stdout",
+        "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "270e0c4136faa996cd46df2bf9ff78ebc664fd69"
+      ],
+      "exit_code": 0,
+      "name": "C0--scripts--ci--pq_lifetime_composition.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_lifetime_composition.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 26814,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_lifetime_composition.py.stdout",
+        "sha256": "9a17adf9f1f85ab7706c09d2c2332dc33a6c10df18e2bd20f20c4aefcf983d6e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0"
+      ],
+      "exit_code": 0,
+      "name": "C0--scripts--w1_lifetime_current_observation.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--w1_lifetime_current_observation.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9216,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--w1_lifetime_current_observation.py.stdout",
+        "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d596dc6bab16698cd18bcc15bcbbe1fafedf603e"
+      ],
+      "exit_code": 0,
+      "name": "C0--trillionnium--crates--trnm-pon-node--src--store.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-pon-node--src--store.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 391470,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "06add57cd798a627630a6f5467d7891ab58c323d"
+      ],
+      "exit_code": 0,
+      "name": "C0--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 10842,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq128-lifetime-composition-current-v3.json",
+        "config/pon/pq128-source-correspondence-current-v2.json",
+        "config/pon/w1-lifetime-current-source-v2.json",
+        "scripts/ci/pq_lifetime_current_v2.py",
+        "scripts/ci/pq_lifetime_composition.py",
+        "scripts/ci/pq_chain_claim_guard.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/w1_lifetime_current_observation.py",
+        "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+        "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+      ],
+      "exit_code": 0,
+      "name": "N-selected-tree",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N-selected-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1687,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N-selected-tree.stdout",
+        "sha256": "52c3da039d3fd07951be3485fb9bbb96edf1bd8a3569a4c1432f7e3f42a776e0"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "2a45fdfefc70881853dc6045491943d819f1a209"
+      ],
+      "exit_code": 0,
+      "name": "N--config--pon--hash-use-contract-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--hash-use-contract-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 72224,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--hash-use-contract-v1.json.stdout",
+        "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1c6dc60f31c13a00e3eaf0d01c85042ece00408f"
+      ],
+      "exit_code": 0,
+      "name": "N--config--pon--pq-authority-effects-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq-authority-effects-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14196,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq-authority-effects-v1.json.stdout",
+        "sha256": "89ca3f7736f08003aad69da03151f1bbf487e3648917aaad88f1a53f7e93e88f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "5d85b9337ff09d3dffd0b52404115c8c9996e039"
+      ],
+      "exit_code": 0,
+      "name": "N--config--pon--pq128-lifetime-composition-current-v3.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-lifetime-composition-current-v3.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 13647,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-lifetime-composition-current-v3.json.stdout",
+        "sha256": "1f29c93399d387abe2a676793a7f9de94bfb88406eeac6ff2bdc93125f31ec99"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "434d1cb328a3072ba08c174285eda3f0b31b51dd"
+      ],
+      "exit_code": 0,
+      "name": "N--config--pon--pq128-source-correspondence-current-v2.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-source-correspondence-current-v2.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3782,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-source-correspondence-current-v2.json.stdout",
+        "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "96aa4ba7a8f4634e4d82778b87eae7791eaca716"
+      ],
+      "exit_code": 0,
+      "name": "N--config--pon--w1-lifetime-current-source-v2.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--w1-lifetime-current-source-v2.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6997,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--w1-lifetime-current-source-v2.json.stdout",
+        "sha256": "ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7"
+      ],
+      "exit_code": 0,
+      "name": "N--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 21527,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+        "sha256": "4fbe2d7b880b445d04bba9eb66f81c4e3dcdc375ecec869b7ed3eecb24488117"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "f4230d0b39b32cf59d294272bac2f5049ba70aba"
+      ],
+      "exit_code": 0,
+      "name": "N--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 40485,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+        "sha256": "402b1fd2bcb3be75762e38d372142152cc16188379ac35c5d03cfa13b5892cec"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "5e075d1d697c70b70db263fdd5e68de2d4d9c622"
+      ],
+      "exit_code": 0,
+      "name": "N--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 10341,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+        "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "42967be8d2e492d9d294f36271fec9758df20203"
+      ],
+      "exit_code": 0,
+      "name": "N--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 8531,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+        "sha256": "22d0ec8240b1420f2d104f7394e425feb287e4a413aa407fe10928748c882409"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "60124687f605c8727c26bfbdd168ef45c50839a3"
+      ],
+      "exit_code": 0,
+      "name": "N--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15988,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+        "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "e2d05b7332635e787137b513ed86186c0341054f"
+      ],
+      "exit_code": 0,
+      "name": "N--scripts--ci--pq_authority_effect_register.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_authority_effect_register.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11127,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_authority_effect_register.py.stdout",
+        "sha256": "4faf1ba7badb0186c7d89a1ae1132a8bd2a32a5d6316ab75a9a85c479b24dc0d"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d29b8569a900473baf8281586394f12ba98d71df"
+      ],
+      "exit_code": 0,
+      "name": "N--scripts--ci--pq_chain_claim_guard.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_chain_claim_guard.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14458,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_chain_claim_guard.py.stdout",
+        "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "32ba61ab1119e6e3c6697b69bce0eb722644d764"
+      ],
+      "exit_code": 0,
+      "name": "N--scripts--ci--pq_lifetime_composition.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_composition.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 28724,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_composition.py.stdout",
+        "sha256": "26381e93a96132c139458e9d3c1c9b0f6f7485013695207913f5d38c2e7659b5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc"
+      ],
+      "exit_code": 0,
+      "name": "N--scripts--ci--pq_lifetime_current_v2.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_current_v2.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 10522,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_current_v2.py.stdout",
+        "sha256": "251123229e5abf417f2c07ed023368091e11aa7200ff017338209e83a6d684ad"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "901634884d201df615370811f46a02ae88647631"
+      ],
+      "exit_code": 0,
+      "name": "N--scripts--w1_lifetime_current_observation.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--w1_lifetime_current_observation.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9216,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--w1_lifetime_current_observation.py.stdout",
+        "sha256": "2cb8cc34baa59ef559d8abc1058414ae3c0bd848deacf0166c1f817bca5b248c"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "3bce39ce1aef265a18f304085bc08c0240547065"
+      ],
+      "exit_code": 0,
+      "name": "N--trillionnium--crates--trnm-pon-node--src--store.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-pon-node--src--store.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 391556,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+        "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "f021a33e2969305241099998f703172d29b15251"
+      ],
+      "exit_code": 0,
+      "name": "N--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12283,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq128-lifetime-composition-current-v3.json",
+        "config/pon/pq128-source-correspondence-current-v2.json",
+        "config/pon/w1-lifetime-current-source-v2.json",
+        "scripts/ci/pq_lifetime_current_v2.py",
+        "scripts/ci/pq_lifetime_composition.py",
+        "scripts/ci/pq_chain_claim_guard.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/w1_lifetime_current_observation.py",
+        "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+        "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+      ],
+      "exit_code": 0,
+      "name": "M6-selected-tree",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6-selected-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1382,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6-selected-tree.stdout",
+        "sha256": "32d129ed65bbc7a2b2705eab59e421c858a405e0eeeb5855562c2427af8c30f1"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "986a94eaf6b1c44a11595cc98ac4f9925e7c943e"
+      ],
+      "exit_code": 0,
+      "name": "M6--config--pon--hash-use-contract-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--hash-use-contract-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 72224,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--hash-use-contract-v1.json.stdout",
+        "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "128fabbf8ccb038c26636f5689fe239a90ac663f"
+      ],
+      "exit_code": 0,
+      "name": "M6--config--pon--pq-authority-effects-v1.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--pq-authority-effects-v1.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14196,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--pq-authority-effects-v1.json.stdout",
+        "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "7424efa09f64f8359e0b144a99478b41ce7913d2"
+      ],
+      "exit_code": 0,
+      "name": "M6--config--pon--w1-lifetime-current-source-v2.json",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--w1-lifetime-current-source-v2.json.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6997,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--w1-lifetime-current-source-v2.json.stdout",
+        "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "01569efdd43a4d9adee2b9585845e8250067cdc2"
+      ],
+      "exit_code": 0,
+      "name": "M6--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 22739,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+        "sha256": "69973d73b1278a3573724baeddc7c9ccf93b1632eab773f7bba1d8d755ffef59"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1b5ccd314220d3af5396cbd6f391380dc137f7ef"
+      ],
+      "exit_code": 0,
+      "name": "M6--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 39183,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+        "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "dc9ab3677b72dc0ce5fc25041aed3858f2121efe"
+      ],
+      "exit_code": 0,
+      "name": "M6--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9888,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+        "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "bbf1200e2d410ff439dfb7367cee193902a91394"
+      ],
+      "exit_code": 0,
+      "name": "M6--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 7324,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+        "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d8641eb1cdc0edf01e6b155460de9173245432db"
+      ],
+      "exit_code": 0,
+      "name": "M6--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14936,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+        "sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6"
+      ],
+      "exit_code": 0,
+      "name": "M6--scripts--ci--pq_authority_effect_register.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_authority_effect_register.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11127,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_authority_effect_register.py.stdout",
+        "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "89d2b42488f11e7cef44b59453fb6aad8962bff6"
+      ],
+      "exit_code": 0,
+      "name": "M6--scripts--ci--pq_chain_claim_guard.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_chain_claim_guard.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14584,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_chain_claim_guard.py.stdout",
+        "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "4a63635251bbe36e729d0f9ad6928c532cce6183"
+      ],
+      "exit_code": 0,
+      "name": "M6--scripts--ci--pq_lifetime_composition.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_lifetime_composition.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 26814,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_lifetime_composition.py.stdout",
+        "sha256": "83170b4a37571e53af2b2d0bbae914a111dfafe0f5324dbc25b3f695212bbc8a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0"
+      ],
+      "exit_code": 0,
+      "name": "M6--scripts--w1_lifetime_current_observation.py",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--w1_lifetime_current_observation.py.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 9216,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--w1_lifetime_current_observation.py.stdout",
+        "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d596dc6bab16698cd18bcc15bcbbe1fafedf603e"
+      ],
+      "exit_code": 0,
+      "name": "M6--trillionnium--crates--trnm-pon-node--src--store.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-pon-node--src--store.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 391470,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "06add57cd798a627630a6f5467d7891ab58c323d"
+      ],
+      "exit_code": 0,
+      "name": "M6--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 10842,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+        "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+      }
+    }
+  ],
+  "commits": {
+    "C0": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "M6": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+  },
+  "full_diff_bytes": 304752,
+  "no_source_refs_config_network_tests_mutation": true,
+  "selected_sources": [
+    {
+      "bytes": 72224,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--hash-use-contract-v1.json.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+      "path": "config/pon/hash-use-contract-v1.json",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "50c12b630049933110a400590d64f8bfb764a76bdf8737c71a53a71245a0fc92"
+    },
+    {
+      "bytes": 14196,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--pq-authority-effects-v1.json.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+    },
+    {
+      "bytes": 6997,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--config--pon--w1-lifetime-current-source-v2.json.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    {
+      "bytes": 20466,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "ca055cb12a2db06dd19c3ef83d7682839baac1c3",
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "de525dcdc63dd3a77eed496a813d26f4ea5ee3bafa8067f9a1f5b583248f41bb"
+    },
+    {
+      "bytes": 39183,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+    },
+    {
+      "bytes": 9888,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+    },
+    {
+      "bytes": 7324,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+    },
+    {
+      "bytes": 14936,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "d8641eb1cdc0edf01e6b155460de9173245432db",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73"
+    },
+    {
+      "bytes": 11127,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_authority_effect_register.py.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    {
+      "bytes": 14584,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_chain_claim_guard.py.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+    },
+    {
+      "bytes": 26814,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--ci--pq_lifetime_composition.py.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "270e0c4136faa996cd46df2bf9ff78ebc664fd69",
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "9a17adf9f1f85ab7706c09d2c2332dc33a6c10df18e2bd20f20c4aefcf983d6e"
+    },
+    {
+      "bytes": 9216,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--scripts--w1_lifetime_current_observation.py.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    {
+      "bytes": 391470,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    },
+    {
+      "bytes": 10842,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/C0--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "label": "C0",
+      "mode": "100644",
+      "oid": "06add57cd798a627630a6f5467d7891ab58c323d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+    },
+    {
+      "bytes": 72224,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--hash-use-contract-v1.json.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "2a45fdfefc70881853dc6045491943d819f1a209",
+      "path": "config/pon/hash-use-contract-v1.json",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+    },
+    {
+      "bytes": 14196,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq-authority-effects-v1.json.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "1c6dc60f31c13a00e3eaf0d01c85042ece00408f",
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "89ca3f7736f08003aad69da03151f1bbf487e3648917aaad88f1a53f7e93e88f"
+    },
+    {
+      "bytes": 13647,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-lifetime-composition-current-v3.json.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "5d85b9337ff09d3dffd0b52404115c8c9996e039",
+      "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "1f29c93399d387abe2a676793a7f9de94bfb88406eeac6ff2bdc93125f31ec99"
+    },
+    {
+      "bytes": 3782,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--pq128-source-correspondence-current-v2.json.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "434d1cb328a3072ba08c174285eda3f0b31b51dd",
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
+    },
+    {
+      "bytes": 6997,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--config--pon--w1-lifetime-current-source-v2.json.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "96aa4ba7a8f4634e4d82778b87eae7791eaca716",
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63"
+    },
+    {
+      "bytes": 21527,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7",
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "4fbe2d7b880b445d04bba9eb66f81c4e3dcdc375ecec869b7ed3eecb24488117"
+    },
+    {
+      "bytes": 40485,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "f4230d0b39b32cf59d294272bac2f5049ba70aba",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "402b1fd2bcb3be75762e38d372142152cc16188379ac35c5d03cfa13b5892cec"
+    },
+    {
+      "bytes": 10341,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+    },
+    {
+      "bytes": 8531,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "42967be8d2e492d9d294f36271fec9758df20203",
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "22d0ec8240b1420f2d104f7394e425feb287e4a413aa407fe10928748c882409"
+    },
+    {
+      "bytes": 15988,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "60124687f605c8727c26bfbdd168ef45c50839a3",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+    },
+    {
+      "bytes": 11127,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_authority_effect_register.py.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "e2d05b7332635e787137b513ed86186c0341054f",
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "4faf1ba7badb0186c7d89a1ae1132a8bd2a32a5d6316ab75a9a85c479b24dc0d"
+    },
+    {
+      "bytes": 14458,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_chain_claim_guard.py.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "d29b8569a900473baf8281586394f12ba98d71df",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+    },
+    {
+      "bytes": 28724,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_composition.py.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "32ba61ab1119e6e3c6697b69bce0eb722644d764",
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "26381e93a96132c139458e9d3c1c9b0f6f7485013695207913f5d38c2e7659b5"
+    },
+    {
+      "bytes": 10522,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--ci--pq_lifetime_current_v2.py.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc",
+      "path": "scripts/ci/pq_lifetime_current_v2.py",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "251123229e5abf417f2c07ed023368091e11aa7200ff017338209e83a6d684ad"
+    },
+    {
+      "bytes": 9216,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--scripts--w1_lifetime_current_observation.py.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "901634884d201df615370811f46a02ae88647631",
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "2cb8cc34baa59ef559d8abc1058414ae3c0bd848deacf0166c1f817bca5b248c"
+    },
+    {
+      "bytes": 391556,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "3bce39ce1aef265a18f304085bc08c0240547065",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+    },
+    {
+      "bytes": 12283,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "label": "N",
+      "mode": "100644",
+      "oid": "f021a33e2969305241099998f703172d29b15251",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+    },
+    {
+      "bytes": 72224,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--hash-use-contract-v1.json.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+      "path": "config/pon/hash-use-contract-v1.json",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    {
+      "bytes": 14196,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--pq-authority-effects-v1.json.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+    },
+    {
+      "bytes": 6997,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--config--pon--w1-lifetime-current-source-v2.json.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    {
+      "bytes": 22739,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "01569efdd43a4d9adee2b9585845e8250067cdc2",
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "69973d73b1278a3573724baeddc7c9ccf93b1632eab773f7bba1d8d755ffef59"
+    },
+    {
+      "bytes": 39183,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+    },
+    {
+      "bytes": 9888,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+    },
+    {
+      "bytes": 7324,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+    },
+    {
+      "bytes": 14936,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "d8641eb1cdc0edf01e6b155460de9173245432db",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73"
+    },
+    {
+      "bytes": 11127,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_authority_effect_register.py.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    {
+      "bytes": 14584,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_chain_claim_guard.py.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+    },
+    {
+      "bytes": 26814,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--ci--pq_lifetime_composition.py.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "4a63635251bbe36e729d0f9ad6928c532cce6183",
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "83170b4a37571e53af2b2d0bbae914a111dfafe0f5324dbc25b3f695212bbc8a"
+    },
+    {
+      "bytes": 9216,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--scripts--w1_lifetime_current_observation.py.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    {
+      "bytes": 391470,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-pon-node--src--store.rs.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    },
+    {
+      "bytes": 10842,
+      "capture": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "label": "M6",
+      "mode": "100644",
+      "oid": "06add57cd798a627630a6f5467d7891ab58c323d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+    }
+  ]
+}

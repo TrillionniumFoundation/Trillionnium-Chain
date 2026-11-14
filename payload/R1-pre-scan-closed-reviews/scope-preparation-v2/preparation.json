@@ -1,0 +1,11 @@
+{
+  "compiled_without_execution": true,
+  "prepared_only": true,
+  "prior_program_sha256": "bd6531cd52adcc65bb301b35a1480a936046b839298eb0424ccc2275709630e6",
+  "program": {
+    "bytes": 4994,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/prepare_scope_and_scan.py",
+    "sha256": "c9bf8f7d90440f36ec0608f0b714cc4a445b5745b8460cbbce0e47d61b0be012"
+  },
+  "scope_code_executed": false
+}

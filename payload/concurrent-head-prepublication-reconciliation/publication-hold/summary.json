@@ -1,0 +1,402 @@
+{
+  "archive": null,
+  "archive_preserves_history_not_semantic_equivalence": true,
+  "auto_merge_enabled": false,
+  "automatic_retry_authorized": false,
+  "branches_deleted": false,
+  "driver": {
+    "bytes": 71594,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish_followup_candidate_execution_archive_v1.py",
+    "sha256": "8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d"
+  },
+  "errors": [
+    {
+      "message": "PR/base/head/auto-merge guard differs",
+      "phase": "prepare-or-push",
+      "type": "ValueError"
+    }
+  ],
+  "exact_hook_verified": false,
+  "expected_previous_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "finished_at": "2026-11-14T09:54:20.689378+00:00",
+  "head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+  "hosted_ci_qualification": false,
+  "invocation": {
+    "argv": [
+      "/private/tmp/chain-consolidation-20261114-root/publish_followup_candidate_execution_archive_v1.py",
+      "--spec",
+      "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a6206-v1.json",
+      "--spec-sha256",
+      "4841b96e506ab216cdb72196d92c8cddf3694f70ad28e608a07e8eee7555cdbd"
+    ],
+    "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "optimize": 0
+  },
+  "main_merged": false,
+  "pr_metadata_changed": false,
+  "protection_changed": false,
+  "push_exit": null,
+  "push_started": false,
+  "qualification_granted": false,
+  "remote_after": null,
+  "remote_before": null,
+  "required_head_and_prospective_ci_must_still_pass": true,
+  "rollback_authorized": false,
+  "schema": "trnm-followup-candidate-execution-publication-receipt-v1",
+  "source_after_identity": {
+    "head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+    "status": "",
+    "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c"
+  },
+  "source_after_valid": true,
+  "source_before_identity": {
+    "head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+    "status": "",
+    "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c"
+  },
+  "spec": {
+    "bytes": 1743,
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a6206-v1.json",
+    "sha256": "4841b96e506ab216cdb72196d92c8cddf3694f70ad28e608a07e8eee7555cdbd"
+  },
+  "started_at": "2026-11-14T09:53:54.744066+00:00",
+  "status": "HOLD",
+  "steps": [
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.007824792002793401,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:53:55.331122+00:00",
+      "label": "origin-push-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-push-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-push-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.006389292000676505,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:53:55.338125+00:00",
+      "label": "origin-fetch-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-fetch-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-fetch-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "config",
+        "--get",
+        "core.hooksPath"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.006110792004619725,
+      "exit": 1,
+      "finished_at": "2026-11-14T09:53:55.344652+00:00",
+      "label": "existing-hook-config",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/existing-hook-config.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/existing-hook-config.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "hooks/pre-push"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.006100375001551583,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:53:55.351185+00:00",
+      "label": "default-hook-path",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/default-hook-path.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 107,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/default-hook-path.stdout",
+      "stdout_sha256": "0b4863d62d1ffb4cadd13d668b30eb105c74ecaa4d1e0d07e650b9284582875d",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.05369975000212435,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:53:55.405312+00:00",
+      "label": "project-preflight",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/project-preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 163,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/project-preflight.stdout",
+      "stdout_sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/source-before.json"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 6.6364473330031615,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.042311+00:00",
+      "label": "verify-source-before",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-before.stdout",
+      "stdout_sha256": "056b49f3825e2ca45533311fae3f6939782a1a29af41993bce1932ec3fc547bd",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.008039915992412716,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.051083+00:00",
+      "label": "candidate-fast-forward",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/candidate-fast-forward.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/candidate-fast-forward.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.00817287499376107,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.059730+00:00",
+      "label": "main-ancestry",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/main-ancestry.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/main-ancestry.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "5c04c60e463462d9df8884786e0d5bb32af08a64",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.0072145409940276295,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.067383+00:00",
+      "label": "semantic-ledger-ancestry",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/semantic-ledger-ancestry.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/semantic-ledger-ancestry.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "08c9becab740ab2c375b970f376a7638f44c9e8e"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.006887375013320707,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.074815+00:00",
+      "label": "published-to-rog-start",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/published-to-rog-start.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/published-to-rog-start.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "08c9becab740ab2c375b970f376a7638f44c9e8e",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.0068473749997792765,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:02.082071+00:00",
+      "label": "rog-start-to-candidate",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/rog-start-to-candidate.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/rog-start-to-candidate.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 2.179658249995555,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:04.262202+00:00",
+      "label": "actor",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/actor.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 37,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/actor.stdout",
+      "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,auto_merge}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 9.671594457991887,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:13.936366+00:00",
+      "label": "pr-before",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/pr-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 242,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/pr-before.stdout",
+      "stdout_sha256": "65fefae4f8ce1d15f6e652e1e4a81da03301485058271df9dc501c8cf86ee85e",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/source-after.json"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 6.604814332997194,
+      "exit": 0,
+      "finished_at": "2026-11-14T09:54:20.543827+00:00",
+      "label": "verify-source-after",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-after.stdout",
+      "stdout_sha256": "056b49f3825e2ca45533311fae3f6939782a1a29af41993bce1932ec3fc547bd",
+      "timeout_seconds": 180
+    }
+  ],
+  "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c",
+  "untouched_refs_and_protection_atomically_locked": false,
+  "validated_inputs": {
+    "exact_gate_commands": 7,
+    "exact_rog_commands": 18,
+    "execution_manifest": {
+      "bytes": 862994,
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-publication-v1/frozen-execution-payload-manifest-v1.json",
+      "sha256": "f3382621883515c8f6e344ae4537e202e64488aeda555dfa77df8745c972ec72"
+    },
+    "gate_receipt": {
+      "bytes": 9143,
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a6206-v1/receipt.json",
+      "sha256": "fc8901b9c33e0887f28994a29ca1fefa3df1301169cfd611a4f30f392fb1f155"
+    },
+    "payload_bytes": 151512748,
+    "payload_files": 2122,
+    "rog_invocation": {
+      "driver_path": "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py",
+      "executable": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+      "expected_start_head": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+      "original_receipt_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a6206-v1/summary.json"
+    },
+    "rog_producer_sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38",
+    "rog_receipt": {
+      "bytes": 21362,
+      "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/M6-original-repository-truth/original/summary.json",
+      "sha256": "7516f4d8602dd58949eeb608439005882c3703a189dac32b0cea716eafd157ce"
+    }
+  }
+}

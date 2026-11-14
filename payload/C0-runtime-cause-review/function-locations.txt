@@ -1,0 +1,42 @@
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:481:pub fn verify_with_progress<E>(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:810:fn verify_with_kernel<E>(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs:1219:            let join = std::thread::spawn(|| {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:1326:fn observe_submit_phase<T>(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:1773:    thread::scope(|scope| -> Result<()> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:3819:        let proof = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:3864:        let client = thread::spawn(move || call_protected(address, &request, &settings).unwrap());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:3965:        let server = thread::spawn(move || -> Result<Metrics> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:4046:        let proof = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:4151:        let sender = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:5341:        let server = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:5395:        let server = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress.rs:5486:        let server = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:323:        progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:356:        // history_checkpoint checks the original deadline and actual Host
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:360:        let held_check = || progress.history_checkpoint(shared_owner, &|| control.check());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:364:        let detached_check = || progress.history_checkpoint(false, &|| control.check());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:427:                        before_writer: &|| progress.history_prepare_writer(&|| control.check()),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:468:            progress.history_prepare_writer(&|| control.check())?;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:485:    let held_checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:486:    operation.history_checkpoint(false, &|| control.check())?;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:499:    operation.history_checkpoint(false, &|| control.check())?;
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:712:        std::thread::scope(|scope| {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1562:pub(in crate::ingress) struct ThreadCpuStamp {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1814:        thread::scope(|scope| {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2277:        let sample = thread::spawn(move || stamp.finish(false)).join().unwrap();
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2516:        thread::scope(|scope| {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2565:        let worker = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2593:        let worker = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2630:        let snapshot_thread = thread::spawn(move || reader.snapshot());
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2680:                thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2728:        let failed_writer = thread::spawn(move || {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:2814:            thread::spawn(move || wrong_thread.finish()).join().unwrap(),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:676:        self.observe_with_control(remove, enforce, wait, &|| Ok(()))
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:678:    fn observe_with_control(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:787:    fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1130:    pub(crate) fn history_checkpoint(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1136:            .observe_with_control(false, true, !owns_node_mutex, resource)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1252:    pub(crate) fn history_checkpoint(
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1258:            .observe_with_control(false, true, !owns_node_mutex, resource)
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1266:    pub(crate) fn history_prepare_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:trillionnium/crates/trnm-pon-node/src/store.rs:1200:    pub(crate) fn verify_with_progress(

@@ -1,0 +1,61 @@
+{
+  "explicit_limits": [
+    "No fmt, Clippy, Cargo metadata, test, Host, native benchmark or source-controlled helper was executed during this review.",
+    "Static reading cannot establish successful formatting, compilation or lint.",
+    "Do not extend these component results to the separate 4-second/16-worker confirmation requirement."
+  ],
+  "findings": [
+    "Workspace manifest, worker manifest, main.rs and audit.rs are identical between the captured M6 and N; no new dependency, feature, target, Rust edition or cfg requirement is introduced.",
+    "The production read -> read_with_hook -> read_with_hooks path uses the new after_validation FnOnce seam; ordinary binary compilation covers that generic function.",
+    "The new validation_window_refuses_change helper and two validation_to_lock controls are inside cfg(test); all-targets is needed to lint the test bodies as well.",
+    "No allow attribute or unsafe construct is present in the selected artifact source; the change does not justify relaxing existing strict warnings.",
+    "The exact current CI requires workspace fmt check and workspace all-targets/all-features Clippy with -D warnings. A package-only result cannot be described as a complete workspace result."
+  ],
+  "incoming_revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "minimal_future_validation": [
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "execution": "Run once at final fixed source, or reuse an already planned same-source full format result; do not run a formatting write.",
+      "purpose": "Final combined workspace formatting"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-worker-agent",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "execution": "Linux, with the existing pinned toolchain/environment, ordinary test/build semantics. If a final same-source full workspace all-targets/all-features strict Clippy is already planned, it covers this package and a duplicate component run is unnecessary.",
+      "purpose": "Changed worker production and test lint coverage"
+    }
+  ],
+  "new_source_mutation": false,
+  "new_stage_mutation": false,
+  "schema": "trnm-worker-artifact-format-clippy-impact-review-v1",
+  "selected_artifact_blob": "f021a33e2969305241099998f703172d29b15251",
+  "selected_artifact_sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc",
+  "source_read_receipt": {
+    "bytes": 4315,
+    "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/source-read.json",
+    "sha256": "789bd31ee349fdea1701679af4cf8e9594649b8a83d8dee4870687fa609794ef"
+  },
+  "source_revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+  "status": "READ_ONLY_NOT_EXECUTED"
+}

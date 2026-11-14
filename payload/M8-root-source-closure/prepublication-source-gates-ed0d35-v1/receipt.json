@@ -1,0 +1,209 @@
+{
+  "schema": "root-final-prepublication-source-gates-v1",
+  "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+  "source": "/private/tmp/chain-consolidation-20261114-mainline",
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1",
+  "environment": {
+    "PATH": "/Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GH_PROMPT_DISABLED": "1"
+  },
+  "producer": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/run_final_prepublication_gates_v1.py",
+    "sha256": "e7bc466fcf570a20745954c8627b8af9227582484b251dfcf7900e7942fa7496"
+  },
+  "status": "passed",
+  "steps": [
+    {
+      "label": "preflight-audit",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/preflight-audit.stdout",
+      "stdout_bytes": 163,
+      "stdout_sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/preflight-audit.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:42.654391+00:00"
+    },
+    {
+      "label": "verify-source-before",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/source-before.json"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/verify-source-before.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/verify-source-before.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:49.226576+00:00"
+    },
+    {
+      "label": "repository-check",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/repository-check.stdout",
+      "stdout_bytes": 307,
+      "stdout_sha256": "478bd8425a41e1de9f0ba4eae0bf196eb153d91f2e08e1d214243e8c0153e037",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/repository-check.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:57.968601+00:00"
+    },
+    {
+      "label": "distributed-inventory-check",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/distributed-inventory-check.stdout",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/distributed-inventory-check.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:58.029492+00:00"
+    },
+    {
+      "label": "ci-contract",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/ci-contract.stdout",
+      "stdout_bytes": 852,
+      "stdout_sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/ci-contract.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:58.106830+00:00"
+    },
+    {
+      "label": "pq-corpus",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/pq-corpus.stdout",
+      "stdout_bytes": 558,
+      "stdout_sha256": "4900497da1e909d890edcce4f18af42a7385257351fdc971d1453e9945ede60e",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/pq-corpus.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:26:58.636496+00:00"
+    },
+    {
+      "label": "verify-source-after",
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/source-after.json"
+      ],
+      "exit": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/verify-source-after.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/verify-source-after.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finished_at": "2026-11-14T10:27:04.785569+00:00"
+    }
+  ],
+  "identities": {
+    "before": {
+      "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+      "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+      "status": ""
+    },
+    "after": {
+      "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+      "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+      "status": ""
+    }
+  },
+  "source_observations": {
+    "before": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/source-before.json",
+      "bytes": 423,
+      "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d",
+      "identity": {
+        "base": null,
+        "candidate": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "tested_tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994947385,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      }
+    },
+    "after": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/source-after.json",
+      "bytes": 423,
+      "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d",
+      "identity": {
+        "base": null,
+        "candidate": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+        "tested_tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994947385,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      }
+    }
+  },
+  "errors": [],
+  "hosted_ci_qualification": false,
+  "started_at": "2026-11-14T10:26:42.154553+00:00",
+  "finished_at": "2026-11-14T10:27:04.928852+00:00"
+}

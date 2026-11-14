@@ -1,0 +1,72 @@
+[
+  {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "bytes": 523769,
+    "sha256": "983a1fedd7e90c515e6a33581385541afefdfc69cc06ee63315edcd368ddbf2e",
+    "git_blob": "3f4c9edc80103c78474203caaf5f2f3c781289d2",
+    "mode": "100644"
+  },
+  {
+    "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+    "bytes": 13647,
+    "sha256": "217266780480623cfec459eb61b533f437690c1234cd0b78e49902a78321eab5",
+    "git_blob": "a7a3005cc86f0202e8465390e058055b2678baa7",
+    "mode": "100644"
+  },
+  {
+    "path": "config/pon/pq128-source-correspondence-current-v2.json",
+    "bytes": 3782,
+    "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0",
+    "git_blob": "1fad2b3ae6a5ae61d021f612a6cc8ccc1aa8dc63",
+    "mode": "100644"
+  },
+  {
+    "path": "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+    "bytes": 57076,
+    "sha256": "cc44eeae1dc20baecc0a0371494f8f3fe06f6732090e8805756d4b8de3bbeb2d",
+    "git_blob": "c07b6a40eb8e5825803cb3c84ebe9e94688d25ff",
+    "mode": "100644"
+  },
+  {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "bytes": 1153099,
+    "sha256": "02301a593700ac92d6d412ba5265bde2cb8dca30350122c28dd83f9089513a02",
+    "git_blob": "d91790c0b53fa11908d2026ad23bcb58520677a5",
+    "mode": "100644"
+  },
+  {
+    "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "bytes": 36093,
+    "sha256": "4e84e389686568106be0f728bd9c9e20ef53cb0798ed4ebe3c74fe328ae9a064",
+    "git_blob": "4e4ac98c9fde929db5de9269f1efd1882cc6cc55",
+    "mode": "100644"
+  },
+  {
+    "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+    "bytes": 25102,
+    "sha256": "e7a9dc004f1cdf3acf42cd26e958d338d1878f6b10f9705f41c74b91e82ed5d1",
+    "git_blob": "39d4e18d99bea0c8908c5e0279566a63dbe6f461",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/ci/pq_lifetime_composition.py",
+    "bytes": 28724,
+    "sha256": "a61b604e699e91171102490e12b576c8693b64cec96b26eac9c90e6976d54e23",
+    "git_blob": "595027440b2d1a6ee6da2b7ba4fcf78d9a3aba37",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/ci/pq_lifetime_current_v2.py",
+    "bytes": 10522,
+    "sha256": "f8871844501054caf62de14a33330817a517ccefa60d538c0618364761c17401",
+    "git_blob": "a5b085f9f1f45e1ae3849778ed57479f76ebd427",
+    "mode": "100644"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "bytes": 438782,
+    "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+    "mode": "100644"
+  }
+]

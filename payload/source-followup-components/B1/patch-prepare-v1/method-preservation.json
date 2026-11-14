@@ -1,0 +1,184 @@
+{
+  "original_methods": 25,
+  "new_total": 31,
+  "preserved_source_and_ast": true,
+  "original": [
+    {
+      "class": "SourceCommitmentControls",
+      "method": "test_missing_head_and_uncommitted_source_cannot_borrow_a_commit_identity",
+      "source_sha256": "76451b4af47bc46981c0e4d4357171788d8c38be6449c9b04c295921014c781a",
+      "ast_sha256": "26d4298ebcfe5e8746c7300f80398ebdf7376d25636bef49488f8886bdde1c00"
+    },
+    {
+      "class": "SourceCommitmentControls",
+      "method": "test_evidence_only_child_can_verify_actual_historical_source_objects",
+      "source_sha256": "67ce65b3b570e150de8c9b371bd2c4be4a01a69f07e745574622d6c6563f4796",
+      "ast_sha256": "e3222374ba9208c862f8c3fd1faa4641b01427300ee2d5a1da9a5553895e876d"
+    },
+    {
+      "class": "SourceCommitmentControls",
+      "method": "test_existing_old_commit_with_different_declared_blob_is_not_a_replay_source",
+      "source_sha256": "5dddce33ca89ba84cd8e26ecd811766678c95dfe5d59e6c01c713409bf8ec2d3",
+      "ast_sha256": "140ee591c841598b9d4170d5b284bffa194a5f694369c39fb40bdf849b3e11f0"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_each_external_source_tree_preregistration_and_binary_pin_is_required",
+      "source_sha256": "b66b40aa174792af9180af06ae57f5d975560f589df69a0377b0b780d74c809f",
+      "ast_sha256": "bc6c4e7cbdbb8fc06b90d16dac9afc74b0e18b110d79426f8da88f7aba756d97"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_archive_digest_cannot_be_derived_from_untrusted_archive",
+      "source_sha256": "05f68c6030a92709e94bc8879508dc30dec5f62bdb72d9bad1e0fd07b3151e45",
+      "ast_sha256": "ba04c0b4d3ab73e9498b724c96280838a5c3b4b2099a9a2d15f06211d69d9e65"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_pins_reject_wrong_types_noncanonical_hex_and_wrong_lengths",
+      "source_sha256": "e80a4b7fc23874d19b4682580b26b3ef798b99974fdb2f439a3858fcafb3c8ac",
+      "ast_sha256": "2db7804100893da5df8cdeab7012fbbee7d95a1951df95ad84655c547a640aea"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_source_guard_cannot_claim_other_commit_tree_or_boolean_integer",
+      "source_sha256": "d16f2b0966946f582b3438290c9f9c3b64210bece7fcce5ca4aac84152c2136a",
+      "ast_sha256": "58b7cfb4ae210016e30ef18ccbcf75b689e7e6f825f36c4041a0e838f8fccd5d"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_guard_schema_rejects_extra_security_authority",
+      "source_sha256": "4b7b54ec77b338c2d3b4d91d7165d3fda48eaef98a4f53e8a90698908ee1f610",
+      "ast_sha256": "4e78e885bf9e0cd6ca3444be28dbc2f8d733d7de847123c006c9597a5161af1d"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_duplicate_keys_and_nonfinite_original_json_are_refused",
+      "source_sha256": "f3148f5d2c3c25e52b3f4fc4402bd932ed6f7349c1e7357e7ede1e38564598c1",
+      "ast_sha256": "96c2663faeaa326765dc47a16d084eaedbc6243f24cca3eb8d6771e60b531c59"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_forged_native_context_source_and_binary_are_refused",
+      "source_sha256": "d4130a3cc050a6d0f39a10da3417630d2a0b732bfa72a5347a33ca12a2a95fb4",
+      "ast_sha256": "394dc67f1dff21354de2f0def9acc5fc04a7f3b4e0852ce377543930536cbdbc"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_unknown_native_schema_and_promoted_scope_are_refused",
+      "source_sha256": "77c46bc562ebd27e000534edaacc5378fa124664cd759a3054089cb561a342c7",
+      "ast_sha256": "87ac7bde4fc7b3943448af5f56c88be99d6fe376e3d3f5be22fb94c6e9ae534a"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_collection_stability_claim_is_not_optional",
+      "source_sha256": "80f15a257b63d01ee67817909c95311aef50db0d02bb63b1a1b0200855695c69",
+      "ast_sha256": "2b0818b12fae7e5d8ca23813e3ea0c11ef343e9e9ff0f37b1787bf10049560a1"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_ninth_process_and_original_stream_cannot_be_omitted",
+      "source_sha256": "ec1e9a364a6914865874755ed3d7cd5a7918c762a1181ea82855aa3f6d696820",
+      "ast_sha256": "0ced8088b4b293cebba5761378e7c4f503401e9bc5a0aba7d7b057b3ffa1f4fe"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_process_stream_splice_is_detected_against_original_digest_and_events",
+      "source_sha256": "8d4be58c56cf7171f8354baaba30296c18e2a458054d0af7b13441881df49dbb",
+      "ast_sha256": "b0b7c6d50189926452a39675550c88b98a911e1c15a5b37d490da38dd0f1a8a2"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_real_packet_mutation_cannot_borrow_original_admission",
+      "source_sha256": "6fff7fb3033d70792125d8317c0a74999214758d9fb3b6df45046ff13f2049d2",
+      "ast_sha256": "05d36a1e86264c2982505e2f0ffd671fa9a1fe3e16eb359a398919d4598b1197"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_late_product_packet_cannot_be_replaced_by_valid_packet",
+      "source_sha256": "8395387970a4c6efda5ec77e6763410a5144ead5e9831a437b7b565296c89e1b",
+      "ast_sha256": "26ddeb43d1e86f94bc4d0c42458c46d8098da6160ea43dc17d6b44b466459e42"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_archive_paths_aliases_and_parent_files_are_rejected_before_extraction",
+      "source_sha256": "a5e0971260f77bbdd970698bc3ab331d2b13dddd5d71b2ec359e0778b7eda3c9",
+      "ast_sha256": "6dd41bf08ce3ca72a87bb7a28dcb3a7b18c0841efaa13bac7724b0f3daff8ba8"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_zip_symlink_and_bounded_expansion_refuse_without_following_target",
+      "source_sha256": "b4e8d562969705af5f70c23c515705ab35fbf8367b28c81208e0a813e446b395",
+      "ast_sha256": "0523fa184c9d2e050a42096e5f195b5920764b1408ff358098f711cba437209e"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_zip_nul_truncation_cannot_alias_another_member_name",
+      "source_sha256": "036b5df4af142ba309bb050d3579060e1c9f285408fcfeafc3c83404a6b02fe8",
+      "ast_sha256": "460542893d21499453ee34cbd5c8a15fd079d4154cac12ad9ca15f5023cb75b0"
+    },
+    {
+      "class": "NativeArchiveRefusalControls",
+      "method": "test_archive_symlink_and_fifo_are_not_read_as_regular_inputs",
+      "source_sha256": "21ccb6a6d1c2512ea707588d6501aeca5c7ef2df6aab53ef7a38cbdba508ecbc",
+      "ast_sha256": "41c9f1e328202e129179e2974fe409ce0aae638f78e6bde42cdca8d335b64a2e"
+    },
+    {
+      "class": "RetainedNativeDifferentialControls",
+      "method": "test_real_pgh2_scalar_macro_native_observations_share_one_statement",
+      "source_sha256": "66d42a7406571ce0b7725c36d4c83c4cc90cf02beef1c2e78a464a884a995158",
+      "ast_sha256": "4a8de9679f597944c6d1f3b3a1dd7f101b5c0552230a73663a30639903855f58"
+    },
+    {
+      "class": "RetainedNativeDifferentialControls",
+      "method": "test_actual_late_product_counterexample_keeps_oracle_winner",
+      "source_sha256": "ff832f3a27cf9398342722c6893bcd603d25cf36df285bfadd7122e9b6e183fb",
+      "ast_sha256": "f8b3e12209d5df9572bd1419e171d688267f6f6857fda70604a327690e7b56c0"
+    },
+    {
+      "class": "RetainedNativeDifferentialControls",
+      "method": "test_retained_native_gate_and_scientific_boundaries_are_not_promoted",
+      "source_sha256": "79391e199bf992a0bbf4f4edbdb62b4a9ea4801914bef5f89047cbe421695de0",
+      "ast_sha256": "3cbfd5aad216361dc1ffbadca1c02be76ff450741f735c943a1c314b7c0ab3d6"
+    },
+    {
+      "class": "RetainedNativeDifferentialControls",
+      "method": "test_saved_report_cannot_choose_its_own_external_pins",
+      "source_sha256": "7e3d176cf1813f4e80ce1ee349d12e935b114acec4316802167732164a018f27",
+      "ast_sha256": "cc6e1e02c66864b558836e9d2705507c28858cdb4d9444c38a01b3cdc98c1002"
+    },
+    {
+      "class": "RetainedNativeDifferentialControls",
+      "method": "test_saved_report_is_fully_rebuilt_and_changed_claims_are_rejected",
+      "source_sha256": "b8f7f8a745f5af0a8cd7c61785c2eefa14a351443e2c59a3e82a517ac9086fc8",
+      "ast_sha256": "a6d767013acfa8b9da2c75b051c2c61a5abef23e79cf078ec189b6ba7543595d"
+    }
+  ],
+  "new": [
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_exact_historical_tuple_reads_data_without_executing_source"
+    },
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_missing_or_mislocated_producer_never_falls_back"
+    },
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_tampered_short_extended_and_current_producer_cannot_replace_history"
+    },
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_symlink_fifo_and_parent_alias_are_rejected"
+    },
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_wrong_source_tree_or_context_digest_cannot_borrow_history"
+    },
+    {
+      "class": "HistoricalCollectorBindingControls",
+      "method": "test_other_source_keeps_the_current_collector_check"
+    }
+  ],
+  "existing_corpus_test_methods_unchanged": 98
+}

@@ -1,0 +1,411 @@
+{
+  "build_separation": {
+    "binding": "bind_prepared_execution requires exact preparation/source/binary before-and-after equality and all original acceptance. The format handoff only reuses a controller-owned exact-source preparation record; it is not a general build bypass.",
+    "cli_options": [
+      "--out",
+      "--summarize-confirmation",
+      "--observation-version {1,2}"
+    ],
+    "has_build_only_or_execute_only_or_prebuilt_binary_cli": false,
+    "host_preparation": "prepare_native_build executes the identical900-second source build before installing/running the service quota; formats with original60-second limit and pins actual source/toolchain/process/log bytes.",
+    "inside_execution": "Original native runner still executes identical900-second source build inside the25% service, selects exact newly reported target, hashes it and runs all5 selectors. Warm Cargo artifacts are permitted; bypassing that build is not.",
+    "not_claimed": "No formally supported original5-selector execute-only handoff found; separate history/architecture modes are not substitutes."
+  },
+  "conclusion": "The original native CLI is not GitHub-only, but the original confirmation importer requires the fixed administrator-owned kernel parent even for loopback. The currently authorized local capabilities cannot faithfully reproduce that Host contract. Do not run native merely to obtain the expected environment refusal. Only the unchanged hosted gates can close the present required validation gap.",
+  "corrections": [
+    {
+      "order": 1,
+      "statement": "Initial conclusion correctly identified hosted controller forbidden locally; native entry not yet fully traced."
+    },
+    {
+      "order": 2,
+      "statement": "Listener-only reading found legitimate loopback None path and temporarily suggested local pressure diagnosis without fixed parent.",
+      "status": "PRELIMINARY_INCOMPLETE_NOT_FINAL"
+    },
+    {
+      "order": 3,
+      "statement": "Full confirmation importer trace overrides listener-only inference: public History always supplies Some(FIXED_PUBLIC_KERNEL_PARENT), including loopback. Root informed immediately.",
+      "status": "FINAL_CORRECTION"
+    },
+    {
+      "order": 4,
+      "statement": "Attempted read of separately extracted confirmation/report.json failed FileNotFoundError; original reports were only inside already verified ZIPs. Failure kept; later read exact ZIP members and original hashes."
+    }
+  ],
+  "current_hosted_qualification": false,
+  "entries": [
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "<new absolute directory outside exact checkout>"
+      ],
+      "lines": "1834-1852;1648-1831",
+      "path": "scripts/ci/run_from_zero_native.py",
+      "preserves": [
+        "source_identity before/after via verify_ci_source",
+        "cargo fmt --all --check 60 seconds",
+        "locked release exact target source build 900 seconds",
+        "five exact selectors each90 seconds with --test-threads=1",
+        "new binary before/after SHA and retained copy",
+        "original sequential service/sustained/confirmation validators"
+      ],
+      "status": "Existing original local-callable CLI; conditional on actual original Host context for public History. Not executed."
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/run_from_zero_host.py",
+        "--",
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "<hosted receipt root>/from-zero-native"
+      ],
+      "lines": "339-346;391-503",
+      "path": "scripts/ci/run_from_zero_host.py",
+      "status": "Hosted-only controller; original guard rejects non-GitHub invocation; no local invocation authorized or performed."
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--summarize-confirmation",
+        "<retained original confirmation/report.json>"
+      ],
+      "lines": "1836-1847",
+      "path": "scripts/ci/run_from_zero_native.py",
+      "status": "Existing read-only report inspection; no new performance sample; keeps invalid original gate result and exits nonzero. Not invoked in this review."
+    }
+  ],
+  "expected_environment_refusal_is_performance_result": false,
+  "fixed_source": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "followup": [
+    "Await exact R1 head+prospective hosted original gates; do not substitute local component success.",
+    "If hosted fails, retain full report/manifest/controller before-after/5named rawlogs and compare baseline vs pressure with original denominators.",
+    "Use existing page replay/Host checkpoint/native attribution records first; do not add timing-changing instrumentation before identifying an unresolved cause.",
+    "Only review an actual immutable/pure-computation duplicate or equivalent allocation elimination if sourced; retain all Host checks, absolute deadlines, accounting, settlement and original cadence.",
+    "Validate any new change on fixed successor source with original controls and original hosted4s/16workergate; no widening, skipping or rerun-until-pass."
+  ],
+  "hepta_process_start": {
+    "absent": [
+      "TasksMax/pids.max",
+      "CPUQuotaPeriodSec",
+      "cpu.max.burst",
+      "memory.swap.max",
+      "slice selection",
+      "fixed parent placement",
+      "boot/inode attestation"
+    ],
+    "conclusion": "25% and2GiB are expressible but exact256tasks,100ms period,zero burst/swap and fixed-parent membership are not established by this API. An alternate transient group is not the originalHost; implementation/defaults were not assumed.",
+    "exposed": [
+      "cpu_quota_percent",
+      "memory_max_bytes",
+      "nice",
+      "timeout_seconds",
+      "cwd",
+      "env",
+      "stdin",
+      "executable",
+      "args",
+      "host",
+      "idempotency_key"
+    ],
+    "source": "Tool declaration read only; no call performed."
+  },
+  "host_controller_or_resource_start_executed": false,
+  "host_controller_requires_github_actions": true,
+  "native_cli_requires_github_actions": false,
+  "native_tests_or_benchmarks_executed": false,
+  "old_N_observations": [
+    {
+      "artifact": "14111407094",
+      "phases": [
+        {
+          "business_started_ns": 140901,
+          "confirmation_ended_ns": 3191665508,
+          "confirmed": 1,
+          "history_count": 7,
+          "history_ok": 7,
+          "last_submit_end_ns": 286654283,
+          "mode": "attack-free-baseline",
+          "replay_accepted": 7,
+          "replay_count": 7,
+          "replays": [],
+          "submit_count": 7,
+          "submit_ok": 7,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_started_ns": 91667336,
+          "confirmation_ended_ns": null,
+          "confirmed": 0,
+          "history_count": 1,
+          "history_ok": 1,
+          "last_submit_end_ns": 1694434484,
+          "mode": "from-zero-pressure",
+          "replay_accepted": 0,
+          "replay_count": 1,
+          "replays": [
+            {
+              "accepted": false,
+              "calling_thread_cpu_ns": 89051928,
+              "end_ns": 4090965490,
+              "error": "PUBLIC_REQUEST_DEADLINE",
+              "fresh_host_checkpoint": {
+                "calls_accepted": 1188,
+                "calls_completed": 1188,
+                "calls_rejected": 0,
+                "calls_started": 1188,
+                "calls_unfinished": 0,
+                "cpu_clock_unknown_calls": 0,
+                "first_started_ns": 96798852,
+                "last_ended_ns": 2200544859,
+                "last_error_code": null,
+                "phase": "checkpoint",
+                "thread_cpu_ns": 81838421,
+                "wall_clock_unknown_calls": 0,
+                "wall_ns": 381091323
+              },
+              "page_cpu_wait": {
+                "actual_sleep_wall_ns": 333718592,
+                "last_reserve_deadline_remaining_ns": 1709504034,
+                "last_sleep_deadline_remaining_ns": 1711691177,
+                "local_wait_ceiling_remaining_at_entry_ns": 1999999870,
+                "original_deadline_remaining_at_entry_ns": 2109088560,
+                "original_deadline_remaining_at_exit_ns": 1709502170,
+                "requested_sleep_ns": 54000000,
+                "reserve_attempts": 28,
+                "reserve_budget_refusals": 27,
+                "reserve_granted": 1,
+                "reserve_other_refusals": 0,
+                "reserve_returns": 28,
+                "sleep_calls_completed": 27,
+                "sleep_calls_started": 27,
+                "span": {
+                  "count": 8,
+                  "type": "dict"
+                }
+              },
+              "start_ns": 1793263152,
+              "wall_ns": 2297702338
+            }
+          ],
+          "submit_count": 7,
+          "submit_ok": 7,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "report_sha256": "6ca59b1b4d4b0af4f3cd615a9ec1860e722fc1721bf5a36e8e071ae80e455748"
+    },
+    {
+      "artifact": "14111816359",
+      "phases": [
+        {
+          "business_started_ns": 148019,
+          "confirmation_ended_ns": 2877335016,
+          "confirmed": 1,
+          "history_count": 7,
+          "history_ok": 7,
+          "last_submit_end_ns": 205411898,
+          "mode": "attack-free-baseline",
+          "replay_accepted": 7,
+          "replay_count": 7,
+          "replays": [],
+          "submit_count": 7,
+          "submit_ok": 7,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_started_ns": 60735040,
+          "confirmation_ended_ns": null,
+          "confirmed": 0,
+          "history_count": 2,
+          "history_ok": 2,
+          "last_submit_end_ns": 1566020707,
+          "mode": "from-zero-pressure",
+          "replay_accepted": 1,
+          "replay_count": 2,
+          "replays": [
+            {
+              "accepted": true,
+              "calling_thread_cpu_ns": 72802894,
+              "end_ns": 3365724546,
+              "error": null,
+              "fresh_host_checkpoint": {
+                "calls_accepted": 1174,
+                "calls_completed": 1174,
+                "calls_rejected": 0,
+                "calls_started": 1174,
+                "calls_unfinished": 0,
+                "cpu_clock_unknown_calls": 0,
+                "first_started_ns": 96986177,
+                "last_ended_ns": 1700644889,
+                "last_error_code": null,
+                "phase": "checkpoint",
+                "thread_cpu_ns": 66143089,
+                "wall_clock_unknown_calls": 0,
+                "wall_ns": 163231482
+              },
+              "page_cpu_wait": {
+                "actual_sleep_wall_ns": 398327679,
+                "last_reserve_deadline_remaining_ns": 1837898658,
+                "last_sleep_deadline_remaining_ns": 1840043411,
+                "local_wait_ceiling_remaining_at_entry_ns": 1999999820,
+                "original_deadline_remaining_at_entry_ns": 2237078887,
+                "original_deadline_remaining_at_exit_ns": 1837896665,
+                "requested_sleep_ns": 16000000,
+                "reserve_attempts": 9,
+                "reserve_budget_refusals": 8,
+                "reserve_granted": 1,
+                "reserve_other_refusals": 0,
+                "reserve_returns": 9,
+                "sleep_calls_completed": 8,
+                "sleep_calls_started": 8,
+                "span": {
+                  "count": 8,
+                  "type": "dict"
+                }
+              },
+              "start_ns": 1664609731,
+              "wall_ns": 1701114815
+            },
+            {
+              "accepted": false,
+              "calling_thread_cpu_ns": 36714448,
+              "end_ns": 4061195689,
+              "error": "PUBLIC_REQUEST_DEADLINE",
+              "fresh_host_checkpoint": {
+                "calls_accepted": 594,
+                "calls_completed": 594,
+                "calls_rejected": 0,
+                "calls_started": 594,
+                "calls_unfinished": 0,
+                "cpu_clock_unknown_calls": 0,
+                "first_started_ns": 260536,
+                "last_ended_ns": 499904941,
+                "last_error_code": null,
+                "phase": "checkpoint",
+                "thread_cpu_ns": 33650455,
+                "wall_clock_unknown_calls": 0,
+                "wall_ns": 35998468
+              },
+              "page_cpu_wait": {
+                "actual_sleep_wall_ns": null,
+                "last_reserve_deadline_remaining_ns": 440202365,
+                "last_sleep_deadline_remaining_ns": null,
+                "local_wait_ceiling_remaining_at_entry_ns": 440316524,
+                "original_deadline_remaining_at_entry_ns": 440316524,
+                "original_deadline_remaining_at_exit_ns": 440199922,
+                "requested_sleep_ns": null,
+                "reserve_attempts": 1,
+                "reserve_budget_refusals": 0,
+                "reserve_granted": 1,
+                "reserve_other_refusals": 0,
+                "reserve_returns": 1,
+                "sleep_calls_completed": 0,
+                "sleep_calls_started": 0,
+                "span": {
+                  "count": 8,
+                  "type": "dict"
+                }
+              },
+              "start_ns": 3465184758,
+              "wall_ns": 596010931
+            }
+          ],
+          "submit_count": 7,
+          "submit_ok": 7,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "report_sha256": "1814ade47a1c616c96cdb95b5e510ff3ec07c922a43549f53a6f6e26ec4de68f"
+    }
+  ],
+  "original_host": {
+    "durable_epoch": "history_import Owner::Exclusive, Node-owned domain lookup/durable begin, per-operation CPU reserve/settlement and epoch close/fence retained. New per-page or per-retry credit is not a valid substitute.",
+    "epoch_clock": "Actual monotonic traffic epoch and original absolute end; fresh PublicServer random epoch/secret; current kernel boot identity; original Node-owned CPU epoch across History pages. Do not fabricate/replay boot, source, preparation or source-success receipts, reset the CPU domain, or move the business clock.",
+    "exact_hosted_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "hosted_envelope": "UID/GID/cwd, NoNewPrivileges1, empty CapBnd, exact installed unit, one shared fixed parent and child membership, before/after controller/inside samples; original from-zero refuses an already provisioned parent at controller entry.",
+    "identity": "root-owned canonical non-symlink fixed parent; no group/other write; actual current thread membership; boot-id plus dev/inode stable; each check fresh opens parent/boot/membership and all5 current regular child files, NOFOLLOW/NONBLOCK and realEOF; final path fence.",
+    "local_loopback_exception": "require_for_listener(loopback) returnsNone for listener development compatibility.",
+    "mandatory_public_import": "ingress.rs2670-2711 supplies Some(FIXED_PUBLIC_KERNEL_PARENT) unconditionally even for loopback, observes Resolve/Initial/every checkpoint/Final, preserves original absolute deadline and errors.",
+    "parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+  },
+  "original_parameters": {
+    "confirmation_depth": 6,
+    "head_caller": 72,
+    "history_cap": 16,
+    "honest_head_cap": 256,
+    "honest_head_poll_sleep_ms": 40,
+    "honest_history_caller": 74,
+    "honest_submit_caller": 73,
+    "late_success_can_promote_acceptance": false,
+    "per_call_absolute_deadline": "min(traffic_epoch+4s,call_start+2s)",
+    "per_call_ms": 2000,
+    "post_pressure_replay_or_drain_credit": false,
+    "pressure_caller_fixture": "80+((attempt+worker*37)%150)",
+    "pressure_calls_per_worker": 1024,
+    "pressure_window_ns": 4000000000,
+    "pressure_workers": 16,
+    "required_work": "6 * floor(2^256/(target+1))",
+    "search_budget": 4096,
+    "service_lifetime_seconds": 30,
+    "signed_honest_packets": 7,
+    "submit_cap": 64
+  },
+  "original_selectors": [
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+  ],
+  "qualified_local_performance_entry_available_without_original_host": false,
+  "schema": "trnm-r1-local-host-diagnostic-readonly-review-v1",
+  "source_environment_git_refs_stage_or_network_modified": false,
+  "supported_hotspots": [
+    "7/7 signed submissions succeeded in both pressure runs, finishing at1.694434484s and1.566020707s; downstream independent History replay consumed the remaining original window.",
+    "Head pressure replay1.793263152→4.090965490s,2.297702338s wall/89.051928ms callerCPU, zero accepted.",
+    "Prospective pressure replay1.664609731→3.365724546s accepted; second3.465184758→4.061195689s,596.010931ms wall/36.714448ms callerCPU failed PUBLIC_REQUEST_DEADLINE.",
+    "Actual fresh Host checkpoint totals are1188,1174,594 calls for the3 pressure replay rows; all accepted. They are not the old1099Host count and not policy.id counts.",
+    "Observed original page-reserve waits: head28attempts/27budgetrefusals/27sleeps,54ms requested vs333.718592ms observed sleep wall; prospective first9/8/8,16ms requested vs398.327679ms observed sleep wall.",
+    "Exclusive importer owns &mut Node; this is not the shared Node mutex retry path. Scalar accounting/refill, Host calls, CPU scheduling and native work remain distinct costs."
+  ],
+  "unknowns": [
+    "No R1 hosted4s performance result in this review.",
+    "No scheduler/kernel trace proving per-thread CFS throttling cause, or attributing entire wall-minus-CPU to a single cause.",
+    "Host wall sums may overlap and Host CPU includes calling workers; cannot add to native phase CPU/wall or infer exclusive percentages.",
+    "The installed immutable policy prefix cache is computation-equivalent, but no measured global policy.id count or proven4s benefit is supplied.",
+    "No nonce optimization selected or measured; changing attacker solve cost can change closed-loop pressure."
+  ],
+  "workflow": {
+    "blob": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+    "build_jobs": 2,
+    "concurrency": "portable-${github.workflow}-${github.ref}; cancel-in-progress false",
+    "cross_arch_cost_job_minutes": 155,
+    "incremental": "0",
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "protocol_job_minutes": 240,
+    "rust_test_threads": "1",
+    "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+    "source_types": "exact head and separately checked prospective merge",
+    "stage_budget_scope": "Job orchestration minutes do not extend original4s/2s/90s/900s component budgets.",
+    "test_toolchain": "1.95.0"
+  }
+}

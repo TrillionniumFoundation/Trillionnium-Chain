@@ -1,0 +1,109 @@
+{
+  "schema": "trnm-prci-n2-w1-ci-static-review-v1",
+  "decision": "ACCEPT_EXACT_THREE_N2_BLOBS_NO_STATIC_BLOCKER",
+  "revisions": {
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "P2": "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+  },
+  "scope": [
+    ".github/workflows/pon-w1-work-security.yml",
+    "scripts/ci/test_w1_v2_controls_gate.py",
+    "scripts/ci/w1_v2_controls_gate.py"
+  ],
+  "exact_selected_blobs": {
+    ".github/workflows/pon-w1-work-security.yml": "ce94e0a5423d91840849d91579ec541081117274",
+    "scripts/ci/test_w1_v2_controls_gate.py": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+    "scripts/ci/w1_v2_controls_gate.py": "458b9c804efb962ded3871d231368aec163161eb"
+  },
+  "P2_same_as_N_all_three": true,
+  "N_to_N2_equals_P2_to_N2": true,
+  "diff_sha256": "def2a1f43788458cc9715d96cec1f6a70046061d280066742c5d900446a1fde1",
+  "diff_bytes": 4368,
+  "named_native_roster": {
+    "helper_blob": "de49010fd9fb08a0cce43b5ec003d7436033f163",
+    "helper_sha256": "4b8be64d8ec2bd657e17ce4d8308a77a7f2dcc06f9587340db629b16ddb7d761",
+    "same_in_N2_P2": true,
+    "suite": "factorial-kernel-tests",
+    "passed_names": 19,
+    "ignored": 0,
+    "rank_job_old_count": 14,
+    "rank_job_selected_count": 19,
+    "strict_names_starts_completions_counts": true,
+    "batch_count_unchanged": 9,
+    "exact_names": [
+      "pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts",
+      "pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders",
+      "pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback",
+      "pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers",
+      "pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task",
+      "pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work",
+      "pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product",
+      "pon_work::legal_attempt::tests::checked_rank_one_and_bounded_rank_preparation_share_bytes_but_keep_distinct_domains",
+      "pon_work::legal_attempt::tests::checked_rank_one_preparation_matches_dense_sparse_and_independent_replay",
+      "pon_work::legal_attempt::tests::checked_rank_one_preparation_preserves_complete_misses_and_cancellation",
+      "pon_work::legal_attempt::tests::checked_rank_one_preparation_refuses_other_ranks_and_hidden_malformed_words",
+      "pon_work::legal_attempt::tests::checked_rank_one_reuse_rejects_changed_challenge_transcript_and_product",
+      "pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry",
+      "pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields",
+      "pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization",
+      "pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes",
+      "pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs",
+      "pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths",
+      "pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry"
+    ]
+  },
+  "clock": {
+    "producer_path": "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+    "blob": "760423dccb6a816466e442a69c91b3b84f5a623a",
+    "sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9",
+    "same_in_N2_P2": true,
+    "producer_deadline": "min(started + wall_seconds, deadline) if deadline is not None else started + wall_seconds",
+    "producer_remaining": "max(0, effective_deadline - started)",
+    "selected_guard": "0 < remaining and deadline <= started + 120 and remaining == deadline - started and started + wall < deadline",
+    "meaning": "Check the exact original absolute endpoint; subtraction can round the derived remaining duration slightly above 120. This does not allocate a later endpoint.",
+    "report_deadline_binding_unchanged": "report deadline == report started + 120; every process uses the common deadline and starts no earlier; report elapsed < 120",
+    "finite_type_bool_cancellation_settlement_guards_preserved": true
+  },
+  "tests": {
+    "methods_before": 31,
+    "methods_after": 31,
+    "unchanged_source_and_ast": 30,
+    "changed_existing_method": "V2ControlsGateTests.test_current_stage_clock_cannot_extend_original_budget",
+    "added_methods": [],
+    "deleted_methods": [],
+    "extended_cases": [
+      "lawful endpoint construction whose subtraction rounds above 120",
+      "reject nextafter deadline toward +infinity",
+      "reject inconsistent remaining duration",
+      "reject completion exactly at the endpoint"
+    ],
+    "old_method_assertions_preserved": true,
+    "executed": false
+  },
+  "unchanged_contracts": [
+    "55-minute job timeout",
+    "head/prospective-merge and architecture matrix",
+    "fixed expected head/base/merge values",
+    "locked release native argv and serial test setting",
+    "batch nine-control expectation",
+    "native Clippy, rank/batch campaign commands and budgets",
+    "source before/after verification",
+    "historical-v2 retained fixture and current-v3 namespaces",
+    "original control order/count, identity, mutation and cryptographic context checks",
+    "false proof/security/admission/activation claims"
+  ],
+  "limitations": [
+    "Static compatibility review, not a fresh test or native/campaign execution.",
+    "No claim that current 4-second confirmation gate passes.",
+    "No source, Git, stage, network or PR mutations by this review."
+  ],
+  "evidence": {
+    "source_index": "../source-index.json",
+    "consumer_index": "../consumer-context-v1/source-index.json",
+    "producer_index": "../producer-closure-v1/source-index.json",
+    "test_roster": "../producer-closure-v1/method-roster-comparison.json",
+    "patch": "../N-to-N2.patch"
+  },
+  "sealed_at": "2026-11-14T11:33:25.518340+00:00"
+}

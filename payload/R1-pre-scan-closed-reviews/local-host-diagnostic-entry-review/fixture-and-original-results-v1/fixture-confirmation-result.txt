@@ -1,0 +1,196 @@
+1481:             }));
+1482:             match imported {
+1483:                 Ok(next) => {
+1484:                     after = next;
+1485:                     if after == tip {
+1486:                         let final_started_ns = ns(epoch);
+1487:                         let final_cpu = ThreadCpuStamp::start();
+1488:                         let observed =
+1489:                             verifier.confirmation(transaction, included, ingress::now().unwrap());
+1490:                         let final_ended_ns = ns(epoch);
+1491:                         independent_final_confirmation_stage = Some(json!({
+1492:                             "confirmation_started_ns": final_started_ns,
+1493:                             "confirmation_ended_ns": final_ended_ns,
+1494:                             "confirmation_wall_ns": final_ended_ns - final_started_ns,
+1495:                             "confirmation_thread_cpu_ns": cpu_elapsed(final_cpu),
+1496:                             "observation_returned": observed.is_ok(),
+1497:                             "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+1498:                         }));
+1499:                         match observed {
+1500:                             Ok(observation) => {
+1501:                                 confirmation = Some(observation);
+1502:                                 confirmation_ended_ns = Some(ns(epoch));
+1503:                             }
+1504:                             Err(error) => verification_errors.push(error.to_string()),
+1505:                         }
+1506:                     }
+1507:                 }
+1508:                 Err(error) => verification_errors.push(error),
+1509:             }
+1510:         }
+1511:         history_calls.push(row);
+1512:         if confirmation.is_some() {
+1513:             break;
+1514:         }
+1515:     }
+1516:     let independent_replay_cpu_ns = cpu_elapsed(replay_cpu);
+1517:     let independent_replay_wall_ns = ns(replay_started);
+1518:     let completed_at_confirmation = completed.load(Ordering::Acquire);
+1519:     let client_confirmed_in_window = confirmation.as_ref().is_some_and(|observation| {
+1520:         observation.confirmed
+1521:             && !observation.finalized
+1522:             && !observation.execution_authority
+1523:             && observation.depth == Some(6)
+1524:     }) && Instant::now() < end;
+1525:     let attack_rows: Vec<_> = attacks
+1526:         .into_iter()
+1527:         .map(|worker| worker.join().unwrap())
+1528:         .collect();
+1529:     let (read_rows, reader_cpu_ns) = reads.join().unwrap();
+1530:     // Shutdown follows the original window. No post-attack replay, retry or drain
+1531:     // can turn an unconfirmed business request into a successful observation.
+1532:     let service_outcome = service.finish();
+1533:     let captured = observer.snapshot();
+1534:     let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
+1535:     let actual = receiver.read_active().unwrap();
+1536:     let checked = verifier.read_active().unwrap();
+1537:     // Active generations count local publication events; page replay can publish
+1538:     // seven complete blocks in one activation and need not share that counter.
+1539:     let full_state_equal = actual.0 == checked.0 && actual.2 == checked.2;
+1540:     let actual_root = trnm_mvcc_fee::pon_executor::root(&actual.2).unwrap();
+1541:     let receiver_matches_valid_honest_prefix = if actual.0 == initial.0 {
+1542:         actual.2 == initial.2
+1543:     } else {
+1544:         packets
+1545:             .iter()
+1546:             .any(|packet| packet.id().unwrap() == actual.0 && packet.header.state == actual_root)
+1547:     };
+1548:     let call_rows: Vec<_> = attack_rows
+1549:         .iter()
+1550:         .flat_map(|worker| worker["calls"].as_array().unwrap())
+1551:         .collect();
+1552:     let overlapping_false_calls = confirmation_ended_ns.map_or(0, |ended| {
+1553:         call_rows
+1554:             .iter()
+1555:             .filter(|row| {
+1556:                 row["started_ns"]
+1557:                     .as_u64()
+1558:                     .is_some_and(|started| started < ended)
+1559:                     && row["ended_ns"]
+1560:                         .as_u64()
+1561:                         .is_some_and(|finished| finished > business_started_ns)
+1562:             })
+1563:             .count()
+1564:     });
+1565:     let no_attack_accepted = call_rows.iter().all(|row| row["status"] != "ok");
+1566:     let attacker_workers_cpu_ns = attack_rows.iter().try_fold(0u64, |sum, worker| {
+1567:         sum.checked_add(worker["calling_thread_cpu_ns"].as_u64()?)
+1568:     });
+1569:     let read_successes = read_rows
+1570:         .iter()
+1571:         .filter(|row| {
+1572:             row["status"] == "ok"
+1573:                 && row["returned_after_deadline"] == false
+1574:                 && row["returned_after_window"] == false
+1575:         })
+1576:         .count();
+1577:     let mut prior_success = 0;
+1578:     let mut maximum_honest_head_gap_ns = 0;
+1579:     for row in &read_rows {
+1580:         if row["status"] == "ok" && row["returned_after_window"] == false {
+1581:             let ended = row["ended_ns"].as_u64().unwrap();
+1582:             maximum_honest_head_gap_ns = maximum_honest_head_gap_ns.max(ended - prior_success);
+1583:             prior_success = ended;
+1584:         }
+1585:     }
+1586:     maximum_honest_head_gap_ns = maximum_honest_head_gap_ns
+1587:         .max(PRESSURE_MS * 1_000_000 - prior_success.min(PRESSURE_MS * 1_000_000));
+1588:     let m = &service_outcome["metrics"];
+1589:     let accounting_closed = m["mutation_cpu_charged_ns"]
+1590:         .as_u64()
+1591:         .zip(
+1592:             m["mutation_full_work_cpu_ns"]
+1593:                 .as_u64()
+1594:                 .zip(m["mutation_dispatch_excluding_work_cpu_ns"].as_u64()),
+1595:         )
+1596:         .is_some_and(|(all, (work, rest))| work.checked_add(rest) == Some(all))
+1597:         && m["work_started"] == m["work_finished"]
+1598:         && m["mutation_cpu_clock_failures"] == 0;
+1599:     let observations_complete = captured.coverage_complete();
+1600:     let invariant_target_met = no_attack_accepted
+1601:         && observations_complete
+1602:         && accounting_closed
+1603:         && service_outcome["error"].is_null()
+1604:         && receiver_matches_valid_honest_prefix;
+1605:     let overlap_demonstrated = !pressured
+1606:         || (completed_before_business > 0
+1607:             && overlapping_false_calls > 0
+1608:             && completed_at_confirmation > completed_before_business);
+1609:     let finite_business_target_met =
+1610:         client_confirmed_in_window && overlap_demonstrated && verification_errors.is_empty();
+1611:     let mut report = json!({"mode": if pressured { "from-zero-pressure" } else { "attack-free-baseline" },
+1612:         "target": hex::encode(target), "task": hex::encode(packets[0].header.work_task),
+1613:         "initial_tip": hex::encode(initial.0),
+1614:         "initial_state_root": hex::encode(trnm_mvcc_fee::pon_executor::root(&initial.2).unwrap()),
+1615:         "requested_window_ns": PRESSURE_MS * 1_000_000, "workers": workers,
+1616:         "initial_meter": initial_meter, "final_meter": domain.observe().unwrap(),
+1617:         "attacks": attack_rows, "completed_false_calls_before_business": completed_before_business,
+1618:         "attacker_workers_cpu_ns": attacker_workers_cpu_ns,
+1619:         "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+1620:         "completed_false_calls_at_confirmation": completed_at_confirmation,
+1621:         "overlapping_false_calls": overlapping_false_calls, "overlap_demonstrated": overlap_demonstrated});
+1622:     report.as_object_mut().unwrap().extend(json!({
+1623:         "honest_submissions": submissions, "honest_history": history_calls,
+1624:         "business_started_ns": business_started_ns, "confirmation_ended_ns": confirmation_ended_ns,
+1625:         "client_confirmation_latency_ns": confirmation_ended_ns.map(|ended| ended - business_started_ns),
+1626:         "independent_client_confirmation": confirmation, "client_confirmed_transactions": usize::from(client_confirmed_in_window),
+1627:         "client_confirmed_before_original_window_end": client_confirmed_in_window,
+1628:         "independent_replay_and_confirmation_cpu_ns": independent_replay_cpu_ns,
+1629:         "independent_replay_and_confirmation_wall_ns": independent_replay_wall_ns,
+1630:         "independent_history_page_replay": independent_history_page_replay,
+1631:         "independent_final_confirmation_stage": independent_final_confirmation_stage,
+1632:         "verification_errors": verification_errors, "honest_heads": read_rows,
+1633:         "honest_head_successes_in_window": read_successes, "maximum_honest_head_gap_ns": maximum_honest_head_gap_ns,
+1634:         "reader_cpu_ns": reader_cpu_ns, "service": service_outcome, "observations": captured,
+1635:         "no_attack_accepted": no_attack_accepted, "accounting_closed": accounting_closed,
+1636:         "full_native_state_equal": full_state_equal, "invariant_target_met": invariant_target_met,
+1637:         "receiver_matches_valid_honest_prefix": receiver_matches_valid_honest_prefix,
+1638:         "finite_business_target_met": finite_business_target_met,
+1639:         "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+1640:         "public_network_ready": false, "independent_operator_accepted": false,
+1641:         "work_profile_qualified": false, "resource_fairness_qualified": false, "production_activation": false})
+1642:         .as_object().unwrap().clone());
+1643:     // Convert the retained original traffic epoch after the run. No new clock
+1644:     // origin, deadline, retry or confirmation drain is introduced. The peer's
+1645:     // Hello digest is only a claimed request identity until actual body checks;
+1646:     // unknown/pre-Hello or unretained connections must remain in the denominator.
+1647:     let traffic_epoch_in_observer_ns = observer.timestamp_ns(epoch);
+1648:     let first_business_body = serde_json::to_vec(&Request::Submit {
+1649:         packet: hex::encode(packets[0].encode().unwrap()),
+1650:     })
+1651:     .unwrap();
+1652:     report["business_receive_clock"] = json!({
+1653:         "schema": "public-v3-business-receive-clock-v1",
+1654:         "clock_scope": "same-process-monotonic-observer",
+1655:         "traffic_epoch_in_observer_ns": traffic_epoch_in_observer_ns,
+1656:         "first_business_packet_body_digest": hex::encode(hash(b"public-request-body-v3", &[&first_business_body])),
+1657:         "independent_confirmation_in_observer_ns": traffic_epoch_in_observer_ns
+1658:             .zip(confirmation_ended_ns).and_then(|(offset, ended)| offset.checked_add(ended)),
+1659:         "request_binding_stage": "hello-claimed-body-digest",
+1660:         "has_control_authority": false,
+1661:     });
+1662:     report
+1663: }
+1664: 
+1665: #[path = "public_v3_from_zero/fresh_challenge.rs"]
+1666: mod fresh_challenge;
+1667: 
+1668: #[path = "public_v3_from_zero/sp27_receiver_controls.rs"]
+1669: mod sp27_receiver_controls;
+1670: 
+1671: #[path = "public_v3_from_zero/sp27_receiver_strata.rs"]
+1672: mod sp27_receiver_strata;
+1673: 
+1674: #[path = "public_v3_from_zero/sp27_receiver_campaign.rs"]
+1675: mod sp27_receiver_campaign;
+1676: 

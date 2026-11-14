@@ -1,0 +1,168 @@
+{
+  "schema": "trnm-P2-original-lane-packagers-preparation-inputs-v1",
+  "output": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1",
+  "source_of_pins": "explicit root handoff after actual P2 Mac seven gates; no P2 Linux terminal observed",
+  "head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+  "tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "source_bytes": 423,
+  "source_sha256": "c68a3dbad6e014c7195d9764372aa6a3a887eafc5a7571957bc20b25e1d022e5",
+  "source_entries": 41677,
+  "source_tracked_bytes": 3994959410,
+  "bundle_bytes": 729,
+  "bundle_sha256": "d83ad4783c69a00d648a4e2d91d7d0ec8899b1dbe44f0fbeec070d9fde38a982",
+  "bundle_filename": "document-count-1e54c4ff-after-6a8cd555.bundle",
+  "original_full_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_external_driver": {
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "bases": [
+    {
+      "kind": "full",
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+      "bytes": 28912,
+      "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967",
+      "copy_name": "P1-full-v2-packager.py.original",
+      "output_name": "package_original_repository_truth_1e54c4_v1.py",
+      "patch_name": "full-P1-v2-to-P2.patch",
+      "replacements": [
+        {
+          "old": "closed P1 repository-truth execution",
+          "new": "closed P2 repository-truth execution",
+          "count": 1
+        },
+        {
+          "old": "\"final-repository-truth-offline-6a8cd5-v2\"",
+          "new": "\"final-repository-truth-offline-1e54c4-v1\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-repository-truth-6a8cd5-v2-prci\"",
+          "new": "\"package-original-repository-truth-1e54c4-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "\nHEAD = \"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "\nHEAD = \"1e54c4ff66a92827c83bea8715f59f6b299e98cf\"",
+          "count": 1
+        },
+        {
+          "old": "\nTREE = \"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "\nTREE = \"2c0716f9165f7cbc31ce8eae17f17bf2643d30cb\"",
+          "count": 1
+        },
+        {
+          "old": "SOURCE_SHA256 = \"cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5\"",
+          "new": "SOURCE_SHA256 = \"c68a3dbad6e014c7195d9764372aa6a3a887eafc5a7571957bc20b25e1d022e5\"",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_BYTES = 8575",
+          "new": "BUNDLE_BYTES = 729",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_SHA256 = \"cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389\"",
+          "new": "BUNDLE_SHA256 = \"d83ad4783c69a00d648a4e2d91d7d0ec8899b1dbe44f0fbeec070d9fde38a982\"",
+          "count": 1
+        },
+        {
+          "old": "recorded P1 bundle differs",
+          "new": "recorded P2 bundle differs",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994959410",
+          "count": 2
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-index-v1",
+          "new": "trnm-P2-original-repository-truth-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-completion-v1",
+          "new": "trnm-P2-original-repository-truth-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-repository-truth-6a8cd5-v2.zip\"",
+          "new": "\"original-repository-truth-1e54c4-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "expected_constant_changes": 14
+    },
+    {
+      "kind": "external",
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+      "bytes": 14207,
+      "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811",
+      "copy_name": "P1-external-packager.py.original",
+      "output_name": "package_original_external_evidence_1e54c4_v1.py",
+      "patch_name": "external-P1-to-P2.patch",
+      "replacements": [
+        {
+          "old": "\"final-external-evidence-existing-source-6a8cd5-v2\"",
+          "new": "\"final-external-evidence-existing-source-1e54c4-v2\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-external-evidence-6a8cd5-v1-prci\"",
+          "new": "\"package-original-external-evidence-1e54c4-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "HEAD=\"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "HEAD=\"1e54c4ff66a92827c83bea8715f59f6b299e98cf\"",
+          "count": 1
+        },
+        {
+          "old": "TREE=\"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "TREE=\"2c0716f9165f7cbc31ce8eae17f17bf2643d30cb\"",
+          "count": 1
+        },
+        {
+          "old": "operator-pinned P1 external lane",
+          "new": "operator-pinned P2 external lane",
+          "count": 1
+        },
+        {
+          "old": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "new": "c68a3dbad6e014c7195d9764372aa6a3a887eafc5a7571957bc20b25e1d022e5",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994959410",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-index-v1",
+          "new": "trnm-P2-original-external-evidence-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-completion-v1",
+          "new": "trnm-P2-original-external-evidence-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-external-evidence-6a8cd5-v1.zip\"",
+          "new": "\"original-external-evidence-1e54c4-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "expected_constant_changes": 10
+    }
+  ],
+  "actual_P1_live_receipts_read": false,
+  "actual_P2_terminal_summary_sha256": null,
+  "packagers_executed": false,
+  "stage_source_git_network_test_actions": false
+}

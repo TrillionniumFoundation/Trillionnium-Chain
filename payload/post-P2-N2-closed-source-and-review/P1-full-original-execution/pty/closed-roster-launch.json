@@ -1,0 +1,21 @@
+{
+  "audit_recorded": true,
+  "automatic_retry": false,
+  "host": "rog",
+  "persistent_across_runtime_restart": true,
+  "reused": false,
+  "session_id": "dpty-4dd788e4ba4a08635195e0e5a22775d658668df4a255ce13cba0194d5d8d08b0",
+  "status": {
+    "boot": "fcdd2477-a952-4ef2-9bdc-2237255080f1",
+    "bytes_seen": 2950,
+    "bytes_stored": 2950,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794656059147,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 2706598,
+    "pid": 2706599,
+    "state": "exited"
+  }
+}

@@ -1,0 +1,232 @@
+{
+  "schema": "trnm-policy-prefix-final-contract-validation-v1",
+  "status": "PASS",
+  "steps": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.04912686347961426,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/preflight.stdout",
+        "bytes": 176,
+        "sha256": "2e2cc8c651ed80aea9b31e2484dd67b974fce0253bfd36b004f670dcee642dfc"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "changed-paths-before",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.2087087631225586,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/changed-paths-before.stdout",
+        "bytes": 493,
+        "sha256": "c202a268deff194a790c2234107246c29623d5d2805fd7857c79244da7ee97ca"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/changed-paths-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "actual-corpus",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.6976189613342285,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-corpus.stdout",
+        "bytes": 558,
+        "sha256": "4900497da1e909d890edcce4f18af42a7385257351fdc971d1453e9945ede60e"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-corpus.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "actual-repository-including-ci-contract",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "elapsed_seconds": 9.011628150939941,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-repository-including-ci-contract.stdout",
+        "bytes": 307,
+        "sha256": "6c792923559b5e03ab060ceb02dbe59d877a7f08709aa560ed57ffca9b960699"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-repository-including-ci-contract.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.17425894737243652,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/diff-check.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/diff-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "errors": [],
+  "source_is_uncommitted_component": true,
+  "hosted_qualification": false,
+  "source_before": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 523769,
+      "sha256": "983a1fedd7e90c515e6a33581385541afefdfc69cc06ee63315edcd368ddbf2e"
+    },
+    "config/pon/pq128-lifetime-composition-current-v3.json": {
+      "bytes": 13647,
+      "sha256": "217266780480623cfec459eb61b533f437690c1234cd0b78e49902a78321eab5"
+    },
+    "config/pon/pq128-source-correspondence-current-v2.json": {
+      "bytes": 3782,
+      "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0"
+    },
+    "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md": {
+      "bytes": 57076,
+      "sha256": "cc44eeae1dc20baecc0a0371494f8f3fe06f6732090e8805756d4b8de3bbeb2d"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 1153099,
+      "sha256": "02301a593700ac92d6d412ba5265bde2cb8dca30350122c28dd83f9089513a02"
+    },
+    "docs/security/PQ128_LIFETIME_BUDGET_V1.md": {
+      "bytes": 36093,
+      "sha256": "4e84e389686568106be0f728bd9c9e20ef53cb0798ed4ebe3c74fe328ae9a064"
+    },
+    "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md": {
+      "bytes": 25102,
+      "sha256": "e7a9dc004f1cdf3acf42cd26e958d338d1878f6b10f9705f41c74b91e82ed5d1"
+    },
+    "scripts/ci/pq_lifetime_composition.py": {
+      "bytes": 28724,
+      "sha256": "a61b604e699e91171102490e12b576c8693b64cec96b26eac9c90e6976d54e23"
+    },
+    "scripts/ci/pq_lifetime_current_v2.py": {
+      "bytes": 10522,
+      "sha256": "f8871844501054caf62de14a33330817a517ccefa60d538c0618364761c17401"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 438782,
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    }
+  },
+  "corpus": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 2606,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "repository": {
+    "activation": false,
+    "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "local_links": 8604,
+    "normal_dependency_edges": 27,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1616,
+    "source_state": "dirty-candidate",
+    "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "workspace_packages": 26
+  },
+  "source_after": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 523769,
+      "sha256": "983a1fedd7e90c515e6a33581385541afefdfc69cc06ee63315edcd368ddbf2e"
+    },
+    "config/pon/pq128-lifetime-composition-current-v3.json": {
+      "bytes": 13647,
+      "sha256": "217266780480623cfec459eb61b533f437690c1234cd0b78e49902a78321eab5"
+    },
+    "config/pon/pq128-source-correspondence-current-v2.json": {
+      "bytes": 3782,
+      "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0"
+    },
+    "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md": {
+      "bytes": 57076,
+      "sha256": "cc44eeae1dc20baecc0a0371494f8f3fe06f6732090e8805756d4b8de3bbeb2d"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 1153099,
+      "sha256": "02301a593700ac92d6d412ba5265bde2cb8dca30350122c28dd83f9089513a02"
+    },
+    "docs/security/PQ128_LIFETIME_BUDGET_V1.md": {
+      "bytes": 36093,
+      "sha256": "4e84e389686568106be0f728bd9c9e20ef53cb0798ed4ebe3c74fe328ae9a064"
+    },
+    "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md": {
+      "bytes": 25102,
+      "sha256": "e7a9dc004f1cdf3acf42cd26e958d338d1878f6b10f9705f41c74b91e82ed5d1"
+    },
+    "scripts/ci/pq_lifetime_composition.py": {
+      "bytes": 28724,
+      "sha256": "a61b604e699e91171102490e12b576c8693b64cec96b26eac9c90e6976d54e23"
+    },
+    "scripts/ci/pq_lifetime_current_v2.py": {
+      "bytes": 10522,
+      "sha256": "f8871844501054caf62de14a33330817a517ccefa60d538c0618364761c17401"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 438782,
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    }
+  },
+  "source_before_after_equal": true,
+  "prior_helper_name_error_preserved": "../final-document-and-corpus-v1/summary.json"
+}

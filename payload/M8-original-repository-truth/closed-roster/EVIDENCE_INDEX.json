@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-M8-closed-full-roster-observation-index-v1",
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/roster-observer.py",
+      "bytes": 4721,
+      "sha256": "bddbe214db2138a3e8575205f0c811193679d41bcc91aaaf7d99e3284c805c6d"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/roster-observer.stdout",
+      "bytes": 23832,
+      "sha256": "4e46dfc8a30d18fa69db82eec2f0ea2c54454db1d97b92fe0044c07808f7d06e"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/roster-observer-launch.json",
+      "bytes": 553,
+      "sha256": "1d4b815ff09c25af2a0c8f94e440a71259b8e955b7ff40807d1c53dd4f8b9360"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/roster-observer-terminal-pages.json",
+      "bytes": 2001,
+      "sha256": "c91948beae298dfa44256472cc95268d7412f6ff32606454431d724033d59b56"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/root-terminal-handoff.json",
+      "bytes": 568,
+      "sha256": "2b13aa98611315ad020ac753ae0f48bdc84a3e822d4978b3a9c05e66778f3027"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/closed-roster-observation.json",
+      "bytes": 31001,
+      "sha256": "99bf8846952e487a4c568ce74bed879a4d7a40fb1a2bbf2affaf11f04cced9b5"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/closed-original-logs.json",
+      "bytes": 2753,
+      "sha256": "06158147ff653c944e6670a91ac294464d64b5cf21038ba972a9dcc3bfedce2a"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1/README.md",
+      "bytes": 535,
+      "sha256": "49d08452a3193729051840cd944e925d31e31a327d5f79e193e692ee02ebf82a"
+    }
+  ]
+}

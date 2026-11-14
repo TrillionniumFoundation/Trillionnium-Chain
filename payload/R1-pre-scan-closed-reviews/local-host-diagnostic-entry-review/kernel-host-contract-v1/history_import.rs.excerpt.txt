@@ -1,0 +1,704 @@
+1: //! History replay under the original Node-owned CPU account and crash epoch.
+2: //! Shared ordinary owners release their writer for CPU refill, decoding, W1
+3: //! and bounded M06 execution. The original owner checks the private execution
+4: //! artifact and retains the original transaction/readback publication fences.
+5: use super::{
+6:     ensure, hex_packet_for_context, now, public_v3, Hash, Node, Packet, Page, Result, Settings,
+7:     WorkCheckedPacket, MAX_FRAME,
+8: };
+9: use public_v3::{request_observation::TaskObservation, SubmitPhase};
+10: mod attribution;
+11: use attribution::{observe_epoch, CpuWaitGuard, HistoryEpochSubstep, NativeAttribution};
+12: mod observation;
+13: pub(super) use observation::{observe_host, HistoryHostPhase};
+14: pub use observation::{HistoryImportObservationSnapshot, HistoryImportObserver};
+15: use std::{
+16:     sync::{Mutex, TryLockError},
+17:     thread,
+18:     time::{Duration, Instant},
+19: };
+20: 
+21: pub(super) const PAGE_BUDGET: Duration = Duration::from_secs(30);
+22: pub(super) const SYNC_BUDGET: Duration = Duration::from_secs(300);
+23: 
+24: pub(super) struct Control<'a> {
+25:     pub deadline: Instant,
+26:     pub resource: &'a (dyn Fn() -> Result<()> + Sync),
+27: }
+28: impl Control<'_> {
+29:     fn alive(&self) -> Result<()> {
+30:         ensure(Instant::now() < self.deadline, "PUBLIC_REQUEST_DEADLINE")
+31:     }
+32:     fn check(&self) -> Result<()> {
+33:         self.alive()?;
+34:         (self.resource)()?;
+35:         // A fresh Host/resource observation can itself outlive the caller's
+36:         // original absolute deadline. Preserve resource errors, but do not
+37:         // grant the next native action from a successful late observation.
+38:         self.alive()
+39:     }
+40: }
+41: 
+42: /// The public wrapper still owes its original final Host observation after
+43: /// native cleanup. That observation can itself cross the request deadline.
+44: /// Preserve its error priority and every existing native error; only an
+45: /// otherwise successful outward result receives the final time fence.
+46: pub(super) fn finish_with_resource<T>(
+47:     native: Result<T>,
+48:     deadline: Instant,
+49:     resource: impl FnOnce() -> Result<()>,
+50: ) -> Result<T> {
+51:     resource()?;
+52:     native.and_then(|value| {
+53:         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+54:         Ok(value)
+55:     })
+56: }
+57: 
+58: pub(super) enum Owner<'a> {
+59:     Exclusive(&'a mut Node),
+60:     Shared(&'a Mutex<Node>),
+61: }
+62: impl Owner<'_> {
+63:     fn with<T>(
+64:         &mut self,
+65:         control: &Control<'_>,
+66:         action: impl FnOnce(&mut Node) -> Result<T>,
+67:     ) -> Result<T> {
+68:         match self {
+69:             Self::Exclusive(node) => {
+70:                 control.check()?;
+71:                 action(node)
+72:             }
+73:             Self::Shared(node) => loop {
+74:                 control.check()?;
+75:                 match node.try_lock() {
+76:                     Ok(mut guard) => return action(&mut guard),
+77:                     Err(TryLockError::Poisoned(_)) => return Err("OWNER_POISONED".into()),
+78:                     Err(TryLockError::WouldBlock) => thread::sleep(
+79:                         Duration::from_millis(1)
+80:                             .min(control.deadline.saturating_duration_since(Instant::now())),
+81:                     ),
+82:                 }
+83:             },
+84:         }
+85:     }
+86: 
+87:     fn finish(
+88:         &mut self,
+89:         control: &Control<'_>,
+90:         cpu: &public_v3::ServiceMutationCpuDomain,
+91:     ) -> Result<()> {
+92:         // Closing an already settled scope is cleanup, never new proof work.
+93:         // Try once even after cancellation. Do not wait beyond the original
+94:         // deadline for a busy writer: Drop then fences the original account,
+95:         // and the persisted active marker prevents restart from erasing debt.
+96:         match self {
+97:             Self::Exclusive(node) => node.finish_remote_history_cpu_epoch(cpu),
+98:             Self::Shared(node) => loop {
+99:                 match node.try_lock() {
+100:                     Ok(mut guard) => return guard.finish_remote_history_cpu_epoch(cpu),
+101:                     Err(TryLockError::Poisoned(_)) => return Err("OWNER_POISONED".into()),
+102:                     Err(TryLockError::WouldBlock) => {
+103:                         ensure(
+104:                             Instant::now() < control.deadline,
+105:                             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+106:                         )?;
+107:                         thread::sleep(
+108:                             Duration::from_millis(1)
+109:                                 .min(control.deadline.saturating_duration_since(Instant::now())),
+110:                         );
+111:                     }
+112:                 }
+113:             },
+114:         }
+115:     }
+116: }
+117: 
+118: struct EpochGuard {
+119:     cpu: public_v3::ServiceMutationCpuDomain,
+120:     closed: bool,
+121: }
+122: impl Drop for EpochGuard {
+123:     fn drop(&mut self) {
+124:         if !self.closed {
+125:             self.cpu.abandon_history_epoch();
+126:         }
+127:     }
+128: }
+129: 
+130: fn scoped<T>(
+131:     owner: &mut Owner<'_>,
+132:     control: &Control<'_>,
+133:     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
+134: ) -> Result<T> {
+135:     scoped_observed(owner, control, None, None, native)
+136: }
+137: 
+138: fn scoped_observed<T>(
+139:     owner: &mut Owner<'_>,
+140:     control: &Control<'_>,
+141:     observation: Option<&TaskObservation>,
+142:     attribution: Option<&NativeAttribution>,
+143:     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
+144: ) -> Result<T> {
+145:     if let Some(record) = attribution {
+146:         record.owner(match owner {
+147:             Owner::Exclusive(_) => "exclusive",
+148:             Owner::Shared(_) => "shared",
+149:         });
+150:     }
+151:     let cpu = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochOpen, || {
+152:         owner.with(control, |node| {
+153:             // #498's continuous-mode deny gate remains before any paid work.
+154:             // Generic scalar begin is not the continuous durable-operation journal.
+155:             let cpu = observe_epoch(attribution, HistoryEpochSubstep::DomainLookup, || {
+156:                 node.remote_history_cpu_domain()
+157:             })?;
+158:             observe_epoch(attribution, HistoryEpochSubstep::DurableBegin, || {
+159:                 node.begin_remote_history_cpu_epoch()
+160:             })?;
+161:             Ok(cpu)
+162:         })
+163:     })?;
+164:     let mut guard = EpochGuard { cpu, closed: false };
+165:     cut("epoch");
+166:     let result = native(owner, &guard.cpu);
+167:     // Test-only observation after all native CPU scopes have settled, before
+168:     // an unclean last-epoch close deliberately fences this original account.
+169:     #[cfg(all(test, target_os = "linux"))]
+170:     cut("before_epoch_close");
+171:     let close = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochClose, || {
+172:         owner.finish(control, &guard.cpu)
+173:     });
+174:     if close.is_ok() {
+175:         guard.closed = true;
+176:     }
+177:     close?;
+178:     // Cleanup is mandatory even after expiry. Only a successful outward result
+179:     // receives this final time fence: an existing native/cleanup error keeps
+180:     // its original precedence, and already committed facts remain committed.
+181:     result.and_then(|value| {
+182:         control.alive()?;
+183:         Ok(value)
+184:     })
+185: }
+186: 
+187: fn begin_cpu(
+188:     cpu: &public_v3::ServiceMutationCpuDomain,
+189:     control: &Control<'_>,
+190: ) -> Result<public_v3::ServiceMutationCpuOperation> {
+191:     begin_cpu_observed(cpu, control, None)
+192: }
+193: 
+194: fn begin_cpu_observed(
+195:     cpu: &public_v3::ServiceMutationCpuDomain,
+196:     control: &Control<'_>,
+197:     attribution: Option<&NativeAttribution>,
+198: ) -> Result<public_v3::ServiceMutationCpuOperation> {
+199:     // Keep a depleted peer from owning the poller's entire (possibly long)
+200:     // runtime. This local wait ceiling can only shorten the original end.
+201:     let wait_end = control
+202:         .deadline
+203:         .min(Instant::now() + Duration::from_secs(2));
+204:     let mut diagnostic =
+205:         attribution.map(|record| CpuWaitGuard::new(record, control.deadline, wait_end));
+206:     let result = (|| loop {
+207:         control.check()?;
+208:         ensure(Instant::now() < wait_end, "PUBLIC_MUTATION_CPU_BUDGET")?;
+209:         if let Some(record) = &mut diagnostic {
+210:             record.reserve_started();
+211:         }
+212:         let reservation = cpu.begin();
+213:         if let Some(record) = &mut diagnostic {
+214:             record.reserve_returned(&reservation);
+215:         }
+216:         match reservation {
+217:             Ok(operation) => return Ok(operation),
+218:             Err(error) if error.is(crate::ErrorCode::PublicMutationCpuBudget) => {
+219:                 // No Node guard; the fixed business deadline never advances.
+220:                 cut("cpu_wait");
+221:                 let duration = Duration::from_millis(2)
+222:                     .min(wait_end.saturating_duration_since(Instant::now()));
+223:                 let start = diagnostic
+224:                     .as_mut()
+225:                     .map(|record| record.sleep_started(duration));
+226:                 thread::sleep(duration);
+227:                 if let (Some(record), Some(start)) = (&mut diagnostic, start) {
+228:                     record.sleep_completed(start);
+229:                 }
+230:             }
+231:             Err(error) => return Err(error),
+232:         }
+233:     })();
+234:     if let Some(record) = diagnostic {
+235:         record.finish(&result);
+236:     }
+237:     result
+238: }
+239: 
+240: fn metered<T>(
+241:     cpu: &public_v3::ServiceMutationCpuDomain,
+242:     control: &Control<'_>,
+243:     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
+244: ) -> Result<T> {
+245:     metered_observed(cpu, control, None, None, native)
+246: }
+247: 
+248: fn metered_observed<T>(
+249:     cpu: &public_v3::ServiceMutationCpuDomain,
+250:     control: &Control<'_>,
+251:     observation: Option<&TaskObservation>,
+252:     attribution: Option<&NativeAttribution>,
+253:     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
+254: ) -> Result<T> {
+255:     let operation =
+256:         super::observe_submit_phase(observation, SubmitPhase::CpuWait, || match attribution {
+257:             Some(record) => begin_cpu_observed(cpu, control, Some(record)),
+258:             None => begin_cpu(cpu, control),
+259:         })?;
+260:     let result = operation
+261:         .bind_history_request(control.deadline)
+262:         .and_then(|()| native(&operation));
+263:     super::observe_submit_phase(observation, SubmitPhase::CpuSettle, || {
+264:         let receipt = operation.finish();
+265:         ensure(
+266:             !receipt.accounting_unavailable,
+267:             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+268:         )
+269:     })?;
+270:     // Settlement must retain all paid CPU before any late success is refused.
+271:     // The cheap original-deadline check is not another Host observation and
+272:     // cannot replace an existing native or settlement error.
+273:     result.and_then(|value| {
+274:         control.alive()?;
+275:         Ok(value)
+276:     })
+277: }
+278: 
+279: fn validate_page(settings: &Settings, page: &Page, tip: Hash, after: Hash) -> Result<()> {
+280:     let schema = if settings.is_native_pq_application_v6() {
+281:         "pon-native-pq-history-v6"
+282:     } else {
+283:         "pon-native-history-v1"
+284:     };
+285:     ensure(
+286:         page.schema == schema
+287:             && page.network == hex::encode(settings.network())
+288:             && page.parameters == hex::encode(settings.parameters())
+289:             && page.genesis == hex::encode(settings.genesis()),
+290:         "PAGE_CONTEXT",
+291:     )?;
+292:     ensure(
+293:         page.tip == hex::encode(tip)
+294:             && page.after == hex::encode(after)
+295:             && page.packets.len() <= 16,
+296:         "PAGE_CURSOR",
+297:     )?;
+298:     ensure(
+299:         !page.packets.is_empty() || (after == tip && page.complete),
+300:         "EMPTY_PAGE",
+301:     )?;
+302:     let mut total = 0usize;
+303:     for packet in &page.packets {
+304:         total = total.checked_add(packet.len()).ok_or("PAGE_LIMIT")?;
+305:         ensure(total <= MAX_FRAME - 1024, "PAGE_LIMIT")?;
+306:     }
+307:     Ok(())
+308: }
+309: 
+310: fn verify_history_work(
+311:     packet: Packet,
+312:     progress: &public_v3::ServiceMutationCpuCheckpoint,
+313:     owns_node_mutex: bool,
+314:     control: &Control<'_>,
+315: ) -> Result<WorkCheckedPacket> {
+316:     WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
+317:         control.alive()?;
+318:         // This checks the actual Host once at EVERY native W1 boundary and
+319:         // again throughout any original refill wait. A second Host read here
+320:         // used to follow selected boundaries without intervening native work.
+321:         // Only that duplicate is removed; no boundary or resource verdict is
+322:         // skipped, cached, weakened or promoted to mathematical invalidity.
+323:         progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
+324:         if matches!(
+325:             point,
+326:             trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
+327:                 row: 4,
+328:                 column: 0,
+329:                 inner: 0,
+330:             }
+331:         ) {
+332:             // Noise/matrix preparation and half the real transcript have
+333:             // already executed. This is not a pre-verification mock cut.
+334:             cut("w1");
+335:         }
+336:         Ok(())
+337:     })
+338: }
+339: 
+340: fn admit_packet(
+341:     owner: &mut Owner<'_>,
+342:     cpu: &public_v3::ServiceMutationCpuDomain,
+343:     packet: Packet,
+344:     clock: u64,
+345:     control: &Control<'_>,
+346:     activate: Option<Hash>,
+347:     observations: (Option<&TaskObservation>, Option<&NativeAttribution>),
+348: ) -> Result<(Hash, bool, Option<Hash>)> {
+349:     let (observation, attribution) = observations;
+350:     if let Some(tip) = activate {
+351:         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
+352:     }
+353:     let shared_owner = matches!(owner, Owner::Shared(_));
+354:     metered_observed(cpu, control, observation, attribution, |operation| {
+355:         let progress = operation.checkpoint_handle();
+356:         // history_checkpoint checks the original deadline and actual Host
+357:         // before its CPU observation, then again throughout every refill wait.
+358:         // Keep that check at every native progress boundary; a second adjacent
+359:         // control.check() performed no ledger work and duplicated Host reads.
+360:         let held_check = || progress.history_checkpoint(shared_owner, &|| control.check());
+361:         // No mutex is held at the detached boundary. This does not qualify
+362:         // unfinished/replayed work: only the same operation's verified unique
+363:         // native completion may receive a wait from the original CPU sampler.
+364:         let detached_check = || progress.history_checkpoint(false, &|| control.check());
+365:         detached_check()?;
+366:         let (existing, permit) =
+367:             super::observe_submit_phase(observation, SubmitPhase::Context, || {
+368:                 owner.with(control, |node| {
+369:                     let existing = node.precheck_public_admission_context_with_progress(
+370:                         &packet,
+371:                         clock,
+372:                         &mut |_| held_check(),
+373:                     )?;
+374:                     let permit = if existing.is_none() {
+375:                         node.begin_owner_work(&packet)?
+376:                     } else {
+377:                         None
+378:                     };
+379:                     Ok((existing, permit))
+380:                 })
+381:             })?;
+382:         if let Some(id) = existing {
+383:             let active = activate
+384:                 .map(|tip| {
+385:                     super::observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+386:                         activate_packet(owner, tip, clock, control, operation)
+387:                     })
+388:                 })
+389:                 .transpose()?;
+390:             return Ok((id, false, active));
+391:         }
+392:         let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
+393:             verify_history_work(packet, &progress, false, control)
+394:         })?;
+395:         // Complete W1 alone cannot claim priority. The same original native
+396:         // owner will signal full parent/task/M06/output validation through
+397:         // this checkpoint; its packet codec and all commit fences stay local.
+398:         detached_check()?;
+399:         let execution_progress = |point| {
+400:             held_check()?;
+401:             if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
+402:                 cut("m06");
+403:             }
+404:             Ok(())
+405:         };
+406:         let execution = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+407:             &execution_progress,
+408:             operation.worker_accounting(),
+409:         );
+410:         let id = match owner {
+411:             Owner::Shared(node) => {
+412:                 let detached_progress = |point| {
+413:                     detached_check()?;
+414:                     if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
+415:                         cut("m06");
+416:                     }
+417:                     Ok(())
+418:                 };
+419:                 let (guard, id, _) = super::admit_shared_checked(
+420:                     node,
+421:                     checked,
+422:                     permit,
+423:                     &mut |_| held_check(),
+424:                     super::SharedAdmissionExecution {
+425:                         held: &execution,
+426:                         detached_progress: &detached_progress,
+427:                         before_writer: &|| progress.history_prepare_writer(&|| control.check()),
+428:                         activation_parent: None,
+429:                     },
+430:                     || Ok(clock),
+431:                     super::AdmissionDispatchContext {
+432:                         observation,
+433:                         completion_cpu: Some(&progress),
+434:                     },
+435:                 )?;
+436:                 drop(guard);
+437:                 id
+438:             }
+439:             Owner::Exclusive(_) => {
+440:                 super::observe_submit_phase(observation, SubmitPhase::Admission, || {
+441:                     owner.with(control, |node| {
+442:                         let checked = node.attach_owner_work(checked, permit)?;
+443:                         super::execution_observation::run(
+444:                             observation,
+445:                             &execution,
+446:                             super::execution_observation::Scope::Held,
+447:                             |execution| {
+448:                                 node.admit_work_checked_with_completion(
+449:                                     checked,
+450:                                     clock,
+451:                                     execution,
+452:                                     Some(&progress),
+453:                                 )
+454:                             },
+455:                         )
+456:                     })
+457:                 })?
+458:             }
+459:         };
+460:         // Test-only cut is after the actual native COMMIT, before CPU settle.
+461:         cut("admitted");
+462:         let active = super::observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+463:             // Admission has released its Node guard and committed the complete
+464:             // native relation. Only that same operation's original completion
+465:             // marker may wait for its paid headroom before activation/settle.
+466:             // A failure here leaves the committed packet intact. Settlement
+467:             // releases this marker before the next packet reserves for itself.
+468:             progress.history_prepare_writer(&|| control.check())?;
+469:             activate
+470:                 .map(|tip| activate_packet(owner, tip, clock, control, operation))
+471:                 .transpose()
+472:         })?;
+473:         Ok((id, true, active))
+474:     })
+475: }
+476: 
+477: fn activate_packet(
+478:     owner: &mut Owner<'_>,
+479:     tip: Hash,
+480:     clock: u64,
+481:     control: &Control<'_>,
+482:     operation: &public_v3::ServiceMutationCpuOperation,
+483: ) -> Result<Hash> {
+484:     let owns_node_mutex = matches!(owner, Owner::Shared(_));
+485:     let held_checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
+486:     operation.history_checkpoint(false, &|| control.check())?;
+487:     let active = owner.with(control, |node| {
+488:         node.activate_observed_with_termination(
+489:             tip,
+490:             clock,
+491:             &mut || {
+492:                 cut("activation_progress");
+493:                 held_checkpoint()
+494:             },
+495:             Some(&operation.checkpoint_handle()),
+496:         )
+497:     })?;
+498:     cut("activated");
+499:     operation.history_checkpoint(false, &|| control.check())?;
+500:     Ok(active)
+501: }
+502: 
+503: pub(super) fn receive(
+504:     owner: Owner<'_>,
+505:     page: Page,
+506:     tip: Hash,
+507:     after: Hash,
+508:     clock: u64,
+509:     control: Control<'_>,
+510: ) -> Result<Hash> {
+511:     receive_observed(owner, page, tip, after, clock, control, None)
+512: }
+513: 
+514: pub(super) fn receive_observed(
+515:     mut owner: Owner<'_>,
+516:     page: Page,
+517:     tip: Hash,
+518:     after: Hash,
+519:     clock: u64,
+520:     control: Control<'_>,
+521:     observation: Option<&HistoryImportObserver>,
+522: ) -> Result<Hash> {
+523:     if let Some(observer) = observation {
+524:         observer.enter(tip, after, page.packets.len());
+525:     }
+526:     let page_observation = observation.map(HistoryImportObserver::page);
+527:     let page_attribution = observation.map(HistoryImportObserver::native_page);
+528:     super::observe_submit_phase(page_observation, SubmitPhase::HistoryImport, || {
+529:         let (codec, continuous) =
+530:             super::observe_submit_phase(page_observation, SubmitPhase::Context, || {
+531:                 owner.with(&control, |node| {
+532:                     validate_page(node.settings(), &page, tip, after)?;
+533:                     Ok((node.settings().packet_codec_context(), node.is_continuous()))
+534:                 })
+535:             })?;
+536:         if continuous {
+537:             // The exclusive owner may use its exact signed receiver pair for one
+538:             // complete extension. General pages and the shared discovery poller
+539:             // still need their own durable History authority and remain closed.
+540:             ensure(
+541:                 matches!(owner, Owner::Exclusive(_))
+542:                     && page.complete
+543:                     && page.packets.len() == 1
+544:                     && page.next == hex::encode(tip),
+545:                 "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+546:             )?;
+547:             let text = &page.packets[0];
+548:             ensure(
+549:                 text.len() <= 2_097_152
+550:                     && text.len().is_multiple_of(2)
+551:                     && text
+552:                         .bytes()
+553:                         .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+554:                 "PACKET_HEX",
+555:             )?;
+556:             let raw = hex::decode(text).map_err(|_| crate::Error::from("PACKET_HEX"))?;
+557:             return owner.with(&control, |node| {
+558:                 node.receive_owned_continuous_history_packet(&raw, tip, after, clock, &|| {
+559:                     control.check()
+560:                 })
+561:             });
+562:         }
+563:         scoped_observed(
+564:             &mut owner,
+565:             &control,
+566:             page_observation,
+567:             page_attribution,
+568:             |owner, cpu| {
+569:                 let (packets, next) = metered_observed(
+570:                     cpu,
+571:                     &control,
+572:                     page_observation,
+573:                     page_attribution,
+574:                     |operation| {
+575:                         super::observe_submit_phase(page_observation, SubmitPhase::Decode, || {
+576:                             let mut packets = Vec::with_capacity(page.packets.len());
+577:                             let mut next = after;
+578:                             for (index, raw) in page.packets.iter().enumerate() {
+579:                                 control.check()?;
+580:                                 operation.checkpoint()?;
+581:                                 // The caller's fixed target ends this page.
+582:                                 ensure(next != tip, "PAGE_COMPLETE")?;
+583:                                 let packet = hex_packet_for_context(raw, &codec)?;
+584:                                 ensure(packet.header.parent == next, "PAGE_PARENT")?;
+585:                                 next = packet.id()?;
+586:                                 if let Some(observer) = observation {
+587:                                     observer.decoded_packet(index, next);
+588:                                 }
+589:                                 packets.push(packet);
+590:                             }
+591:                             ensure(
+592:                                 page.next == hex::encode(next) && page.complete == (next == tip),
+593:                                 "PAGE_COMPLETE",
+594:                             )?;
+595:                             control.check()?;
+596:                             operation.checkpoint()?;
+597:                             Ok((packets, next))
+598:                         })
+599:                     },
+600:                 )?;
+601:                 cut("decoded");
+602:                 let count = packets.len();
+603:                 for (index, packet) in packets.into_iter().enumerate() {
+604:                     let activate = (page.complete && index + 1 == count).then_some(tip);
+605:                     let packet_observation =
+606:                         observation.and_then(|observer| observer.packet(index));
+607:                     let packet_attribution =
+608:                         observation.and_then(|observer| observer.native_packet(index));
+609:                     super::observe_submit_phase(
+610:                         packet_observation,
+611:                         SubmitPhase::HistoryImport,
+612:                         || {
+613:                             admit_packet(
+614:                                 owner,
+615:                                 cpu,
+616:                                 packet,
+617:                                 clock,
+618:                                 &control,
+619:                                 activate,
+620:                                 (packet_observation, packet_attribution),
+621:                             )
+622:                         },
+623:                     )?;
+624:                 }
+625:                 if page.complete && count == 0 {
+626:                     metered_observed(cpu, &control, None, page_attribution, |operation| {
+627:                         super::observe_submit_phase(
+628:                             page_observation,
+629:                             SubmitPhase::SubmitResult,
+630:                             || activate_packet(owner, tip, clock, &control, operation),
+631:                         )
+632:                     })?;
+633:                 }
+634:                 Ok(next)
+635:             },
+636:         )
+637:     })
+638: }
+639: 
+640: /// The pinned public poller uses the same short-owner importer and durable
+641: /// epoch. Its packet is already bounded/decoded, but all native checks and W1
+642: /// remain charged to the original account, including ordinary standalone use.
+643: pub(crate) fn admit_shared_packet(
+644:     node: &Mutex<Node>,
+645:     packet: Packet,
+646:     deadline: Instant,
+647:     resource: &(dyn Fn() -> Result<()> + Sync),
+648:     activate: Option<Hash>,
+649: ) -> Result<(bool, Option<Hash>)> {
+650:     if let Some(tip) = activate {
+651:         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
+652:     }
+653:     let control = Control { deadline, resource };
+654:     let mut owner = Owner::Shared(node);
+655:     owner.with(&control, |node| {
+656:         ensure(
+657:             !node.is_continuous(),
+658:             "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+659:         )?;
+660:         node.public_service_cpu_domain()?;
+661:         Ok(())
+662:     })?;
+663:     scoped(&mut owner, &control, |owner, cpu| {
+664:         admit_packet(owner, cpu, packet, now()?, &control, activate, (None, None))
+665:             .map(|(_, inserted, active)| (inserted, active))
+666:     })
+667: }
+668: 
+669: /// Complete a previously admitted locator using the original service account,
+670: /// durable History epoch and caller deadline. No proof work or new CPU domain
+671: /// is created for an empty page or a known Head response.
+672: pub(crate) fn complete_shared(
+673:     node: &Mutex<Node>,
+674:     tip: Hash,
+675:     deadline: Instant,
+676:     resource: &(dyn Fn() -> Result<()> + Sync),
+677: ) -> Result<Hash> {
+678:     let control = Control { deadline, resource };
+679:     let mut owner = Owner::Shared(node);
+680:     owner.with(&control, |node| {
+681:         ensure(
+682:             !node.is_continuous(),
+683:             "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+684:         )?;
+685:         node.public_service_cpu_domain()?;
+686:         Ok(())
+687:     })?;
+688:     scoped(&mut owner, &control, |owner, cpu| {
+689:         metered(cpu, &control, |operation| {
+690:             activate_packet(owner, tip, now()?, &control, operation)
+691:         })
+692:     })
+693: }
+694: 
+695: #[cfg(all(test, target_os = "linux"))]
+696: fn cut(stage: &'static str) {
+697:     tests::cut(stage);
+698: }
+699: #[cfg(not(all(test, target_os = "linux")))]
+700: fn cut(_stage: &'static str) {}
+701: 
+702: #[cfg(all(test, target_os = "linux"))]
+703: #[path = "history_import_tests.rs"]
+704: mod tests;

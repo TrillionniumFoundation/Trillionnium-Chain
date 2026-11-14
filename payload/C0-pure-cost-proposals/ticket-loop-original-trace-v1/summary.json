@@ -1,0 +1,506 @@
+{
+  "native_or_test_executed": false,
+  "observed_at": "2026-11-14T09:19:52.678406+00:00",
+  "results": [
+    {
+      "arch": "x64",
+      "groups": {
+        "/phases/1/attacker_workers_cpu_ns": {
+          "integer_values": 1,
+          "max": 354481431,
+          "min": 354481431,
+          "records": 1,
+          "sum": 354481431,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calling_thread_cpu_ns": {
+          "integer_values": 16,
+          "max": 25203114,
+          "min": 20313399,
+          "records": 16,
+          "sum": 354481431,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_search_ns": {
+          "integer_values": 335,
+          "max": 93451122,
+          "min": 0,
+          "records": 335,
+          "sum": 475479864,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 332,
+          "max": 282657,
+          "min": 4609,
+          "records": 332,
+          "sum": 13658895,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_trials": {
+          "integer_values": 335,
+          "max": 1993,
+          "min": 0,
+          "records": 335,
+          "sum": 80522,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/response/solve_trials": {
+          "integer_values": 319,
+          "max": 1993,
+          "min": 1,
+          "records": 319,
+          "sum": 76849,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_search_ns": {
+          "integer_values": 29,
+          "max": 210676,
+          "min": 7033,
+          "records": 29,
+          "sum": 1259138,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 29,
+          "max": 202908,
+          "min": 5731,
+          "records": 29,
+          "sum": 1198319,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_trials": {
+          "integer_values": 29,
+          "max": 1228,
+          "min": 4,
+          "records": 29,
+          "sum": 7220,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/response/solve_trials": {
+          "integer_values": 28,
+          "max": 1228,
+          "min": 4,
+          "records": 28,
+          "sum": 6246,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_search_ns": {
+          "integer_values": 1,
+          "max": 19316,
+          "min": 19316,
+          "records": 1,
+          "sum": 19316,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 1,
+          "max": 17503,
+          "min": 17503,
+          "records": 1,
+          "sum": 17503,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_trials": {
+          "integer_values": 1,
+          "max": 59,
+          "min": 59,
+          "records": 1,
+          "sum": 59,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/response/solve_trials": {
+          "integer_values": 1,
+          "max": 59,
+          "min": 59,
+          "records": 1,
+          "sum": 59,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_search_ns": {
+          "integer_values": 7,
+          "max": 143730,
+          "min": 6332,
+          "records": 7,
+          "sum": 420500,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 7,
+          "max": 142085,
+          "min": 5200,
+          "records": 7,
+          "sum": 410506,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_trials": {
+          "integer_values": 7,
+          "max": 805,
+          "min": 12,
+          "records": 7,
+          "sum": 2516,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/response/solve_trials": {
+          "integer_values": 7,
+          "max": 805,
+          "min": 12,
+          "records": 7,
+          "sum": 2516,
+          "unknown": 0
+        }
+      },
+      "original": {
+        "bytes": 12119117,
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+        "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0"
+      },
+      "phase_keys": [
+        "accounting_closed",
+        "attacker_workers_cpu_ns",
+        "attacker_workers_cpu_scope",
+        "attacks",
+        "business_receive_clock",
+        "business_started_ns",
+        "client_confirmation_latency_ns",
+        "client_confirmed_before_original_window_end",
+        "client_confirmed_transactions",
+        "completed_false_calls_at_confirmation",
+        "completed_false_calls_before_business",
+        "confirmation_ended_ns",
+        "final_meter",
+        "finite_business_target_met",
+        "full_native_state_equal",
+        "honest_head_successes_in_window",
+        "honest_heads",
+        "honest_history",
+        "honest_submissions",
+        "independent_client_confirmation",
+        "independent_final_confirmation_stage",
+        "independent_history_page_replay",
+        "independent_operator_accepted",
+        "independent_replay_and_confirmation_cpu_ns",
+        "independent_replay_and_confirmation_wall_ns",
+        "initial_meter",
+        "initial_state_root",
+        "initial_tip",
+        "invariant_target_met",
+        "maximum_honest_head_gap_ns",
+        "mode",
+        "no_attack_accepted",
+        "observations",
+        "overlap_demonstrated",
+        "overlapping_false_calls",
+        "production_activation",
+        "public_network_ready",
+        "reader_cpu_ns",
+        "receiver_matches_valid_honest_prefix",
+        "requested_window_ns",
+        "resource_fairness_qualified",
+        "scope",
+        "service",
+        "target",
+        "task",
+        "verification_errors",
+        "work_profile_qualified",
+        "workers"
+      ],
+      "phase_scalar_fields": {
+        "accounting_closed": true,
+        "attacker_workers_cpu_ns": 354481431,
+        "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+        "business_started_ns": 95342559,
+        "client_confirmation_latency_ns": null,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "completed_false_calls_at_confirmation": 319,
+        "completed_false_calls_before_business": 1,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "full_native_state_equal": false,
+        "honest_head_successes_in_window": 28,
+        "independent_client_confirmation": null,
+        "independent_final_confirmation_stage": null,
+        "independent_operator_accepted": false,
+        "independent_replay_and_confirmation_cpu_ns": 96067767,
+        "independent_replay_and_confirmation_wall_ns": 2498658826,
+        "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+        "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "invariant_target_met": true,
+        "maximum_honest_head_gap_ns": 297675357,
+        "mode": "from-zero-pressure",
+        "no_attack_accepted": true,
+        "overlap_demonstrated": false,
+        "overlapping_false_calls": 0,
+        "production_activation": false,
+        "public_network_ready": false,
+        "reader_cpu_ns": 18565070,
+        "receiver_matches_valid_honest_prefix": true,
+        "requested_window_ns": 4000000000,
+        "resource_fairness_qualified": false,
+        "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+        "work_profile_qualified": false,
+        "workers": 16
+      },
+      "selected_original_leaves": {
+        "bytes": 281350,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/ticket-loop-original-trace-v1/x64-selected-original-leaves.json",
+        "sha256": "3c30fb97a82c98d22c2745bf1bb2159c39f75fe35230bdda0840f8d155b3d1e5"
+      }
+    },
+    {
+      "arch": "arm64",
+      "groups": {
+        "/phases/1/attacker_workers_cpu_ns": {
+          "integer_values": 1,
+          "max": 337787584,
+          "min": 337787584,
+          "records": 1,
+          "sum": 337787584,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calling_thread_cpu_ns": {
+          "integer_values": 16,
+          "max": 22949368,
+          "min": 19806904,
+          "records": 16,
+          "sum": 337787584,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_search_ns": {
+          "integer_values": 476,
+          "max": 93608484,
+          "min": 0,
+          "records": 476,
+          "sum": 116227926,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 470,
+          "max": 201904,
+          "min": 2696,
+          "records": 470,
+          "sum": 13737288,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/metrics/solution_trials": {
+          "integer_values": 476,
+          "max": 1884,
+          "min": 0,
+          "records": 476,
+          "sum": 118806,
+          "unknown": 0
+        },
+        "/phases/1/attacks/[]/calls/[]/response/solve_trials": {
+          "integer_values": 460,
+          "max": 1884,
+          "min": 3,
+          "records": 460,
+          "sum": 116366,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_search_ns": {
+          "integer_values": 37,
+          "max": 221486,
+          "min": 4072,
+          "records": 37,
+          "sum": 1362422,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 37,
+          "max": 71152,
+          "min": 3024,
+          "records": 37,
+          "sum": 929464,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/metrics/solution_trials": {
+          "integer_values": 37,
+          "max": 641,
+          "min": 1,
+          "records": 37,
+          "sum": 7885,
+          "unknown": 0
+        },
+        "/phases/1/honest_heads/[]/response/solve_trials": {
+          "integer_values": 36,
+          "max": 641,
+          "min": 1,
+          "records": 36,
+          "sum": 7848,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_search_ns": {
+          "integer_values": 5,
+          "max": 20817,
+          "min": 5224,
+          "records": 5,
+          "sum": 74476,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 5,
+          "max": 19680,
+          "min": 3872,
+          "records": 5,
+          "sum": 68088,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/metrics/solution_trials": {
+          "integer_values": 5,
+          "max": 166,
+          "min": 9,
+          "records": 5,
+          "sum": 523,
+          "unknown": 0
+        },
+        "/phases/1/honest_history/[]/response/solve_trials": {
+          "integer_values": 5,
+          "max": 166,
+          "min": 9,
+          "records": 5,
+          "sum": 523,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_search_ns": {
+          "integer_values": 7,
+          "max": 78010,
+          "min": 5584,
+          "records": 7,
+          "sum": 212935,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_search_thread_cpu_ns": {
+          "integer_values": 7,
+          "max": 76528,
+          "min": 4488,
+          "records": 7,
+          "sum": 204040,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/metrics/solution_trials": {
+          "integer_values": 7,
+          "max": 722,
+          "min": 19,
+          "records": 7,
+          "sum": 1674,
+          "unknown": 0
+        },
+        "/phases/1/honest_submissions/[]/response/solve_trials": {
+          "integer_values": 7,
+          "max": 722,
+          "min": 19,
+          "records": 7,
+          "sum": 1674,
+          "unknown": 0
+        }
+      },
+      "original": {
+        "bytes": 16002976,
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+        "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333"
+      },
+      "phase_keys": [
+        "accounting_closed",
+        "attacker_workers_cpu_ns",
+        "attacker_workers_cpu_scope",
+        "attacks",
+        "business_receive_clock",
+        "business_started_ns",
+        "client_confirmation_latency_ns",
+        "client_confirmed_before_original_window_end",
+        "client_confirmed_transactions",
+        "completed_false_calls_at_confirmation",
+        "completed_false_calls_before_business",
+        "confirmation_ended_ns",
+        "final_meter",
+        "finite_business_target_met",
+        "full_native_state_equal",
+        "honest_head_successes_in_window",
+        "honest_heads",
+        "honest_history",
+        "honest_submissions",
+        "independent_client_confirmation",
+        "independent_final_confirmation_stage",
+        "independent_history_page_replay",
+        "independent_operator_accepted",
+        "independent_replay_and_confirmation_cpu_ns",
+        "independent_replay_and_confirmation_wall_ns",
+        "initial_meter",
+        "initial_state_root",
+        "initial_tip",
+        "invariant_target_met",
+        "maximum_honest_head_gap_ns",
+        "mode",
+        "no_attack_accepted",
+        "observations",
+        "overlap_demonstrated",
+        "overlapping_false_calls",
+        "production_activation",
+        "public_network_ready",
+        "reader_cpu_ns",
+        "receiver_matches_valid_honest_prefix",
+        "requested_window_ns",
+        "resource_fairness_qualified",
+        "scope",
+        "service",
+        "target",
+        "task",
+        "verification_errors",
+        "work_profile_qualified",
+        "workers"
+      ],
+      "phase_scalar_fields": {
+        "accounting_closed": true,
+        "attacker_workers_cpu_ns": 337787584,
+        "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+        "business_started_ns": 53632619,
+        "client_confirmation_latency_ns": null,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "completed_false_calls_at_confirmation": 472,
+        "completed_false_calls_before_business": 1,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "full_native_state_equal": false,
+        "honest_head_successes_in_window": 36,
+        "independent_client_confirmation": null,
+        "independent_final_confirmation_stage": null,
+        "independent_operator_accepted": false,
+        "independent_replay_and_confirmation_cpu_ns": 172070576,
+        "independent_replay_and_confirmation_wall_ns": 2989698976,
+        "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+        "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "invariant_target_met": true,
+        "maximum_honest_head_gap_ns": 200040313,
+        "mode": "from-zero-pressure",
+        "no_attack_accepted": true,
+        "overlap_demonstrated": false,
+        "overlapping_false_calls": 0,
+        "production_activation": false,
+        "public_network_ready": false,
+        "reader_cpu_ns": 20363088,
+        "receiver_matches_valid_honest_prefix": true,
+        "requested_window_ns": 4000000000,
+        "resource_fairness_qualified": false,
+        "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+        "work_profile_qualified": false,
+        "workers": 16
+      },
+      "selected_original_leaves": {
+        "bytes": 393876,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/ticket-loop-original-trace-v1/arm64-selected-original-leaves.json",
+        "sha256": "e76afcbb2b8d23bae255d2e41049e7b968c51d0106b326c3feaffc748e00dc3d"
+      }
+    }
+  ],
+  "schema": "trnm-readonly-client-ticket-original-counters-v1",
+  "scope": "Exact original pressure phase selected leaves; aggregates by identical pointer shape, not a new time-aligned cost measurement.",
+  "source_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "source_or_fixture_mutated": false
+}

@@ -1,0 +1,54 @@
+{
+  "cargo_or_checker_invoked": false,
+  "ci_job_source": {
+    "bytes": 46547,
+    "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci_job.sh.original",
+    "sha256": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir",
+        "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "grep",
+        "-n",
+        "-I",
+        "-e",
+        "clippy",
+        "-e",
+        "cargo fmt",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+        "--",
+        ".github/workflows",
+        "scripts/ci"
+      ],
+      "exit_code": 0,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14115,
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.original",
+        "sha256": "d22434932703ddb2368bb27f1601953830f715ab66384d3bc4f9dcb36305be7e"
+      }
+    }
+  ],
+  "schema": "trnm-worker-artifact-lint-scope-read-v1",
+  "selected_ci_job_context": [
+    {
+      "end": 386,
+      "start": 370,
+      "text": "370:     python3 scripts/ci/test_repository.py\n371:     python3 formal/pon-nakamoto-v1/test_reference.py\n372:     python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py\n373:     python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v\n374:     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture\n375:     python3 scripts/ci/run_fuzz_smoke.py\n376:     ;;\n377:   rust-baseline)\n378:     cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n379:     python3 scripts/ci/run_supply_chain.py\n380:     # The full workspace matrix includes both evaluation_sync_observation tests.\n381:     # Run that target once in this matrix; a separate pre-run duplicated over ten\n382:     # minutes of actual sync work and left the hosted 45-minute job incomplete.\n383:     (\n384:       trnm_model_receipt_root=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}\"\n385:       mkdir -p \"$trnm_model_receipt_root\"\n386:       # Export the selected fallback as well as an explicit caller destination."
+    },
+    {
+      "end": 506,
+      "start": 490,
+      "text": "490:       test ! -e \"$trnm_native_receipt_root/native-account-verification-cost\"\n491:       test ! -L \"$trnm_native_receipt_root/native-account-verification-cost\"\n492:       test ! -e \"$trnm_native_receipt_root/native-account-verification-cost.log\"\n493:       test ! -L \"$trnm_native_receipt_root/native-account-verification-cost.log\"\n494:       TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=\"$trnm_native_receipt_root/native-account-verification-cost\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-account-verification-cost.log\"\n495:       python3 scripts/ci/check_required_native_test.py \"$trnm_native_receipt_root/native-account-verification-cost.log\" --test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost\n496:     )\n497:     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n498:     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n499:     ;;\n500:   external-evidence-contract)\n501:     python3 scripts/ci/prepare_evidence_sources.py\n502:     python3 scripts/ci/test_evidence_sources.py\n503:     python3 scripts/ci/check_repository.py\n504:     python3 scripts/ci/test_repository.py EvidenceBoundaryTests\n505:     python3 scripts/ci/check_pon_evidence.py\n506:     python3 scripts/ci/test_pon_evidence.py"
+    }
+  ],
+  "source_git_stage_mutation": false,
+  "source_revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+}

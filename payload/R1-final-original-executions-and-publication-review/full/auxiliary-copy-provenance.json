@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-R1-full-auxiliary-copy-v1",
+  "method": "official h_read_multiple_files exact UTF-8 bytes with independent SHA and version",
+  "files": [
+    {
+      "target": "closed-roster-observation/closed-original-logs.json",
+      "bytes": 2753,
+      "sha256": "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-full-closed-roster-observation-prci-v1/closed-original-logs.json",
+      "source_host": "rog",
+      "version": "66306:35166676:2753:1794657142811878360:1794657142811878360"
+    },
+    {
+      "target": "closed-roster-observation/closed-roster-observation.json",
+      "bytes": 36696,
+      "sha256": "64e3dc696182a2e402e01e5117fecac526fd79dc37163586287438bbd9f4fcdb",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-full-closed-roster-observation-prci-v1/closed-roster-observation.json",
+      "source_host": "rog",
+      "version": "66306:35166684:36696:1794657142812989910:1794657142812989910"
+    },
+    {
+      "target": "closed-roster-observation/producer.py",
+      "bytes": 5813,
+      "sha256": "daf9d3c8f54426ee281e71990e4531971f7fbf7c7c7062ccaff520ee1397f98d",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/R1-full-closed-roster-observation-prci-v1/producer.py",
+      "source_host": "rog",
+      "version": "66306:35166668:5813:1794657142810821592:1794657142810821592"
+    },
+    {
+      "target": "rog-launch-producer.py",
+      "bytes": 2605,
+      "sha256": "47f1813d6aa9fc7ab939ee673edd43d60b296749466aed28692a4f083531555a",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-launch-v1-prci/launch-producer.py",
+      "source_host": "rog",
+      "version": "66306:36450926:2605:1794657196808979400:1794657196808979400"
+    }
+  ]
+}

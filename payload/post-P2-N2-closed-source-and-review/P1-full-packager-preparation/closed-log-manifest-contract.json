@@ -1,0 +1,64 @@
+{
+  "schema": "trnm-P1-full-v2-closed-log-manifest-input-contract-v1",
+  "status": "PREPARED_ONLY_WAIT_FOR_REAL_TERMINAL",
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "source_bytes": 423,
+  "source_sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+  "source_entries": 41677,
+  "source_tracked_bytes": 3994959368,
+  "bundle": {
+    "bytes": 8575,
+    "sha256": "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389",
+    "filename": "policy-prefix-6a8cd555-after-ed0d3548.bundle",
+    "single_prerequisite_assumption": false
+  },
+  "future_full_receipts": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v2",
+  "future_full_package": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-6a8cd5-v2-prci",
+  "original_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_driver_schema": "trnm-final-linux-repository-truth-offline-source-v4",
+  "exact_original_step_count": 18,
+  "original_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "original_lane_timeout_seconds": 2700,
+  "closed_manifest_schema": "trnm-closed-original-sublogs-manifest-v1",
+  "closed_manifest_exact_fields": [
+    "schema",
+    "head",
+    "tree",
+    "receipt_directory",
+    "terminal_summary_sha256",
+    "files"
+  ],
+  "closed_manifest_file_fields": [
+    "path",
+    "bytes",
+    "sha256"
+  ],
+  "closed_manifest_must_be_created_only_after_terminal": true,
+  "actual_complete_directory_must_equal": "39 required flat original files plus exactly the operator-pinned closed ci-observations manifest roster",
+  "counts": {
+    "n": "actual closed nested original file count",
+    "original_files": "39+n",
+    "payload_files": "42+n",
+    "zip_members": "43+n"
+  },
+  "successful_lane_requires_original_12_nested_logs": true,
+  "terminal_and_manifest_hashes_are_runtime_required_actual_inputs": true,
+  "actual_full_terminal_summary_sha256": null,
+  "actual_full_terminal_read": false,
+  "unknown_members": "reject and report, never silently omit",
+  "elapsed_and_total_bytes": "derive only from pinned actual terminal and original bytes",
+  "failure_boundary": "original lane status/exit/errors must agree; a failure is retained; earlier irregular non-lane failure is preserved separately, never normalized",
+  "prior_17_stage_source_index_failure_is_not_accepted_as_full_result": true,
+  "packager_executed": false,
+  "live_ROG_receipts_read": false,
+  "stage_source_git_network_test_actions": false
+}

@@ -1,0 +1,39 @@
+{
+  "base_head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+  "changed_file_count": 41,
+  "changed_payload_bytes": 3338399,
+  "common_source": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "concurrent_head": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "current_map_sha256": "b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a",
+  "current_snapshot_sha256": "69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9",
+  "full_combined_tree_not_yet_created": true,
+  "full_patch": {
+    "bytes": 280518,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/M6-to-selected-proposal.patch",
+    "sha256": "d7dd1bd149f36e2b32a45de259ce27c4751e43d3117bb3409b286686631dfcf9"
+  },
+  "native_qualification_granted": false,
+  "pending": "Root review/application as normal merge; independent final source gates, full original local lanes and required hosted checks.",
+  "pinned_paths_after": 2606,
+  "pinned_paths_before": 2600,
+  "required_paths_after": 2510,
+  "required_paths_before": 2504,
+  "schema": "trnm-concurrent-ci-selected-proposal-v2",
+  "selected_files_manifest_sha256": "8510deaed8560ccaeb4c41ed68135dda8110419b0eb4d80d988a77fb47ccd45a",
+  "selected_store": {
+    "bytes": 391470,
+    "mode": "100644",
+    "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+    "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+  },
+  "selection_file_count": 52,
+  "source_or_Git_or_refs_or_stage_or_network_access": false,
+  "status": "STATIC_PROPOSAL_NOT_APPLIED_OR_EXECUTED",
+  "tests_executed": false,
+  "worker_selected": {
+    "bytes": 12283,
+    "oid": "f021a33e2969305241099998f703172d29b15251",
+    "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+    "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+  }
+}

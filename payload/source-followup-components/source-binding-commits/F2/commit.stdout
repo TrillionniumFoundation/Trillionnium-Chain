@@ -1,0 +1,29 @@
+[fix/chain-fixed-joint-source-binding-20261114 6418023d7] fix(chain): bind joint qualification to reviewed current sources
+ 31 files changed, 3203 insertions(+), 12 deletions(-)
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/EVIDENCE_INDEX.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/README.md
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/all-23-inputs-review.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/minimal-change-proof.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas-index.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas.zip
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/old-mapping-control.py
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stderr
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stdout
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-after.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-before.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/steps-progress.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/f2/validation/summary.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/historical/joint-consensus-qualification-v1-2bb56596.json
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/historical/joint_consensus_qualification-2bb56596.py.original
+ create mode 100644 evidence/pon-fixed-joint-source-binding-20261114/historical/test_joint_consensus_qualification-2bb56596.py.original

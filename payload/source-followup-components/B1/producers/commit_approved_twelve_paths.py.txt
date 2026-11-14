@@ -1,0 +1,46 @@
+import datetime,hashlib,json,os,pathlib,subprocess,time
+W=pathlib.Path("/private/tmp/chain-native-bridge-history-binding-port-20261114");R=pathlib.Path("/private/tmp/chain-native-bridge-history-binding-review-20261114")
+O=R/"commit-v1";O.mkdir(exist_ok=False)
+B="7d8d4c59fcd01480a12e1c64835b202079091800"
+E=dict(os.environ,PATH="/Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",PYTHONDONTWRITEBYTECODE="1",GIT_NO_LAZY_FETCH="1",GIT_NO_REPLACE_OBJECTS="1",GIT_TERMINAL_PROMPT="0")
+steps=[]
+def sha(b):return hashlib.sha256(b).hexdigest()
+def run(label,argv,timeout=120):
+ t=time.monotonic();start=datetime.datetime.now(datetime.timezone.utc).isoformat()
+ p=subprocess.run(argv,cwd=W,env=E,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout)
+ for kind,raw in (("stdout",p.stdout),("stderr",p.stderr)):(O/(label+"."+kind)).write_bytes(raw)
+ steps.append({"label":label,"argv":argv,"started_at":start,"seconds":time.monotonic()-t,"returncode":p.returncode,"stdout":{"bytes":len(p.stdout),"sha256":sha(p.stdout)},"stderr":{"bytes":len(p.stderr),"sha256":sha(p.stderr)}})
+ (O/"steps.json").write_text(json.dumps(steps,indent=2)+"\n")
+ print(json.dumps({"label":label,"returncode":p.returncode}),flush=True)
+ if p.returncode:raise RuntimeError(label+" failed; preserved original outputs")
+ return p.stdout
+assert run("01-fixed-parent",["/usr/bin/git","rev-parse","HEAD"]).decode().strip()==B
+prep=json.loads((R/"patch-prepare-v1/summary.json").read_bytes());rows=prep["modified_or_added"];paths=[x["path"] for x in rows];assert len(paths)==12
+for row in rows:
+ b=(W/row["path"]).read_bytes();assert len(b)==row["bytes"] and sha(b)==row["sha256"]
+for p,h in prep["preserved_sha256"].items():assert sha((W/p).read_bytes())==h,p
+run("02-project-preflight",["/bin/bash","scripts/project-preflight.sh","--audit"])
+run("03-stage-exact-twelve",["/usr/bin/git","add","--",*paths])
+staged=run("04-staged-paths",["/usr/bin/git","diff","--cached","--name-only","--no-renames"]).decode().splitlines()
+assert sorted(staged)==sorted(paths),(staged,paths)
+run("05-staged-whitespace",["/usr/bin/git","diff","--cached","--check"])
+sp=run("06-staged-full-patch",["/usr/bin/git","diff","--cached","--binary","--full-index"])
+for row in rows:
+ actual=run("07-staged-blob-"+str(paths.index(row["path"])).zfill(2),["/usr/bin/git","rev-parse",":"+row["path"]]).decode().strip()
+ assert actual==row["git_blob_sha1"],row["path"]
+run("08-normal-local-commit",["/usr/bin/git","commit","-m","fix(research): bind retained native collector as data"],180)
+head=run("09-committed-head",["/usr/bin/git","rev-parse","HEAD"]).decode().strip()
+tree=run("10-committed-tree",["/usr/bin/git","rev-parse","HEAD^{tree}"]).decode().strip()
+parents=run("11-committed-parent",["/usr/bin/git","show","-s","--format=%P","HEAD"]).decode().split()
+assert parents==[B]
+assert not run("12-final-status",["/usr/bin/git","status","--porcelain=v1","--untracked-files=all"])
+patch=run("13-commit-patch",["/usr/bin/git","diff","--binary","--full-index",B,head])
+(O/"commit.patch").write_bytes(patch)
+committed=[]
+for row in rows:
+ oid=run("14-committed-blob-"+str(paths.index(row["path"])).zfill(2),["/usr/bin/git","rev-parse",head+":"+row["path"]]).decode().strip()
+ assert oid==row["git_blob_sha1"];committed.append(row)
+for p,h in prep["preserved_sha256"].items():assert sha((W/p).read_bytes())==h,p
+summary={"schema":"trnm-B1-retained-native-collector-history-commit-v1","committed_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"commit":head,"tree":tree,"parent":B,"worktree":str(W),"clean":True,"exact_paths":committed,"original_25_methods_source_ast_preserved":True,"focused_bridge_controls_passed":31,"new_required_source_control_passed":1,"initial_canonical_temp_failure_preserved":True,"current_collector_and_historical_evidence_unchanged":True,"corpus_and_soleplan_left_for_root":True,"qualification":{"native_processes_executed":False,"original_full_repository_lane_passed":False,"production_activation":False},"commit_patch":{"path":str(O/"commit.patch"),"bytes":len(patch),"sha256":sha(patch)},"steps":steps}
+(O/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+print(json.dumps({"commit":head,"tree":tree,"parent":B,"paths":len(rows),"clean":True,"summary":str(O/"summary.json"),"summary_sha256":sha((O/"summary.json").read_bytes()),"patch_sha256":sha(patch)}),flush=True)

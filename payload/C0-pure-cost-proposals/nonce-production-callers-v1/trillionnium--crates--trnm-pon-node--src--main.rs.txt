@@ -1,0 +1,31 @@
+943: ) -> Result<ingress::public_v3::PublicReply> {
+944:     public_pool_call_before(args, request, settings, None)
+945: }
+946: fn public_pool_call_before(
+947:     args: &BTreeMap<String, String>,
+948:     request: &ingress::public_v3::Request,
+949:     settings: &Settings,
+950:     deadline: Option<Instant>,
+951: ) -> Result<ingress::public_v3::PublicReply> {
+952:     if !public_pool_profile(args) {
+953:         return Err("PUBLIC_V3_REQUIRED".into());
+954:     }
+955:     let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_deadline(
+956:         need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
+957:         request,
+958:         settings,
+959:         need(args, "--server-public")?,
+960:         &public_identity(args)?,
+961:         ingress::public_v3::PublicPolicy::new(
+962:             u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
+963:             Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
+964:         )?,
+965:         deadline,
+966:     );
+967:     if args.contains_key("--client-observations") {
+968:         eprintln!(
+969:             "{}",
+970:             json!({"schema":"public-v3-cli-client-observation-v1","observations":observations,
+971:             "scope":"local elapsed stage time including failed calls; not server CPU or cost authority",
+972:             "public_network_ready":false})
+973:         );

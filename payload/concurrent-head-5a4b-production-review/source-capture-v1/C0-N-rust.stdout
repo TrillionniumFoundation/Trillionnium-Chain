@@ -1,0 +1,293 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index d596dc6bab16698cd18bcc15bcbbe1fafedf603e..3bce39ce1aef265a18f304085bc08c0240547065 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -6832,119 +6832,120 @@ impl Node {
+             .ok_or_else(|| "EMPTY_CONFIRMATION".into())
+     }
+     pub fn confirmations(
+         &self,
+         queries: &[(Hash, Hash)],
+         observed_now: u64,
+     ) -> Result<ConfirmationBatch> {
+         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+             return self.growth_confirmations_with_progress(queries, observed_now, &|_| Ok(()));
+         }
+         self.confirmations_with_progress(queries, observed_now, &mut |_| Ok(()))
+     }
+     /// Cancellation produces no partial batch and never stores a reusable clock verdict.
+     pub fn confirmations_with_progress(
+         &self,
+         queries: &[(Hash, Hash)],
+         observed_now: u64,
+         progress: &mut dyn FnMut(u64) -> Result<()>,
+     ) -> Result<ConfirmationBatch> {
+         use std::collections::BTreeSet;
+         ensure((1..=256).contains(&queries.len()), "CONFIRMATION_LIMIT")?;
+         let unique: BTreeSet<_> = queries.iter().copied().collect();
+         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
+         progress(0)?;
+         // The growth W1/M06 callback is Sync. Never discard it or silently
+         // substitute this legacy non-Sync FnMut callback for its checkpoints.
+         ensure(
+             self.state_backend != StateBackend::PermanentAccountGrowthV2,
+             "GROWTH_USE_CONFIRMATION_PROGRESS",
+         )?;
+-        // A successful observation must use one unchanged local storage epoch.
+-        // The owner excludes cooperating writers; these counters additionally
++        self.ready()?;
++        // Preserve the original namespace/reorg refusals before the new epoch read.
++        // Subsequent row observations must use one unchanged local storage epoch.
++        // The owner excludes cooperating writers; the counters additionally
+         // detect callback writes and commits by independent SQLite connections.
+         // They do not authenticate arbitrary out-of-band filesystem mutation.
+         let epoch = self.admission_state_epoch()?;
+-        self.ready()?;
+         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
+         let mut included = BTreeMap::new();
+         for (transaction, block) in queries {
+             if !included.contains_key(block) {
+                 let row = self.record(*block)?;
+                 let packet = self.packet(*block)?;
+                 ensure(
+                     packet.header.transactions
+                         == sequence_root("transactions", &packet.transactions),
+                     "ROOT",
+                 )?;
+                 let members: BTreeSet<_> = packet
+                     .transactions
+                     .iter()
+                     .map(|raw| hash(b"tx-id", &[raw]))
+                     .collect();
+                 included.insert(*block, (row, packet.header.target, members));
+             }
+             ensure(included[block].2.contains(transaction), "MEMBERSHIP")?;
+         }
+         let observed = self.record(tip)?;
+         let mut current = tip;
+         let mut expected_height = observed.height;
+         let mut expected_work = observed.work;
+         let mut found = BTreeSet::new();
+         let mut checked = 0u64;
+         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
+         while current != self.settings.genesis() {
+             // The prior query has ended before cancellation or caller code runs.
+             progress(checked)?;
+             let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
++                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+                 let required =
+                     consensus::required_work(link.header.target).map_err(Error::local_integrity)?;
+                 let cumulative = link
+                     .parent_work
+                     .checked_add(required)
+                     .map_err(Error::local_integrity)?;
+                 ensure(
+                     link.record.height == expected_height
+                         && link.record.work == expected_work
+                         && link.record.work == cumulative,
+                     "STORAGE_PACKET",
+                 )
+                 .map_err(Error::local_integrity)?;
+                 if let Some((row, _, _)) = included.get(&id) {
+                     ensure(
+                         row.height == link.record.height && row.work == link.record.work,
+                         "STORAGE_PACKET",
+                     )
+                     .map_err(Error::local_integrity)?;
+                     found.insert(id);
+                 }
+-                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+                 expected_height = link
+                     .record
+                     .height
+                     .checked_sub(1)
+                     .ok_or_else(|| Error::from("ANCESTRY_HEIGHT").local_integrity())?;
+                 expected_work = link.parent_work;
+                 Ok(())
+             })?;
+             current = parent;
+             checked = checked.checked_add(count).ok_or("ANCESTRY_LIMIT")?;
+         }
+         let genesis = self.record(current).map_err(Error::local_integrity)?;
+         ensure(
+             genesis.parent.is_none()
+                 && genesis.height == 0
+                 && genesis.work == Work::default()
+                 && expected_height == 0
+                 && expected_work == genesis.work,
+             "STORAGE_PACKET",
+         )
+         .map_err(Error::local_integrity)?;
+         let depth_required = self.settings.limit("confirmation_depth")?;
+         let multiplier = self.settings.limit("confirmation_work_multiplier")?;
+         let mut observations = Vec::with_capacity(queries.len());
+         for (transaction, block) in queries {
+             let (row, target, _) = &included[block];
+             let present = found.contains(block);
+             let delta = present
+                 .then(|| observed.work.checked_sub(row.work))
+                 .transpose()?;
+diff --git a/trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs b/trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs
+index 06add57cd798a627630a6f5467d7891ab58c323d..f021a33e2969305241099998f703172d29b15251 100644
+--- a/trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs
++++ b/trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs
+@@ -37,79 +37,87 @@ fn identity(value: &fs::Metadata) -> Identity {
+         ctime: value.ctime(),
+         ctime_nsec: value.ctime_nsec(),
+     }
+ }
+ fn check_named(path: &Path, file: &File, expected: &Identity) -> Result<()> {
+     let named = fs::symlink_metadata(path)?;
+     ensure!(
+         named.is_file()
+             && &identity(&named) == expected
+             && &identity(&file.metadata()?) == expected,
+         "worker audit artifact identity changed"
+     );
+     Ok(())
+ }
+ fn bounded_bytes(reader: &mut impl Read, maximum: u64) -> Result<Vec<u8>> {
+     let limit = maximum
+         .checked_add(1)
+         .ok_or_else(|| anyhow::anyhow!("worker audit artifact bound"))?;
+     let mut bytes = Vec::new();
+     reader.take(limit).read_to_end(&mut bytes)?;
+     ensure!(
+         bytes.len() as u64 <= maximum,
+         "worker audit artifact byte capacity"
+     );
+     Ok(bytes)
+ }
+ pub(super) fn read(path: &Path) -> Result<String> {
+     read_with_hook(path, || Ok(()))
+ }
+ fn read_with_hook(path: &Path, after_open: impl FnOnce() -> Result<()>) -> Result<String> {
++    read_with_hooks(path, || Ok(()), after_open)
++}
++fn read_with_hooks(
++    path: &Path,
++    after_validation: impl FnOnce() -> Result<()>,
++    after_open: impl FnOnce() -> Result<()>,
++) -> Result<String> {
+     let mut file = OpenOptions::new()
+         .read(true)
+         .custom_flags((OFlags::NOFOLLOW | OFlags::NONBLOCK | OFlags::CLOEXEC).bits() as i32)
+         .open(path)?;
+     let metadata = file.metadata()?;
+     ensure!(
+         metadata.is_file(),
+         "worker audit artifact requires a regular file"
+     );
+     ensure!(
+         metadata.nlink() == 1
+             && metadata.uid() == rustix::process::geteuid().as_raw()
+             && metadata.mode() & 0o022 == 0,
+         "worker audit artifact must be owned locally and not writable by other users"
+     );
++    after_validation()?;
+     // An exporter that uses a journal lock cannot be mistaken for a stable
+     // input. Non-cooperating writes still face the complete identity checks.
+     flock(&file, FlockOperation::NonBlockingLockShared)?;
+-    let before = identity(&file.metadata()?);
++    let before = identity(&metadata);
+     ensure!(
+         before.len <= MAX_BYTES,
+         "worker audit artifact byte capacity"
+     );
+     check_named(path, &file, &before)?;
+     after_open()?;
+     // The descriptor-bound take, not only stat, caps a file that grows during
+     // the read. Neither a new open nor a size-dependent unbounded allocation.
+     let bytes = bounded_bytes(&mut file, MAX_BYTES)?;
+     check_named(path, &file, &before)?;
+     ensure!(
+         bytes.len() as u64 == before.len,
+         "worker audit artifact length changed"
+     );
+     let raw = String::from_utf8(bytes)?;
+     ensure!(
+         raw.lines().all(|line| line.len() <= MAX_LINE_BYTES),
+         "worker audit artifact line capacity"
+     );
+     Ok(raw)
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+     use std::io::{self, Cursor, Write};
+     use std::os::unix::fs::{symlink, PermissionsExt};
+ 
+     #[test]
+     fn exact_stream_bound_includes_eof_and_limits_a_growing_reader() {
+@@ -284,31 +292,70 @@ mod tests {
+         File::create(&index)
+             .unwrap()
+             .set_len(MAX_BYTES + 1)
+             .unwrap();
+         assert_eq!(
+             super::super::handle_query_audit(output, Some(7), None)
+                 .unwrap_err()
+                 .to_string(),
+             "worker audit artifact byte capacity"
+         );
+     }
+ 
+     #[cfg(target_os = "linux")]
+     #[test]
+     fn fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check() {
+         let dir = tempfile::tempdir().unwrap();
+         let path = dir.path().join("fifo");
+         rustix::fs::mknodat(
+             rustix::fs::CWD,
+             &path,
+             rustix::fs::FileType::Fifo,
+             rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+             0,
+         )
+         .unwrap();
+         assert_eq!(
+             read(&path).unwrap_err().to_string(),
+             "worker audit artifact requires a regular file"
+         );
+     }
++
++    fn validation_window_refuses_change(hard_link: bool) {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("input");
++        fs::write(&path, b"{}").unwrap();
++        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
++        let mut reached = false;
++        let result = read_with_hooks(
++            &path,
++            || {
++                reached = true;
++                if hard_link {
++                    fs::hard_link(&path, dir.path().join("alias"))?;
++                } else {
++                    fs::set_permissions(&path, fs::Permissions::from_mode(0o666))?;
++                }
++                Ok(())
++            },
++            || Ok(()),
++        );
++        assert!(
++            reached,
++            "controlled mutation must occur after initial validation"
++        );
++        assert_eq!(
++            result.unwrap_err().to_string(),
++            "worker audit artifact identity changed"
++        );
++    }
++
++    #[test]
++    fn validation_to_lock_permission_change_is_refused() {
++        validation_window_refuses_change(false);
++    }
++
++    #[test]
++    fn validation_to_lock_hardlink_change_is_refused() {
++        validation_window_refuses_change(true);
++    }
+ }

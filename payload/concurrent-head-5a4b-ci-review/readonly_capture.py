@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""Bounded immutable C0/N/M6 CI-source inspection; no tests, source or refs writes."""
+import ast,hashlib,json,os,stat,subprocess,time
+from pathlib import Path
+OUT=Path("/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1")
+DB="/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git"
+WT="/private/tmp/chain-consolidation-20261114-mainline"
+REVS={"C0":"dc42ce4df5cff79cc61c5addbaf01074b56b06ca","N":"5a4b7fe8de1adce803184f262fd9f704ead1930c","M6":"2a62061177852dc3ebd200fa8d7c66c661a119a1"}
+TREES={"C0":"9fda17fed2542b2baccaa34585bb00afd699e12b","N":"4bc5ade0813ba3172eeb0ad7425358469a1b1edd","M6":"f8d170ff75990e879e93888a95e5408f36b36f6c"}
+PATHS=[".github/workflows/pon-recent-batch-acceptance.yml",".github/workflows/pon-w1-transparent-profile.yml","config/pon/hash-use-contract-v1.json","config/pon/pq-authority-effects-v1.json","config/pon/pq-cross-branch-corpus-v1.json","config/pon/pq128-lifetime-composition-current-v3.json","config/pon/pq128-source-correspondence-current-v2.json","config/pon/w1-lifetime-current-source-v2.json","docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md","docs/security/PQ128_LIFETIME_COMPOSITION_V2.md","docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md","docs/security/PQ_PROOF_PROFILE_BINDING_V1.md","docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md","docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md","evidence/pon-w1-qrom-semantics-current-20261114/README.md","evidence/pon-w1-qrom-semantics-current-20261114/report.json","formal/throughput-v1/test_execution_report.py","scripts/ci/check_ci_contract.py","scripts/ci/check_pq_research_integration.py","scripts/ci/check_public_readiness_evidence.py","scripts/ci/ci_job.sh","scripts/ci/hash_use_contract.py","scripts/ci/pq_authority_effect_register.py","scripts/ci/pq_chain_claim_guard.py","scripts/ci/pq_lifetime_composition.py","scripts/ci/pq_lifetime_current_v2.py","scripts/ci/run_cell_learning_business_readback.py","scripts/ci/run_pon_budget_controls.py","scripts/ci/run_sp27_receiver_controls.py","scripts/ci/run_sp27_strata_controls.py","scripts/ci/test_ci_contract.py","scripts/ci/test_pon_budget_controls.py","scripts/ci/test_pq_authority_effect_register.py","scripts/ci/test_pq_chain_claim_guard.py","scripts/ci/test_pq_lifetime_budget.py","scripts/ci/test_pq_lifetime_composition.py","scripts/ci/test_pq_lifetime_current_v2.py","scripts/ci/test_public_readiness_evidence.py","scripts/ci/test_sp27_receiver_controls.py","scripts/ci/test_sp27_strata_controls.py","scripts/ci/test_throughput_cost_coverage.py","scripts/ci/test_w1_lifetime_current_observation.py","scripts/ci/test_w1_qrom_closure_current_controls.py","scripts/ci/test_w1_qrom_current_ci.py","scripts/ci/test_w1_qrom_semantics_audit.py","scripts/ci/throughput_cost_coverage.py","scripts/w1_lifetime_current_observation.py"]
+GROUPS={"workflows":[".github/workflows/pon-recent-batch-acceptance.yml",".github/workflows/pon-w1-transparent-profile.yml"],"ci_contract":["scripts/ci/check_ci_contract.py","scripts/ci/check_pq_research_integration.py","scripts/ci/ci_job.sh","scripts/ci/test_ci_contract.py"],"runners":["formal/throughput-v1/test_execution_report.py","scripts/ci/run_cell_learning_business_readback.py","scripts/ci/run_pon_budget_controls.py","scripts/ci/run_sp27_receiver_controls.py","scripts/ci/run_sp27_strata_controls.py","scripts/ci/test_pon_budget_controls.py","scripts/ci/test_sp27_receiver_controls.py","scripts/ci/test_sp27_strata_controls.py","scripts/ci/test_throughput_cost_coverage.py","scripts/ci/throughput_cost_coverage.py"],"readiness":["scripts/ci/check_public_readiness_evidence.py","scripts/ci/test_public_readiness_evidence.py"],"lifetime_consumers":["scripts/ci/hash_use_contract.py","scripts/ci/pq_authority_effect_register.py","scripts/ci/pq_chain_claim_guard.py","scripts/ci/pq_lifetime_composition.py","scripts/ci/pq_lifetime_current_v2.py","scripts/ci/test_pq_authority_effect_register.py","scripts/ci/test_pq_chain_claim_guard.py","scripts/ci/test_pq_lifetime_budget.py","scripts/ci/test_pq_lifetime_composition.py","scripts/ci/test_pq_lifetime_current_v2.py","scripts/ci/test_w1_lifetime_current_observation.py","scripts/ci/test_w1_qrom_closure_current_controls.py","scripts/ci/test_w1_qrom_current_ci.py","scripts/ci/test_w1_qrom_semantics_audit.py","scripts/w1_lifetime_current_observation.py"],"configs":["config/pon/hash-use-contract-v1.json","config/pon/pq-authority-effects-v1.json","config/pon/pq-cross-branch-corpus-v1.json","config/pon/pq128-lifetime-composition-current-v3.json","config/pon/pq128-source-correspondence-current-v2.json","config/pon/w1-lifetime-current-source-v2.json"],"docs":["docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md","docs/security/PQ128_LIFETIME_COMPOSITION_V2.md","docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md","docs/security/PQ_PROOF_PROFILE_BINDING_V1.md","docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md","docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"],"evidence":["evidence/pon-w1-qrom-semantics-current-20261114/README.md","evidence/pon-w1-qrom-semantics-current-20261114/report.json"]}
+ENV=dict(os.environ)
+for key in list(ENV):
+    if key.startswith("GIT_TRACE") or key=="GIT_CURL_VERBOSE" or key=="GIT_DIFF_OPTS": ENV.pop(key,None)
+ENV.update({"PATH":"/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin","GIT_OPTIONAL_LOCKS":"0","GIT_NO_LAZY_FETCH":"1","GIT_NO_REPLACE_OBJECTS":"1","GIT_TERMINAL_PROMPT":"0","GIT_ALLOW_PROTOCOL":"","GIT_TRACE2":"0","GIT_TRACE2_EVENT":"0","GIT_TRACE2_PERF":"0","PYTHONDONTWRITEBYTECODE":"1"})
+def sha(data):return hashlib.sha256(data).hexdigest()
+def put(name,data):
+    path=OUT/name
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with path.open("xb") as f:f.write(data)
+    if path.read_bytes()!=data:raise ValueError("evidence readback differs")
+    return {"path":str(path),"bytes":len(data),"sha256":sha(data)}
+steps=[]
+def run(name,args,input_data=None,cap=4*1024*1024,worktree=False,allowed=(0,)):
+    argv=["/usr/bin/git","--no-pager"]+(["-C",WT] if worktree else ["--git-dir="+DB])+args
+    start=time.time_ns()
+    try:
+        done=subprocess.run(argv,input=input_data,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=ENV,timeout=60)
+        code,out,err=done.returncode,done.stdout,done.stderr
+    except subprocess.TimeoutExpired as error:
+        code,out,err=124,error.stdout or b"",error.stderr or b""
+    row={"label":name,"argv":argv,"exit":code,"started_ns":start,"finished_ns":time.time_ns(),
+         "stdout":put("raw/"+name+".stdout",out),"stderr":put("raw/"+name+".stderr",err)}
+    steps.append(row)
+    if len(out)>cap or len(err)>1024*1024:raise ValueError("bounded command output exceeded")
+    if code not in allowed:raise ValueError("read-only git step failed: "+name)
+    return out
+def definitions(raw):
+    text=raw.decode("utf-8")
+    root=ast.parse(text)
+    result={}
+    def walk(body,prefix=""):
+        for node in body:
+            if isinstance(node,ast.ClassDef):
+                walk(node.body,prefix+node.name+".")
+            elif isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                name=prefix+node.name
+                segment=ast.get_source_segment(text,node)
+                result[name]={"sha256":sha(segment.encode()),"ast":sha(ast.dump(node,include_attributes=False).encode()),"lineno":node.lineno,"end_lineno":node.end_lineno}
+    walk(root.body)
+    return result
+if os.path.lexists(OUT):raise RuntimeError("create-only audit directory exists")
+OUT.mkdir(mode=0o700)
+put("readonly_capture.py","".encode()) if False else None
+state={"schema":"trnm-new-candidate-ci-readonly-capture-v1","status":"HOLD","revisions":REVS,"trees":TREES,"paths":PATHS,"groups":GROUPS,"tests_run":False,"source_or_refs_or_config_mutated":False,"network_requests":False,"errors":[]}
+try:
+    supplied=Path("/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/inventory.json").read_bytes()
+    if sha(supplied)!="f26d4c565c366e2ce2901d245aa55f6e9c517d84c0b6afbc675b46eed3349d46":raise ValueError("fixed architecture inventory differs")
+    state["inventory_origin"]=put("architecture-inventory.original.json",supplied)
+    head_before=run("root-head-before",["rev-parse","--verify","HEAD"],worktree=True).decode().strip()
+    status_before=run("root-status-before",["status","--porcelain=v1","--untracked-files=normal"],worktree=True)
+    if head_before!=REVS["M6"] or status_before:raise ValueError("root fixed M6 source differs")
+    commits={}
+    for name,oid in REVS.items():
+        raw=run(name+"-commit",["cat-file","commit",oid],cap=131072)
+        if hashlib.sha1(b"commit "+str(len(raw)).encode()+b"\0"+raw).hexdigest()!=oid:raise ValueError("commit content address differs")
+        header,message=raw.split(b"\n\n",1)
+        tree=header.splitlines()[0].decode().split()[1]
+        if tree!=TREES[name]:raise ValueError("fixed tree differs")
+        commits[name]={"oid":oid,"tree":tree,"raw_sha256":sha(raw),"parents":[line.decode().split()[1] for line in header.splitlines() if line.startswith(b"parent ")],"message":message.decode()}
+    state["commits"]=commits
+    count_raw=run("N-exclusive-count",["rev-list","--count",REVS["N"],"^"+REVS["C0"]],cap=128)
+    count=int(count_raw)
+    if count>128:raise ValueError("exclusive provenance exceeds 128-commit bound")
+    provenance=run("N-exclusive-log",["log","--reverse","--topo-order","--format=%H%x09%P%x09%at%x09%aI%x09%s",REVS["C0"]+".."+REVS["N"]],cap=262144).decode()
+    state["exclusive_commit_count"]=count
+    state["exclusive_commit_log"]=provenance
+    mapping={}
+    for name,oid in REVS.items():
+        raw=run(name+"-selected-ls-tree",["ls-tree","-z",oid,"--"]+PATHS,cap=262144)
+        mapping[name]={}
+        for record in raw.split(b"\0"):
+            if not record:continue
+            header,path=record.split(b"\t",1)
+            mode,kind,blob=header.decode().split()
+            if kind!="blob":raise ValueError("selected source not blob")
+            mapping[name][path.decode()]={"mode":mode,"oid":blob}
+    oids=sorted({item["oid"] for tree in mapping.values() for item in tree.values()})
+    query="".join(oid+"\n" for oid in oids).encode()
+    metadata=run("selected-blob-metadata",["cat-file","--batch-check=%(objectname) %(objecttype) %(objectsize)"],query,cap=262144)
+    sizes={}
+    for row in metadata.decode().splitlines():
+        oid,kind,size=row.split()
+        if kind!="blob":raise ValueError("nonblob or missing fixed source")
+        sizes[oid]=int(size)
+    if set(sizes)!=set(oids) or max(sizes.values(),default=0)>8*1024*1024 or sum(sizes.values())>32*1024*1024:raise ValueError("selected source size bound exceeded")
+    batch=run("selected-blob-batch",["cat-file","--batch"],query,cap=34*1024*1024)
+    raw_by_oid={}; index=[]; offset=0
+    for oid in oids:
+        end=batch.index(b"\n",offset)
+        header=batch[offset:end].decode().split()
+        if header!=[oid,"blob",str(sizes[oid])]:raise ValueError("batch identity differs")
+        begin=end+1; end=begin+sizes[oid]
+        raw=batch[begin:end]
+        if batch[end:end+1]!=b"\n" or hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()!=oid:raise ValueError("blob content address differs")
+        raw_by_oid[oid]=raw
+        index.append({"oid":oid,"type":"blob","bytes":len(raw),"sha256":sha(raw),"batch_offset":begin})
+        offset=end+1
+    if offset!=len(batch):raise ValueError("batch trailing bytes")
+    state["blob_index"]=put("selected-blob-index.json",(json.dumps(index,sort_keys=True,indent=2)+"\n").encode())
+    state["unique_selected_blobs"]=len(oids);state["unique_selected_blob_bytes"]=sum(sizes.values())
+    records=[]
+    python_changes=[]
+    for path in PATHS:
+        versions={}
+        for name in REVS:
+            entry=mapping[name].get(path)
+            versions[name]=None if entry is None else {**entry,"bytes":sizes[entry["oid"]],"sha256":sha(raw_by_oid[entry["oid"]])}
+        records.append({"path":path,"versions":versions,"N_equals_M6":versions["N"]==versions["M6"],"M6_equals_C0":versions["M6"]==versions["C0"]})
+        if path.endswith(".py"):
+            defs={name:{} if mapping[name].get(path) is None else definitions(raw_by_oid[mapping[name][path]["oid"]]) for name in REVS}
+            one={"path":path,"test_method_counts":{name:sum(n.rsplit(".",1)[-1].startswith("test_") for n in table) for name,table in defs.items()},"comparisons":{}}
+            for left,right in (("C0","N"),("M6","N")):
+                a,b=defs[left],defs[right]
+                one["comparisons"][left+"_to_"+right]={"added":sorted(set(b)-set(a)),"removed":sorted(set(a)-set(b)),"ast_changed":[n for n in sorted(set(a)&set(b)) if a[n]["ast"]!=b[n]["ast"]],"source_changed":[n for n in sorted(set(a)&set(b)) if a[n]["sha256"]!=b[n]["sha256"]]}
+            python_changes.append(one)
+    state["three_way_blobs"]=put("three-way-selected-blobs.json",(json.dumps(records,sort_keys=True,indent=2)+"\n").encode())
+    state["python_definition_deltas"]=put("python-definition-deltas.json",(json.dumps(python_changes,sort_keys=True,indent=2)+"\n").encode())
+    patches=[]
+    for name,selected in GROUPS.items():
+        for left in ("C0","M6"):
+            label=left+"-N-"+name
+            raw=run(label,["diff","--no-ext-diff","--no-textconv","--no-renames","--full-index","--binary","--unified=5",REVS[left],REVS["N"],"--"]+selected,cap=4*1024*1024)
+            patches.append({"group":name,"comparison":left+"_to_N","path":str(OUT/"raw"/(label+".stdout")),"bytes":len(raw),"sha256":sha(raw)})
+    state["patches"]=patches
+    status_after=run("root-status-after",["status","--porcelain=v1","--untracked-files=normal"],worktree=True)
+    head_after=run("root-head-after",["rev-parse","--verify","HEAD"],worktree=True).decode().strip()
+    if status_after!=status_before or head_after!=head_before:raise ValueError("root head/status changed")
+    state["root_head_status_unchanged"]=True
+    state["status"]="CAPTURED_FOR_SEMANTIC_REVIEW"
+except Exception as error:
+    state["errors"].append({"type":type(error).__name__,"message":str(error)})
+finally:
+    state["steps"]=put("steps.json",(json.dumps(steps,sort_keys=True,indent=2)+"\n").encode())
+    info=put("capture-summary.json",(json.dumps(state,sort_keys=True,indent=2)+"\n").encode())
+print(json.dumps({"summary":info,"status":state["status"],"errors":state["errors"],"selected_paths":len(PATHS),"selected_blobs":state.get("unique_selected_blobs"),"selected_blob_bytes":state.get("unique_selected_blob_bytes"),"patches":state.get("patches"),"exclusive_commit_log":state.get("exclusive_commit_log")},sort_keys=True,indent=2),flush=True)
+raise SystemExit(0 if state["status"]=="CAPTURED_FOR_SEMANTIC_REVIEW" else 1)

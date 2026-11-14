@@ -1,0 +1,20 @@
+[
+  {
+    "chunk_sha256": "e6d8bc7681aaad551ca3ce6a76e75bbe5481d7922ca48a6e6b79ea038a49c050",
+    "eof": false,
+    "next_offset": 196605,
+    "offset": 131070,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/presence-inventory.json",
+    "size": 377491,
+    "version": "66306:36062131:377491:1794644918811476034:1794644918811476034"
+  },
+  {
+    "chunk_sha256": "a06869365473f611b56cefdaa2d4a4df98cc4687cc8dbd7758c929108d195980",
+    "eof": false,
+    "next_offset": 262140,
+    "offset": 196605,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/presence-inventory.json",
+    "size": 377491,
+    "version": "66306:36062131:377491:1794644918811476034:1794644918811476034"
+  }
+]

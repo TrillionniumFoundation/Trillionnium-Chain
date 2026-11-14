@@ -1,0 +1,51 @@
+{
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "files": [
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "-c",
+        "protocol.allow=never",
+        "cat-file",
+        "blob",
+        "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/trnm-required-baseline.yml"
+      ],
+      "exit": 0,
+      "capture": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/.github--workflows--trnm-required-baseline.yml.raw",
+      "bytes": 35462,
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+      "git_oid": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919"
+    },
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "-c",
+        "protocol.allow=never",
+        "cat-file",
+        "blob",
+        "2a86462a1ab20c68151719ba4635e3c294391e64:config/systemd/trnmponpublic.slice"
+      ],
+      "exit": 0,
+      "capture": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/config--systemd--trnmponpublic.slice.raw",
+      "bytes": 325,
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "git_oid": "8981b6aeed4c08c21679664940366b36a991444a"
+    }
+  ],
+  "excerpts": [
+    {
+      "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/native-entry.txt",
+      "bytes": 24201,
+      "sha256": "ab37d36e82c8af3c0c1de1c5d268368344f7ebc34b1939059bf9b66f73835e15"
+    },
+    {
+      "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/entry-excerpts-v1/native-confirmation-acceptance.txt",
+      "bytes": 7481,
+      "sha256": "3e68f70a8188737ec65b7a2411d00dc20d2d2637796795dd878cf2b2df322ae6"
+    }
+  ]
+}

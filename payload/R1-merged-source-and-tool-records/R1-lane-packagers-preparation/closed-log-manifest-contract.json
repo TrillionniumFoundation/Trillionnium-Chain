@@ -1,0 +1,86 @@
+{
+  "schema": "trnm-R1-closed-log-manifest-input-contract-not-executable-v1",
+  "status": "PREPARED_ONLY_WAIT_FOR_REAL_TERMINAL",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "source_bytes": 423,
+  "source_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+  "source_entries": 41677,
+  "source_tracked_bytes": 3994964901,
+  "full_expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "bundle": {
+    "bytes": 11223,
+    "sha256": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+    "filename": "concurrent-ci-2a86462a-after-6a8cd555.bundle",
+    "single_prerequisite_assumption": false,
+    "actual_root_reported_prerequisites": [
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+    ]
+  },
+  "future_full_receipts": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1",
+  "future_full_package": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci",
+  "future_external_receipts": "/home/qian-qi/chain-final-consolidation-20261114-root/final-external-evidence-2a8646-v1",
+  "future_external_package": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a8646-v1-prci",
+  "original_full_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_external_driver": {
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "full_step_count": 18,
+  "external_step_count": 12,
+  "full_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "external_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "external-evidence-contract"
+  ],
+  "lane_timeout_seconds": 2700,
+  "full_counts": {
+    "n": "actual closed nested original file count",
+    "required_flat": 39,
+    "original_files": "39+n",
+    "payload_files": "42+n",
+    "zip_members": "43+n"
+  },
+  "external_counts": {
+    "n": "actual closed nested original file count",
+    "required_flat": 27,
+    "original_files": "27+n",
+    "payload_files": "30+n",
+    "zip_members": "31+n"
+  },
+  "successful_full_lane_requires_original_12_nested_logs": true,
+  "external_required_readiness_tests": 78,
+  "closed_manifest_schema": "trnm-closed-original-sublogs-manifest-v1",
+  "closed_manifest_exact_fields": [
+    "schema",
+    "head",
+    "tree",
+    "receipt_directory",
+    "terminal_summary_sha256",
+    "files"
+  ],
+  "closed_manifest_file_fields": [
+    "path",
+    "bytes",
+    "sha256"
+  ],
+  "closed_manifest_must_be_created_only_after_terminal": true,
+  "actual_complete_directory_must_equal": "required flat originals plus exactly the operator-pinned complete nested-file roster",
+  "unknown_members": "reject and report; never silently omit or normalize",
+  "actual_R1_terminal_summary_sha256": null,
+  "actual_R1_terminal_read": false,
+  "actual_P1_live_receipts_read": false,
+  "elapsed_and_total_bytes": "derive only from pinned actual terminal and original bytes",
+  "failure_boundary": "original lane status/exit/errors must agree; retain failures; earlier irregular non-lane failure is preserved separately, never normalized",
+  "packagers_executed": false,
+  "stage_source_git_network_test_actions": false
+}

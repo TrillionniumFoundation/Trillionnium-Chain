@@ -1,0 +1,303 @@
+[
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "label": "source-before-head",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-head.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "label": "source-before-tree",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "symbolic-ref",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "label": "source-before-branch",
+    "seconds": 0.006,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 42,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-branch.stdout",
+      "sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "label": "source-before-status",
+    "seconds": 0.129,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-before-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "cat-file",
+      "commit",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+    ],
+    "exit_code": 0,
+    "label": "head-commit",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/head-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 300,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/head-commit.stdout",
+      "sha256": "962ca367dd0469446416ddd3ce66ad33f8c1e20a7a13dec5c17e324b0c06c0d4"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "merge-base",
+      "--is-ancestor",
+      "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+    ],
+    "exit_code": 0,
+    "label": "base-is-ancestor",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/base-is-ancestor.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/base-is-ancestor.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-list",
+      "--objects",
+      "--no-object-names",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+      "^ed0d35487f2a67239e4d646fd41c2c7acb5cc740"
+    ],
+    "exit_code": 0,
+    "label": "new-objects",
+    "seconds": 0.022,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/new-objects.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 984,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/new-objects.stdout",
+      "sha256": "179ef1912aeadc02b3ae26f54ca325bb358e7fc11f7d441fa1d6171d3a38e1c3"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "cat-file",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "exit_code": 0,
+    "label": "new-object-metadata",
+    "seconds": 0.008,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/new-object-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1234,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/new-object-metadata.stdout",
+      "sha256": "6a80d1248934610194de0f63aee19b204071bdb3e0a7388e22ae413f46c9c351"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "diff-tree",
+      "--no-commit-id",
+      "--no-renames",
+      "--raw",
+      "-r",
+      "--no-abbrev",
+      "-z",
+      "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+    ],
+    "exit_code": 0,
+    "label": "delta-paths",
+    "seconds": 0.009,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/delta-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1483,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/delta-paths.stdout",
+      "sha256": "d399500a486da34fa6f1e17791e180af09fc1f2cf29e3756313cf61285eb4204"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "label": "source-after-head",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-head.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "label": "source-after-tree",
+    "seconds": 0.007,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "symbolic-ref",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "label": "source-after-branch",
+    "seconds": 0.006,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 42,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-branch.stdout",
+      "sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "label": "source-after-status",
+    "seconds": 0.121,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/incremental-6a8cd5-after-ed0d35-v1/source-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

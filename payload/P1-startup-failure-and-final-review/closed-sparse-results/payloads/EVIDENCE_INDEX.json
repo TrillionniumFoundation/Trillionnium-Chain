@@ -1,0 +1,1756 @@
+{
+  "empty_original_directories": [
+    {
+      "host": "rog",
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/ci-observations"
+    },
+    {
+      "host": "rog",
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/tmp"
+    }
+  ],
+  "file_count": 98,
+  "files": [
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067135383985,
+        "dev": 66306,
+        "ino": 34757359,
+        "mode": 33152,
+        "mtime_ns": 1794655067135383985,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067135383985,
+        "dev": 66306,
+        "ino": 34757358,
+        "mode": 33152,
+        "mtime_ns": 1794655067135383985,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.ignorestat.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.ignorestat.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067134383989,
+        "dev": 66306,
+        "ino": 34757357,
+        "mode": 33152,
+        "mtime_ns": 1794655067134383989,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.ignorestat.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.ignorestat.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067134383989,
+        "dev": 66306,
+        "ino": 34757356,
+        "mode": 33152,
+        "mtime_ns": 1794655067134383989,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.preloadindex.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.preloadindex.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067138383976,
+        "dev": 66306,
+        "ino": 34757365,
+        "mode": 33152,
+        "mtime_ns": 1794655067138383976,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.preloadindex.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.preloadindex.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067138383976,
+        "dev": 66306,
+        "ino": 34757364,
+        "mode": 33152,
+        "mtime_ns": 1794655067138383976,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067140707017,
+        "dev": 66306,
+        "ino": 34757367,
+        "mode": 33152,
+        "mtime_ns": 1794655067140707017,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 31,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stdout",
+      "sha256": "f4a2c44c37d369d22852039cbf45bfec64891df2825e95eaf1322f00e5213de5",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067140707017,
+        "dev": 66306,
+        "ino": 34757366,
+        "mode": 33152,
+        "mtime_ns": 1794655067140707017,
+        "nlink": 1,
+        "size": 31
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067136383982,
+        "dev": 66306,
+        "ino": 34757363,
+        "mode": 33152,
+        "mtime_ns": 1794655067136383982,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067136383982,
+        "dev": 66306,
+        "ino": 34757361,
+        "mode": 33152,
+        "mtime_ns": 1794655067136383982,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/head.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655066768827556,
+        "dev": 66306,
+        "ino": 34757344,
+        "mode": 33152,
+        "mtime_ns": 1794655066768827556,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/head.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/head.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050",
+      "source_fingerprint": {
+        "ctime_ns": 1794655066768827556,
+        "dev": 66306,
+        "ino": 34757343,
+        "mode": 33152,
+        "mtime_ns": 1794655066768827556,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/index-path.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/index-path.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067142061824,
+        "dev": 66306,
+        "ino": 34757371,
+        "mode": 33152,
+        "mtime_ns": 1794655067142061824,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 11,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/index-path.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/index-path.stdout",
+      "sha256": "742e1586a644af64934a892663d03c75415bfb01edafdfdd924a8627573bfb9c",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067142061824,
+        "dev": 66306,
+        "ino": 34757369,
+        "mode": 33152,
+        "mtime_ns": 1794655067142061824,
+        "nlink": 1,
+        "size": 11
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/ls-files-v.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/ls-files-v.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067117384044,
+        "dev": 66306,
+        "ino": 34757355,
+        "mode": 33152,
+        "mtime_ns": 1794655067117384044,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/ls-files-v.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/ls-files-v.stdout",
+      "sha256": "a86673ec02d1535ae2f034c603bf863c512d5830c798c3c1236de1dd71a5d82a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067103397579,
+        "dev": 66306,
+        "ino": 34757352,
+        "mode": 33152,
+        "mtime_ns": 1794655067103397579,
+        "nlink": 1,
+        "size": 4191866
+      }
+    },
+    {
+      "bytes": 2445,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/producer.py"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/producer.py",
+      "sha256": "fe2d1434894847ccfc7bc17df40573389fe70675b3a6edbe0e60e841bd097c3b",
+      "source_fingerprint": {
+        "ctime_ns": 1794655066766747031,
+        "dev": 66306,
+        "ino": 34757342,
+        "mode": 33152,
+        "mtime_ns": 1794655066766747031,
+        "nlink": 1,
+        "size": 2445
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/status.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067093384123,
+        "dev": 66306,
+        "ino": 34757349,
+        "mode": 33152,
+        "mtime_ns": 1794655067093384123,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/status.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067093384123,
+        "dev": 66306,
+        "ino": 34757348,
+        "mode": 33152,
+        "mtime_ns": 1794655067093384123,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 4788,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/summary.json"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/summary.json",
+      "sha256": "a81f116ef48cb1fa1a50d9d17b343be473c6c8102d47119bfbae1d0381443ea1",
+      "source_fingerprint": {
+        "ctime_ns": 1794655067148203193,
+        "dev": 66306,
+        "ino": 34757379,
+        "mode": 33152,
+        "mtime_ns": 1794655067148203193,
+        "nlink": 1,
+        "size": 4788
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/tree.stderr"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655066771277734,
+        "dev": 66306,
+        "ino": 34757347,
+        "mode": 33152,
+        "mtime_ns": 1794655066771277734,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/tree.stdout"
+      },
+      "path": "originals/P1-index-flag-diagnostic-v1/tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655066771277734,
+        "dev": 66306,
+        "ino": 34757346,
+        "mode": 33152,
+        "mtime_ns": 1794655066771277734,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 58,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/config.worktree.before"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/config.worktree.before",
+      "sha256": "97997ba84fd1c44263deb6f412fc3bef4b05e0103d00c5a97a97ca928299aa13",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128812705772,
+        "dev": 66306,
+        "ino": 34899321,
+        "mode": 33152,
+        "mtime_ns": 1794655128812705772,
+        "nlink": 1,
+        "size": 58
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129365181052,
+        "dev": 66306,
+        "ino": 34899330,
+        "mode": 33152,
+        "mtime_ns": 1794655129365181052,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129365181052,
+        "dev": 66306,
+        "ino": 34899303,
+        "mode": 33152,
+        "mtime_ns": 1794655129365181052,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-after.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/flags-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129377511802,
+        "dev": 66306,
+        "ino": 34899332,
+        "mode": 33152,
+        "mtime_ns": 1794655129377511802,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-after.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/flags-after.stdout",
+      "sha256": "2164d13c3e81a1cb84a969e83385ae134005ff954fcfc9eaed46e5375eb42f52",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129377511802,
+        "dev": 66306,
+        "ino": 34899331,
+        "mode": 33152,
+        "mtime_ns": 1794655129377511802,
+        "nlink": 1,
+        "size": 4191866
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-before.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/flags-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128804237897,
+        "dev": 66306,
+        "ino": 34899320,
+        "mode": 33152,
+        "mtime_ns": 1794655128804237897,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-before.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/flags-before.stdout",
+      "sha256": "a86673ec02d1535ae2f034c603bf863c512d5830c798c3c1236de1dd71a5d82a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128804237897,
+        "dev": 66306,
+        "ino": 34899319,
+        "mode": 33152,
+        "mtime_ns": 1794655128804237897,
+        "nlink": 1,
+        "size": 4191866
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-after.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141707456402,
+        "dev": 66306,
+        "ino": 34899341,
+        "mode": 33152,
+        "mtime_ns": 1794655141707456402,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-after.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/head-after.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141707456402,
+        "dev": 66306,
+        "ino": 34899340,
+        "mode": 33152,
+        "mtime_ns": 1794655141707456402,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-before.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128445943662,
+        "dev": 66306,
+        "ino": 34899313,
+        "mode": 33152,
+        "mtime_ns": 1794655128445943662,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-before.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/head-before.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128445943662,
+        "dev": 66306,
+        "ino": 34899312,
+        "mode": 33152,
+        "mtime_ns": 1794655128445943662,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 241,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/info--sparse-checkout.before"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/info--sparse-checkout.before",
+      "sha256": "07c0bfe8afef62cdd40b8ff208965346a0096ebe8afb5dce077b7cd020827a54",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128812743132,
+        "dev": 66306,
+        "ino": 34899322,
+        "mode": 33152,
+        "mtime_ns": 1794655128812743132,
+        "nlink": 1,
+        "size": 241
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-0.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/object-present-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128814182849,
+        "dev": 66306,
+        "ino": 34899324,
+        "mode": 33152,
+        "mtime_ns": 1794655128814182849,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-0.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/object-present-0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128814182849,
+        "dev": 66306,
+        "ino": 34899323,
+        "mode": 33152,
+        "mtime_ns": 1794655128814182849,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-1.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/object-present-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128816182842,
+        "dev": 66306,
+        "ino": 34899326,
+        "mode": 33152,
+        "mtime_ns": 1794655128816182842,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-1.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/object-present-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128816182842,
+        "dev": 66306,
+        "ino": 34899325,
+        "mode": 33152,
+        "mtime_ns": 1794655128816182842,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/original-verify-source.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/original-verify-source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141705006846,
+        "dev": 66306,
+        "ino": 34899339,
+        "mode": 33152,
+        "mtime_ns": 1794655141705006846,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/original-verify-source.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/original-verify-source.stdout",
+      "sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141705006846,
+        "dev": 66306,
+        "ino": 34899338,
+        "mode": 33152,
+        "mtime_ns": 1794655141705006846,
+        "nlink": 1,
+        "size": 423
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/preflight-audit.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/preflight-audit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128849690373,
+        "dev": 66306,
+        "ino": 34899328,
+        "mode": 33152,
+        "mtime_ns": 1794655128849690373,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/preflight-audit.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/preflight-audit.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128849690373,
+        "dev": 66306,
+        "ino": 34899327,
+        "mode": 33152,
+        "mtime_ns": 1794655128849690373,
+        "nlink": 1,
+        "size": 177
+      }
+    },
+    {
+      "bytes": 4191,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/producer.py"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/producer.py",
+      "sha256": "49ba802cf6ad90aca6653b70e13499ed9df9bb9c2634f872b4b5e97d891c9936",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128444425549,
+        "dev": 66306,
+        "ino": 34899311,
+        "mode": 33152,
+        "mtime_ns": 1794655128444425549,
+        "nlink": 1,
+        "size": 4191
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/sparse-config-after.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/sparse-config-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129668665142,
+        "dev": 66306,
+        "ino": 34899336,
+        "mode": 33152,
+        "mtime_ns": 1794655129668665142,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 6,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/sparse-config-after.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/sparse-config-after.stdout",
+      "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129668665142,
+        "dev": 66306,
+        "ino": 34899335,
+        "mode": 33152,
+        "mtime_ns": 1794655129668665142,
+        "nlink": 1,
+        "size": 6
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-after.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129665180074,
+        "dev": 66306,
+        "ino": 34899334,
+        "mode": 33152,
+        "mtime_ns": 1794655129665180074,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-after.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655129665180074,
+        "dev": 66306,
+        "ino": 34899329,
+        "mode": 33152,
+        "mtime_ns": 1794655129665180074,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-before.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128793182917,
+        "dev": 66306,
+        "ino": 34899318,
+        "mode": 33152,
+        "mtime_ns": 1794655128793182917,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-before.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128793182917,
+        "dev": 66306,
+        "ino": 34899271,
+        "mode": 33152,
+        "mtime_ns": 1794655128793182917,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 7489,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/summary.json"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/summary.json",
+      "sha256": "ecb2bdae4daa5d9a4d38a1734ab9bc8f63acc9fdd89053c44019e5ce8845a7a3",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141709588495,
+        "dev": 66306,
+        "ino": 34899314,
+        "mode": 33152,
+        "mtime_ns": 1794655141709588495,
+        "nlink": 1,
+        "size": 7489
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-after.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/tree-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141709426491,
+        "dev": 66306,
+        "ino": 34899343,
+        "mode": 33152,
+        "mtime_ns": 1794655141709426491,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-after.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/tree-after.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141709426491,
+        "dev": 66306,
+        "ino": 34899342,
+        "mode": 33152,
+        "mtime_ns": 1794655141709426491,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-before.stderr"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/tree-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128447516397,
+        "dev": 66306,
+        "ino": 34899316,
+        "mode": 33152,
+        "mtime_ns": 1794655128447516397,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-before.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/tree-before.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655128447516397,
+        "dev": 66306,
+        "ino": 34899315,
+        "mode": 33152,
+        "mtime_ns": 1794655128447516397,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/verified-source.json"
+      },
+      "path": "originals/P1-sparse-checkout-correction-v1/verified-source.json",
+      "sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+      "source_fingerprint": {
+        "ctime_ns": 1794655141699141774,
+        "dev": 66306,
+        "ino": 34899337,
+        "mode": 33152,
+        "mtime_ns": 1794655141699141774,
+        "nlink": 1,
+        "size": 423
+      }
+    },
+    {
+      "bytes": 58,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/config.worktree.original"
+      },
+      "path": "originals/P1-sparse-checkout-precorrection-v1/config.worktree.original",
+      "sha256": "97997ba84fd1c44263deb6f412fc3bef4b05e0103d00c5a97a97ca928299aa13",
+      "source_fingerprint": {
+        "ctime_ns": 1794655100560414112,
+        "dev": 66306,
+        "ino": 34899307,
+        "mode": 33152,
+        "mtime_ns": 1794655100560414112,
+        "nlink": 1,
+        "size": 58
+      }
+    },
+    {
+      "bytes": 2249,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/producer.py"
+      },
+      "path": "originals/P1-sparse-checkout-precorrection-v1/producer.py",
+      "sha256": "0882e6e42809c90d82a160842ade10cd67ba5268ac62c25cbfda19fd5573a52c",
+      "source_fingerprint": {
+        "ctime_ns": 1794655100547782690,
+        "dev": 66306,
+        "ino": 34899305,
+        "mode": 33152,
+        "mtime_ns": 1794655100547782690,
+        "nlink": 1,
+        "size": 2249
+      }
+    },
+    {
+      "bytes": 241,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/sparse-checkout.original"
+      },
+      "path": "originals/P1-sparse-checkout-precorrection-v1/sparse-checkout.original",
+      "sha256": "07c0bfe8afef62cdd40b8ff208965346a0096ebe8afb5dce077b7cd020827a54",
+      "source_fingerprint": {
+        "ctime_ns": 1794655100560606281,
+        "dev": 66306,
+        "ino": 34899308,
+        "mode": 33152,
+        "mtime_ns": 1794655100560606281,
+        "nlink": 1,
+        "size": 241
+      }
+    },
+    {
+      "bytes": 1227,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/summary.json"
+      },
+      "path": "originals/P1-sparse-checkout-precorrection-v1/summary.json",
+      "sha256": "c52c88e84a3141ad3f3d0f391fbd07043ba1067f187cd34c8b907e93cce23fb8",
+      "source_fingerprint": {
+        "ctime_ns": 1794655100563790734,
+        "dev": 66306,
+        "ino": 34899309,
+        "mode": 33152,
+        "mtime_ns": 1794655100563790734,
+        "nlink": 1,
+        "size": 1227
+      }
+    },
+    {
+      "bytes": 358,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/two-tree-entries.stdout"
+      },
+      "path": "originals/P1-sparse-checkout-precorrection-v1/two-tree-entries.stdout",
+      "sha256": "f95f12bd6b670c30c71b68d1489ddf60b6e06f587d122769fbdc2081dd06c22d",
+      "source_fingerprint": {
+        "ctime_ns": 1794655100557158516,
+        "dev": 66306,
+        "ino": 34899306,
+        "mode": 33152,
+        "mtime_ns": 1794655100557158516,
+        "nlink": 1,
+        "size": 358
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/cargo-version.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003293488658,
+        "dev": 66306,
+        "ino": 34757325,
+        "mode": 33152,
+        "mtime_ns": 1794655003293488658,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 36,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/cargo-version.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003322592243,
+        "dev": 66306,
+        "ino": 34757324,
+        "mode": 33152,
+        "mtime_ns": 1794655003322592243,
+        "nlink": 1,
+        "size": 36
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003326867777,
+        "dev": 66306,
+        "ino": 34757327,
+        "mode": 33152,
+        "mtime_ns": 1794655003326867777,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 223,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stdout",
+      "sha256": "6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003367592096,
+        "dev": 66306,
+        "ino": 34757326,
+        "mode": 33152,
+        "mtime_ns": 1794655003367592096,
+        "nlink": 1,
+        "size": 223
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002996096368,
+        "dev": 66306,
+        "ino": 34757288,
+        "mode": 33152,
+        "mtime_ns": 1794655002996096368,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002996096368,
+        "dev": 66306,
+        "ino": 34757284,
+        "mode": 33152,
+        "mtime_ns": 1794655002996096368,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fast-forward.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002999751051,
+        "dev": 66306,
+        "ino": 34757300,
+        "mode": 33152,
+        "mtime_ns": 1794655002999751051,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 738,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fast-forward.stdout",
+      "sha256": "53c2e224443711cee558ed16ae313eae74925814562396dad0205b7d5e861cb3",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003072593060,
+        "dev": 66306,
+        "ino": 34757297,
+        "mode": 33152,
+        "mtime_ns": 1794655003072593060,
+        "nlink": 1,
+        "size": 738
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002621692401,
+        "dev": 66306,
+        "ino": 34757274,
+        "mode": 33152,
+        "mtime_ns": 1794655002621692401,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002621692401,
+        "dev": 66306,
+        "ino": 34757272,
+        "mode": 33152,
+        "mtime_ns": 1794655002621692401,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002988154357,
+        "dev": 66306,
+        "ino": 34757276,
+        "mode": 33152,
+        "mtime_ns": 1794655002988154357,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002989593330,
+        "dev": 66306,
+        "ino": 34757275,
+        "mode": 33152,
+        "mtime_ns": 1794655002989593330,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002992473655,
+        "dev": 66306,
+        "ino": 34757282,
+        "mode": 33152,
+        "mtime_ns": 1794655002992473655,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002992593321,
+        "dev": 66306,
+        "ino": 34757278,
+        "mode": 33152,
+        "mtime_ns": 1794655002992593321,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-head.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/initial-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002203986355,
+        "dev": 66306,
+        "ino": 34757250,
+        "mode": 33152,
+        "mtime_ns": 1794655002203986355,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-head.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/initial-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002205595890,
+        "dev": 66306,
+        "ino": 34757248,
+        "mode": 33152,
+        "mtime_ns": 1794655002205595890,
+        "nlink": 1,
+        "size": 41
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-status.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/initial-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002208382947,
+        "dev": 66306,
+        "ino": 34757256,
+        "mode": 33152,
+        "mtime_ns": 1794655002208382947,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-status.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/initial-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002208382947,
+        "dev": 66306,
+        "ino": 34757253,
+        "mode": 33152,
+        "mtime_ns": 1794655002208382947,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002620113344,
+        "dev": 66306,
+        "ino": 34757271,
+        "mode": 33152,
+        "mtime_ns": 1794655002620113344,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 46,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stdout",
+      "sha256": "efe872d31e928b2b2636fa968ca7a883130fc276b3673ae698b6108710b2d789",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002620918722,
+        "dev": 66306,
+        "ino": 34757270,
+        "mode": 33152,
+        "mtime_ns": 1794655002620918722,
+        "nlink": 1,
+        "size": 46
+      }
+    },
+    {
+      "bytes": 133,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stderr",
+      "sha256": "6e60986e870984343b84c515856e7981a5534291c5c5ec6f4bb6dd57675e4f37",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002603594591,
+        "dev": 66306,
+        "ino": 34757269,
+        "mode": 33152,
+        "mtime_ns": 1794655002603594591,
+        "nlink": 1,
+        "size": 133
+      }
+    },
+    {
+      "bytes": 190,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stdout",
+      "sha256": "38141c1fbd856140293f15d0768b94401aad0549002f21666eba8561cf8d4db2",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002603594591,
+        "dev": 66306,
+        "ino": 34757268,
+        "mode": 33152,
+        "mtime_ns": 1794655002603594591,
+        "nlink": 1,
+        "size": 190
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002522723821,
+        "dev": 66306,
+        "ino": 34757261,
+        "mode": 33152,
+        "mtime_ns": 1794655002522723821,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "source_fingerprint": {
+        "ctime_ns": 1794655002562594725,
+        "dev": 66306,
+        "ino": 34757259,
+        "mode": 33152,
+        "mtime_ns": 1794655002562594725,
+        "nlink": 1,
+        "size": 177
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003113851293,
+        "dev": 66306,
+        "ino": 34757312,
+        "mode": 33152,
+        "mtime_ns": 1794655003113851293,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003146592818,
+        "dev": 66306,
+        "ino": 34757310,
+        "mode": 33152,
+        "mtime_ns": 1794655003146592818,
+        "nlink": 1,
+        "size": 177
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003391703927,
+        "dev": 66306,
+        "ino": 34757332,
+        "mode": 33152,
+        "mtime_ns": 1794655003391703927,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 205,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stdout",
+      "sha256": "aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003424591910,
+        "dev": 66306,
+        "ino": 34757329,
+        "mode": 33152,
+        "mtime_ns": 1794655003424591910,
+        "nlink": 1,
+        "size": 205
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/rust-version.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/rust-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003178506634,
+        "dev": 66306,
+        "ino": 34757321,
+        "mode": 33152,
+        "mtime_ns": 1794655003178506634,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 36,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/rust-version.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/rust-version.stdout",
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003234592531,
+        "dev": 66306,
+        "ino": 34757314,
+        "mode": 33152,
+        "mtime_ns": 1794655003234592531,
+        "nlink": 1,
+        "size": 36
+      }
+    },
+    {
+      "bytes": 20640,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/summary.json"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/summary.json",
+      "sha256": "de19c39a28328ac3f53b849b37e75962b0005cbf6b1980670857c583bfedfbc9",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003587607268,
+        "dev": 66306,
+        "ino": 34757247,
+        "mode": 33152,
+        "mtime_ns": 1794655003587607268,
+        "nlink": 1,
+        "size": 20640
+      }
+    },
+    {
+      "bytes": 839,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stderr",
+      "sha256": "768f405f7ef8615c2ff89388d9b42145c237ef2b6db69bd0fab502bcbfca2d3c",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003563591457,
+        "dev": 66306,
+        "ino": 34757340,
+        "mode": 33152,
+        "mtime_ns": 1794655003563591457,
+        "nlink": 1,
+        "size": 839
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003522398049,
+        "dev": 66306,
+        "ino": 34757338,
+        "mode": 33152,
+        "mtime_ns": 1794655003522398049,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 839,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stderr"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stderr",
+      "sha256": "768f405f7ef8615c2ff89388d9b42145c237ef2b6db69bd0fab502bcbfca2d3c",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003502591656,
+        "dev": 66306,
+        "ino": 34757336,
+        "mode": 33152,
+        "mtime_ns": 1794655003502591656,
+        "nlink": 1,
+        "size": 839
+      }
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stdout"
+      },
+      "path": "originals/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_fingerprint": {
+        "ctime_ns": 1794655003457135852,
+        "dev": 66306,
+        "ino": 34757335,
+        "mode": 33152,
+        "mtime_ns": 1794655003457135852,
+        "nlink": 1,
+        "size": 0
+      }
+    },
+    {
+      "bytes": 71570,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/capture-closure.json"
+      },
+      "path": "package/capture-closure.json",
+      "sha256": "939e842d9cde3e6dce0e31b7736a93e89c5696de73ebca888df0aee9a9dfcf18"
+    },
+    {
+      "bytes": 9530,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/inventory-input.json"
+      },
+      "path": "package/inventory-input.json",
+      "sha256": "0611bf8f7db43c5dbac3427dba1b0a7d3fa2a60344d5a13e3bf1b3c536b24fe1"
+    },
+    {
+      "bytes": 27249,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/pack_architecture_P1_closed_sparse_receipts_v1.py"
+      },
+      "path": "package/producer.py",
+      "sha256": "0b222893eba3379a7a24f85d86b2b28f3845fc99a1732f106e31725261a0c2b8"
+    }
+  ],
+  "original_file_count": 95,
+  "original_total_bytes": 12624662,
+  "schema": "trnm-P1-closed-sparse-originals-zip-index-v1",
+  "total_bytes": 12733011
+}

@@ -1,0 +1,6 @@
+{
+  "stage": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "prefix": "M8-original-repository-truth",
+  "output": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1",
+  "baseline_sha256": "a8eb882dc0392613103fcc0a3d8ed18ce5b67a05b3d460cde8fed9e0fc67dc22"
+}

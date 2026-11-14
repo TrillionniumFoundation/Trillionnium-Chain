@@ -1,0 +1,116 @@
+{
+  "files": [
+    {
+      "bytes": 97589,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-normalized.json",
+      "sha256": "0dc2721579f138584d3c0032f242d1fde886a619d2f2670e77ce112e19b3d561"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 373969,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stdout",
+      "sha256": "ed2889e9bc916ba9d68736ad578af2f6d3a5e3d5f313e0450190eea8175f2f1d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 241870,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stdout",
+      "sha256": "453d10a204df7efcd85e1a8bcf99dcb5e4bf23d0a395db055e509a0680a8ac93"
+    },
+    {
+      "bytes": 81699,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-normalized.json",
+      "sha256": "f65ae59b89f7df3651893b98ee48beec99d75b29267a71467602e2504031e93d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 63939,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stdout",
+      "sha256": "30cec0ea13ce54f2e09bc3a2d3b3f4e45ef048099715d7aa78023a25376c8bc1"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15121,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stdout",
+      "sha256": "dcca93ab3084a6c7b1f3021fb36bd9f54f0b3cf7c249c82755cd0a609bc2b4d8"
+    },
+    {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-normalized.json",
+      "sha256": "59993657d136a3f63c2f0934c24e0ef68aba37fe0aaeee3e00af0b844c7e8c93"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15157,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stdout",
+      "sha256": "9a2da73fc07a4b2d0ee175f82893af42022efa62c32d708fa77ecd8fe93b4513"
+    },
+    {
+      "bytes": 94421,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/expected-heads-with-reviewed-N.json",
+      "sha256": "3181b23cdbec589abb215330ea16676914d40f5a1d639f74df5027523bde245b"
+    },
+    {
+      "bytes": 132555,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/frozen-0170-branches.json",
+      "sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734"
+    },
+    {
+      "bytes": 532,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/heads-summary.json",
+      "sha256": "f6c99290845bda211ed8490eefec91a7075aa5dfe0ce21a6ff7dccb6ddec7882"
+    },
+    {
+      "bytes": 14131,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/observer.py",
+      "sha256": "62c68d1438bc8596c31e54b0f6ca49392252dc04b03c57cfe127fde568d5d16e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38700,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stdout",
+      "sha256": "7db19e6ecbd0b195816283a9a2dde54163182b633cda672c384b6e1572ac94f0"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 87154,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stdout",
+      "sha256": "4bb28d857e62ad05457ff6f58b3e6caa9a436b1d5d02f802e4abed0b1925487d"
+    },
+    {
+      "bytes": 107925,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/summary.json",
+      "sha256": "511582eb74e1a0c01cdcf6e1f04a0e600169b34de314ff0e0fdde920badc61b3"
+    }
+  ],
+  "schema": "trnm-readonly-remote-observation-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

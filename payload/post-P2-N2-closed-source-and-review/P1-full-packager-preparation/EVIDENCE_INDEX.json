@@ -1,0 +1,47 @@
+{
+  "schema": "trnm-P1-full-v2-packager-preparation-index-v1",
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/preparation-producer.py",
+      "bytes": 9443,
+      "sha256": "9f659d1210ade2a581b852c6f736f427e8281e0535ede14691ccb2a17e723df8"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/preparation-inputs.json",
+      "bytes": 6625,
+      "sha256": "064179ff8335baa924f1a79aabe0709ff79d1ce613b89dc41f80482e3f3e3d41"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/M8-full-packager.py.original",
+      "bytes": 28914,
+      "sha256": "cef78f3610541a8056b297fd5256a2493227d3aa78cd0d964a92c57c687889d8"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+      "bytes": 28912,
+      "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/full-M8-to-P1-v2.patch",
+      "bytes": 5730,
+      "sha256": "b5b0d7499f10096dd0cd6f12ca5c9e34ce3bb2a2b688c739aec65e6e9419d195"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/closed-log-manifest-contract.json",
+      "bytes": 2744,
+      "sha256": "cf1fa54d0ee5bc6fdc49c3579f990f5a8f068ad2997238997981f8a51733d855"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/static-identity-proof.json",
+      "bytes": 7916,
+      "sha256": "9b5a8282e903672f1ee918c10f615a47a14b675b95d4a808cc1eaf3128a28003"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/README.md",
+      "bytes": 1652,
+      "sha256": "096450a9ca8cb2cbab90946d7f320d56405cb31db855a8830b34a9fd77f68f7d"
+    }
+  ],
+  "self_and_summary_excluded": true,
+  "all_preparation_only": true
+}

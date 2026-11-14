@@ -1,0 +1,1486 @@
+{
+  "schema": "trnm-original-source-object-import-official-copy-provenance-v1",
+  "sealed_at": "2026-11-14T09:18:14.106Z",
+  "plan": {
+    "schema": "original-source-object-import-official-copy-plan-v1",
+    "source_host": "rog",
+    "target_host": "mac",
+    "source_base": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2",
+    "target": "/private/tmp/chain-consolidation-20261114-root/source-object-import-1a7afc-copy-v1",
+    "items": [
+      {
+        "file": "original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "sha256": "5192c787b6e8c334781bd967bd31dad663fcab4687ed8000954206637ef39794",
+        "source_info": {
+          "metadata": {
+            "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "gid": 1000,
+            "link_count": 1,
+            "metadata_platform": "linux",
+            "mode": 384,
+            "uid": 1000,
+            "xattr_names": [],
+            "xattr_sha256": {}
+          },
+          "mode": 384,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+          "sha256": "5192c787b6e8c334781bd967bd31dad663fcab4687ed8000954206637ef39794",
+          "size": 4119633,
+          "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+        },
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001"
+      },
+      {
+        "file": "EVIDENCE_INDEX.json",
+        "size": 57954,
+        "sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+        "source_info": {
+          "metadata": {
+            "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "gid": 1000,
+            "link_count": 1,
+            "metadata_platform": "linux",
+            "mode": 384,
+            "uid": 1000,
+            "xattr_names": [],
+            "xattr_sha256": {}
+          },
+          "mode": 384,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/EVIDENCE_INDEX.json",
+          "sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+          "size": 57954,
+          "version": "66306:34756591:57954:1794647235114749434:1794647235114749434"
+        },
+        "upload_id": "prci-source-import-1a7-v2-1-20261114-001"
+      },
+      {
+        "file": "summary.json",
+        "size": 1021,
+        "sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+        "source_info": {
+          "metadata": {
+            "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "gid": 1000,
+            "link_count": 1,
+            "metadata_platform": "linux",
+            "mode": 384,
+            "uid": 1000,
+            "xattr_names": [],
+            "xattr_sha256": {}
+          },
+          "mode": 384,
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/summary.json",
+          "sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+          "size": 1021,
+          "version": "66306:34756625:1021:1794647235293749143:1794647235293749143"
+        },
+        "upload_id": "prci-source-import-1a7-v2-2-20261114-001"
+      }
+    ],
+    "no_rog_processes": true,
+    "no_stage_writes": true,
+    "no_importer_or_test_execution": true
+  },
+  "source_info_after": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+      "sha256": "5192c787b6e8c334781bd967bd31dad663fcab4687ed8000954206637ef39794",
+      "size": 4119633,
+      "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/EVIDENCE_INDEX.json",
+      "sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+      "size": 57954,
+      "version": "66306:34756591:57954:1794647235114749434:1794647235114749434"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/summary.json",
+      "sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+      "size": 1021,
+      "version": "66306:34756625:1021:1794647235293749143:1794647235293749143"
+    }
+  ],
+  "target_info": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 0,
+        "link_count": 1,
+        "metadata_platform": "darwin",
+        "mode": 384,
+        "uid": 501,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/source-object-import-1a7afc-copy-v1/original-source-object-import-1a7afc-v2.zip",
+      "sha256": "5192c787b6e8c334781bd967bd31dad663fcab4687ed8000954206637ef39794",
+      "size": 4119633,
+      "version": "16777233:606803216:4119633:1794647828831667755:1794647850416172871"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 0,
+        "link_count": 1,
+        "metadata_platform": "darwin",
+        "mode": 384,
+        "uid": 501,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/source-object-import-1a7afc-copy-v1/EVIDENCE_INDEX.json",
+      "sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+      "size": 57954,
+      "version": "16777233:606803326:57954:1794647421445815261:1794647422811429730"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 0,
+        "link_count": 1,
+        "metadata_platform": "darwin",
+        "mode": 384,
+        "uid": 501,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/private/tmp/chain-consolidation-20261114-root/source-object-import-1a7afc-copy-v1/summary.json",
+      "sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+      "size": 1021,
+      "version": "16777233:606803363:1021:1794647423767944632:1794647425582539613"
+    }
+  ],
+  "initial_invalid_argument_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "chunk requires expected version and bounded base64 data"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "initial_invalid_argument_had_no_data_write": true,
+  "corrected_create_precondition": "absent",
+  "chunks": [
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "9a2878f411e9eb303d3c2b6bae394117c2c1553a2f9d48e105b98fe008358ba8",
+        "eof": false,
+        "next_offset": 65536,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:10:07.788Z",
+      "upload": {
+        "next_offset": 65536,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "EVIDENCE_INDEX.json",
+      "read": {
+        "chunk_sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+        "eof": true,
+        "next_offset": 57954,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/EVIDENCE_INDEX.json",
+        "size": 57954,
+        "version": "66306:34756591:57954:1794647235114749434:1794647235114749434"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:10:22.385Z",
+      "upload": {
+        "next_offset": 57954,
+        "upload_id": "prci-source-import-1a7-v2-1-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "summary.json",
+      "read": {
+        "chunk_sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+        "eof": true,
+        "next_offset": 1021,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/summary.json",
+        "size": 1021,
+        "version": "66306:34756625:1021:1794647235293749143:1794647235293749143"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:10:24.677Z",
+      "upload": {
+        "next_offset": 1021,
+        "upload_id": "prci-source-import-1a7-v2-2-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "4d98157cddd5d2ec71f35b307d29eec4d520f17c863956ae874cedef38dbd421",
+        "eof": false,
+        "next_offset": 131072,
+        "offset": 65536,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:10:59.357Z",
+      "upload": {
+        "next_offset": 131072,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "a6a8a677ad837146bb785215e003632971906746d6d3b9b5cbe380ed3e5fbd77",
+        "eof": false,
+        "next_offset": 196608,
+        "offset": 131072,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:03.249Z",
+      "upload": {
+        "next_offset": 196608,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "264452b394903437033743dd63da430bf76c8e394e0de38f0867e15cc5af258d",
+        "eof": false,
+        "next_offset": 262144,
+        "offset": 196608,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:06.780Z",
+      "upload": {
+        "next_offset": 262144,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "de906218a35488a574f9332b680c97f2509af599f335e866bc88820cad4e23b8",
+        "eof": false,
+        "next_offset": 327680,
+        "offset": 262144,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:10.764Z",
+      "upload": {
+        "next_offset": 327680,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "ce5c14dd5e92a63d8b7223bbdc429c184f2455dcb247b87d05a62f9072ac4e36",
+        "eof": false,
+        "next_offset": 393216,
+        "offset": 327680,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:14.422Z",
+      "upload": {
+        "next_offset": 393216,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "5078e04d788a27eb534a6406322034ff95878215cd2a5b9b5cef0708eb43af50",
+        "eof": false,
+        "next_offset": 458752,
+        "offset": 393216,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:18.059Z",
+      "upload": {
+        "next_offset": 458752,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "dab908664c19820fa153fbcf1a6bca2c06882be2a5ad80ae916da09e60359bab",
+        "eof": false,
+        "next_offset": 524288,
+        "offset": 458752,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:20.750Z",
+      "upload": {
+        "next_offset": 524288,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "8f15362872466155665b845de0e96153aa8fa6cadabae2d543f61c04448e834d",
+        "eof": false,
+        "next_offset": 589824,
+        "offset": 524288,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:26.443Z",
+      "upload": {
+        "next_offset": 589824,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "f68c6687879c85f6d3146949ae5cda2d1a35acba78d1bc7e1da0ae89db84ed00",
+        "eof": false,
+        "next_offset": 655360,
+        "offset": 589824,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:11:59.258Z",
+      "upload": {
+        "next_offset": 655360,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "7f0665227ace9c88d1d7887cc953361fd86951e26f87ae64287a1173764f495b",
+        "eof": false,
+        "next_offset": 720896,
+        "offset": 655360,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:02.331Z",
+      "upload": {
+        "next_offset": 720896,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "68c5f8d22d4365fdc1d05cfac855639d3fa17cc90a1d0728cbf420be949d39ed",
+        "eof": false,
+        "next_offset": 786432,
+        "offset": 720896,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:03.836Z",
+      "upload": {
+        "next_offset": 786432,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "2c807cc76334a84d91b38671e8dcbd3544fecb689a11b2a38bfecd883244cf53",
+        "eof": false,
+        "next_offset": 851968,
+        "offset": 786432,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:08.051Z",
+      "upload": {
+        "next_offset": 851968,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "9a914add111f9eaaf54adfec3e3eadf37de8bf213e9e17fcdd91d8d487404fc1",
+        "eof": false,
+        "next_offset": 917504,
+        "offset": 851968,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:11.136Z",
+      "upload": {
+        "next_offset": 917504,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "9d81a3cf7adc2e377324b72a8add5fa2ed037159145435521f34b579b7f7d11d",
+        "eof": false,
+        "next_offset": 983040,
+        "offset": 917504,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:13.700Z",
+      "upload": {
+        "next_offset": 983040,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "841423fe10774c6a9dedc2123e88e90f32836e1ad071617e11e90e80997c23ba",
+        "eof": false,
+        "next_offset": 1048576,
+        "offset": 983040,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:15.616Z",
+      "upload": {
+        "next_offset": 1048576,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "678d59e505fc7a1a21999ce4ce668a4f9b5717106b6ae377d11df40a7573d98e",
+        "eof": false,
+        "next_offset": 1114112,
+        "offset": 1048576,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:18.961Z",
+      "upload": {
+        "next_offset": 1114112,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "9cf4349f171e7b43cc79875fcb2827cd35dbde1ccc37d48c0f333e71be6c9679",
+        "eof": false,
+        "next_offset": 1179648,
+        "offset": 1114112,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:46.342Z",
+      "upload": {
+        "next_offset": 1179648,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "d0b7ea1eedb4c5ca56e585e37d860b48c5e2b81b89723269446839939887766b",
+        "eof": false,
+        "next_offset": 1245184,
+        "offset": 1179648,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:51.116Z",
+      "upload": {
+        "next_offset": 1245184,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "01521267251156f759d47b2ac71d9024874ce0a6fb0dbe23259d63907e1ad905",
+        "eof": false,
+        "next_offset": 1310720,
+        "offset": 1245184,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:55.230Z",
+      "upload": {
+        "next_offset": 1310720,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "37c7463c708b6c312c474c0a8e82807f30022bd2b473db6d223f506c0906759f",
+        "eof": false,
+        "next_offset": 1376256,
+        "offset": 1310720,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:12:59.979Z",
+      "upload": {
+        "next_offset": 1376256,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "2e8dca498870d5730841171679455be66199365f4dc51e0f4b4dceece81bc6ed",
+        "eof": false,
+        "next_offset": 1441792,
+        "offset": 1376256,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:04.354Z",
+      "upload": {
+        "next_offset": 1441792,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "a7a7eeb151a20a669f2833c9c4c5d51623fa738ee52545d5758b56130e587435",
+        "eof": false,
+        "next_offset": 1507328,
+        "offset": 1441792,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:09.092Z",
+      "upload": {
+        "next_offset": 1507328,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "8382a547a2ad467d7bd7d405e8821a13e5a337f35e9c54e83fbe70cfbc8c0e34",
+        "eof": false,
+        "next_offset": 1572864,
+        "offset": 1507328,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:12.221Z",
+      "upload": {
+        "next_offset": 1572864,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "6fc0e5967419be0d1e5048df94289ba1978d4530789de379b122e73776a0d585",
+        "eof": false,
+        "next_offset": 1638400,
+        "offset": 1572864,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:15.992Z",
+      "upload": {
+        "next_offset": 1638400,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "a3af6a7bbb4d163849cb207178345817c0f136e603d7e3a7144048514be89745",
+        "eof": false,
+        "next_offset": 1703936,
+        "offset": 1638400,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:31.721Z",
+      "upload": {
+        "next_offset": 1703936,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "3e4efb495560ffe9489143cc4319744fefc9cdbc9bbcbde09a3c35024081c94d",
+        "eof": false,
+        "next_offset": 1769472,
+        "offset": 1703936,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:35.258Z",
+      "upload": {
+        "next_offset": 1769472,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "7e6f7c1192dd9a097ab33bbb39289baa311ad5185e75f83fb1b77a310bd30a67",
+        "eof": false,
+        "next_offset": 1835008,
+        "offset": 1769472,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:39.711Z",
+      "upload": {
+        "next_offset": 1835008,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "5bac4bf5afcb478e5aff3e6c4824373c2f23bcdcbd9ab0cb4597c69e8c56378c",
+        "eof": false,
+        "next_offset": 1900544,
+        "offset": 1835008,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:44.144Z",
+      "upload": {
+        "next_offset": 1900544,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "57c88fa7b65fd33d59441022a083915fb33e663c968fcdea91becb074c25c8dd",
+        "eof": false,
+        "next_offset": 1966080,
+        "offset": 1900544,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:47.939Z",
+      "upload": {
+        "next_offset": 1966080,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "70311b74e867870bc2ec37e5ca19f802bfd441f03464de7b728ae0b078a6e476",
+        "eof": false,
+        "next_offset": 2031616,
+        "offset": 1966080,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:51.442Z",
+      "upload": {
+        "next_offset": 2031616,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "0077aeb7a394851b2b92e5435f5bfca8be8daee6e1e58a56f8af10e95d4ed747",
+        "eof": false,
+        "next_offset": 2097152,
+        "offset": 2031616,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:55.277Z",
+      "upload": {
+        "next_offset": 2097152,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "547d961711e213b2bf628f9e56f00bc04c1dd4b6f94b56fa6c5bc71949cfca96",
+        "eof": false,
+        "next_offset": 2162688,
+        "offset": 2097152,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:13:58.743Z",
+      "upload": {
+        "next_offset": 2162688,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "c17e4d9b2d24e50170e8fd463b722e2f869e2d4721ffaf1e2af65afbaffd7c7a",
+        "eof": false,
+        "next_offset": 2228224,
+        "offset": 2162688,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:17.444Z",
+      "upload": {
+        "next_offset": 2228224,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "d26bce7c0284337f4d0920ee27fb725973f3bea5f16e930bec6a8ff61d8b7947",
+        "eof": false,
+        "next_offset": 2293760,
+        "offset": 2228224,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:20.269Z",
+      "upload": {
+        "next_offset": 2293760,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "8ab8b495b87659b76b1a54b555ef88af3d3ff98e0485dee4aea861db564c97a4",
+        "eof": false,
+        "next_offset": 2359296,
+        "offset": 2293760,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:23.476Z",
+      "upload": {
+        "next_offset": 2359296,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "4c2daafbad0f5f937ea6b157db935cf60d57f45bfeeca41638fe4fbf8928891b",
+        "eof": false,
+        "next_offset": 2424832,
+        "offset": 2359296,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:27.780Z",
+      "upload": {
+        "next_offset": 2424832,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "ebb456cdaad1e7aee8d9ba658dc4ea411011a241bd59b6c22a92239a6b3ec4db",
+        "eof": false,
+        "next_offset": 2490368,
+        "offset": 2424832,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:33.088Z",
+      "upload": {
+        "next_offset": 2490368,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "3b76867b8c6e51532dd726ca4ad2e210a609b924b3f0530ff2dd293237cdbb4b",
+        "eof": false,
+        "next_offset": 2555904,
+        "offset": 2490368,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:36.788Z",
+      "upload": {
+        "next_offset": 2555904,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "1f0bdb83f0f671bba45ccb76da33cf75cdae7e1e9696dcbe21b65bd01274c316",
+        "eof": false,
+        "next_offset": 2621440,
+        "offset": 2555904,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:40.954Z",
+      "upload": {
+        "next_offset": 2621440,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "088682b3c1aa03956a59cb947909cb131c68e6e14b3b0e3354435e15db1199dd",
+        "eof": false,
+        "next_offset": 2686976,
+        "offset": 2621440,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:14:44.557Z",
+      "upload": {
+        "next_offset": 2686976,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "d1b53990e58ac5c4e35c631a618cc1c7c0402b5930d7b9534050fd38b1c20795",
+        "eof": false,
+        "next_offset": 2752512,
+        "offset": 2686976,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:07.461Z",
+      "upload": {
+        "next_offset": 2752512,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "249381c99fab5b56f5d6164c214ffc6bc120b5910a89367462b644e3fcd28fd9",
+        "eof": false,
+        "next_offset": 2818048,
+        "offset": 2752512,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:10.681Z",
+      "upload": {
+        "next_offset": 2818048,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "fc8413b6c42080e3545d3283f1339efa9804a360f588fc1581b329972590d1d2",
+        "eof": false,
+        "next_offset": 2883584,
+        "offset": 2818048,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:15.438Z",
+      "upload": {
+        "next_offset": 2883584,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "55c3193e2b40fd9c65db8bca649ad75c905c39e8354af22bc32f4d5d080097d9",
+        "eof": false,
+        "next_offset": 2949120,
+        "offset": 2883584,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:19.916Z",
+      "upload": {
+        "next_offset": 2949120,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "31708dc095e860b6b9acdf97184b9d48f0d15853aecf5bf30016c17ae3f18045",
+        "eof": false,
+        "next_offset": 3014656,
+        "offset": 2949120,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:22.765Z",
+      "upload": {
+        "next_offset": 3014656,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "1c64c6fe30609ec4227b773f636e43abe0cbe657dd553f91b1a8605738c7c7b4",
+        "eof": false,
+        "next_offset": 3080192,
+        "offset": 3014656,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:27.597Z",
+      "upload": {
+        "next_offset": 3080192,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "708cf1d019690dd9a1d71d81dddfde09b29dd7d1b5b5348b9b3bbb4ca8d954fb",
+        "eof": false,
+        "next_offset": 3145728,
+        "offset": 3080192,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:31.713Z",
+      "upload": {
+        "next_offset": 3145728,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "465f444a42c4754e16431d9f9207ca8dbce4fe6666c36db4262100ab2acb6665",
+        "eof": false,
+        "next_offset": 3211264,
+        "offset": 3145728,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:35.095Z",
+      "upload": {
+        "next_offset": 3211264,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "5d761d8f25c5fe467223857370f282b70968c010e348ef24401d1528e4603161",
+        "eof": false,
+        "next_offset": 3276800,
+        "offset": 3211264,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:51.078Z",
+      "upload": {
+        "next_offset": 3276800,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "99da600334b70dca5cf026e460df1995e2906a860b031019c9c5628546e26b41",
+        "eof": false,
+        "next_offset": 3342336,
+        "offset": 3276800,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:55.257Z",
+      "upload": {
+        "next_offset": 3342336,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "15b4662477198fc3080a607cbff77d139b5c2feb61082388b583fdc7a8ebf0d9",
+        "eof": false,
+        "next_offset": 3407872,
+        "offset": 3342336,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:15:59.499Z",
+      "upload": {
+        "next_offset": 3407872,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "6778d228b34034814d251657ee0a90e5ba83b526058ed354f845b5a6c712f531",
+        "eof": false,
+        "next_offset": 3473408,
+        "offset": 3407872,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:04.074Z",
+      "upload": {
+        "next_offset": 3473408,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "11cc40bbaeb17c606ac83d1a75f47be7c54f9dcdff25957b0b6c2e6aee298e6d",
+        "eof": false,
+        "next_offset": 3538944,
+        "offset": 3473408,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:13.062Z",
+      "upload": {
+        "next_offset": 3538944,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "6f88e8e93e0f901a5fffa2669a8a535c598821ac2b44574cb23fe4890be68baf",
+        "eof": false,
+        "next_offset": 3604480,
+        "offset": 3538944,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:24.239Z",
+      "upload": {
+        "next_offset": 3604480,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "4e35bdc48db080523604e0a73aef1913bfb1ca62da296e95e221bf973df0f4e1",
+        "eof": false,
+        "next_offset": 3670016,
+        "offset": 3604480,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:30.009Z",
+      "upload": {
+        "next_offset": 3670016,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "4874bb38712ae6d7b7bf211e25b4998ad9fe897a390db3b43ce30740b775b178",
+        "eof": false,
+        "next_offset": 3735552,
+        "offset": 3670016,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:35.204Z",
+      "upload": {
+        "next_offset": 3735552,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "f97cf783a980cd765d90e6169eafe3cfadbe07f2e9cd1a381bfae5a495164060",
+        "eof": false,
+        "next_offset": 3801088,
+        "offset": 3735552,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:49.179Z",
+      "upload": {
+        "next_offset": 3801088,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "bac201fa206eeb66fed3cb33e1942acb1fd94c98e8a3459cd8b5a01e20625730",
+        "eof": false,
+        "next_offset": 3866624,
+        "offset": 3801088,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:53.276Z",
+      "upload": {
+        "next_offset": 3866624,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "d167090e27517cbe5155b9296e9d9e8f2dc8d0f96546edc4f2b724551c717afc",
+        "eof": false,
+        "next_offset": 3932160,
+        "offset": 3866624,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:16:57.296Z",
+      "upload": {
+        "next_offset": 3932160,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "c888170811ad0f24c53bbc65021ee6adc7c390f47f186e8178c8f9d133a37ad9",
+        "eof": false,
+        "next_offset": 3997696,
+        "offset": 3932160,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:17:02.653Z",
+      "upload": {
+        "next_offset": 3997696,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "e52be3f161ce2140e4c23a57367b2ea09639bd64c653cb2d34c85380fd6a7ba0",
+        "eof": false,
+        "next_offset": 4063232,
+        "offset": 3997696,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:17:07.471Z",
+      "upload": {
+        "next_offset": 4063232,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    },
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "read": {
+        "chunk_sha256": "40e4ee755466be2a76e6a415a50f5bad606a1002c66d600f22793447044d42ca",
+        "eof": true,
+        "next_offset": 4119633,
+        "offset": 4063232,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-source-object-import-1a7afc-v2/original-source-object-import-1a7afc-v2.zip",
+        "size": 4119633,
+        "version": "66306:34756598:4119633:1794647235230749245:1794647235230749245"
+      },
+      "destination_expected_version": "absent",
+      "upload_finished_at": "2026-11-14T09:17:09.747Z",
+      "upload": {
+        "next_offset": 4119633,
+        "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+        "visible": false
+      }
+    }
+  ],
+  "commits": [
+    {
+      "file": "original-source-object-import-1a7afc-v2.zip",
+      "upload_id": "prci-source-import-1a7-v2-0-20261114-001",
+      "result": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "5192c787b6e8c334781bd967bd31dad663fcab4687ed8000954206637ef39794",
+        "size": 4119633,
+        "version": "16777233:606803216:4119633:1794647828831667755:1794647850416172871"
+      }
+    },
+    {
+      "file": "EVIDENCE_INDEX.json",
+      "upload_id": "prci-source-import-1a7-v2-1-20261114-001",
+      "result": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "6a1ccad002de34681634e7d74ebfb2df19e5ab4980be75e5209b81d9a7203d35",
+        "size": 57954,
+        "version": "16777233:606803326:57954:1794647421445815261:1794647422811429730"
+      }
+    },
+    {
+      "file": "summary.json",
+      "upload_id": "prci-source-import-1a7-v2-2-20261114-001",
+      "result": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "6efc0fa3c296f92d2c3aba990bbe928c1f2e156fa6714c4363a2cf34d8f90256",
+        "size": 1021,
+        "version": "16777233:606803363:1021:1794647423767944632:1794647425582539613"
+      }
+    }
+  ],
+  "source_read_chunks": 65,
+  "successful_upload_chunks": 65,
+  "successful_commits": 3,
+  "rog_process_execution": false,
+  "stage_writes": false,
+  "importer_or_tests_rerun": false
+}

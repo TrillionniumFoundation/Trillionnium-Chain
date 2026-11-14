@@ -1,0 +1,21 @@
+{
+  "label": "cargo-version",
+  "argv": [
+    "cargo",
+    "--version"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+  "started": 1794653462.2768836,
+  "ended": 1794653462.3056607,
+  "returncode": 0,
+  "stdout": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/cargo-version.stdout",
+    "bytes": 36,
+    "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+  },
+  "stderr": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/cargo-version.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

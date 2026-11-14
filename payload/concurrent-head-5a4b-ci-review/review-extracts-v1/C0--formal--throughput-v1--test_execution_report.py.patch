@@ -1,0 +1,36 @@
+diff --git a/formal/throughput-v1/test_execution_report.py b/formal/throughput-v1/test_execution_report.py
+index d3f2dc52acfd9ee5d9451c5ac4a732747019561b..19d0ff0825bc93b9e140cb3ee0e5d34894e126fc 100644
+--- a/formal/throughput-v1/test_execution_report.py
++++ b/formal/throughput-v1/test_execution_report.py
+@@ -206,11 +206,17 @@ class ReportTests(unittest.TestCase):
+                 self.assertEqual(phase["transaction_identity_observation"]["unknown_timeliness_round_slots"], 3)
+ 
+     def test_campaign_deduplicates_same_transaction_across_all_phases_and_runs(self):
+         report = campaign_report()
+         for phase in report["phases"]:
+-            phase["confirmations"] = [positive_round(index) for index in reader.ROUNDS]
++            phase["confirmations"] = []
++            for index in reader.ROUNDS:
++                # Complete campaign fixtures use the native t=1/5/9s schedule.
++                start = (1 + 4 * index) * 1_000_000_000
++                row = positive_round(index, start + 10)
++                row["started_ns"] = start
++                phase["confirmations"].append(row)
+             phase["all_signed_rounds_confirmed_in_window"] = True
+         value = self.read(self.bundle({number: report for number in reader.RUNS}))
+         self.assertEqual(value["confirmation_denominator"]["total_timely"], 27)
+         identities = value["transaction_identity_observation"]
+         self.assertEqual(identities["schema"], "trnm-campaign-transaction-identity-observation-v1")
+@@ -346,10 +352,12 @@ class ReportTests(unittest.TestCase):
+         self.assertFalse(value["strict_original_acceptance_reader_executed"])
+ 
+     def test_failed_report_keeps_missing_runs_and_rounds(self):
+         report = campaign_report()
+         report["phases"][0]["confirmations"] = [negative_round(0), negative_round(2)]
++        for row in report["phases"][0]["confirmations"]:
++            row["started_ns"] = (1 + 4 * row["round"]) * 1_000_000_000
+         value = self.read(self.bundle({1: report}))
+         counts = value["confirmation_denominator"]
+         self.assertEqual(counts["planned"], 27)
+         self.assertEqual(counts["records_present"], 2)
+         self.assertEqual(counts["observed_supported_not_timely"], 2)

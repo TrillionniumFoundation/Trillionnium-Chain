@@ -1,0 +1,9 @@
+config/pon/pq128-lifetime-composition-current-v3.json
+config/pon/pq128-source-correspondence-current-v2.json
+docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md
+docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+docs/security/PQ128_LIFETIME_BUDGET_V1.md
+docs/security/PQ128_LIFETIME_COMPOSITION_V2.md
+scripts/ci/pq_lifetime_composition.py
+scripts/ci/pq_lifetime_current_v2.py
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs

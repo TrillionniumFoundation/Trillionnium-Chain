@@ -1,0 +1,107 @@
+194:     epoch: Instant,
+195: }
+196: impl Client {
+197:     fn call(&self, lane: &str, who: u8, request: Request) -> Value {
+198:         self.call_before(lane, who, request, None)
+199:     }
+200:     fn call_before(
+201:         &self,
+202:         lane: &str,
+203:         who: u8,
+204:         request: Request,
+205:         window_end: Option<Instant>,
+206:     ) -> Value {
+207:         let start = Instant::now();
+208:         let client_cpu = ThreadCpuStamp::start();
+209:         let started_ns = ns(self.epoch);
+210:         let (reply, metrics) = public_v3::call_public_protected_v3_with_deadline(
+211:             self.address,
+212:             &request,
+213:             &self.settings,
+214:             identity(71).public_key(),
+215:             &identity(who),
+216:             policy(),
+217:             Some(
+218:                 window_end.map_or(start + Duration::from_millis(CALL_MS), |end| {
+219:                     end.min(start + Duration::from_millis(CALL_MS))
+220:                 }),
+221:             ),
+222:         );
+223:         let client_thread_cpu_ns = cpu_elapsed(client_cpu);
+224:         let ended_ns = ns(self.epoch);
+225:         let elapsed_ns = ns(start);
+226:         let late = elapsed_ns > CALL_MS * 1_000_000;
+227:         let (status, response, error) = match reply {
+228:             Ok(reply) => (
+229:                 if reply.ok { "ok" } else { "refused" },
+230:                 Some(serde_json::to_value(reply).unwrap()),
+231:                 None,
+232:             ),
+233:             Err(error) => ("error", None, Some(error.to_string())),
+234:         };
+235:         json!({
+236:             "lane": lane, "caller_fixture": who, "request": request,
+237:             "started_ns": started_ns, "ended_ns": ended_ns,
+238:             "elapsed_wall_ns": elapsed_ns, "deadline_ms": CALL_MS,
+239:             "client_thread_cpu_ns": client_thread_cpu_ns,
+240:             "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+241:             "returned_after_deadline": late,
+242:             "returned_after_window": window_end.is_some_and(|end| Instant::now() >= end),
+243:             "status": status, "response": response, "error": error,
+244:             // Retain the real transport challenge/search and failure metrics.
+245:             "metrics": metrics,
+246:         })
+247:     }
+248: }
+249: 
+250: // Local test ownership only. Assertions/unwind cannot leave the listener alive.
+251: struct RunningService {
+252:     stop: Arc<AtomicBool>,
+253:     worker: Option<JoinHandle<Value>>,
+254: }
+255: impl RunningService {
+256:     fn finish(mut self) -> Value {
+257:         self.stop.store(true, Ordering::Release);
+258:         self.worker.take().unwrap().join().unwrap()
+259:     }
+260: }
+261: impl Drop for RunningService {
+262:     fn drop(&mut self) {
+263:         self.stop.store(true, Ordering::Release);
+264:         if let Some(worker) = self.worker.take() {
+265:             let _ = worker.join();
+266:         }
+267:     }
+268: }
+
+839:         std::hint::black_box(bytes);
+840:         assert!(actual.finish().is_some_and(|value| value > 0));
+841:         let reversed = ThreadCpuStamp {
+842:             owner: thread::current().id(),
+843:             value: u64::MAX,
+844:         };
+845:         assert_eq!(reversed.finish(), None);
+846:     }
+847: }
+848: 
+849: // Additional mandatory observation in the existing exact-named service test.
+850: // Original finite v2 report and all its assertions remain unchanged.
+851: const PRESSURE_MS: u64 = 4_000;
+852: const PRESSURE_WORKERS: usize = 16;
+853: const PRESSURE_CALLS_PER_WORKER: usize = 1_024;
+854: 
+855: fn compact_pressure_call(mut row: Value, packet_index: Option<usize>) -> Value {
+856:     // Full immutable packets are retained once in the construction table. Do
+857:     // not retain another 98-KiB hex string for every retransmitted false proof.
+858:     let request = row.as_object_mut().unwrap().remove("request").unwrap();
+859:     let bytes = serde_json::to_vec(&request).unwrap();
+860:     row["recorded_request_digest"] = json!(hex::encode(hash(
+861:         b"pressure-recorded-request-v1",
+862:         &[&bytes]
+863:     )));
+864:     row["recorded_request_bytes"] = json!(bytes.len());
+865:     row["packet_index"] = json!(packet_index);
+866:     row
+867: }
+868: 
+869: fn sustained_phase(

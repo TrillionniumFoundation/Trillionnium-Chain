@@ -1,0 +1,64 @@
+{
+  "changes": [
+    {
+      "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+      "old_oid": "48fd25bd32da1cb2900afb2f43e7105ecc3248c1",
+      "new_oid": "a7a3005cc86f0202e8465390e058055b2678baa7",
+      "bytes": 13647,
+      "sha256": "217266780480623cfec459eb61b533f437690c1234cd0b78e49902a78321eab5"
+    },
+    {
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "old_oid": "cac5ec525f34f10e966826561ef1e9fa918f82af",
+      "new_oid": "1fad2b3ae6a5ae61d021f612a6cc8ccc1aa8dc63",
+      "bytes": 3782,
+      "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_oid": "8051933ab30db78d0344d1b417e45d7bd986a90e",
+      "new_oid": "d91790c0b53fa11908d2026ad23bcb58520677a5",
+      "bytes": 1153099,
+      "sha256": "02301a593700ac92d6d412ba5265bde2cb8dca30350122c28dd83f9089513a02"
+    },
+    {
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "old_oid": "ca27d838f08a7bb78f7074aac5ceaf8bc6e1c91b",
+      "new_oid": "4e4ac98c9fde929db5de9269f1efd1882cc6cc55",
+      "bytes": 36093,
+      "sha256": "4e84e389686568106be0f728bd9c9e20ef53cb0798ed4ebe3c74fe328ae9a064"
+    },
+    {
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "old_oid": "b47c30622f0f2175351d1940618852d44a72b55c",
+      "new_oid": "39d4e18d99bea0c8908c5e0279566a63dbe6f461",
+      "bytes": 25102,
+      "sha256": "e7a9dc004f1cdf3acf42cd26e958d338d1878f6b10f9705f41c74b91e82ed5d1"
+    },
+    {
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "old_oid": "a99eb8b5915c5eb300ae7233dc5f4d797b3fa1f7",
+      "new_oid": "595027440b2d1a6ee6da2b7ba4fcf78d9a3aba37",
+      "bytes": 28724,
+      "sha256": "a61b604e699e91171102490e12b576c8693b64cec96b26eac9c90e6976d54e23"
+    },
+    {
+      "path": "scripts/ci/pq_lifetime_current_v2.py",
+      "old_oid": "cc805ba9cc83e9e1160e037725af8a968a2ece12",
+      "new_oid": "a5b085f9f1f45e1ae3849778ed57479f76ebd427",
+      "bytes": 10522,
+      "sha256": "f8871844501054caf62de14a33330817a517ccefa60d538c0618364761c17401"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "old_oid": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+      "new_oid": "b62de39bdba906c9d989498a6299df9a14d900e8",
+      "bytes": 438782,
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    }
+  ],
+  "changed_files_outside_existing_corpus": [
+    "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md"
+  ],
+  "roster_unchanged": true
+}

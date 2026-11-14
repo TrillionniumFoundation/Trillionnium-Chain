@@ -1,0 +1,67 @@
+{
+  "schema": "trnm-P2-packagers-preparation-index-v1",
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/preparation-producer.py",
+      "bytes": 10528,
+      "sha256": "bd01c1e178de8e40eb05722821f523b816ec5eac83c54df0a78b2048d295caf3"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/preparation-inputs.json",
+      "bytes": 6384,
+      "sha256": "45b157a681296fbdd3441d67b2aabdbf1afd2564fc633e4e75fcf1072fc33036"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/P1-full-v2-packager.py.original",
+      "bytes": 28912,
+      "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_1e54c4_v1.py",
+      "bytes": 28911,
+      "sha256": "c87a84c011ceb4be30dfbc39e406a3b54344f7919179b47684fcdec4a4d98e21"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/full-P1-v2-to-P2.patch",
+      "bytes": 5673,
+      "sha256": "bdc5d3335058ec8d4def086479001aa8bb137de62c6fbebcbb6229cdf74d56a4"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/P1-external-packager.py.original",
+      "bytes": 14207,
+      "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_1e54c4_v1.py",
+      "bytes": 14207,
+      "sha256": "c1dcd6428301d247c91c6928eab2fb22d646744f9917ed3240a11b8896388a76"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/external-P1-to-P2.patch",
+      "bytes": 9152,
+      "sha256": "119911c85acea43ba371ffaa374bac6aad8532d11934961e98ca401d6825edee"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/both-packagers-precise.patch",
+      "bytes": 14825,
+      "sha256": "b5201125d4a65506ee3803b6b192c6f9899c8f0affb286b2b20f1060a7259e78"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/closed-log-manifest-contract.json",
+      "bytes": 3306,
+      "sha256": "337d3c4951781460bf97e8a90695179782f7e6b02c1e3a9b31aa9b96d474de5a"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/static-identity-proof.json",
+      "bytes": 14296,
+      "sha256": "32e26ede93b000104ba839cf65df08997d31e6b2792e62de7715f0ee295f0577"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/README.md",
+      "bytes": 1427,
+      "sha256": "8b717704579b64e825c975a31704b117b954a70ecffc2f11fa8be22588b7e6ba"
+    }
+  ],
+  "self_and_summary_excluded": true,
+  "all_preparation_only": true
+}

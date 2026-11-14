@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-pager",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "grep",
+    "-n",
+    "-C",
+    "5",
+    "-E",
+    "trnm-pon-node/src/store.rs|trnm-worker-agent/src/audit/artifact.rs",
+    "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "--",
+    "*distributed_source_inventory.rs"
+  ],
+  "exit_code": 0
+}

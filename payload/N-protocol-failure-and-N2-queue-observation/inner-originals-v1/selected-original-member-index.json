@@ -1,0 +1,436 @@
+[
+  {
+    "bytes": 895,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/build/process.json",
+    "sha256": "3d89b661057251032ac8803772c3221a76ac9697daabbb84c197a0a718a86691",
+    "zip_member": "from-zero-native/build/process.json"
+  },
+  {
+    "bytes": 62,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/build/stderr",
+    "sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b",
+    "zip_member": "from-zero-native/build/stderr"
+  },
+  {
+    "bytes": 118795,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/build/stdout",
+    "sha256": "3f19e55096de79b33910364b7de314ab8c6e260fd2e31466cc2606b6dc00bded",
+    "zip_member": "from-zero-native/build/stdout"
+  },
+  {
+    "bytes": 887,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+    "sha256": "73cb17a61779600b77616bb3dc42c11fffdbfcbcc1bf110d0d52f67d66f57743",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+  },
+  {
+    "bytes": 190,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+    "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+  },
+  {
+    "bytes": 793,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-check/process.json",
+    "sha256": "a3228d7bbe1c62443ecf82dbd91938dd5b64c335fb526a3bc44a78d875140aa5",
+    "zip_member": "from-zero-native/format-check/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-check/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-check/stderr"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-check/stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-check/stdout"
+  },
+  {
+    "bytes": 820,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-copy/process.json",
+    "sha256": "09d9400d002aaba0a3befc3da2b136a5065f9024d008c94b4ed717089e675abf",
+    "zip_member": "from-zero-native/format-copy/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-copy/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-copy/stderr"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/format-copy/stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-copy/stdout"
+  },
+  {
+    "bytes": 899,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+    "sha256": "fcc0384af8effa795bac39e76145df2e6c8ccdf5f4c4606f149265d48e929c4a",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+  },
+  {
+    "bytes": 3364,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+    "sha256": "94bac4c3c4c181cc1216ecd4b99e5f56aa3f12f075bafd5154f453346bd5d2f5",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+  },
+  {
+    "bytes": 900,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+    "sha256": "68c413774eead36aa508fcc65fe0f9ed6af157f1d73f6a30034070178eebeee6",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+  },
+  {
+    "bytes": 196,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+    "sha256": "e77d31f224a92e319462c7205ec97d5286a3d5845a0caa016838a3cf666b71d6",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+  },
+  {
+    "bytes": 914,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+    "sha256": "c741ecb8a9f0959b0747f1cfa1c6bd60e6711a02431a4d07c7397c76940b369e",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+  },
+  {
+    "bytes": 917,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+    "sha256": "36a31bb249670fe8b8f8180b61d30936bd47a34bddb18a013da0aab59109e1ea",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+  },
+  {
+    "bytes": 951,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+    "sha256": "84d95754638bc1213c9a5c4b61547490e748f71eb93b7ec572aea4edf0a1da13",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+  },
+  {
+    "bytes": 408,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+    "sha256": "ba72c651965a638b1c12bf7e6606d1b86336931d2fd166ae5b15a02bc82feda6",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+  },
+  {
+    "bytes": 73987,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native/manifest.json",
+    "sha256": "3e9aecafb2cb934a954cbefda7adcfdd381c94622509c30ca6bc5ed866653f26",
+    "zip_member": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 333,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/child-result.json",
+    "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+    "zip_member": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 9363,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/controller-result.json",
+    "sha256": "46dc9a2de1e91c3fc7ac0f2e1875138702f31cf3be999caf610acd327868dc9f",
+    "zip_member": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 1703,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/inside-after.json",
+    "sha256": "a6c0ec69c49e80ee13e3d9e61cd40ff92fcb3520908d59991d8e866ff3974b3f",
+    "zip_member": "from-zero-native-host/inside-after.json"
+  },
+  {
+    "bytes": 1692,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/inside-before.json",
+    "sha256": "49d61a774d335c944b582452d7ba5732d1634e3493c097b0717b5e75725bef52",
+    "zip_member": "from-zero-native-host/inside-before.json"
+  },
+  {
+    "bytes": 5055,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/prepare-build.json",
+    "sha256": "b9679f77a0a9e2f88625c93e94338a757fc43b81306e58a6e1e93f7678412867",
+    "zip_member": "from-zero-native-host/prepare-build.json"
+  },
+  {
+    "bytes": 6918,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111407094.zip",
+    "path": "inner-originals-v1/14111407094/from-zero-native-host/systemd-run.log",
+    "sha256": "4c13e59dc258dca91328e6658289b1f6e6d080e5202cafaa13c8022e58670fa9",
+    "zip_member": "from-zero-native-host/systemd-run.log"
+  },
+  {
+    "bytes": 62,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/build/stderr",
+    "sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+    "zip_member": "from-zero-native/build/stderr"
+  },
+  {
+    "bytes": 893,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/build/process.json",
+    "sha256": "a2bc2d538eab7b64f23c6147f52e41f2edd4ad889a4ee59aadc49043742ab83f",
+    "zip_member": "from-zero-native/build/process.json"
+  },
+  {
+    "bytes": 118795,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/build/stdout",
+    "sha256": "94d40721addc953b2843a80aba0adc2d7ef37800768d03c8cd2e58a86e60f96a",
+    "zip_member": "from-zero-native/build/stdout"
+  },
+  {
+    "bytes": 887,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+    "sha256": "7e3419a4c4d2a99feba991e3a8730230a5803af6a8875daaaed14c7adec094d7",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+  },
+  {
+    "bytes": 190,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+    "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+    "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+  },
+  {
+    "bytes": 792,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-check/process.json",
+    "sha256": "db5bad60c5e6100c9fc20ef509133eeda219c9b343d7ec725a84a0193beed245",
+    "zip_member": "from-zero-native/format-check/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-check/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-check/stderr"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-check/stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-check/stdout"
+  },
+  {
+    "bytes": 820,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-copy/process.json",
+    "sha256": "7fc1c5b7dd1f0dba99ad3deff0570a05199d459d3b062d38021adabf19d34025",
+    "zip_member": "from-zero-native/format-copy/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-copy/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-copy/stderr"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/format-copy/stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/format-copy/stdout"
+  },
+  {
+    "bytes": 899,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+    "sha256": "07dd44f611b61a4ce3440954b0d3ae061de21c5651c8e3bbf1c64a22d3674552",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+  },
+  {
+    "bytes": 3364,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+    "sha256": "3cf16338f47891fcebab037e728fb8ed84efd60909eeeab409a175c9fb7e310c",
+    "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+  },
+  {
+    "bytes": 900,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+    "sha256": "2ba1fc090746e61e1c7056a4910f4e0f393d4946b8ba126a8c335e5e92f4ebfc",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+  },
+  {
+    "bytes": 196,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+    "sha256": "e77d31f224a92e319462c7205ec97d5286a3d5845a0caa016838a3cf666b71d6",
+    "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+  },
+  {
+    "bytes": 915,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+    "sha256": "6a5f99264e166c4ccc4ac4c539920e7884ad8ce341bd895c64b089e2f8952783",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+  },
+  {
+    "bytes": 917,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+    "sha256": "fdcc092ab5df81e30fcbdd098c277aa3f8e8aa3bdd0e620c2f198c5ed23b6348",
+    "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+  },
+  {
+    "bytes": 951,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+    "sha256": "0d46b2dfbce37abe28b6b35a3ffeb860f2c78900f61343c5869bbe5150ac56af",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 0,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+  },
+  {
+    "bytes": 408,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+    "sha256": "3765924461345528d3d5502d610585f091f3c140fa2168ba2f126498e86d24d2",
+    "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+  },
+  {
+    "bytes": 73890,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native/manifest.json",
+    "sha256": "ba3e2c27501e314fb329e8be8d2b1d8cc77b5f6f79b05ab9d535e580d84e2ab3",
+    "zip_member": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 333,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/child-result.json",
+    "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+    "zip_member": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 9362,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/controller-result.json",
+    "sha256": "aef6ddab320fdb0c8a1ca7180c1d83293b8996a1c826954f648fcda23882b957",
+    "zip_member": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 1702,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/inside-after.json",
+    "sha256": "a0dc15eb8f22c04a1ee4f1149e1903f82a03a2049abcb21bbde99aa4fdd47f09",
+    "zip_member": "from-zero-native-host/inside-after.json"
+  },
+  {
+    "bytes": 1692,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/inside-before.json",
+    "sha256": "a4519442a8dd3c7f1824f14ba5b0ac260422ea0229756f196b4cda17041f1ff9",
+    "zip_member": "from-zero-native-host/inside-before.json"
+  },
+  {
+    "bytes": 5054,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/prepare-build.json",
+    "sha256": "15f7fedbdd3a8e244eb434053b921f67e6df7c05647093e78a46d449c992841e",
+    "zip_member": "from-zero-native-host/prepare-build.json"
+  },
+  {
+    "bytes": 6915,
+    "original_zip": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/official-complete-artifacts-v1/14111816359.zip",
+    "path": "inner-originals-v1/14111816359/from-zero-native-host/systemd-run.log",
+    "sha256": "7a359ce84a947fe2ddc91eb29782dc3010cf8ad7d04182e7cfafe89313e77d02",
+    "zip_member": "from-zero-native-host/systemd-run.log"
+  }
+]

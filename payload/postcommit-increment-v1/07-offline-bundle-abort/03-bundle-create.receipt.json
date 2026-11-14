@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "-c",
+    "core.commitGraph=false",
+    "bundle",
+    "create",
+    "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle",
+    "HEAD",
+    "^dba81d56be6598cec9df2774446ca3ab7fccca98"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-14T06:14:05.326101+00:00",
+  "label": "03-bundle-create",
+  "started_at": "2026-11-14T06:14:05.116598+00:00"
+}

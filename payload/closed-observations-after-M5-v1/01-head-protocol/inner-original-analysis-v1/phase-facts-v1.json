@@ -1,0 +1,1146 @@
+{
+  "phases": [
+    {
+      "mode": "attack-free-baseline",
+      "workers": 0,
+      "requested_window_ns": 4000000000,
+      "business_started_ns": 142237,
+      "confirmation_ended_ns": 3200564462,
+      "client_confirmation_latency_ns": 3200422225,
+      "client_confirmed_before_original_window_end": true,
+      "client_confirmed_transactions": 1,
+      "finite_business_target_met": true,
+      "invariant_target_met": true,
+      "accounting_closed": true,
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "full_native_state_equal": true,
+      "verification_errors": [],
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3200561377,
+        "confirmation_started_ns": 3199572818,
+        "confirmation_thread_cpu_ns": 989408,
+        "confirmation_wall_ns": 988559,
+        "observation_returned": true
+      },
+      "independent_client_confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1794645507,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "independent_replay_and_confirmation_wall_ns": 2988830793,
+      "independent_replay_and_confirmation_cpu_ns": 570079562,
+      "honest_head_successes_in_window": 57,
+      "maximum_honest_head_gap_ns": 101415778,
+      "business_receive_clock": {
+        "clock_scope": "same-process-monotonic-observer",
+        "first_business_packet_body_digest": "fb73556e73a575bf2768b03bcd2c50954eac8422b9253045b25b00ced83477a0",
+        "has_control_authority": false,
+        "independent_confirmation_in_observer_ns": 3200808140,
+        "request_binding_stage": "hello-claimed-body-digest",
+        "schema": "public-v3-business-receive-clock-v1",
+        "traffic_epoch_in_observer_ns": 243678
+      },
+      "honest_submissions": [
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 910650,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 8775523,
+          "ended_ns": 9456293,
+          "error": null,
+          "height": 1,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 0,
+          "recorded_request_bytes": 99445,
+          "recorded_request_digest": "ae89dd11b9e11ee359c34dd9b8d83f02e4f997ca096e6947a1b7a1fc3f34bf16",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 682673,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 751534,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9611309,
+          "ended_ns": 19576389,
+          "error": null,
+          "height": 2,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 1,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "bbc4c040dd3b582f8f17e6b496cf93f1c32e19acde697696bd699ef12966943e",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 9966623,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 963520,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 79781382,
+          "ended_ns": 99879672,
+          "error": null,
+          "height": 3,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 2,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "f621d9129564a7acd2f4e9a520cab5af0ba364464054ea8306fe32132f337584",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 20099673,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 760771,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9954360,
+          "ended_ns": 110383104,
+          "error": null,
+          "height": 4,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 3,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "ca1ec819d6746d4d07bc9d24fa70590cdec9dd1491a9398a6e3e61b1235e408f",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 100430257,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 861429,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 80638285,
+          "ended_ns": 191552658,
+          "error": null,
+          "height": 5,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 4,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "38796bff0ea731e623433ee51e42d238502a62d145d099158ec2d10186734042",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 110915686,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 800425,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 8927369,
+          "ended_ns": 201046813,
+          "error": null,
+          "height": 6,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 5,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "3a9c52d7557717f6e0b2bb071c103846cce9cdb641508f96954a648b9c2b30fc",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 192120987,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 729894,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9929453,
+          "ended_ns": 211526520,
+          "error": null,
+          "height": 7,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 6,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "c900b977969d3fed70e75f1ead75709549944bbabd455d84bcbe8ba9a4c54266",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 201598630,
+          "status": "ok"
+        }
+      ],
+      "independent_history_page_replay": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 216581997,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "replay_accepted": true,
+          "replay_ended_ns": 903579927,
+          "replay_error": null,
+          "replay_started_ns": 216600833,
+          "replay_thread_cpu_ns": 85019141,
+          "replay_wall_ns": 686979094
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 908108674,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+          "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "replay_accepted": true,
+          "replay_ended_ns": 1210423616,
+          "replay_error": null,
+          "replay_started_ns": 908129863,
+          "replay_thread_cpu_ns": 73158314,
+          "replay_wall_ns": 302293753
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 2,
+          "history_request_ended_ns": 1290600313,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+          "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+          "replay_accepted": true,
+          "replay_ended_ns": 1603567527,
+          "replay_error": null,
+          "replay_started_ns": 1290650457,
+          "replay_thread_cpu_ns": 75842954,
+          "replay_wall_ns": 312917070
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 3,
+          "history_request_ended_ns": 1607878383,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+          "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+          "replay_accepted": true,
+          "replay_ended_ns": 1994711093,
+          "replay_error": null,
+          "replay_started_ns": 1607900144,
+          "replay_thread_cpu_ns": 75645878,
+          "replay_wall_ns": 386810949
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 1999354786,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+          "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+          "replay_accepted": true,
+          "replay_ended_ns": 2308687308,
+          "replay_error": null,
+          "replay_started_ns": 1999390773,
+          "replay_thread_cpu_ns": 75356546,
+          "replay_wall_ns": 309296535
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 5,
+          "history_request_ended_ns": 2391080553,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+          "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+          "replay_accepted": true,
+          "replay_ended_ns": 2704220316,
+          "replay_error": null,
+          "replay_started_ns": 2391102555,
+          "replay_thread_cpu_ns": 78726774,
+          "replay_wall_ns": 313117761
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2708198187,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+          "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+          "replay_accepted": true,
+          "replay_ended_ns": 3199458102,
+          "replay_error": null,
+          "replay_started_ns": 2708219777,
+          "replay_thread_cpu_ns": 98402621,
+          "replay_wall_ns": 491238325
+        }
+      ],
+      "honest_history_summary": {
+        "count": 7,
+        "last": {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 811266,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 3842556,
+          "ended_ns": 2708198187,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "request": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "op",
+              "tip"
+            ]
+          },
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 2704357264,
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "mode": "from-zero-pressure",
+      "workers": 16,
+      "requested_window_ns": 4000000000,
+      "business_started_ns": 6466562,
+      "confirmation_ended_ns": null,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_before_original_window_end": false,
+      "client_confirmed_transactions": 0,
+      "finite_business_target_met": false,
+      "invariant_target_met": true,
+      "accounting_closed": true,
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "full_native_state_equal": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "independent_final_confirmation_stage": null,
+      "independent_client_confirmation": null,
+      "independent_replay_and_confirmation_wall_ns": 2394019022,
+      "independent_replay_and_confirmation_cpu_ns": 99315896,
+      "honest_head_successes_in_window": 30,
+      "maximum_honest_head_gap_ns": 297325239,
+      "business_receive_clock": {
+        "clock_scope": "same-process-monotonic-observer",
+        "first_business_packet_body_digest": "fb73556e73a575bf2768b03bcd2c50954eac8422b9253045b25b00ced83477a0",
+        "has_control_authority": false,
+        "independent_confirmation_in_observer_ns": null,
+        "request_binding_stage": "hello-claimed-body-digest",
+        "schema": "public-v3-business-receive-clock-v1",
+        "traffic_epoch_in_observer_ns": 95690
+      },
+      "honest_submissions": [
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 830299,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 187341327,
+          "ended_ns": 194128803,
+          "error": null,
+          "height": 1,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 0,
+          "recorded_request_bytes": 99445,
+          "recorded_request_digest": "ae89dd11b9e11ee359c34dd9b8d83f02e4f997ca096e6947a1b7a1fc3f34bf16",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 6789249,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 652419,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 204758554,
+          "ended_ns": 399498255,
+          "error": null,
+          "height": 2,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 1,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "bbc4c040dd3b582f8f17e6b496cf93f1c32e19acde697696bd699ef12966943e",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 194740994,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 1090877,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 294596009,
+          "ended_ns": 694582512,
+          "error": null,
+          "height": 3,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 2,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "f621d9129564a7acd2f4e9a520cab5af0ba364464054ea8306fe32132f337584",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 399988687,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 796197,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 302425008,
+          "ended_ns": 997686769,
+          "error": null,
+          "height": 4,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 3,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "ca1ec819d6746d4d07bc9d24fa70590cdec9dd1491a9398a6e3e61b1235e408f",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 695263683,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 849007,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 200989398,
+          "ended_ns": 1199140850,
+          "error": null,
+          "height": 5,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 4,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "38796bff0ea731e623433ee51e42d238502a62d145d099158ec2d10186734042",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 998152855,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 754450,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 292706789,
+          "ended_ns": 1493350064,
+          "error": null,
+          "height": 6,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 5,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "3a9c52d7557717f6e0b2bb071c103846cce9cdb641508f96954a648b9c2b30fc",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1200644938,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 764168,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 206442502,
+          "ended_ns": 1700542877,
+          "error": null,
+          "height": 7,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "packet_index": 6,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "c900b977969d3fed70e75f1ead75709549944bbabd455d84bcbe8ba9a4c54266",
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1494101968,
+          "status": "ok"
+        }
+      ],
+      "independent_history_page_replay": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 1895273779,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "replay_accepted": true,
+          "replay_ended_ns": 3797524870,
+          "replay_error": null,
+          "replay_started_ns": 1895298265,
+          "replay_thread_cpu_ns": 89332169,
+          "replay_wall_ns": 1902226605
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 3896627423,
+          "native_import_observation": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checkpoint_attribution",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "native_attribution",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": null,
+          "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "replay_accepted": false,
+          "replay_ended_ns": 4094626530,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3896652901,
+          "replay_thread_cpu_ns": 7936872,
+          "replay_wall_ns": 197973629
+        }
+      ],
+      "honest_history_summary": {
+        "count": 2,
+        "last": {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 822055,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 98963582,
+          "ended_ns": 3896627423,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "type": "dict",
+            "keys": [
+              "challenge_ns",
+              "construction_ns",
+              "failed_stage",
+              "solution_body_response_ns",
+              "solution_found",
+              "solution_search_ns",
+              "solution_search_thread_cpu_ns",
+              "solution_trials",
+              "total_elapsed_ns"
+            ]
+          },
+          "request": {
+            "type": "dict",
+            "keys": [
+              "after",
+              "op",
+              "tip"
+            ]
+          },
+          "response": {
+            "type": "dict",
+            "keys": [
+              "body_bytes_sent",
+              "identity_authority",
+              "ok",
+              "public_network_ready",
+              "solve_elapsed_ns",
+              "solve_trials",
+              "value"
+            ]
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 3797665514,
+          "status": "ok"
+        }
+      }
+    }
+  ]
+}

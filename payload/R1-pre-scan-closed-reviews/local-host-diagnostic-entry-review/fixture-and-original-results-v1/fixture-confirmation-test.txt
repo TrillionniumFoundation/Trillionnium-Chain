@@ -1,0 +1,116 @@
+1677: #[test]
+1678: fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(
+1679: ) {
+1680:     let temporary = tempfile::tempdir().unwrap();
+1681:     let output = std::env::var_os("TRNM_PUBLIC_V3_CONFIRMATION_DIR")
+1682:         .map(std::path::PathBuf::from)
+1683:         .or_else(|| {
+1684:             std::env::var_os("TRNM_CI_RECEIPT_DIR")
+1685:                 .map(|root| std::path::PathBuf::from(root).join("public-v3-confirmation-pressure"))
+1686:         });
+1687:     let path = output.unwrap_or_else(|| temporary.path().join("confirmation-pressure"));
+1688:     fs::create_dir(&path).unwrap();
+1689:     let settings = Settings::development(Some(1_750_000_000)).unwrap();
+1690:     let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
+1691:     let target = producer.expected_target(settings.genesis()).unwrap();
+1692:     let (a, b) = maintenance();
+1693:     let task = pon_work::task_id(&a, &b).unwrap();
+1694:     // False proof acquisition precedes all honest production and never consumes
+1695:     // an honest trace, product, prepared object or verifier result.
+1696:     let construction_cpu = ThreadCpuStamp::start();
+1697:     let construction_started = Instant::now();
+1698:     let searches: Vec<_> = (0..16)
+1699:         .map(|i| {
+1700:             search_from_zero(
+1701:                 genesis_header(&settings, target, 100_000 + i, task),
+1702:                 &a,
+1703:                 &b,
+1704:                 SEARCH_BUDGET,
+1705:             )
+1706:         })
+1707:         .collect();
+1708:     let attacker_construction_cpu_ns = cpu_elapsed(construction_cpu);
+1709:     let attacker_construction_wall_ns = ns(construction_started);
+1710:     let false_wires = Arc::new(
+1711:         searches
+1712:             .iter()
+1713:             .map(|search| search.observation["packet"].as_str().map(str::to_owned))
+1714:             .collect::<Vec<_>>(),
+1715:     );
+1716:     let construction = searches
+1717:         .iter()
+1718:         .map(|search| search.observation.clone())
+1719:         .collect::<Vec<_>>();
+1720:     let tx = confirmation_transfer(
+1721:         &settings,
+1722:         producer.next_nonce(development_public(0).unwrap()).unwrap(),
+1723:     );
+1724:     let honest_started = Instant::now();
+1725:     let honest_process_cpu_started = process_cpu_ns();
+1726:     let mut packets = Vec::new();
+1727:     for height in 1..=7 {
+1728:         let packet = producer
+1729:             .mine(
+1730:                 if height == 1 {
+1731:                     vec![tx.clone()]
+1732:                 } else {
+1733:                     vec![]
+1734:                 },
+1735:                 settings.genesis_time() + height * 10,
+1736:                 ingress::now().unwrap(),
+1737:             )
+1738:             .unwrap();
+1739:         assert_eq!(packet.header.target, target);
+1740:         assert_eq!(packet.header.work_task, task);
+1741:         packets.push(packet);
+1742:     }
+1743:     let honest_chain_acquisition_wall_ns = ns(honest_started);
+1744:     let honest_chain_process_cpu_ns = honest_process_cpu_started
+1745:         .zip(process_cpu_ns())
+1746:         .and_then(|(start, end)| end.checked_sub(start));
+1747:     let baseline = signed_confirmation_phase(
+1748:         &path.join("baseline"),
+1749:         &settings,
+1750:         &packets,
+1751:         false_wires.clone(),
+1752:         false,
+1753:     );
+1754:     let pressure = signed_confirmation_phase(
+1755:         &path.join("pressure"),
+1756:         &settings,
+1757:         &packets,
+1758:         false_wires,
+1759:         true,
+1760:     );
+1761:     let passed = baseline["invariant_target_met"] == true
+1762:         && baseline["finite_business_target_met"] == true
+1763:         && pressure["invariant_target_met"] == true
+1764:         && pressure["finite_business_target_met"] == true;
+1765:     let invariants_passed =
+1766:         baseline["invariant_target_met"] == true && pressure["invariant_target_met"] == true;
+1767:     let report = json!({"schema": "public-v3-signed-confirmation-pressure-v1",
+1768:         "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
+1769:         "genesis": hex::encode(settings.genesis()), "target": hex::encode(target), "task": hex::encode(task),
+1770:         "policy_id": hex::encode(policy().id()), "same_packet_sequence_in_both_runs": true,
+1771:         "signed_honest_packets": packets.iter().map(|packet| hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
+1772:         "from_zero_construction": construction, "attacker_construction_cpu_ns": attacker_construction_cpu_ns,
+1773:         "attacker_construction_wall_ns": attacker_construction_wall_ns,
+1774:         "honest_chain_acquisition_wall_ns": honest_chain_acquisition_wall_ns,
+1775:         "honest_chain_process_cpu_ns": honest_chain_process_cpu_ns,
+1776:         "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+1777:         "honest_chain_aggregate_cpu_ns": null, "strongest_honest_producer_used": false,
+1778:         "phases": [baseline, pressure], "finite_target_met": passed, "invariant_target_met": invariants_passed,
+1779:         "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+1780:         "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+1781:         "public_network_ready": false, "work_profile_qualified": false, "production_activation": false});
+1782:     fs::write(
+1783:         path.join("report.json"),
+1784:         serde_json::to_vec_pretty(&report).unwrap(),
+1785:     )
+1786:     .unwrap();
+1787:     println!(
+1788:         "{}",
+1789:         json!({"schema": report["schema"], "finite_target_met": passed, "report_path": path.join("report.json")})
+1790:     );
+1791:     assert!(invariants_passed, "retain signed-confirmation report; native safety/accounting failed; finite service outcomes are recorded separately");
+1792: }

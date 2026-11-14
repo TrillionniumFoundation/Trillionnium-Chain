@@ -1,0 +1,29 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-32a3b93f4328e3cdab29da05ae4c21f595376e0b174cffdb101e9baef56b683d/output.log",
+  "available_end": 259,
+  "chunk_sha256": "14e19bd914cbb5316d244d1e584c2f6e61bd5eae781631ff49fb0efb6cda5108",
+  "host": "mac",
+  "next_offset": 259,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-32a3b93f4328e3cdab29da05ae4c21f595376e0b174cffdb101e9baef56b683d",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 259,
+    "bytes_stored": 259,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794650942751,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 92586,
+    "pid": 92587,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"status\": \"CAPTURED_READONLY_FOR_REVIEW\", \"summary\": {\"bytes\": 15359, \"path\": \"/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/summary.json\", \"sha256\": \"254a214451d3f6be70b248167b2fff63e68d8dec67f29c6b0c0eecf19e028c16\"}}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

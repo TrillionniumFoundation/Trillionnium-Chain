@@ -1,0 +1,731 @@
+[
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/aggregate-kernel-counter-deltas.json",
+    "bytes": 9795,
+    "sha256": "7f4ce5f87084b2f1b9a839b7895273d4d0df5bfd9b70abd275e3ba198744ee66",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/aggregate-kernel-counter-deltas.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/actual-systemd-parent-after.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/actual-systemd-parent-after.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/actual-systemd-parent.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/actual-systemd-parent.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/after-provision.json",
+    "bytes": 1626,
+    "sha256": "4d5175b7930be66f789b5bf186943ede443365af6ff7ef60740b38c50401a9c3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/after-provision.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/before-provision.json",
+    "bytes": 2793,
+    "sha256": "4f403090ae765839b3c241df704833d6ba3d17758a95f039f666f8437ba01731",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/before-provision.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/inside-after.json",
+    "bytes": 1695,
+    "sha256": "5fbba7a49b3f8b6cbcaa79129af1254f3477bfaad64af7f0a53705cd17d045e8",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/inside-after.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/inside-before.json",
+    "bytes": 1684,
+    "sha256": "f0bde7bbce37c61a34cbaa34e75a63284808c1eeeb68644db2c94b8bd23a37ab",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/inside-before.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/outside-after.json",
+    "bytes": 1659,
+    "sha256": "6d531a7bd60c4e5bebd25d6c13837685e98a16359fea34855c7da604aa537330",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/outside-after.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/parent-properties.log",
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/parent-properties.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/arm64/systemd-run.log",
+    "bytes": 6900,
+    "sha256": "ea6c7caf0be1c718cfde790283617ad811ac71a37320f784d1350d5186e267a0",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/arm64/systemd-run.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/index.json",
+    "bytes": 6121,
+    "sha256": "caf42da42485ad125ec1bf757350749364bb7e5af9b42d891b536d91b1020ab4",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/index.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/producer-scope.json",
+    "bytes": 5538,
+    "sha256": "b5336e560782b42dd5ba9bd14afd924791f81b3a76ac03a2a8885bd91262a235",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/producer-scope.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/run_from_zero_host.py.dc42.raw",
+    "bytes": 28366,
+    "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/run_from_zero_host.py.dc42.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/actual-systemd-parent-after.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/actual-systemd-parent-after.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/actual-systemd-parent.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/actual-systemd-parent.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/after-provision.json",
+    "bytes": 1626,
+    "sha256": "8b832a4aa4eeba5d53d63b4d4f3b9504ba2ab3bc59b6d42df3752fdc9c75fa2c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/after-provision.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/before-provision.json",
+    "bytes": 2793,
+    "sha256": "dc7a8375422d8dea3587f8db9c19596ab5cb067058001e12eb513a9e1a409ce8",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/before-provision.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/inside-after.json",
+    "bytes": 1696,
+    "sha256": "691cc240dd189ee6f1cd16818ad493d1f0132b1b4dc363c728c0831c7e463f06",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/inside-after.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/inside-before.json",
+    "bytes": 1685,
+    "sha256": "67ab1e53f41a4fbfdf7aed886679e97bbb9e1c96ecaeeb18c72bef4b60b00d6d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/inside-before.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/outside-after.json",
+    "bytes": 1660,
+    "sha256": "98253df6ba70909ca3aabba11338d3729f534a05119040dd8bdd124c7310da12",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/outside-after.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/parent-properties.log",
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/parent-properties.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-host-counter-originals-v1/x64/systemd-run.log",
+    "bytes": 6905,
+    "sha256": "f0577741e8c1ec1dd02169afd56159b36cade173d79f7b220210421a3a6b0f8c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/x64/systemd-run.log"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-member-observation-inventory-v1/arm64-member-observation-inventory.json",
+    "bytes": 52782,
+    "sha256": "8d99e655228dd3f528f208a3a3e0f803c559ed445db2c135d2920d05917154c4",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-member-observation-inventory-v1/arm64-member-observation-inventory.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-member-observation-inventory-v1/index.json",
+    "bytes": 616,
+    "sha256": "1046ada859bf6c472d32c22bbeb59648ac8787343d2fc680166415357975586a",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-member-observation-inventory-v1/index.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/additional-member-observation-inventory-v1/x64-member-observation-inventory.json",
+    "bytes": 52782,
+    "sha256": "164280608baf609d5414bd7185c34715ae8b9b0092872b2dcb445b7b9726c5fe",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-member-observation-inventory-v1/x64-member-observation-inventory.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/arm64.tail-range-receipt.json",
+    "bytes": 1790,
+    "sha256": "851d4a3b8c716fb652f096025159043648f30e7ad76348e6b104f9dfa617f786",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/arm64.tail-range-receipt.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/bounded-continuation-v2/summary.json",
+    "bytes": 18601,
+    "sha256": "8dc375d9fa93ea752270d2c4bcb7af1c43d462e579ed9dacaf01d38f89bdc4f9",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/bounded-continuation-v2/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/fixed-artifacts.json",
+    "bytes": 731,
+    "sha256": "573de3724cd1447c423eec2f5d3f5cbcfb17302c13481e87f395ca9af4d88e7c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/fixed-artifacts.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/original-failed-download-summary.json",
+    "bytes": 2750,
+    "sha256": "afaaf9eb855a5fd0bc3bbbeb84577d27e485a2edfac1eca3fee15a83a5c043da",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/original-failed-download-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/serial-missing-ranges-v3/summary.json",
+    "bytes": 17372,
+    "sha256": "7e9eab55421445991cbd958dbbb7feb7a5d762512b4bb989ea87ce051a17554e",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v3/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/serial-missing-ranges-v4/summary.json",
+    "bytes": 33165,
+    "sha256": "50635af608b4078afa94fa6d3a7dae2fa3567c53d4e64c83d3c41b74d17fdb3f",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v4/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/serial-missing-ranges-v5/arm64/000-3472328-3996615.receipt.json",
+    "bytes": 1066,
+    "sha256": "ea93f2e83116865389c66fc1d0d4a5cd9ab64b7a71acd4937d92bce111ac4147",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/arm64/000-3472328-3996615.receipt.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/serial-missing-ranges-v5/x64/005-6716362-7240649.receipt.json",
+    "bytes": 1060,
+    "sha256": "372653341d79070a855ca9a3503b56d51a6a9ee3e44bd355c4f003f3e70e8922",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/x64/005-6716362-7240649.receipt.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/artifact-range-continuation-v1/x64.tail-range-receipt.json",
+    "bytes": 1783,
+    "sha256": "bb686695f7b4470fe24b5196cf3f6006a6f597c083bc55413120b1ea72fbc2a0",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/x64.tail-range-receipt.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/bounded-cause-review-v1/EVIDENCE_INDEX.json",
+    "bytes": 3033,
+    "sha256": "16001be2dec61f5ed870781c93748c065a5a57733fba1a3a5355d25417626b8e",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/EVIDENCE_INDEX.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/bounded-cause-review-v1/causal-summary.json",
+    "bytes": 111116,
+    "sha256": "07c9620aca942d46dfef631650508a6e985e8f28f1f947a099b5aef0d97d78c7",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/causal-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/bounded-cause-review-v1/review.md",
+    "bytes": 4572,
+    "sha256": "a6e33926b598b9f68e4bbb5b3ae44aafd3b58f7821f4f1e6060241fc86590874",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/review.md"
+    }
+  },
+  {
+    "path": "C0-cost-originals/completed-originals-archive-manifest-v1/README.md",
+    "bytes": 1908,
+    "sha256": "a6b943fb5e2e23b94f2625eb2de9e8e81a3fb044ec95bdfe477af9d3f19305e4",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/completed-originals-archive-manifest-v1/README.md"
+    }
+  },
+  {
+    "path": "C0-cost-originals/completed-originals-archive-manifest-v1/completion-overlay.json",
+    "bytes": 3475,
+    "sha256": "b4b867b4053b20e6805c625e81f1a459ec96e2e4d5e63280d910481774a7c23f",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/completed-originals-archive-manifest-v1/completion-overlay.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/critical-members-v3/arm64/critical-original-summary.json",
+    "bytes": 15395,
+    "sha256": "affe4d55d9edd262ce575b4cff3273ea88deba7e331bfbc3f4744309d4190e70",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/critical-original-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/critical-members-v3/x64/critical-original-summary.json",
+    "bytes": 15375,
+    "sha256": "9f87cc034ef2f294773404b444a872168801581bb148a26283c630974d233ef9",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/critical-original-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/fixed-inputs.json",
+    "bytes": 12675,
+    "sha256": "2b59db99af8b7a1a5b4cc2bfee96fad9c951e3e699afa55d63c83405a4cacce2",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/fixed-inputs.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/hotpath-readonly-v1/test-history-import-callsite.json",
+    "bytes": 5468,
+    "sha256": "627cd5aba9db48b5d60565a07a56acc4eae9657c371f6a1e732d8a317553d6cc",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-readonly-v1/test-history-import-callsite.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/hotpath-readonly-v2/all-replay-phases-and-waits.json",
+    "bytes": 277682,
+    "sha256": "920783335d16d47ee2c2ce469ea74afea0500ff0692c512b7d5a81b69e86db5c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-readonly-v2/all-replay-phases-and-waits.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/hotpath-source-discovery-v1/small-stage-table.json",
+    "bytes": 56500,
+    "sha256": "c0942b801082ab0335a2650256042df1cd9bf6d4ca411fb50104561dbe9c35a6",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-source-discovery-v1/small-stage-table.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/immutable-dc42-hotpath-source-v1/source-index.json",
+    "bytes": 1937,
+    "sha256": "199be3981cb1d4c5898638db99f42e2a12eabbb9c6873874fc7ba6dcc8dd05cc",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/source-index.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/job-132376957328.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957328.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/job-132376957328.stdout.raw",
+    "bytes": 184796,
+    "sha256": "cfbdfbd664b2da3babc27026d6abf6529921c74296bb170a5e93087d54a74d76",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957328.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/job-132376957441.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957441.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/job-132376957441.stdout.raw",
+    "bytes": 184338,
+    "sha256": "382032e5ce118dbe178ba1cb73a5225ef66e1df6880bdd0c2f73c4fd828b1f74",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957441.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/job-logs-summary.json",
+    "bytes": 2593,
+    "sha256": "0a2876e7340f97b59bb101300c3aeea91f188fc12d659b7592b82fa68896277d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-logs-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.index.json",
+    "bytes": 39431,
+    "sha256": "3239b32cb6890c243ff64dc4968c61052ce91bca934b5d332224cdc6033a82e8",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.index.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.zip",
+    "bytes": 9927566,
+    "sha256": "242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.zip"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/arm64/summary.json",
+    "bytes": 1748,
+    "sha256": "ceaa5e675ad685f3f7b99307f246bca89b039ba88e8a0ce27f1f9760a7dfa8fc",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/arm64/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/completion-summary.json",
+    "bytes": 4073,
+    "sha256": "2201a627e0f88c94ccef191ebe204c895f59bc313c6f6576d4618a16dcb70eb6",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/completion-summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.index.json",
+    "bytes": 39423,
+    "sha256": "63d25082d83e8f56724ff5b1fe2aac05859714f6f8b8bbfd7eaae9b4e9285b7c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.index.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.zip",
+    "bytes": 9927259,
+    "sha256": "be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.zip"
+    }
+  },
+  {
+    "path": "C0-cost-originals/official-connector-complete-artifacts-v1/x64/summary.json",
+    "bytes": 1739,
+    "sha256": "16e90993d82af6a02a99bb5a109f1f9af7f06c9f4f890008fe9fef5a7f6ea0e3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/x64/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/base-ref.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/base-ref.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/base-ref.stdout.raw",
+    "bytes": 380,
+    "sha256": "f01fbe0c6105d065f8f920e6d65c6c916fb85bb658e21d79cc7e3c079627c9a5",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/base-ref.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-checks-page-001.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-checks-page-001.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-checks-page-001.stdout.raw",
+    "bytes": 373622,
+    "sha256": "babc99902a12b47454c7cc089d83ef8b982b5ca0e45cfc722a7b522bd429bee1",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-checks-page-001.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-checks-page-002.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-checks-page-002.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-checks-page-002.stdout.raw",
+    "bytes": 242238,
+    "sha256": "8b8526fcb19f352912c944d9db53212462ef031fec4240c406f521b94fa05c72",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-checks-page-002.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-ref.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-ref.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-ref.stdout.raw",
+    "bytes": 533,
+    "sha256": "64a3bbcf3b45188eedd18cd1735dff6f853f94af8d651abab0bb3afeb556534e",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-ref.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-statuses-page-001.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-statuses-page-001.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/head-statuses-page-001.stdout.raw",
+    "bytes": 5635,
+    "sha256": "6a8bba4f6aac9f54073cbda103975f9b742ddf98b1e8533e81ba5d756cf339e9",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/head-statuses-page-001.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/pull847-after.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/pull847-after.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/pull847-after.stdout.raw",
+    "bytes": 38714,
+    "sha256": "4caa8e1cce8f043068e7863581cd09df0d405be5ad4d60f561236a63bd6cb6cb",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/pull847-after.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/pull847-before.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/pull847-before.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/pull847-before.stdout.raw",
+    "bytes": 38714,
+    "sha256": "4caa8e1cce8f043068e7863581cd09df0d405be5ad4d60f561236a63bd6cb6cb",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/pull847-before.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run-jobs-page-001.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run-jobs-page-001.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run-jobs-page-001.stdout.raw",
+    "bytes": 64264,
+    "sha256": "69c345eebd6f14ed89415c33eac4dc21adeb4772e6997ca3815401559843e93d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run-jobs-page-001.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run43567821538-after.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run43567821538-after.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run43567821538-after.stdout.raw",
+    "bytes": 15157,
+    "sha256": "d1f8310dc9b3e86a4389fb850552b0dae070983bea6cff404e897f807f8e01e5",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run43567821538-after.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run43567821538-before.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run43567821538-before.stderr.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/run43567821538-before.stdout.raw",
+    "bytes": 15157,
+    "sha256": "d1f8310dc9b3e86a4389fb850552b0dae070983bea6cff404e897f807f8e01e5",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/run43567821538-before.stdout.raw"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/steps.json",
+    "bytes": 10489,
+    "sha256": "486491c786f6175f99227a56b95efae4c7091f0c04b5975fba3f951c62aa873d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/steps.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/pr847-C0-final-refresh-v1/summary.json",
+    "bytes": 95361,
+    "sha256": "a8b21725cbdaa06e2ff629f6d3f68a67773c165c2e05d6a8ed3ee168c17aee22",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/summary.json"
+    }
+  },
+  {
+    "path": "C0-cost-originals/runner-and-transport-review-v1/runner-cause-source.json",
+    "bytes": 17027,
+    "sha256": "c06cb660b0cccc80e364a62ebf30446854ce9b1f32613935c5809d09da0c4af6",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/runner-and-transport-review-v1/runner-cause-source.json"
+    }
+  }
+]

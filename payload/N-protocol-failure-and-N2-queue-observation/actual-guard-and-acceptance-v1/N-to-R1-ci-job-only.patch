@@ -1,0 +1,13 @@
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+index bfbec4fd0d5565424b83ff70ae508126c5efd956..bbe1c63b258cb59042d1b389f598d54290cd5d9f 100644
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -172,7 +172,7 @@ expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
+             ("source-builder", 8),
+             ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+             ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+-            ("owned-process-collector", 14))
++            ("owned-process-collector", 16))
+ for name, count in expected:
+     text = (root / (name + ".log")).read_text()
+     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]

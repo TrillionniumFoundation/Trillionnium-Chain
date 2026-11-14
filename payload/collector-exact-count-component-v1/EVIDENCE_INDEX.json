@@ -1,0 +1,1264 @@
+{
+  "Host_run": false,
+  "actual_CI_method_count": 4,
+  "commit": "f0f6a4192dc3bcda2fca20110322f7cff07e4644",
+  "file_count": 249,
+  "files": [
+    {
+      "bytes": 2500,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/README.md",
+      "sha256": "444938eefd456f14396612b2a28f44f0afdb6db353e02f58e37547aab2df35bd"
+    },
+    {
+      "bytes": 3367,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/add-independent-worktree.stderr",
+      "sha256": "1dfb715077a8892f045aa56ddfa396f230c59f5916d0f28d7eea7185479965d1"
+    },
+    {
+      "bytes": 76,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/add-independent-worktree.stdout",
+      "sha256": "14f3a359def1791b382bdcec2739909fe6cdf2b823d3db84b7836fce4521cf93"
+    },
+    {
+      "bytes": 46547,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/C5--scripts--ci--ci_job.sh.original",
+      "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b"
+    },
+    {
+      "bytes": 26879,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/C5--scripts--test_w1_owned_process_collector_v1.py.original",
+      "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa"
+    },
+    {
+      "bytes": 48204,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/C5--scripts--w1_owned_process_collector_v1.py.original",
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+    },
+    {
+      "bytes": 5423,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/C5-original14-source-ast-proof.original.json",
+      "sha256": "d383d2a4588d1c02c8e583b053a0f2671df7c5cb7aa393f874b149c9cf50581c"
+    },
+    {
+      "bytes": 46547,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M4--scripts--ci--ci_job.sh.original",
+      "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b"
+    },
+    {
+      "bytes": 22760,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M4--scripts--test_w1_owned_process_collector_v1.py.original",
+      "sha256": "2d9912f9bd4dfe7f708a5b9125e7ce72e7cbe7396be2aad1119401d136db0b8d"
+    },
+    {
+      "bytes": 47663,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M4--scripts--w1_owned_process_collector_v1.py.original",
+      "sha256": "e250f1a75794c35d9583e55e56f159366b5d15fa13118d7a142d10a38fd6394f"
+    },
+    {
+      "bytes": 46547,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M5--scripts--ci--ci_job.sh.original",
+      "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b"
+    },
+    {
+      "bytes": 26879,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M5--scripts--test_w1_owned_process_collector_v1.py.original",
+      "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa"
+    },
+    {
+      "bytes": 48204,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/M5--scripts--w1_owned_process_collector_v1.py.original",
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+    },
+    {
+      "bytes": 10480,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/review.json",
+      "sha256": "2a46eed3696c73c93a4927de9b2534cdffaf17fbd624c28385c773830604e5b5"
+    },
+    {
+      "bytes": 734,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/baseline-proof/root-reported-original-failure.json",
+      "sha256": "3c20b6b20e7a5f15da8327b0035700bf6d98429eb87b3234a6d40c9d2846954c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/branch-absent.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/branch-absent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 47,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/branch.stdout",
+      "sha256": "3a0595d008b164668245a3e19a265e59ce25ec21986dec16d00c90c4b5f38590"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/changed-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 84,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/changed-before.stdout",
+      "sha256": "bcfa398b180b47e86d586df4678ab2d335df13e9c640e81a351d69b51cf48807"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/commit-object.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 305,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/commit-object.stdout",
+      "sha256": "9be17c1fc1746953be11a52c74892547ee734025b111b181ffd9410ec6253b8f"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 158,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/commit.stdout",
+      "sha256": "c46bea88a5d17d0155088c10f5babe756fe612ddf534bcb309483d1fce5cad18"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/committed-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 84,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/committed-paths.stdout",
+      "sha256": "bcfa398b180b47e86d586df4678ab2d335df13e9c640e81a351d69b51cf48807"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/head-after.stdout",
+      "sha256": "2a085650ab4b9facace5dc9c1569a9ae4e9c0d2face0e66f1485e2212c346a6f"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/head-before.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/private-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/private-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/project-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/project-preflight.stdout",
+      "sha256": "034a45038ba21853f9c3e814aefa59447362aa337748cc238244ccb79201d734"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/reviewed-patch-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2859,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/reviewed-patch-before.stdout",
+      "sha256": "85fd36f54e4c7fa98ccb94a51c4fe4f11bd8e3c6e4c4cbf83ff3f47d21d92ef2"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-head-after.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-tree-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/root-tree-after.stdout",
+      "sha256": "b067eefafe72a7cb6f61b7a667917ba7c0d55ec8a010e9391639451e84de171c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/stage-exact-three.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/stage-exact-three.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-empty.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-empty.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-patch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2859,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/staged-patch.stdout",
+      "sha256": "85fd36f54e4c7fa98ccb94a51c4fe4f11bd8e3c6e4c4cbf83ff3f47d21d92ef2"
+    },
+    {
+      "bytes": 13568,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/steps.json",
+      "sha256": "10ff7ff3e739c9ad1cbfdec9c5b8fa298d40635e92749b80b38ccf6e4a1d8a52"
+    },
+    {
+      "bytes": 16309,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/summary.json",
+      "sha256": "35bfce3f2fafe0596bcc7a328ab03a947376e2bf825145d31409124c611c13ec"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/tree-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/commit-v1/tree-after.stdout",
+      "sha256": "290c3098f3adfd15647d9d9955e5d3afb154527f05fe689aeca4d5aa1fd4e6a9"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/bash-syntax.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/bash-syntax.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/changed-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 84,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/changed-paths.stdout",
+      "sha256": "bcfa398b180b47e86d586df4678ab2d335df13e9c640e81a351d69b51cf48807"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/full-patch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2859,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/full-patch.stdout",
+      "sha256": "85fd36f54e4c7fa98ccb94a51c4fe4f11bd8e3c6e4c4cbf83ff3f47d21d92ef2"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/head-before.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/project-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/project-preflight.stdout",
+      "sha256": "034a45038ba21853f9c3e814aefa59447362aa337748cc238244ccb79201d734"
+    },
+    {
+      "bytes": 199207,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/scripts--ci--check_ci_contract.py.before",
+      "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2"
+    },
+    {
+      "bytes": 46547,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/scripts--ci--ci_job.sh.before",
+      "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b"
+    },
+    {
+      "bytes": 247302,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/scripts--ci--test_ci_contract.py.before",
+      "sha256": "75c1c7345288916d99d3646fc44ac8c3bacc778e1839b1dda70d20a1e2ec1910"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6769,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/summary.json",
+      "sha256": "f3e944d2acaaf3bc5ec1f5751e2afc2775df8b67ba3b39b41883cfabbb8c258e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-head.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/private-tree.stdout",
+      "sha256": "b067eefafe72a7cb6f61b7a667917ba7c0d55ec8a010e9391639451e84de171c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/project-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/project-preflight.stdout",
+      "sha256": "034a45038ba21853f9c3e814aefa59447362aa337748cc238244ccb79201d734"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-head-after.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-head-before.stdout",
+      "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-tree-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-tree-after.stdout",
+      "sha256": "b067eefafe72a7cb6f61b7a667917ba7c0d55ec8a010e9391639451e84de171c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-tree-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/root-tree-before.stdout",
+      "sha256": "b067eefafe72a7cb6f61b7a667917ba7c0d55ec8a010e9391639451e84de171c"
+    },
+    {
+      "bytes": 9503,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/setup-steps.json",
+      "sha256": "dae463a694e45e658936dd0d7cf38827a19ad01f1b40ad0a41978f8cdd506785"
+    },
+    {
+      "bytes": 10459,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/setup-summary.json",
+      "sha256": "0a3a595cd40b6ceade527db110433cc3f7465d22daf80d2d05cdbc13fa382a21"
+    },
+    {
+      "bytes": 6585,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/targeted_validation_v1.original.py",
+      "sha256": "337099c14f9c95cea30d6c7c5d6222207f2ee8926bae2c4966711557de8fe4ce"
+    },
+    {
+      "bytes": 6543,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/targeted_validation_v2.py",
+      "sha256": "0579e8efe25407dbe3aab65851a8992b81d0bce96f107d41e6bd0b66f6d89746"
+    },
+    {
+      "bytes": 1374,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v1-preexecution-syntax-failure.json",
+      "sha256": "939d5a65186ffee3f988ba27e8e9cb67316cd00eede180e5824b3e7d63ddab8c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/actual-ci-contract.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 852,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/actual-ci-contract.stdout",
+      "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/consumer-search.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1709,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/consumer-search.stdout",
+      "sha256": "304318da96a2054d83e0fee66fce9f7e5d0ca31f730cadcd361d997edaa70b41"
+    },
+    {
+      "bytes": 740,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-ci-postwin-four-controls.stderr",
+      "sha256": "910ffe5048a7d38da71051d40398b46bce4ea7ced184981416ee9f388fc288a2"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-ci-postwin-four-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 804,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-inline-parser.py",
+      "sha256": "639ddb4ed40209af0a5ba94544c3871806b7df3a8fdd4f06ada2e9c0dfff4399"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-rejects-actual16.stderr",
+      "sha256": "7c3b62a6796453cd72da70ca18578157d0c5ba96da90af80c42de06cdb2c575d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/original-rejects-actual16.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 539,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/source-after.json",
+      "sha256": "acdd4b04076b8976314074d8df795701dfa1ae5558da2016b17e030f7f77cd7f"
+    },
+    {
+      "bytes": 539,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/source-before.json",
+      "sha256": "acdd4b04076b8976314074d8df795701dfa1ae5558da2016b17e030f7f77cd7f"
+    },
+    {
+      "bytes": 12318,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/steps.json",
+      "sha256": "73eb38b70fd442af5083c68c557e2a58ac1250bddcbc30c8e18e247a5ca3ee81"
+    },
+    {
+      "bytes": 13975,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/summary.json",
+      "sha256": "a456bf26ae06cfac2e9484f435b76c769e8dbb4e3b1740b11a9601c4dd219a94"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/owned-process-collector.log",
+      "sha256": "5b480b7ff55bc4ecb01da63e82161046ee45675d8b035710bfdc34fb6a79fb66"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/original-rejects-actual16/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/owned-process-collector.log",
+      "sha256": "5b480b7ff55bc4ecb01da63e82161046ee45675d8b035710bfdc34fb6a79fb66"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-accepts-exact16/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 50,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/owned-process-collector.log",
+      "sha256": "ba78ad53bd77ad8f59a31648d7b79872580d2930acd90930038bff9df14540f8"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-duplicate-count/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/owned-process-collector.log",
+      "sha256": "25954ee6d5e7dab509d53fdb764ccbb02cd2a81b76cd1d84d51a3ed21ee4fee4"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-excess17/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 44,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/owned-process-collector.log",
+      "sha256": "342e73e3d38c06d6e135927150136fff894f0deea02ce5c6d91d37698fd27942"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-failed/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/owned-process-collector.log",
+      "sha256": "c0e8da68f7d22db58a0b09cc380fad475742ae64e18d6f19cfef55749dcf3c6f"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-incomplete15/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-missing-log/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/owned-process-collector.log",
+      "sha256": "ff8ebc4730de5ebfd5fd56fcaca85c47817a29f40785acdb9b6b1f9e92d0648a"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-old14/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 37,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/owned-process-collector.log",
+      "sha256": "ad3ac15afe26c35d7b8992b1a970b0d618251eb57931d038b79f8dd4fc7b6ff9"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-skipped/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/cancellation-handoff.log",
+      "sha256": "5f460bb943f03f19ebbf5cb125c6672e05d75f3b8fd7d5d81583f8b8e00b9979"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/coordinator-contract.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/deployment-comparison-audit.log",
+      "sha256": "ca4ec21ccf39651c67d002e6b9eafafa72f6b5ac3c107a200dc4b01545e829da"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/deployment-evidence-binding.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/generation-target.log",
+      "sha256": "1c94151289bebaeb17020e199d3a8a3ad05bf8833e2ffd24b22d5167ceb05507"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/kaggle-worker-contract.log",
+      "sha256": "64a209ad7532af02ed5c8f57a3e901f16299cc57a7420784db80380881a55c16"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/owned-process-collector.log",
+      "sha256": "d2ee5ae852d2a819c7829be83c5b13a4257010f57a5aad5c2afecdd0528f6320"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/owned-runtime-reader.log",
+      "sha256": "ddd025a78476d1912aa79a0cc313ebaf66012776a099fc59aea67c24ed756ae1"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/owner-cancellation.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 27,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/provider-contract.log",
+      "sha256": "3906d7527a379eb37eb2a90a0daadd1c0f2fc74de5ca2bde00dddfea475651fb"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/source-builder.log",
+      "sha256": "d6e1f090f4f201a7bae7d190ddbd0e733a08d6d7aa9f595039d699639c748f7e"
+    },
+    {
+      "bytes": 26,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/synthetic-count-fixtures/updated-rejects-zero/winner-identity.log",
+      "sha256": "5f2243476af0213976f8c52f4c6af2be2e992b9ead1cf497667c4dd63de0f227"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-accepts-exact16.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-accepts-exact16.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 804,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-inline-parser.py",
+      "sha256": "2ca116e8a039aba025824d7f4cfd1115dc437c0a5646c7ab3b857d9889d5a53e"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-duplicate-count.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-duplicate-count.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-excess17.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-excess17.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-failed.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-failed.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-incomplete15.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-incomplete15.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1045,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-missing-log.stderr",
+      "sha256": "78422b6a9d9c28e9798afa24e0f9d6d6a763889c0a989f7d56b9d8cd4dcee5d1"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-missing-log.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-old14.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-old14.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-skipped.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-skipped.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 68,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-zero.stderr",
+      "sha256": "afb3826388e2c1bfc4fb33e6658cbe743820918f1717b41302873f65d2e44f56"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/validation-v2/updated-rejects-zero.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "full_Linux_lane_run": false,
+  "index_excludes_itself": true,
+  "native_or_collector_tests_run": false,
+  "original_14_methods_raw_AST_unchanged": true,
+  "original_ROG_failure_copied_here": false,
+  "original_ROG_failure_owner": "root",
+  "schema": "trnm-owned-collector-control-count-evidence-index-v1",
+  "source_path_count": 3,
+  "synthetic_inline_parser_cases": 10,
+  "total_bytes": 994429,
+  "tree": "f2301d62786c8cca73d16c52ae24a2a2dc82e65d"
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "root-reviewed-hash-use-component-fast-forward-v1",
+  "old_head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "identity": {
+    "head": "e811c204e039565c06f5bb2cba3543564f510f7b",
+    "tree": "1d94ccf0b0be26944633cb1eec5933b644d195e5",
+    "status": ""
+  },
+  "component_receipt_sha256": "b30a19d5150cae04f5ae7575149e45ab989d0445b63c678302b1406fbd6e040c",
+  "committed_index_sha256": "8c8e89ab7e905ee5c1f88d7ffd3e37730c5fbff5bfb8eb8a235f013689e3f1df",
+  "steps": [
+    {
+      "label": "preflight-before",
+      "exit": 0,
+      "seconds": 0.073,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "component-fast-forward",
+      "exit": 0,
+      "seconds": 0.165,
+      "sha256": "17113b131df6c998fd43b70eb78f3f9c95b15d8ad7dce70a4c7bf51b4f34dfc9"
+    }
+  ],
+  "corpus_and_soleplan_pending_combined_integration": true,
+  "full_lane_qualification": false,
+  "remote_mutations": false
+}

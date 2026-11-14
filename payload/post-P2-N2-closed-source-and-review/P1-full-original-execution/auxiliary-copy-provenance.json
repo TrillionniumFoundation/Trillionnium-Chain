@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-P1-full-v2-auxiliary-copy-v1",
+  "method": "official h_read_multiple_files exact UTF-8 bytes with independent SHA and version",
+  "files": [
+    {
+      "target": "closed-roster-observation/closed-roster-observation.json",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-full-v2-closed-roster-observation-prci-v1/closed-roster-observation.json",
+      "source_host": "rog",
+      "bytes": 36704,
+      "sha256": "f2584d165fe355f228661204d5493feedae6fc3877bbcc32e1e7b0777b92605f",
+      "read_version": "66306:35166373:36704:1794656059174684380:1794656059174684380"
+    },
+    {
+      "target": "closed-roster-observation/producer.py",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-full-v2-closed-roster-observation-prci-v1/producer.py",
+      "source_host": "rog",
+      "bytes": 5743,
+      "sha256": "4d29707bb819d5dc7ba7bc8403752d438bc476641ad7b63085b9f85920322f6d",
+      "read_version": "66306:35166370:5743:1794656059172665154:1794656059172665154"
+    },
+    {
+      "target": "closed-roster-observation/closed-original-logs.json",
+      "source_path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-full-v2-closed-roster-observation-prci-v1/closed-original-logs.json",
+      "source_host": "rog",
+      "bytes": 2753,
+      "sha256": "84d28a8d4fc53c949c13ddd69e042e9f2c92707497e719caeba84a4c802c9fa2",
+      "read_version": "66306:35166372:2753:1794656059173531354:1794656059173531354"
+    },
+    {
+      "target": "root-static-review/summary.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/P1-packagers-root-static-review-v1/summary.json",
+      "source_host": "mac",
+      "bytes": 1819,
+      "sha256": "0f16ad250e3927a22b23fe677aefcc1efd7f82f7225fb11c87ea83281952e61d",
+      "read_version": "16777233:607004410:1819:1794655445305004745:1794655445305004745"
+    }
+  ]
+}

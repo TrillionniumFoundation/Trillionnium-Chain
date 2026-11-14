@@ -1,0 +1,68 @@
+[
+  {
+    "label": "status-before",
+    "exit": 0,
+    "seconds": 0.364,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "preflight-audit",
+    "exit": 0,
+    "seconds": 0.052,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "fetch-exact-observed-object",
+    "exit": 0,
+    "seconds": 0.021,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "raw-new-commit",
+    "exit": 0,
+    "seconds": 0.006,
+    "sha256": "9123d667955f86fd121c81ea8e26e406af06d1ba36ef7c9b7244ecc8d0989551"
+  },
+  {
+    "label": "old-is-ancestor",
+    "exit": 0,
+    "seconds": 0.006,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "root-merge-bases",
+    "exit": 0,
+    "seconds": 0.007,
+    "sha256": "6bd96fb642c86d0ae049cf59ca19a8877045c0d1e0c5a380341323ae8d02ec70"
+  },
+  {
+    "label": "bounded-new-commits",
+    "exit": 0,
+    "seconds": 0.006,
+    "sha256": "f867fc71e32b4d71f2b92ea2bc8960f334bfb42f7b50f2b217ffb672bba154c4"
+  },
+  {
+    "label": "changed-paths",
+    "exit": 0,
+    "seconds": 0.007,
+    "sha256": "ed775e0972bc3408cba7bcc6a19f35f30d75e51028d49057c4d691c889a781ef"
+  },
+  {
+    "label": "diff-stat",
+    "exit": 0,
+    "seconds": 0.01,
+    "sha256": "2cac5138321c68b4b5f3d8b3b121e65af646db5c798bef12d8768207650c6dea"
+  },
+  {
+    "label": "diff-numstat",
+    "exit": 0,
+    "seconds": 0.009,
+    "sha256": "95fe9f33dd851629f879a34cdb6bcf473504a4b118ef5fe6705726d1f60ebc75"
+  },
+  {
+    "label": "status-after",
+    "exit": 0,
+    "seconds": 0.132,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

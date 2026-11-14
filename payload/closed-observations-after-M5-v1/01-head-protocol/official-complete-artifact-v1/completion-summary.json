@@ -1,0 +1,55 @@
+{
+  "schema": "C0-head-protocol-official-artifact-completion-v1",
+  "started_at": "2026-11-14T09:05:16.376447+00:00",
+  "artifact_id": 14107050061,
+  "run_id": 43567821538,
+  "job_id": 132376957411,
+  "attempt": 1,
+  "run_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "artifact_metadata": {
+    "id": 14107050061,
+    "node_id": "MDg6QXJ0aWZhY3QxNDEwNzA1MDA2MQ==",
+    "name": "head-protocol-contract-dc42ce4df5cff79cc61c5addbaf01074b56b06ca-1",
+    "size_in_bytes": 7047002,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14107050061",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14107050061/zip",
+    "expired": false,
+    "digest": "sha256:0cca9baae976a39bf7e38bec8f942e75053e44e9637233c89d177ee249a6c0a9",
+    "created_at": "2026-11-14T08:39:06Z",
+    "updated_at": "2026-11-14T08:39:06Z",
+    "expires_at": "2026-12-14T08:39:05Z",
+    "workflow_run": {
+      "id": 43567821538,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+    }
+  },
+  "metadata_source": {
+    "path": "/private/tmp/chain-C0-required-ci-final-observation-20261114-v1/summary.json",
+    "bytes": 51365,
+    "sha256": "2634bb4d942018997cb62d542bf411c8083e9e6744d17ef52dfaabd9f2b29644"
+  },
+  "official_connector": "github_download_workflow_artifact",
+  "official_file_reference_id": "file_0000000091c481fd895dc94119e47470",
+  "whole_zip_verified": true,
+  "all_members_verified": true,
+  "remote_write": false,
+  "stage_write": false,
+  "automatic_retry": false,
+  "download_url_not_retained": true,
+  "zip": {
+    "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/official-complete-artifact-v1/C0-head-protocol-14107050061.zip",
+    "bytes": 7047002,
+    "sha256": "0cca9baae976a39bf7e38bec8f942e75053e44e9637233c89d177ee249a6c0a9"
+  },
+  "index": {
+    "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/official-complete-artifact-v1/C0-head-protocol-14107050061.index.json",
+    "bytes": 29940,
+    "sha256": "5d4677f690e9577e52167f96e2afd4a10edbd5e9588dea4453820e4ad48625be"
+  },
+  "member_count": 109,
+  "uncompressed_bytes": 54386268,
+  "finished_at": "2026-11-14T09:05:34.255621+00:00"
+}

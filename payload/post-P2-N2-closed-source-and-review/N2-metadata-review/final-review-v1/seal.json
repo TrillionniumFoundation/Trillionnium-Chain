@@ -1,0 +1,17 @@
+{
+  "all_selected_originals_rechecked": true,
+  "index": {
+    "bytes": 42076,
+    "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "cff5653f0b7f99ec4f24620648738931be2c7adc24602b0e9522ca90c0a3b00d"
+  },
+  "review": {
+    "bytes": 5129,
+    "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/review.json",
+    "sha256": "e6d49c44e8837f18c5ff9d785f13ac2b6be18d3419b245210824da66af4efcf2"
+  },
+  "schema": "trnm-N2-metadata-evidence-seal-v1",
+  "source_Git_stage_network_mutation": false,
+  "status": "SEALED_STATIC_READONLY_REVIEW",
+  "tests_run": false
+}

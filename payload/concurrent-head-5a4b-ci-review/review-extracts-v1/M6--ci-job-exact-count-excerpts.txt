@@ -1,0 +1,38 @@
+148:       mkdir "$w1_contract_out"
+149:       w1_contract_tmp="$(mktemp -d /dev/shm/trnm-w1-contract-XXXXXXXX)"
+150:       trap 'rm -rf -- "$w1_contract_tmp"' EXIT
+151:       export TMPDIR="$w1_contract_tmp"
+152:       export PYTHONDONTWRITEBYTECODE=1
+153:       python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"
+154:       python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"
+155:       python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"
+156:       python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"
+157:       python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"
+158:       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"
+159:       python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
+160:       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
+161:       python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+162:       python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+163:       python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+164:       python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+165:       python3 - "$w1_contract_out" <<'PY'
+166: from pathlib import Path
+167: import re, sys
+168: root = Path(sys.argv[1])
+169: expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
+170:             ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
+171:             ("source-builder", 8),
+172:             ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+173:             ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+174:             ("owned-process-collector", 16))
+175: for name, count in expected:
+176:     text = (root / (name + ".log")).read_text()
+177:     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]
+178:             or not re.search(r"^OK$", text, re.M) or "skipped=" in text):
+179:         raise SystemExit(f"{name}: all {count} controls must execute without skips")
+180: PY
+181:     )
+182:     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
+183:     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
+184:     python3 scripts/ci/test_run_w1_rank_batch_v5.py
+185:     python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py

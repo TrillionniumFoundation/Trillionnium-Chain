@@ -1,0 +1,534 @@
+{
+  "C0": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "changes": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "status": "M"
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "status": "M"
+    },
+    {
+      "path": "config/pon/hash-use-contract-v1.json",
+      "status": "M"
+    },
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "status": "M"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M"
+    },
+    {
+      "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+      "status": "A"
+    },
+    {
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "status": "A"
+    },
+    {
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "status": "M"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "M"
+    },
+    {
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "status": "M"
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "status": "M"
+    },
+    {
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "status": "M"
+    },
+    {
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "status": "M"
+    },
+    {
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "status": "M"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+      "status": "A"
+    },
+    {
+      "path": "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+      "status": "A"
+    },
+    {
+      "path": "formal/throughput-v1/test_execution_report.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/hash_use_contract.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/pq_lifetime_current_v2.py",
+      "status": "A"
+    },
+    {
+      "path": "scripts/ci/run_cell_learning_business_readback.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/run_pon_budget_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/run_sp27_receiver_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/run_sp27_strata_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pon_budget_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pq_lifetime_budget.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pq_lifetime_composition.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_pq_lifetime_current_v2.py",
+      "status": "A"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_sp27_receiver_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_sp27_strata_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_throughput_cost_coverage.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_w1_lifetime_current_observation.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_semantics_audit.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/throughput_cost_coverage.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "status": "M"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "status": "M"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+      "status": "M"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248348356000,
+      "name": "head-before",
+      "started_ns": 1794650248340717000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/head-before.stdout",
+        "sha256": "0f658df88f34aa1bfd818ade5fda4e6a1dc55ef5b27d2a462d6d666da95d3858"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "--git-common-dir"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248354261000,
+      "name": "common-dir",
+      "started_ns": 1794650248348567000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/common-dir.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 92,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/common-dir.stdout",
+        "sha256": "f8761189178b77d4b8658c8e40ee81d94041c39e6d6f5bc788d3d8fdd7bbe05c"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=no"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248392348000,
+      "name": "status-before",
+      "started_ns": 1794650248354447000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/status-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/status-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "commit",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248401660000,
+      "name": "C0-commit",
+      "started_ns": 1794650248394873000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 309,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-commit.stdout",
+        "sha256": "d6e24ddaef8d3afb9029677a0e14e1d651ce466ba388f6de1b890b94c4a2c4e0"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "commit",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248407707000,
+      "name": "N-commit",
+      "started_ns": 1794650248401858000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/N-commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 273,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/N-commit.stdout",
+        "sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "commit",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248413402000,
+      "name": "M6-commit",
+      "started_ns": 1794650248407879000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/M6-commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 376,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/M6-commit.stdout",
+        "sha256": "e324c67a3de643639113c7d287bbf2ff9dc8ee00b47c07e0d78d469f36e056b3"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--name-status",
+        "-z",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248421432000,
+      "name": "C0-N-name-status",
+      "started_ns": 1794650248413554000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-N-name-status.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2270,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-N-name-status.stdout",
+        "sha256": "37cf6bd6d97d20c35355b223f117dc95e3eb6dd09a03d48d4711357b7486ab89"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--numstat",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248442612000,
+      "name": "C0-N-numstat",
+      "started_ns": 1794650248421627000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-N-numstat.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2413,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/C0-N-numstat.stdout",
+        "sha256": "a770c52c274960c3e51dd13feff41b523d535a7cbd706128ba7ef95336fdfe1f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-renames",
+        "--name-status",
+        "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "--"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248452067000,
+      "name": "M6-N-name-status",
+      "started_ns": 1794650248442799000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/M6-N-name-status.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 31394,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/M6-N-name-status.stdout",
+        "sha256": "5d7b6443f24fc9d1571709155bfe93cd05d3dcd348016c99c477d0d497416841"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=no"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248488177000,
+      "name": "status-after",
+      "started_ns": 1794650248452260000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-pager",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1794650248494645000,
+      "name": "head-after",
+      "started_ns": 1794650248488329000,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/head-after.stdout",
+        "sha256": "0f658df88f34aa1bfd818ade5fda4e6a1dc55ef5b27d2a462d6d666da95d3858"
+      }
+    }
+  ],
+  "commits": {
+    "C0": {
+      "message": "docs: preserve empty network receipt as raw evidence\n",
+      "oid": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "parents": [
+        "318527b4b2a07b5037d755547acd92e46ae3aded"
+      ],
+      "raw_sha256": "d6e24ddaef8d3afb9029677a0e14e1d651ce466ba388f6de1b890b94c4a2c4e0",
+      "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b"
+    },
+    "M6": {
+      "message": "Merge exact collector control count and preserve original lane outcomes\n",
+      "oid": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "parents": [
+        "08c9becab740ab2c375b970f376a7638f44c9e8e",
+        "f0f6a4192dc3bcda2fca20110322f7cff07e4644"
+      ],
+      "raw_sha256": "e324c67a3de643639113c7d287bbf2ff9dc8ee00b47c07e0d78d469f36e056b3",
+      "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c"
+    },
+    "N": {
+      "message": "Bind recent acceptance workflow to reviewed store source\n",
+      "oid": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "parents": [
+        "2635e6f11a90b9dcd05101ab386d60d61f8ef7d4"
+      ],
+      "raw_sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a",
+      "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+    }
+  },
+  "git_common_dir": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+  "git_no_lazy_fetch": true,
+  "git_optional_locks_zero": true,
+  "network_or_tests_run": false,
+  "numstat": "1\t1\t.github/workflows/pon-recent-batch-acceptance.yml\n25\t0\t.github/workflows/pon-w1-transparent-profile.yml\n1\t1\tconfig/pon/hash-use-contract-v1.json\n2\t2\tconfig/pon/pq-authority-effects-v1.json\n51\t39\tconfig/pon/pq-cross-branch-corpus-v1.json\n405\t0\tconfig/pon/pq128-lifetime-composition-current-v3.json\n43\t0\tconfig/pon/pq128-source-correspondence-current-v2.json\n3\t3\tconfig/pon/w1-lifetime-current-source-v2.json\n88\t1\tdocs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n18\t0\tdocs/security/PQ128_LIFETIME_COMPOSITION_V2.md\n27\t4\tdocs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md\n37\t24\tdocs/security/PQ_PROOF_PROFILE_BINDING_V1.md\n33\t12\tdocs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md\n26\t6\tdocs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md\n58\t0\tevidence/pon-w1-qrom-semantics-current-20261114/README.md\n1776\t0\tevidence/pon-w1-qrom-semantics-current-20261114/report.json\n9\t1\tformal/throughput-v1/test_execution_report.py\n32\t3\tscripts/ci/check_ci_contract.py\n6\t0\tscripts/ci/check_pq_research_integration.py\n5\t2\tscripts/ci/check_public_readiness_evidence.py\n2\t1\tscripts/ci/ci_job.sh\n3\t1\tscripts/ci/hash_use_contract.py\n2\t2\tscripts/ci/pq_authority_effect_register.py\n9\t10\tscripts/ci/pq_chain_claim_guard.py\n34\t13\tscripts/ci/pq_lifetime_composition.py\n212\t0\tscripts/ci/pq_lifetime_current_v2.py\n46\t5\tscripts/ci/run_cell_learning_business_readback.py\n47\t14\tscripts/ci/run_pon_budget_controls.py\n6\t0\tscripts/ci/run_sp27_receiver_controls.py\n6\t0\tscripts/ci/run_sp27_strata_controls.py\n26\t2\tscripts/ci/test_ci_contract.py\n122\t2\tscripts/ci/test_pon_budget_controls.py\n3\t2\tscripts/ci/test_pq_authority_effect_register.py\n11\t13\tscripts/ci/test_pq_chain_claim_guard.py\n19\t4\tscripts/ci/test_pq_lifetime_budget.py\n26\t8\tscripts/ci/test_pq_lifetime_composition.py\n302\t0\tscripts/ci/test_pq_lifetime_current_v2.py\n62\t23\tscripts/ci/test_public_readiness_evidence.py\n77\t0\tscripts/ci/test_sp27_receiver_controls.py\n77\t0\tscripts/ci/test_sp27_strata_controls.py\n47\t0\tscripts/ci/test_throughput_cost_coverage.py\n2\t2\tscripts/ci/test_w1_lifetime_current_observation.py\n18\t4\tscripts/ci/test_w1_qrom_closure_current_controls.py\n28\t3\tscripts/ci/test_w1_qrom_current_ci.py\n18\t5\tscripts/ci/test_w1_qrom_semantics_audit.py\n3\t1\tscripts/ci/throughput_cost_coverage.py\n2\t2\tscripts/w1_lifetime_current_observation.py\n5\t4\ttrillionnium/crates/trnm-pon-node/src/store.rs\n48\t1\ttrillionnium/crates/trnm-worker-agent/src/audit/artifact.rs\n",
+  "observed_root_head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+  "root_head_status_unchanged": true,
+  "root_status_before": "",
+  "schema": "trnm-new-candidate-production-readonly-inventory-v1",
+  "source_or_refs_mutated": false
+}

@@ -1,0 +1,65 @@
+{
+  "key": "0271",
+  "pages": [
+    {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-8ae2ce6656aca0293c5c37981fa9f8a31f94c119ebe1ae6dbb5b18c5b9a0e207/output.log",
+      "available_end": 4333,
+      "chunk_sha256": "9c86c93c0271f1828c9a5102efb2552cd78b4a1158f7e8dd1fda1d5b97abd562",
+      "host": "mac",
+      "next_offset": 4333,
+      "offset": 0,
+      "output_complete": true,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-8ae2ce6656aca0293c5c37981fa9f8a31f94c119ebe1ae6dbb5b18c5b9a0e207",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 4333,
+        "bytes_stored": 4333,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657327698,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 21439,
+        "pid": 21440,
+        "state": "exited"
+      },
+      "storage": "target_archive",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    }
+  ],
+  "start": {
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "host": "mac",
+    "persistent_across_runtime_restart": true,
+    "reused": false,
+    "session_id": "dpty-8ae2ce6656aca0293c5c37981fa9f8a31f94c119ebe1ae6dbb5b18c5b9a0e207",
+    "status": {
+      "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+      "bytes_seen": 4333,
+      "bytes_stored": 4333,
+      "capture_error": null,
+      "created_unix_ms": 1794657327698,
+      "output_complete": false,
+      "owner_pid": 21439,
+      "pid": 21440,
+      "state": "running"
+    }
+  },
+  "terminal_status": {
+    "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 4333,
+    "bytes_stored": 4333,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794657327698,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 21439,
+    "pid": 21440,
+    "state": "exited"
+  }
+}

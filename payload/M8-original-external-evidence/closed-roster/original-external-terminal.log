@@ -1,0 +1,14 @@
+{"preceding_original_repository_lane": "passed", "preceding_worker_component": "passed", "next_lane": "external-evidence-contract", "original_budget_seconds": 2700}
+{"label": "initial-head", "exit": 0}
+{"label": "initial-tree", "exit": 0}
+{"label": "initial-status", "exit": 0}
+{"label": "preflight-audit", "exit": 0}
+{"label": "rust-version", "exit": 0}
+{"label": "cargo-version", "exit": 0}
+{"label": "conformance-environment", "exit": 0}
+{"label": "runtime-environment", "exit": 0}
+{"label": "verify-source-before", "exit": 0}
+{"label": "verify-required-evidence-objects", "exit": 0}
+{"label": "external-evidence-contract", "exit": 0}
+{"label": "verify-source-after", "exit": 0}
+{"status": "passed", "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740", "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354", "summary": "/home/qian-qi/chain-final-consolidation-20261114-root/final-external-evidence-existing-source-ed0d35-v2/summary.json", "summary_sha256": "2773983d4ab2839412bb6b8edc4c8954b9be2e085455e16d0ec6b6b094f94cd8"}

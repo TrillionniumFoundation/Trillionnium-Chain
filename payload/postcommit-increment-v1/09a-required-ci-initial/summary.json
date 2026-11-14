@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-dc42-initial-required-ci-trigger-readonly-v1",
+  "method": "GET",
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/trnm-required-baseline.yml/runs?head_sha=dc42ce4df5cff79cc61c5addbaf01074b56b06ca&per_page=100&page=1",
+  "observed_start": "2026-11-14T06:45:37.818287+00:00",
+  "observed_end": "2026-11-14T06:45:41.639463+00:00",
+  "exit_code": 0,
+  "raw": {
+    "path": "/private/tmp/chain-audit-20261114-branch-graph/dc42-initial-required-ci-trigger-v1/required-runs.json",
+    "bytes": 15189,
+    "sha256": "2b1e443b2b31f7c1e92e51aa0ca76e4ca36d6ddbf18af924885d0e28d5f97271"
+  },
+  "remote_writes": false,
+  "total_count": 1,
+  "page_complete": true,
+  "runs": [
+    {
+      "id": 43567821538,
+      "name": "trnm-required-baseline",
+      "event": "pull_request",
+      "status": "pending",
+      "conclusion": null,
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "run_attempt": 1,
+      "created_at": "2026-11-14T06:44:40Z",
+      "updated_at": "2026-11-14T06:44:41Z",
+      "run_started_at": "2026-11-14T06:44:40Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "check_suite_id": 117969202465,
+      "pull_requests": [
+        {
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+          "id": 5225636007,
+          "number": 847,
+          "head": {
+            "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+            "sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+            "repo": {
+              "id": 1323087357,
+              "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+              "name": "Trillionnium-Chain"
+            }
+          },
+          "base": {
+            "ref": "main",
+            "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "repo": {
+              "id": 1323087357,
+              "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+              "name": "Trillionnium-Chain"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

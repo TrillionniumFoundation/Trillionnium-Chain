@@ -1,0 +1,709 @@
+diff --git a/formal/throughput-v1/test_execution_report.py b/formal/throughput-v1/test_execution_report.py
+index d3f2dc52acfd9ee5d9451c5ac4a732747019561b..19d0ff0825bc93b9e140cb3ee0e5d34894e126fc 100644
+--- a/formal/throughput-v1/test_execution_report.py
++++ b/formal/throughput-v1/test_execution_report.py
+@@ -206,11 +206,17 @@ class ReportTests(unittest.TestCase):
+                 self.assertEqual(phase["transaction_identity_observation"]["unknown_timeliness_round_slots"], 3)
+ 
+     def test_campaign_deduplicates_same_transaction_across_all_phases_and_runs(self):
+         report = campaign_report()
+         for phase in report["phases"]:
+-            phase["confirmations"] = [positive_round(index) for index in reader.ROUNDS]
++            phase["confirmations"] = []
++            for index in reader.ROUNDS:
++                # Complete campaign fixtures use the native t=1/5/9s schedule.
++                start = (1 + 4 * index) * 1_000_000_000
++                row = positive_round(index, start + 10)
++                row["started_ns"] = start
++                phase["confirmations"].append(row)
+             phase["all_signed_rounds_confirmed_in_window"] = True
+         value = self.read(self.bundle({number: report for number in reader.RUNS}))
+         self.assertEqual(value["confirmation_denominator"]["total_timely"], 27)
+         identities = value["transaction_identity_observation"]
+         self.assertEqual(identities["schema"], "trnm-campaign-transaction-identity-observation-v1")
+@@ -346,10 +352,12 @@ class ReportTests(unittest.TestCase):
+         self.assertFalse(value["strict_original_acceptance_reader_executed"])
+ 
+     def test_failed_report_keeps_missing_runs_and_rounds(self):
+         report = campaign_report()
+         report["phases"][0]["confirmations"] = [negative_round(0), negative_round(2)]
++        for row in report["phases"][0]["confirmations"]:
++            row["started_ns"] = (1 + 4 * row["round"]) * 1_000_000_000
+         value = self.read(self.bundle({1: report}))
+         counts = value["confirmation_denominator"]
+         self.assertEqual(counts["planned"], 27)
+         self.assertEqual(counts["records_present"], 2)
+         self.assertEqual(counts["observed_supported_not_timely"], 2)
+diff --git a/scripts/ci/run_cell_learning_business_readback.py b/scripts/ci/run_cell_learning_business_readback.py
+index 1d3d7547524bab86db38a69a935e801066ba9e25..0ae22bec4563858aa9735c4334593459f1b9b236 100644
+--- a/scripts/ci/run_cell_learning_business_readback.py
++++ b/scripts/ci/run_cell_learning_business_readback.py
+@@ -16,18 +16,41 @@ import re
+ import subprocess
+ import sys
+ import time
+ 
+ ROOT = Path(__file__).resolve().parents[2]
++CI_CONTRACT_METHODS = (
++    'test_actual_merged_lanes_keep_all_original_controls',
++    'test_independent_literals_keep_original_neighbors_and_unique_commands',
++    'test_credit_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure',
++    'test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_upstream_security_controls_cannot_be_skipped_or_suppressed',
++    'test_posterior_policy_controls_cannot_be_skipped_or_suppressed',
++    'test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_joint_consensus_qualification_commands_cannot_be_omitted_moved_or_skipped',
++    'test_joint_resource_commands_cannot_be_omitted_moved_or_skipped',
++    'test_completion_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_learning_business_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy',
++    'test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions',
++    'test_whole_repository_and_external_lanes_cannot_suppress_failures',
++)
+ TESTS = (
+     ("adoption-controls", "scripts/test_cell_adoption_readback.py", 26, ()),
+     ("iteration-controls", "scripts/test_cell_learning_iteration_join.py", 25, ()),
+     ("completion-controls", "scripts/test_cell_learning_completion_join.py", 13, ()),
+     ("economics-controls", "scripts/test_cell_learning_business_economics.py", 29, ()),
+     ("business-controls", "scripts/test_cell_learning_business_join.py", 24, ()),
+     ("trainer-no-update-controls", "scripts/test_cell_learning_training_no_update_join.py", 17, ()),
+-    ("ci-contract-controls", "scripts/ci/test_ci_contract.py", 19,
++    ("ci-contract-controls", "scripts/ci/test_ci_contract.py", len(CI_CONTRACT_METHODS),
+      ("MergedQualificationLaneTests",)),
+ )
+ SOURCE_FILES = (
+     "scripts/cell_adoption_readback.py", "scripts/cell_learning_iteration_join.py",
+     "scripts/cell_learning_completion_join.py", "scripts/cell_learning_business_economics.py",
+@@ -122,10 +145,29 @@ def check_replay(raw, case, directory):
+     (directory / "report.json").write_bytes(raw)
+     return dict(original_completion_bytes_equal=True, retrospective_bindings_only=True,
+                 source_execution_authenticated=False, qualification="HOLD_NO_GO")
+ 
+ 
++def validate_test_completion(log, expected_tests, required_methods=()):
++    counts = re.findall(r"^Ran ([0-9]+) tests? in [0-9.]+s$", log, re.M)
++    outcomes = re.findall(r"^(?:OK(?: \(.*\))?|FAILED(?: \(.*\))?)$", log, re.M)
++    if counts != [str(expected_tests)] or outcomes != ["OK"]:
++        raise ValueError("test count, skip policy or final outcome differs")
++    if required_methods:
++        expected = [f"{name} (__main__.MergedQualificationLaneTests.{name}) ... ok"
++                    for name in required_methods]
++        lines = [line for line in log.splitlines() if line]
++        if (len(required_methods) != expected_tests or
++                len(set(required_methods)) != expected_tests or
++                len(lines) != expected_tests + 3 or
++                sorted(lines[:-3]) != sorted(expected) or
++                lines[-3] != "-" * 70 or lines[-1] != "OK" or
++                re.fullmatch(r"Ran " + str(expected_tests) + r" tests? in [0-9.]+s",
++                             lines[-2]) is None):
++            raise ValueError("exact ci-contract verbose roster or terminal records differ")
++
++
+ def run_one(output, label, command, source_commit, expected_tests=None, case=None, inputs=None):
+     directory = output / label
+     directory.mkdir()
+     record = dict(label=label, argv=command, source_commit=source_commit,
+                   inputs=inputs or {}, launched=False, returncode=None, passed=False)
+@@ -139,14 +181,13 @@ def run_one(output, label, command, source_commit, expected_tests=None, case=Non
+         record["returncode"] = process.returncode
+         if process.returncode:
+             raise ValueError("command returned nonzero")
+         if expected_tests is not None:
+             log = (directory / "stderr.log").read_text()
+-            counts = re.findall(r"^Ran ([0-9]+) tests? in [0-9.]+s$", log, re.M)
+-            outcomes = re.findall(r"^(?:OK(?: \(.*\))?|FAILED(?: \(.*\))?)$", log, re.M)
+-            if counts != [str(expected_tests)] or outcomes != ["OK"]:
+-                raise ValueError("test count, skip policy or final outcome differs")
++            validate_test_completion(
++                log, expected_tests,
++                CI_CONTRACT_METHODS if label == "ci-contract-controls" else ())
+             record["tests_passed"] = expected_tests
+         if case is not None:
+             record["readback_checks"] = check_replay((directory / "stdout.log").read_bytes(), case, directory)
+         record["passed"] = True
+     except subprocess.TimeoutExpired as error:
+diff --git a/scripts/ci/run_pon_budget_controls.py b/scripts/ci/run_pon_budget_controls.py
+index 531707e853b1b298bafd8ba6c248e8a4ed15c037..64e29f974ae60d2a688d9a19d4320827e7feadaa 100644
+--- a/scripts/ci/run_pon_budget_controls.py
++++ b/scripts/ci/run_pon_budget_controls.py
+@@ -358,17 +358,23 @@ def history_cpu_observation(cpu: object, balance: int, unavailable: bool) -> Non
+     require(all(type(cpu.get(key)) is int and cpu[key] == value for key, value in expected.items()),
+             'ORIGINAL_CPU_BUDGET_AND_BALANCE_REQUIRED')
+ 
+ 
+ def history_evidence(raw: str, name: str, mode: str) -> dict:
++    # The old refusal and current native-completion observations have different
++    # phase semantics. A version label alone cannot transfer either outcome.
++    old_schema = 'history-detached-original-refill-control-v2'
++    current_schema = 'history-detached-native-completion-control-v3'
+     records = []
+     for line in raw.splitlines():
+-        if '"schema":"history-detached-original-refill-control-v2"' in line:
++        if any('"schema":"' + schema + '"' in line for schema in (old_schema, current_schema)):
+             records.append(json_load(line[line.index('{'):]))
+     require(len(records) == 1, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED')
+     record = records[0]
+-    require(record.get('schema') == 'history-detached-original-refill-control-v2'
++    before = mode == 'budget-before-v2'
++    require(mode in ('budget-before-v2', 'fixed')
++            and record.get('schema') == (old_schema if before else current_schema)
+             and record.get('mode') == HISTORY[name]
+             and record.get('native_campaign_executed') is False, 'HISTORY_SCOPE_AND_MODE')
+     replay = record.get('replay')
+     require(type(replay) is dict, 'M06_REPLAY_WAS_NOT_REACHED')
+     count, cpu, credit = (replay.get(key) for key in (
+@@ -382,11 +388,13 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
+     balance = flow['stored_credit_ns']
+     history_cpu_observation(before_close.get('cpu'), balance, False)
+     history = record.get('history')
+     require(type(history) is dict and type(history.get('measurement_failures')) is int
+             and history['measurement_failures'] == 0
+-            and type(history.get('packets')) is list and len(history['packets']) == 1,
++            and type(history.get('packets')) is list
++            and len(history['packets']) == (1 if before else 2)
++            and all(type(packet) is dict for packet in history['packets']),
+             'ACTUAL_HISTORY_PACKET_REQUIRED')
+     by_phase = history_phase_map(history['packets'][0].get('phases'))
+     page = history_phase_map(history.get('phases'))
+     work, execution, commit = (by_phase.get(key, {}) for key in ('work', 'execution', 'commit'))
+     require(completed_phase(work, True) and execution.get('started') is True
+@@ -419,26 +427,51 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
+             require(record.get('outcome') == {'Err': 'PUBLIC_MUTATION_CPU_BUDGET'}
+                     and completed_phase(page.get('history_import', {}), False,
+                                         'PUBLIC_MUTATION_CPU_BUDGET'),
+                     'ORIGINAL_REFUSAL_OUTCOME_REQUIRED')
+     else:
++        require(record.get('qualification') == 'NativeCommitted',
++                'ACTUAL_NATIVE_COMPLETION_QUALIFICATION_REQUIRED')
+         require(checks > 0, 'ORIGINAL_REFILL_CONTROL_REQUIRED')
+-        if HISTORY[name] == 'Continue':
+-            packet_id = history['packets'][0].get('packet_id')
+-            require(type(packet_id) is list and len(packet_id) == 32
+-                    and all(type(byte) is int and 0 <= byte <= 255 for byte in packet_id),
++        first_credit = record.get('first_refill_credited_ns')
++        require(type(first_credit) is int and 0 <= first_credit <= flow['credited_refill_ns'],
++                'ORIGINAL_FIRST_REFILL_CREDIT_REQUIRED')
++        require(completed_phase(execution, True) and completed_phase(commit, True),
++                'NATIVE_COMMIT_BEFORE_REFILL_REQUIRED')
++
++        def packet_id(value):
++            require(type(value) is list and len(value) == 32
++                    and all(type(byte) is int and 0 <= byte <= 255 for byte in value),
+                     'ACTUAL_PACKET_ID_REQUIRED')
+-            require(not dirty and completed_phase(execution, True) and completed_phase(commit, True)
+-                    and completed_phase(by_phase.get('submit_result', {}), True)
++            return bytes(value)
++
++        packets = history['packets']
++        ids = [packet_id(packet.get('packet_id')) for packet in packets]
++        require(ids[0] != ids[1]
++                and all(type(packet.get('packet_index')) is int and packet['packet_index'] == index
++                        for index, packet in enumerate(packets))
++                and history.get('schema') == 'pon-local-history-import-observation-v1'
++                and history.get('observation_has_consensus_authority') is False
++                and type(history.get('supplied_packets')) is int and history['supplied_packets'] == 2
++                and packet_id(history.get('tip')) == ids[1],
++                'EXACT_NATIVE_SUCCESSOR_PAGE_REQUIRED')
++        successor = history_phase_map(packets[1].get('phases'))
++        require(set(successor) == set(by_phase), 'COMPLETE_SUCCESSOR_PHASES_REQUIRED')
++        if HISTORY[name] == 'Continue':
++            required = ('work', 'execution', 'commit', 'submit_result', 'cpu_settle', 'history_import')
++            require(not dirty and all(completed_phase(phases.get(key, {}), True)
++                                      for phases in (by_phase, successor) for key in required)
++                    and flow['credited_refill_ns'] > first_credit
+                     and completed_phase(page.get('history_import', {}), True)
+-                    and record.get('outcome') == {'Ok': bytes(packet_id).hex()},
+-                    'CONTINUED_IMPORT_REQUIRED')
++                    and record.get('outcome') == {'Ok': ids[1].hex()},
++                    'CONTINUED_NATIVE_SUCCESSOR_IMPORT_REQUIRED')
+         else:
+             expected = 'PUBLIC_REQUEST_CANCELLED' if HISTORY[name] == 'Cancel' else 'PUBLIC_REQUEST_DEADLINE'
+-            require(completed_phase(execution, False, expected)
+-                    and unstarted_phase(commit),
+-                    'ORIGINAL_CANCELLATION_REQUIRED')
++            require(completed_phase(by_phase.get('submit_result', {}), False, expected)
++                    and completed_phase(by_phase.get('history_import', {}), False, expected)
++                    and all(unstarted_phase(phase) for phase in successor.values()),
++                    'ORIGINAL_POST_COMMIT_CANCELLATION_REQUIRED')
+             if not dirty:
+                 require(record.get('outcome') == {'Err': expected}
+                         and completed_phase(page.get('history_import', {}), False, expected),
+                         'ORIGINAL_CANCELLATION_OUTCOME_REQUIRED')
+     return record
+diff --git a/scripts/ci/run_sp27_receiver_controls.py b/scripts/ci/run_sp27_receiver_controls.py
+index 9c80ee11fa6b6d2dc5461f7a4a2cdbe8f51eff93..fb440145ded4a7b4fcc9e8216c7fd6d0780f6286 100644
+--- a/scripts/ci/run_sp27_receiver_controls.py
++++ b/scripts/ci/run_sp27_receiver_controls.py
+@@ -297,10 +297,16 @@ def bind_execution(prepared: dict, out: Path) -> dict:
+             'SP27_SOURCE_BINARY_BINDING')
+     report, observed, readback = read_health(out, prepared)
+     require(observed == result['report_file'] and report['qualification'] == result['qualification'],
+             'SP27_REPORT_CHANGED')
+     require(readback == result.get('native_readback_files'), 'SP27_NATIVE_READBACK_CHANGED')
++    process = result.get('process')
++    command = [prepared['binary']['path'], SELECTOR, '--exact', '--ignored',
++               '--show-output', '--test-threads=1']
++    require(type(process) is dict and process.get('command') == command
++            and type(process.get('exit_code')) is int and process['exit_code'] == 0
++            and process.get('timed_out') is False, 'SP27_NATIVE_PROCESS_REQUIRED')
+     require(result['process']['stdout_sha256'] == digest(out / 'run/stdout')
+             and result['process']['stderr_sha256'] == digest(out / 'run/stderr')
+             and named_test((out / 'run/stdout').read_text().splitlines(), SELECTOR)
+             == result['named_execution'], 'SP27_NATIVE_LOG_CHANGED')
+     return {'schema': 'sp27-health-build-execution-binding-v2',
+diff --git a/scripts/ci/run_sp27_strata_controls.py b/scripts/ci/run_sp27_strata_controls.py
+index 7202f000438a06f017c5e00416431900dc919b83..45ca070ace5981fc481061fc2c1d979046eec4b6 100644
+--- a/scripts/ci/run_sp27_strata_controls.py
++++ b/scripts/ci/run_sp27_strata_controls.py
+@@ -609,10 +609,16 @@ def bind_execution(prepared: dict, out: Path) -> dict:
+             'SP27_SOURCE_BINARY_BINDING')
+     report, observed, readback = read_campaign(out, prepared)
+     require(observed == result['report_file'] and report['qualification'] == result['qualification'],
+             'SP27_REPORT_CHANGED')
+     require(readback == result.get('native_readback_files'), 'SP27_NATIVE_READBACK_CHANGED')
++    process = result.get('process')
++    command = [prepared['binary']['path'], SELECTOR, '--exact', '--ignored',
++               '--show-output', '--test-threads=1']
++    require(type(process) is dict and process.get('command') == command
++            and type(process.get('exit_code')) is int and process['exit_code'] == 0
++            and process.get('timed_out') is False, 'SP27_NATIVE_PROCESS_REQUIRED')
+     require(result['process']['stdout_sha256'] == digest(out / 'run/stdout')
+             and result['process']['stderr_sha256'] == digest(out / 'run/stderr')
+             and named_test((out / 'run/stdout').read_text().splitlines(), SELECTOR)
+             == result['named_execution'], 'SP27_NATIVE_LOG_CHANGED')
+     return {'schema': 'sp27-strata-build-execution-binding-v1',
+diff --git a/scripts/ci/test_pon_budget_controls.py b/scripts/ci/test_pon_budget_controls.py
+index 7e23896549563972f7e5951610c6b54c20bb896a..0f436b85a6ce1225bf53c1780d32f4f7490adb69 100644
+--- a/scripts/ci/test_pon_budget_controls.py
++++ b/scripts/ci/test_pon_budget_controls.py
+@@ -61,11 +61,11 @@ def history(name, mode):
+                 balance_identity_verified=True, stored_credit_ns=balance, live_owners=0)
+     cpu = dict(schema='public-v3-local-stored-cpu-budget-v1', stored_credit_ns=balance,
+                in_flight=0, accounting_unavailable=False, burst_ns=2_000_000_000,
+                refill_ns_per_second=250_000_000, start_reserve_ns=100_000_000, worker_limit=2)
+     outer = 'PUBLIC_MUTATION_CPU_UNAVAILABLE' if dirty else code
+-    return dict(
++    record = dict(
+         schema='history-detached-original-refill-control-v2', mode=control,
+         native_campaign_executed=False,
+         outcome={'Ok': '11' * 32} if continued else {'Err': outer},
+         replay=dict(completed_native_replays=2, actual_thread_cpu_ns=90_000_000,
+                     projected_paid_credit_ns=50_000_000),
+@@ -88,10 +88,38 @@ def history(name, mode):
+                  accepted=True if continued else None),
+             dict(phase='submit_result', started=continued, completed=continued,
+                  accepted=True if continued else None),
+             dict(phase='cpu_settle', started=True, completed=True, accepted=True),
+         ])]))
++    if not before:
++        # These are explicitly synthetic reader fixtures. Current native v3
++        # commits the first packet before waiting and observes a second packet.
++        record['schema'] = 'history-detached-native-completion-control-v3'
++        record['qualification'] = 'NativeCommitted'
++        record['first_refill_credited_ns'] = 50_000_000
++        observed = record['history']
++        observed.update(schema='pon-local-history-import-observation-v1',
++                        observation_has_consensus_authority=False, supplied_packets=2,
++                        tip=[34] * 32)
++        first = observed['packets'][0]
++        first['packet_index'] = 0
++        for index in (1, 2):
++            first['phases'][index].update(started=True, completed=True, accepted=True,
++                                          error_code=None)
++        first['phases'][3].update(started=True, completed=True, accepted=continued,
++                                  error_code=code)
++        first['phases'].append(dict(phase='history_import', started=True, completed=True,
++                                    accepted=continued, error_code=code))
++        second = copy.deepcopy(first)
++        second.update(packet_id=[34] * 32, packet_index=1)
++        if not continued:
++            for phase in second['phases']:
++                phase.update(started=False, completed=False, accepted=None, error_code=None)
++        observed['packets'].append(second)
++        if continued:
++            record['outcome'] = {'Ok': '22' * 32}
++    return record
+ 
+ 
+ def pool_panic(name):
+     marker, line, expected = runner.POOL_FAILURES[name]
+     actual = 2 if expected == 0 else 512
+@@ -358,11 +386,11 @@ class BudgetControlsTests(unittest.TestCase):
+         changes = [
+             (('flow',), None),
+             (('after_epoch_close_cpu', 'accounting_unavailable'), True),
+             (('epoch_marker',), b'active-v1'.hex()),
+             (('outcome',), {'Err': 'PUBLIC_MUTATION_CPU_UNAVAILABLE'}),
+-            (('outcome',), {'Ok': '22' * 32}),
++            (('outcome',), {'Ok': '33' * 32}),
+             (('history', 'packets', 0, 'phases', 2, 'accepted'), False),
+             (('history', 'packets', 0, 'phases', 2, 'completed'), False),
+             (('history', 'packets', 0, 'phases', 3, 'accepted'), False),
+             (('history', 'phases', 1, 'accepted'), False),
+             (('history', 'phases', 2, 'accepted'), False),
+@@ -374,10 +402,102 @@ class BudgetControlsTests(unittest.TestCase):
+                 target = target[key]
+             target[path[-1]] = value
+             with self.subTest(path=path), self.assertRaises(ValueError):
+                 runner.validate_case(name, 'fixed', process(), transcript(name, observation=changed), '')
+ 
++    def test_history_versions_and_qualification_cannot_transfer_outcomes(self):
++        for name in runner.HISTORY:
++            current = history(name, 'fixed')
++            old = history(name, 'budget-before-v2')
++            for changed in (old, dict(current, schema=old['schema']),
++                            dict(current, qualification='BeforeNativeCompletion'),
++                            dict(current, qualification=None), dict(current, qualification=True)):
++                with self.subTest(name=name, changed=changed), self.assertRaises(ValueError):
++                    runner.validate_case(name, 'fixed', process(),
++                                         transcript(name, observation=changed), '')
++            with self.assertRaises(ValueError):
++                runner.validate_case(name, 'budget-before-v2', process(True),
++                                     transcript(name, True, current), panic(name))
++            combined = transcript(name, observation=current) + json.dumps(old, separators=(',', ':'))
++            with self.assertRaisesRegex(ValueError, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED'):
++                runner.history_evidence(combined, name, 'fixed')
++
++    def test_history_v3_requires_two_distinct_ordered_packets_and_exact_tip(self):
++        name = next(iter(runner.HISTORY))
++        record = history(name, 'fixed')
++        changes = [
++            (('history', 'packets'), record['history']['packets'][:1]),
++            (('history', 'packets'), record['history']['packets'] * 2),
++            (('history', 'packets', 1, 'packet_id'), [17] * 32),
++            (('history', 'packets', 1, 'packet_id'), [True] * 32),
++            (('history', 'packets', 0, 'packet_index'), False),
++            (('history', 'packets', 1, 'packet_index'), 0),
++            (('history', 'supplied_packets'), True),
++            (('history', 'tip'), [17] * 32),
++            (('history', 'tip'), [True] * 32),
++            (('history', 'observation_has_consensus_authority'), True),
++            (('outcome',), {'Ok': '11' * 32}),
++        ]
++        for path, value in changes:
++            changed = copy.deepcopy(record)
++            node = changed
++            for key in path[:-1]:
++                node = node[key]
++            node[path[-1]] = value
++            with self.subTest(path=path), self.assertRaises(ValueError):
++                runner.validate_case(name, 'fixed', process(), transcript(name, observation=changed), '')
++
++    def test_history_v3_requires_real_original_refill_and_successor_completion(self):
++        name = next(iter(runner.HISTORY))
++        record = history(name, 'fixed')
++        for credit in (None, False, -1, record['flow']['credited_refill_ns'],
++                       record['flow']['credited_refill_ns'] + 1):
++            changed = dict(record, first_refill_credited_ns=credit)
++            with self.subTest(credit=credit), self.assertRaises(ValueError):
++                runner.validate_case(name, 'fixed', process(), transcript(name, observation=changed), '')
++        for index in range(len(record['history']['packets'][1]['phases'])):
++            changed = copy.deepcopy(record)
++            changed['history']['packets'][1]['phases'][index]['accepted'] = False
++            with self.subTest(index=index), self.assertRaises(ValueError):
++                runner.validate_case(name, 'fixed', process(), transcript(name, observation=changed), '')
++
++    def test_history_v3_cancellation_keeps_durable_first_and_unstarted_successor(self):
++        for name, control in runner.HISTORY.items():
++            if control == 'Continue':
++                continue
++            record = history(name, 'fixed')
++            changes = [
++                (('history', 'packets', 0, 'phases', 1, 'accepted'), False),
++                (('history', 'packets', 0, 'phases', 2, 'started'), False),
++                (('history', 'packets', 0, 'phases', 2, 'accepted'), None),
++                (('history', 'packets', 0, 'phases', 3, 'error_code'), 'PUBLIC_MUTATION_CPU_BUDGET'),
++                (('history', 'packets', 0, 'phases', 5, 'accepted'), True),
++                (('history', 'packets', 1, 'phases'), []),
++                (('history', 'packets', 1, 'phases'), record['history']['packets'][1]['phases'][:-1]),
++                (('first_refill_credited_ns',), False),
++                (('before_epoch_close', 'flow', 'initial_credit_ns'), 1),
++                (('before_epoch_close', 'flow', 'booked_reservation_ns'), 1),
++                (('before_epoch_close', 'flow', 'paid_cpu_debit_ns'), 99_000_000),
++            ]
++            for index in range(len(record['history']['packets'][1]['phases'])):
++                changes.append((('history', 'packets', 1, 'phases', index, 'started'), True))
++            if control == 'Cancel':
++                changes.extend([
++                    (('flow',), copy.deepcopy(record['before_epoch_close']['flow'])),
++                    (('after_epoch_close_cpu', 'accounting_unavailable'), False),
++                    (('epoch_marker',), None),
++                    (('outcome',), {'Err': 'PUBLIC_REQUEST_CANCELLED'}),
++                ])
++            for path, value in changes:
++                changed = copy.deepcopy(record)
++                node = changed
++                for key in path[:-1]:
++                    node = node[key]
++                node[path[-1]] = value
++                with self.subTest(name=name, path=path), self.assertRaises(ValueError):
++                    runner.validate_case(name, 'fixed', process(), transcript(name, observation=changed), '')
++
+     def test_history_old_g2_null_flow_is_not_reclassified_as_v2_evidence(self):
+         for name in runner.HISTORY:
+             record = history(name, 'budget-before-v2')
+             record['schema'] = 'history-detached-original-refill-control-v1'
+             with self.assertRaisesRegex(ValueError, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED'):
+diff --git a/scripts/ci/test_sp27_receiver_controls.py b/scripts/ci/test_sp27_receiver_controls.py
+index e7c658baf937963336bc76f2ff59919698270961..9764950c120b1e7636685100cef8c473c2d96ddf 100644
+--- a/scripts/ci/test_sp27_receiver_controls.py
++++ b/scripts/ci/test_sp27_receiver_controls.py
+@@ -278,7 +278,84 @@ class SyntheticHealthReadbackControls(unittest.TestCase):
+                 patch.object(sp27.history, 'job_identity', return_value=self.prepared['job']), \
+                 self.assertRaisesRegex(ValueError, 'SP27_NATIVE_READBACK_CHANGED'):
+             sp27.bind_execution(self.prepared, self.out)
+ 
+ 
++    def binding_manifest(self):
++        # Only synthetic ordinary files are used; no native command is run.
++        report, observed, readback = self.read()
++        run = self.out / 'run'
++        run.mkdir()
++        stdout = ('running 1 test\n'
++                  f'test {sp27.SELECTOR} ... ok\n'
++                  'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; '
++                  '0 filtered out; finished in 0.001s\n')
++        (run / 'stdout').write_text(stdout)
++        (run / 'stderr').write_bytes(b'')
++        process = {
++            'command': [self.prepared['binary']['path'], sp27.SELECTOR,
++                        '--exact', '--ignored', '--show-output', '--test-threads=1'],
++            'exit_code': 0, 'timed_out': False,
++            'stdout_sha256': sp27.digest(run / 'stdout'),
++            'stderr_sha256': sp27.digest(run / 'stderr'),
++        }
++        return {
++            'schema': sp27.SCHEMA, 'collection_completed': True, 'failures': [],
++            'job': self.prepared['job'], 'causal_mechanism_established': False,
++            'runtime_limits_or_deadlines_changed': False,
++            'source_before': self.prepared['source_before'],
++            'source_after': self.prepared['source_before'],
++            'binary_before': self.prepared['binary'], 'binary_after': self.prepared['binary'],
++            'report_file': observed, 'qualification': report['qualification'],
++            'native_readback_files': readback, 'process': process,
++            'named_execution': sp27.named_test(stdout.splitlines(), sp27.SELECTOR),
++        }
++
++    def bind_manifest(self, value):
++        (self.out / 'manifest.json').write_text(json.dumps(value, sort_keys=True) + '\n')
++        with patch.object(sp27, 'validate_preparation', return_value=self.prepared), \
++                patch.object(sp27.history, 'job_identity', return_value=self.prepared['job']):
++            return sp27.bind_execution(self.prepared, self.out)
++
++    def test_execution_binding_accepts_exact_synthetic_process(self):
++        result = self.bind_manifest(self.binding_manifest())
++        self.assertFalse(result['successful_collection_is_business_qualification'])
++        self.assertFalse(result['runtime_limits_or_deadlines_changed'])
++
++    def test_execution_binding_rejects_changed_process_with_unchanged_logs(self):
++        original = self.binding_manifest()
++        command = original['process']['command']
++        changes = [
++            ('command missing', 'command', None, True),
++            ('command null', 'command', None, False),
++            ('command string', 'command', ' '.join(command), False),
++            ('different binary', 'command', ['/synthetic/other-binary', *command[1:]], False),
++            ('different selector', 'command', [command[0], 'different_selector', *command[2:]], False),
++            ('extra flag', 'command', [*command, '--nocapture'], False),
++            ('missing flag', 'command', [*command[:3], *command[4:]], False),
++            ('reordered flags', 'command', [*command[:4], command[5], command[4]], False),
++            ('exit missing', 'exit_code', None, True),
++            ('exit positive', 'exit_code', 1, False),
++            ('exit negative', 'exit_code', -1, False),
++            ('exit true', 'exit_code', True, False),
++            ('exit false', 'exit_code', False, False),
++            ('exit null', 'exit_code', None, False),
++            ('exit float', 'exit_code', 0.0, False),
++            ('timeout missing', 'timed_out', None, True),
++            ('timeout true', 'timed_out', True, False),
++            ('timeout numeric zero', 'timed_out', 0, False),
++            ('timeout null', 'timed_out', None, False),
++            ('timeout text', 'timed_out', 'false', False),
++        ]
++        for label, field, value, missing in changes:
++            changed = copy.deepcopy(original)
++            if missing:
++                del changed['process'][field]
++            else:
++                changed['process'][field] = value
++            with self.subTest(change=label), self.assertRaisesRegex(
++                    ValueError, 'SP27_NATIVE_PROCESS_REQUIRED'):
++                self.bind_manifest(changed)
++
++
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/scripts/ci/test_sp27_strata_controls.py b/scripts/ci/test_sp27_strata_controls.py
+index 948f9964aeb88aeccebc9b7b01448c1b4a6f3b4d..69c8289f41253cddbf0ec57eebf1a074cbda5697 100644
+--- a/scripts/ci/test_sp27_strata_controls.py
++++ b/scripts/ci/test_sp27_strata_controls.py
+@@ -415,7 +415,84 @@ class SyntheticCampaignControls(unittest.TestCase):
+                 patch.object(strata.history, 'job_identity', return_value=self.prepared['job']), \
+                 self.assertRaisesRegex(ValueError, 'SP27_NATIVE_READBACK_CHANGED'):
+             strata.bind_execution(self.prepared, self.out)
+ 
+ 
++    def binding_manifest(self):
++        # Only synthetic ordinary files are used; no native command is run.
++        report, observed, readback = self.read()
++        run = self.out / 'run'
++        run.mkdir()
++        stdout = ('running 1 test\n'
++                  f'test {strata.SELECTOR} ... ok\n'
++                  'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; '
++                  '0 filtered out; finished in 0.001s\n')
++        (run / 'stdout').write_text(stdout)
++        (run / 'stderr').write_bytes(b'')
++        process = {
++            'command': [self.prepared['binary']['path'], strata.SELECTOR,
++                        '--exact', '--ignored', '--show-output', '--test-threads=1'],
++            'exit_code': 0, 'timed_out': False,
++            'stdout_sha256': strata.digest(run / 'stdout'),
++            'stderr_sha256': strata.digest(run / 'stderr'),
++        }
++        return {
++            'schema': strata.SCHEMA, 'collection_completed': True, 'failures': [],
++            'job': self.prepared['job'], 'causal_mechanism_established': False,
++            'runtime_limits_or_deadlines_changed': False,
++            'source_before': self.prepared['source_before'],
++            'source_after': self.prepared['source_before'],
++            'binary_before': self.prepared['binary'], 'binary_after': self.prepared['binary'],
++            'report_file': observed, 'qualification': report['qualification'],
++            'native_readback_files': readback, 'process': process,
++            'named_execution': strata.named_test(stdout.splitlines(), strata.SELECTOR),
++        }
++
++    def bind_manifest(self, value):
++        (self.out / 'manifest.json').write_text(json.dumps(value, sort_keys=True) + '\n')
++        with patch.object(strata, 'validate_preparation', return_value=self.prepared), \
++                patch.object(strata.history, 'job_identity', return_value=self.prepared['job']):
++            return strata.bind_execution(self.prepared, self.out)
++
++    def test_execution_binding_accepts_exact_synthetic_process(self):
++        result = self.bind_manifest(self.binding_manifest())
++        self.assertFalse(result['successful_collection_is_business_qualification'])
++        self.assertFalse(result['runtime_limits_or_deadlines_changed'])
++
++    def test_execution_binding_rejects_changed_process_with_unchanged_logs(self):
++        original = self.binding_manifest()
++        command = original['process']['command']
++        changes = [
++            ('command missing', 'command', None, True),
++            ('command null', 'command', None, False),
++            ('command string', 'command', ' '.join(command), False),
++            ('different binary', 'command', ['/synthetic/other-binary', *command[1:]], False),
++            ('different selector', 'command', [command[0], 'different_selector', *command[2:]], False),
++            ('extra flag', 'command', [*command, '--nocapture'], False),
++            ('missing flag', 'command', [*command[:3], *command[4:]], False),
++            ('reordered flags', 'command', [*command[:4], command[5], command[4]], False),
++            ('exit missing', 'exit_code', None, True),
++            ('exit positive', 'exit_code', 1, False),
++            ('exit negative', 'exit_code', -1, False),
++            ('exit true', 'exit_code', True, False),
++            ('exit false', 'exit_code', False, False),
++            ('exit null', 'exit_code', None, False),
++            ('exit float', 'exit_code', 0.0, False),
++            ('timeout missing', 'timed_out', None, True),
++            ('timeout true', 'timed_out', True, False),
++            ('timeout numeric zero', 'timed_out', 0, False),
++            ('timeout null', 'timed_out', None, False),
++            ('timeout text', 'timed_out', 'false', False),
++        ]
++        for label, field, value, missing in changes:
++            changed = copy.deepcopy(original)
++            if missing:
++                del changed['process'][field]
++            else:
++                changed['process'][field] = value
++            with self.subTest(change=label), self.assertRaisesRegex(
++                    ValueError, 'SP27_NATIVE_PROCESS_REQUIRED'):
++                self.bind_manifest(changed)
++
++
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/scripts/ci/test_throughput_cost_coverage.py b/scripts/ci/test_throughput_cost_coverage.py
+index 748c21550dda37f69ddc5f9208e9dc07fc384b69..79214af83feab98f32a73c18280fa539df0eb16f 100644
+--- a/scripts/ci/test_throughput_cost_coverage.py
++++ b/scripts/ci/test_throughput_cost_coverage.py
+@@ -531,7 +531,54 @@ class FiniteBusinessControls(unittest.TestCase):
+         self.assertIsNone(self.analyze()['phases'][0]['phase_process_memory'])
+         value['phases'][0]['rss']['scope'] = 'per-request exact physical peak'
+         with self.assertRaisesRegex(ValueError, 'memory scope'):
+             self.analyze(value)
+ 
++
++class SourceReceiptTypeControls(unittest.TestCase):
++    def test_exact_typed_head_and_merge_source_pairs_are_accepted(self):
++        before = source()
++        reader.source_binding(before, copy.deepcopy(before), head=HEAD, tree=TREE)
++        base, merge = 'c' * 40, 'd' * 40
++        before.update(kind='prospective-merge', base=base, prospective_merge=merge,
++                      tested_commit=merge)
++        reader.source_binding(before, dict(reversed(list(before.items()))),
++                              head=HEAD, tree=TREE, kind='prospective-merge',
++                              base=base, merge=merge)
++
++    def test_changed_after_source_types_refuse_equal_python_values(self):
++        before = source()
++        for field, changed in (
++                ('tracked_entries', True), ('tracked_entries', 1.0),
++                ('tracked_bytes', True), ('tracked_bytes', 1.0),
++                ('tracked_worktree_verified', 1), ('tracked_worktree_verified', 1.0),
++                ('tests_executed_by_identity_check', 0),
++                ('tests_executed_by_identity_check', 0.0)):
++            after = copy.deepcopy(before)
++            after[field] = changed
++            self.assertEqual(before, after)  # The counterexample for untyped equality.
++            with self.subTest(field=field, value=changed, value_type=type(changed).__name__):
++                with self.assertRaisesRegex(ValueError, 'unchanged complete source receipts'):
++                    reader.source_binding(before, after, head=HEAD, tree=TREE)
++
++    def test_source_shape_original_types_and_error_order_are_preserved(self):
++        before = source()
++        invalid_pairs = [
++            (before, None),
++            (before, {key: value for key, value in before.items() if key != 'schema'}),
++            (before, dict(before, extra=False)),
++            (before, dict(before, tested_tree='c' * 40)),
++        ]
++        for original, after in invalid_pairs:
++            with self.subTest(after=after), self.assertRaisesRegex(
++                    ValueError, 'unchanged complete source receipts'):
++                reader.source_binding(original, after, head=HEAD, tree=TREE)
++        invalid = dict(before, tracked_entries=True)
++        with self.assertRaisesRegex(ValueError, 'measured u64 required'):
++            reader.source_binding(invalid, copy.deepcopy(invalid), head=HEAD, tree=TREE)
++        with self.assertRaisesRegex(ValueError, 'canonical digest required'):
++            reader.source_binding(before, None, head='invalid', tree=TREE)
++        with self.assertRaisesRegex(ValueError, 'unexpected merge source arguments'):
++            reader.source_binding(before, None, head=HEAD, tree=TREE, base='c' * 40)
++
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/scripts/ci/throughput_cost_coverage.py b/scripts/ci/throughput_cost_coverage.py
+index 4aa91a62595b5771a09cfe017395af652f93a0aa..8d5e8a370df1fee8d84e493f55f2a9417f3b8e99 100644
+--- a/scripts/ci/throughput_cost_coverage.py
++++ b/scripts/ci/throughput_cost_coverage.py
+@@ -77,11 +77,13 @@ def source_binding(before, after, *, head, tree, kind='head', base=None, merge=N
+         tested = head
+     else:
+         digest(base, 40)
+         tested = digest(merge, 40)
+     require(type(before) is dict and set(before) == SOURCE_FIELDS
+-            and before == after, 'unchanged complete source receipts required')
++            and type(after) is dict and set(after) == SOURCE_FIELDS
++            and all(type(before[key]) is type(after[key]) and before[key] == after[key]
++                    for key in SOURCE_FIELDS), 'unchanged complete source receipts required')
+     require(before['schema'] == 'trnm-ci-source-v1'
+             and before['kind'] == kind and before['candidate'] == head
+             and before['tested_commit'] == tested and before['tested_tree'] == tree
+             and before['base'] == base and before['prospective_merge'] == merge
+             and before['tracked_worktree_verified'] is True

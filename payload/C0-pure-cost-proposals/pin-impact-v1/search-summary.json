@@ -1,0 +1,377 @@
+{
+  "at_utc": "2026-11-14T09:12:09.494215+00:00",
+  "json_copies": [
+    {
+      "copy": {
+        "bytes": 64941,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--applicability-v1.json.original",
+        "sha256": "50117a45c52fb2f140ba945d5d2e43298629f4e33dcf33517ef620ae18af009e"
+      },
+      "git_blob": "3a4eab9a7693c9e0553d7d43463772005ee061f3",
+      "path": "config/pon/applicability-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 73351,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--module-contracts-v1.json.original",
+        "sha256": "fb8195c3893cd26bd9708eefe47ee5b315a45197437279be5326a122ceb36dcb"
+      },
+      "git_blob": "08389a8c219274bd849472dddf1ee76e401cd512",
+      "path": "config/pon/module-contracts-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 215980,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--module-maturity-v1.json.original",
+        "sha256": "86da7e012c3b25e6753b2a87104ab193bd4d915eb81a1e691824c5a7cb3e104f"
+      },
+      "git_blob": "06cc64fc6a3f7041d779e09fa73f5ef597ff528a",
+      "path": "config/pon/module-maturity-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 522809,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq-cross-branch-corpus-v1.json.original",
+        "sha256": "6ceb8570edf00c29bcb142ef1f0ffd74f52a1235c5f41f32fa5d6d6b5c7c3367"
+      },
+      "git_blob": "9bb43fcaec3667b5a78c920e9641ef01275feb66",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 18358,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq128-lifetime-budget-v1.json.original",
+        "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc"
+      },
+      "git_blob": "1035073e635a2cecd2841cfdc2e6166659f1599d",
+      "path": "config/pon/pq128-lifetime-budget-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 3017,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq128-source-lock-v1.json.original",
+        "sha256": "59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb"
+      },
+      "git_blob": "283ff219ff0b9483b988bfb2c4af25f79fcd9e0e",
+      "path": "config/pon/pq128-source-lock-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 507048,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--contracts--work-cost-contract-v1.json.original",
+        "sha256": "3c21ea1823c6193ad41039034693799bc7673777305a103f425df65fe8891c34"
+      },
+      "git_blob": "fe4ba9a88508e5a748ecd0333bbef50cfe1d6a91",
+      "path": "formal/pon-nakamoto-v1/contracts/work-cost-contract-v1.json"
+    },
+    {
+      "copy": {
+        "bytes": 196363,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--campaign-01--result.json.original",
+        "sha256": "7fb6f1d64f9fe0448ee6f2f590e3aacbc1b463241b54c4df4a5000f1a6e63dcb"
+      },
+      "git_blob": "01d918a6df5dd4e3b9860aaa2e3b6c5ea065b32e",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/campaign-01/result.json"
+    },
+    {
+      "copy": {
+        "bytes": 233135,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--final-evidence-files.json.original",
+        "sha256": "d334be78d7b7d030759213fa20d3c1dbdbb569ee6037e0019ca10589abf9e238"
+      },
+      "git_blob": "5b4c7291b7df76ef5cbe9bd4dce46de93579c468",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/final-evidence-files.json"
+    },
+    {
+      "copy": {
+        "bytes": 320566,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--independent_cleanup.json.original",
+        "sha256": "4ca5d9a79a7e35e9bfc0870425b895dc0b26fd57bbb0d2bb4e48c9fc211ca070"
+      },
+      "git_blob": "b9fafbacf1188eea05411169d14683450d498912",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/independent_cleanup.json"
+    },
+    {
+      "copy": {
+        "bytes": 792215,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--inputs--manifest.json.original",
+        "sha256": "709b96f59289e0352329653b0b821634f7b702e593b4f5655a697b658fba0550"
+      },
+      "git_blob": "23d00239648de60f7ba704079f14233454f8bca1",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json"
+    }
+  ],
+  "matches": [
+    {
+      "line": 15,
+      "path": ".github/workflows/pon-throughput-evidence.yml",
+      "text": "      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    },
+    {
+      "line": 214,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"path\": \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 218,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline\","
+    },
+    {
+      "line": 219,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r20_rejects_signed_old_cookies_and_preserves_control_output_reserve\","
+    },
+    {
+      "line": 220,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release\","
+    },
+    {
+      "line": 221,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries\","
+    },
+    {
+      "line": 222,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt\","
+    },
+    {
+      "line": 223,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification\","
+    },
+    {
+      "line": 229,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice\","
+    },
+    {
+      "line": 230,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority\","
+    },
+    {
+      "line": 231,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund\","
+    },
+    {
+      "line": 232,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock\","
+    },
+    {
+      "line": 233,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads\","
+    },
+    {
+      "line": 234,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle\","
+    },
+    {
+      "line": 235,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state\","
+    },
+    {
+      "line": 236,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts\","
+    },
+    {
+      "line": 237,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure\","
+    },
+    {
+      "line": 494,
+      "path": "config/pon/applicability-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting\","
+    },
+    {
+      "line": 846,
+      "path": "config/pon/module-contracts-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 2074,
+      "path": "config/pon/module-maturity-v1.json",
+      "text": "            \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting\","
+    },
+    {
+      "line": 2111,
+      "path": "config/pon/module-maturity-v1.json",
+      "text": "            \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting\","
+    },
+    {
+      "line": 2372,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": \"b9bbe75b8509eaf10a73b50aab7e7892f6796e64\","
+    },
+    {
+      "line": 4900,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 112,
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\""
+    },
+    {
+      "line": 17,
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": \"1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70\","
+    },
+    {
+      "line": 55,
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "text": "`trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs` digest changes;"
+    },
+    {
+      "line": 217,
+      "path": "docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md",
+      "text": "The installed `trnm-pon-node/src/ingress/public_v3.rs` path uses `TcpStream` and"
+    },
+    {
+      "line": 7610,
+      "path": "formal/pon-nakamoto-v1/contracts/work-cost-contract-v1.json",
+      "text": "      \"path\": \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 3329,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/campaign-01/result.json",
+      "text": "    \"source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": true,"
+    },
+    {
+      "line": 1625,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/final-evidence-files.json",
+      "text": "    \"inputs/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": {"
+    },
+    {
+      "line": 2232,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/independent_cleanup.json",
+      "text": "    \"/home/qian-qi/work/chain-w1-node-r4-f16ac/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": {"
+    },
+    {
+      "line": 5493,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/independent_cleanup.json",
+      "text": "    \"source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": true,"
+    },
+    {
+      "line": 1386,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json",
+      "text": "    \"/home/qian-qi/work/chain-w1-node-r4-f16ac/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": {"
+    },
+    {
+      "line": 3674,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json",
+      "text": "    \"/home/qian-qi/work/chain-w1-node-r4-f16ac/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": true,"
+    },
+    {
+      "line": 8421,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json",
+      "text": "    \"source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": {"
+    },
+    {
+      "line": 8422,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json",
+      "text": "      \"path\": \"/home/qian-qi/work/chain-w1-node-r4-f16ac/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 8430,
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/inputs/manifest.json",
+      "text": "      \"copy\": \"source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\""
+    },
+    {
+      "line": 124,
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+    },
+    {
+      "line": 1295,
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 1567,
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 1601,
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 34,
+      "path": "scripts/ci/pq_authority_surface_scan.py",
+      "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs': 'mixed-client-profile-and-owner-boundary',"
+    },
+    {
+      "line": 53,
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "text": "        'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 158,
+      "path": "scripts/ci/test_pon_public_v3_policy_read.py",
+      "text": "        source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'"
+    },
+    {
+      "line": 1997,
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "text": "            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 2125,
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "text": "            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    },
+    {
+      "line": 2547,
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "text": "            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+    }
+  ],
+  "native_or_tests_executed": false,
+  "node_Cargo": {
+    "copy": {
+      "bytes": 2357,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/node-Cargo.toml.original",
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    "git_blob": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+    "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "sha2_lines": [
+      {
+        "line": 37,
+        "text": "sha2 = \"0.10\""
+      }
+    ]
+  },
+  "pattern": "(b9bbe75b8509eaf10a73b50aab7e7892f6796e64|1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70|ingress/public_v3\\.rs)",
+  "schema": "trnm-public-v3-profile-candidate-pin-impact-v1",
+  "search_receipt": {
+    "bytes": 9524,
+    "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/exact-path-and-pin-search.stdout",
+    "sha256": "ed25527cdaa6cb93ddd6931657c65839e6986c3c9ffa6c9bf1679b55962b205c"
+  },
+  "search_scope": [
+    "config",
+    "scripts",
+    "formal",
+    ".github",
+    "docs/security",
+    "docs/development"
+  ],
+  "source": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "source_or_git_mutated": false,
+  "target_git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+  "target_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "target_sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+}

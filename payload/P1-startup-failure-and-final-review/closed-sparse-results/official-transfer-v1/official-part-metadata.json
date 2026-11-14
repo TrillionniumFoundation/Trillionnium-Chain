@@ -1,0 +1,37 @@
+[
+  {
+    "bytes": 262144,
+    "offset": 0,
+    "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000000000.part",
+    "sha256": "fcee69bf2a482e9c7e1f5552f22269a701375151204c945606daecfb3a2a6161",
+    "version": "16777233:607014037:262144:1794655853514089719:1794655853514685799"
+  },
+  {
+    "bytes": 262144,
+    "offset": 262144,
+    "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000262144.part",
+    "sha256": "b4338601d6116ab1ba05f08638705305dfbaaabf1ae2a13ac39de9f79a9cb9d8",
+    "version": "16777233:607014262:262144:1794655877556997000:1794655877557768454"
+  },
+  {
+    "bytes": 262144,
+    "offset": 524288,
+    "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000524288.part",
+    "sha256": "fd3fa8feec683056fb38e408b4742e544d8780adf63824faf1b29864b0379e02",
+    "version": "16777233:607014382:262144:1794655897311203181:1794655897314445331"
+  },
+  {
+    "bytes": 262144,
+    "offset": 786432,
+    "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000786432.part",
+    "sha256": "527badc69342f57ebfadc4ade639140f842edd10a17d79dbf6f998938b4a771b",
+    "version": "16777233:607014532:262144:1794655912789523281:1794655912790125027"
+  },
+  {
+    "bytes": 47140,
+    "offset": 1048576,
+    "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0001048576.part",
+    "sha256": "991652798d2d80a05edb375f65f93203b85c06e3722566e0c179b4afd54a72e2",
+    "version": "16777233:607014637:47140:1794655916048203525:1794655916048788313"
+  }
+]

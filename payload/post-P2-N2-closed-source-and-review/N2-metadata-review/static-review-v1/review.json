@@ -1,0 +1,482 @@
+{
+  "actual_31_source_proof": {
+    "bytes": 46382,
+    "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/all31-actual-source-objects.json",
+    "sha256": "68bc6604aa158d71ecd6a299c7bc1d0559aaf30ff1ec1e44ea1c1510aab11218"
+  },
+  "corpus": {
+    "N_to_N2": {
+      "other_typed_changes": [],
+      "pinned_count_after": 2605,
+      "pinned_count_before": 2605,
+      "pins_added": {},
+      "pins_changed": {
+        ".github/workflows/pon-w1-work-security.yml": {
+          "after": "ce94e0a5423d91840849d91579ec541081117274",
+          "before": "f1ea17ef43bf7a3067da95adc4b30d0f071d2530"
+        },
+        "config/pon/hash-use-contract-v1.json": {
+          "after": "096a83efdb9d15ecb3ebbc97c62df4b9ae3a92c6",
+          "before": "2a45fdfefc70881853dc6045491943d819f1a209"
+        },
+        "scripts/ci/hash_use_contract.py": {
+          "after": "c1ca2e16a76f067736b76158d382eb96e78b08b5",
+          "before": "f58609ec7ea88ec9eadfdf92b3e09ab843b884c6"
+        },
+        "scripts/ci/test_w1_v2_controls_gate.py": {
+          "after": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+          "before": "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470"
+        },
+        "scripts/ci/w1_v2_controls_gate.py": {
+          "after": "458b9c804efb962ded3871d231368aec163161eb",
+          "before": "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38"
+        },
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+          "after": "a13590cbefab86636e12a83f4eaf58b8d69aaf8e",
+          "before": "914fd5ffe2f7c9f9bd1416de539950ccae4ded22"
+        }
+      },
+      "pins_removed": {},
+      "required_added": [],
+      "required_count_after": 2509,
+      "required_count_before": 2509,
+      "required_order_equal": true,
+      "required_removed": []
+    },
+    "P2_to_N2": {
+      "other_typed_changes": [],
+      "pinned_count_after": 2605,
+      "pinned_count_before": 2606,
+      "pins_added": {},
+      "pins_changed": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "after": "10370fb69e7398d976b2e5516ff5e139bf298455",
+          "before": "d91b1bd75a91d33106df99a482b9b74b68592dd0"
+        },
+        ".github/workflows/pon-w1-work-security.yml": {
+          "after": "ce94e0a5423d91840849d91579ec541081117274",
+          "before": "f1ea17ef43bf7a3067da95adc4b30d0f071d2530"
+        },
+        "config/pon/hash-use-contract-v1.json": {
+          "after": "096a83efdb9d15ecb3ebbc97c62df4b9ae3a92c6",
+          "before": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e"
+        },
+        "config/pon/joint-consensus-qualification-v1.json": {
+          "after": "acde7743dc9f837c3c7ba4c1e2be9ae33276af2c",
+          "before": "b2ce9946df65598ea1068ee5d2fbdcac131de6c8"
+        },
+        "config/pon/pq-authority-effects-v1.json": {
+          "after": "1c6dc60f31c13a00e3eaf0d01c85042ece00408f",
+          "before": "128fabbf8ccb038c26636f5689fe239a90ac663f"
+        },
+        "config/pon/pq128-lifetime-composition-current-v3.json": {
+          "after": "5d85b9337ff09d3dffd0b52404115c8c9996e039",
+          "before": "a7a3005cc86f0202e8465390e058055b2678baa7"
+        },
+        "config/pon/pq128-source-correspondence-current-v2.json": {
+          "after": "434d1cb328a3072ba08c174285eda3f0b31b51dd",
+          "before": "1fad2b3ae6a5ae61d021f612a6cc8ccc1aa8dc63"
+        },
+        "config/pon/w1-lifetime-current-source-v2.json": {
+          "after": "96aa4ba7a8f4634e4d82778b87eae7791eaca716",
+          "before": "7424efa09f64f8359e0b144a99478b41ce7913d2"
+        },
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+          "after": "2a83106b73a65c78f826bcb2b4fd4794c6df12d2",
+          "before": "d91790c0b53fa11908d2026ad23bcb58520677a5"
+        },
+        "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md": {
+          "after": "6106d4500a427c132d9e13d222be15730a9c6617",
+          "before": "fb577f6b424f19db48e21d0027cf3618e3556bbf"
+        },
+        "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md": {
+          "after": "10c72df611f8b81422b9c2e2b56bc0f185327a52",
+          "before": "bae4d5c9692e451bddb2e46e67facefeb649848b"
+        },
+        "docs/security/HASH_USE_CONTRACT_V1.md": {
+          "after": "d912dc2e923b1e39bab1661d5616e90873c74522",
+          "before": "caeef93f9bc11228fc8fe5d18923ffca42a7af16"
+        },
+        "docs/security/PQ128_LIFETIME_BUDGET_V1.md": {
+          "after": "e3682e7af54d60b85ad35a2a5c92706c837a1051",
+          "before": "4e4ac98c9fde929db5de9269f1efd1882cc6cc55"
+        },
+        "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md": {
+          "after": "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7",
+          "before": "39d4e18d99bea0c8908c5e0279566a63dbe6f461"
+        },
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": {
+          "after": "f4230d0b39b32cf59d294272bac2f5049ba70aba",
+          "before": "1b5ccd314220d3af5396cbd6f391380dc137f7ef"
+        },
+        "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md": {
+          "after": "42967be8d2e492d9d294f36271fec9758df20203",
+          "before": "bbf1200e2d410ff439dfb7367cee193902a91394"
+        },
+        "formal/pon-nakamoto-v1/joint_consensus_qualification.py": {
+          "after": "37dec995b7df6f13e6002c932287f258a687f1de",
+          "before": "675a93aef57d928cb7054778b64232e922ca57e4"
+        },
+        "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": {
+          "after": "96d5011a6eadb30fc8af223ecba1b1d1d1cc9207",
+          "before": "7983a260ff6cfb91c4f2f8ab4b128f0769fa166c"
+        },
+        "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py": {
+          "after": "763ed92c3fc3d9eb197224344e37c99682b81dd6",
+          "before": "89bbe4a78c3d258e7799556257f4919cc280e17f"
+        },
+        "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py": {
+          "after": "51c3ae0299f9a3a577fcde3b31311f89815c1dbb",
+          "before": "61731a92ddf7e5fd27f8712dc204c2d065b22eff"
+        },
+        "scripts/ci/check_ci_contract.py": {
+          "after": "0c45b3c88437c8903faa3f6f1fb998cd5220fef8",
+          "before": "aa3971a204b45b00908b8798b75c3c3cb3462372"
+        },
+        "scripts/ci/check_pq_research_integration.py": {
+          "after": "a4200bf6db7e26864c1cd2e5c2e58758abd1f743",
+          "before": "88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d"
+        },
+        "scripts/ci/check_public_readiness_evidence.py": {
+          "after": "cba090808890320880b58036096e91604a4807a0",
+          "before": "7684557b73d8cf7884133fbe55c8b35a9481a0a6"
+        },
+        "scripts/ci/ci_job.sh": {
+          "after": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+          "before": "bbe1c63b258cb59042d1b389f598d54290cd5d9f"
+        },
+        "scripts/ci/hash_use_contract.py": {
+          "after": "c1ca2e16a76f067736b76158d382eb96e78b08b5",
+          "before": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b"
+        },
+        "scripts/ci/pq_authority_effect_register.py": {
+          "after": "e2d05b7332635e787137b513ed86186c0341054f",
+          "before": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6"
+        },
+        "scripts/ci/pq_lifetime_composition.py": {
+          "after": "32ba61ab1119e6e3c6697b69bce0eb722644d764",
+          "before": "595027440b2d1a6ee6da2b7ba4fcf78d9a3aba37"
+        },
+        "scripts/ci/pq_lifetime_current_v2.py": {
+          "after": "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc",
+          "before": "a5b085f9f1f45e1ae3849778ed57479f76ebd427"
+        },
+        "scripts/ci/test_ci_contract.py": {
+          "after": "5ed407bb9590217423e5642cf0ceb45433c796db",
+          "before": "0593d7870b0675d7e642085b1771ace2cce84656"
+        },
+        "scripts/ci/test_pq_authority_effect_register.py": {
+          "after": "9851b6a9bddc8b695fb6142c471a766977cb9ede",
+          "before": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d"
+        },
+        "scripts/ci/test_pq_research_integration.py": {
+          "after": "3fa462b482ee015e8c4a50ead42f3a8a5f221f2c",
+          "before": "b43c38008095eff5ab7a5cac35c00beddd2803d0"
+        },
+        "scripts/ci/test_public_readiness_evidence.py": {
+          "after": "30a4e2dd3f2a78faf196ca75b484df0e4b2bd062",
+          "before": "f09640852443d301f206b0f9143720b9cdda1328"
+        },
+        "scripts/ci/test_w1_lifetime_current_observation.py": {
+          "after": "7cedb1e646aae60bcd0104d82ae969706a497802",
+          "before": "9e6989095794564623e9b56e58ab97af3cc42517"
+        },
+        "scripts/ci/test_w1_v2_controls_gate.py": {
+          "after": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+          "before": "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470"
+        },
+        "scripts/ci/w1_v2_controls_gate.py": {
+          "after": "458b9c804efb962ded3871d231368aec163161eb",
+          "before": "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38"
+        },
+        "scripts/test_w1_owned_process_collector_v1.py": {
+          "after": "15072e49434166d0d286a710cd3ef4e0f0a71776",
+          "before": "0c683b183d64d71e8ae6c6f44dca857b4f6e77b3"
+        },
+        "scripts/w1_lifetime_current_observation.py": {
+          "after": "901634884d201df615370811f46a02ae88647631",
+          "before": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0"
+        },
+        "scripts/w1_owned_process_collector_v1.py": {
+          "after": "eaa24403674c9b5448d49187f0d2d0ade6bc9127",
+          "before": "7049001ace23192d6d32e4f438ca85e4b0ac16cc"
+        },
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+          "after": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+          "before": "b62de39bdba906c9d989498a6299df9a14d900e8"
+        },
+        "trillionnium/crates/trnm-pon-node/src/store.rs": {
+          "after": "3bce39ce1aef265a18f304085bc08c0240547065",
+          "before": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e"
+        }
+      },
+      "pins_removed": {
+        "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw": "421b10241820580efcdabc692ccb1f6dd27b6586"
+      },
+      "required_added": [],
+      "required_count_after": 2509,
+      "required_count_before": 2510,
+      "required_order_equal": false,
+      "required_removed": [
+        "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+      ]
+    }
+  },
+  "distributed_inventory": {
+    "N2_entries": 1740,
+    "N2_equals_P2_entire_bytes": true,
+    "N_entries": 1738,
+    "N_to_N2_added": [
+      "config/pon/pq128-lifetime-composition-current-v3.json",
+      "config/pon/pq128-source-correspondence-current-v2.json"
+    ],
+    "N_to_N2_removed": [],
+    "P2_entries": 1740,
+    "oid": "a13590cbefab86636e12a83f4eaf58b8d69aaf8e",
+    "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+  },
+  "hash_use": {
+    "N_to_N2_typed_changes": [
+      {
+        "after": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd",
+        "before": "03dea45629a872ed5f59d8583fc43adb12970c76269455ff0359a534f67e1ec3",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "config/pon/pq-proof-profile-binding-v1.json",
+          "sha256"
+        ]
+      },
+      {
+        "after": 106066,
+        "before": 104121,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+        "before": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "sha256"
+        ]
+      },
+      {
+        "after": 15173,
+        "before": 14762,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-data-availability/src/cell.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c",
+        "before": "af920ebe2fc0d998c5083418b6d2e312aa90e4109b84241e44ee585c656c2739",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-data-availability/src/cell.rs",
+          "sha256"
+        ]
+      },
+      {
+        "after": 28154,
+        "before": 27237,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a",
+        "before": "bb95507ff80d5a0f01931098f91fc1d7d1a9985e72d49937354ec2b86a966486",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "sha256"
+        ]
+      },
+      {
+        "after": 37947,
+        "before": 37665,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d",
+        "before": "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "sha256"
+        ]
+      },
+      {
+        "after": 391556,
+        "before": 387798,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5",
+        "before": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256"
+        ]
+      }
+    ],
+    "P2_to_N2_typed_changes": [
+      {
+        "after": 391556,
+        "before": 391470,
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "bytes"
+        ]
+      },
+      {
+        "after": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5",
+        "before": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+        "kind": "value",
+        "path": [
+          "source_files",
+          "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256"
+        ]
+      }
+    ],
+    "map_commitments": {
+      "N": "1c79bdfe03c3303346f10ead1a91e31a583bbd6e7381b0dc2dffa80960c7aaa8",
+      "N2": "9b58a370b9ee6b6c867e283b817eef3a1b100fc535577b91c86834b4fd76780a",
+      "P2": "15a8d91e0b2c50908d17c6bb9743e8ef5a44927814e59354874d77d9654f9ee7"
+    },
+    "max_bytes": 1048576,
+    "max_depth": 64,
+    "max_source_bytes": 2097152,
+    "qualification": {
+      "actual_lifetime_failure_bound": null,
+      "composition_coverage_proved": false,
+      "production_activation": false,
+      "security_bits": null,
+      "whole_chain_hash_query_scope_closed": false,
+      "whole_chain_pq_qualified": false
+    },
+    "reader_AST_equal_except_one_map_literal": true,
+    "review_base": "e4abb172147e941b62483652b0ceabaae4317624",
+    "same_19_use_semantics_and_31_paths": true,
+    "selected_P2_hash_manifest_oid": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+    "selected_P2_hash_reader_oid": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+    "semantics_commitment": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
+  },
+  "heads": {
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "P2": "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+  },
+  "protected_P2_current_bindings": [
+    {
+      "P2_corpus_pin": "a7a3005cc86f0202e8465390e058055b2678baa7",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "a7a3005cc86f0202e8465390e058055b2678baa7",
+      "path": "config/pon/pq128-lifetime-composition-current-v3.json"
+    },
+    {
+      "P2_corpus_pin": "1fad2b3ae6a5ae61d021f612a6cc8ccc1aa8dc63",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "1fad2b3ae6a5ae61d021f612a6cc8ccc1aa8dc63",
+      "path": "config/pon/pq128-source-correspondence-current-v2.json"
+    },
+    {
+      "P2_corpus_pin": "421b10241820580efcdabc692ccb1f6dd27b6586",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "421b10241820580efcdabc692ccb1f6dd27b6586",
+      "path": "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+    },
+    {
+      "P2_corpus_pin": "595027440b2d1a6ee6da2b7ba4fcf78d9a3aba37",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "595027440b2d1a6ee6da2b7ba4fcf78d9a3aba37",
+      "path": "scripts/ci/pq_lifetime_composition.py"
+    },
+    {
+      "P2_corpus_pin": "a5b085f9f1f45e1ae3849778ed57479f76ebd427",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "a5b085f9f1f45e1ae3849778ed57479f76ebd427",
+      "path": "scripts/ci/pq_lifetime_current_v2.py"
+    },
+    {
+      "P2_corpus_pin": "b62de39bdba906c9d989498a6299df9a14d900e8",
+      "in_N2_changed_paths": false,
+      "in_P2_required_paths": true,
+      "mode": "100644",
+      "oid": "b62de39bdba906c9d989498a6299df9a14d900e8",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    }
+  ],
+  "qualification_granted": false,
+  "recommendation": {
+    "conditional_3_pin_updates": [
+      {
+        "condition": "only after pr_ci semantic review selects exact N2 blob",
+        "incoming_N2_corpus_oid": "ce94e0a5423d91840849d91579ec541081117274",
+        "old_P2_corpus_oid": "f1ea17ef43bf7a3067da95adc4b30d0f071d2530",
+        "path": ".github/workflows/pon-w1-work-security.yml"
+      },
+      {
+        "condition": "only after pr_ci semantic review selects exact N2 blob",
+        "incoming_N2_corpus_oid": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+        "old_P2_corpus_oid": "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470",
+        "path": "scripts/ci/test_w1_v2_controls_gate.py"
+      },
+      {
+        "condition": "only after pr_ci semantic review selects exact N2 blob",
+        "incoming_N2_corpus_oid": "458b9c804efb962ded3871d231368aec163161eb",
+        "old_P2_corpus_oid": "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38",
+        "path": "scripts/ci/w1_v2_controls_gate.py"
+      }
+    ],
+    "corpus": "start from P2 entire file and preserve every existing pin/required path; apply only the separately selected3 W1 blob updates",
+    "hash_manifest": "keep P2 entire file; N2 has the rejected N store identity, all other30 pins equal",
+    "hash_reader": "keep P2 entire file and H1 map commitment/comment; all runtime AST otherwise equal",
+    "inventory": "P2 and N2 already byte-identical; no edit"
+  },
+  "runtime_or_test_threshold_changes_in_four_reviewed_paths": false,
+  "schema": "trnm-N2-metadata-compatible-disposition-v1",
+  "stage_source_Git_refs_or_network_mutated": false,
+  "tests_run": false
+}

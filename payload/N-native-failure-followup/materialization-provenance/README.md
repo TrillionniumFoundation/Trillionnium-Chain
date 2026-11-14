@@ -1,0 +1,7 @@
+# N native failure follow-up archive group
+
+This create-only group retains the fresh 10:53 UTC complete refs/PR/N checks-and-jobs observation, one complete original N x64 job log, its unchanged outer-only UNKNOWN report, the one approved complete artifact 14109658844, the complete 161-member custody index, the 17 approved original manifest/source/process/stdout/stderr members, and the separate final diagnostic overlay.
+
+The tested source is N 5a4b7fe8de1adce803184f262fd9f704ead1930c / tree 4bc5ade0813ba3172eeb0ad7425358469a1b1edd. All five native tests returned normally and passed their test assertions; the original four-second, 16-worker pressure business confirmation failed with CONFIRMATION_TARGET. This evidence does not describe an M8 hosted result or authorize a deadline change.
+
+Every selected regular, single-link source was read with a stable no-follow FD and checked before stage writes. Exact SHA readback validates all new targets. Every old stage file and subdirectory identity must remain unchanged; only the existing stage-root directory metadata may reflect the new child. Existing reports are never edited. Sources retain actual Mac custody origin; selection.json and original API/transport/member receipts provide the upstream GitHub origin chain. No network, native test, source, Git or PR action occurs in this materializer. The materializer's own final outcome is an external receipt and is not self-referentially included.

@@ -1,0 +1,22 @@
+{
+  "head": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "comparison": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto-primitives--src--lib.rs.raw",
+      "bytes": 12112,
+      "sha256": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
+      "git_blob": "dcfe1aa548438a836743bc60b4375a922a87ff33",
+      "same_as_dc42": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/classical-identity-source-v1/trillionnium--crates--trnm-crypto-primitives--src--owned_ed25519.rs.raw",
+      "bytes": 2171,
+      "sha256": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+      "git_blob": "d8276ef060cc609e86ed768ed07fb360af140cf3",
+      "same_as_dc42": true
+    }
+  ]
+}

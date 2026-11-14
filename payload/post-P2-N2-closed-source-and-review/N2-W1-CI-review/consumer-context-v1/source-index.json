@@ -1,0 +1,61 @@
+{
+  "commits": {
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "P2": "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+  },
+  "files": [
+    {
+      "repository_path": "scripts/ci/w1_native_controls.py",
+      "N2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "de49010fd9fb08a0cce43b5ec003d7436033f163"
+      },
+      "P2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "de49010fd9fb08a0cce43b5ec003d7436033f163"
+      },
+      "same_blob_and_mode": true,
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/consumer-context-v1/N2/scripts--ci--w1_native_controls.py.source",
+      "bytes": 21535,
+      "sha256": "4b8be64d8ec2bd657e17ce4d8308a77a7f2dcc06f9587340db629b16ddb7d761"
+    },
+    {
+      "repository_path": "scripts/ci/w1_native_rosters_v1.json",
+      "N2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "3c43534e13ce0b65ee6bc1e7cffea42bfd38f1ed"
+      },
+      "P2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "3c43534e13ce0b65ee6bc1e7cffea42bfd38f1ed"
+      },
+      "same_blob_and_mode": true,
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/consumer-context-v1/N2/scripts--ci--w1_native_rosters_v1.json.source",
+      "bytes": 7404,
+      "sha256": "a78249797d270150eb6297a84cafdd2f752b7afcde2f36c0ebe6ab55b4120a87"
+    },
+    {
+      "repository_path": "scripts/w1_v2_receipt_controls.py",
+      "N2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "6c0369081013550e861c48d9d906b0c72fc815d8"
+      },
+      "P2": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "6c0369081013550e861c48d9d906b0c72fc815d8"
+      },
+      "same_blob_and_mode": true,
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/consumer-context-v1/N2/scripts--w1_v2_receipt_controls.py.source",
+      "bytes": 23014,
+      "sha256": "ef68fc78226d0eee314d7457a4f2b54235be0fadf3786f79493b974c8f5569c3"
+    }
+  ],
+  "readonly": true,
+  "tests_executed": false
+}

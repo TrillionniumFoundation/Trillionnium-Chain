@@ -1,0 +1,250 @@
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.184
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling cmov v0.5.4
+   Compiling proc-macro2 v1.0.106
+   Compiling ctutils v0.4.6
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling zeroize v1.9.1
+   Compiling cfg-if v1.0.4
+   Compiling hybrid-array v0.4.15
+   Compiling block-buffer v0.12.1
+   Compiling crypto-common v0.2.2
+   Compiling digest v0.11.3
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling syn v3.0.9
+   Compiling cpufeatures v0.3.1
+   Compiling vcpkg v0.2.15
+   Compiling serde_core v1.0.229
+   Compiling semver v1.0.27
+   Compiling pkg-config v0.3.32
+   Compiling libsqlite3-sys v0.39.1
+   Compiling rustc_version v0.4.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling hashbrown v0.16.1
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling digest v0.10.7
+   Compiling curve25519-dalek v5.0.0
+   Compiling signature v3.0.0
+   Compiling cpufeatures v0.2.17
+   Compiling bitflags v2.11.0
+   Compiling autocfg v1.5.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling foldhash v0.2.0
+   Compiling zmij v1.0.21
+   Compiling hashbrown v0.17.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling num-traits v0.2.19
+   Compiling sha2 v0.10.9
+   Compiling serde v1.0.229
+   Compiling cfg_aliases v0.2.2
+   Compiling serde_json v1.0.149
+   Compiling subtle v2.6.1
+   Compiling borsh v1.8.1
+   Compiling proc-macro-crate v3.5.0
+   Compiling hashlink v0.12.2
+   Compiling ed25519 v3.0.0
+   Compiling serde_derive v1.0.229
+   Compiling sha2 v0.11.1
+   Compiling syn v2.0.117
+   Compiling once_cell v1.21.4
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling thiserror v1.0.69
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.15.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling rusqlite v0.41.1
+   Compiling borsh-derive v1.8.1
+   Compiling thiserror-impl v1.0.69
+   Compiling ed25519-dalek v3.0.0
+   Compiling keccak v0.2.2
+   Compiling anyhow v1.0.103
+   Compiling sponge-cursor v0.1.0
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling rustix v1.1.6
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.2
+   Compiling trnm-crypto-primitives v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: only native little-endian Linux x86_64/aarch64 GNU or musl builds are admitted
+   Compiling trnm-task-kernel v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-verification-profiles)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/private/tmp/chain-public-policy-prefix-cache-20261114/trillionnium/crates/trnm-pon-node)
+error[E0432]: unresolved import `crate::operator_continuous_test_support`
+   --> crates/trnm-pon-node/src/operator_continuous_pool_tests.rs:3:12
+    |
+  3 | use crate::operator_continuous_test_support::{allocation, signed_allocation};
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ could not find `operator_continuous_test_support` in the crate root
+    |
+note: found an item that was configured out
+   --> crates/trnm-pon-node/src/lib.rs:815:5
+    |
+814 | #[cfg(all(test, target_os = "linux"))]
+    |                 ------------------- the item is gated behind the `linux` feature
+815 | mod operator_continuous_test_support;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0433]: cannot find `operator_continuous_test_support` in `crate`
+   --> crates/trnm-pon-node/src/operator_continuous_lease_tests.rs:29:26
+    |
+ 29 |     let mut old = crate::operator_continuous_test_support::binding();
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ could not find `operator_continuous_test_support` in the crate root
+    |
+note: found an item that was configured out
+   --> crates/trnm-pon-node/src/lib.rs:815:5
+    |
+814 | #[cfg(all(test, target_os = "linux"))]
+    |                 ------------------- the item is gated behind the `linux` feature
+815 | mod operator_continuous_test_support;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0433]: cannot find `operator_continuous_test_support` in `crate`
+   --> crates/trnm-pon-node/src/operator_continuous_pool_tests.rs:17:55
+    |
+ 17 |         task_binding: declared_binding_digest(&crate::operator_continuous_test_support::binding())
+    |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ could not find `operator_continuous_test_support` in the crate root
+    |
+note: found an item that was configured out
+   --> crates/trnm-pon-node/src/lib.rs:815:5
+    |
+814 | #[cfg(all(test, target_os = "linux"))]
+    |                 ------------------- the item is gated behind the `linux` feature
+815 | mod operator_continuous_test_support;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0425]: cannot find function `mkfifoat` in module `rustix::fs`
+ --> crates/trnm-pon-node/src/operator_task_policy_file_tests.rs:8:17
+  |
+8 |     rustix::fs::mkfifoat(
+  |                 ^^^^^^^^ not found in `rustix::fs`
+
+error[E0425]: cannot find function `mknodat` in module `rustix::fs`
+   --> crates/trnm-pon-node/src/store/growth_reservation_io.rs:583:21
+    |
+583 |         rustix::fs::mknodat(
+    |                     ^^^^^^^ not found in `rustix::fs`
+
+error[E0425]: cannot find function `mknodat` in module `rustix::fs`
+    --> crates/trnm-pon-node/src/store/authenticated_migration_tests.rs:1811:29
+     |
+1811 |                 rustix::fs::mknodat(
+     |                             ^^^^^^^ not found in `rustix::fs`
+
+error[E0425]: cannot find function `mknodat` in module `rustix::fs`
+   --> crates/trnm-pon-node/src/store.rs:812:35
+    |
+812 |             "fifo" => rustix::fs::mknodat(
+    |                                   ^^^^^^^ not found in `rustix::fs`
+
+warning: unused imports: `Control`, `begin_cpu_observed`, and `begin_cpu`
+ --> crates/trnm-pon-node/src/ingress/history_import/attribution/tests.rs:1:20
+  |
+1 | use super::super::{begin_cpu, begin_cpu_observed, Control, HistoryImportObserver};
+  |                    ^^^^^^^^^  ^^^^^^^^^^^^^^^^^^  ^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0308]: mismatched types
+   --> crates/trnm-pon-node/src/store/growth_reservation_io.rs:119:42
+    |
+119 |                     && metadata.dev() == named.st_dev
+    |                                          ^^^^^^^^^^^^ expected `u64`, found `i32`
+
+error[E0277]: can't compare `u64` with `i32`
+    --> crates/trnm-pon-node/src/store/growth_reservation_io.rs:119:39
+     |
+ 119 |                     && metadata.dev() == named.st_dev
+     |                                       ^^ no implementation for `u64 == i32`
+     |
+     = help: the trait `PartialEq<i32>` is not implemented for `u64`
+help: the following other types implement trait `PartialEq<Rhs>`
+    --> /Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/cmp.rs:1876:13
+     |
+1876 |               impl const PartialEq for $t {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^ `u64` implements `PartialEq`
+...
+1898 | /     partial_eq_impl! {
+1899 | |         bool char usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f16 f32 f64 f128
+1900 | |     }
+     | |_____- in this macro invocation
+     |
+    ::: /Users/qianqi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/value/partial_eq.rs:76:13
+     |
+  76 |               impl PartialEq<Value> for $ty {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `u64` implements `PartialEq<serde_json::Value>`
+...
+  97 | / partialeq_numeric! {
+  98 | |     eq_i64[i8 i16 i32 i64 isize]
+  99 | |     eq_u64[u8 u16 u32 u64 usize]
+ 100 | |     eq_f32[f32]
+ 101 | |     eq_f64[f64]
+ 102 | |     eq_bool[bool]
+ 103 | | }
+     | |_- in this macro invocation
+     = note: this error originates in the macro `partial_eq_impl` which comes from the expansion of the macro `partialeq_numeric` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+   --> crates/trnm-pon-node/src/store/growth_reservation_io.rs:123:66
+    |
+123 |                     && metadata.permissions().mode() & 0o7777 == named.st_mode & 0o7777,
+    |                                                                  ^^^^^^^^^^^^^^^^^^^^^^ expected `u32`, found `u16`
+
+error[E0277]: can't compare `u32` with `u16`
+    --> crates/trnm-pon-node/src/store/growth_reservation_io.rs:123:63
+     |
+ 123 |                     && metadata.permissions().mode() & 0o7777 == named.st_mode & 0o7777,
+     |                                                               ^^ no implementation for `u32 == u16`
+     |
+     = help: the trait `PartialEq<u16>` is not implemented for `u32`
+help: the following other types implement trait `PartialEq<Rhs>`
+    --> /Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/cmp.rs:1876:13
+     |
+1876 |               impl const PartialEq for $t {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^ `u32` implements `PartialEq`
+...
+1898 | /     partial_eq_impl! {
+1899 | |         bool char usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f16 f32 f64 f128
+1900 | |     }
+     | |_____- in this macro invocation
+     |
+    ::: /Users/qianqi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/value/partial_eq.rs:76:13
+     |
+  76 |               impl PartialEq<Value> for $ty {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `u32` implements `PartialEq<serde_json::Value>`
+...
+  97 | / partialeq_numeric! {
+  98 | |     eq_i64[i8 i16 i32 i64 isize]
+  99 | |     eq_u64[u8 u16 u32 u64 usize]
+ 100 | |     eq_f32[f32]
+ 101 | |     eq_f64[f64]
+ 102 | |     eq_bool[bool]
+ 103 | | }
+     | |_- in this macro invocation
+     = note: this error originates in the macro `partial_eq_impl` which comes from the expansion of the macro `partialeq_numeric` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+Some errors have detailed explanations: E0277, E0308, E0425, E0432, E0433.
+For more information about an error, try `rustc --explain E0277`.
+warning: `trnm-pon-node` (lib test) generated 1 warning
+error: could not compile `trnm-pon-node` (lib test) due to 11 previous errors; 1 warning emitted

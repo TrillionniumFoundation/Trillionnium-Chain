@@ -1,0 +1,70 @@
+test_archive_digest_cannot_be_derived_from_untrusted_archive (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_archive_digest_cannot_be_derived_from_untrusted_archive) ... ok
+test_archive_paths_aliases_and_parent_files_are_rejected_before_extraction (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_archive_paths_aliases_and_parent_files_are_rejected_before_extraction) ... ok
+test_archive_symlink_and_fifo_are_not_read_as_regular_inputs (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_archive_symlink_and_fifo_are_not_read_as_regular_inputs) ... ok
+test_collection_stability_claim_is_not_optional (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_collection_stability_claim_is_not_optional) ... FAIL
+test_duplicate_keys_and_nonfinite_original_json_are_refused (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_duplicate_keys_and_nonfinite_original_json_are_refused) ... ok
+test_each_external_source_tree_preregistration_and_binary_pin_is_required (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_each_external_source_tree_preregistration_and_binary_pin_is_required) ... ok
+test_forged_native_context_source_and_binary_are_refused (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_forged_native_context_source_and_binary_are_refused) ... ok
+test_guard_schema_rejects_extra_security_authority (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_guard_schema_rejects_extra_security_authority) ... ok
+test_late_product_packet_cannot_be_replaced_by_valid_packet (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_late_product_packet_cannot_be_replaced_by_valid_packet) ... ok
+test_ninth_process_and_original_stream_cannot_be_omitted (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_ninth_process_and_original_stream_cannot_be_omitted) ... ok
+test_pins_reject_wrong_types_noncanonical_hex_and_wrong_lengths (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_pins_reject_wrong_types_noncanonical_hex_and_wrong_lengths) ... ok
+test_process_stream_splice_is_detected_against_original_digest_and_events (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_process_stream_splice_is_detected_against_original_digest_and_events) ... ok
+test_real_packet_mutation_cannot_borrow_original_admission (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_real_packet_mutation_cannot_borrow_original_admission) ... ok
+test_source_guard_cannot_claim_other_commit_tree_or_boolean_integer (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_source_guard_cannot_claim_other_commit_tree_or_boolean_integer) ... ok
+test_unknown_native_schema_and_promoted_scope_are_refused (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_unknown_native_schema_and_promoted_scope_are_refused) ... FAIL
+test_zip_nul_truncation_cannot_alias_another_member_name (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_zip_nul_truncation_cannot_alias_another_member_name) ... ok
+test_zip_symlink_and_bounded_expansion_refuse_without_following_target (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_zip_symlink_and_bounded_expansion_refuse_without_following_target) ... ok
+setUpClass (test_w1_quantum_native_bridge.RetainedNativeDifferentialControls) ... ERROR
+test_evidence_only_child_can_verify_actual_historical_source_objects (test_w1_quantum_native_bridge.SourceCommitmentControls.test_evidence_only_child_can_verify_actual_historical_source_objects) ... ok
+test_existing_old_commit_with_different_declared_blob_is_not_a_replay_source (test_w1_quantum_native_bridge.SourceCommitmentControls.test_existing_old_commit_with_different_declared_blob_is_not_a_replay_source) ... ok
+test_missing_head_and_uncommitted_source_cannot_borrow_a_commit_identity (test_w1_quantum_native_bridge.SourceCommitmentControls.test_missing_head_and_uncommitted_source_cannot_borrow_a_commit_identity) ... ok
+
+======================================================================
+ERROR: setUpClass (test_w1_quantum_native_bridge.RetainedNativeDifferentialControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py", line 262, in setUpClass
+    cls.result = bridge.run_bridge(ARCHIVE, PINS)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/w1_quantum_native_bridge.py", line 346, in run_bridge
+    context, observed, native = validate_native(root, pins)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/w1_quantum_native_bridge.py", line 208, in validate_native
+    gate.require(context["collector_sha256"] == gate.sha256((NATIVE / "collect_native.py").read_bytes()),
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-native-fullpath-v1/fullpath_gate.py", line 45, in require
+    raise ValueError(label)
+ValueError: COLLECTOR_SOURCE_BINDING
+
+======================================================================
+FAIL: test_collection_stability_claim_is_not_optional (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_collection_stability_claim_is_not_optional)
+----------------------------------------------------------------------
+ValueError: COLLECTOR_SOURCE_BINDING
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py", line 188, in test_collection_stability_claim_is_not_optional
+    self.check_changed(self.changed_json("collector-output.json", lambda x: x.update(source_and_binary_unchanged=False)),
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py", line 136, in check_changed
+    with self.assertRaisesRegex(ValueError, reason):
+AssertionError: "COLLECTOR_OUTPUT_BINDING" does not match "COLLECTOR_SOURCE_BINDING"
+
+======================================================================
+FAIL: test_unknown_native_schema_and_promoted_scope_are_refused (test_w1_quantum_native_bridge.NativeArchiveRefusalControls.test_unknown_native_schema_and_promoted_scope_are_refused)
+----------------------------------------------------------------------
+ValueError: COLLECTOR_SOURCE_BINDING
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py", line 184, in test_unknown_native_schema_and_promoted_scope_are_refused
+    self.check_changed(self.changed_json("processes/context.json", lambda x: x.update(production_activation=True)),
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py", line 136, in check_changed
+    with self.assertRaisesRegex(ValueError, reason):
+AssertionError: "NATIVE_SCOPE_PROMOTION" does not match "COLLECTOR_SOURCE_BINDING"
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.438s
+
+FAILED (failures=2, errors=1)

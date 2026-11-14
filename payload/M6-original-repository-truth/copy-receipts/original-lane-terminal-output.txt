@@ -1,0 +1,20 @@
+{"preceding_external_lane": "passed_on_M5", "summary_sha256": "624efff452b6bd0b2c6ebcf9a47abe3216999a7d051d1e7d0fb9e5ea86fb2ca3", "new_candidate": "2a62061177852dc3ebd200fa8d7c66c661a119a1", "new_candidate_result_not_claimed": true}
+{"label": "initial-head", "exit": 0}
+{"label": "initial-status", "exit": 0}
+{"label": "pre-update-preflight", "exit": 0}
+{"label": "local-bundle-verify", "exit": 0}
+{"label": "local-bundle-list-heads", "exit": 0}
+{"label": "fetch-exact-local-bundle", "exit": 0}
+{"label": "fetched-commit", "exit": 0}
+{"label": "fetched-tree", "exit": 0}
+{"label": "fast-forward-ancestry", "exit": 0}
+{"label": "fast-forward", "exit": 0}
+{"label": "preflight-audit", "exit": 0}
+{"label": "rust-version", "exit": 0}
+{"label": "cargo-version", "exit": 0}
+{"label": "conformance-environment", "exit": 0}
+{"label": "runtime-environment", "exit": 0}
+{"label": "verify-source-before", "exit": 0}
+{"label": "repository-truth", "exit": 0}
+{"label": "verify-source-after", "exit": 0}
+{"status": "passed", "head": "2a62061177852dc3ebd200fa8d7c66c661a119a1", "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c", "summary": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a6206-v1/summary.json", "summary_sha256": "7516f4d8602dd58949eeb608439005882c3703a189dac32b0cea716eafd157ce"}

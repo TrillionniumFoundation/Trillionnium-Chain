@@ -1,0 +1,56 @@
+{
+  "schema": "trnm-remote-5a4-exact-frozen-map-correction-overlay-v1",
+  "created_at": "2026-11-14T09:58:55.195646+00:00",
+  "original_summary": {
+    "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/summary.json",
+    "bytes": 81140,
+    "sha256": "7ffb497825e26891e291676f39ee52bdf5e1fbc8c4429afb599a05f7cc6b871e"
+  },
+  "original_heads_summary": {
+    "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/heads-summary.json",
+    "bytes": 913,
+    "sha256": "97be933c61f50c068a0770ebe4c763b347f1fdec135bc286a563f9152ee0e4df"
+  },
+  "original_baseline_error_preserved": "KeyError: 'commit'",
+  "correct_field_mapping": {
+    "branch_name": "name",
+    "exact_tip": "sha"
+  },
+  "baseline": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/remote-readonly-refresh-0170-v1/branches.json",
+    "bytes": 132555,
+    "sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734"
+  },
+  "observed_heads": {
+    "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-heads.stdout",
+    "bytes": 87154,
+    "sha256": "4bb28d857e62ad05457ff6f58b3e6caa9a436b1d5d02f802e4abed0b1925487d"
+  },
+  "full_frozen_ref_count": 908,
+  "observed_ref_count": 908,
+  "observed_unique_tips": 892,
+  "differences_from_frozen0170": [
+    {
+      "ref": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+      "expected": "e40d7071c4724e6600deef8a2820bf35c1982289",
+      "observed": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+    }
+  ],
+  "differences_from_frozen0170_with_published_C0_candidate": [
+    {
+      "ref": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+      "expected": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "observed": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+    }
+  ],
+  "new_or_deleted_refs": [],
+  "only_candidate_changed_from_published_map": true,
+  "candidate_git_and_PR_equal": true,
+  "main_unchanged": true,
+  "related_candidate_push_events": [],
+  "recent_push_events_count": 47,
+  "events_bounded_first100_repository_events": true,
+  "events_absence_not_proof_of_no_push": true,
+  "additional_network_calls": 0,
+  "git_fetch_or_mutation": false
+}

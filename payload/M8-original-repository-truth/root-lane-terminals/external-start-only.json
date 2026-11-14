@@ -1,0 +1,19 @@
+{
+  "audit_recorded": true,
+  "automatic_retry": false,
+  "host": "rog",
+  "persistent_across_runtime_restart": true,
+  "reused": false,
+  "session_id": "dpty-e0ae15a93fe73dddb054512a9a1f4b53c2b5a188fa9bd9cb00afcdbb16d32487",
+  "status": {
+    "boot": "fcdd2477-a952-4ef2-9bdc-2237255080f1",
+    "bytes_seen": 0,
+    "bytes_stored": 0,
+    "capture_error": null,
+    "created_unix_ms": 1794652901904,
+    "output_complete": false,
+    "owner_pid": 2613066,
+    "pid": 2613067,
+    "state": "running"
+  }
+}

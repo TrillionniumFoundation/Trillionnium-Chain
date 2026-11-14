@@ -1,0 +1,3 @@
+# M8 external original receipts and full materializer execution
+
+Prepared source selection only. Nothing has been written into the shared stage. This selection includes all 27 original M8 external files, the original driver, 31-member package and official version-pinned copy proof, the actual external terminal and exact empty nested-log manifest. It also preserves the entire earlier full materializer directory, including the first EMFILE failure, partial-file identity proof, deterministic continuation and its actual successful terminal. Source and tests were not rerun. Existing launch-only observations are retained as historical observations, not overwritten. No hosted or future-revision qualification is asserted.

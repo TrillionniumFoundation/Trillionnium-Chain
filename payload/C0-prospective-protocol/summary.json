@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-C0-prospective-protocol-original-job-log-v1",
+  "run": 43567821538,
+  "attempt": 1,
+  "job": 132376957499,
+  "observed_run_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "started_at": "2026-11-14T08:33:24.387886+00:00",
+  "finished_at": "2026-11-14T08:33:41.819041+00:00",
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132376957499/logs"
+  ],
+  "wall_seconds": 17.431238958990434,
+  "returncode": 0,
+  "timed_out": false,
+  "complete_download": true,
+  "stdout": {
+    "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stdout.raw",
+    "bytes": 221700,
+    "sha256": "50b3b4fab0cb804210065d6bd748b6c3d9d63ff0127c67a4f55d33db74a81461"
+  },
+  "stderr": {
+    "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stderr.raw",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "no_retry": true
+}

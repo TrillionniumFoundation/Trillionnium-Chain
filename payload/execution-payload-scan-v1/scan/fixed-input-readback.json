@@ -1,0 +1,119 @@
+{
+  "inputs": [
+    {
+      "bytes": 14664,
+      "identity": [
+        16777233,
+        606868819,
+        33152,
+        1,
+        14664,
+        1794649191387134295,
+        1794649191387134295
+      ],
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py",
+      "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6"
+    },
+    {
+      "bytes": 4888,
+      "identity": [
+        16777233,
+        606868820,
+        33152,
+        1,
+        4888,
+        1794649191387273003,
+        1794649191387273003
+      ],
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/README-v2.md",
+      "sha256": "0677ac2e065b2201735bba6b026749e27b53465d012f5e3654d1814f2d4e327c"
+    },
+    {
+      "bytes": 1674,
+      "identity": [
+        16777233,
+        606867738,
+        33152,
+        1,
+        1674,
+        1794649079298832985,
+        1794649079298832985
+      ],
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/pattern-provenance.json",
+      "sha256": "e0a88156a296c1e2bb0eceb18cd19ff7f7ec9724c68ee4f56f9172a0f3edc253"
+    },
+    {
+      "bytes": 1446,
+      "identity": [
+        16777233,
+        606868822,
+        33152,
+        1,
+        1446,
+        1794649191388092877,
+        1794649191388092877
+      ],
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/static-review-v2.json",
+      "sha256": "0257d86150da77fe909d2fac819cc9c15d0bc2872a61015c1b8a31aec66c58f1"
+    },
+    {
+      "bytes": 3614,
+      "identity": [
+        16777233,
+        606875041,
+        33152,
+        1,
+        3614,
+        1794649729016241381,
+        1794649729016241381
+      ],
+      "path": "/private/tmp/chain-consolidation-20261114-root/final-execution-group-descriptor-2a6206-prescan-v1.json",
+      "sha256": "515cda73fe9ffe680c30378193fd355f14bfb4e165c099bc76af56ab339f5277"
+    },
+    {
+      "bytes": 5985,
+      "identity": [
+        16777233,
+        606875050,
+        33152,
+        1,
+        5985,
+        1794649729471885384,
+        1794649729471885384
+      ],
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/summary.json",
+      "sha256": "ec48a4a95d2eac1af6c195341b02c561f01e0830d4cd0518c9052c5e1595186e"
+    },
+    {
+      "bytes": 15047,
+      "identity": [
+        16777233,
+        606875043,
+        33152,
+        1,
+        15047,
+        1794649729029670988,
+        1794649729029670988
+      ],
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/producer.py",
+      "sha256": "38642c29417a4f37e9f1ca6693c71d0d1bc08a9904950470049efdfc66700139"
+    },
+    {
+      "bytes": 855220,
+      "identity": [
+        16777233,
+        606875049,
+        33152,
+        1,
+        855220,
+        1794649729470471302,
+        1794649729470471302
+      ],
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/frozen-execution-payload-manifest-v1.json",
+      "sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4"
+    }
+  ],
+  "observed_unix_ns": 1794649866251714000,
+  "scanner_not_launched_by_preparation": true,
+  "scanner_run_absent": true
+}

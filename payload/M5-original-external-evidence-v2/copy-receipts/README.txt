@@ -1,0 +1,4 @@
+M5 original external-evidence-contract evidence, fixed head 08c9becab740ab2c375b970f376a7638f44c9e8e and tree 036868dfcc953b6f5574c627e0027c3d4e2d3523.
+The completed original local lane ran unchanged argv bash scripts/ci/ci_job.sh external-evidence-contract, exit 0 in 225.948 seconds. All 12 original driver stages returned 0. The original readiness suite reports 77 tests / 36.691 seconds / OK.
+The exact 27 original files (112,325 bytes), driver and package producer are retained flat and in the 30-member ZIP. Every member is checked against the original index and CRC; source-before/source-after match, 14 original object-tree mappings match and fetched is empty. Flat original origins remain their actual ROG paths.
+This is evidence of the completed M5 external lane only. It is not a M6 result, hosted CI qualification or a repository-truth pass. Packaging/copying does not rerun any tests, source/Git operation, importer or native lane.

@@ -1,0 +1,13 @@
+import subprocess,pathlib,hashlib,json,os,datetime
+W=pathlib.Path("/private/tmp/chain-M4-owned-process-collector-20261114")
+O=pathlib.Path("/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1");O.mkdir(exist_ok=False)
+env=dict(os.environ,GIT_NO_LAZY_FETCH="1",GIT_OPTIONAL_LOCKS="0",GIT_NO_REPLACE_OBJECTS="1",PYTHONDONTWRITEBYTECODE="1")
+p=subprocess.run(["/usr/bin/git","-C",str(W),"ls-tree","-r","--name-only","HEAD","--","scripts","docs"],env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=60);assert p.returncode==0
+nested=[x for x in p.stdout.decode().splitlines() if pathlib.PurePosixPath(x).name=="AGENTS.md"]
+assert not nested,repr(nested)
+p=subprocess.run(["bash","scripts/project-preflight.sh"],cwd=W,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=120)
+rows=[]
+for n,r in [("stdout",p.stdout),("stderr",p.stderr)]:
+ f=O/n;f.write_bytes(r);rows.append({"path":str(f),"bytes":len(r),"sha256":hashlib.sha256(r).hexdigest()})
+s={"schema":"trnm-M4-project-preflight-before-edit-v1","argv":["bash","scripts/project-preflight.sh"],"returncode":p.returncode,"worktree":str(W),"head":"1a7afcdb820b051d1e4bfde3d436f96fc050c487","nested_agents":nested,"files":rows,"finished_at":datetime.datetime.now(datetime.timezone.utc).isoformat()}
+b=(json.dumps(s,indent=2)+"\n").encode();(O/"summary.json").write_bytes(b);print(json.dumps(s));assert p.returncode==0

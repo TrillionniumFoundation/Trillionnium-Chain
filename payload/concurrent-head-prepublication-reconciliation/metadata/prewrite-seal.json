@@ -1,0 +1,40 @@
+{
+  "all_selected_sources_preverified_before_stage_write": true,
+  "baseline_bytes": 154688299,
+  "baseline_count": 2285,
+  "baseline_identities_sha256": "8b1247b598674ea8a9c8c8f954d02fda2eee0d2be37b41c31c7876ccd6c6fcd7",
+  "metadata_before_seal": [
+    {
+      "bytes": 16021,
+      "path": "materializer-producer.py",
+      "sha256": "f4803d9a1f239c5e753be8d7bbf15493def968bac1198d332e6f55e01f54bc7e"
+    },
+    {
+      "bytes": 48162,
+      "path": "materializer-inputs.json",
+      "sha256": "c159a521708f773b3e18f070f08dbb18ad208e9888ebdb5bbccfced0b67cec25"
+    },
+    {
+      "bytes": 154591,
+      "path": "source-manifest.json",
+      "sha256": "437606d7d11fd307c6267d1f334d85576fb24ad34aa3d689f5c3ddfff218e559"
+    },
+    {
+      "bytes": 658213,
+      "path": "baseline-identities.json",
+      "sha256": "8b1247b598674ea8a9c8c8f954d02fda2eee0d2be37b41c31c7876ccd6c6fcd7"
+    },
+    {
+      "bytes": 1789,
+      "path": "README.md",
+      "sha256": "ac895c4952c78590f65a51bbd7fe26dee13ec058be471e1caff2c5bacb5e43fa"
+    }
+  ],
+  "publication_or_qualification_success_asserted": false,
+  "schema": "trnm-concurrent-reconciliation-prewrite-seal-v1",
+  "sealed_at": "2026-11-14T10:17:43.007648+00:00",
+  "selected_manifest_sha256": "437606d7d11fd307c6267d1f334d85576fb24ad34aa3d689f5c3ddfff218e559",
+  "selected_source_bytes": 2249662,
+  "selected_source_count": 166,
+  "self_excluded": true
+}

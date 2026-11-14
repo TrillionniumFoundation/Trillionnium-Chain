@@ -1,0 +1,60 @@
+{
+  "bundle": {
+    "bytes": 8575,
+    "path": "/private/tmp/chain-consolidation-20261114-root/source-bundle-6a8cd5-after-ed0d35-v1/policy-prefix-6a8cd555-after-ed0d3548.bundle",
+    "sha256": "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389"
+  },
+  "errors": [],
+  "excluded_base": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "header": "# v2 git bundle\n-ed0d35487f2a67239e4d646fd41c2c7acb5cc740 Include reconciled current PQ configs in native source inventory\n6a8cd55573065ceb50cdb65a7834615f79b521ae HEAD",
+  "schema": "trnm-exact-source-delta-bundle-v1",
+  "source_head_tree_status_unchanged": true,
+  "source_or_ref_mutation": false,
+  "status": "CREATED_AND_VERIFIED",
+  "steps": [
+    {
+      "exit": 0,
+      "label": "source-status-before",
+      "seconds": 0.126,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "preflight",
+      "seconds": 0.049,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "exit": 0,
+      "label": "base-is-ancestor",
+      "seconds": 0.007,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "create-bounded-bundle",
+      "seconds": 0.027,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "verify-bundle",
+      "seconds": 0.018,
+      "sha256": "0be3cd4627ee8cf56744c4ed027a267509e898b0f0ae72ecb17bbe9b248b0195"
+    },
+    {
+      "exit": 0,
+      "label": "list-heads",
+      "seconds": 0.006,
+      "sha256": "efe872d31e928b2b2636fa968ca7a883130fc276b3673ae698b6108710b2d789"
+    },
+    {
+      "exit": 0,
+      "label": "source-status-after",
+      "seconds": 0.125,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5"
+}

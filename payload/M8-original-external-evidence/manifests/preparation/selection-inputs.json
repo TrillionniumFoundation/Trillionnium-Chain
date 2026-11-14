@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-ed0d35-copy-v1-prci",
+      "target": "original-copy",
+      "role": "verified M8 external original receipts and official copy"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-external-roster-observation-20261114-v1",
+      "target": "closed-roster",
+      "role": "actual closed external manifest and original complete terminal"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1",
+      "target": "full-materializer-execution",
+      "role": "full original materialization including EMFILE failure, immutable partial evidence and actual continuation success"
+    }
+  ],
+  "origin_map_path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-ed0d35-copy-v1-prci/copy-files.json",
+  "origin_map_sha256": "09cfa82706ad0d8c4445f2d61fa931b339d75b237dac1a74898f45921dcac247",
+  "prefix": "M8-original-external-evidence"
+}

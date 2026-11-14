@@ -1,0 +1,653 @@
+{
+  "schema": "trnm-N-x64-completed-artifact-review-index-v1",
+  "root": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1",
+  "files": [
+    {
+      "path": ".hepta-lock-329aad723d14703df1023bd0",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/.hepta-lock-329aad723d14703df1023bd0",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606990032,
+        33152,
+        1,
+        0,
+        1794654436858788936,
+        1794654436858788936
+      ]
+    },
+    {
+      "path": "N-cost-x64-14109658844.zip",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip",
+      "bytes": 9884207,
+      "sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4",
+      "version": [
+        16777233,
+        606979397,
+        33152,
+        1,
+        9884207,
+        1794654138470437412,
+        1794654138471856899
+      ]
+    },
+    {
+      "path": "ZIP_MEMBER_INDEX.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/ZIP_MEMBER_INDEX.json",
+      "bytes": 47816,
+      "sha256": "989f6ec25dc46aae82ce6a418693a0bca1b69a50b25ccb77d7ddddc3ef3b9199",
+      "version": [
+        16777233,
+        606979858,
+        33152,
+        1,
+        47816,
+        1794654138575630885,
+        1794654138575630885
+      ]
+    },
+    {
+      "path": "completion-review-v1/findings.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/findings.json",
+      "bytes": 36198,
+      "sha256": "8f8f519b23b33d598548f6602ae56fd4d41d7bdde5b55d41dd9a3b713e2787eb",
+      "version": [
+        16777233,
+        606993094,
+        33152,
+        1,
+        36198,
+        1794654514253134588,
+        1794654514253134588
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/artifact-whole-zip.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.json",
+      "bytes": 70459,
+      "sha256": "8918737e3194da3f0382f525734010c9191792386b331a8dddeaaa052822a157",
+      "version": [
+        16777233,
+        606993088,
+        33152,
+        1,
+        70459,
+        1794654514246369123,
+        1794654514246369123
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/artifact-whole-zip.log",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.log",
+      "bytes": 21940,
+      "sha256": "8ef6a811a5e061933948d2e5e14f8da9a05cde0df5a9dbb6d0a3db21c4af9982",
+      "version": [
+        16777233,
+        606993089,
+        33152,
+        1,
+        21940,
+        1794654514246526372,
+        1794654514246526372
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/fresh-remote-observation.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.json",
+      "bytes": 36751,
+      "sha256": "e36efb61c491b15a8e4b3f1dc48d3ab0e5e0ea73c67081dcd303054f780ac0bc",
+      "version": [
+        16777233,
+        606993084,
+        33152,
+        1,
+        36751,
+        1794654514245581419,
+        1794654514245581419
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/fresh-remote-observation.log",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.log",
+      "bytes": 11300,
+      "sha256": "d6d9fd09d647aa5806614e6a0f477f5a330e3b3f61c4f75659ea7a32fb9ea9f1",
+      "version": [
+        16777233,
+        606993085,
+        33152,
+        1,
+        11300,
+        1794654514245797710,
+        1794654514245797710
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/manifest-observation-read.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.json",
+      "bytes": 114793,
+      "sha256": "74de1e695b7b2609c18a51dd370a649d20314bc5073d0bf6e2b523f07b746cb2",
+      "version": [
+        16777233,
+        606993092,
+        33152,
+        1,
+        114793,
+        1794654514247351826,
+        1794654514247351826
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/manifest-observation-read.log",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.log",
+      "bytes": 36151,
+      "sha256": "afb26b9925be54bb79f018303a61a8ea7048960a7d0616dc705415be7ec88177",
+      "version": [
+        16777233,
+        606993093,
+        33152,
+        1,
+        36151,
+        1794654514247526951,
+        1794654514247526951
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/outer-single-job-log.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.json",
+      "bytes": 21625,
+      "sha256": "d9783e2d09acce9e97bd85e1a1be5c8ef047648426b873c114526e085c51a597",
+      "version": [
+        16777233,
+        606993086,
+        33152,
+        1,
+        21625,
+        1794654514245981750,
+        1794654514245981750
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/outer-single-job-log.log",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.log",
+      "bytes": 6110,
+      "sha256": "a2bccc8d24f7514520d9e82b1ba47cab196481a45ab419964f7ce7cc5a7c6ca3",
+      "version": [
+        16777233,
+        606993087,
+        33152,
+        1,
+        6110,
+        1794654514246131458,
+        1794654514246131458
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/selected-17-member-read.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.json",
+      "bytes": 83270,
+      "sha256": "43c68be4a49df681558e046b8ad7b252e58ff0de8865a70439b0b93489398fe0",
+      "version": [
+        16777233,
+        606993090,
+        33152,
+        1,
+        83270,
+        1794654514246889162,
+        1794654514246889162
+      ]
+    },
+    {
+      "path": "completion-review-v1/operation-terminals/selected-17-member-read.log",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.log",
+      "bytes": 26079,
+      "sha256": "36bcc0751c24da8b5dd69a4e549c5eb93e093b6f75e4b942a815b58c83d1ca77",
+      "version": [
+        16777233,
+        606993091,
+        33152,
+        1,
+        26079,
+        1794654514247045453,
+        1794654514247045453
+      ]
+    },
+    {
+      "path": "completion-review-v1/review.md",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/review.md",
+      "bytes": 3298,
+      "sha256": "a41ac93f3b9cac399896be2cbeb434386f0ef58c174224438f874a8f05d1621f",
+      "version": [
+        16777233,
+        606993095,
+        33152,
+        1,
+        3298,
+        1794654514253292171,
+        1794654514253292171
+      ]
+    },
+    {
+      "path": "completion-review-v1/seal-producer.py",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-producer.py",
+      "bytes": 13294,
+      "sha256": "429d8ff518c99f764ed2c8e7c4992d25cd534d749eb34216d36cabe1ab074479",
+      "version": [
+        16777233,
+        606993082,
+        33152,
+        1,
+        13294,
+        1794654514245322170,
+        1794654514245322170
+      ]
+    },
+    {
+      "path": "completion-seal-inputs-v1.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-seal-inputs-v1.json",
+      "bytes": 333887,
+      "sha256": "c12c465e4fdf9300efa9e3424cb7afd53146ab67bb20c511e664eab9d2cd7ec7",
+      "version": [
+        16777233,
+        606990033,
+        33152,
+        1,
+        333887,
+        1794654436859961389,
+        1794654436860615052
+      ]
+    },
+    {
+      "path": "fixed-inputs-and-official-tool-provenance.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/fixed-inputs-and-official-tool-provenance.json",
+      "bytes": 2593,
+      "sha256": "84449d33663c3f1e27700ff9e76967ed665fc976cd5a5a87e10cf74c63252537",
+      "version": [
+        16777233,
+        606979329,
+        33152,
+        1,
+        2593,
+        1794654101669409848,
+        1794654101669409848
+      ]
+    },
+    {
+      "path": "manifest-observation-v1/confirmation-observation.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/confirmation-observation.json",
+      "bytes": 49818,
+      "sha256": "1167d4a4efb55ae3dfb97243267a16f3abe8e69c5850f1ddbde9cf1eb9aedd05",
+      "version": [
+        16777233,
+        606989193,
+        33152,
+        1,
+        49818,
+        1794654338033556557,
+        1794654338033556557
+      ]
+    },
+    {
+      "path": "manifest-observation-v1/producer.py",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/producer.py",
+      "bytes": 1668,
+      "sha256": "6c982ecdef7878ddf87cc3a33c2cbce3f17e810e51ed816750c2a9f3ed2f7a75",
+      "version": [
+        16777233,
+        606989194,
+        33152,
+        1,
+        1668,
+        1794654338033699473,
+        1794654338033699473
+      ]
+    },
+    {
+      "path": "producer.py",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/producer.py",
+      "bytes": 6713,
+      "sha256": "4fcb375664f00bace84647fe09c57210cf8b64453f44d12d7a5601780deb067b",
+      "version": [
+        16777233,
+        606979328,
+        33152,
+        1,
+        6713,
+        1794654101669256854,
+        1794654101669256854
+      ]
+    },
+    {
+      "path": "selected-read-v1/SELECTED_MEMBER_INDEX.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/SELECTED_MEMBER_INDEX.json",
+      "bytes": 10233,
+      "sha256": "f680572726ebd7508fa2c735e499fe561f1b225bb5ef57c754edb5afeb3ef6b3",
+      "version": [
+        16777233,
+        606980718,
+        33152,
+        1,
+        10233,
+        1794654219684472417,
+        1794654219684472417
+      ]
+    },
+    {
+      "path": "selected-read-v1/initial-reading.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/initial-reading.json",
+      "bytes": 31739,
+      "sha256": "6ff5aa40df91416681b4f998897caa551ee16077608e19bbee1841b89eaab371",
+      "version": [
+        16777233,
+        606980717,
+        33152,
+        1,
+        31739,
+        1794654219684191418,
+        1794654219684191418
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "e94264bd742576ad425065b1058657f66503efcc22b894da605d0985f78c5e60",
+      "version": [
+        16777233,
+        606980697,
+        33152,
+        1,
+        885,
+        1794654219682407094,
+        1794654219682407094
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606980699,
+        33152,
+        1,
+        0,
+        1794654219682574510,
+        1794654219682574510
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 190,
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+      "version": [
+        16777233,
+        606980698,
+        33152,
+        1,
+        190,
+        1794654219682506427,
+        1794654219682506427
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "a7466a090d5605170c3fa8888d1cf13150df88d3a7607354948ce2f6e4024022",
+      "version": [
+        16777233,
+        606980701,
+        33152,
+        1,
+        897,
+        1794654219682679176,
+        1794654219682679176
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606980703,
+        33152,
+        1,
+        0,
+        1794654219682842717,
+        1794654219682842717
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3364,
+      "sha256": "d10fdc5f7f5d66eb48ccbc76416d519c7f9b8eacf80873b67bc613b17177339b",
+      "version": [
+        16777233,
+        606980702,
+        33152,
+        1,
+        3364,
+        1794654219682774967,
+        1794654219682774967
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 896,
+      "sha256": "ea1988546502f82874b8655ad3445d11eb5fbbe50edf55195614497eb40d9d0f",
+      "version": [
+        16777233,
+        606980705,
+        33152,
+        1,
+        896,
+        1794654219682945508,
+        1794654219682945508
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606980707,
+        33152,
+        1,
+        0,
+        1794654219683090715,
+        1794654219683090715
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 196,
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+      "version": [
+        16777233,
+        606980706,
+        33152,
+        1,
+        196,
+        1794654219683029674,
+        1794654219683029674
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 913,
+      "sha256": "c96147b7bf4f77adf60454a3b534b9301dcef56da669e7f551670864c9b37dbd",
+      "version": [
+        16777233,
+        606980709,
+        33152,
+        1,
+        913,
+        1794654219683188257,
+        1794654219683188257
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606980711,
+        33152,
+        1,
+        0,
+        1794654219683329173,
+        1794654219683329173
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 917,
+      "sha256": "aa89d933dee695fc6c67279c7569350df8cd69fb44caa199743af0eb24e8634d",
+      "version": [
+        16777233,
+        606980710,
+        33152,
+        1,
+        917,
+        1794654219683269715,
+        1794654219683269715
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 950,
+      "sha256": "c23c84d441d77594f151342587ded6917ec6519ec899318263f49ff0999aaecc",
+      "version": [
+        16777233,
+        606980713,
+        33152,
+        1,
+        950,
+        1794654219683429964,
+        1794654219683429964
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        606980715,
+        33152,
+        1,
+        0,
+        1794654219683586255,
+        1794654219683586255
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 408,
+      "sha256": "5e9aa06087cd95837d20a29c4e279777949304a56ec1cc7b47e7ecdaa182dab0",
+      "version": [
+        16777233,
+        606980714,
+        33152,
+        1,
+        408,
+        1794654219683519797,
+        1794654219683519797
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/from-zero-native/manifest.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/manifest.json",
+      "bytes": 74003,
+      "sha256": "3362e60289fbf2268b0c9886f97a1b4958cbb095fbdf02c7349a986880ce0bf7",
+      "version": [
+        16777233,
+        606980695,
+        33152,
+        1,
+        74003,
+        1794654219682228053,
+        1794654219682228053
+      ]
+    },
+    {
+      "path": "selected-read-v1/originals/source.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/source.json",
+      "bytes": 423,
+      "sha256": "fc1b6e0213fbdd6e1f93ec879c138ec233cc3a4cf6aa08330df81041ef4304b6",
+      "version": [
+        16777233,
+        606980693,
+        33152,
+        1,
+        423,
+        1794654219681982763,
+        1794654219681982763
+      ]
+    },
+    {
+      "path": "selected-read-v1/read-producer.py",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/read-producer.py",
+      "bytes": 2420,
+      "sha256": "7354208e49a616318a8e9793e4321888683d8bb311b0f27cc53857158d080fff",
+      "version": [
+        16777233,
+        606980716,
+        33152,
+        1,
+        2420,
+        1794654219684042836,
+        1794654219684042836
+      ]
+    },
+    {
+      "path": "summary.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/summary.json",
+      "bytes": 1913,
+      "sha256": "a3faacfc1c0bfa327d6cf9b2364c6ff3a52c1e3429dec89763e0678a9b0b07b2",
+      "version": [
+        16777233,
+        606979859,
+        33152,
+        1,
+        1913,
+        1794654138579200229,
+        1794654138579200229
+      ]
+    },
+    {
+      "path": "transport.json",
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/transport.json",
+      "bytes": 1421,
+      "sha256": "bc18a9a09c106bc6f65e8e9f5c93da9f28518a63c836e859f15cf1074bff4583",
+      "version": [
+        16777233,
+        606979855,
+        33152,
+        1,
+        1421,
+        1794654138472482644,
+        1794654138472482644
+      ]
+    }
+  ],
+  "index_and_seal_self_excluded": true,
+  "all_are_closed_readonly_observations": true
+}

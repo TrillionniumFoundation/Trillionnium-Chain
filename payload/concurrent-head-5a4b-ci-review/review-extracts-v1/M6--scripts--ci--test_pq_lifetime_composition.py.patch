@@ -1,0 +1,115 @@
+diff --git a/scripts/ci/test_pq_lifetime_composition.py b/scripts/ci/test_pq_lifetime_composition.py
+index 35e1ba409aaaaae951dc1f85c8c1a45667ffb223..dfc384a37ec3da774ab77936cfe474858869cc0e 100644
+--- a/scripts/ci/test_pq_lifetime_composition.py
++++ b/scripts/ci/test_pq_lifetime_composition.py
+@@ -22,10 +22,12 @@ import pq_lifetime_composition as composition
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ MANIFEST = composition.DEFAULT_MANIFEST
+ LEGACY = composition.legacy.DEFAULT_MANIFEST
+ SOURCE_LOCK = composition.legacy.DEFAULT_SOURCE_LOCK
++CURRENT_MAP = composition.current_lifetime.DEFAULT_MAP
++FROZEN_COMPOSITION = "config/pon/pq128-lifetime-composition-v2.json"
+ ROOT_REGISTER = composition.root_register.DEFAULT_MANIFEST
+ TARGET = Fraction(1, 1 << 128)
+ 
+ 
+ def ratio(value):
+@@ -284,10 +286,15 @@ class ArithmeticContractTests(ContractCase):
+ class InventoryContractTests(ContractCase):
+     def test_checked_in_manifest_matches_the_frozen_contract(self):
+         data = load(MANIFEST)
+         self.assertEqual(data, composition.default_manifest())
+         self.remains_unqualified(composition.validate_manifest(data))
++        self.assertEqual(data["schema"], "trnm-pq128-lifetime-composition-current-v3")
++        self.assertEqual(data["frozen_composition"]["sha256"],
++                         hashlib.sha256((ROOT / FROZEN_COMPOSITION).read_bytes()).hexdigest())
++        with self.assertRaises(composition.CompositionError):
++            composition.validate_manifest(load(FROZEN_COMPOSITION))
+ 
+     def test_superseded_child_manifest_identities_are_refused(self):
+         previous = {
+             "legacy": {
+                 "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23",
+@@ -307,10 +314,12 @@ class InventoryContractTests(ContractCase):
+                     with self.assertRaises(composition.CompositionError):
+                         composition.validate_manifest(data)
+ 
+         # The pre-typed-error root input remains a refused historical identity.
+         for field, value in (
++            ("sha256", "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8"),
++            ("declared_revision", "975af9eb4a7f15b405de602552fa05021a176c11"),
+             ("sha256", "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8"),
+             ("declared_revision", "b683714cdd5ba241c16c335a81aebc12c1581902"),
+         ):
+             with self.subTest(root_continuation_field=field):
+                 data = load(MANIFEST)
+@@ -424,14 +433,15 @@ class InventoryContractTests(ContractCase):
+ class SourceInspectionTests(ContractCase):
+     def setUp(self):
+         self.temporary = tempfile.TemporaryDirectory(prefix="pq-lifetime-composition-test-")
+         self.addCleanup(self.temporary.cleanup)
+         self.root = Path(self.temporary.name)
+-        self.legacy_files = load(SOURCE_LOCK)["files"]
++        self.legacy_files = load(CURRENT_MAP)["current_source_files_sha256"]
+         self.root_files = load(ROOT_REGISTER)["source_files_sha256"]
+         paths = set(self.legacy_files) | set(self.root_files)
+-        paths.update((MANIFEST, LEGACY, SOURCE_LOCK, ROOT_REGISTER))
++        paths.update((MANIFEST, LEGACY, SOURCE_LOCK, ROOT_REGISTER, CURRENT_MAP,
++                      FROZEN_COMPOSITION))
+         for path in paths:
+             destination = self.root / path
+             destination.parent.mkdir(parents=True, exist_ok=True)
+             shutil.copyfile(ROOT / path, destination)
+ 
+@@ -441,16 +451,24 @@ class SourceInspectionTests(ContractCase):
+     def run_cli(self):
+         return subprocess.run([sys.executable, str(ROOT / "scripts/ci/pq_lifetime_composition.py"),
+                                "--root", str(self.root)], capture_output=True, text=True,
+                               check=False, timeout=20)
+ 
+-    def test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes(self):
++    def test_real_inspection_binds_66_current_declared_sources_and_four_scopes(self):
+         report = composition.inspect(self.root)
+         self.assertEqual(report["source_counts"], {"legacy": 21, "root": 46, "shared": 1, "union": 66})
+         self.assertEqual(len(report["source_files_sha256"]), 66)
++        self.assertIn("trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
++                      report["source_files_sha256"])
+         self.assertEqual(set(report["source_files_sha256"]), set(self.legacy_files) | set(self.root_files))
+         self.assertIs(report["declared_source_union_consistent"], True)
++        current = report["legacy_current_source_correspondence"]
++        self.assertIs(current["source_files_checked"], True)
++        self.assertIs(current["source_revision_bound"], False)
++        self.assertEqual(current["source_files_sha256"], self.legacy_files)
++        self.assertEqual(report["legacy_frozen_model_identity"]["source_revision"],
++                         "0f9b30549328e5be20f4d3e6e27bd132b42d90de")
+         self.assertEqual(report["source_binding_scope"], "declared-path-union-only")
+         self.assertIs(report["source_revision_bound"], False)
+         self.assertIs(report["deployment_identity_proved"], False)
+         self.assertEqual(report["shared_primitive_scope_count"], 4)
+         self.assertEqual(report["shared_source_paths"],
+@@ -474,22 +492,22 @@ class SourceInspectionTests(ContractCase):
+         (self.root / MANIFEST).unlink()
+         with self.assertRaises(composition.CompositionError):
+             composition.inspect(self.root)
+ 
+     def test_missing_each_child_manifest_or_legacy_lock_is_refused(self):
+-        for path in (LEGACY, ROOT_REGISTER, SOURCE_LOCK):
++        for path in (LEGACY, ROOT_REGISTER, SOURCE_LOCK, FROZEN_COMPOSITION):
+             with self.subTest(path=path):
+                 data = (self.root / path).read_bytes()
+                 (self.root / path).unlink()
+                 try:
+                     with self.assertRaises(composition.CompositionError):
+                         composition.inspect(self.root)
+                 finally:
+                     (self.root / path).write_bytes(data)
+ 
+     def test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match(self):
+-        for path in (LEGACY, ROOT_REGISTER):
++        for path in (LEGACY, ROOT_REGISTER, FROZEN_COMPOSITION):
+             with self.subTest(path=path):
+                 data = (self.root / path).read_bytes()
+                 (self.root / path).write_bytes(data + b"\n")
+                 try:
+                     with self.assertRaisesRegex(composition.CompositionError, "input manifest differs"):

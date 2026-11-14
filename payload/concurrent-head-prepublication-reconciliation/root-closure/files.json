@@ -1,0 +1,97 @@
+[
+  {
+    "bytes": 3820,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/producer.py",
+    "sha256": "eb8b0515bbfcf9fdd2c6b529dd71d0b47e925d4b99f892d3b401f45825e825ca"
+  },
+  {
+    "bytes": 1888,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-launch.py",
+    "sha256": "229e9edae81609471a542da13411f231955b60d60d332b000ea62db19faf609a"
+  },
+  {
+    "bytes": 4320,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-launch-arguments.json",
+    "sha256": "2d4e15af78b9b10b84eb98b8eaadddecc44b068dbca989b4122c00d3e4b724f2"
+  },
+  {
+    "bytes": 530,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-start.json",
+    "sha256": "961d41c5f81decc96ebad290c89d96d47c3ed08dc53811aba3191410d30cae58"
+  },
+  {
+    "bytes": 5392,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-terminal.json",
+    "sha256": "f5c61274977d75411cf8abebedded3e32f878f5c5564b6bd98cc392cdcdf77e1"
+  },
+  {
+    "bytes": 1413,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-terminal.log",
+    "sha256": "6dd4242fc5dc474dc1b39bd80abaab34a50327689cc43e954e28ea8294c3ba8f"
+  },
+  {
+    "bytes": 3921,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-producer.py",
+    "sha256": "b7736aa9bd52d97e5702a86a4974d543e436f6c414ed3728f04267d9d3e626c1"
+  },
+  {
+    "bytes": 526,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-start.json",
+    "sha256": "f11aaf2bf881c9cd94bbdfb5d99a4280003eb1524e0148154453eb52587962b8"
+  },
+  {
+    "bytes": 4499,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-terminal.json",
+    "sha256": "83575b45a019bbaced16ccefd2fb64f25a4ace4c8bb95b7a2d1f0e3d7d57c885"
+  },
+  {
+    "bytes": 1146,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-terminal.log",
+    "sha256": "dbdeb9ca5b33f7d9e4b5f493aacd57a4c1dc3c3f4b86afc0452c17acfd9fe6ef"
+  },
+  {
+    "bytes": 2559,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-producer.py",
+    "sha256": "5ccbe46bfa7107073ebfa5956592064187fc6df1cf040dd48c4a79d1beb1ab9b"
+  },
+  {
+    "bytes": 526,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-start.json",
+    "sha256": "b1e01f57ba06aa93c0241980ca71a6b316f399c3db3a1d1a805b2a132057923f"
+  },
+  {
+    "bytes": 40948,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-terminal.json",
+    "sha256": "cd7332cd1c8e9d550c8ced386b89b2c03b92fba4033a93b15870ab750ec775aa"
+  },
+  {
+    "bytes": 13207,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-terminal.log",
+    "sha256": "1ad149039020158a3c7c03f14d44e21fe7732326464c34096b2edaad4c792cfd"
+  },
+  {
+    "bytes": 3820,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-producer.py",
+    "sha256": "3430b559adda7890eae246ef802d5218013e7efc8612b1fcf28f2824c5a176b7"
+  },
+  {
+    "bytes": 530,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-start.json",
+    "sha256": "e4c4ce24dc91675587accd78b5d147186726971e37e1bbd8ee2ddb01c829c45f"
+  },
+  {
+    "bytes": 1972,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-terminal.json",
+    "sha256": "74311b9eee532ee777fbbaa1f5d729218165165f1b37309a15d880e14b1d89c2"
+  },
+  {
+    "bytes": 295,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-terminal.log",
+    "sha256": "629428f8fb8f94e09ac970b3b796489b9ae631f4e8b3d29f5f0d234021c26ee6"
+  },
+  {
+    "bytes": 1679,
+    "path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publication-independent-diff-verification.json",
+    "sha256": "8c8914c9d08ec24eef0a2090d03286683841f81b10d087964c6b37298577c8df"
+  }
+]

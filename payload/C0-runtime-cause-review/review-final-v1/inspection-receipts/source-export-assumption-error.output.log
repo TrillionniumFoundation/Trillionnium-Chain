@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m34[0m, in [35m<module>[0m
+    assert [1;31mnot diff.strip()[0m
+           [1;31m^^^^^^^^^^^^^^^^[0m
+[1;35mAssertionError[0m

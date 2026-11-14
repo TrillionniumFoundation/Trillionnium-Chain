@@ -1,0 +1,17 @@
+{
+  "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "argv": [
+    "/usr/bin/git",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "-c",
+    "protocol.allow=never",
+    "cat-file",
+    "blob",
+    "2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress.rs"
+  ],
+  "exit": 0,
+  "bytes": 221433,
+  "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+  "git_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96"
+}

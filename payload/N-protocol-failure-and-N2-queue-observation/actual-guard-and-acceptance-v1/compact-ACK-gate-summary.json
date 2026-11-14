@@ -1,0 +1,220 @@
+[
+  {
+    "artifact_id": 14111407094,
+    "native_runs": [
+      {
+        "exit_code": 0,
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+        },
+        "passed": true,
+        "timed_out": false
+      }
+    ],
+    "original_confirmation_observation_flags": {
+      "original_gate_validated": false,
+      "original_gate_validation_error": "CONFIRMATION_TARGET"
+    },
+    "phases": [
+      {
+        "ack_before_window_count": 7,
+        "ack_count": 7,
+        "final_confirmation_stage_present": true,
+        "mode": "attack-free-baseline",
+        "submission_count": 7,
+        "submission_ends_ns": [
+          80250124,
+          89216972,
+          100314431,
+          182128471,
+          191984875,
+          276653602,
+          286654283
+        ],
+        "submission_returned_after_deadline_count": 0,
+        "verification_errors": []
+      },
+      {
+        "ack_before_window_count": 7,
+        "ack_count": 7,
+        "final_confirmation_stage_present": false,
+        "mode": "from-zero-pressure",
+        "submission_count": 7,
+        "submission_ends_ns": [
+          388927498,
+          589546674,
+          789034360,
+          898991250,
+          1295241693,
+          1492696142,
+          1694434484
+        ],
+        "submission_returned_after_deadline_count": 0,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    ]
+  },
+  {
+    "artifact_id": 14111816359,
+    "native_runs": [
+      {
+        "exit_code": 0,
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+        },
+        "passed": true,
+        "timed_out": false
+      },
+      {
+        "exit_code": 0,
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+        },
+        "passed": true,
+        "timed_out": false
+      }
+    ],
+    "original_confirmation_observation_flags": {
+      "original_gate_validated": false,
+      "original_gate_validation_error": "CONFIRMATION_TARGET"
+    },
+    "phases": [
+      {
+        "ack_before_window_count": 7,
+        "ack_count": 7,
+        "final_confirmation_stage_present": true,
+        "mode": "attack-free-baseline",
+        "submission_count": 7,
+        "submission_ends_ns": [
+          77325954,
+          85849702,
+          94767283,
+          174763857,
+          184468576,
+          193801615,
+          205411898
+        ],
+        "submission_returned_after_deadline_count": 0,
+        "verification_errors": []
+      },
+      {
+        "ack_before_window_count": 7,
+        "ack_count": 7,
+        "final_confirmation_stage_present": false,
+        "mode": "from-zero-pressure",
+        "submission_count": 7,
+        "submission_ends_ns": [
+          259975910,
+          714856487,
+          864319054,
+          1064488496,
+          1260920882,
+          1369318735,
+          1566020707
+        ],
+        "submission_returned_after_deadline_count": 0,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    ]
+  }
+]

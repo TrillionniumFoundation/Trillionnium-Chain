@@ -1,0 +1,35 @@
+{
+  "all_secret_types_excluded": false,
+  "patterns": [
+    {
+      "bytes_regex_ascii": "\\bgh[pousr]_[A-Za-z0-9]{36,255}\\b",
+      "flags": [],
+      "id": "github_classic_token"
+    },
+    {
+      "bytes_regex_ascii": "\\bgithub_pat_[A-Za-z0-9_]{20,255}\\b",
+      "flags": [],
+      "id": "github_fine_grained_token"
+    },
+    {
+      "bytes_regex_ascii": "\\b(?:AKIA|ASIA)[A-Z0-9]{16}\\b",
+      "flags": [],
+      "id": "aws_access_key_id"
+    },
+    {
+      "bytes_regex_ascii": "\\b(?:xox[baprs]-[A-Za-z0-9-]{10,255}|xapp-[A-Za-z0-9-]{10,255})\\b",
+      "flags": [],
+      "id": "slack_token"
+    },
+    {
+      "bytes_regex_ascii": "-----BEGIN (?:(?:RSA|EC|DSA|OPENSSH|ENCRYPTED) )?PRIVATE KEY-----",
+      "flags": [],
+      "id": "private_key_header"
+    }
+  ],
+  "previous_regex_equivalence_claimed": false,
+  "previous_scanner_driver_available": false,
+  "reason": "Original summary records category names only; original driver not found by coordinator. These are explicitly new regular expressions.",
+  "schema": "explicit-new-delta-credential-patterns-v1",
+  "scope": "All new Git blob raw bytes from frozen local enumeration; no recursive archive decompression; binary and text blobs treated identically."
+}

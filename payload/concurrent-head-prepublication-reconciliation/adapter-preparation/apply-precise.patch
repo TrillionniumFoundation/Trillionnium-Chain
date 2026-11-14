@@ -1,0 +1,53 @@
+--- /private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v2.py
++++ /private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v3.py
+@@ -9,9 +9,9 @@
+ 
+ ROOT = pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+ SOURCE = pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
+-SELF = ROOT / "apply_pr847_audit_update_and_ready_v2.py"
+-PREPARER = ROOT / "prepare_pr847_audit_update_v4.py"
+-PREPARER_SHA = "57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7"
++SELF = ROOT / "apply_pr847_audit_update_and_ready_v3.py"
++PREPARER = ROOT / "prepare_pr847_audit_update_v5.py"
++PREPARER_SHA = "12776f0a436732589e46ef13548cb8f34180a532ab1ff63671560326c541cd6d"
+ PUBLISHER = ROOT / "publish_candidate_and_archive_v4.py"
+ PUBLISHER_SHA = "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038"
+ BASE = "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+@@ -104,8 +104,8 @@
+     args = parser.parse_args()
+     for digest in (args.inputs_sha256, args.prepared_summary_sha256, args.desired_sha256):
+         require(re.fullmatch(r"[0-9a-f]{64}", digest) is not None, "exact operator SHA256 required")
+-    PREPARED = preparer["evidence_directory"](args.prepared_directory, "prepare-pr847-audit-update-v4")
+-    ev = preparer["evidence_directory"](args.evidence_dir, "apply-pr847-audit-update-and-ready-v2")
++    PREPARED = preparer["evidence_directory"](args.prepared_directory, "prepare-pr847-audit-update-v5")
++    ev = preparer["evidence_directory"](args.evidence_dir, "apply-pr847-audit-update-and-ready-v3")
+     ctx = preparer["validate_inputs"](args.inputs, args.inputs_sha256)
+     HEAD, TREE = ctx["head"], ctx["tree"]
+     os.umask(0o077)
+@@ -115,7 +115,7 @@
+     env = preparer["safe_environment"](helpers)
+     steps, errors, retained = [], [], []
+     result = {
+-        "schema": "trnm-pr847-audit-metadata-ready-v2", "status": "HOLD",
++        "schema": "trnm-pr847-audit-metadata-ready-v3", "status": "HOLD",
+         "started_at": now(), "head": HEAD, "tree": TREE, "base": BASE, "pr_number": 847,
+         "driver": {"path": str(SELF), "sha256": sha(read_regular(SELF))},
+         "inputs": ctx["input_pin"], "validated_facts": ctx["facts"],
+@@ -189,7 +189,7 @@
+         return value
+     save()
+     try:
+-        retain("preparer-v4.py", PREPARER, PREPARER_SHA)
++        retain("preparer-v5.py", PREPARER, PREPARER_SHA)
+         summary_raw = retain("prepared-summary.json", PREPARED / "summary.json", args.prepared_summary_sha256)
+         prepared = strict_json(summary_raw)
+         required_summary_fields = {
+@@ -201,7 +201,7 @@
+         }
+         require(isinstance(prepared, dict) and set(prepared) == required_summary_fields,
+                 "prepared summary field set differs")
+-        require(prepared["schema"] == "prepared-pr847-audit-update-v4"
++        require(prepared["schema"] == "prepared-pr847-audit-update-v5"
+                 and prepared["status"] == "prepared" and prepared["remote_writes"] is False
+                 and prepared["errors"] == [] and prepared["inputs"] == ctx["input_pin"]
+                 and prepared["validated_facts"] == ctx["facts"]

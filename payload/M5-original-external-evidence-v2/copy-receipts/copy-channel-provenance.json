@@ -1,0 +1,202 @@
+{
+  "schema": "trnm-M5-original-external-evidence-official-copy-provenance-v2",
+  "recorded_at": "2026-11-14T09:27:50.942Z",
+  "source_host": "rog",
+  "target_host": "mac",
+  "target_directory": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-08c9be-copy-v2-prci",
+  "copies": [
+    {
+      "source_info": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/original-external-evidence-08c9be-v2.zip",
+        "sha256": "0ea6ea3ecbf52c0a2c8117fcedbede03517c0a9a437b594a7b03fc5414d0939f",
+        "size": 38321,
+        "version": "66306:35165996:38321:1794648324621314062:1794648324621314062"
+      },
+      "read": {
+        "chunk_sha256": "0ea6ea3ecbf52c0a2c8117fcedbede03517c0a9a437b594a7b03fc5414d0939f",
+        "eof": true,
+        "next_offset": 38321,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/original-external-evidence-08c9be-v2.zip",
+        "size": 38321,
+        "version": "66306:35165996:38321:1794648324621314062:1794648324621314062"
+      },
+      "target_path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-08c9be-copy-v2-prci/original-external-evidence-08c9be-v2.zip",
+      "upload_id": "prci-M5-external-copy-v2-0-20261114-001",
+      "expected_version": "absent",
+      "upload": {
+        "next_offset": 38321,
+        "upload_id": "prci-M5-external-copy-v2-0-20261114-001",
+        "visible": false
+      },
+      "commit": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "0ea6ea3ecbf52c0a2c8117fcedbede03517c0a9a437b594a7b03fc5414d0939f",
+        "size": 38321,
+        "version": "16777233:606861309:38321:1794648382230242502:1794648384136889858"
+      },
+      "recorded_at": "2026-11-14T09:26:25.061Z"
+    },
+    {
+      "source_info": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/EVIDENCE_INDEX.json",
+        "sha256": "367497dcdffc9d78e7024a3dc24b93d853cf42eb4e577b4fd61f4c2ead8957c9",
+        "size": 26697,
+        "version": "66306:35165995:26697:1794648324619477114:1794648324619477114"
+      },
+      "read": {
+        "chunk_sha256": "367497dcdffc9d78e7024a3dc24b93d853cf42eb4e577b4fd61f4c2ead8957c9",
+        "eof": true,
+        "next_offset": 26697,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/EVIDENCE_INDEX.json",
+        "size": 26697,
+        "version": "66306:35165995:26697:1794648324619477114:1794648324619477114"
+      },
+      "target_path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-08c9be-copy-v2-prci/EVIDENCE_INDEX.json",
+      "upload_id": "prci-M5-external-copy-v2-1-20261114-001",
+      "expected_version": "absent",
+      "upload": {
+        "next_offset": 26697,
+        "upload_id": "prci-M5-external-copy-v2-1-20261114-001",
+        "visible": false
+      },
+      "commit": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "367497dcdffc9d78e7024a3dc24b93d853cf42eb4e577b4fd61f4c2ead8957c9",
+        "size": 26697,
+        "version": "16777233:606861446:26697:1794648387082947127:1794648389139719194"
+      },
+      "recorded_at": "2026-11-14T09:26:30.121Z"
+    },
+    {
+      "source_info": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/package-summary.json",
+        "sha256": "5df8066c910925e04a9381645312981a60b5970aed4d3764a0b5cd38b602da1f",
+        "size": 4034,
+        "version": "66306:35165997:4034:1794648324624181196:1794648324624181196"
+      },
+      "read": {
+        "chunk_sha256": "5df8066c910925e04a9381645312981a60b5970aed4d3764a0b5cd38b602da1f",
+        "eof": true,
+        "next_offset": 4034,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/package-summary.json",
+        "size": 4034,
+        "version": "66306:35165997:4034:1794648324624181196:1794648324624181196"
+      },
+      "target_path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-08c9be-copy-v2-prci/package-summary.json",
+      "upload_id": "prci-M5-external-copy-v2-2-20261114-001",
+      "expected_version": "absent",
+      "upload": {
+        "next_offset": 4034,
+        "upload_id": "prci-M5-external-copy-v2-2-20261114-001",
+        "visible": false
+      },
+      "commit": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "5df8066c910925e04a9381645312981a60b5970aed4d3764a0b5cd38b602da1f",
+        "size": 4034,
+        "version": "16777233:606861504:4034:1794648390589833173:1794648392772349902"
+      },
+      "recorded_at": "2026-11-14T09:26:33.949Z"
+    }
+  ],
+  "source_infos_after": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/original-external-evidence-08c9be-v2.zip",
+      "sha256": "0ea6ea3ecbf52c0a2c8117fcedbede03517c0a9a437b594a7b03fc5414d0939f",
+      "size": 38321,
+      "version": "66306:35165996:38321:1794648324621314062:1794648324621314062"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/EVIDENCE_INDEX.json",
+      "sha256": "367497dcdffc9d78e7024a3dc24b93d853cf42eb4e577b4fd61f4c2ead8957c9",
+      "size": 26697,
+      "version": "66306:35165995:26697:1794648324619477114:1794648324619477114"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-08c9be-v2-prci/package-summary.json",
+      "sha256": "5df8066c910925e04a9381645312981a60b5970aed4d3764a0b5cd38b602da1f",
+      "size": 4034,
+      "version": "66306:35165997:4034:1794648324624181196:1794648324624181196"
+    }
+  ],
+  "source_versions_unchanged": true,
+  "read_calls": 3,
+  "successful_upload_chunks": 3,
+  "successful_commits": 3,
+  "source_or_Git_test_execution": false
+}

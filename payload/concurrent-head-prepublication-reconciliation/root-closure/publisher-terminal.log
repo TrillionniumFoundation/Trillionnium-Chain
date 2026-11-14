@@ -1,0 +1,16 @@
+{"publication_spec": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a6206-v1.json", "bytes": 1743, "sha256": "4841b96e506ab216cdb72196d92c8cddf3694f70ad28e608a07e8eee7555cdbd", "candidate": "2a62061177852dc3ebd200fa8d7c66c661a119a1", "archive_tag": "archive/execution-receipts-20261114-2a6206117785-v1", "normal_two_ref_atomic_publication": true, "main_merge_or_branch_deletion": false}
+{"label": "origin-push-url", "exit": 0}
+{"label": "origin-fetch-url", "exit": 0}
+{"label": "existing-hook-config", "exit": 1}
+{"label": "default-hook-path", "exit": 0}
+{"label": "project-preflight", "exit": 0}
+{"label": "verify-source-before", "exit": 0}
+{"label": "candidate-fast-forward", "exit": 0}
+{"label": "main-ancestry", "exit": 0}
+{"label": "semantic-ledger-ancestry", "exit": 0}
+{"label": "published-to-rog-start", "exit": 0}
+{"label": "rog-start-to-candidate", "exit": 0}
+{"label": "actor", "exit": 0}
+{"label": "pr-before", "exit": 0}
+{"label": "verify-source-after", "exit": 0}
+{"schema": "trnm-followup-candidate-execution-publication-receipt-v1", "status": "HOLD", "head": "2a62061177852dc3ebd200fa8d7c66c661a119a1", "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c", "push_exit": null, "source_after_valid": true, "exact_hook_verified": false, "receipt": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/summary.json"}

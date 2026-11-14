@@ -1,0 +1,28 @@
+Start an explicit executable and argv on one configured host. No shell syntax is parsed. Jobs have durable metadata and logs, survive MCP reconnects, require a stable idempotency_key, and may be resource-limited. This tool is part of plugin `h`.
+
+MCP server instructions: Filesystem tools. File lines render as `N:hh|content`; `N:hh` is the line id edit tools target, and edit results are diffs with fresh ids, so edits chain without re-viewing files. Reuse returned content and ids; read complete relevant blocks, then act on them. Each response costs a round trip: first decide what you need next, then request every call that doesn't depend on another's result in that one response.
+
+exec tool declaration:
+```ts
+declare const tools: { mcp__codex_apps__h_process_start(args: {
+  args?: Array<string>;
+  // Optional transient systemd CPUQuota percentage, 1..1000.
+  cpu_quota_percent?: number;
+  cwd?: string;
+  env?: { [key: string]: string; };
+  // Executable path or command name. Shell syntax is not accepted.
+  executable: string;
+  // Configured host name, never a raw SSH destination.
+  host: string;
+  // Mandatory stable operation key; exact retries reconcile the original durable job.
+  idempotency_key: string;
+  // Optional transient systemd MemoryMax in bytes.
+  memory_max_bytes?: number;
+  // Non-negative Unix nice adjustment, 0..19.
+  nice?: number;
+  // Optional standard input written once at process start (max 1 MiB).
+  stdin?: string;
+  // Optional process timeout. The remote supervisor terminates the process group.
+  timeout_seconds?: number;
+}): Promise<CallToolResult>; };
+```

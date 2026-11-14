@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-P1-external-packager-preparation-summary-v1",
+  "status": "PREPARED_ONLY_WAIT_FOR_REAL_TERMINAL",
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+  "prepared_script": {
+    "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+    "bytes": 14207,
+    "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811"
+  },
+  "precise_patch": {
+    "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/external-M8-to-P1.patch",
+    "bytes": 9152,
+    "sha256": "f880d789b7bbfdbfffd73a6e4ad2adaabdf99430e522060b546623a72cad5fee"
+  },
+  "static_identity_proof": {
+    "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/static-identity-proof.json",
+    "bytes": 5577,
+    "sha256": "b4661366a8a3b72a676f8e711c51420fdd2817ef06f2ddd47c78319f251644bb"
+  },
+  "index": {
+    "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/EVIDENCE_INDEX.json",
+    "bytes": 2073,
+    "sha256": "02ce9dabdaf0e215e7a9a94b35547683ab83cf00ae7919fbc8372ef320d5c5f4"
+  },
+  "base_bytes_unchanged": true,
+  "packager_executed": false,
+  "full_adapter_state": "PAUSED_PENDING_NEW_EXPECTED_START_HEAD_AND_RECEIPT_DIRECTORY",
+  "actual_external_terminal_not_observed": true,
+  "stage_source_git_network_test_actions": false
+}

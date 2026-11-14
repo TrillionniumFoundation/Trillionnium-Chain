@@ -1,0 +1,62 @@
+--- M8-external-packager.py.original
++++ package_original_external_evidence_6a8cd5_v1.py
+@@ -1,8 +1,8 @@
+ import pathlib,os,stat,json,hashlib,zipfile,datetime,re,argparse,math,sys
+ BASE=pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root")
+-R=BASE/"final-external-evidence-existing-source-ed0d35-v2"
+-O=BASE/"package-original-external-evidence-ed0d35-v1-prci"
+-HEAD="ed0d35487f2a67239e4d646fd41c2c7acb5cc740";TREE="1aa9c21812489080980bdc3c1c2bb43611e88354"
++R=BASE/"final-external-evidence-existing-source-6a8cd5-v2"
++O=BASE/"package-original-external-evidence-6a8cd5-v1-prci"
++HEAD="6a8cd55573065ceb50cdb65a7834615f79b521ae";TREE="cbd6b4552c87af27c72c0189806baeb33ecb8bf5"
+ DRIVER=BASE/"run_final_rog_external_evidence_existing_source_v2.py"
+ def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+ def sig(s):return [s.st_dev,s.st_ino,s.st_size,s.st_mtime_ns,s.st_ctime_ns,s.st_nlink,s.st_mode]
+@@ -33,7 +33,7 @@
+ def fi(p):
+  b=p.read_bytes();return {"path":str(p),"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()}
+ assert not sys.flags.optimize
+-parser=argparse.ArgumentParser(description="Package only a closed, operator-pinned M8 external lane.")
++parser=argparse.ArgumentParser(description="Package only a closed, operator-pinned P1 external lane.")
+ parser.add_argument("--terminal-summary-sha256",required=True)
+ parser.add_argument("--terminal-exit-code",type=int,choices=(0,1),required=True)
+ parser.add_argument("--closed-log-manifest-sha256",required=True)
+@@ -87,7 +87,7 @@
+   p=pathlib.Path(step[kind+"_path"]);assert p.parent==R and p.name not in names and p.name==step["label"]+"."+kind
+   names.add(p.name);retain(p,"original/"+p.name,"original-execution",step[kind+"_bytes"],step[kind+"_sha256"])
+ for n in ("source-before.json","source-after.json"):
+- names.add(n);retain(R/n,"original/"+n,"original-execution",423,"a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d")
++ names.add(n);retain(R/n,"original/"+n,"original-execution",423,"cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5")
+ assert len(names)==27
+ names.update(x[0]for x in nested)
+ actual=set();empty_dirs=[];inventory_before={}
+@@ -107,7 +107,7 @@
+ source=json.loads(before)
+ assert source=={"base":None,"candidate":HEAD,"kind":"head","prospective_merge":None,
+  "schema":"trnm-ci-source-v1","tested_commit":HEAD,"tested_tree":TREE,
+- "tests_executed_by_identity_check":False,"tracked_bytes":3994947385,
++ "tests_executed_by_identity_check":False,"tracked_bytes":3994959368,
+  "tracked_entries":41677,"tracked_worktree_verified":True}
+ assert before==cache["original/verify-source-before.stdout"]==cache["original/verify-source-after.stdout"]
+ assert cache["original/initial-head.stdout"].decode().strip()==HEAD and cache["original/initial-tree.stdout"].decode().strip()==TREE and cache["original/initial-status.stdout"]==b""
+@@ -127,9 +127,9 @@
+ retain(pathlib.Path(__file__),"producer/"+pathlib.Path(__file__).name,"packaging-producer")
+ assert len(rows)==original_count+3
+ payload_count=len(rows);member_count=len(rows)+1
+-index={"schema":"trnm-M8-original-external-evidence-package-index-v1","source_head":HEAD,"source_tree":TREE,"original_lane":"external-evidence-contract","original_result":derived,"original_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"driver":d["driver"],"original_invocation":d["invocation"],"original_lane_argv":d["lane_argv"],"original_step_invocations":[{k:x[k] for k in ("label","argv","cwd","exit","timeout_seconds","elapsed_seconds")} for x in d["steps"]],"source_before_after_equal":True,"required_object_tree_map":expected,"lane_fetched":[],"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"files":rows,"empty_directories_without_files":sorted(empty_dirs),"unexpected_nested_files_excluded":[]}
++index={"schema":"trnm-P1-original-external-evidence-package-index-v1","source_head":HEAD,"source_tree":TREE,"original_lane":"external-evidence-contract","original_result":derived,"original_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"driver":d["driver"],"original_invocation":d["invocation"],"original_lane_argv":d["lane_argv"],"original_step_invocations":[{k:x[k] for k in ("label","argv","cwd","exit","timeout_seconds","elapsed_seconds")} for x in d["steps"]],"source_before_after_equal":True,"required_object_tree_map":expected,"lane_fetched":[],"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"files":rows,"empty_directories_without_files":sorted(empty_dirs),"unexpected_nested_files_excluded":[]}
+ ib=(json.dumps(index,indent=2)+"\n").encode();ip=O/"EVIDENCE_INDEX.json";save(ip,ib)
+-zp=O/"original-external-evidence-ed0d35-v1.zip"
++zp=O/"original-external-evidence-6a8cd5-v1.zip"
+ with zipfile.ZipFile(zp,"x",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+  for row in rows:z.writestr(row["path"],cache[row["path"]])
+  z.writestr("EVIDENCE_INDEX.json",ib)
+@@ -156,7 +156,7 @@
+   p=pathlib.Path(b)/n;s=p.lstat();assert stat.S_ISREG(s.st_mode) and s.st_nlink==1
+   inventory_after[str(p.relative_to(R))]=sig(s)
+ assert inventory_after==inventory_before
+-summary={"schema":"trnm-M8-original-external-evidence-package-completion-v1","started_at":started,"finished_at":now(),"original_head":HEAD,"original_tree":TREE,"original_result":derived,"original_lane_argv":d["lane_argv"],"original_driver_invocation":d["invocation"],"original_all_12_steps_exit0":all(x["exit"]==0 for x in d["steps"]),"original_lane_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"payload_file_count":payload_count,"zip_member_count":member_count,"zip":fi(zp),"index":fi(ip),"producer":fi(pathlib.Path(__file__)),"all_member_crc_size_sha_verified":True,"original_source_file_versions_unchanged":True,"source_before_after_equal":True,"verified_object_trees":expected,"fetched":[],"original_readiness_suite":readiness,"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"tests_rerun":False,"source_or_git_objects_modified":False,"network_actions_by_packager":False,"unexpected_nested_files_excluded":[]}
++summary={"schema":"trnm-P1-original-external-evidence-package-completion-v1","started_at":started,"finished_at":now(),"original_head":HEAD,"original_tree":TREE,"original_result":derived,"original_lane_argv":d["lane_argv"],"original_driver_invocation":d["invocation"],"original_all_12_steps_exit0":all(x["exit"]==0 for x in d["steps"]),"original_lane_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"payload_file_count":payload_count,"zip_member_count":member_count,"zip":fi(zp),"index":fi(ip),"producer":fi(pathlib.Path(__file__)),"all_member_crc_size_sha_verified":True,"original_source_file_versions_unchanged":True,"source_before_after_equal":True,"verified_object_trees":expected,"fetched":[],"original_readiness_suite":readiness,"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"tests_rerun":False,"source_or_git_objects_modified":False,"network_actions_by_packager":False,"unexpected_nested_files_excluded":[]}
+ sp=O/"package-summary.json";save(sp,(json.dumps(summary,indent=2)+"\n").encode())
+ for fd,_,_ in held:os.close(fd)
+ print(json.dumps({"summary":fi(sp),"zip":summary["zip"],"index":summary["index"],"producer":summary["producer"],"original_files":original_count,"original_bytes":original_bytes,"zip_members":member_count,"all_crc_sha_verified":True,"source_head":HEAD,"source_tree":TREE,"original_result":derived,"tests_rerun":False,"source_or_git_objects_modified":False}),flush=True)

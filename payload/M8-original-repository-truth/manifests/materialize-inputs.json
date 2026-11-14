@@ -1,0 +1,55 @@
+{
+  "stage": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "prefix": "M8-original-repository-truth",
+  "output": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1",
+  "baseline_path": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1/stage-before.json",
+  "baseline_sha256": "a8eb882dc0392613103fcc0a3d8ed18ce5b67a05b3d460cde8fed9e0fc67dc22",
+  "expected_count": 3276,
+  "expected_bytes": 180978142,
+  "sources": [
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/original-repository-truth-ed0d35-copy-v1-prci",
+      "target": "original-copy",
+      "role": "verified original full-lane receipts and official transfer"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1",
+      "target": "packager-preparation",
+      "role": "static preparation; external packager not yet executed"
+    },
+    {
+      "path": "/private/tmp/chain-prci-M8-closed-full-roster-observation-20261114-v1",
+      "target": "closed-roster",
+      "role": "read-only closed full-lane file roster"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/M8-packager-root-static-review-v1",
+      "target": "root-static-review",
+      "role": "independent root static review"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/M8-root-lane-terminals-v1",
+      "target": "root-lane-terminals",
+      "role": "actual full and worker closed terminal records; external launch only"
+    }
+  ],
+  "special_origins_path": "/private/tmp/chain-consolidation-20261114-root/original-repository-truth-ed0d35-copy-v1-prci/copy-files.json",
+  "special_origins_sha256": "37e75070d264369a07553329d3b891ee9c679a93b8262df9f3f30a7ced1b43b0",
+  "pins": [
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/M8-packager-root-static-review-v1/summary.json",
+      "bytes": 1540,
+      "sha256": "f51b00f1321b2f1236b9b154f42d8b5ed4111c453a4b8e57f0e2cdb794a4145f"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/M8-root-lane-terminals-v1/EVIDENCE_INDEX.json",
+      "bytes": 3594,
+      "sha256": "82cc95212320ce4b8e6cbea3cb4aeaf919cafeb5b602cae0eb2c10ec70a70ca2"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/original-repository-truth-ed0d35-copy-v1-prci/copy-verification.json",
+      "bytes": 44677,
+      "sha256": "aef2ae36eea7b76786cb81c91ff5c46fb3c85af7331509dd65600d78524bb9ae"
+    }
+  ]
+}

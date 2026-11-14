@@ -1,0 +1,181 @@
+{
+  "observed_at": "2026-11-14T05:23:52.877030+00:00",
+  "remote_mutations": false,
+  "runs": [
+    {
+      "id": 43540659883,
+      "name": "trnm-required-baseline",
+      "head_sha": "e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-14T01:27:04Z",
+      "updated_at": "2026-11-14T05:03:25Z",
+      "run_started_at": "2026-11-14T01:27:04Z",
+      "run_attempt": 1,
+      "jobs_total": 21,
+      "jobs_remaining": [],
+      "completed_counts": {
+        "failure": 6,
+        "success": 15
+      }
+    },
+    {
+      "id": 43551533528,
+      "name": "trnm-required-baseline",
+      "head_sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+      "event": "pull_request",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-14T03:25:09Z",
+      "updated_at": "2026-11-14T05:13:00Z",
+      "run_started_at": "2026-11-14T03:25:09Z",
+      "run_attempt": 1,
+      "jobs_total": 19,
+      "jobs_remaining": [
+        {
+          "id": 132340218496,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:28Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 12,
+              "name": "Execute the same lane on the prospective merge",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:06:42Z",
+              "completed_at": null
+            }
+          ]
+        },
+        {
+          "id": 132340218524,
+          "name": "rust-baseline shard (quality)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:28Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:09:12Z",
+              "completed_at": null
+            }
+          ]
+        },
+        {
+          "id": 132340218551,
+          "name": "prospective Rust shard (runtime)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:28Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:08:07Z",
+              "completed_at": null
+            }
+          ],
+          "original_timeout_minutes": 180,
+          "nominal_deadline": "2026-11-14T08:03:28+00:00"
+        },
+        {
+          "id": 132340218588,
+          "name": "protocol-contract",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:28Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 8,
+              "name": "Run actual protocol-contract checks",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:06:05Z",
+              "completed_at": null
+            }
+          ]
+        },
+        {
+          "id": 132340218643,
+          "name": "rust-baseline shard (runtime)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:28Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:08:53Z",
+              "completed_at": null
+            }
+          ]
+        },
+        {
+          "id": 132340218661,
+          "name": "prospective Rust shard (quality)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-14T05:03:29Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-14T05:08:31Z",
+              "completed_at": null
+            }
+          ],
+          "original_timeout_minutes": 180,
+          "nominal_deadline": "2026-11-14T08:03:29+00:00"
+        }
+      ],
+      "completed_counts": {
+        "failure": 4,
+        "success": 9
+      }
+    }
+  ],
+  "raw_files": {
+    "43540659883-run": {
+      "exit_code": 0,
+      "bytes": 15135,
+      "sha256": "6dd589038ec753e499f98c651644d9381cf1ce8b2b65309af21d50082677eddc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "43540659883-jobs": {
+      "exit_code": 0,
+      "bytes": 71283,
+      "sha256": "1139cb883cbc14eaf3a006ea9adf4e41dd97fd297137ac61e9f5756963531a24",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "43551533528-run": {
+      "exit_code": 0,
+      "bytes": 15172,
+      "sha256": "571dca314e2e2b911aae5a268bd713c37f87ea192ebd042dbf9110f45dfa656a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "43551533528-jobs": {
+      "exit_code": 0,
+      "bytes": 63939,
+      "sha256": "50c94db73a1baf4e7fc5ae07f9decbe6fa7f4f7da235bf4c04a1f386fc344698",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

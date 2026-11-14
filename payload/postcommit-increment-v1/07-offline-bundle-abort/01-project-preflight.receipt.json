@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/bin/bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-14T06:14:05.104329+00:00",
+  "label": "01-project-preflight",
+  "started_at": "2026-11-14T06:14:05.056890+00:00"
+}

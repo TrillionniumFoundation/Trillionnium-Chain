@@ -1,0 +1,15 @@
+{
+  "manifest": {
+    "path": "/private/tmp/chain-native-bridge-history-binding-review-20261114/execution-receipt-manifest-v1/manifest.json",
+    "bytes": 26349,
+    "sha256": "60873cb07f9f4c2afe581ee35622438e8da9e01b3fac5e67cc49a0d7b8c3a85e"
+  },
+  "README": {
+    "path": "/private/tmp/chain-native-bridge-history-binding-review-20261114/execution-receipt-manifest-v1/README.md",
+    "bytes": 1435,
+    "sha256": "caa8ee802556e62948e17cc7804a6487dc979e9e305a00deeafaa12813ecd908"
+  },
+  "files": 47,
+  "payload_bytes": 161188,
+  "git_or_remote_modified": false
+}

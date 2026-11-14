@@ -1,0 +1,48 @@
+{
+  "schema": "root-soleplan-corpus-pin-correction-v1",
+  "head_before": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+  "head_after": "308878245be0a8ece89447c78caf606a413e5434",
+  "tree": "8542cd577dd142748007ec34f9d55719027f7b24",
+  "clean": true,
+  "changed_source_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "changed_leaf": "pinned_blobs.docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "old_blob": "bff274c40d3c159fb24d94e1b08006eb42bde64a",
+  "reviewed_current_blob": "65efdab4fcc905d619632a4e17f67c7cd90d7489",
+  "preserved_original_seven_gate_receipt_sha256": "5687999515fe726fd0d2984f0a2497ec0520a37ad00347cb5ea7519457e98327",
+  "original_result": "6 pass / pq-corpus failed",
+  "source_gates_reexecuted": false,
+  "steps": [
+    {
+      "label": "preflight-before",
+      "exit": 0,
+      "seconds": 0.046,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "stage-one-metadata-file",
+      "exit": 0,
+      "seconds": 0.031,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "staged-diff-check",
+      "exit": 0,
+      "seconds": 0.011,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight-staged",
+      "exit": 0,
+      "seconds": 0.481,
+      "sha256": "0f0a9425a19154ebb97022f161fe491cf9733382609ea601b51f4a95edfea496"
+    },
+    {
+      "label": "normal-commit",
+      "exit": 0,
+      "seconds": 0.071,
+      "sha256": "f2682157be3a79058e57dbd4513c2f1dee1c256a54a09d710248d8edbc2da324"
+    }
+  ]
+}

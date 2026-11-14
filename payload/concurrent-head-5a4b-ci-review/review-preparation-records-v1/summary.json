@@ -1,0 +1,120 @@
+{
+  "failures": [
+    {
+      "cause": "Read-only lookup used nonexistent pq_root_lifetime_register.py; correct fixed-source consumer continuation completed.",
+      "exit": 1,
+      "name": "consumer-lookup-failed-v1"
+    },
+    {
+      "cause": "Bytes/string concatenation TypeError and SyntaxWarnings; stopped before writing proposal payload; corrected v2 completed.",
+      "exit": 1,
+      "name": "proposal-builder-failed-v1"
+    }
+  ],
+  "records": [
+    {
+      "bytes": 4428,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/consumer-capture-v1.py",
+      "sha256": "0f0ad8d2b2e1170ada4732ca490714d0ca1e1103f51e1dc9db0c947ea8c038c6"
+    },
+    {
+      "bytes": 6245,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/consumer-capture-continuation-v2.py",
+      "sha256": "44714bcc4c27f70c5d829a2c6f66df9136d224452639146444dbb0b15ec3d041"
+    },
+    {
+      "bytes": 4530,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/final-consumer-edges.py",
+      "sha256": "9eac9cba250f0f1f2255570b4363be9c2d40ae27e646d6df1fd93d2c16480247"
+    },
+    {
+      "bytes": 30964,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/proposal-builder-failed-v1.py",
+      "sha256": "32193098c43a36db3a679d3a2b76bb8ef9a71c9d96fd4040e54d9297a1bb5530"
+    },
+    {
+      "bytes": 30952,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/proposal-builder-complete-v2.py",
+      "sha256": "fbd4e42f4c70ad30458d84fc7365dbfad328696a4565d73bf0d75207e0c8e4ad"
+    },
+    {
+      "bytes": 20162,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/final-roster-producer.py",
+      "sha256": "ca1619a74f03a3397eea45289f3430f87341e851465506be619ef01f1e84bd74"
+    },
+    {
+      "bytes": 30432,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/producers/initial-capture-actual-launch.py",
+      "sha256": "a06616ce4f74c2949d5904ba4ac2d416f5fe7d8497d4223402f707530c673759"
+    },
+    {
+      "bytes": 3349,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/consumer-lookup-failed-v1.json",
+      "sha256": "60ec87861a55474cdf0d77f1a8e878d750bbf922d60fd05bd07a9629632b6fc2"
+    },
+    {
+      "bytes": 730,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/consumer-lookup-failed-v1.original.log",
+      "sha256": "cde7eea0834ae88adc98fa44dafea5688d76896a0dc0f9dbbdd0b0e8d6ffc4b9"
+    },
+    {
+      "bytes": 1243,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/consumer-lookup-complete-v2.json",
+      "sha256": "c55595299abac84822e2acdd19c24a3d4137a3ab36570ff519477828b2edd59c"
+    },
+    {
+      "bytes": 259,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/consumer-lookup-complete-v2.original.log",
+      "sha256": "14e19bd914cbb5316d244d1e584c2f6e61bd5eae781631ff49fb0efb6cda5108"
+    },
+    {
+      "bytes": 2303,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/last-consumer-complete.json",
+      "sha256": "279b9a3d2e94930098b0987dc09c052c4b4205f2c3db2988bcb3e6b32928dfb8"
+    },
+    {
+      "bytes": 428,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/last-consumer-complete.original.log",
+      "sha256": "5a383a083d62869360df13d7fba8ea7f63fbf2d61fb568d0d72802829e3d3250"
+    },
+    {
+      "bytes": 11414,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/proposal-builder-failed-v1.json",
+      "sha256": "3bafc95b00be198bfe4ff3f2dad982d63f6c5c2bc5904cb51bde9edc987d0fd3"
+    },
+    {
+      "bytes": 3363,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/proposal-builder-failed-v1.original.log",
+      "sha256": "0cdd278b45e1f1120b28c115389186072b61564efb5539bf17f0bfc5c0742ab5"
+    },
+    {
+      "bytes": 3798,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/proposal-builder-complete-v2.json",
+      "sha256": "3d5f9842e2dddd2449e61a562721e095ed931911c80e6882f9f75568a87866d3"
+    },
+    {
+      "bytes": 913,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/proposal-builder-complete-v2.original.log",
+      "sha256": "64256391daa2a5eb1bd45c28613a2ba83e05db837aa3b85e8278b0ca179f3eb5"
+    },
+    {
+      "bytes": 3772,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/final-roster-complete.json",
+      "sha256": "a4138365d3bea40df84b8985dbbd68c03314c0c00f41bb9314e20d6440b29ca3"
+    },
+    {
+      "bytes": 905,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-preparation-records-v1/terminals/final-roster-complete.original.log",
+      "sha256": "2229c5571a2665d102ba7d1442441807ab00c87286aff21c560ef112150115aa"
+    }
+  ],
+  "scope": "Audit preparation only; no project tests were run.",
+  "source_or_Git_or_refs_or_network_writes": false,
+  "status": "ORIGINAL_PREPARATION_FAILURES_AND_SUCCESSES_RETAINED",
+  "successes": [
+    "consumer-lookup-complete-v2",
+    "last-consumer-complete",
+    "proposal-builder-complete-v2",
+    "final-roster-complete"
+  ]
+}

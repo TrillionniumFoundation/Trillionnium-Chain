@@ -1,0 +1,160 @@
+[
+  {
+    "artifact_upload_lines": [
+      {
+        "line": 1476,
+        "text": "2026-11-14T11:18:27.0832890Z Artifact name is valid!"
+      },
+      {
+        "line": 1482,
+        "text": "2026-11-14T11:18:29.3019281Z SHA256 digest of uploaded artifact zip is 3a7ee31f6b28d9b283e2829dcea3e7ca4a415c14a88ba5cc6f16f408ac877086"
+      },
+      {
+        "line": 1484,
+        "text": "2026-11-14T11:18:29.6664696Z Artifact head-protocol-contract-5a4b7fe8de1adce803184f262fd9f704ead1930c-1.zip successfully finalized. Artifact ID 14111407094"
+      },
+      {
+        "line": 1485,
+        "text": "2026-11-14T11:18:29.6666250Z Artifact head-protocol-contract-5a4b7fe8de1adce803184f262fd9f704ead1930c-1 has been successfully uploaded! Final size is 7039235 bytes. Artifact ID is 14111407094"
+      },
+      {
+        "line": 1486,
+        "text": "2026-11-14T11:18:29.6672424Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392/artifacts/14111407094"
+      }
+    ],
+    "host_events": [
+      {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "failure": null,
+        "final_host_errors": [],
+        "line": 1408,
+        "passed": false,
+        "preparation_completed": true,
+        "preparation_failure_type": null,
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "source_after": {
+          "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3992055587,
+            "tracked_entries": 41378,
+            "tracked_worktree_verified": true
+          },
+          "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+        },
+        "source_before": {
+          "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3992055587,
+            "tracked_entries": 41378,
+            "tracked_worktree_verified": true
+          },
+          "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+        },
+        "systemd_run_exit": 1
+      }
+    ],
+    "job_id": 132415017391
+  },
+  {
+    "artifact_upload_lines": [
+      {
+        "line": 1493,
+        "text": "2026-11-14T11:08:10.3727466Z Artifact name is valid!"
+      },
+      {
+        "line": 1499,
+        "text": "2026-11-14T11:08:12.1835878Z SHA256 digest of uploaded artifact zip is 954a7541c58b9117b8af08de3b9f0e0a096009f466c2ad96e916b6376484eed0"
+      },
+      {
+        "line": 1501,
+        "text": "2026-11-14T11:08:12.5502357Z Artifact merge-protocol-contract-6936874e73bef2b6629c132e1a214f281f49ef3d-1.zip successfully finalized. Artifact ID 14111816359"
+      },
+      {
+        "line": 1502,
+        "text": "2026-11-14T11:08:12.5503655Z Artifact merge-protocol-contract-6936874e73bef2b6629c132e1a214f281f49ef3d-1 has been successfully uploaded! Final size is 7283601 bytes. Artifact ID is 14111816359"
+      },
+      {
+        "line": 1503,
+        "text": "2026-11-14T11:08:12.5508463Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392/artifacts/14111816359"
+      }
+    ],
+    "host_events": [
+      {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "failure": null,
+        "final_host_errors": [],
+        "line": 1421,
+        "passed": false,
+        "preparation_completed": true,
+        "preparation_failure_type": null,
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "source_after": {
+          "commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+            "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3992055587,
+            "tracked_entries": 41378,
+            "tracked_worktree_verified": true
+          },
+          "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+        },
+        "source_before": {
+          "commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+            "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3992055587,
+            "tracked_entries": 41378,
+            "tracked_worktree_verified": true
+          },
+          "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+        },
+        "systemd_run_exit": 1
+      }
+    ],
+    "job_id": 132415017476
+  }
+]

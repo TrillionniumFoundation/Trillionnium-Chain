@@ -1,0 +1,206 @@
+{
+  "artifact_claim": "Read-only cause review and proposed observation design; no source repair or test acceptance",
+  "deferred_not_implemented": [
+    "Cookie digest reuse",
+    "same-call parsed classic server key reuse",
+    "new History session/epoch API",
+    "classic reactor CPU sidecar"
+  ],
+  "existing_entrypoints": [
+    {
+      "classical_server_auth_cpu": false,
+      "entry": "PublicRequestObserver::new",
+      "id": "request_v4",
+      "line_end": 927,
+      "line_start": 765,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "reason": "V4 snapshot explicitly declares false"
+    },
+    {
+      "classical_server_auth_cpu": false,
+      "entry": "PublicRequestObserver::new_with_authenticated_callers",
+      "id": "caller_v5",
+      "line_end": 927,
+      "line_start": 770,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "reason": "Authenticated identity observation only; same false CPU flag"
+    },
+    {
+      "classical_server_auth_cpu": false,
+      "entry": "read/write ReactorIoStamp wrappers",
+      "id": "reactor_io",
+      "line_end": 1755,
+      "line_start": 1715,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "reason": "Only original read_available/write_available calls; authentication is outside"
+    },
+    {
+      "classical_server_auth_cpu": false,
+      "entry": "call_public_protected_v3_with_cpu_observation",
+      "id": "client_cpu",
+      "line_end": 3587,
+      "line_start": 3528,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "reason": "Client-thread observation explicitly native_server_cpu_known=false"
+    },
+    {
+      "classical_server_auth_cpu": false,
+      "entry": "AuthenticationBudget::perform and classic/PQ branches",
+      "id": "pq_auth_budget",
+      "line_end": 278,
+      "line_start": 164,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "reason": "Actual PQ-only authoritative budget; classic branch bypasses it, cannot repurpose without changing admission"
+    }
+  ],
+  "external_references": [
+    {
+      "bytes": 12119117,
+      "category": "original-cost-report",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+      "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0"
+    },
+    {
+      "bytes": 16002976,
+      "category": "original-cost-report",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+      "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333"
+    },
+    {
+      "bytes": 277682,
+      "category": "replay-extraction",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-readonly-v2/all-replay-phases-and-waits.json",
+      "sha256": "920783335d16d47ee2c2ce469ea74afea0500ff0692c512b7d5a81b69e86db5c"
+    },
+    {
+      "bytes": 56500,
+      "category": "replay-table",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-source-discovery-v1/small-stage-table.json",
+      "sha256": "c0942b801082ab0335a2650256042df1cd9bf6d4ca411fb50104561dbe9c35a6"
+    },
+    {
+      "bytes": 9795,
+      "category": "whole-child-kernel",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/aggregate-kernel-counter-deltas.json",
+      "sha256": "7f4ce5f87084b2f1b9a839b7895273d4d0df5bfd9b70abd275e3ba198744ee66"
+    },
+    {
+      "bytes": 5538,
+      "category": "whole-child-kernel-producer",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/producer-scope.json",
+      "sha256": "b5336e560782b42dd5ba9bd14afd924791f81b3a76ac03a2a8885bd91262a235"
+    },
+    {
+      "bytes": 6121,
+      "category": "whole-child-kernel-index",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/index.json",
+      "sha256": "caf42da42485ad125ec1bf757350749364bb7e5af9b42d891b536d91b1020ab4"
+    }
+  ],
+  "facts": [
+    {
+      "finding": "Actual FullLimb W1 uses calling thread; no nested pool or deliberate numerical sleep/yield",
+      "id": "synchronous_w1",
+      "status": "source_verified"
+    },
+    {
+      "finding": "Actual replay Owner::Exclusive uses independent Node/domain; pressure receiver does not share these mutexes",
+      "id": "owner_separation",
+      "status": "source_and_report_verified"
+    },
+    {
+      "finding": "Verified-completion 5 ms wait is not active before W1/native completion",
+      "id": "completion_wait",
+      "status": "source_verified"
+    },
+    {
+      "finding": "x64 55 budget refusals and actual 300.844881 ms sleep belong to page pre-W1 reservation wait",
+      "id": "page_wait",
+      "status": "observed"
+    },
+    {
+      "finding": "Host dynamic checks remain fresh; current scoped openat/stack/iterator and adjacent-read optimization already exist",
+      "id": "fresh_host",
+      "status": "source_and_report_verified"
+    },
+    {
+      "finding": "2 s warm scalar credit is explicit; receiver CPU refusals are zero; physical supply is a different constraint",
+      "id": "warm_credit",
+      "status": "source_and_report_verified"
+    },
+    {
+      "finding": "Service startup installs the current bounded cache; no missing enablement",
+      "id": "default_rejection_cache",
+      "status": "source_verified"
+    },
+    {
+      "finding": "Whole run_from_zero_native command cpu.stat proves throttling but does not align it to individual W1 or four-second phase",
+      "id": "whole_child_throttle",
+      "status": "observed"
+    },
+    {
+      "finding": "Durable per-page boundary and synchronous FULL already selected; no fsync contribution or safe removal measured",
+      "id": "epoch",
+      "status": "source_verified_at_selected_callsites"
+    },
+    {
+      "finding": "Held signing key/public string; no project-level per-message key reconstruction; distinct challenge and response signatures both required",
+      "id": "classic_identity",
+      "status": "source_verified"
+    },
+    {
+      "finding": "No selected existing opt-in entrypoint measures classic server reactor challenge-sign/caller-verify thread CPU",
+      "id": "existing_diagnostic",
+      "status": "source_verified_at_actual_route"
+    }
+  ],
+  "new_prospective_sample": {
+    "artifact_id": 14106191819,
+    "does_not_establish_same_microscopic_cause": true,
+    "job_id": 132376957499,
+    "report_sha256": "671c8395639c5bfdae0e5034cedbb40edcb125594ab03a84159795a3a2bf2f39",
+    "status": "peer_reported_distinct_sample_not_analyzed_here"
+  },
+  "observed_complete_packet_progress_count": 1099,
+  "preserved_constraints": {
+    "cpu_max": "25000 100000",
+    "cpu_max_burst": 0,
+    "fresh_progress_checks_preserved": true,
+    "original_fixture_identity_construction_preserved": true,
+    "original_signature_checks_preserved": true,
+    "pressure_workers": 16,
+    "window_seconds": 4
+  },
+  "progress_count_is_universal": false,
+  "remaining_unknowns": [
+    "Per-event classic reactor CPU",
+    "Per-W1 off-CPU scheduler/throttle attribution",
+    "Performance benefit of bounded deterministic reuse",
+    "Unchanged original confirmation acceptance"
+  ],
+  "schema": "trnm-c0-w1-classical-auth-causal-review-v1",
+  "scope": {
+    "external_evidence_files_only": true,
+    "git_object_or_ref_writes": false,
+    "hosted_qualification": false,
+    "native_executed": false,
+    "performance_fix_demonstrated": false,
+    "source_edits": false,
+    "source_read_only": true,
+    "tests_executed": false,
+    "whole_repository_semantic_proof": false
+  },
+  "sealed_at_utc": "2026-11-14T08:53:25.147674+00:00",
+  "selected_source_count": 24,
+  "source_checkpoint": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "source_tree": "18c3d20df915f5c31ee38c7037775c61e5c12e3f",
+  "tested_c0": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "tested_c0_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "trace_inspection_errors": [
+    "initial zero Rust/Cargo delta assumption rejected evidence-carrier additions",
+    "guessed maintenance limb path corrected using fixed Git source",
+    "grep parser path included line number; explicit path used",
+    "guessed telemetry key corrected from actual original schema",
+    "two final h_view calls used shortened crate name; corrected from source-index"
+  ]
+}

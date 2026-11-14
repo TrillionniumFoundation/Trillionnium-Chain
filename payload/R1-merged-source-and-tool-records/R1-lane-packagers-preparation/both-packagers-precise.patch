@@ -1,0 +1,163 @@
+--- P1-full-v2-packager.py.original
++++ package_original_repository_truth_2a8646_v1.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/python3
+-"""Package the closed P1 repository-truth execution after an exact terminal handoff.
++"""Package the closed R1 repository-truth execution after an exact terminal handoff.
+ This program must not run against a live receipt directory. It does not run Git,
+ source verification, tests, builds, network requests, or the original lane.
+ """
+@@ -16,21 +16,21 @@
+ import zipfile
+ 
+ BASE = pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root")
+-RECEIPTS = BASE / "final-repository-truth-offline-6a8cd5-v2"
+-OUTPUT = BASE / "package-original-repository-truth-6a8cd5-v2-prci"
++RECEIPTS = BASE / "final-repository-truth-offline-2a8646-v1"
++OUTPUT = BASE / "package-original-repository-truth-2a8646-v1-prci"
+ DRIVER = BASE / "run_final_rog_repository_truth_offline_v4.py"
+ SOURCE = BASE / "source"
+ CONFORMANCE = BASE / "final-python312-env/bin/python"
+ RUNTIME = BASE / "final-runtime-release-env/bin/python"
+ TOOLCHAIN = pathlib.Path("/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin")
+ BUNDLE_ROOT = BASE / "offline-source-bundles-v3"
+-HEAD = "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+-TREE = "cbd6b4552c87af27c72c0189806baeb33ecb8bf5"
++HEAD = "2a86462a1ab20c68151719ba4635e3c294391e64"
++TREE = "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+ START_HEAD = "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+ DRIVER_BYTES = 15187
+ DRIVER_SHA256 = "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+ SOURCE_BYTES = 423
+-SOURCE_SHA256 = "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5"
++SOURCE_SHA256 = "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+ MAX_FILE_BYTES = 16 * 1024 * 1024
+ MAX_TOTAL_BYTES = 32 * 1024 * 1024
+ NESTED_REQUIRED_PATHS = [
+@@ -48,8 +48,8 @@
+     "ci-observations/w1-postwin-contracts/winner-identity.log"
+ ]
+ CLOSED_LOG_MANIFEST = OUTPUT / "closed-original-logs.json"
+-BUNDLE_BYTES = 8575
+-BUNDLE_SHA256 = "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389"
++BUNDLE_BYTES = 11223
++BUNDLE_SHA256 = "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4"
+ LABELS = [
+     "initial-head", "initial-status", "pre-update-preflight",
+     "local-bundle-verify", "local-bundle-list-heads", "fetch-exact-local-bundle",
+@@ -284,7 +284,7 @@
+                 and bundle["bytes"] > 0 and re.fullmatch(r"[0-9a-f]{64}", bundle["sha256"]),
+                 "invalid recorded local bundle identity")
+         require(bundle["bytes"] == BUNDLE_BYTES and bundle["sha256"] == BUNDLE_SHA256,
+-                "recorded P1 bundle differs from the operator-reviewed bundle")
++                "recorded R1 bundle differs from the operator-reviewed bundle")
+         bundle_path = pathlib.PurePosixPath(bundle["path"])
+         require(bundle_path.parent == BUNDLE_ROOT
+                 and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*\.bundle", bundle_path.name),
+@@ -352,7 +352,7 @@
+         require(identity == {
+             "base": None, "candidate": HEAD, "kind": "head", "prospective_merge": None,
+             "schema": "trnm-ci-source-v1", "tested_commit": HEAD, "tested_tree": TREE,
+-            "tests_executed_by_identity_check": False, "tracked_bytes": 3994959368,
++            "tests_executed_by_identity_check": False, "tracked_bytes": 3994964901,
+             "tracked_entries": 41677, "tracked_worktree_verified": True,
+         }, "source sidecar exact eleven-field identity differs")
+         require(data["original/initial-head.stdout"].decode().strip() == START_HEAD
+@@ -394,7 +394,7 @@
+ 
+         fence()
+         index = {
+-            "schema": "trnm-P1-original-repository-truth-package-index-v1",
++            "schema": "trnm-R1-original-repository-truth-package-index-v1",
+             "source_head": HEAD, "source_tree": TREE, "expected_start_head": START_HEAD,
+             "original_schema": original["schema"], "original_status": original["status"],
+             "original_lane_exit": lane["exit"], "original_errors": original["errors"],
+@@ -411,7 +411,7 @@
+             "source_identity": identity,
+             "independently_pinned_source_identity": {
+                 "bytes": SOURCE_BYTES, "sha256": SOURCE_SHA256,
+-                "expected_entries": 41677, "expected_raw_bytes": 3994959368,
++                "expected_entries": 41677, "expected_raw_bytes": 3994964901,
+             },
+             "files": rows, "receipt_directories": initial_inventory["directories"],
+             "unexpected_nested_files_excluded": [],
+@@ -423,7 +423,7 @@
+         index_raw = (json.dumps(index, indent=2) + "\n").encode()
+         index_path = OUTPUT / "EVIDENCE_INDEX.json"
+         save_new(index_path, index_raw)
+-        zip_path = OUTPUT / "original-repository-truth-6a8cd5-v2.zip"
++        zip_path = OUTPUT / "original-repository-truth-2a8646-v1.zip"
+         with zipfile.ZipFile(zip_path, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+             for row in rows:
+                 archive.writestr(row["path"], data[row["path"]])
+@@ -443,7 +443,7 @@
+                             "ZIP member identity differs")
+         fence()
+         completion = {
+-            "schema": "trnm-P1-original-repository-truth-package-completion-v1",
++            "schema": "trnm-R1-original-repository-truth-package-completion-v1",
+             "packaging_status": "verified", "started_at": started, "finished_at": now(),
+             "original_status": original["status"], "original_lane_exit": lane["exit"],
+             "original_errors": original["errors"], "original_lane_elapsed_seconds": lane["elapsed_seconds"],
+--- P1-external-packager.py.original
++++ package_original_external_evidence_2a8646_v1.py
+@@ -1,8 +1,8 @@
+ import pathlib,os,stat,json,hashlib,zipfile,datetime,re,argparse,math,sys
+ BASE=pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root")
+-R=BASE/"final-external-evidence-existing-source-6a8cd5-v2"
+-O=BASE/"package-original-external-evidence-6a8cd5-v1-prci"
+-HEAD="6a8cd55573065ceb50cdb65a7834615f79b521ae";TREE="cbd6b4552c87af27c72c0189806baeb33ecb8bf5"
++R=BASE/"final-external-evidence-2a8646-v1"
++O=BASE/"package-original-external-evidence-2a8646-v1-prci"
++HEAD="2a86462a1ab20c68151719ba4635e3c294391e64";TREE="5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+ DRIVER=BASE/"run_final_rog_external_evidence_existing_source_v2.py"
+ def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+ def sig(s):return [s.st_dev,s.st_ino,s.st_size,s.st_mtime_ns,s.st_ctime_ns,s.st_nlink,s.st_mode]
+@@ -33,7 +33,7 @@
+ def fi(p):
+  b=p.read_bytes();return {"path":str(p),"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()}
+ assert not sys.flags.optimize
+-parser=argparse.ArgumentParser(description="Package only a closed, operator-pinned P1 external lane.")
++parser=argparse.ArgumentParser(description="Package only a closed, operator-pinned R1 external lane.")
+ parser.add_argument("--terminal-summary-sha256",required=True)
+ parser.add_argument("--terminal-exit-code",type=int,choices=(0,1),required=True)
+ parser.add_argument("--closed-log-manifest-sha256",required=True)
+@@ -87,7 +87,7 @@
+   p=pathlib.Path(step[kind+"_path"]);assert p.parent==R and p.name not in names and p.name==step["label"]+"."+kind
+   names.add(p.name);retain(p,"original/"+p.name,"original-execution",step[kind+"_bytes"],step[kind+"_sha256"])
+ for n in ("source-before.json","source-after.json"):
+- names.add(n);retain(R/n,"original/"+n,"original-execution",423,"cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5")
++ names.add(n);retain(R/n,"original/"+n,"original-execution",423,"1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03")
+ assert len(names)==27
+ names.update(x[0]for x in nested)
+ actual=set();empty_dirs=[];inventory_before={}
+@@ -107,7 +107,7 @@
+ source=json.loads(before)
+ assert source=={"base":None,"candidate":HEAD,"kind":"head","prospective_merge":None,
+  "schema":"trnm-ci-source-v1","tested_commit":HEAD,"tested_tree":TREE,
+- "tests_executed_by_identity_check":False,"tracked_bytes":3994959368,
++ "tests_executed_by_identity_check":False,"tracked_bytes":3994964901,
+  "tracked_entries":41677,"tracked_worktree_verified":True}
+ assert before==cache["original/verify-source-before.stdout"]==cache["original/verify-source-after.stdout"]
+ assert cache["original/initial-head.stdout"].decode().strip()==HEAD and cache["original/initial-tree.stdout"].decode().strip()==TREE and cache["original/initial-status.stdout"]==b""
+@@ -127,9 +127,9 @@
+ retain(pathlib.Path(__file__),"producer/"+pathlib.Path(__file__).name,"packaging-producer")
+ assert len(rows)==original_count+3
+ payload_count=len(rows);member_count=len(rows)+1
+-index={"schema":"trnm-P1-original-external-evidence-package-index-v1","source_head":HEAD,"source_tree":TREE,"original_lane":"external-evidence-contract","original_result":derived,"original_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"driver":d["driver"],"original_invocation":d["invocation"],"original_lane_argv":d["lane_argv"],"original_step_invocations":[{k:x[k] for k in ("label","argv","cwd","exit","timeout_seconds","elapsed_seconds")} for x in d["steps"]],"source_before_after_equal":True,"required_object_tree_map":expected,"lane_fetched":[],"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"files":rows,"empty_directories_without_files":sorted(empty_dirs),"unexpected_nested_files_excluded":[]}
++index={"schema":"trnm-R1-original-external-evidence-package-index-v1","source_head":HEAD,"source_tree":TREE,"original_lane":"external-evidence-contract","original_result":derived,"original_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"driver":d["driver"],"original_invocation":d["invocation"],"original_lane_argv":d["lane_argv"],"original_step_invocations":[{k:x[k] for k in ("label","argv","cwd","exit","timeout_seconds","elapsed_seconds")} for x in d["steps"]],"source_before_after_equal":True,"required_object_tree_map":expected,"lane_fetched":[],"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"files":rows,"empty_directories_without_files":sorted(empty_dirs),"unexpected_nested_files_excluded":[]}
+ ib=(json.dumps(index,indent=2)+"\n").encode();ip=O/"EVIDENCE_INDEX.json";save(ip,ib)
+-zp=O/"original-external-evidence-6a8cd5-v1.zip"
++zp=O/"original-external-evidence-2a8646-v1.zip"
+ with zipfile.ZipFile(zp,"x",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+  for row in rows:z.writestr(row["path"],cache[row["path"]])
+  z.writestr("EVIDENCE_INDEX.json",ib)
+@@ -156,7 +156,7 @@
+   p=pathlib.Path(b)/n;s=p.lstat();assert stat.S_ISREG(s.st_mode) and s.st_nlink==1
+   inventory_after[str(p.relative_to(R))]=sig(s)
+ assert inventory_after==inventory_before
+-summary={"schema":"trnm-P1-original-external-evidence-package-completion-v1","started_at":started,"finished_at":now(),"original_head":HEAD,"original_tree":TREE,"original_result":derived,"original_lane_argv":d["lane_argv"],"original_driver_invocation":d["invocation"],"original_all_12_steps_exit0":all(x["exit"]==0 for x in d["steps"]),"original_lane_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"payload_file_count":payload_count,"zip_member_count":member_count,"zip":fi(zp),"index":fi(ip),"producer":fi(pathlib.Path(__file__)),"all_member_crc_size_sha_verified":True,"original_source_file_versions_unchanged":True,"source_before_after_equal":True,"verified_object_trees":expected,"fetched":[],"original_readiness_suite":readiness,"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"tests_rerun":False,"source_or_git_objects_modified":False,"network_actions_by_packager":False,"unexpected_nested_files_excluded":[]}
++summary={"schema":"trnm-R1-original-external-evidence-package-completion-v1","started_at":started,"finished_at":now(),"original_head":HEAD,"original_tree":TREE,"original_result":derived,"original_lane_argv":d["lane_argv"],"original_driver_invocation":d["invocation"],"original_all_12_steps_exit0":all(x["exit"]==0 for x in d["steps"]),"original_lane_elapsed_seconds":lane["elapsed_seconds"],"original_file_count":original_count,"required_flat_original_file_count":27,"nested_original_log_count":len(nested),"closed_log_manifest_sha256":args.closed_log_manifest_sha256,"operator_terminal_summary_sha256":args.terminal_summary_sha256,"operator_terminal_exit_code":args.terminal_exit_code,"original_lane_exit":lane["exit"],"original_errors":d["errors"],"original_bytes":original_bytes,"payload_file_count":payload_count,"zip_member_count":member_count,"zip":fi(zp),"index":fi(ip),"producer":fi(pathlib.Path(__file__)),"all_member_crc_size_sha_verified":True,"original_source_file_versions_unchanged":True,"source_before_after_equal":True,"verified_object_trees":expected,"fetched":[],"original_readiness_suite":readiness,"hosted_ci_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"tests_rerun":False,"source_or_git_objects_modified":False,"network_actions_by_packager":False,"unexpected_nested_files_excluded":[]}
+ sp=O/"package-summary.json";save(sp,(json.dumps(summary,indent=2)+"\n").encode())
+ for fd,_,_ in held:os.close(fd)
+ print(json.dumps({"summary":fi(sp),"zip":summary["zip"],"index":summary["index"],"producer":summary["producer"],"original_files":original_count,"original_bytes":original_bytes,"zip_members":member_count,"all_crc_sha_verified":True,"source_head":HEAD,"source_tree":TREE,"original_result":derived,"tests_rerun":False,"source_or_git_objects_modified":False}),flush=True)

@@ -1,0 +1,512 @@
+{
+  "scripts/ci/check_client_confirmation_evidence.py": [
+    {
+      "line": 164,
+      "text": "    require(overrides.get('TRNM_EXECUTION_WORKERS') == '8'"
+    },
+    {
+      "line": 165,
+      "text": "            and overrides.get('TRNM_NATIVE_WORK', '').endswith('/release/examples/pon_work_io')"
+    },
+    {
+      "line": 166,
+      "text": "            and overrides.get('TRNM_NATIVE_EXECUTOR', '').endswith('/release/examples/pon_execute'), 'missing actual native client selection')"
+    },
+    {
+      "line": 248,
+      "text": "        require(env.get('TRNM_EXECUTION_WORKERS') == '8'"
+    },
+    {
+      "line": 249,
+      "text": "                and env.get('TRNM_NATIVE_WORK', '').endswith('/release/examples/pon_work_io')"
+    },
+    {
+      "line": 250,
+      "text": "                and env.get('TRNM_NATIVE_SESSION', '').endswith('/release/examples/pon_execute_session')"
+    },
+    {
+      "line": 251,
+      "text": "                and not env.get('TRNM_NATIVE_EXECUTOR'), 'explicit session backend')"
+    },
+    {
+      "line": 271,
+      "text": "    require(pipeline_env.get('TRNM_NATIVE_SESSION', '').endswith('/release/examples/pon_execute_session')"
+    },
+    {
+      "line": 272,
+      "text": "            and pipeline_env.get('TRNM_NATIVE_WORK', '').endswith('/release/examples/pon_work_io')"
+    },
+    {
+      "line": 273,
+      "text": "            and not pipeline_env.get('TRNM_NATIVE_EXECUTOR'), 'explicit pipeline backend')"
+    },
+    {
+      "line": 344,
+      "text": "    require(pipeline['binaries'] == {'TRNM_NATIVE_WORK': q['native_binary_sha256']['pon_work_io'],"
+    },
+    {
+      "line": 345,
+      "text": "                                    'TRNM_NATIVE_SESSION': native_session_hash}, 'pipeline binaries')"
+    },
+    {
+      "line": 368,
+      "text": "                {'TRNM_NATIVE_SESSION':'','TRNM_NATIVE_EXECUTOR':'','TRNM_NATIVE_WORK':''}):"
+    },
+    {
+      "line": 370,
+      "text": "            os.environ.pop('TRNM_NATIVE_WORK', None)"
+    }
+  ],
+  "scripts/ci/check_evaluation_bundle_evidence.py": [
+    {
+      "line": 92,
+      "text": "   require(row['environment_overrides'].get('TRNM_EXECUTION_WORKERS')=='8' and row['environment_overrides'].get('TRNM_NATIVE_EXECUTOR','').endswith('/release/examples/pon_execute'),'native backend not selected')"
+    }
+  ],
+  "scripts/ci/check_native_node_supplements.py": [
+    {
+      "line": 37,
+      "text": "        with tempfile.TemporaryDirectory(prefix='pon-native-receipt-replay-') as tmp, patch.dict(os.environ,{'TRNM_NATIVE_SESSION':'','TRNM_NATIVE_EXECUTOR':''}):"
+    },
+    {
+      "line": 38,
+      "text": "            os.environ.pop('TRNM_NATIVE_WORK',None)"
+    }
+  ],
+  "scripts/ci/test_client_confirmation_evidence.py": [
+    {
+      "line": 118,
+      "text": "        self.row('native-client-confirmation')['environment_overrides'].pop('TRNM_NATIVE_EXECUTOR')"
+    }
+  ],
+  "scripts/ci/test_native_session_evidence.py": [
+    {
+      "line": 85,
+      "text": "        self.row('session-client-confirmation')['environment_overrides'].pop('TRNM_NATIVE_SESSION')"
+    },
+    {
+      "line": 89,
+      "text": "        self.row('session-pipeline')['environment_overrides'].pop('TRNM_NATIVE_WORK')"
+    }
+  ],
+  "formal/pon-nakamoto-v1/ledger.py": [
+    {
+      "line": 213,
+      "text": "    if os.environ.get('TRNM_NATIVE_EXECUTOR'):"
+    },
+    {
+      "line": 327,
+      "text": "        selected=os.environ.get('TRNM_NATIVE_SESSION')"
+    },
+    {
+      "line": 328,
+      "text": "        require(not(selected and os.environ.get('TRNM_NATIVE_EXECUTOR')),'NATIVE_BACKEND_CONFLICT')"
+    },
+    {
+      "line": 335,
+      "text": "                int(os.environ.get('TRNM_EXECUTION_WORKERS','1')))"
+    }
+  ],
+  "scripts/ci/check_ci_contract.py": [
+    {
+      "line": 74,
+      "text": "        run: python3 scripts/pon_work_rejection_report.py --run --out \"$TRNM_CI_RECEIPT_DIR/work-rejection\""
+    },
+    {
+      "line": 125,
+      "text": "          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\""
+    },
+    {
+      "line": 154,
+      "text": "PAIRED_WORK_ORACLE = '    TRNM_PAIRED_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io\")\" TRNM_PAIRED_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work\" python3 formal/pon-nakamoto-v1/test_paired_work.py -v\\n'"
+    },
+    {
+      "line": 155,
+      "text": "ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" TRNM_ZERO_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work\" python3 formal/pon-nakamoto-v1/test_zero_work.py -v\\n'"
+    },
+    {
+      "line": 158,
+      "text": "                         '    python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" --native-pq \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle\")\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle\"\\n')"
+    },
+    {
+      "line": 159,
+      "text": "NATIVE_OWNER_SCORE_BRIDGE = ('    TRNM_NATIVE_OWNER_OBSERVATION=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1\")\" TRNM_NATIVE_OWNER_RECORD_DIR=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge\" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v\\n'"
+    },
+    {
+      "line": 160,
+      "text": "                             '    python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json\"\\n')"
+    },
+    {
+      "line": 161,
+      "text": "LIFECYCLE_QUERY_NATIVE = '    LQC_NATIVE_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" LQC_NATIVE_PREPARED=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/lifecycle-query\"\\n'"
+    },
+    {
+      "line": 163,
+      "text": "NATIVE_OWNER_JOURNAL = ('    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_owner_journal\\n    \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_journal_v1\")\" \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal\"\\n    NATIVE_OWNER_JOURNAL_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \\'test_native_owner_journal.py\\' -v\\n    python3 formal/pon-nakamoto-v1/native_owner_journal.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json\"\\n'"
+    },
+    {
+      "line": 165,
+      "text": "                        + '    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output-dir \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition\"\\n')"
+    },
+    {
+      "line": 166,
+      "text": "NATIVE_RISK_LEDGER = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger\\n    \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1\")\" \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger\"\\n    NATIVE_RISK_LEDGER_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \\'test_native_risk_ledger.py\\' -v\\n    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json\"\\n'"
+    },
+    {
+      "line": 279,
+      "text": "      TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY=\"$trnm_native_receipt_root/native-growth-reference\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-growth-reference-release.log\""
+    },
+    {
+      "line": 289,
+      "text": "      TRNM_NATIVE_GROWTH_V2_EXPORT_DIR=\"$trnm_native_receipt_root/native-growth-v2\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-growth-v2-release.log\""
+    },
+    {
+      "line": 298,
+      "text": "      trnm_model_receipt_root=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}\""
+    },
+    {
+      "line": 300,
+      "text": "      export TRNM_CI_RECEIPT_DIR=\"$trnm_model_receipt_root\""
+    },
+    {
+      "line": 312,
+      "text": "      export TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR=\"$trnm_model_receipt_root/native-authenticated-state\""
+    },
+    {
+      "line": 313,
+      "text": "      test ! -e \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR\""
+    },
+    {
+      "line": 314,
+      "text": "      test ! -L \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR\""
+    },
+    {
+      "line": 371,
+      "text": "      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.json\" \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.sqlite\" --output \"$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/oracle.json\""
+    },
+    {
+      "line": 380,
+      "text": "      trnm_native_receipt_root=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}\""
+    },
+    {
+      "line": 391,
+      "text": "      TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=\"$trnm_native_receipt_root/native-account-verification-cost\" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee \"$trnm_native_receipt_root/native-account-verification-cost.log\""
+    },
+    {
+      "line": 488,
+      "text": "PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE_BLOCK + '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native\""
+    },
+    {
+      "line": 495,
+      "text": "    TRNM_PAIRED_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io\")\" TRNM_PAIRED_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work\" python3 formal/pon-nakamoto-v1/test_paired_work.py -v"
+    },
+    {
+      "line": 496,
+      "text": "    TRNM_ZERO_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" TRNM_ZERO_WORK_OUTPUT=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work\" python3 formal/pon-nakamoto-v1/test_zero_work.py -v"
+    },
+    {
+      "line": 499,
+      "text": "    python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" --native-pq \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle\")\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle\""
+    },
+    {
+      "line": 500,
+      "text": "    LQC_NATIVE_WORK=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\")\" LQC_NATIVE_PREPARED=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io\")\" python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/lifecycle-query\""
+    },
+    {
+      "line": 515,
+      "text": "    TRNM_NATIVE_OWNER_OBSERVATION=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1\")\" TRNM_NATIVE_OWNER_RECORD_DIR=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge\" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v"
+    },
+    {
+      "line": 516,
+      "text": "    python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json\" --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json\""
+    },
+    {
+      "line": 518,
+      "text": "    \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_journal_v1\")\" \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal\""
+    },
+    {
+      "line": 519,
+      "text": "    NATIVE_OWNER_JOURNAL_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_owner_journal.py' -v"
+    },
+    {
+      "line": 520,
+      "text": "    python3 formal/pon-nakamoto-v1/native_owner_journal.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json\""
+    },
+    {
+      "line": 522,
+      "text": "    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json\" --output-dir \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition\""
+    },
+    {
+      "line": 524,
+      "text": "    \"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1\")\" \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger\""
+    },
+    {
+      "line": 525,
+      "text": "    NATIVE_RISK_LEDGER_RUN=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v"
+    },
+    {
+      "line": 526,
+      "text": "    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json\" --output \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json\""
+    },
+    {
+      "line": 529,
+      "text": "    python3 scripts/run_public_v3_service_campaign.py --out \"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service\""
+    },
+    {
+      "line": 572,
+      "text": "    TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py"
+    },
+    {
+      "line": 573,
+      "text": "    TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py"
+    },
+    {
+      "line": 574,
+      "text": "    TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_SESSION=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py"
+    },
+    {
+      "line": 575,
+      "text": "    TRNM_NATIVE_WORK=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io\" TRNM_NATIVE_EXECUTOR=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py"
+    },
+    {
+      "line": 590,
+      "text": "    TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py"
+    },
+    {
+      "line": 591,
+      "text": "    TRNM_NATIVE_EXECUTOR=\"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute\" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py"
+    },
+    {
+      "line": 592,
+      "text": "    TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py"
+    },
+    {
+      "line": 593,
+      "text": "    TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py"
+    },
+    {
+      "line": 930,
+      "text": "      w1_contract_out=\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/w1-postwin-contracts\""
+    },
+    {
+      "line": 1652,
+      "text": "    require(script.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY') =="
+    },
+    {
+      "line": 1653,
+      "text": "            NATIVE_GROWTH_RELEASE_BLOCK.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY'),"
+    },
+    {
+      "line": 1659,
+      "text": "    require(script.count('TRNM_NATIVE_GROWTH_V2_EXPORT_DIR') =="
+    },
+    {
+      "line": 1660,
+      "text": "            NATIVE_GROWTH_V2_RELEASE_BLOCK.count('TRNM_NATIVE_GROWTH_V2_EXPORT_DIR'),"
+    },
+    {
+      "line": 1767,
+      "text": "        run: python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+    },
+    {
+      "line": 1770,
+      "text": "        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+    },
+    {
+      "line": 1871,
+      "text": "    workflow_command = '        run: ' + command + '\"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\\n'"
+    },
+    {
+      "line": 1875,
+      "text": "        + '\"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native\"\\n')"
+    }
+  ],
+  "scripts/qualification_runtime.py": [
+    {
+      "line": 25,
+      "text": "GNU_TIME_EXECUTABLE_LIMIT = 16 * 1024 * 1024"
+    },
+    {
+      "line": 26,
+      "text": "GNU_TIME_PROBE_LIMIT = 16 * 1024"
+    },
+    {
+      "line": 27,
+      "text": "GNU_TIME_USAGE_LIMIT = 16 * 1024"
+    },
+    {
+      "line": 37,
+      "text": "            raise ValueError('GNU_TIME_REGULAR_FILE_REQUIRED')"
+    },
+    {
+      "line": 38,
+      "text": "        if info.st_size > GNU_TIME_EXECUTABLE_LIMIT:"
+    },
+    {
+      "line": 39,
+      "text": "            raise ValueError('GNU_TIME_EXECUTABLE_LIMIT')"
+    },
+    {
+      "line": 43,
+      "text": "            chunk = stream.read(min(65536, GNU_TIME_EXECUTABLE_LIMIT - size + 1))"
+    },
+    {
+      "line": 47,
+      "text": "            if size > GNU_TIME_EXECUTABLE_LIMIT:"
+    },
+    {
+      "line": 48,
+      "text": "                raise ValueError('GNU_TIME_EXECUTABLE_LIMIT')"
+    },
+    {
+      "line": 55,
+      "text": "        raise ValueError('GNU_TIME_EXECUTABLE_CHANGED')"
+    },
+    {
+      "line": 61,
+      "text": "    TRNM_GNU_TIME may name an absolute executable path (for example an official"
+    },
+    {
+      "line": 62,
+      "text": "    package extracted into a writable workspace). The default is /usr/bin/time."
+    },
+    {
+      "line": 68,
+      "text": "    selected = environment.get('TRNM_GNU_TIME', '/usr/bin/time')"
+    },
+    {
+      "line": 70,
+      "text": "        raise ValueError('GNU_TIME_ABSOLUTE_PATH_REQUIRED')"
+    },
+    {
+      "line": 73,
+      "text": "        raise ValueError('GNU_TIME_EXECUTABLE_REQUIRED')"
+    },
+    {
+      "line": 76,
+      "text": "                        stdout_limit=GNU_TIME_PROBE_LIMIT, stderr_limit=GNU_TIME_PROBE_LIMIT)"
+    },
+    {
+      "line": 78,
+      "text": "        raise ValueError('GNU_TIME_PROBE_FAILED')"
+    },
+    {
+      "line": 81,
+      "text": "        raise ValueError('GNU_TIME_IDENTITY_REQUIRED')"
+    },
+    {
+      "line": 83,
+      "text": "        raise ValueError('GNU_TIME_CHANGED_DURING_PROBE')"
+    },
+    {
+      "line": 84,
+      "text": "    environment['TRNM_GNU_TIME'] = str(executable)"
+    },
+    {
+      "line": 97,
+      "text": "        lines = read_bounded(usage, GNU_TIME_USAGE_LIMIT).decode('utf-8').splitlines()"
+    }
+  ],
+  "scripts/run_public_readiness_qualification.py": [
+    {
+      "line": 7,
+      "text": "Resource observer: defaults to /usr/bin/time. To use an officially installed or"
+    },
+    {
+      "line": 8,
+      "text": "extracted GNU time elsewhere, set TRNM_GNU_TIME to its absolute executable path."
+    },
+    {
+      "line": 150,
+      "text": "        if key.startswith('TRNM_') and key != 'TRNM_GNU_TIME': env.pop(key)"
+    }
+  ],
+  "scripts/test_qualification_runtime.py": [
+    {
+      "line": 24,
+      "text": "from qualification_runtime import (GNU_TIME_EXECUTABLE_LIMIT, bind_gnu_time,"
+    },
+    {
+      "line": 144,
+      "text": "        self.assertEqual(environment['TRNM_GNU_TIME'], observer['executable'])"
+    },
+    {
+      "line": 156,
+      "text": "                    bind_gnu_time({'TRNM_GNU_TIME': selected})"
+    },
+    {
+      "line": 160,
+      "text": "        with self.assertRaisesRegex(ValueError, 'GNU_TIME_IDENTITY_REQUIRED'):"
+    },
+    {
+      "line": 161,
+      "text": "            bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(invalid)))"
+    },
+    {
+      "line": 175,
+      "text": "                self.assertEqual(environment['TRNM_GNU_TIME'], observer['executable'])"
+    },
+    {
+      "line": 196,
+      "text": "            stream.truncate(GNU_TIME_EXECUTABLE_LIMIT + 1)"
+    },
+    {
+      "line": 198,
+      "text": "        with self.assertRaisesRegex(ValueError, 'GNU_TIME_EXECUTABLE_LIMIT'):"
+    },
+    {
+      "line": 199,
+      "text": "            bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))"
+    },
+    {
+      "line": 210,
+      "text": "                    bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))"
+    },
+    {
+      "line": 223,
+      "text": "                _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))"
+    },
+    {
+      "line": 227,
+      "text": "                with self.assertRaisesRegex(ValueError, 'GNU_TIME_EXECUTABLE_CHANGED'):"
+    },
+    {
+      "line": 244,
+      "text": "                    _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))"
+    },
+    {
+      "line": 258,
+      "text": "                    self.assertEqual(row['resource_observer_error'], 'GNU_TIME_EXECUTABLE_CHANGED')"
+    }
+  ],
+  "formal/pon-nakamoto-v1/work_backend.py": [
+    {
+      "line": 17,
+      "text": "    path=Path(os.environ['TRNM_NATIVE_WORK'])"
+    },
+    {
+      "line": 24,
+      "text": "    if not os.environ.get('TRNM_NATIVE_WORK'):return oracle.prove(challenge,a,b)"
+    },
+    {
+      "line": 32,
+      "text": "    if not os.environ.get('TRNM_NATIVE_WORK'):return oracle.verify(challenge,task,target,proof)"
+    }
+  ],
+  "formal/pon-nakamoto-v1/native_execution.py": [
+    {
+      "line": 9,
+      "text": "    path=Path(binary or os.environ.get('TRNM_NATIVE_EXECUTOR',''))"
+    },
+    {
+      "line": 13,
+      "text": "    count=int(workers if workers is not None else os.environ.get('TRNM_EXECUTION_WORKERS','1'))"
+    }
+  ],
+  "scripts/ci/ci_observation.py": [
+    {
+      "line": 35,
+      "text": "    base = Path(os.environ.get('TRNM_CI_RECEIPT_DIR',"
+    }
+  ]
+}

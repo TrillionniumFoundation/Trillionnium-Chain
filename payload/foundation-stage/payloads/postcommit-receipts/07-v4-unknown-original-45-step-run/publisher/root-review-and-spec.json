@@ -1,0 +1,20 @@
+{
+  "spec": {
+    "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/publish-candidate-and-archive-dc42ce-v2",
+    "candidate_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "candidate_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+    "expected_remote_manifest": "/private/tmp/chain-consolidation-20261114-root/remote-ref-and-open-pr-inventory-0208-v1/branches-before.json",
+    "expected_remote_sha256": "35b9f97cf2019347ddaf025eb9b5b58da4c66a4689a65b12dfba2c127a8dac94",
+    "frozen_remote_manifest": "/private/tmp/chain-consolidation-20261114-root/remote-readonly-refresh-0170-v1/branches.json",
+    "frozen_remote_sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+    "local_gate_receipt": "/private/tmp/chain-consolidation-20261114-root/final-prepublication-source-gates-dc42ce-v1/receipt.json",
+    "local_gate_receipt_sha256": "602cb049eabab6e5ce92639b69123caa55e6d0fab5bd7a69f8e6eaa1cb2639dc",
+    "archive_tag": "archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2"
+  },
+  "spec_path": "/private/tmp/chain-consolidation-20261114-root/publish-candidate-and-archive-dc42ce-spec-v2.json",
+  "spec_bytes": 1008,
+  "spec_sha256": "c63009a5e7d99af7e60f66cfd43fcf036a6cf4d5b002a98cd4500c3d76b07c2a",
+  "publisher_sha256": "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038",
+  "exact_reviewed_patch_verified": true,
+  "previous_attempt_reconciliation_sha256": "8dd4e9e210e707782f3f1f816070519ef435f11e9d8506b261159e7c6bf60506"
+}

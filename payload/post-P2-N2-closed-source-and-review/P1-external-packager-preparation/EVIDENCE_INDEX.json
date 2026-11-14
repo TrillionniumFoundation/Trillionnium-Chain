@@ -1,0 +1,47 @@
+{
+  "schema": "trnm-P1-external-packager-preparation-index-v1",
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/preparation-producer.py",
+      "bytes": 9240,
+      "sha256": "d48c60bf8c5bd6cda2719c6529174e6382372df6b9da7108373b8e6a24ccb962"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/preparation-inputs.json",
+      "bytes": 4142,
+      "sha256": "644a4968c926f2425c36abfacc64ed56027323b3ba5c35cde80d7ac52ba0dd4d"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/M8-external-packager.py.original",
+      "bytes": 14207,
+      "sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+      "bytes": 14207,
+      "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/external-M8-to-P1.patch",
+      "bytes": 9152,
+      "sha256": "f880d789b7bbfdbfffd73a6e4ad2adaabdf99430e522060b546623a72cad5fee"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/closed-log-manifest-contract.json",
+      "bytes": 2479,
+      "sha256": "149fb563a8a9af41a2e902692ebbb4b28aed21d5485de4afcfdad487f125cdc3"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/static-identity-proof.json",
+      "bytes": 5577,
+      "sha256": "b4661366a8a3b72a676f8e711c51420fdd2817ef06f2ddd47c78319f251644bb"
+    },
+    {
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/README.md",
+      "bytes": 1667,
+      "sha256": "4ed061eb1036905148cc93d83f38cd2aaea30daf1cd5c4f2d83204e5471374ab"
+    }
+  ],
+  "self_and_summary_excluded": true,
+  "all_preparation_only": true
+}

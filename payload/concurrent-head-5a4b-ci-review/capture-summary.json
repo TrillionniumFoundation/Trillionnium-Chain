@@ -1,0 +1,306 @@
+{
+  "blob_index": {
+    "bytes": 21607,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-blob-index.json",
+    "sha256": "a366816343eff62e060fc52404b28c80fd7de518227d01d0a103241d502f95e2"
+  },
+  "commits": {
+    "C0": {
+      "message": "docs: preserve empty network receipt as raw evidence\n",
+      "oid": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "parents": [
+        "318527b4b2a07b5037d755547acd92e46ae3aded"
+      ],
+      "raw_sha256": "d6e24ddaef8d3afb9029677a0e14e1d651ce466ba388f6de1b890b94c4a2c4e0",
+      "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b"
+    },
+    "M6": {
+      "message": "Merge exact collector control count and preserve original lane outcomes\n",
+      "oid": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "parents": [
+        "08c9becab740ab2c375b970f376a7638f44c9e8e",
+        "f0f6a4192dc3bcda2fca20110322f7cff07e4644"
+      ],
+      "raw_sha256": "e324c67a3de643639113c7d287bbf2ff9dc8ee00b47c07e0d78d469f36e056b3",
+      "tree": "f8d170ff75990e879e93888a95e5408f36b36f6c"
+    },
+    "N": {
+      "message": "Bind recent acceptance workflow to reviewed store source\n",
+      "oid": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "parents": [
+        "2635e6f11a90b9dcd05101ab386d60d61f8ef7d4"
+      ],
+      "raw_sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a",
+      "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+    }
+  },
+  "errors": [],
+  "exclusive_commit_count": 14,
+  "exclusive_commit_log": "885b8a9c68f54e63a8b37db4a7cfaca187493a85\t73d5a17b9b7fb5f67040554f22ff37d20725e548\t1794624971\t2026-11-13T21:56:11-05:00\tfix(ci): bind current QROM checks to reviewed dependency locks\n7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69\t885b8a9c68f54e63a8b37db4a7cfaca187493a85\t1794625405\t2026-11-13T22:03:25-05:00\tfix(ci): validate native-completion budget observations by phase\n933d2d13821617c3003796c04eb440ff5e30dba3\t7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69 e40d7071c4724e6600deef8a2820bf35c1982289\t1794627539\t2026-11-13T22:38:59-05:00\tmerge: preserve concurrent History CI corrections with audited source fixes\nd426d86cc7d8b457f8a0a2a566b17f4aa55e7e57\t933d2d13821617c3003796c04eb440ff5e30dba3\t1794632582\t2026-11-14T00:03:02-05:00\tFix reviewed hash-purpose descriptor binding\n3ccbc6666f4256bdd752d68d0b7f5eab255ac69c\td426d86cc7d8b457f8a0a2a566b17f4aa55e7e57 dc42ce4df5cff79cc61c5addbaf01074b56b06ca\t1794643660\t2026-11-14T03:07:40-05:00\tMerge current candidate with retained audit corrections\ncb1e6108ed2508e454d4e14ef518b9fa12369efe\t3ccbc6666f4256bdd752d68d0b7f5eab255ac69c\t1794643860\t2026-11-14T03:11:00-05:00\tFix retained control coverage and audited source regressions\nf9cf4c4256ed86fef739f6f31962dd4122eb63fb\tcb1e6108ed2508e454d4e14ef518b9fa12369efe\t1794644444\t2026-11-14T03:20:44-05:00\tBind current durable reader to reviewed endpoint witness gate\n9b57c817ff7db396d8e606a74403f48bce65862f\tf9cf4c4256ed86fef739f6f31962dd4122eb63fb\t1794645324\t2026-11-14T03:35:24-05:00\tSeparate frozen PQ models from current source correspondence\n55255ebba9001df7ff858a79f378719624c200bf\t9b57c817ff7db396d8e606a74403f48bce65862f\t1794645815\t2026-11-14T03:43:35-05:00\tClose SQLite evidence connections after each transaction\ncecc3041ae1f0e0a1da4c82c7f0467254f76cdfb\t55255ebba9001df7ff858a79f378719624c200bf\t1794646223\t2026-11-14T03:50:23-05:00\tAssert the current PQ report at its explicit namespace\na365d6937ccda638e3a096adbab1ce84217e6d22\tcecc3041ae1f0e0a1da4c82c7f0467254f76cdfb\t1794647162\t2026-11-14T04:06:02-05:00\tRevalidate the persisted SP27 native process at readback\nfc39da5f35298ce8a4c34aa5bdb25849648612f9\ta365d6937ccda638e3a096adbab1ce84217e6d22\t1794647449\t2026-11-14T04:10:49-05:00\tRequire matching JSON types in complete source receipt pairs\n2635e6f11a90b9dcd05101ab386d60d61f8ef7d4\tfc39da5f35298ce8a4c34aa5bdb25849648612f9\t1794648644\t2026-11-14T04:30:44-05:00\tBind reviewed corrective source inventories and current audit documentation\n5a4b7fe8de1adce803184f262fd9f704ead1930c\t2635e6f11a90b9dcd05101ab386d60d61f8ef7d4\t1794649791\t2026-11-14T04:49:51-05:00\tBind recent acceptance workflow to reviewed store source\n",
+  "groups": {
+    "ci_contract": [
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "configs": [
+      "config/pon/hash-use-contract-v1.json",
+      "config/pon/pq-authority-effects-v1.json",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq128-lifetime-composition-current-v3.json",
+      "config/pon/pq128-source-correspondence-current-v2.json",
+      "config/pon/w1-lifetime-current-source-v2.json"
+    ],
+    "docs": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+    ],
+    "evidence": [
+      "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+      "evidence/pon-w1-qrom-semantics-current-20261114/report.json"
+    ],
+    "lifetime_consumers": [
+      "scripts/ci/hash_use_contract.py",
+      "scripts/ci/pq_authority_effect_register.py",
+      "scripts/ci/pq_chain_claim_guard.py",
+      "scripts/ci/pq_lifetime_composition.py",
+      "scripts/ci/pq_lifetime_current_v2.py",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "scripts/ci/test_pq_lifetime_composition.py",
+      "scripts/ci/test_pq_lifetime_current_v2.py",
+      "scripts/ci/test_w1_lifetime_current_observation.py",
+      "scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "scripts/ci/test_w1_qrom_current_ci.py",
+      "scripts/ci/test_w1_qrom_semantics_audit.py",
+      "scripts/w1_lifetime_current_observation.py"
+    ],
+    "readiness": [
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/test_public_readiness_evidence.py"
+    ],
+    "runners": [
+      "formal/throughput-v1/test_execution_report.py",
+      "scripts/ci/run_cell_learning_business_readback.py",
+      "scripts/ci/run_pon_budget_controls.py",
+      "scripts/ci/run_sp27_receiver_controls.py",
+      "scripts/ci/run_sp27_strata_controls.py",
+      "scripts/ci/test_pon_budget_controls.py",
+      "scripts/ci/test_sp27_receiver_controls.py",
+      "scripts/ci/test_sp27_strata_controls.py",
+      "scripts/ci/test_throughput_cost_coverage.py",
+      "scripts/ci/throughput_cost_coverage.py"
+    ],
+    "workflows": [
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      ".github/workflows/pon-w1-transparent-profile.yml"
+    ]
+  },
+  "inventory_origin": {
+    "bytes": 18874,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/architecture-inventory.original.json",
+    "sha256": "f26d4c565c366e2ce2901d245aa55f6e9c517d84c0b6afbc675b46eed3349d46"
+  },
+  "network_requests": false,
+  "patches": [
+    {
+      "bytes": 4458,
+      "comparison": "C0_to_N",
+      "group": "workflows",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-workflows.stdout",
+      "sha256": "a746ce7f0e8e9383f93584e311affe8eef5053c00dddf74afb964f9115b66a30"
+    },
+    {
+      "bytes": 4458,
+      "comparison": "M6_to_N",
+      "group": "workflows",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-workflows.stdout",
+      "sha256": "a746ce7f0e8e9383f93584e311affe8eef5053c00dddf74afb964f9115b66a30"
+    },
+    {
+      "bytes": 13838,
+      "comparison": "C0_to_N",
+      "group": "ci_contract",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-ci_contract.stdout",
+      "sha256": "c551ff99214bcd923a5b388136f8f82184b8e0c79809e00ffb12c267d2f394a8"
+    },
+    {
+      "bytes": 17679,
+      "comparison": "M6_to_N",
+      "group": "ci_contract",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-ci_contract.stdout",
+      "sha256": "80c3cbe04711e7d36e289ed3b1553be89ad044cd42101eb0c6a2f9989ec7286f"
+    },
+    {
+      "bytes": 42825,
+      "comparison": "C0_to_N",
+      "group": "runners",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-runners.stdout",
+      "sha256": "e0ed4756dab635227756e6278d3e8956d39b007a792e912d201193d284b8f7da"
+    },
+    {
+      "bytes": 42825,
+      "comparison": "M6_to_N",
+      "group": "runners",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-runners.stdout",
+      "sha256": "e0ed4756dab635227756e6278d3e8956d39b007a792e912d201193d284b8f7da"
+    },
+    {
+      "bytes": 22959,
+      "comparison": "C0_to_N",
+      "group": "readiness",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-readiness.stdout",
+      "sha256": "0526415cd0dd784ff0f94050d8b5f90e5f7c9d8cf6bc7e9bfa3a566b1b005c9e"
+    },
+    {
+      "bytes": 25541,
+      "comparison": "M6_to_N",
+      "group": "readiness",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-readiness.stdout",
+      "sha256": "0f4bfb4c9a29f0530deb287fb28527338abc9a7c44b946b073b19256b495dde1"
+    },
+    {
+      "bytes": 74798,
+      "comparison": "C0_to_N",
+      "group": "lifetime_consumers",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-lifetime_consumers.stdout",
+      "sha256": "c3c310974a6694604ea9dc92a09f903da865876691db7f8ca3bd4590bc7687b2"
+    },
+    {
+      "bytes": 74740,
+      "comparison": "M6_to_N",
+      "group": "lifetime_consumers",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-lifetime_consumers.stdout",
+      "sha256": "c91df576359eb1f58c6d797727748f91c5a4f03bff186b754c9923a776a1161c"
+    },
+    {
+      "bytes": 59909,
+      "comparison": "C0_to_N",
+      "group": "configs",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-configs.stdout",
+      "sha256": "a02a033923141875a71b809d402e1650ba0afcd0945d39b0594cab5fcdfcd55e"
+    },
+    {
+      "bytes": 73524,
+      "comparison": "M6_to_N",
+      "group": "configs",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-configs.stdout",
+      "sha256": "89bb98d431e359a6e2e17027e4475175a75d67d5b4f33f0692e7ebf59df8e22a"
+    },
+    {
+      "bytes": 32552,
+      "comparison": "C0_to_N",
+      "group": "docs",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-docs.stdout",
+      "sha256": "c88ff8fd391c7e364d45b8b52f451fffd6223025ff38854f336edc2f506b77e8"
+    },
+    {
+      "bytes": 45812,
+      "comparison": "M6_to_N",
+      "group": "docs",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-docs.stdout",
+      "sha256": "2b53122c66df9262075bcaed43f5f703196bd43b9b7bde1c714c1864d01adf79"
+    },
+    {
+      "bytes": 82207,
+      "comparison": "C0_to_N",
+      "group": "evidence",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/C0-N-evidence.stdout",
+      "sha256": "2278e9543957d53d6711039a9f56183847c2e608cfb118d9808de472d9954d85"
+    },
+    {
+      "bytes": 82207,
+      "comparison": "M6_to_N",
+      "group": "evidence",
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/raw/M6-N-evidence.stdout",
+      "sha256": "2278e9543957d53d6711039a9f56183847c2e608cfb118d9808de472d9954d85"
+    }
+  ],
+  "paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    ".github/workflows/pon-w1-transparent-profile.yml",
+    "config/pon/hash-use-contract-v1.json",
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "config/pon/pq128-lifetime-composition-current-v3.json",
+    "config/pon/pq128-source-correspondence-current-v2.json",
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+    "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+    "formal/throughput-v1/test_execution_report.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/check_public_readiness_evidence.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_chain_claim_guard.py",
+    "scripts/ci/pq_lifetime_composition.py",
+    "scripts/ci/pq_lifetime_current_v2.py",
+    "scripts/ci/run_cell_learning_business_readback.py",
+    "scripts/ci/run_pon_budget_controls.py",
+    "scripts/ci/run_sp27_receiver_controls.py",
+    "scripts/ci/run_sp27_strata_controls.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pon_budget_controls.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "scripts/ci/test_pq_chain_claim_guard.py",
+    "scripts/ci/test_pq_lifetime_budget.py",
+    "scripts/ci/test_pq_lifetime_composition.py",
+    "scripts/ci/test_pq_lifetime_current_v2.py",
+    "scripts/ci/test_public_readiness_evidence.py",
+    "scripts/ci/test_sp27_receiver_controls.py",
+    "scripts/ci/test_sp27_strata_controls.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/ci/test_w1_qrom_closure_current_controls.py",
+    "scripts/ci/test_w1_qrom_current_ci.py",
+    "scripts/ci/test_w1_qrom_semantics_audit.py",
+    "scripts/ci/throughput_cost_coverage.py",
+    "scripts/w1_lifetime_current_observation.py"
+  ],
+  "python_definition_deltas": {
+    "bytes": 37065,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/python-definition-deltas.json",
+    "sha256": "6f28ddeb8221d3aaea0672e328948cd7087658e4f97d8ebcf47a84eefb8c76e2"
+  },
+  "revisions": {
+    "C0": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "M6": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+  },
+  "root_head_status_unchanged": true,
+  "schema": "trnm-new-candidate-ci-readonly-capture-v1",
+  "source_or_refs_or_config_mutated": false,
+  "status": "CAPTURED_FOR_SEMANTIC_REVIEW",
+  "steps": {
+    "bytes": 40801,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/steps.json",
+    "sha256": "fdcdd5dc8481193204ec9cccccd4dfa97dad8f1caccbfa7290b5d229ba5f7e72"
+  },
+  "tests_run": false,
+  "three_way_blobs": {
+    "bytes": 34904,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/three-way-selected-blobs.json",
+    "sha256": "bdfc984bd5ffd8da456cb45e33769864891df947c1465275ec9f5d17eb1d320c"
+  },
+  "trees": {
+    "C0": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+    "M6": "f8d170ff75990e879e93888a95e5408f36b36f6c",
+    "N": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+  },
+  "unique_selected_blob_bytes": 9456629,
+  "unique_selected_blobs": 101
+}

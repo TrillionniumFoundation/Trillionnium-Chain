@@ -1,0 +1,18 @@
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:.github/workflows/pon-w1-transparent-profile.yml:30:      - scripts/w1_owned_process_collector_v1.py
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:.github/workflows/pon-w1-transparent-profile.yml:31:      - scripts/test_w1_owned_process_collector_v1.py
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_ci_contract.py:950:      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_ci_contract.py:1090:      - scripts/w1_owned_process_collector_v1.py
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_ci_contract.py:1091:      - scripts/test_w1_owned_process_collector_v1.py
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_ci_contract.py:1452:    "scripts/test_w1_owned_process_collector_v1.py",
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_pq_research_integration.py:560:    "scripts/w1_owned_process_collector_v1.py",
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/check_pq_research_integration.py:561:    "scripts/test_w1_owned_process_collector_v1.py",
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/ci_job.sh:164:      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_ci_contract.py:2828:            'python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"',
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_ci_contract.py:2978:            ("      - scripts/w1_owned_process_collector_v1.py\n", ""),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_ci_contract.py:2979:            ("      - scripts/test_w1_owned_process_collector_v1.py\n", ""),
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pq_research_integration.py:1305:            "scripts/w1_owned_process_collector_v1.py",
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/ci/test_pq_research_integration.py:1306:            "scripts/test_w1_owned_process_collector_v1.py",
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/test_w1_owned_process_collector_v1.py:19:import w1_owned_process_collector_v1 as collector
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/test_w1_owned_process_collector_v1.py:178:import w1_owned_process_collector_v1 as c
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/test_w1_owned_process_collector_v1.py:290:                         "import w1_owned_process_collector_v1 as c\n"
+1a7afcdb820b051d1e4bfde3d436f96fc050c487:scripts/test_w1_owned_process_collector_v1.py:346:        code = "import sys;sys.path.insert(0," + repr(str(SOURCE.parent)) + ");import w1_owned_process_collector_v1 as c;sys.platform='darwin';sys.exit(c.main(" + repr(argv[2:]) + "))"

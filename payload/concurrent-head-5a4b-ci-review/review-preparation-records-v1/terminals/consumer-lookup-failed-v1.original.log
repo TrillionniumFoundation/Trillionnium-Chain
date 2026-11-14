@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m45[0m, in [35m<module>[0m
+    oid=[31mrun[0m[1;31m(label+"-"+p.replace("/","--")+"-oid",["rev-parse",rev+":"+p],cap=100)[0m.decode().strip()
+        [31m~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"<string>"[0m, line [35m27[0m, in [35mrun[0m
+    if rc not in allowed or len(out)>cap or len(err)>262144:[1;31mraise ValueError("bounded read failed "+label)[0m
+                                                            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[1;35mValueError[0m: [35mbounded read failed C0-scripts--ci--pq_root_lifetime_register.py-oid[0m

@@ -1,0 +1,134 @@
+{
+  "initial_chunks": [
+    {
+      "chunk_sha256": "31e5faae9f2659f7fee5171c24ad18bf541649b714cbf90a88e4f45efe5fc3fa",
+      "eof": false,
+      "next_offset": 65535,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/presence-inventory.json",
+      "size": 377491,
+      "version": "66306:36062131:377491:1794644918811476034:1794644918811476034"
+    },
+    {
+      "chunk_sha256": "16ebfda51fba41e29954f3972be9d4d39dccce229ed062c73af964b9d575bbb1",
+      "eof": false,
+      "next_offset": 131070,
+      "offset": 65535,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/presence-inventory.json",
+      "size": 377491,
+      "version": "66306:36062131:377491:1794644918811476034:1794644918811476034"
+    }
+  ],
+  "inventory_info": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/presence-inventory.json",
+    "sha256": "e96892d718a2de19c80a4fd766004486feabe886bc7f5f29a0e15393988035f0",
+    "size": 377491,
+    "version": "66306:36062131:377491:1794644918811476034:1794644918811476034"
+  },
+  "originals_host": "rog",
+  "small_originals": [
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-head.stdout",
+      "sha256": "bbb378e88c20b164e06398c98dbb6d3d829cdcd9fb06fb878d786c613df1f07c",
+      "size": 41,
+      "version": "66306:36062115:41:1794644918728800931:1794644918728800931"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062116:0:1794644918728800931:1794644918728800931"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-tree.stdout",
+      "sha256": "97de9441bc65fd78c2b29ccc38b111f74755602a1826bd34335a13bc02993c8d",
+      "size": 41,
+      "version": "66306:36062118:41:1794644918730689084:1794644918730689084"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062120:0:1794644918730689084:1794644918730689084"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36061986:0:1794644918760425933:1794644918760425933"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36061992:0:1794644918760470477:1794644918760470477"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/object-presence.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062122:0:1794644918789127596:1794644918789127596"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-head.stdout",
+      "sha256": "bbb378e88c20b164e06398c98dbb6d3d829cdcd9fb06fb878d786c613df1f07c",
+      "size": 41,
+      "version": "66306:36062124:41:1794644918793188303:1794644918793188303"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062125:0:1794644918793188303:1794644918793188303"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-tree.stdout",
+      "sha256": "97de9441bc65fd78c2b29ccc38b111f74755602a1826bd34335a13bc02993c8d",
+      "size": 41,
+      "version": "66306:36062126:41:1794644918794375594:1794644918794375594"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062127:0:1794644918794375594:1794644918794375594"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062128:0:1794644918803824664:1794644918803824664"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/source-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "version": "66306:36062129:0:1794644918803824664:1794644918803824664"
+    }
+  ],
+  "source_commands_executed": false
+}

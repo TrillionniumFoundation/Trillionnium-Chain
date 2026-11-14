@@ -1,0 +1,12 @@
+{
+  "args": [
+    "/home/qian-qi/chain-final-consolidation-20261114-root/pack_architecture_P1_closed_sparse_receipts_v1.py"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "executable": "/usr/bin/python3",
+  "host": "rog",
+  "idempotency_key": "architecture-P1-four-closed-sparse-package-v1-20261114"
+}

@@ -1,0 +1,9 @@
+{
+  "bytes": 18876,
+  "compile_ast_only": true,
+  "not_executed": true,
+  "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/verify_and_materialize_official_copy_v1.py",
+  "review": "Only exact official part list and indexed99ZIP members; original95 file bytes preserved, no extractall, no source/Git/network/test/stage access, explicit per-file/aggregate caps and create-only target readback.",
+  "schema": "trnm-P1-closed-sparse-receiver-static-v1",
+  "sha256": "5af5b914ced19914c0ede45d614f6f061b307a26a429ed1e88b6affdc93fe5b2"
+}

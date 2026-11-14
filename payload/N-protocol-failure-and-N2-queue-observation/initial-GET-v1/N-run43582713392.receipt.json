@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "-H",
+    "Accept: application/vnd.github+json",
+    "-H",
+    "X-GitHub-Api-Version: 2022-11-28",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392"
+  ],
+  "bounded_capture_errors": [],
+  "budget_seconds": 90,
+  "complete_capture": true,
+  "elapsed_seconds": 1.6914962919981917,
+  "exit_code": 0,
+  "finished_at": "2026-11-14T11:39:35.432266+00:00",
+  "method": "GET",
+  "name": "N-run43582713392",
+  "started_at": "2026-11-14T11:39:33.740841+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/initial-GET-v1/N-run43582713392.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 15121,
+    "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/initial-GET-v1/N-run43582713392.stdout",
+    "sha256": "191f070d3d2bbc656ab2d8314587ec7cf90237729d59255ae50428fdc7843ef1"
+  }
+}

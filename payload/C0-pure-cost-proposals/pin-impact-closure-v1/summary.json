@@ -1,0 +1,1186 @@
+{
+  "at_utc": "2026-11-14T09:14:37.269862+00:00",
+  "files": [
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 34,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 58,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 82,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 104,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 126,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 146,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 166,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 186,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 210,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 228,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 251,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 269,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 290,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 307,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 328,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 347,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 368,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 393,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 773,
+          "text": "  \"prior_lifetime_manifest\": \"config/pon/pq128-lifetime-budget-v1.json\","
+        },
+        {
+          "line": 840,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 852,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 866,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 925,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 937,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 951,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 964,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 980,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1034,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1047,
+          "text": "          \"source_paths\": [],"
+        },
+        {
+          "line": 1053,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1069,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1131,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1142,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1156,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1214,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1225,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1239,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1296,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1309,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1321,
+          "text": "          \"source_paths\": ["
+        },
+        {
+          "line": 1339,
+          "text": "  \"source_files_sha256\": {"
+        }
+      ],
+      "git_blob": "1e59559f598ed1935432b81eb00419f604341dba",
+      "path": "config/pon/pq-root-dependency-register-v3.json",
+      "raw": {
+        "bytes": 54959,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq-root-dependency-register-v3.json.original",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 57,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 69,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 87,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 98,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 110,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 112,
+          "text": "        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\""
+        },
+        {
+          "line": 122,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 134,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 145,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 157,
+          "text": "    \"source_revision\": \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\""
+        }
+      ],
+      "git_blob": "1035073e635a2cecd2841cfdc2e6166659f1599d",
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "raw": {
+        "bytes": 18358,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-budget-v1.json.original",
+        "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc"
+      },
+      "target_json_pointers": [
+        {
+          "pointer": "/events/4/source_paths/1",
+          "value": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+        }
+      ]
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 137,
+          "text": "      \"declared_revision\": \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\","
+        },
+        {
+          "line": 138,
+          "text": "      \"path\": \"config/pon/pq128-lifetime-budget-v1.json\","
+        },
+        {
+          "line": 140,
+          "text": "      \"sha256\": \"ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc\""
+        },
+        {
+          "line": 146,
+          "text": "      \"sha256\": \"2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725\""
+        },
+        {
+          "line": 359,
+          "text": "  \"review_base_revision\": \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\","
+        }
+      ],
+      "git_blob": "ebd3b69b78036120b361d9984b02b3a4f9b1b462",
+      "path": "config/pon/pq128-lifetime-composition-v2.json",
+      "raw": {
+        "bytes": 13166,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-composition-v2.json.original",
+        "sha256": "035053b5e938801ff15fc091898519d47ffb4fc8065502cf989f45535f893b26"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 10,
+          "text": "    \"source_revision\": \"illustrative\""
+        },
+        {
+          "line": 149,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 161,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 174,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 185,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 197,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 208,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 220,
+          "text": "      \"source_paths\": ["
+        },
+        {
+          "line": 231,
+          "text": "      \"source_paths\": ["
+        }
+      ],
+      "git_blob": "19aba0a047f92e4f8fd99f84590519c4831d4418",
+      "path": "config/pon/pq128-lifetime-example-v1.json",
+      "raw": {
+        "bytes": 22575,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-example-v1.json.original",
+        "sha256": "1445acf89060118c4afd64e881fa3fc77f3daca6ab30ca5b0ca675817080ec57"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 17,
+          "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\": \"1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70\","
+        },
+        {
+          "line": 26,
+          "text": "  \"source_revision\": \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\""
+        }
+      ],
+      "git_blob": "283ff219ff0b9483b988bfb2c4af25f79fcd9e0e",
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "raw": {
+        "bytes": 3017,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-source-lock-v1.json.original",
+        "sha256": "59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb"
+      },
+      "target_json_pointers": [
+        {
+          "pointer": "/files/trillionnium~1crates~1trnm-pon-node~1src~1ingress~1public_v3.rs",
+          "value": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+        }
+      ]
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "raw": {
+        "bytes": 6997,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-lifetime-current-source-v2.json.original",
+        "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "859bc8a918dc7b9676ce4e00f69f936af3d89021",
+      "path": "config/pon/w1-qrom-closure-current-required-tests-v2.json",
+      "raw": {
+        "bytes": 15482,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-current-required-tests-v2.json.original",
+        "sha256": "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "866d3eed2cbe3ee6b47ef6a06f11dd7dcfed89b7",
+      "path": "config/pon/w1-qrom-closure-required-tests-v1.json",
+      "raw": {
+        "bytes": 13952,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-required-tests-v1.json.original",
+        "sha256": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "04c4439af4dce19d87746beb6bb0a5f45e9d57bd",
+      "path": "config/pon/w1-qrom-current-required-tests-v1.json",
+      "raw": {
+        "bytes": 10175,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-current-required-tests-v1.json.original",
+        "sha256": "88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "beee95742c378a2ef19ea6ded59f58fb712f6b02",
+      "path": "config/pon/w1-qrom-current-source-observation-v1.json",
+      "raw": {
+        "bytes": 9971,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-current-source-observation-v1.json.original",
+        "sha256": "7eac13d310d91177dfbdbfd1adc70af4ccfe5eddb64821558e3fa4a109b43353"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "f7842c7a89cec7c34630ba8edd0a57ab59e8b369",
+      "path": "config/pon/w1-qrom-implementation-current-v2.json",
+      "raw": {
+        "bytes": 50313,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-current-v2.json.original",
+        "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "b8fe1e3f00d171400f57426dc3aa04d7b6faa0ca",
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "raw": {
+        "bytes": 6875,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-v1.json.original",
+        "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "6510d1385154c01e5c4da6a5ef9d3320b081159a",
+      "path": "config/pon/w1-qrom-required-tests-v1.json",
+      "raw": {
+        "bytes": 10677,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-required-tests-v1.json.original",
+        "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "a6391e1a1c17ecbf19673c0e3b57526f4e9a581d",
+      "path": "config/pon/w1-qrom-supplemental-tests-v1.json",
+      "raw": {
+        "bytes": 3970,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-supplemental-tests-v1.json.original",
+        "sha256": "fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307"
+      },
+      "target_json_pointers": []
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 9,
+          "text": "The [machine-readable register](../../config/pon/pq128-lifetime-budget-v1.json)"
+        },
+        {
+          "line": 17,
+          "text": "checkpoint `dc42ce4df5cff79cc61c5addbaf01074b56b06ca`, tree `9fda17fed2542b2baccaa34585bb00afd699e12b`."
+        },
+        {
+          "line": 25,
+          "text": "The current register SHA-256 is `ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc`;"
+        },
+        {
+          "line": 26,
+          "text": "the current lock SHA-256 is `59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb`."
+        },
+        {
+          "line": 55,
+          "text": "`trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs` digest changes;"
+        },
+        {
+          "line": 57,
+          "text": "lock and `experiment.source_revision` name this actual source checkpoint."
+        },
+        {
+          "line": 82,
+          "text": "`experiment.source_revision` name the same checkpoint; the lock-byte SHA-256 is"
+        },
+        {
+          "line": 267,
+          "text": "does not inspect files, so `source_revision_bound` is false,"
+        },
+        {
+          "line": 268,
+          "text": "`source_binding_scope` is `unbound`, and `source_lock_sha256` is null."
+        },
+        {
+          "line": 271,
+          "text": "reviewed [source lock](../../config/pon/pq128-source-lock-v1.json). Its namespace"
+        },
+        {
+          "line": 273,
+          "text": "`source_revision`, and `files`. The lock revision must equal the manifest's full"
+        },
+        {
+          "line": 275,
+          "text": "exactly the union of the events' `source_paths`, each mapped to a full lowercase"
+        },
+        {
+          "line": 283,
+          "text": "After these checks, the report has `source_revision_bound: true`,"
+        },
+        {
+          "line": 303,
+          "text": "The source lock and `experiment.source_revision` now both name published"
+        },
+        {
+          "line": 327,
+          "text": "regular file. The source lock and `experiment.source_revision` both name"
+        },
+        {
+          "line": 349,
+          "text": "The lifetime manifest differs only at `experiment.source_revision`. Its event"
+        },
+        {
+          "line": 384,
+          "text": "`experiment.source_revision`."
+        },
+        {
+          "line": 416,
+          "text": "The manifest differs only at `experiment.source_revision`. The original failed"
+        },
+        {
+          "line": 437,
+          "text": "changed; the manifest differed only at `experiment.source_revision`."
+        },
+        {
+          "line": 441,
+          "text": "Its [earlier composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md)"
+        },
+        {
+          "line": 473,
+          "text": "lock = budget.strict_json(read_regular(root, budget.DEFAULT_SOURCE_LOCK, budget.MAX_BYTES))"
+        },
+        {
+          "line": 475,
+          "text": "assert revision == lock['source_revision'] == manifest['experiment']['source_revision']"
+        },
+        {
+          "line": 476,
+          "text": "paths = {path for event in manifest['events'] for path in event['source_paths']}"
+        }
+      ],
+      "git_blob": "c9b43d27d1408969017c2b8d3afd19080c216278",
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "raw": {
+        "bytes": 34109,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_BUDGET_V1.md.original",
+        "sha256": "085784f77f915f990496ea64f029dbce452642646c3b717a151f02fa7e9895c0"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 19,
+          "text": "This reviewed mapping uses source checkpoint `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` as its"
+        },
+        {
+          "line": 22,
+          "text": "`ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc`."
+        },
+        {
+          "line": 25,
+          "text": "`2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725`."
+        },
+        {
+          "line": 132,
+          "text": "`declared_source_union_consistent=true` means consistency of these reviewed"
+        },
+        {
+          "line": 137,
+          "text": "`source_revision_bound=false`, `deployment_identity_proved=false`, and"
+        }
+      ],
+      "git_blob": "01569efdd43a4d9adee2b9585845e8250067cdc2",
+      "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "raw": {
+        "bytes": 22739,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.original",
+        "sha256": "69973d73b1278a3573724baeddc7c9ccf93b1632eab773f7bba1d8d755ffef59"
+      }
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 124,
+          "text": "    \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\","
+        },
+        {
+          "line": 298,
+          "text": "    \"config/pon/pq128-lifetime-budget-v1.json\","
+        },
+        {
+          "line": 299,
+          "text": "    \"config/pon/pq128-source-lock-v1.json\","
+        },
+        {
+          "line": 1295,
+          "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+        },
+        {
+          "line": 1567,
+          "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+        },
+        {
+          "line": 1601,
+          "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+        }
+      ],
+      "git_blob": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "raw": {
+        "bytes": 113472,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--check_pq_research_integration.py.original",
+        "sha256": "a84324de473404cdb6c78f39e7e15ba4c448ac7aa994dbe5917ca0eab17bf03d"
+      }
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 34,
+          "text": "    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs': 'mixed-client-profile-and-owner-boundary',"
+        },
+        {
+          "line": 165,
+          "text": "            'source_files_read': files_seen,"
+        }
+      ],
+      "git_blob": "6df25bea817bbb491d5549364bbe7a7c486f7b9a",
+      "path": "scripts/ci/pq_authority_surface_scan.py",
+      "raw": {
+        "bytes": 9848,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_authority_surface_scan.py.original",
+        "sha256": "440ac658941fbe117109f06501e219b8756c39d82f8a5323b96926b44e57be49"
+      }
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 18,
+          "text": "                                DEFAULT_SOURCE_LOCK as LIFETIME_SOURCE_LOCK,"
+        },
+        {
+          "line": 53,
+          "text": "        'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',"
+        },
+        {
+          "line": 110,
+          "text": "        LIFETIME_SOURCE_LOCK,"
+        },
+        {
+          "line": 276,
+          "text": "        'gates': {gate: {'status': 'UNQUALIFIED', 'source_paths': list(paths)}"
+        },
+        {
+          "line": 280,
+          "text": "            'source_revision_bound', 'source_binding_scope', 'source_lock_sha256',"
+        }
+      ],
+      "git_blob": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "raw": {
+        "bytes": 14584,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_chain_claim_guard.py.original",
+        "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 23,
+          "text": "DEFAULT_MANIFEST = 'config/pon/pq128-lifetime-budget-v1.json'"
+        },
+        {
+          "line": 24,
+          "text": "SOURCE_LOCK_SCHEMA = 'trnm-pq128-source-lock-v1'"
+        },
+        {
+          "line": 25,
+          "text": "DEFAULT_SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'"
+        },
+        {
+          "line": 183,
+          "text": "    fields(exp, 'id profile model horizon source_revision', 'experiment')"
+        },
+        {
+          "line": 187,
+          "text": "    require(re.fullmatch(r'[0-9a-f]{40}', exp['source_revision']) is not None"
+        },
+        {
+          "line": 189,
+          "text": "                and exp['source_revision'] == 'illustrative'),"
+        },
+        {
+          "line": 238,
+          "text": "    source_paths = set()"
+        },
+        {
+          "line": 240,
+          "text": "        fields(row, 'id definition source_paths allocation', 'event')"
+        },
+        {
+          "line": 245,
+          "text": "        for path in strings(row['source_paths'], 'event source_paths', True):"
+        },
+        {
+          "line": 246,
+          "text": "            source_paths.add(relative_path(path, 'event source_path'))"
+        },
+        {
+          "line": 340,
+          "text": "        'source_revision_bound': False, 'source_binding_scope': 'unbound',"
+        },
+        {
+          "line": 341,
+          "text": "        'source_lock_sha256': None,"
+        },
+        {
+          "line": 344,
+          "text": "        'term_results': results, 'source_paths': sorted(source_paths),"
+        },
+        {
+          "line": 369,
+          "text": "            lock_raw = read_regular(root, DEFAULT_SOURCE_LOCK, MAX_BYTES)"
+        },
+        {
+          "line": 371,
+          "text": "            fields(lock, 'schema source_revision files', 'source lock')"
+        },
+        {
+          "line": 372,
+          "text": "            require(lock['schema'] == SOURCE_LOCK_SCHEMA, 'unsupported source lock schema')"
+        },
+        {
+          "line": 373,
+          "text": "            require(lock['source_revision'] == result['experiment']['source_revision'],"
+        },
+        {
+          "line": 376,
+          "text": "                    and set(lock['files']) == set(result['source_paths']),"
+        },
+        {
+          "line": 381,
+          "text": "        result['source_files_sha256'] = {"
+        },
+        {
+          "line": 383,
+          "text": "            for path in result['source_paths']"
+        },
+        {
+          "line": 387,
+          "text": "                require(result['source_files_sha256'][path] == digest,"
+        },
+        {
+          "line": 389,
+          "text": "            result['source_revision_bound'] = True"
+        },
+        {
+          "line": 391,
+          "text": "            result['source_lock_sha256'] = hashlib.sha256(lock_raw).hexdigest()"
+        }
+      ],
+      "git_blob": "1de78fbee6948d23b39df9628ead1e2a913a250e",
+      "path": "scripts/ci/pq_lifetime_budget.py",
+      "raw": {
+        "bytes": 20543,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_budget.py.original",
+        "sha256": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 26,
+          "text": "REVIEW_BASE = \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\""
+        },
+        {
+          "line": 31,
+          "text": "INPUTS = {"
+        },
+        {
+          "line": 34,
+          "text": "        \"sha256\": \"ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc\","
+        },
+        {
+          "line": 35,
+          "text": "        \"declared_revision\": \"dc42ce4df5cff79cc61c5addbaf01074b56b06ca\","
+        },
+        {
+          "line": 40,
+          "text": "        \"sha256\": \"2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725\","
+        },
+        {
+          "line": 41,
+          "text": "        \"declared_revision\": root_register.REVIEW_BASE,"
+        },
+        {
+          "line": 125,
+          "text": "        \"review_base_revision\": REVIEW_BASE,"
+        },
+        {
+          "line": 423,
+          "text": "        \"review_base_revision\": REVIEW_BASE,"
+        },
+        {
+          "line": 424,
+          "text": "        \"declared_source_union_consistent\": False, \"source_binding_scope\": \"unbound\","
+        },
+        {
+          "line": 425,
+          "text": "        \"source_revision_bound\": False, \"deployment_identity_proved\": False,"
+        },
+        {
+          "line": 465,
+          "text": "        require(old_result[\"experiment\"][\"source_revision\"] == INPUTS[\"legacy\"][\"declared_revision\"]"
+        },
+        {
+          "line": 468,
+          "text": "        require(old_result[\"purpose\"] == \"research-model\" and old_result[\"source_revision_bound\"] is True"
+        },
+        {
+          "line": 469,
+          "text": "                and root_result[\"source_files_checked\"] is True,"
+        },
+        {
+          "line": 474,
+          "text": "        files = merge_source_maps(old_result[\"source_files_sha256\"], root_result[\"source_files_sha256\"])"
+        },
+        {
+          "line": 475,
+          "text": "        shared_paths = sorted(set(old_result[\"source_files_sha256\"])"
+        },
+        {
+          "line": 476,
+          "text": "                              & set(root_result[\"source_files_sha256\"]))"
+        },
+        {
+          "line": 478,
+          "text": "            \"legacy\": len(old_result[\"source_files_sha256\"]),"
+        },
+        {
+          "line": 479,
+          "text": "            \"root\": len(root_result[\"source_files_sha256\"]),"
+        },
+        {
+          "line": 491,
+          "text": "            \"legacy_source_lock_sha256\": old_result[\"source_lock_sha256\"],"
+        },
+        {
+          "line": 492,
+          "text": "            \"root_declared_source_snapshot_sha256\": root_result[\"declared_source_snapshot_sha256\"],"
+        },
+        {
+          "line": 493,
+          "text": "            \"declared_source_union_consistent\": True,"
+        },
+        {
+          "line": 496,
+          "text": "            \"source_files_sha256\": files,"
+        },
+        {
+          "line": 497,
+          "text": "            \"shared_source_paths\": shared_paths,"
+        }
+      ],
+      "git_blob": "4a63635251bbe36e729d0f9ad6928c532cce6183",
+      "path": "scripts/ci/pq_lifetime_composition.py",
+      "raw": {
+        "bytes": 26814,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_composition.py.original",
+        "sha256": "83170b4a37571e53af2b2d0bbae914a111dfafe0f5324dbc25b3f695212bbc8a"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 26,
+          "text": "REVIEW_BASE = '5c04c60e463462d9df8884786e0d5bb32af08a64'"
+        },
+        {
+          "line": 111,
+          "text": "    return {\"source_paths\": sorted(paths), \"status\": \"source-candidate-only\","
+        },
+        {
+          "line": 139,
+          "text": "        _native = {\"source_paths\": [], \"status\": \"not-wired-in-native-v3\","
+        },
+        {
+          "line": 199,
+          "text": "            \"source_paths\": sorted(paths), \"roles\": list(roles),"
+        },
+        {
+          "line": 367,
+          "text": "    \"review_base_revision\": REVIEW_BASE,"
+        },
+        {
+          "line": 406,
+          "text": "    \"prior_lifetime_manifest\": \"config/pon/pq128-lifetime-budget-v1.json\","
+        },
+        {
+          "line": 419,
+          "text": "    raw = json.dumps({\"review_base_revision\": REVIEW_BASE, \"source_files_sha256\": files},"
+        },
+        {
+          "line": 426,
+          "text": "    fields(data, (*FROZEN, \"source_files_sha256\"), \"register\")"
+        },
+        {
+          "line": 429,
+          "text": "    files = data[\"source_files_sha256\"]"
+        },
+        {
+          "line": 430,
+          "text": "    fields(files, SOURCE_PATHS, \"source_files_sha256\")"
+        },
+        {
+          "line": 439,
+          "text": "        \"source_files_checked\": False,"
+        },
+        {
+          "line": 441,
+          "text": "        \"source_revision_bound\": False,"
+        },
+        {
+          "line": 442,
+          "text": "        \"review_base_revision\": REVIEW_BASE,"
+        },
+        {
+          "line": 443,
+          "text": "        \"declared_source_snapshot_sha256\": REVIEWED_SOURCE_SNAPSHOT_SHA256,"
+        },
+        {
+          "line": 480,
+          "text": "            require(digest == data[\"source_files_sha256\"][path],"
+        },
+        {
+          "line": 485,
+          "text": "    result.update({\"source_files_checked\": True,"
+        },
+        {
+          "line": 488,
+          "text": "                   \"source_files_sha256\": observed})"
+        }
+      ],
+      "git_blob": "34b793d911762e9564dfd58e417fc47de1f97f31",
+      "path": "scripts/ci/pq_root_dependency_register.py",
+      "raw": {
+        "bytes": 25957,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_root_dependency_register.py.original",
+        "sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c"
+      }
+    },
+    {
+      "contains_exact_target_path": true,
+      "excerpt_matches": [
+        {
+          "line": 106,
+          "text": "            self.assertEqual((value['resource_revision'], value['base_resource_revision'],"
+        },
+        {
+          "line": 121,
+          "text": "                       {'work_profile': 'arithmetic-facts-v1'}, {'resource_revision': 'r13'}):"
+        },
+        {
+          "line": 152,
+          "text": "            self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],"
+        },
+        {
+          "line": 158,
+          "text": "        source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'"
+        },
+        {
+          "line": 168,
+          "text": "            lambda c: c['historical_arithmetic_profiles']['r13'].update(resource_revision='r14-arithmetic-facts-v1'),"
+        },
+        {
+          "line": 173,
+          "text": "            lambda c: c['historical_arithmetic_profiles']['r14'].update(resource_revision='r15-arithmetic-facts-v1'),"
+        },
+        {
+          "line": 196,
+          "text": "                       {'policy_id': EXPECTED['r12'][0].upper()}, {'resource_revision': 'r12'},"
+        }
+      ],
+      "git_blob": "73bcf4d1483f293a7f9e0feb451e7ab8fe0fac82",
+      "path": "scripts/ci/test_pon_public_v3_policy_read.py",
+      "raw": {
+        "bytes": 13674,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--test_pon_public_v3_policy_read.py.original",
+        "sha256": "f423a03fa0757b21927dbcb5e5ed977d729aecefee131d725a5f7be56a2c706f"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "e50aff85289b7e6fa6ed1ccf45683d807e7ef9fd",
+      "path": "scripts/ci/w1_qrom_closure_controls.py",
+      "raw": {
+        "bytes": 9498,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_controls.py.original",
+        "sha256": "71b68fe4cf9486d9d6b6fd6b370a34f3749800a09f7c9dd093767f4b52e1e487"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "3d2938a93e3ce52401dff1cd7b5a95a5b810bcbb",
+      "path": "scripts/ci/w1_qrom_closure_current_controls.py",
+      "raw": {
+        "bytes": 14367,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_current_controls.py.original",
+        "sha256": "92994b799069282b9aa0b1531e91bd8105650c1a61aed72260377b9125478148"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 368,
+          "text": "            and type(closure.get('source_files_checked')) is int"
+        },
+        {
+          "line": 369,
+          "text": "            and closure['source_files_checked'] == len(contract['local_path_closure']['files'])"
+        }
+      ],
+      "git_blob": "4b26cf53c7278145bb8ad134e99f24c0ea594b7a",
+      "path": "scripts/ci/w1_qrom_current_ci.py",
+      "raw": {
+        "bytes": 24631,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_current_ci.py.original",
+        "sha256": "b171ff84df6472e29738425c038e5830dab17e09dc276c3a4c59bd2e08d833d8"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "755f0204d6283847e54326095492eee592ecfce9",
+      "path": "scripts/ci/w1_qrom_proof_chain_controls.py",
+      "raw": {
+        "bytes": 8484,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_proof_chain_controls.py.original",
+        "sha256": "a75fcd1414eb9c83dbfefd80a39d4fac24524977fe5068c6d0079b70371a04bb"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "97b344e65dc5ec91b15b9a99289099e752dab2e8",
+      "path": "scripts/ci/w1_qrom_supplemental_controls.py",
+      "raw": {
+        "bytes": 10275,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_supplemental_controls.py.original",
+        "sha256": "e9edfd3d9cbf8b854f43317523c6c22e1dfd68dd6b037ae27820fbf0581598e1"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 153,
+          "text": "        'changed_source_paths': list(CHANGED),"
+        }
+      ],
+      "git_blob": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "raw": {
+        "bytes": 9216,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_lifetime_current_observation.py.original",
+        "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "3d61c4fb781d7aa27d08bd1d091a495d75ae6181",
+      "path": "scripts/w1_qrom_bcs_budget.py",
+      "raw": {
+        "bytes": 11977,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_bcs_budget.py.original",
+        "sha256": "391d8e0eaf9c5417bd79bf2c222bdd2d2bb3ca2df1da8bad8e623a524b63600a"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "021c7dc0f93bb6115ccf4b322fd100608bd37760",
+      "path": "scripts/w1_qrom_composition_budget.py",
+      "raw": {
+        "bytes": 21292,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_composition_budget.py.original",
+        "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "dbc0a7923b003708b0104b517c8c78689558e0a4",
+      "path": "scripts/w1_qrom_conditional_budget.py",
+      "raw": {
+        "bytes": 14985,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_conditional_budget.py.original",
+        "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [
+        {
+          "line": 287,
+          "text": "            'source_files_checked': len(before), 'source_before_after_equal': True},"
+        }
+      ],
+      "git_blob": "88b619db34314c1d5a212dba99e6105d4bfca14e",
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "raw": {
+        "bytes": 17150,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_current_implementation_audit.py.original",
+        "sha256": "55d3e0da144675614004b4dcd93617dccdf02a92f8468bf17ff42052d65c74a1"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "5b5776cae574907c9ce5d6b8cfd7369f21749935",
+      "path": "scripts/w1_qrom_historical_fixture.py",
+      "raw": {
+        "bytes": 9762,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_historical_fixture.py.original",
+        "sha256": "ecd8a99a207082a37548a6e38068d02156316e96da6da8af807a7787d73ab20e"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "d345b2f2a397a254b44ab0a38c33083f507e206d",
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "raw": {
+        "bytes": 21678,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_implementation_audit.py.original",
+        "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "dcf6a68ed2e3b9f33553dc31472fdd6358eb9f2a",
+      "path": "scripts/w1_qrom_joint_oracle_diagnostic.py",
+      "raw": {
+        "bytes": 9863,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_joint_oracle_diagnostic.py.original",
+        "sha256": "ce6dd894f949cced697ecdcb9f8960b3e4280eefa3815f02ad708e06842b4658"
+      }
+    },
+    {
+      "contains_exact_target_path": false,
+      "excerpt_matches": [],
+      "git_blob": "9a59e5742d58cf2b160987030f9eb00ef181c4f0",
+      "path": "scripts/w1_qrom_semantics_audit.py",
+      "raw": {
+        "bytes": 35649,
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_semantics_audit.py.original",
+        "sha256": "91b8bc2bac87d24a84df1c4c7345d5cd6765433da01c4a79f6367e36bc72e9b4"
+      }
+    }
+  ],
+  "schema": "trnm-readonly-public-v3-current-pin-closure-v1",
+  "selected_file_count": 37,
+  "source": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "source_or_git_mutated": false,
+  "tests_or_native_executed": false
+}

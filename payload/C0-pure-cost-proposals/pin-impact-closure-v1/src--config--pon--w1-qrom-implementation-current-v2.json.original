@@ -1,0 +1,988 @@
+{
+  "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
+  "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
+  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
+  "project_files": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "bytes": 5246,
+      "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+      "bytes": 1282,
+      "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "bytes": 349,
+      "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "bytes": 38332,
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "bytes": 11172,
+      "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+      "bytes": 284,
+      "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "bytes": 498,
+      "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "bytes": 46018,
+      "sha256": "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "bytes": 445,
+      "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "bytes": 564,
+      "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "bytes": 46025,
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "bytes": 14597,
+      "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "bytes": 11159,
+      "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 106066,
+      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "bytes": 3747,
+      "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "bytes": 32654,
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    }
+  ],
+  "saved_v2_files": [
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "bytes": 198014,
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+    }
+  ],
+  "upstream_snapshot": {
+    "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+    "bytes": 69332,
+    "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+  },
+  "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "qualification": {
+    "post_quantum_soundness_qualified": false,
+    "complete_w1_soundness_qualified": false,
+    "quantum_work_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "consensus_admission": false,
+    "security_bits_quantum": null
+  },
+  "lifetime_budget": {
+    "quantum_queries_lifetime": null,
+    "accepted_statements_lifetime": null,
+    "max_recursive_nodes_per_statement": null,
+    "max_fs_rounds_per_reduction": null,
+    "target_total_failure_probability": null,
+    "rrbr_knowledge_error": null,
+    "concrete_hash_to_ideal_oracle_error": null,
+    "hash_output_sigma_bits": null,
+    "min_verifier_randomness_bits": null,
+    "adaptive_composition_bound": null,
+    "policy_adopted": false
+  },
+  "proof_obligations": [
+    "latest_theorem_version_equivalence",
+    "complete_relation_and_compiler",
+    "all_27_recursion_program_semantics",
+    "control_padding_and_recursive_trace_size_reachability",
+    "relaxed_rbr_knowledge_soundness",
+    "committed_relation_monotonicity",
+    "merkle_multi_extractability",
+    "sponge_and_domain_separation_mapping",
+    "fiat_shamir_challenge_and_salt_mapping",
+    "finite_field_sampling_and_challenge_length",
+    "sequential_adaptive_composition",
+    "lifetime_global_quantum_budget",
+    "concrete_enabled_features_and_debug_exclusion",
+    "quantum_work_and_chainweight",
+    "pq_signature_owner_authorization"
+  ],
+  "audit_helpers": [
+    {
+      "path": "scripts/w1_control_tree_audit.py",
+      "bytes": 18002,
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    {
+      "path": "scripts/w1_profile_source_map.py",
+      "bytes": 33723,
+      "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+    },
+    {
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "bytes": 23660,
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    }
+  ],
+  "historical_contract": {
+    "path": "config/pon/w1-qrom-implementation-v1.json",
+    "bytes": 6875,
+    "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+  },
+  "historical_reader": {
+    "path": "scripts/w1_qrom_implementation_audit.py",
+    "bytes": 21678,
+    "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+  },
+  "local_path_closure": {
+    "scope": "all-local-path-crate-source-files-and-literal-includes; external-implementation-and-build-identity-unqualified",
+    "entry_manifests": [
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml"
+    ],
+    "crate_roots": [
+      "formal/pon-nakamoto-v1/w1_hardened_verifier",
+      "formal/pon-nakamoto-v1/w1_v2_verifier",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation",
+      "trillionnium/crates/trnm-crypto-primitives",
+      "trillionnium/crates/trnm-protocol"
+    ],
+    "workspace_inputs": [
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+      "rust-toolchain.toml",
+      "trillionnium/Cargo.lock",
+      "trillionnium/Cargo.toml"
+    ],
+    "literal_include_files": [
+      "config/pon/work-profile-v1.json",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "tests/fixtures/cpq1-content-v1/vectors.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+    ],
+    "absent_build_inputs": [
+      ".cargo/config",
+      ".cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/build.rs",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/build.rs",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/build.rs",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/build.rs",
+      "trillionnium/crates/trnm-crypto-primitives/.cargo/config",
+      "trillionnium/crates/trnm-crypto-primitives/.cargo/config.toml",
+      "trillionnium/crates/trnm-crypto-primitives/build.rs",
+      "trillionnium/crates/trnm-protocol/.cargo/config",
+      "trillionnium/crates/trnm-protocol/.cargo/config.toml",
+      "trillionnium/crates/trnm-protocol/build.rs"
+    ],
+    "files": [
+      {
+        "path": "config/pon/work-profile-v1.json",
+        "bytes": 1596,
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      {
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+        "bytes": 318,
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+      },
+      {
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+        "bytes": 256886,
+        "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+      },
+      {
+        "path": "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+        "bytes": 223154,
+        "sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "bytes": 38332,
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "bytes": 349,
+        "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs",
+        "bytes": 110,
+        "sha256": "35b60c3d87a6dff48ff7fc63820f86fcc50bf7c7cb3551a58fa2242c6b8e77b5"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "bytes": 28049,
+        "sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "bytes": 5246,
+        "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+        "bytes": 1282,
+        "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "bytes": 46018,
+        "sha256": "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "bytes": 498,
+        "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+        "bytes": 284,
+        "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "bytes": 11172,
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "bytes": 74379,
+        "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "bytes": 397,
+        "sha256": "955e810713a1c15cf7b9af3f635705e7fdd20434aee829080f314fd68b98725e"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "bytes": 46025,
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "bytes": 564,
+        "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+        "bytes": 445,
+        "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "bytes": 290,
+        "sha256": "98317da54f1b107b02486236f409f240c1910c948eaf31b5e093365147e2004f"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "bytes": 14597,
+        "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+        "bytes": 11159,
+        "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+      },
+      {
+        "path": "rust-toolchain.toml",
+        "bytes": 86,
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+      },
+      {
+        "path": "tests/fixtures/cpq1-content-v1/vectors.json",
+        "bytes": 5079,
+        "sha256": "b295ac507b880840176e5dc836dbb1773c13f16f4c4a60c0c89a0c57905dda5e"
+      },
+      {
+        "path": "trillionnium/Cargo.lock",
+        "bytes": 42127,
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      },
+      {
+        "path": "trillionnium/Cargo.toml",
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "bytes": 1016,
+        "sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
+        "bytes": 3488,
+        "sha256": "0d091365566386c60d90cd69ef040aff0500bd396a7f94e70410b4aed72e9fd9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs",
+        "bytes": 1722,
+        "sha256": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs",
+        "bytes": 15343,
+        "sha256": "78665546a09da49bc100da9357743781eae282379a6eae40f0e286d7cbbc8cde"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+        "bytes": 28108,
+        "sha256": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs",
+        "bytes": 5963,
+        "sha256": "1efb46c8d663829688a60084031186795ceaf4837e2167f417a27f159afc611d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+        "bytes": 27944,
+        "sha256": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
+        "bytes": 2806,
+        "sha256": "aed36ea1d2dc71b8b1f5c70af4781a937c00998dabb6d9848c049761411faaa4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs",
+        "bytes": 3905,
+        "sha256": "9ac01ea460ec3e8c2280500c390faf918a93a73debc0a66ad55e0cd53c3519ab"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs",
+        "bytes": 17263,
+        "sha256": "c82c7a6c91cac154b4f229c8b318ca1778fd5d04eebc9de6dca23893cff49493"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+        "bytes": 26180,
+        "sha256": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+        "bytes": 26739,
+        "sha256": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+        "bytes": 41232,
+        "sha256": "1c29a290fffc5481b1980e19c13ef381e5caf9540af3787f227f2a145083d128"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
+        "bytes": 50152,
+        "sha256": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs",
+        "bytes": 1527,
+        "sha256": "657ba21f36ca6b2efd229b1c0a019bbc59236a5c96e0b293d3d1a3d5fea5d1bb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+        "bytes": 10535,
+        "sha256": "ee1a573012568b1f104d66f37ff08a083719d8745031c6904929899217e9d7d1"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs",
+        "bytes": 40837,
+        "sha256": "b4906b6782e7bbe28e80f0837bf638bd9ddbeed66926dcc15478ec529eaa2b03"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs",
+        "bytes": 18694,
+        "sha256": "758f2954bc572a45900c3e653438f6d763643e5c4acb1f0f0fbf84489ae8855e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
+        "bytes": 2953,
+        "sha256": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+        "bytes": 40448,
+        "sha256": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+        "bytes": 17650,
+        "sha256": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "bytes": 1495,
+        "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "bytes": 5395,
+        "sha256": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "bytes": 26758,
+        "sha256": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+        "bytes": 3938,
+        "sha256": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+        "bytes": 18697,
+        "sha256": "8567e6a09d03fb7b63d73dedc1b0ae8bd77f25790af19a6c9d670974494336fb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs",
+        "bytes": 29053,
+        "sha256": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
+        "bytes": 21222,
+        "sha256": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+        "bytes": 7114,
+        "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "bytes": 12112,
+        "sha256": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+        "bytes": 2171,
+        "sha256": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+        "bytes": 17866,
+        "sha256": "7763bd52066366b0f30c9b4bc314ae713fbcf9063abd651c48c5c495cdfcad29"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+        "bytes": 48908,
+        "sha256": "e9416457ee3df24cf5446ebffde6d7748a8eeff8f0f46e77b6ad9555e0ef6b0a"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "bytes": 106066,
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        "bytes": 13186,
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "bytes": 5124,
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "bytes": 23186,
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+        "bytes": 9812,
+        "sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        "bytes": 4167,
+        "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+        "bytes": 3747,
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "bytes": 16879,
+        "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        "bytes": 10436,
+        "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "bytes": 34628,
+        "sha256": "cb3d908e1a88e599d6f17b7678271cf9e93fe8b8dc973be30ff031abcc140b96"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+        "bytes": 8795,
+        "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+        "bytes": 21981,
+        "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "bytes": 5033,
+        "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+        "bytes": 40347,
+        "sha256": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+        "bytes": 13599,
+        "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+        "bytes": 13950,
+        "sha256": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "bytes": 20390,
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "bytes": 12611,
+        "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "bytes": 26429,
+        "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "bytes": 15194,
+        "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "bytes": 29477,
+        "sha256": "5aef4dc44007bb3a81af68769c72eba8a9398360903e057f883602cd0e915187"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
+        "bytes": 10004,
+        "sha256": "e85c9f8fc28d44fed0899c1167500c122b4e4703b46513bdac5385a59eaa4ce9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+        "bytes": 5504,
+        "sha256": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "bytes": 22800,
+        "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs",
+        "bytes": 9625,
+        "sha256": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs",
+        "bytes": 15147,
+        "sha256": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "bytes": 12902,
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs",
+        "bytes": 8563,
+        "sha256": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+        "bytes": 7158,
+        "sha256": "f94910f4eefc7be98c0741a48140d59d3a638f4613fdc1e7d0f6f5137c3fca73"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "bytes": 19075,
+        "sha256": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+        "bytes": 3525,
+        "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/profile_boundary_tests.rs",
+        "bytes": 5018,
+        "sha256": "0a5a6950d30d998ea3f89e8698d3aae64dd1c0126fc5435a57c9ee57942f5dd5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/tests.rs",
+        "bytes": 4729,
+        "sha256": "b96ec0d04833d8c69faeb958a6ddb4c0b7881bfae92035d3ba739f095d8b7ac7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        "bytes": 11609,
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+        "bytes": 23689,
+        "sha256": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+        "bytes": 17768,
+        "sha256": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+        "bytes": 8198,
+        "sha256": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs",
+        "bytes": 4044,
+        "sha256": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "bytes": 6831,
+        "sha256": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "bytes": 8938,
+        "sha256": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/ed25519_rfc8032.rs",
+        "bytes": 1764,
+        "sha256": "f59f0291ebce4672f85b8cb3219f77e61aa0186be29038c51dd621bb0165ac94"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+        "bytes": 18941,
+        "sha256": "d56d1c460e0372e262fe4d0cfc4b255b9dc325eda93e512638bedbd3e18deef2"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+        "bytes": 1664284,
+        "sha256": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs",
+        "bytes": 7088,
+        "sha256": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+        "bytes": 15400,
+        "sha256": "3826964229379674be933f963b0860332ee19fc545143cdc40c4e92393b1fac7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs",
+        "bytes": 7624,
+        "sha256": "da2d906d90f5f1a7ed80eff3368305a7275c52bcd80a6a9a4cbfd507901a2a2f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs",
+        "bytes": 9762,
+        "sha256": "8ad9579c1b96f319c46bd63acc4d1838e5b39609474bb8e1ecdc14192efc74bd"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+        "bytes": 6132,
+        "sha256": "ca4fcb7198dfcadf5ed0fa609594f7cb1e6104aeafe428fee57bfba169857052"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "bytes": 684,
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/examples/pon_wire.rs",
+        "bytes": 1279,
+        "sha256": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "bytes": 9650,
+        "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment/tests.rs",
+        "bytes": 8022,
+        "sha256": "8ed765a896ea89891c921b216f4a5dd7c3ee89b8f4eb1a5b6b9e1d7e5eec5fe6"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "bytes": 41595,
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+        "bytes": 59988,
+        "sha256": "600bb311882e1094c55826040b7d215f2f7b680bfcedab10678cdcb409a2ba27"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "bytes": 14038,
+        "sha256": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "bytes": 5249,
+        "sha256": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+        "bytes": 3284,
+        "sha256": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+        "bytes": 17379,
+        "sha256": "0ed69ce0a7e4868186038042708eb134633f7707c08e939e9eb6ff5b5c7ca844"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+        "bytes": 3760,
+        "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+        "bytes": 19189,
+        "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs",
+        "bytes": 12129,
+        "sha256": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "bytes": 32654,
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "bytes": 21244,
+        "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+        "bytes": 30536,
+        "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "bytes": 13891,
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+        "bytes": 1856,
+        "sha256": "5ba12e5b3bedcfcb2e495ef255ac4c4d457d27cbd9e6f90f8f839dda445fea75"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+        "bytes": 26325,
+        "sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+        "bytes": 9944,
+        "sha256": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+        "bytes": 6151,
+        "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+        "bytes": 11950,
+        "sha256": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+        "bytes": 10733,
+        "sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+        "bytes": 1792,
+        "sha256": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "bytes": 459,
+        "sha256": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "bytes": 12866,
+        "sha256": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "bytes": 13706,
+        "sha256": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+        "bytes": 2844,
+        "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+        "bytes": 1974,
+        "sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs",
+        "bytes": 3615,
+        "sha256": "4056f533271873d6b8a4d1ea5aefa99f10ea4a8bf2d7fd8df2aff2410878aecd"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs",
+        "bytes": 7353,
+        "sha256": "c02f0dc67d6ae82e823729c224d945dbf228cd8eaeca877d7821520efb763873"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs",
+        "bytes": 5051,
+        "sha256": "d1d0d0e3909768035d4f9770ab94407ad871931cdd44dcd10e16118cac579eb6"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs",
+        "bytes": 4606,
+        "sha256": "e6a79653acace6efc30ba289c0624fb3581f90d1267c4e8a427a44e2b41ea9f8"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+        "bytes": 2236,
+        "sha256": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs",
+        "bytes": 2531,
+        "sha256": "ec4b8732e4fa8dc151cad9679845213e3d47d7099d3feb4db885de1e5f55706d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+        "bytes": 2496,
+        "sha256": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+        "bytes": 6531,
+        "sha256": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa"
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+        "bytes": 7659,
+        "sha256": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+      }
+    ]
+  },
+  "reviewed_changes": {
+    "verifier_native_once": "New explicit native replay command; receipt verification dispatch and existing proof relation retained. Native execution is not performed by this mapping.",
+    "funded_service_wire": "Tags 2 and 5 also decode exact FundedServiceReservationV1 and FundedServiceDecisionV1; full local path-crate sources and literal includes are pinned. This is no theorem about all new wire behaviors.",
+    "grouped_factored_producer": "Expanded local closure includes the reviewed #824 exact B(Ax) preparation/execution and separate example selector. These two files do not call or change W1; no verifier/protocol/manifest/lock/include changes relative to #827 were observed. This inventory establishes no cost lower bound or consensus credit.",
+    "root_storage_integration_20261109": "Reviewed merge 44e96b1a841a50613d0b93484c5e576caec9f81f retains all 16 selected project files, saved fixtures, parameters and unresolved obligations. The local closure adds the three pq_root_v3 Rust source/test files and rebinds only the crypto module export and workspace lock among the prior 134 inputs. Optional root exports, the release OpenSSL dependency edge and the storage getrandom edge do not establish native execution, external dependency closure, a new proof or any security qualification.",
+    "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification.",
+    "from_zero_filter_cost_inventory_20261110": "Reviewed source 39336622c63df1ae746d83a76bb53202cd01ba17 adds only the finite pon_from_zero_filter_cost_v1.rs diagnostic example to the existing 137 local-closure inputs, producing 138. All original closure records, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. The example calls the existing native PNW1 components; this source inventory does not change the selected RISC Zero proof relation or establish a minimum legal work cost. Preserve the earlier local Rust source inventory refusal. The 138 inputs retain the original crate-root and literal-data inventory scope; this reader does not enumerate Rust #[path] imports outside those roots. The new example, like the older expensive-verifier example, imports trnm-pon-node/examples/support/w1_from_zero.rs, which is outside this selected inventory. The separate native experiment guards the whole tracked source and does not turn this mapping into a complete Rust include/build graph. Native observations remain bound to source 39336622; this mapping supplies no new native execution, cryptographic verification or security qualification.",
+    "rustix_dependency_security_20261111": "Reviewed source 7f83ea843d6d1578a475a7a0c4dc026da564a795 rebinds only trillionnium/Cargo.lock and trillionnium/crates/trnm-crypto-primitives/Cargo.toml among the existing 138 local-closure files. The dependency update selects rustix 1.1.6 for RUSTSEC-2026-0486; all other locked package records and dependency features are unchanged. The other 136 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. Node ingress and rollback-witness changes in that commit are outside this selected mapping scope. Preserve the earlier exact lock-pin refusal. This mapping supplies no native execution, external dependency implementation review, whole-chain proof or security qualification.",
+    "zero_paired_lazy_20261111": "Reviewed source 0eab349d7e6123b458cb98540f36fd273ee24f21 rebinds only trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs among the prior 138 local-closure inputs and adds examples/pon_w1_zero_paired_lazy_v1.rs to that crate, bringing the inventory to 139. The existing zero integer-paired transcript kernel and original producer APIs remain byte-identical; a target-aware unverified attempt API composes the same kernel with optional winner-only proof materialization. The native example compares five fixed producer arms over six preregistered target/reuse cells, retains failures and verifier controls, and grants no consensus credit. The other 137 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. This mapping supplies no native execution, whole-chain proof, minimum adversarial cost, ideal-ticket independence or security qualification.",
+    "audited_branch_integration_20261113": "Reviewed source 975ab0937243949b73cdbea9f13902802bbd7d00 rebinds four of the prior 139 local-closure inputs: the workspace lock, crypto Cargo manifest, crypto lib.rs and protocol lib.rs. Their exact old blobs match the separately reviewed dependency and source changes: the resolved package graph, Ed25519 API migration with stricter weak-key/canonical decoding, and validated protocol deserialization. Add the ordinary ed25519_rfc8032.rs vector source found by complete crate-directory enumeration, producing 140 inputs. The other 135 prior closure records, all 16 selected project files, saved proof materials, historical reader/contract, audit helpers, six crate roots, eight literal includes, proof parameters and 15 unresolved obligations retain their bytes. Preserve the earlier exact source-pin and unlisted-Rust-source refusals. Source byte counts identify reviewed files; they are not larger protocol, compute or security budgets. This selected inventory does not enumerate external Rust #[path] imports or third-party implementations and establishes no native execution, new proof, current-use approval or security qualification.",
+    "operator_weak_key_error_contract_20261113": "Reviewed combination 80ee3a6ad326662074b329d4c9b7c04a5580b504 contains actor error-contract commit 1166b1661b389104b2209fc71dd9a81f263f17a1. Only crypto/lib.rs changes among the 140 local-closure inputs. The strict decode/canonical-encoding/point-parse/weak-key rejection order, display text and accepted key set remain unchanged. A typed WeakEd25519Key reason lets the separately reviewed operator preserve ACTOR_WEAK_KEY. New finite parser controls remain in the same source file. The mvcc caller is outside this selected six-crate closure. The other 139 inputs, 16 selected project files, saved proofs, historical reader/contract, helpers, eight literal includes, proof parameters and 15 unresolved obligations are unchanged. No business, CPU, protocol or security budget changes. This binding supplies no native execution, complete dependency proof, current-proof-use approval or security qualification.",
+    "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied.",
+    "all_branch_source_consolidation_20261114": "Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 changes nine of the prior 140 local-closure records and adds five crypto sources: the explicit root cost example, low_rank_prefix, statement_boundaries, task_product_facts and its tests. The nine changed inputs are the crypto manifest, rank-batch diagnostic, pon_work entry, legal_attempt, rejection_cache and its controls, and the pq_root_v3 implementation plus unit/native controls. The 131 other prior closure inputs, six Cargo-reachable crate roots, eight literal includes, saved proof materials, guest lock/image, historical reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their identities. The selected 16-path project map changes only pon_work.rs from the preceding current checkpoint; its historical-V1 difference set therefore contains four paths. Native product reuse, cheap-statement checks, cooperative task hashing and explicit structured producers are separately reviewed source capabilities. Immutable root-key expansion preserves each-call quorum verification and the original budget. This mapping adds no native execution, lower cost bound, current-profile approval, full Rust #[path] closure, external implementation proof or security qualification. The SP27 example belongs to trnm-research-protocol and is outside these six crates."
+  }
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "label": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      "{login,id}"
+    ],
+    "exit": 0,
+    "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "pr-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+      "--jq",
+      "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+    ],
+    "exit": 0,
+    "stdout_sha256": "14fb8d72a54f43e15e3e5f9829dd8107f051a6039ff6a5023c2482827cb0a31d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

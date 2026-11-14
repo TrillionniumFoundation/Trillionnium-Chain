@@ -1,0 +1,202 @@
+{
+  "file_count": 20,
+  "files": [
+    {
+      "bytes": 1931,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-scan-materialization-20261114-v1/README.md"
+      },
+      "path": "execution-payload-scan-v1/README.md",
+      "sha256": "54c378120b4504264c6ccf01ef2777ca56a3aac825676b1dfc157c928538c8c7"
+    },
+    {
+      "bytes": 770,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/invocation-2a6206-prescan-v1/freezer-output.bin"
+      },
+      "path": "execution-payload-scan-v1/freezer/output.bin",
+      "sha256": "d7a85b366c351da9cf8a5f5a0d0afdfe2af918d4a1bde60831e39422ab44f9b6"
+    },
+    {
+      "bytes": 15047,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/producer.py"
+      },
+      "path": "execution-payload-scan-v1/freezer/producer.py",
+      "sha256": "38642c29417a4f37e9f1ca6693c71d0d1bc08a9904950470049efdfc66700139"
+    },
+    {
+      "bytes": 5985,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/summary.json"
+      },
+      "path": "execution-payload-scan-v1/freezer/summary.json",
+      "sha256": "ec48a4a95d2eac1af6c195341b02c561f01e0830d4cd0518c9052c5e1595186e"
+    },
+    {
+      "bytes": 3343,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/invocation-2a6206-prescan-v1/freezer-terminal.json"
+      },
+      "path": "execution-payload-scan-v1/freezer/terminal.json",
+      "sha256": "a284938739291108089416945fd1a99f11bfe9f41208d472ded64c9ee8f9846f"
+    },
+    {
+      "bytes": 400144,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-2a6206-prescan-v1/coverage.jsonl"
+      },
+      "path": "execution-payload-scan-v1/scan/coverage.jsonl",
+      "sha256": "ee278e4b8120f507e054450ea385a61fc50064a796dfce5565f58ea5f9e5acd9"
+    },
+    {
+      "bytes": 3332,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/invocation-2a6206-prescan-v1/fixed-input-readback.json"
+      },
+      "path": "execution-payload-scan-v1/scan/fixed-input-readback.json",
+      "sha256": "20b94c625f03f836e11f82ed88e47fa8e46831a143ea4bd636a62c7897ff105a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-2a6206-prescan-v1/hits.jsonl"
+      },
+      "path": "execution-payload-scan-v1/scan/hits.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3396,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/invocation-2a6206-prescan-v1/invocation.json"
+      },
+      "path": "execution-payload-scan-v1/scan/invocation.json",
+      "sha256": "542096d152f294276ac2bb95c2f8a61a12ba4584ead34f93fc849a7ef149138b"
+    },
+    {
+      "bytes": 268,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-scan-materialization-20261114-v1/scanner-output.bin"
+      },
+      "path": "execution-payload-scan-v1/scan/output.bin",
+      "sha256": "669cec2ec885266fd0ce4eeefd9fbf19fbc334d8bacb5bf8365a2cd709181b83"
+    },
+    {
+      "bytes": 1107,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/invocation-2a6206-prescan-v1/prelaunch-summary.json"
+      },
+      "path": "execution-payload-scan-v1/scan/prelaunch-summary.json",
+      "sha256": "d771631fc0b3aedd6c837b3b9b84690014751a683f5dc60d1c22a746fec412bb"
+    },
+    {
+      "bytes": 526,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-scan-materialization-20261114-v1/scanner-start.json"
+      },
+      "path": "execution-payload-scan-v1/scan/start.json",
+      "sha256": "3660fee1dd2fa9d369d3ba554fd87fea2ba8585b20da605f7e508725bef796df"
+    },
+    {
+      "bytes": 1117,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-2a6206-prescan-v1/summary.json"
+      },
+      "path": "execution-payload-scan-v1/scan/summary.json",
+      "sha256": "ef58b1712201ef8e14a956a02964468cc3af4a3c3ee574754ca150b9315d0983"
+    },
+    {
+      "bytes": 1807,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-scan-materialization-20261114-v1/scanner-terminal.json"
+      },
+      "path": "execution-payload-scan-v1/scan/terminal.json",
+      "sha256": "2439d9c824a5f8d816858bc3049e05a4620d1732774ce21514d388dc43ee7478"
+    },
+    {
+      "bytes": 4888,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/README-v2.md"
+      },
+      "path": "execution-payload-scan-v1/scanner/README-v2.md",
+      "sha256": "0677ac2e065b2201735bba6b026749e27b53465d012f5e3654d1814f2d4e327c"
+    },
+    {
+      "bytes": 1674,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/pattern-provenance.json"
+      },
+      "path": "execution-payload-scan-v1/scanner/pattern-provenance.json",
+      "sha256": "e0a88156a296c1e2bb0eceb18cd19ff7f7ec9724c68ee4f56f9172a0f3edc253"
+    },
+    {
+      "bytes": 14664,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py"
+      },
+      "path": "execution-payload-scan-v1/scanner/scan_frozen_execution_payload_v2.py",
+      "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6"
+    },
+    {
+      "bytes": 1446,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/static-review-v2.json"
+      },
+      "path": "execution-payload-scan-v1/scanner/static-review-v2.json",
+      "sha256": "0257d86150da77fe909d2fac819cc9c15d0bc2872a61015c1b8a31aec66c58f1"
+    },
+    {
+      "bytes": 3614,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/final-execution-group-descriptor-2a6206-prescan-v1.json"
+      },
+      "path": "execution-payload-scan-v1/scope/descriptor.json",
+      "sha256": "515cda73fe9ffe680c30378193fd355f14bfb4e165c099bc76af56ab339f5277"
+    },
+    {
+      "bytes": 855220,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/frozen-execution-payload-manifest-v1.json"
+      },
+      "path": "execution-payload-scan-v1/scope/frozen-execution-payload-manifest-v1.json",
+      "sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4"
+    }
+  ],
+  "new_result_group_was_scanned": false,
+  "no_all_secrets_absence_claim": true,
+  "prefix": "execution-payload-scan-v1",
+  "prescan_file_count": 2100,
+  "prescan_total_bytes": 150184002,
+  "scan_coverage_complete": true,
+  "scan_pattern_counts": {
+    "aws_access_key_id": 0,
+    "github_classic_token": 0,
+    "github_fine_grained_token": 0,
+    "private_key_header": 0,
+    "slack_token": 0
+  },
+  "scan_status": "NO_PATTERN_HITS_IN_DECLARED_SCOPE",
+  "schema": "trnm-execution-payload-scan-archive-source-roster-v1",
+  "scope_manifest_sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4",
+  "total_bytes": 1320279
+}

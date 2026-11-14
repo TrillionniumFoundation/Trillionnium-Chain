@@ -1,0 +1,151 @@
+{
+  "schema": "trnm-N-x64-selected-from-zero-originals-v1",
+  "zip": {
+    "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip",
+    "bytes": 9884207,
+    "sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+  },
+  "whole_member_index_sha256": "989f6ec25dc46aae82ce6a418693a0bca1b69a50b25ccb77d7ddddc3ef3b9199",
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/source.json",
+      "bytes": 423,
+      "sha256": "fc1b6e0213fbdd6e1f93ec879c138ec233cc3a4cf6aa08330df81041ef4304b6",
+      "artifact_id": 14109658844,
+      "source_member": "source.json",
+      "source_member_sha256": "fc1b6e0213fbdd6e1f93ec879c138ec233cc3a4cf6aa08330df81041ef4304b6"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/manifest.json",
+      "bytes": 74003,
+      "sha256": "3362e60289fbf2268b0c9886f97a1b4958cbb095fbdf02c7349a986880ce0bf7",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/manifest.json",
+      "source_member_sha256": "3362e60289fbf2268b0c9886f97a1b4958cbb095fbdf02c7349a986880ce0bf7"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "e94264bd742576ad425065b1058657f66503efcc22b894da605d0985f78c5e60",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "source_member_sha256": "e94264bd742576ad425065b1058657f66503efcc22b894da605d0985f78c5e60"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 190,
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "source_member_sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "source_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "a7466a090d5605170c3fa8888d1cf13150df88d3a7607354948ce2f6e4024022",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "source_member_sha256": "a7466a090d5605170c3fa8888d1cf13150df88d3a7607354948ce2f6e4024022"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3364,
+      "sha256": "d10fdc5f7f5d66eb48ccbc76416d519c7f9b8eacf80873b67bc613b17177339b",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "source_member_sha256": "d10fdc5f7f5d66eb48ccbc76416d519c7f9b8eacf80873b67bc613b17177339b"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "source_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 896,
+      "sha256": "ea1988546502f82874b8655ad3445d11eb5fbbe50edf55195614497eb40d9d0f",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "source_member_sha256": "ea1988546502f82874b8655ad3445d11eb5fbbe50edf55195614497eb40d9d0f"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 196,
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "source_member_sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "source_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 913,
+      "sha256": "c96147b7bf4f77adf60454a3b534b9301dcef56da669e7f551670864c9b37dbd",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "source_member_sha256": "c96147b7bf4f77adf60454a3b534b9301dcef56da669e7f551670864c9b37dbd"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 917,
+      "sha256": "aa89d933dee695fc6c67279c7569350df8cd69fb44caa199743af0eb24e8634d",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "source_member_sha256": "aa89d933dee695fc6c67279c7569350df8cd69fb44caa199743af0eb24e8634d"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "source_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 950,
+      "sha256": "c23c84d441d77594f151342587ded6917ec6519ec899318263f49ff0999aaecc",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "source_member_sha256": "c23c84d441d77594f151342587ded6917ec6519ec899318263f49ff0999aaecc"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 408,
+      "sha256": "5e9aa06087cd95837d20a29c4e279777949304a56ec1cc7b47e7ecdaa182dab0",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "source_member_sha256": "5e9aa06087cd95837d20a29c4e279777949304a56ec1cc7b47e7ecdaa182dab0"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifact_id": 14109658844,
+      "source_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "source_member_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "selected_count": 17,
+  "selected_bytes": 84042,
+  "package_code_executed": false,
+  "report_json_large_members_not_interpreted": true
+}

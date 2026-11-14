@@ -1,0 +1,155 @@
+{
+  "file_count": 14,
+  "files": [
+    {
+      "bytes": 16945,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/source-diff.original"
+      },
+      "path": "source-diff.original",
+      "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37"
+    },
+    {
+      "bytes": 433736,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original",
+      "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+    },
+    {
+      "bytes": 221433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress.rs.original",
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "bytes": 32654,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-protocol--src--pon_wire.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-protocol--src--pon_wire.rs.original",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    },
+    {
+      "bytes": 438782,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/candidate-public_v3.rs.reconstructed.original"
+      },
+      "path": "candidate-public_v3.rs.reconstructed.original",
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    },
+    {
+      "bytes": 3961,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/source-capture.json"
+      },
+      "path": "source-capture.json",
+      "sha256": "07e67697f78ba10e85038f495c0d13f93eebf737f283e987756b05b54681a2a2"
+    },
+    {
+      "bytes": 20772,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/framing-and-callsite-contexts.json"
+      },
+      "path": "framing-and-callsite-contexts.json",
+      "sha256": "c76e57f78cdca6a5d3e66fb993167ebd5a9780aef9c34b255fc05aa0cb336960"
+    },
+    {
+      "bytes": 6606,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-callsite-and-test-proof.json"
+      },
+      "path": "production-callsite-and-test-proof.json",
+      "sha256": "587a541f4471df2ec1d055bfc4a9c8b5da5d430d89839d27b0b3cb8b59cbb073"
+    },
+    {
+      "bytes": 12757,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original",
+      "sha256": "ee7b44de5d90db0931dd22624c9e4e4b1ac89f10395f34a642088f83f13cc3e7"
+    },
+    {
+      "bytes": 3561,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-server-policy-callchain.json"
+      },
+      "path": "production-server-policy-callchain.json",
+      "sha256": "530b7d6496ca9b76310b480c6dd160d07afb32b1b8d2f65b65b51e248576451f"
+    },
+    {
+      "bytes": 10762,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs.original",
+      "sha256": "2799bd30b73fae3b89b894e2c55f2dcb4c3231b670eb40f4f79a6e29d8362dbd"
+    },
+    {
+      "bytes": 2282,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/resource-profile-definition-location.json"
+      },
+      "path": "resource-profile-definition-location.json",
+      "sha256": "c9d2c9d5d49e1f39a1ee292863b134693bd6096b7b69c438587bb61502d806c5"
+    },
+    {
+      "bytes": 7198,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.original",
+      "sha256": "c1fc7c88249daff102c2cdb045bb1b38e5fd115e15dc4c608a2f1a5725171724"
+    },
+    {
+      "bytes": 10422,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-profile-dispatch-closure.json"
+      },
+      "path": "production-profile-dispatch-closure.json",
+      "sha256": "e9a8405d0d7c3ff255acf7c63a5938f1d0598d23821e31c36e5d104536bd9d12"
+    }
+  ],
+  "full_original_reports_referenced_not_copied": true,
+  "prior_closed_references": [
+    {
+      "bytes": 4142,
+      "disposition": "Reference only; original remains in its existing closed evidence group",
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/candidate-impact-final-v1/review.json",
+      "sha256": "9a3b668adc6cc2faaa9b7669209d5e9eb8168e41f169d9699b9476a2e8f2f79c"
+    },
+    {
+      "bytes": 6379,
+      "disposition": "Reference only; original remains in its existing closed evidence group",
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/candidate-impact-final-v1/README.md",
+      "sha256": "c8149106c8b61fc492b2c096c92ec2dc6042d3f4b46737d769cccac3a469199c"
+    },
+    {
+      "bytes": 3147,
+      "disposition": "Reference only; original remains in its existing closed evidence group",
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/profile-prefix-preimage-proof.json",
+      "sha256": "95b931d675d9c565aba57c6be6bcb7527fb4b002e6253eaf2292bd4d411784ac"
+    }
+  ],
+  "schema": "trnm-policy-prefix-static-review-inputs-v1",
+  "source_root": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1",
+  "total_bytes": 1221871
+}

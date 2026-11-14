@@ -1,0 +1,56 @@
+[
+  {
+    "label": "status-before",
+    "exit": 0,
+    "seconds": 0.297,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "preflight-before-merge",
+    "exit": 0,
+    "seconds": 0.083,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "incoming-reviewed-diff",
+    "exit": 0,
+    "seconds": 0.01,
+    "sha256": "d469d1091d59939487cf37c3b06a3bd96a906b66135a9cc4a6d4feb8983a0896"
+  },
+  {
+    "label": "normal-no-ff-merge",
+    "exit": 1,
+    "seconds": 0.153,
+    "sha256": "895db18ddface6aacec3fc044e154a99ae8e8566e4e7952df92e7867f9e3e9e1"
+  },
+  {
+    "label": "stage-exact-merge-resolution",
+    "exit": 0,
+    "seconds": 0.043,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "resolved-diff",
+    "exit": 0,
+    "seconds": 0.015,
+    "sha256": "ebf46cf3ea4114dc67c661b0cda0680b334b8bfec8b4f82c3019c2645e70b380"
+  },
+  {
+    "label": "diff-check",
+    "exit": 0,
+    "seconds": 0.015,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "preflight-before-controls",
+    "exit": 0,
+    "seconds": 0.048,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "original-w1-v2-controls",
+    "exit": 1,
+    "seconds": 3.672,
+    "sha256": "4a54ecfca9da12d73586deca39cb25fe79f0347e4964bfd5e57198269aa221d3"
+  }
+]

@@ -1,0 +1,1184 @@
+{
+  "closed_source_directories": {
+    "adapter-preparation": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1",
+    "graph": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1",
+    "local-reconciliation": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1",
+    "publication-hold": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1",
+    "remote-observation": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1",
+    "root-closure": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2",
+    "root-closure-first-attempt": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v1",
+    "worker-artifact-plan": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1"
+  },
+  "expected_stage_bytes": 154688299,
+  "expected_stage_files": 2285,
+  "max_group_bytes": 8388608,
+  "output_directory": "/private/tmp/chain-prci-concurrent-reconciliation-materialization-20261114-v1",
+  "prefix": "concurrent-head-prepublication-reconciliation",
+  "root": "/private/tmp/chain-consolidation-20261114-root",
+  "schema": "trnm-concurrent-reconciliation-materialization-inputs-v1",
+  "selected_sources": [
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "actor.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/actor.stderr"
+    },
+    {
+      "bytes": 37,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "actor.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/actor.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "candidate-fast-forward.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/candidate-fast-forward.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "candidate-fast-forward.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/candidate-fast-forward.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "default-hook-path.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/default-hook-path.stderr"
+    },
+    {
+      "bytes": 107,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "default-hook-path.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/default-hook-path.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "existing-hook-config.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/existing-hook-config.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "existing-hook-config.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/existing-hook-config.stdout"
+    },
+    {
+      "bytes": 84433,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "expected-published-dc42-heads.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/expected-published-dc42-heads.json"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "main-ancestry.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/main-ancestry.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "main-ancestry.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/main-ancestry.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "origin-fetch-url.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-fetch-url.stderr"
+    },
+    {
+      "bytes": 65,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "origin-fetch-url.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-fetch-url.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "origin-push-url.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-push-url.stderr"
+    },
+    {
+      "bytes": 65,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "origin-push-url.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/origin-push-url.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "pr-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/pr-before.stderr"
+    },
+    {
+      "bytes": 242,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "pr-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/pr-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "project-preflight.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/project-preflight.stderr"
+    },
+    {
+      "bytes": 163,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "project-preflight.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/project-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "published-to-rog-start.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/published-to-rog-start.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "published-to-rog-start.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/published-to-rog-start.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "rog-start-to-candidate.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/rog-start-to-candidate.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "rog-start-to-candidate.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/rog-start-to-candidate.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "semantic-ledger-ancestry.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/semantic-ledger-ancestry.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "semantic-ledger-ancestry.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/semantic-ledger-ancestry.stdout"
+    },
+    {
+      "bytes": 423,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "source-after.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/source-after.json"
+    },
+    {
+      "bytes": 423,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "source-before.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/source-before.json"
+    },
+    {
+      "bytes": 1743,
+      "expected_sha256": "4841b96e506ab216cdb72196d92c8cddf3694f70ad28e608a07e8eee7555cdbd",
+      "group": "publication-hold",
+      "relative": "spec.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/spec.json"
+    },
+    {
+      "bytes": 17760,
+      "expected_sha256": "c7878c180b7019ff635203f08fe05a9c09e00d8e8e9ee44232f4df7272d05183",
+      "group": "publication-hold",
+      "relative": "summary.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/summary.json"
+    },
+    {
+      "bytes": 862994,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "validated-execution-manifest.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/validated-execution-manifest.json"
+    },
+    {
+      "bytes": 9143,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "validated-local-gate-receipt.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/validated-local-gate-receipt.json"
+    },
+    {
+      "bytes": 21362,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "validated-rog-lane-receipt.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/validated-rog-lane-receipt.json"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "verify-source-after.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-after.stderr"
+    },
+    {
+      "bytes": 423,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "verify-source-after.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "verify-source-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-before.stderr"
+    },
+    {
+      "bytes": 423,
+      "expected_sha256": null,
+      "group": "publication-hold",
+      "relative": "verify-source-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a6206-v1/verify-source-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "c0-to-new.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/c0-to-new.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "c0-to-new.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/c0-to-new.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit-size.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit-size.stderr"
+    },
+    {
+      "bytes": 4,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit-size.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit-size.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit-type.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit-type.stderr"
+    },
+    {
+      "bytes": 7,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit-type.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit-type.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit.stderr"
+    },
+    {
+      "bytes": 273,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "local-new-commit.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/local-new-commit.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "m6-to-new.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/m6-to-new.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "m6-to-new.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/m6-to-new.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "new-to-m6.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/new-to-m6.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "new-to-m6.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/new-to-m6.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-head-after.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-head-after.stderr"
+    },
+    {
+      "bytes": 41,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-head-after.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-head-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-head-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-head-before.stderr"
+    },
+    {
+      "bytes": 41,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-head-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-head-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-status-after.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-status-after.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-status-after.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-status-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-status-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-status-before.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "local-reconciliation",
+      "relative": "source-status-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/source-status-before.stdout"
+    },
+    {
+      "bytes": 8705,
+      "expected_sha256": "bfb8161a7783561c19665a919e8b8b7d9acb4b3dd7f9bbf6ba569de80dd641c6",
+      "group": "local-reconciliation",
+      "relative": "summary.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-local-reconciliation-v1/summary.json"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "common-bases.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/common-bases.stderr"
+    },
+    {
+      "bytes": 41,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "common-bases.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/common-bases.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "head-after.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/head-after.stderr"
+    },
+    {
+      "bytes": 41,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "head-after.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/head-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "head-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/head-before.stderr"
+    },
+    {
+      "bytes": 41,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "head-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/head-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "local-refs-at-new.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/local-refs-at-new.stderr"
+    },
+    {
+      "bytes": 280,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "local-refs-at-new.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/local-refs-at-new.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-commits.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-commits.stderr"
+    },
+    {
+      "bytes": 2656,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-commits.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-commits.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-count.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-count.stderr"
+    },
+    {
+      "bytes": 3,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-count.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-count.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-numstat.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-numstat.stderr"
+    },
+    {
+      "bytes": 2413,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-numstat.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-numstat.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-raw.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-raw.stderr"
+    },
+    {
+      "bytes": 7023,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "new-range-raw.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/new-range-raw.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "status-after.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/status-after.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "status-after.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/status-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "status-before.stderr",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/status-before.stderr"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "graph",
+      "relative": "status-before.stdout",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/status-before.stdout"
+    },
+    {
+      "bytes": 20991,
+      "expected_sha256": "b30aeb9fdf5273a7bcb181f2a5b34f4396eddb2fbed22f4aade7d66375a3a471",
+      "group": "graph",
+      "relative": "summary.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-head-drift-5a4b7f-graph-v1/summary.json"
+    },
+    {
+      "bytes": 4136,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "EVIDENCE_INDEX.json",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/EVIDENCE_INDEX.json"
+    },
+    {
+      "bytes": 1623,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "README.md",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/README.md"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "commit-5a4-page-001.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/commit-5a4-page-001.stderr"
+    },
+    {
+      "bytes": 2517,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "commit-5a4-page-001.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/commit-5a4-page-001.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "compare-C0-to-5a4-page-001.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/compare-C0-to-5a4-page-001.stderr"
+    },
+    {
+      "bytes": 31634,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "compare-C0-to-5a4-page-001.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/compare-C0-to-5a4-page-001.stdout"
+    },
+    {
+      "bytes": 2208,
+      "expected_sha256": "8ef1c33dc6658c5162244a73d3baf3a0442bdc85a8e6a914791c4317f32724cd",
+      "group": "remote-observation",
+      "relative": "frozen-map-difference-overlay-v1.json",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/frozen-map-difference-overlay-v1.json"
+    },
+    {
+      "bytes": 913,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "heads-summary.json",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/heads-summary.json"
+    },
+    {
+      "bytes": 10585,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "observe_remote_advance_v1.py",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/observe_remote_advance_v1.py"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "pr847.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/pr847.stderr"
+    },
+    {
+      "bytes": 38700,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "pr847.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/pr847.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "recent-push-events.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/recent-push-events.stderr"
+    },
+    {
+      "bytes": 19450,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "recent-push-events.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/recent-push-events.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "refs-archive-tags.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-archive-tags.stderr"
+    },
+    {
+      "bytes": 334,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "refs-archive-tags.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-archive-tags.stdout"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "refs-heads.stderr",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-heads.stderr"
+    },
+    {
+      "bytes": 87154,
+      "expected_sha256": null,
+      "group": "remote-observation",
+      "relative": "refs-heads.stdout",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-heads.stdout"
+    },
+    {
+      "bytes": 81140,
+      "expected_sha256": "7ffb497825e26891e291676f39ee52bdf5e1fbc8c4429afb599a05f7cc6b871e",
+      "group": "remote-observation",
+      "relative": "summary.json",
+      "source_path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/summary.json"
+    },
+    {
+      "bytes": 3338,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "EVIDENCE_INDEX.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/EVIDENCE_INDEX.json"
+    },
+    {
+      "bytes": 2270,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "README.md",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/README.md"
+    },
+    {
+      "bytes": 22991,
+      "expected_sha256": "0d7fb044b15ed0f14847f2d30913ec50af37f7b509db7f4ebb81710c6cad039a",
+      "group": "adapter-preparation",
+      "relative": "all-three-precise.patch",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/all-three-precise.patch"
+    },
+    {
+      "bytes": 3180,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "apply-precise.patch",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/apply-precise.patch"
+    },
+    {
+      "bytes": 3065,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "input-contract-v2.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/input-contract-v2.json"
+    },
+    {
+      "bytes": 14769,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "preparation-inputs.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-inputs.json"
+    },
+    {
+      "bytes": 602,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "preparation-launch.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-launch.json"
+    },
+    {
+      "bytes": 20374,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "preparation-producer.py",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-producer.py"
+    },
+    {
+      "bytes": 5451,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "preparation-terminal.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-terminal.json"
+    },
+    {
+      "bytes": 10540,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "preparer-precise.patch",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparer-precise.patch"
+    },
+    {
+      "bytes": 9271,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "publisher-precise.patch",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/publisher-precise.patch"
+    },
+    {
+      "bytes": 819,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "readback-review-v1.index.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/readback-review-v1.index.json"
+    },
+    {
+      "bytes": 2462,
+      "expected_sha256": null,
+      "group": "adapter-preparation",
+      "relative": "readback-review-v1.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/readback-review-v1.json"
+    },
+    {
+      "bytes": 29704,
+      "expected_sha256": "cdc8a7597aa19afe1ea9cae2f9b86f61d8df4707ebcd6f4dc4ba3f925825b56c",
+      "group": "adapter-preparation",
+      "relative": "static-identity-proof.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/static-identity-proof.json"
+    },
+    {
+      "bytes": 3513,
+      "expected_sha256": "1891eda7a8a680f1d0b4156a047ba1236a9edbb50bed7908dd0201b1f6e8b31a",
+      "group": "adapter-preparation",
+      "relative": "summary.json",
+      "source_path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/summary.json"
+    },
+    {
+      "bytes": 4442,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "files.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/files.json"
+    },
+    {
+      "bytes": 3820,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "first-closure-attempt-producer.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-producer.py"
+    },
+    {
+      "bytes": 530,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "first-closure-attempt-start.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-start.json"
+    },
+    {
+      "bytes": 1972,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "first-closure-attempt-terminal.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-terminal.json"
+    },
+    {
+      "bytes": 295,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "first-closure-attempt-terminal.log",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/first-closure-attempt-terminal.log"
+    },
+    {
+      "bytes": 2559,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "graph-reconciliation-producer.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-producer.py"
+    },
+    {
+      "bytes": 526,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "graph-reconciliation-start.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-start.json"
+    },
+    {
+      "bytes": 40948,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "graph-reconciliation-terminal.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-terminal.json"
+    },
+    {
+      "bytes": 13207,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "graph-reconciliation-terminal.log",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/graph-reconciliation-terminal.log"
+    },
+    {
+      "bytes": 3921,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "local-reconciliation-producer.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-producer.py"
+    },
+    {
+      "bytes": 526,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "local-reconciliation-start.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-start.json"
+    },
+    {
+      "bytes": 4499,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "local-reconciliation-terminal.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-terminal.json"
+    },
+    {
+      "bytes": 1146,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "local-reconciliation-terminal.log",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/local-reconciliation-terminal.log"
+    },
+    {
+      "bytes": 3820,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "producer.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/producer.py"
+    },
+    {
+      "bytes": 1679,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publication-independent-diff-verification.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publication-independent-diff-verification.json"
+    },
+    {
+      "bytes": 4320,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publisher-launch-arguments.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-launch-arguments.json"
+    },
+    {
+      "bytes": 1888,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publisher-launch.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-launch.py"
+    },
+    {
+      "bytes": 530,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publisher-start.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-start.json"
+    },
+    {
+      "bytes": 5392,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publisher-terminal.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-terminal.json"
+    },
+    {
+      "bytes": 1413,
+      "expected_sha256": null,
+      "group": "root-closure",
+      "relative": "publisher-terminal.log",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v2/publisher-terminal.log"
+    },
+    {
+      "bytes": 68050,
+      "expected_sha256": null,
+      "group": "root-closure-first-attempt",
+      "relative": "producer.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/concurrent-head-root-closure-v1/producer.py"
+    },
+    {
+      "bytes": 5438,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "EVIDENCE_INDEX.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/EVIDENCE_INDEX.json"
+    },
+    {
+      "bytes": 2204,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "M6--trillionnium--Cargo.toml.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--Cargo.toml.original"
+    },
+    {
+      "bytes": 577,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "M6--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--Cargo.toml.original"
+    },
+    {
+      "bytes": 21031,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "M6--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit.rs.original"
+    },
+    {
+      "bytes": 70688,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "M6--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--main.rs.original"
+    },
+    {
+      "bytes": 386,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "M6-tree.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6-tree.original"
+    },
+    {
+      "bytes": 2204,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "N--trillionnium--Cargo.toml.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--Cargo.toml.original"
+    },
+    {
+      "bytes": 577,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "N--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--Cargo.toml.original"
+    },
+    {
+      "bytes": 21031,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "N--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--audit.rs.original"
+    },
+    {
+      "bytes": 70688,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "N--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--main.rs.original"
+    },
+    {
+      "bytes": 386,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "N-tree.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N-tree.original"
+    },
+    {
+      "bytes": 4326,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "README.md",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/README.md"
+    },
+    {
+      "bytes": 541,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "seal.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/seal.json"
+    },
+    {
+      "bytes": 23159,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "source-read-terminal.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/source-read-terminal.json"
+    },
+    {
+      "bytes": 11405,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "source-target-review.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/source-target-review.json"
+    },
+    {
+      "bytes": 5894,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "validation-plan.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/validation-plan.json"
+    },
+    {
+      "bytes": 2064,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/EVIDENCE_INDEX.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/EVIDENCE_INDEX.json"
+    },
+    {
+      "bytes": 1456,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/README.md",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/README.md"
+    },
+    {
+      "bytes": 14115,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/ci-format-lint-lines.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.original"
+    },
+    {
+      "bytes": 0,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/ci-format-lint-lines.stderr",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.stderr"
+    },
+    {
+      "bytes": 46547,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/ci_job.sh.original",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci_job.sh.original"
+    },
+    {
+      "bytes": 3036,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/lint-review.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/lint-review.json"
+    },
+    {
+      "bytes": 240,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/seal.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/seal.json"
+    },
+    {
+      "bytes": 4315,
+      "expected_sha256": null,
+      "group": "worker-artifact-plan",
+      "relative": "lint-review-v1/source-read.json",
+      "source_path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/source-read.json"
+    },
+    {
+      "bytes": 73492,
+      "expected_sha256": "0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2",
+      "group": "producer-sources",
+      "relative": "publish_followup_candidate_execution_archive_v2.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish_followup_candidate_execution_archive_v2.py"
+    },
+    {
+      "bytes": 36663,
+      "expected_sha256": "12776f0a436732589e46ef13548cb8f34180a532ab1ff63671560326c541cd6d",
+      "group": "producer-sources",
+      "relative": "prepare_pr847_audit_update_v5.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v5.py"
+    },
+    {
+      "bytes": 20506,
+      "expected_sha256": "d89eeaa8f7ba2514d411e8ed5b8bb8b3d1270d611b444f832f36fc4d60f9efdc",
+      "group": "producer-sources",
+      "relative": "apply_pr847_audit_update_and_ready_v3.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v3.py"
+    },
+    {
+      "bytes": 71594,
+      "expected_sha256": "8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d",
+      "group": "producer-sources",
+      "relative": "publish_followup_candidate_execution_archive_v1.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish_followup_candidate_execution_archive_v1.py"
+    },
+    {
+      "bytes": 32628,
+      "expected_sha256": "57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7",
+      "group": "producer-sources",
+      "relative": "prepare_pr847_audit_update_v4.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v4.py"
+    },
+    {
+      "bytes": 20506,
+      "expected_sha256": "ad29ad36815bd088d2b386bb996d28dc5cbe6b5a1b32766f51735598c6ff9776",
+      "group": "producer-sources",
+      "relative": "apply_pr847_audit_update_and_ready_v2.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v2.py"
+    },
+    {
+      "bytes": 6355,
+      "expected_sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a",
+      "group": "producer-sources",
+      "relative": "pr847-audit-body-template-v3.md",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md"
+    },
+    {
+      "bytes": 28163,
+      "expected_sha256": "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038",
+      "group": "producer-sources",
+      "relative": "publish_candidate_and_archive_v4.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish_candidate_and_archive_v4.py"
+    },
+    {
+      "bytes": 25112,
+      "expected_sha256": "d89b6f7b651d0422cd17fbd97ff6782996c9e3cdab163306f729109146560853",
+      "group": "producer-sources",
+      "relative": "resume_candidate_archive_publish_v2.py",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume_candidate_archive_publish_v2.py"
+    },
+    {
+      "bytes": 1743,
+      "expected_sha256": "4841b96e506ab216cdb72196d92c8cddf3694f70ad28e608a07e8eee7555cdbd",
+      "group": "producer-sources",
+      "relative": "followup-publication-spec-2a6206-v1.json",
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a6206-v1.json"
+    }
+  ],
+  "stage": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1"
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "root-combined-source-bindings-integration-commit-v1",
+  "head_before": "e99fe0e0e48a96185e1d02ac5acc458311814f65",
+  "head_after": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+  "tree": "926c85beac7bd4faf4ba94a5b7558d8931d2cee3",
+  "parents": [
+    "e99fe0e0e48a96185e1d02ac5acc458311814f65",
+    "341a8b5f751342b51a4aaf9512534853c79d7b5b"
+  ],
+  "clean": true,
+  "corpus_pins_updated": 12,
+  "required_path_added": "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+  "carrier_bytes_unchanged": true,
+  "staged_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/README.md",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/diagnostics-copy-verification.json",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/diagnostics-index.json",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/diagnostics-original-summary.json",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/diagnostics.zip",
+    "evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/integration-review.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/EVIDENCE_INDEX.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md.original",
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+    "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py",
+    "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "metadata_patch": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/combined-binding-followup-integration-v1/integration-existing-metadata.patch",
+    "bytes": 21243,
+    "sha256": "c94dfbb95ce48f51b3ad62ab4c2a5f6e920eda7050f012039dd4b37bdfa6ea66"
+  },
+  "component_controls_reexecuted": false,
+  "original_full_lane_run": false,
+  "remote_mutation": false,
+  "steps": [
+    {
+      "label": "preflight-before",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "normal-b1-merge",
+      "exit": 0,
+      "seconds": 0.144,
+      "sha256": "96bb6a194a796153cbd0c640642866371219451832063763d544b942a8d97c4e"
+    },
+    {
+      "label": "stage-exact-combined",
+      "exit": 0,
+      "seconds": 0.051,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "staged-diff-check",
+      "exit": 0,
+      "seconds": 0.033,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight-staged",
+      "exit": 0,
+      "seconds": 0.491,
+      "sha256": "0f0a9425a19154ebb97022f161fe491cf9733382609ea601b51f4a95edfea496"
+    },
+    {
+      "label": "normal-integration-commit",
+      "exit": 0,
+      "seconds": 0.074,
+      "sha256": "e4f10a9735ac6d8bbf64bec7bf3f1e82ff9e4ab9f6b78f867277744b6f88e12f"
+    }
+  ]
+}

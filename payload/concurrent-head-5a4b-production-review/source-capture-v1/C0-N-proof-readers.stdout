@@ -1,0 +1,1751 @@
+diff --git a/config/pon/hash-use-contract-v1.json b/config/pon/hash-use-contract-v1.json
+index c2f7552fded037e2e6ff6a91609112ad7aa6b301..2a45fdfefc70881853dc6045491943d819f1a209 100644
+--- a/config/pon/hash-use-contract-v1.json
++++ b/config/pon/hash-use-contract-v1.json
+@@ -1534,25 +1534,25 @@
+   },
+   "qualification": {
+     "actual_lifetime_failure_bound": null,
+     "security_bits": null,
+     "whole_chain_hash_query_scope_closed": false,
+     "composition_coverage_proved": false,
+     "whole_chain_pq_qualified": false,
+     "production_activation": false
+   },
+   "source_files": {
+     "config/pon/pq-proof-profile-binding-v1.json": {
+       "bytes": 2378,
+-      "sha256": "e2b13c985b1e00ad0d9e4bc6c41b6a2cb2c870da379db77fa2882defd79f8a23"
++      "sha256": "03dea45629a872ed5f59d8583fc43adb12970c76269455ff0359a534f67e1ec3"
+     },
+     "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": {
+       "bytes": 5246,
+       "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+     },
+     "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": {
+       "bytes": 13329,
+       "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+     },
+     "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs": {
+       "bytes": 11732,
+       "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+diff --git a/config/pon/pq-authority-effects-v1.json b/config/pon/pq-authority-effects-v1.json
+index 128fabbf8ccb038c26636f5689fe239a90ac663f..1c6dc60f31c13a00e3eaf0d01c85042ece00408f 100644
+--- a/config/pon/pq-authority-effects-v1.json
++++ b/config/pon/pq-authority-effects-v1.json
+@@ -1,15 +1,15 @@
+ {
+   "schema": "trnm-pq-authority-effects-v1",
+-  "source_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
++  "source_revision": "fc39da5f35298ce8a4c34aa5bdb25849648612f9",
+   "purpose": "curated-source-consistency-only",
+   "coverage_complete": false,
+   "whole_chain_pq_qualified": false,
+   "production_activation": false,
+   "routes": [
+     {
+       "id": "compat_transfer_type_v1",
+       "effect_scope": "validation-result-only",
+       "reachability_observation": "no-in-repository-native-consumer-found",
+       "profile_boundary": "classic-type-without-a-selected-node-profile",
+       "entry_sources": [
+         "trillionnium/crates/trnm-types/src/transfer.rs",
+@@ -200,25 +200,25 @@
+     "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "ce9efc2dc6160bcd1fc47163167deffb5b1f51926e98405bba7f7344fbdf179e",
+     "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "dd82a7a03e3b64ec74929734d0a9cdc99af61da5e2d4cf2614a578c7b2374924",
+     "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a",
+     "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "15fd960618017d9aa1932ebc7ad5da15ba6423bff4497f334b47bea5b5298930",
+     "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs": "3d4381aba6850515fb947f44591fa1f543ddc1588c5f5668c1ac4d22493a6827",
+     "trillionnium/crates/trnm-pon-node/src/ingress.rs": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+     "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "11fb84b1c7c7ab4e0f31723c5f708d0d5042dc080712fe899a632b6edc573a5a",
+     "trillionnium/crates/trnm-pon-node/src/release_finality.rs": "5a70f3985c511a5bec6b107e9184ea5f5a6f533aa4be647b9ced23be0b7232df",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5",
+     "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d",
+     "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "c38fd34412d955f04add458c91873a7fd7421171c3d64b5829ee5a3a4d51cdd6",
+     "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f",
+     "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+     "trillionnium/crates/trnm-research-protocol/src/command.rs": "8eed90ea44f2c7c25f13c2ba81765e1e34fa8b0548c8abfedda8b107a1e9e973",
+     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs": "921349f9d07f8c4a904ec7eb8bc9b091275a7c7d3da345d25e9e241e12155973",
+     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
+     "trillionnium/crates/trnm-research-protocol/src/state.rs": "4d1afff30a8fcfaadb921c58433d72d3a36971ad7e15872a484f2553cfcbf9eb",
+     "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs": "b0174c8aca1555b2dc0af1f7c3e0ff64b70431d03a0bccd0382fadacda897338",
+     "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs": "279c9b6787c2ee4a7cc31904aa73c9b860863867d5d4509d57bf5dad7ed5467a",
+     "trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs": "6f2bde4430b55d9d79ecf9e0733599cbcd95c6411af59a7bb48daf830624d809",
+     "trillionnium/crates/trnm-service-settlement/src/engine.rs": "bbec1ec6d64e7eb5d4806634a43656e2510b34cd4ee278aef179a84ed6d666f6",
+diff --git a/config/pon/pq128-lifetime-composition-current-v3.json b/config/pon/pq128-lifetime-composition-current-v3.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..5d85b9337ff09d3dffd0b52404115c8c9996e039
+--- /dev/null
++++ b/config/pon/pq128-lifetime-composition-current-v3.json
+@@ -0,0 +1,405 @@
++{
++  "actual_lifetime_failure_bound": null,
++  "additional_loss_accounting": {
++    "known_budget_headroom_is_not_a_security_bound": true,
++    "placement_in_eight_domains": "unproved",
++    "total": null
++  },
++  "composition_coverage_proved": false,
++  "conditional_root_arithmetic": {
++    "combiner": "common-plus-shared-plus-min-complete-family-bounds",
++    "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++    "family_population": {
++      "corruption_model": "unqualified",
++      "required_by_role": {
++        "anchor-response": {
++          "required": 2,
++          "roster_size": 3
++        },
++        "anchor-writer": {
++          "required": 2,
++          "roster_size": 3
++        },
++        "effect-provider": {
++          "required": 2,
++          "roster_size": 3
++        },
++        "root-approval": {
++          "required": 2,
++          "roster_size": 3
++        },
++        "successor-possession": {
++          "required": 3,
++          "roster_size": 3
++        },
++        "witness-response": {
++          "required": 2,
++          "roster_size": 3
++        }
++      },
++      "roles": [
++        "root-approval",
++        "successor-possession",
++        "anchor-writer",
++        "anchor-response",
++        "effect-provider",
++        "witness-response"
++      ],
++      "scope": "all-keys-all-epochs-including-retired-authority",
++      "threshold_to_forgery_reduction": "uninstantiated"
++    },
++    "game_id": "uninstantiated-common-root-game-v2",
++    "inputs": {
++      "common_failure": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "joint-root",
++        "resource_instance_id": "common",
++        "scope": "root-common-failure-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      },
++      "ml_event": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "ML-DSA-87",
++        "resource_instance_id": "ml",
++        "scope": "threshold-family-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      },
++      "ml_loss": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "ML-DSA-87",
++        "resource_instance_id": "ml",
++        "scope": "family-reduction-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      },
++      "shared_game_loss": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "joint-root",
++        "resource_instance_id": "shared",
++        "scope": "common-game-replacement-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      },
++      "slh_event": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "SLH-DSA-SHA2-256s",
++        "resource_instance_id": "slh",
++        "scope": "threshold-family-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      },
++      "slh_loss": {
++        "bound": null,
++        "experiment_id": "trnm-proposed-joint-lifetime-experiment-v2",
++        "game_id": "uninstantiated-common-root-game-v2",
++        "model": "quantum-adaptive-lifetime",
++        "profile": "SLH-DSA-SHA2-256s",
++        "resource_instance_id": "slh",
++        "scope": "family-reduction-whole-lifetime",
++        "status": "unknown",
++        "theorem": null
++      }
++    },
++    "purpose": "research-model",
++    "schema": "trnm-pq128-root-composition-arithmetic-v2"
++  },
++  "current_lifetime_correspondence": {
++    "path": "config/pon/pq128-source-correspondence-current-v2.json",
++    "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93",
++    "source_snapshot_sha256": "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140"
++  },
++  "experiment": {
++    "authority_after_retirement_included": true,
++    "horizon": null,
++    "id": "trnm-proposed-joint-lifetime-experiment-v2",
++    "initial_state_and_advice": "unqualified",
++    "joint_corruption_and_custody_model": "unqualified",
++    "model": "quantum-adaptive-lifetime",
++    "prior_preprocessing_included": true,
++    "profile": "proposed-native-pnw1-with-root-v2-v3-v4",
++    "status": "uninstantiated",
++    "stopping_rule": null
++  },
++  "frozen_composition": {
++    "path": "config/pon/pq128-lifetime-composition-v2.json",
++    "sha256": "5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052"
++  },
++  "frozen_review_base_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
++  "input_manifests": {
++    "legacy": {
++      "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
++      "path": "config/pon/pq128-lifetime-budget-v1.json",
++      "revision_semantics": "declared-event-source-revision",
++      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
++    },
++    "root": {
++      "declared_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
++      "path": "config/pon/pq-root-dependency-register-v3.json",
++      "revision_semantics": "review-base-context-not-all-source-revision",
++      "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
++    }
++  },
++  "primitive_scope_bridge": {
++    "sha256": {
++      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
++      "maximum": null,
++      "merge_rule": "identity-union-no-budget-sum-or-min",
++      "public_parameter_id": "FIPS180-4/SHA-256",
++      "query_unit": null,
++      "reset_at_register_key_epoch_role_recovery": false
++    },
++    "sha512": {
++      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
++      "maximum": null,
++      "merge_rule": "identity-union-no-budget-sum-or-min",
++      "public_parameter_id": "FIPS180-4/SHA-512",
++      "query_unit": null,
++      "reset_at_register_key_epoch_role_recovery": false
++    },
++    "shake128": {
++      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
++      "maximum": null,
++      "merge_rule": "identity-union-no-budget-sum-or-min",
++      "public_parameter_id": "FIPS202/SHAKE128",
++      "query_unit": null,
++      "reset_at_register_key_epoch_role_recovery": false
++    },
++    "shake256": {
++      "budget_identity": "one-shared-lifetime-scope-across-both-registers",
++      "maximum": null,
++      "merge_rule": "identity-union-no-budget-sum-or-min",
++      "public_parameter_id": "FIPS202/SHAKE256",
++      "query_unit": null,
++      "reset_at_register_key_epoch_role_recovery": false
++    }
++  },
++  "production_activation": false,
++  "purpose": "research-obligation-bridge",
++  "resource_instances": {
++    "common": {
++      "advice_generation_scope": "unknown",
++      "auxiliary_state_kind": "unknown",
++      "coverage_labels": [
++        "online",
++        "offline",
++        "preprocessing",
++        "failed",
++        "cancelled",
++        "rejected",
++        "unpublished",
++        "helpers",
++        "recursive",
++        "all-keys",
++        "all-epochs",
++        "shared-uses",
++        "authority-surviving-retirement"
++      ],
++      "coverage_labels_are_disjoint_buckets": false,
++      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
++      "node_limits_bound_external_queries": false,
++      "quantum_access_model": null,
++      "query_unit": null,
++      "status": "uninstantiated",
++      "theorem_reference": null,
++      "theorem_resource_transform": null,
++      "variables": {
++        "adversary_total_queries": null,
++        "classical_advice_bits": null,
++        "extractor_queries": null,
++        "honest_queries": null,
++        "offline_search_queries": null,
++        "online_queries": null,
++        "preprocessing_queries": null,
++        "quantum_advice_qubits": null,
++        "signing_queries": null,
++        "simulator_queries": null,
++        "total_epochs": null,
++        "total_keys": null,
++        "total_rosters": null,
++        "verification_attempts": null
++      }
++    },
++    "ml": {
++      "advice_generation_scope": "unknown",
++      "auxiliary_state_kind": "unknown",
++      "coverage_labels": [
++        "online",
++        "offline",
++        "preprocessing",
++        "failed",
++        "cancelled",
++        "rejected",
++        "unpublished",
++        "helpers",
++        "recursive",
++        "all-keys",
++        "all-epochs",
++        "shared-uses",
++        "authority-surviving-retirement"
++      ],
++      "coverage_labels_are_disjoint_buckets": false,
++      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
++      "node_limits_bound_external_queries": false,
++      "quantum_access_model": null,
++      "query_unit": null,
++      "status": "uninstantiated",
++      "theorem_reference": null,
++      "theorem_resource_transform": null,
++      "variables": {
++        "adversary_total_queries": null,
++        "classical_advice_bits": null,
++        "extractor_queries": null,
++        "honest_queries": null,
++        "offline_search_queries": null,
++        "online_queries": null,
++        "preprocessing_queries": null,
++        "quantum_advice_qubits": null,
++        "signing_queries": null,
++        "simulator_queries": null,
++        "total_epochs": null,
++        "total_keys": null,
++        "total_rosters": null,
++        "verification_attempts": null
++      }
++    },
++    "shared": {
++      "advice_generation_scope": "unknown",
++      "auxiliary_state_kind": "unknown",
++      "coverage_labels": [
++        "online",
++        "offline",
++        "preprocessing",
++        "failed",
++        "cancelled",
++        "rejected",
++        "unpublished",
++        "helpers",
++        "recursive",
++        "all-keys",
++        "all-epochs",
++        "shared-uses",
++        "authority-surviving-retirement"
++      ],
++      "coverage_labels_are_disjoint_buckets": false,
++      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
++      "node_limits_bound_external_queries": false,
++      "quantum_access_model": null,
++      "query_unit": null,
++      "status": "uninstantiated",
++      "theorem_reference": null,
++      "theorem_resource_transform": null,
++      "variables": {
++        "adversary_total_queries": null,
++        "classical_advice_bits": null,
++        "extractor_queries": null,
++        "honest_queries": null,
++        "offline_search_queries": null,
++        "online_queries": null,
++        "preprocessing_queries": null,
++        "quantum_advice_qubits": null,
++        "signing_queries": null,
++        "simulator_queries": null,
++        "total_epochs": null,
++        "total_keys": null,
++        "total_rosters": null,
++        "verification_attempts": null
++      }
++    },
++    "slh": {
++      "advice_generation_scope": "unknown",
++      "auxiliary_state_kind": "unknown",
++      "coverage_labels": [
++        "online",
++        "offline",
++        "preprocessing",
++        "failed",
++        "cancelled",
++        "rejected",
++        "unpublished",
++        "helpers",
++        "recursive",
++        "all-keys",
++        "all-epochs",
++        "shared-uses",
++        "authority-surviving-retirement"
++      ],
++      "coverage_labels_are_disjoint_buckets": false,
++      "honest_simulator_extractor_inclusion": "theorem-dependent-uninstantiated",
++      "node_limits_bound_external_queries": false,
++      "quantum_access_model": null,
++      "query_unit": null,
++      "status": "uninstantiated",
++      "theorem_reference": null,
++      "theorem_resource_transform": null,
++      "variables": {
++        "adversary_total_queries": null,
++        "classical_advice_bits": null,
++        "extractor_queries": null,
++        "honest_queries": null,
++        "offline_search_queries": null,
++        "online_queries": null,
++        "preprocessing_queries": null,
++        "quantum_advice_qubits": null,
++        "signing_queries": null,
++        "simulator_queries": null,
++        "total_epochs": null,
++        "total_keys": null,
++        "total_rosters": null,
++        "verification_attempts": null
++      }
++    }
++  },
++  "root_event_relation": {
++    "common_failure_obligations": [
++      "same-complete-statement-purpose-and-current-roster",
++      "thresholds-distinct-signers-and-successor-possession",
++      "implementation-refinement-and-owner-authority",
++      "corruption-custody-revocation-and-all-state-recovery",
++      "actual-external-effects-and-surviving-liabilities"
++    ],
++    "statement": "Bad_root subset C union (B_ML intersection B_SLH)",
++    "status": "unproved-for-project"
++  },
++  "schema": "trnm-pq128-lifetime-composition-current-v3",
++  "scope_mappings": {
++    "joint_bound_derived": false,
++    "legacy_domains_to_current_candidate": "unproved",
++    "root_is_added_to_legacy_sum": false,
++    "root_replaces_legacy_signature_term": false,
++    "root_to_legacy_domains": "unproved"
++  },
++  "shared_substrates": {
++    "keccak-p1600-24": {
++      "independent_oracles_proved": false,
++      "interface_level": "xof-to-permutation-mapping-uninstantiated",
++      "interfaces": [
++        "shake128",
++        "shake256"
++      ],
++      "joint_oracle_replacement_bound": null,
++      "maximum_queries": null,
++      "other_sha3_profiles_included": false,
++      "reference": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf",
++      "resource_transform": null
++    }
++  },
++  "whole_chain_hash_query_scope_closed": false,
++  "whole_chain_pq_qualified": false
++}
+diff --git a/config/pon/pq128-source-correspondence-current-v2.json b/config/pon/pq128-source-correspondence-current-v2.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..434d1cb328a3072ba08c174285eda3f0b31b51dd
+--- /dev/null
++++ b/config/pon/pq128-source-correspondence-current-v2.json
+@@ -0,0 +1,43 @@
++{
++  "schema": "trnm-pq128-source-correspondence-current-v2",
++  "status": "HOLD",
++  "frozen_model": {
++    "source_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
++    "manifest_path": "config/pon/pq128-lifetime-budget-v1.json",
++    "manifest_sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
++    "source_lock_path": "config/pon/pq128-source-lock-v1.json",
++    "source_lock_sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
++  },
++  "current_source_files_sha256": {
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
++    "trillionnium/crates/trnm-data-availability/src/cell.rs": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c",
++    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5",
++    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915",
++    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33",
++    "trillionnium/crates/trnm-data-availability/src/cell/retained.rs": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128",
++    "trillionnium/crates/trnm-data-availability/src/cell/version.rs": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs": "4b1df7fd0500303667873e560c66f90a86ed7cae0ae7784cc46bcc49e69ef57c",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d",
++    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
++    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5",
++    "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
++    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
++    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
++    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
++  },
++  "current_source_snapshot_sha256": "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140",
++  "qualification": {
++    "actual_lifetime_failure_bound": null,
++    "whole_chain_pq_qualified": false,
++    "pq_128_qualified": false,
++    "production_activation": false,
++    "composition_coverage_proved": false,
++    "theorem_applicability_verified": false
++  }
++}
+diff --git a/config/pon/w1-lifetime-current-source-v2.json b/config/pon/w1-lifetime-current-source-v2.json
+index 7424efa09f64f8359e0b144a99478b41ce7913d2..96aa4ba7a8f4634e4d82778b87eae7791eaca716 100644
+--- a/config/pon/w1-lifetime-current-source-v2.json
++++ b/config/pon/w1-lifetime-current-source-v2.json
+@@ -15,25 +15,25 @@
+   },
+   "historical_source_base_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+   "qualification": {
+     "actual_lifetime_failure_bound": null,
+     "composition_theorem_instantiated": false,
+     "consensus_admission": false,
+     "coverage_exhaustiveness_proved": false,
+     "production_activation": false,
+     "whole_chain_post_quantum_qualified": false
+   },
+   "schema": "TRNM-W1-LIFETIME-CURRENT-SOURCE-CONTRACT2",
+   "selected_source_scope": "20_selected_paths_not_full_dependency_or_execution_closure",
+-  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
++  "source_base_commit": "fc39da5f35298ce8a4c34aa5bdb25849648612f9",
+   "sources": [
+     {
+       "bytes": 1016,
+       "current_sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
+       "historical_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+       "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+     },
+     {
+       "bytes": 42127,
+       "current_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+       "historical_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+       "path": "trillionnium/Cargo.lock"
+@@ -60,26 +60,26 @@
+       "bytes": 42956,
+       "current_sha256": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
+       "historical_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+       "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs"
+     },
+     {
+       "bytes": 11701,
+       "current_sha256": "d782595915da93128ecf71cfd8f5a8a3a906f7f4e108d72d34b5299490b30499",
+       "historical_sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
+       "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+     },
+     {
+-      "bytes": 391470,
+-      "current_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
++      "bytes": 391556,
++      "current_sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5",
+       "historical_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+       "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+     },
+     {
+       "bytes": 20510,
+       "current_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+       "historical_sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+       "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs"
+     },
+     {
+       "bytes": 106066,
+       "current_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+diff --git a/docs/security/PQ128_LIFETIME_COMPOSITION_V2.md b/docs/security/PQ128_LIFETIME_COMPOSITION_V2.md
+index ca055cb12a2db06dd19c3ef83d7682839baac1c3..75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7 100644
+--- a/docs/security/PQ128_LIFETIME_COMPOSITION_V2.md
++++ b/docs/security/PQ128_LIFETIME_COMPOSITION_V2.md
+@@ -360,12 +360,30 @@ contract returns exit two with **REFUSE**. Neither grants consensus admission,
+ release, migration, payment, installation, execution or FinalUse. The actual
+ report continues to contain:
+ 
+ ```json
+ {
+   "actual_lifetime_failure_bound": null,
+   "composition_coverage_proved": false,
+   "whole_chain_hash_query_scope_closed": false,
+   "whole_chain_pq_qualified": false,
+   "production_activation": false
+ }
+ ```
++
++## Current source correspondence entry (2026-11-14)
++
++The v2 machine register and the original observation files remain unchanged.
++The default checker now reads the explicit
++[current-v3 register](../../config/pon/pq128-lifetime-composition-current-v3.json).
++That register retains the exact v2 identity and binds the
++[current 21-path correspondence](../../config/pon/pq128-source-correspondence-current-v2.json)
++separately from the frozen v1 model and source lock. The frozen arithmetic does
++not claim a current source revision.
++
++The current root inventory has 46 declared source paths, including the bounded
++cost observation source. Its one shared path with the 21-path event map gives
++66 distinct current source paths. This source accounting adds no bad event,
++probability, query budget, theorem applicability or production qualification.
++All arithmetic, unknown values, HOLD results and original refusal limits remain
++in force. Supplying the retained v2 register to the current-v3 checker is refused;
++historical logs retain their original schema and outcome.
+diff --git a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+index 1b5ccd314220d3af5396cbd6f391380dc137f7ef..f4230d0b39b32cf59d294272bac2f5049ba70aba 100644
+--- a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
++++ b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+@@ -1,33 +1,56 @@
+ # PQ authority and effect source register V1
+ 
+ **HOLD. Curated source consistency only; incomplete authority coverage.**
+ 
+ The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
+ routes to the current listed source checkpoint
+-`332d7f723d71707d88a2cffa52b3754579a46926`. The
++`fc39da5f35298ce8a4c34aa5bdb25849648612f9`. The
+ [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
+ effect scopes and source sets, and compares 44 actual regular files with a fixed
+ reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
+ while `status: HOLD`, `coverage_complete: false`,
+ `whole_chain_pq_qualified: false`, and `production_activation: false` remain fixed.
+ 
+ The original register closed a source-recording gap in the earlier
+ [cryptographic surface inventory](PQ_AUTHORITY_SURFACE_AUDIT_20261031.md): a
+ classic transfer type is not interchangeable with the native account owner, and
+ a signature, context comparison, downloaded artifact or certificate observation
+ must not be recorded as a different downstream permission. That original source
+ inventory did not itself establish a classical bypass of a PQ owner.
+ 
+-## Current combined-source binding, 2026-11-13
++## Active corrective source binding, 2026-11-14
++
++The selected checkpoint is `fc39da5f35298ce8a4c34aa5bdb25849648612f9`,
++tree `20ef410a1ea847a3585de91d5f0a0380009cf874`. All 44 selected
++regular Git blobs were read independently and matched to the checkout.
++The canonical revision-plus-file lock is `f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56`.
++
++Only `trillionnium/crates/trnm-pon-node/src/store.rs` differs in this
++inventory from the preceding `5c04c60e463462d9df8884786e0d5bb32af08a64`
++map: 391,470 bytes / `5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c`
++become 391,556 bytes /
++`ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5`.
++The other 43 source digests, seven route definitions, exact effect scopes,
++limits and false qualification fields are unchanged. The manifest, strict
++reader and independent positive assertions bind the same new lock. The old
++`5c04c60e` revision is an additional negative control alongside every
++earlier refusal.
++
++This is a curated source-consistency update. It neither authenticates an
++executor nor establishes a complete call graph, runtime reachability, native
++execution, whole-chain PQ qualification or production activation. Earlier
++review and execution records retain their original source identities.
++
++## Retained combined-source binding, 2026-11-13
+ 
+ The reviewed source checkpoint is `332d7f723d71707d88a2cffa52b3754579a46926`, tree
+ `c93086b354d75827ca96a42c7eaa3f8be8954311`. All 44 selected regular Git
+ blobs were read from that checkpoint and matched to the isolated checkout.
+ The canonical revision-plus-file lock is
+ `a4a74df247995dcfe7aa48bc0d7c8ff9969088c8acb665d0d8041310cce5dac4`.
+ 
+ Only `trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs`
+ changes within this selected set from the preceding `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`
+ mapping: SHA-256 `e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554` becomes
+ `db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3`. The fixture waits for the actual rendezvous
+ accept-loop readiness signal within its original finite setup allowance,
+@@ -597,27 +620,27 @@ that an absent source reference cannot exist at runtime. Negative-test paths
+ identify review material, not successful receipts. External-branch test results
+ cannot be supplied as acceptance fields in this schema. Actual integration,
+ fresh authorization, recovery, external effects and whole-chain security remain
+ separate obligations; `native_tests_executed`, `call_graph_proved` and
+ `runtime_reachability_proved` all remain false in the checker result.
+ 
+ ## Concurrent reviewed source lineage, 2026-11-14
+ 
+ The consolidation preserves commits e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5, 493f7fce6e517211a8cabccc15ba099965ea7c2a, d98067e973e2d00ec577dfe0a9dc478b81e895e4 and 73d5a17b9b7fb5f67040554f22ff37d20725e548 as real merge ancestors. The first commit binds the same discovery readiness fixture to checkpoint c82c6eabe8f27e2b918de850d237f6b0b06444bb with canonical lock f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a. That retained checkpoint is not the final consolidated source identity. Its preceding-revision refusal remains present, and the stale c82 checkpoint is now also an explicit refusal.
+ 
+ The incoming sealed-material fixture contains three corrected fixed expected contract hashes for its exact source pair. The current combination additionally contains the reviewed read-only trial-ledger reconciliation command, changing llm_runtime_pilot.py to SHA-256 13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7. The first integration attempt refused this real producer difference before changing the repository. The final merge rebinds the neural reader and explicit research preparation entry to that exact current pilot and independently derived complete contract. Both original test suites retain their fixed positive identities and all refusal assertions; the prior pilot is an additional explicit refusal. Historical material plan, target and original runtime identities retain their bytes. Both standalone lock blobs already exactly match the reviewed root. Final combined source mappings remain pending; neither this rebind nor preserved historical executions confer native, model, installation or security qualification.
+ 
+-## Consolidated current source review, 2026-11-14
++## Retained consolidated source review, 2026-11-14
+ 
+-Current source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
++The preceding source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
+ selected paths. Seven selected files changed from the preceding 332d7f72
+ review: Cell fetch ordering and controlled cache restoration, the per-call PQ
+ account configuration and its controls, Node advisory/store integration, and
+ the explicit THP2 fresh-time comparator plus its controls. Each full path and
+ Git identity was compared before this new lock was formed.
+ 
+ Canonical source-lock SHA-256: 3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528. The strict reader and independent
+ test literals select this checkpoint explicitly. Prior revision and hash
+ refusals, exact route fields, bounded regular-file reads and all false
+ qualification flags remain. These 44 paths are a curated inventory; source
+ consistency supplies no complete call graph, runtime reachability or whole-chain
+ security result. Earlier dated review records retain their original identities.
+diff --git a/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md b/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
+index dc9ab3677b72dc0ce5fc25041aed3858f2121efe..5e075d1d697c70b70db263fdd5e68de2d4d9c622 100644
+--- a/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
++++ b/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md
+@@ -4,42 +4,48 @@ Status: **HOLD / NO-GO**. This is a selected-source consistency reader. It grant
+ no consensus admission, production activation, model installation or FinalUse.
+ 
+ The [binding declaration](../../config/pon/pq-proof-profile-binding-v1.json) fixes
+ one research proof candidate. The [reader](../../scripts/ci/pq_proof_profile_binding.py)
+ checks its actual declared input bytes, entry profile, guest image, SDK lock,
+ control and verifier-parameter identities. It also checks the different profile
+ identities in the system lifetime register and the two P3 source configurations.
+ Those other records cannot supply the selected candidate's security parameters
+ or failure budget.
+ 
+ ## Selected candidate
+ 
+-The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its current
+-[QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) has
+-SHA-256 `272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
+-The current reference inputs were read from Chain commit
+-`39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency continuation
+-reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9` and contract SHA-256
+-`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`; those
+-observations remain historical. The current mapping now retains those 137 local
+-closure records and adds the finite `pon_from_zero_filter_cost_v1.rs` diagnostic
+-example, for 138 inputs. All 16 selected project inputs, saved proof fixtures,
+-parameters and proof obligations are unchanged. The 138-input count preserves
+-the existing crate-root and literal-data scope; cross-root Rust `#[path]` imports,
+-including the example's node-side `w1_from_zero.rs` helper, are not enumerated by
+-that mapping. Complete native source guarding is a separate observation.
+-The historical V1 contract and
+-reader retain their own source revision and bytes. The binding successor must
+-reproduce these declared inputs; it does not acquire the native execution claims
+-recorded on source `39336622`.
++The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its active
++[QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) is
++50,313 bytes with SHA-256
++`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`.
++It binds checkpoint `5c04c60e463462d9df8884786e0d5bb32af08a64` and
++145 local-closure inputs across the same six Cargo-reachable crates.
++The selected project roster still has 16 paths. Saved proof fixtures, guest
++image, SDK, control identity, verifier parameters and all 15 unresolved
++obligations retain their identities.
++
++The earlier `39336622c63df1ae746d83a76bb53202cd01ba17` mapping contained
++138 inputs and had contract SHA-256
++`272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
++The preceding `189b9b5959d836ef6ae96e14fb285948e4920aa9` review contained
++137 inputs with contract SHA-256
++`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`.
++Those source and native observations remain historical.
++
++The current inventory retains the crate-root and literal-data scope. External
++Rust `#[path]` imports, including the node-side `w1_from_zero.rs` helper,
++remain outside that inventory. Complete checkout guarding, native execution,
++third-party review and implementation refinement require separate evidence.
++The historical V1 contract and reader retain their own source revision and
++bytes; matching the current declaration transfers no historical execution claim.
+ 
+ | Selected property | Checked declaration |
+ | --- | --- |
+ | Independent entry | `w1_v2_verifier`, profile ending `join-v2` |
+ | Locked SDK | `risc0-zkvm` 3.0.6 |
+ | Proof field | BabyBear, modulus 2,013,265,921 |
+ | Extension | Degree 4, polynomial `X^4 + 11` |
+ | Hash suite | `poseidon2` |
+ | FRI | 50 queries; inverse rate 4; folding factor 16; final minimum degree 256 |
+ | Final recursion control | `7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e` |
+ | Verifier parameter digest | `ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013` |
+ | Guest image words | `[1958252411, 3287394615, 1805488136, 1516578702, 78549041, 790278610, 301018785, 4279049364]` |
+@@ -52,28 +58,31 @@ separate current QROM audit remains responsible for its broader mapping.
+ The hardened verifier library still contains its historical `join-v1`
+ `PROFILE_ID` and default guest image. The v2 entry explicitly calls its
+ `verify_image` API with the independent v2 image. This reader therefore binds
+ the entry and the image used by that entry; it does not replace the v2 image
+ with the library's historical default merely because the library is reused.
+ Its source checks do not establish compiler refinement.
+ 
+ The selected descriptor hashes the profile ID, mapping-contract bytes,
+ extracted identity, selected project and saved-fixture hashes, and upstream
+ snapshot identity. For these reference inputs its SHA-256 is:
+ 
+ ```text
+-9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad
++8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+ ```
+ 
+-The preceding dependency continuation produced descriptor
++The former frozen candidate descriptor was
++`9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad`.
++That identity is now refused for the current candidate.
++The earlier dependency continuation produced descriptor
+ `5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031`.
+ The earlier M2–M7 mapping produced descriptor
+ `da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c`.
+ The descriptor changes because it includes the mapping contract bytes; the
+ selected image, SDK, field, FRI, control and verifier-parameter identities do
+ not change. Prior candidate evidence keeps its original descriptor.
+ 
+ This is an audit identity, not a new protocol commitment or a security-bit
+ estimate. It does not replace a candidate's full repository, dependency,
+ provider, executable, loaded-model or operation identities.
+ 
+ ## Cross-register boundaries
+@@ -105,37 +114,41 @@ listed 2026-03-02 as the latest of three revisions. The
+ [conference publication](https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14)
+ was first published online on 2026-05-09. These metadata observations do not
+ establish equivalence between the manuscripts.
+ 
+ The pinned [composition evaluator](../../scripts/w1_qrom_composition_budget.py)
+ implements a hypothetical expression from the **2026-01-01** manuscript's
+ Theorem 10.6. The latest full PDF could not be obtained in this review, and its
+ theorem statements and proof have not been compared with that evaluator.
+ `version_equivalence_verified=false` is mandatory in this binding schema.
+ The metadata observation is dated; the reader does not claim to discover later
+ revisions while running offline.
+ 
+-## Candidate integration
++## Retained independent-lock review
+ 
+-The 2026-11-14 independent-lock review binds source
++The earlier 2026-11-14 independent-lock review bound source
+ `d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`. Its V2 lock is now
+ consistent with the selected shared crypto graph. The composed profile and
+ upstream-security register both reference mapping SHA-256
+ `5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb`.
+ The selected proof/image, unresolved obligations and current-use withdrawal
+-are unchanged. The descriptor fixes this reviewed input set:
++are unchanged. That review and its original descriptor remain historical.
++
++## Current candidate integration
++
++The current command requires the descriptor of the 145-input mapping above:
+ 
+ ```sh
+ python3 scripts/ci/pq_proof_profile_binding.py \
+-  --expected-profile-descriptor-sha256 9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad
++  --expected-profile-descriptor-sha256 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+ python3 scripts/ci/test_pq_proof_profile_binding.py -v
+ ```
+ 
+ The Python interface is
+ `inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=None)`.
+ A supplied digest must match exactly. If none is supplied, the reader can still
+ describe the current selected profile, but it reports
+ `candidate_profile_identity_matched=false`. A caller requiring a frozen
+ candidate must require that field to be true and must separately bind the
+ manifest hash and complete candidate identity.
+ 
+ Inputs are descriptor-bound regular-file reads. Duplicate JSON keys, unsafe
+diff --git a/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md b/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
+index bbf1200e2d410ff439dfb7367cee193902a91394..42967be8d2e492d9d294f36271fec9758df20203 100644
+--- a/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
++++ b/docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md
+@@ -1,38 +1,57 @@
+ # W1 lifetime: separate historical reproduction from current observation
+ 
+ Status: **HOLD / NO-GO**. No lifetime bound or cryptographic qualification is
+ created by this source-survey continuation of #850.
+ 
++## Active corrective source binding, 2026-11-14
++
++The current contract selects `fc39da5f35298ce8a4c34aa5bdb25849648612f9`,
++tree `20ef410a1ea847a3585de91d5f0a0380009cf874`, with the same
++ordered 20-path roster and the same 20 historical SHA-256 values.
++Its SHA-256 is `ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63`.
++All 20 current inputs were independently read from the immutable Git
++checkpoint and compared with the checkout.
++
++Only Node `store.rs` changes from the preceding `5c04c60e` mapping:
++391,470 bytes / `5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c`
++become 391,556 bytes /
++`ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5`.
++The historical-versus-current difference list still contains eight paths.
++The current reader's fixed contract digest and independent positive assertions
++move together. The frozen `7150d96a` reader, original pins and source refusal,
++arithmetic evaluator, bounds and all null/false qualification outputs remain
++unchanged. No historical execution or lifetime failure bound is inferred.
++
+ ## Original failure and preserved contract
+ 
+ On exact #850 source `3898582a321471fc2a6945b37ff4d0cd58c7a255`, hosted
+ [closure run 42645116454](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42645116454)
+ failed on head and prospective merge. Its original lifetime test class failed
+ in setup before executing any tests, because the V1 source survey rejected
+ the changed `store.rs` identity. Reproduction separately returned the same
+ refusal. Other named suites ran; a later completion refusal did not replace
+ the missing lifetime tests. #850's implementation workflow separation did
+ not repair this distinct closure workflow.
+ 
+ The historical ledger, its 20 pins, original lifetime tests, original closure
+ runner, original 105-name roster and seven saved reports remain unchanged.
+ The historical job now checks out the known original positive closure source
+ `1a14f7d4826363daefac9ec10131c66d7e70ece7`. Its positive result applies only
+ to that source. Current jobs must separately retain the real historical V1
+ refusal; raising a byte limit or silently replacing its pin is not a repair.
+ 
+-## Current combined-source binding, 2026-11-13
++## Retained combined-source binding, 2026-11-13
+ 
+-The current contract selects `332d7f723d71707d88a2cffa52b3754579a46926`, tree
++The contract at that retained checkpoint selected `332d7f723d71707d88a2cffa52b3754579a46926`, tree
+ `c93086b354d75827ca96a42c7eaa3f8be8954311`. Its 20 regular-file inputs
+ were read from the immutable Git revision and matched to the isolated checkout.
+ Compared with the previous current checkpoint `975ab0937243949b73cdbea9f13902802bbd7d00`,
+ only `formal/pon-nakamoto-v1/quantum_oracle_resources.py` changes:
+ 28,132 bytes / `23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a` become
+ 29,812 bytes / `3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049`.
+ The source now rejects inconsistent gate counts, depths and live-wire widths
+ for both circuit stages and serial totals. These are necessary arithmetic
+ conditions for one declared schedule, not circuit verification or a physical
+ resource lower bound. The current contract SHA-256 is
+ `66aaee2e08e666f32a106832274703d8c9c9fa6be9882ddc45017882c66be96b`.
+ 
+@@ -47,76 +66,78 @@ pins; the roster and historical pins themselves remain unchanged:
+ - `formal/pon-nakamoto-v1/quantum_oracle_resources.py`
+ 
+ The historical reader bytes, historical source identity, arithmetic evaluator,
+ all qualification flags and the null lifetime failure bound are unchanged.
+ The old current mapping actually refused the 29,812-byte source before this
+ repair. The update fixes its exact byte count and digest; it does not enlarge
+ the general reader cap or relax source identity checks.
+ 
+ ## Retained initial current-source observation
+ 
+ The initial V2 contract retained the same 20 selected paths under a new
+ namespace. At that initial checkpoint, comparison with V1 found one changed
+-path; the current six-path comparison is recorded above:
++path; the later six-path comparison at `332d7f72` is retained above:
+ 
+ | Path | Historical SHA-256 | Current SHA-256 |
+ |---|---|---|
+ | `trillionnium/crates/trnm-pon-node/src/store.rs` | `b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153` | `108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554` |
+ 
+-The current file is 382,866 bytes and retains both the native work-verification
++At that initial checkpoint the file was 382,866 bytes and retained both the native work-verification
+ and cumulative-required-work anchors used by the selected survey. These
+ anchors are source observations, not proofs of complete entry-point coverage,
+ runtime behavior, execution cost or consensus security.
+ 
+ The [observer](../../scripts/w1_lifetime_current_observation.py) independently
+ pins the current manifest and the complete unchanged historical reader bytes.
+ It reuses the historical source-observation function code in a private copied
+ data context whose current pin map and source label are explicit. It does not
+ modify the historical module, reader file or pin map. The historical reader
+ continues to reject the current store. The arithmetic evaluator and three
+ independent acceptance lines are unchanged; supplied counts remain premises.
+ 
+ The new output schema is `TRNM-W1-LIFETIME-CURRENT-OBSERVATION2`. Current jobs
+ do not compare it to the historical V1 lifetime report. They compare five
+ unaffected reports byte for byte. The semantics report has an independent,
+-explicit current comparison: the only reviewed difference is the SHA-256 of
+-`formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock` in its provenance. The current lock
+-adds the `risc0-binfmt` and `sha2` dependency edges to the local
+-`trnm-w1-zk-methods-v2` package; package entries and other report values remain
+-unchanged. Both lock identities and the original report identity are frozen;
+-arbitrary provenance or mathematical-output changes are refused. This is not
++explicit current comparison in the
++[QROM mapping](W1_QROM_CURRENT_SOURCE_MAPPING_V2.md). Its current correspondence
++permits only provenance lock-check SHA fields 0 and 2, for the V2 verifier
++and zkVM locks, to differ from the frozen report. Both current lock digests
++are independently fixed. Guest lock field 1, every other report property
++and all qualification fields must remain identical. The earlier zkVM-only
++comparison belongs to its retained source checkpoint; it is not the complete
++current correspondence. This is not
+ dependency-graph execution or compiler refinement evidence.
+ 
+ The jobs check complete source identity before and after, and require every
+ stage and every actual named test to complete successfully. The current roster and the
+ historical 105-name roster have separate namespaces and are not interchangeable.
+ 
+ ## Validation and remaining obligations
+ 
+ The current observer's tests cover the actual V1 refusal, retained unknown
+ outputs, immutable historical context, source-plus-manifest changes, missing
+ files, aliases and strict CLI failure behavior. The current closure controls
+ also cover actual named completion and workflow gate behavior. Repository CI
+ requires the observer tests, report and current closure controls once in the
+ original straight-line lane. No test or CI source check grants security bits.
+ 
+ All project lifetime failure bounds remain null, coverage exhaustiveness and
+ composition remain unproved, and production/consensus qualification stays false.
+ Source-before/after equality is not a native execution certificate. Concrete
+ quantum auxiliary-state hypotheses, a complete shared-oracle reduction,
+ recursive composition and complete lifetime event coverage still require their
+ own mathematical and operational evidence.
+ 
+-## Consolidated current source review, 2026-11-14
++## Retained consolidated source review, 2026-11-14
+ 
+-Current checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
++The preceding checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
+ 20 historical SHA-256 values from 7150d96a. Four current rows changed from
+ 332d7f72: the crypto Cargo manifest, pon_work.rs, pq_accounts_v2.rs and Node
+ store.rs. The historical-versus-current difference list now has eight paths,
+ including the two newly different pon_work.rs and pq_accounts_v2.rs.
+ 
+ Current contract SHA-256: bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7. The current reader still calls the original
+ byte-pinned survey function in a private copied context. The 7150 fixture,
+ the separate 1f2b0187 ledger and the 0f9b3054 PQ128 source lock retain their
+ bytes and identities. All source limits, arithmetic rules, missing/symlink
+ refusals and unknown qualification outputs remain. Current observation does
+ not reproduce a historical execution or establish a lifetime failure bound.
+diff --git a/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md b/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
+index d8641eb1cdc0edf01e6b155460de9173245432db..60124687f605c8727c26bfbdd168ef45c50839a3 100644
+--- a/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
++++ b/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md
+@@ -1,22 +1,42 @@
+ # Current-source W1 mapping V2
+ 
+ Status: **HOLD**. This is an explicit source-compatibility continuation under the
+ sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+ It does not replace the historical implementation contract, its test roster,
+ its failed workflow results or its unknown cryptographic obligations.
+ 
+-## Current independent-lock review, 2026-11-14
+-
+-The active mapping now binds source `d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`.
++## Active selected mapping, 2026-11-14
++
++The active contract binds checkpoint
++`5c04c60e463462d9df8884786e0d5bb32af08a64`, with 145 inputs in
++the same six local Cargo-reachable crates and 16 selected project paths.
++Its 50,313 bytes have SHA-256
++`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`.
++The paired proof descriptor is
++`8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`.
++
++The later local corrective checkpoint `fc39da5f35298ce8a4c34aa5bdb25849648612f9`
++does not change these 145 selected input bytes. Node `store.rs` and the
++CI reader fixes are outside this mapping's source inventory, so this mapping
++retains its existing checkpoint and digest. That equality does not qualify the
++whole successor checkout or reproduce a historical native run. The detailed
++145-input changes and current named CI correspondence are recorded below.
++All qualification flags remain false; the upstream current-approval list stays
++empty and the 15 proof obligations remain unresolved.
++
++## Retained independent-lock review, 2026-11-14
++
++At this retained checkpoint, the mapping bound source
++`d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`.
+ The independent native and V2 verifier locks previously failed full
+ `cargo metadata --locked` because their shared crypto dependency now requires
+ Ed25519 3.0 and Curve25519 5.0. The same manifest constraints were resolved;
+ no guest lock or historical proof material was rewritten.
+ 
+ Within this selected mapping, exactly one of 16 project inputs and one of
+ 140 local-closure inputs changes: `w1_v2_verifier/Cargo.lock`, now 46,018 bytes,
+ SHA-256 `93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b`.
+ All unchanged-version registry checksums and RISC Zero 3.0.6 package identities
+ are retained. Relative to the historical V1 project roster, the reviewed
+ difference set now contains the verifier entry, funded-service wire source and
+ this lock.
+@@ -31,26 +51,26 @@ upstream current-use withdrawal remain unchanged.
+ 
+ The profile-binding and upstream-security descriptors reference the same updated
+ mapping bytes; the route registry rebinds only that mapping and V2 lock.
+ No route, receipt format, approved profile, qualification flag or budget changes.
+ 
+ ## Earlier source reviews
+ 
+ The earlier source review described Chain
+ `39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency mapping
+ reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9`; its observations remain
+ historical. The retained V1 implementation contract is based on
+ `cb114b13bf848a77634e40a08b31b30c7c758e7b`.
+-Comparing its entire project-file roster with the current source gives two
+-changed files:
++At that earlier review, comparison of its entire project-file roster with
++`39336622` gave two changed files:
+ 
+ | File | Historical bytes | Current bytes | Reviewed difference |
+ | --- | ---: | ---: | --- |
+ | `formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs` | 9,233 | 11,172 | Adds the explicit `--native-once` command and dispatch branch. It performs one native replay with an independently supplied header. Existing receipt-verification dispatch is retained. |
+ | `trillionnium/crates/trnm-protocol/src/pon_wire.rs` | 32,354 | 32,654 | Adds exact funded-service reservation and decision decoding for additional forms of tags 2 and 5. The previously accepted fixed-length forms retain their branches. |
+ 
+ Changing those two source pins alone would leave new local dependencies outside
+ the selected mapping. The new contract therefore fixes all Rust source files
+ under the six reachable local path crates, their manifests and existing lock
+ files, workspace inputs and eight literal include materials. This includes
+ `funded_service_task_v1.rs`, the state-root arithmetic module, the remaining
+ protocol modules, the crypto crate and the relation/guest/verifier sources.
+@@ -108,25 +128,25 @@ retain their bytes. The original 14 control methods remain; their existing
+ closure-count assertion now includes the added example.
+ 
+ The 138-input count retains the original crate-root and literal-data inventory
+ scope. This reader does not enumerate Rust `#[path]` imports outside those roots.
+ The new example, like the older expensive-verifier example, imports
+ `trnm-pon-node/examples/support/w1_from_zero.rs`; that helper remains outside this
+ selected inventory. The separate native experiment guards the whole tracked
+ source. This mapping does not establish a complete Rust include/build graph.
+ 
+ The actual pre-update current reader on evidence child
+ `42d6ab45598cbba3d476a3c558b7fce562f13877` exited 2 with
+ `local Rust source inventory differs`. Retain that failure independently of the
+-historical V1 refusal. The active current contract SHA-256 is now
++historical V1 refusal. At that retained checkpoint the contract SHA-256 was
+ `272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
+ This source rebinding supplies no native execution or new security conclusion.
+ Native observations on `39336622` retain that identity; the binding successor
+ requires its own consistency checks and inherits no execution qualification.
+ 
+ The current checker verifies the local Cargo path graph,
+ exact Rust-file inventory, literal include set and declared absence of build
+ inputs. Newly added Rust files or previously absent build scripts require an
+ explicit review and new contract; they are not silently included.
+ 
+ The two entry manifests are the V2 verifier and the V2 guest. This source
+ inventory includes local test sources and their literal fixtures. It is not
+diff --git a/scripts/ci/pq_authority_effect_register.py b/scripts/ci/pq_authority_effect_register.py
+index 1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6..e2d05b7332635e787137b513ed86186c0341054f 100644
+--- a/scripts/ci/pq_authority_effect_register.py
++++ b/scripts/ci/pq_authority_effect_register.py
+@@ -13,30 +13,30 @@ import json
+ from pathlib import Path
+ import re
+ import sys
+ 
+ from pq_lifetime_budget import BudgetError, relative_path, strict_json
+ from pq_source_reader import SourceReadError, read_regular
+ 
+ SCHEMA = 'trnm-pq-authority-effects-v1'
+ RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
+ DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
+ # The seven route definitions and 44 source paths retain their reviewed scope.
+ # Prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
+-SOURCE_REVISION = '5c04c60e463462d9df8884786e0d5bb32af08a64'
++SOURCE_REVISION = 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'
+ PURPOSE = 'curated-source-consistency-only'
+ MAX_BYTES = 1024 * 1024
+ # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
+ # Generated from git show at the exact revision, not from current-tree hashes.
+-REVIEWED_SOURCE_LOCK_SHA256 = '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528'
++REVIEWED_SOURCE_LOCK_SHA256 = 'f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56'
+ 
+ CRATES = 'trillionnium/crates/'
+ TRANSFER = CRATES + 'trnm-types/src/transfer.rs'
+ MVCC = CRATES + 'trnm-mvcc-fee/'
+ EXECUTOR = MVCC + 'src/pon_executor.rs'
+ NODE = CRATES + 'trnm-pon-node/'
+ RESEARCH = CRATES + 'trnm-research-protocol/'
+ SETTLEMENT = CRATES + 'trnm-service-settlement/'
+ CELL = CRATES + 'trnm-data-availability/'
+ DISCOVERY = CELL + 'src/cell/discovery'
+ SOURCE_FIELDS = ('entry_sources', 'authentication_sources', 'state_or_effect_sources',
+                  'profile_sources', 'negative_test_sources')
+diff --git a/scripts/ci/pq_chain_claim_guard.py b/scripts/ci/pq_chain_claim_guard.py
+index 89d2b42488f11e7cef44b59453fb6aad8962bff6..d29b8569a900473baf8281586394f12ba98d71df 100644
+--- a/scripts/ci/pq_chain_claim_guard.py
++++ b/scripts/ci/pq_chain_claim_guard.py
+@@ -7,25 +7,27 @@ advertises HOLD; it is NOT a PQ-128 attestation, authorization or consensus gate
+ from __future__ import annotations
+ 
+ import argparse
+ import decimal
+ import json
+ import math
+ from pathlib import Path
+ import sys
+ 
+ from pq_source_reader import SourceReadError, read_regular
+ from pq_lifetime_budget import (BudgetError, DEFAULT_MANIFEST as LIFETIME_BUDGET,
+                                 DEFAULT_SOURCE_LOCK as LIFETIME_SOURCE_LOCK,
+-                                inspect as inspect_lifetime_budget)
++                                )
++from pq_lifetime_current_v2 import (DEFAULT_MAP as LIFETIME_CURRENT_MAP,
++                                    inspect as inspect_lifetime_current)
+ 
+ CONFIG = 'config/pon/post-quantum-transition-v1.json'
+ CORPUS = 'config/pon/pq-cross-branch-corpus-v1.json'
+ CONSENSUS = 'config/consensus-mainline.json'
+ DEVNET = 'config/pon/devnet-v1.json'
+ BOUNDARY = 'PROJECT_BOUNDARY.json'
+ PROOF_MANIFEST = 'trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json'
+ 
+ # Reserved aliases are checked wherever they occur in the configuration objects
+ # read below. This is an explicit source contract, not a natural-language scan.
+ LIFETIME_CLAIM_FLAGS = frozenset({
+     'whole_chain_pq128_qualified', 'whole_chain_pq_qualified',
+@@ -99,24 +101,27 @@ GATES = {
+     'capacity_and_invalid_input': (
+         'trillionnium/crates/trnm-protocol/src/pq_frame.rs',
+         'config/pon/post-quantum-transition-v1.json',
+     ),
+     'independent_end_to_end': (
+         'docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md',
+         'config/pon/pq-cross-branch-corpus-v1.json',
+         'scripts/ci/pq_source_reader.py',
+     ),
+     'lifetime_budget': (
+         LIFETIME_BUDGET,
+         LIFETIME_SOURCE_LOCK,
++        LIFETIME_CURRENT_MAP,
++        'scripts/ci/pq_lifetime_current_v2.py',
++        'scripts/ci/test_pq_lifetime_current_v2.py',
+         'scripts/ci/pq_lifetime_budget.py',
+         'scripts/ci/test_pq_lifetime_budget.py',
+         'docs/security/PQ128_LIFETIME_BUDGET_V1.md',
+     ),
+ }
+ 
+ class UnsafePromotion(ValueError):
+     pass
+ 
+ 
+ def require(ok: bool, msg: str) -> None:
+     if not ok:
+@@ -255,42 +260,36 @@ def inspect(root: Path) -> dict:
+             'actual devnet resource ceiling changed without qualification')
+     for paths in GATES.values():
+         for path in paths:
+             safe_file(root, path)
+     # The formerly researched guest may be absent from the current candidate.
+     # If reintroduced, its own qualification flag cannot override whole-chain HOLD.
+     if (root / PROOF_MANIFEST).exists() or (root / PROOF_MANIFEST).is_symlink():
+         manifest = strict_json(root, PROOF_MANIFEST)
+         refuse_lifetime_promotion(manifest, PROOF_MANIFEST)
+         false_field(manifest, 'pq_128_security_qualified', PROOF_MANIFEST)
+         false_field(manifest, 'production_consensus_activation', PROOF_MANIFEST)
+     try:
+-        lifetime = inspect_lifetime_budget(root)
++        lifetime = inspect_lifetime_current(root)
+     except BudgetError as error:
+         raise UnsafePromotion('invalid lifetime budget: ' + str(error)) from error
+-    require(lifetime['purpose'] == 'research-model',
++    require(lifetime['frozen_model']['purpose'] == 'research-model',
+             'illustrative budget cannot replace the current research register')
+     return {
+         'schema': 'trnm-whole-chain-pq-claim-guard-v1',
+         'status': 'HOLD', 'whole_chain_pq_qualified': False,
+         'pq_128_qualified': False, 'production_activation': False,
+         'gates': {gate: {'status': 'UNQUALIFIED', 'source_paths': list(paths)}
+                   for gate, paths in GATES.items()},
+-        'lifetime_budget': {key: lifetime[key] for key in (
+-            'schema', 'status', 'manifest_sha256', 'allocated_sum',
+-            'source_revision_bound', 'source_binding_scope', 'source_lock_sha256',
+-            'model_arithmetic_sum', 'actual_lifetime_failure_bound',
+-            'unknown_terms', 'unknown_query_budgets',
+-            'composition_coverage_proved', 'theorem_applicability_verified',
+-        )},
++        'lifetime_budget': lifetime,
+         'note': 'Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.',
+     }
+ 
+ 
+ def main() -> int:
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
+     args = parser.parse_args()
+     try:
+         result = inspect(args.root)
+     except UnsafePromotion as error:
+         print(json.dumps({'schema': 'trnm-whole-chain-pq-claim-guard-v1',
+diff --git a/scripts/ci/pq_lifetime_composition.py b/scripts/ci/pq_lifetime_composition.py
+index 270e0c4136faa996cd46df2bf9ff78ebc664fd69..32ba61ab1119e6e3c6697b69bce0eb722644d764 100644
+--- a/scripts/ci/pq_lifetime_composition.py
++++ b/scripts/ci/pq_lifetime_composition.py
+@@ -1,56 +1,60 @@
+ #!/usr/bin/env python3
+ """Review the declared V1/root inventory union and conditional AND arithmetic.
+ 
++The current-v3 entry retains the original v2 manifest by exact identity.
+ This is a research accounting contract, not a theorem checker. The two source
+ inventories do not instantiate one security game. No numeric declaration, source
+ checksum, or successful inspection can produce an actual lifetime bound.
+ """
+ from __future__ import annotations
+ 
+ import argparse
+ import copy
+ from fractions import Fraction
+ import hashlib
+ import json
+ from pathlib import Path
+ import sys
+ 
+ import pq_lifetime_budget as legacy
++import pq_lifetime_current_v2 as current_lifetime
+ import pq_root_dependency_register as root_register
+ from pq_source_reader import SourceReadError, read_regular
+ 
+-SCHEMA = "trnm-pq128-lifetime-composition-v2"
+-RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
++SCHEMA = "trnm-pq128-lifetime-composition-current-v3"
++RESULT_SCHEMA = "trnm-pq128-lifetime-composition-current-result-v3"
+ ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
+-DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
++DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-current-v3.json"
+ REVIEW_BASE = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
+ EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
+ COMMON_GAME = "uninstantiated-common-root-game-v2"
+ MAX_BYTES = legacy.MAX_BYTES
+ 
+ INPUTS = {
+     "legacy": {
+         "path": legacy.DEFAULT_MANIFEST,
+         "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
+         "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+         "revision_semantics": "declared-event-source-revision",
+     },
+     "root": {
+         "path": root_register.DEFAULT_MANIFEST,
+-        "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
++        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725",
+         "declared_revision": root_register.REVIEW_BASE,
+         "revision_semantics": "review-base-context-not-all-source-revision",
+     },
+ }
++FROZEN_COMPOSITION = {'path': 'config/pon/pq128-lifetime-composition-v2.json', 'sha256': '5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052'}
++CURRENT_CORRESPONDENCE = {'path': 'config/pon/pq128-source-correspondence-current-v2.json', 'sha256': '2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93', 'source_snapshot_sha256': '5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140'}
+ PRIMITIVES = {
+     "sha256": "FIPS180-4/SHA-256", "sha512": "FIPS180-4/SHA-512",
+     "shake128": "FIPS202/SHAKE128", "shake256": "FIPS202/SHAKE256",
+ }
+ COVERAGE = [
+     "online", "offline", "preprocessing", "failed", "cancelled", "rejected",
+     "unpublished", "helpers", "recursive", "all-keys", "all-epochs",
+     "shared-uses", "authority-surviving-retirement",
+ ]
+ RESOURCE_VARIABLES = (
+     "adversary_total_queries", "online_queries", "offline_search_queries",
+     "preprocessing_queries", "honest_queries", "simulator_queries",
+@@ -113,25 +117,27 @@ def default_arithmetic():
+             "scope": "all-keys-all-epochs-including-retired-authority",
+             "corruption_model": "unqualified",
+             "threshold_to_forgery_reduction": "uninstantiated",
+         },
+         "inputs": {name: unknown_leaf(name) for name in LEAVES},
+     }
+ 
+ 
+ def default_manifest():
+     """Return reviewed declarations; never regenerate a source lock from files."""
+     return {
+         "schema": SCHEMA, "purpose": "research-obligation-bridge",
+-        "review_base_revision": REVIEW_BASE,
++        "frozen_review_base_revision": REVIEW_BASE,
++        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
++        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
+         "input_manifests": copy.deepcopy(INPUTS),
+         "experiment": {
+             "id": EXPERIMENT_ID, "model": legacy.MODEL,
+             "profile": "proposed-native-pnw1-with-root-v2-v3-v4",
+             "status": "uninstantiated", "horizon": None, "stopping_rule": None,
+             "initial_state_and_advice": "unqualified",
+             "prior_preprocessing_included": True,
+             "authority_after_retirement_included": True,
+             "joint_corruption_and_custody_model": "unqualified",
+         },
+         "scope_mappings": {
+             "legacy_domains_to_current_candidate": "unproved",
+@@ -411,25 +417,27 @@ def bridge_primitives(legacy_data, root_data):
+             "legacy_term_ids": sorted(term["id"] for term in legacy_data["terms"]
+                                       if name in term["primitive_ids"]),
+             "root_use_ids": list(right["use_ids"]),
+             "scope": "declared-use-union-only", "query_budget_proved": False,
+         }
+     return out
+ 
+ 
+ def validate_manifest(data):
+     exact(data, default_manifest(), "composition manifest")
+     return {
+         "schema": RESULT_SCHEMA, "status": "HOLD", "inventory_contract_satisfied": True,
+-        "review_base_revision": REVIEW_BASE,
++        "frozen_review_base_revision": REVIEW_BASE,
++        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
++        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
+         "declared_source_union_consistent": False, "source_binding_scope": "unbound",
+         "source_revision_bound": False, "deployment_identity_proved": False,
+         "transitive_dependency_closure_proved": False,
+         "conditional_root_arithmetic": review_arithmetic(data["conditional_root_arithmetic"]),
+         "conditional_query_tail_arithmetic": review_query_tail_arithmetic(default_query_tail_arithmetic()),
+         "scope_mappings": copy.deepcopy(data["scope_mappings"]),
+         "resource_instances": copy.deepcopy(data["resource_instances"]),
+         "shared_substrates": copy.deepcopy(data["shared_substrates"]),
+         "additional_loss_placement": "unproved", "additional_loss_total": None,
+         "allocation_sufficiency_under_declared_losses": None,
+         "actual_lifetime_failure_bound": None, "joint_bound_derived": False,
+         "composition_coverage_proved": False, "theorem_applicability_verified": False,
+@@ -437,67 +445,80 @@ def validate_manifest(data):
+         "whole_chain_pq_qualified": False, "pq_128_qualified": False,
+         "production_activation": False,
+         "note": "The old domain experiment and the new root inventory are not a proved common experiment. No numeric bound is transferred, substituted, added or promoted.",
+     }
+ 
+ 
+ def inspect(root, manifest_path=DEFAULT_MANIFEST):
+     root = Path(root)
+     try:
+         raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
+         data = legacy.strict_json(raw)
+         result = validate_manifest(data)
++        frozen_raw = read_regular(root, FROZEN_COMPOSITION["path"], MAX_BYTES)
++        require(hashlib.sha256(frozen_raw).hexdigest() == FROZEN_COMPOSITION["sha256"],
++                "input manifest differs from reviewed bytes: frozen composition")
+         children = {}
+         for name, item in INPUTS.items():
+             child_raw = read_regular(root, item["path"], MAX_BYTES)
+             require(hashlib.sha256(child_raw).hexdigest() == item["sha256"],
+                     "input manifest differs from reviewed bytes: " + name)
+             children[name] = legacy.strict_json(child_raw)
+-        old_result = legacy.inspect(root)
++        current_result = current_lifetime.inspect(root)
++        old_result = current_result['frozen_model']
++        current_sources = current_result['current_source_correspondence']
++        require(current_sources['map_sha256'] == CURRENT_CORRESPONDENCE['sha256']
++                and current_sources['source_snapshot_sha256'] == CURRENT_CORRESPONDENCE['source_snapshot_sha256'],
++                'current lifetime correspondence differs from the reviewed composition input')
+         root_result = root_register.inspect(root)
+         for name, child in (("legacy", old_result), ("root", root_result)):
+             require(child["manifest_sha256"] == INPUTS[name]["sha256"],
+                     "child manifest changed between inspections: " + name)
+             require(child["actual_lifetime_failure_bound"] is None
+                     and child["composition_coverage_proved"] is False
+                     and child["whole_chain_pq_qualified"] is False
+                     and child["production_activation"] is False,
+                     "changed child qualification requires new review")
+         require(old_result["experiment"]["source_revision"] == INPUTS["legacy"]["declared_revision"]
+                 and root_result["review_base_revision"] == INPUTS["root"]["declared_revision"],
+                 "child revision semantics mismatch")
+-        require(old_result["purpose"] == "research-model" and old_result["source_revision_bound"] is True
++        require(old_result["purpose"] == "research-model"
++                and old_result["source_revision_bound"] is False
++                and current_sources["source_files_checked"] is True
++                and current_sources["source_revision_bound"] is False
+                 and root_result["source_files_checked"] is True,
+                 "source inventories must be checked research inputs")
+         require(len(old_result["unknown_terms"]) == 8
+                 and all(value is None for value in root_result["domain_failure_bounds"].values()),
+                 "new component bounds require explicit experiment and coverage review")
+-        files = merge_source_maps(old_result["source_files_sha256"], root_result["source_files_sha256"])
+-        shared_paths = sorted(set(old_result["source_files_sha256"])
++        files = merge_source_maps(current_sources["source_files_sha256"], root_result["source_files_sha256"])
++        shared_paths = sorted(set(current_sources["source_files_sha256"])
+                               & set(root_result["source_files_sha256"]))
+         source_counts = {
+-            "legacy": len(old_result["source_files_sha256"]),
++            "legacy": len(current_sources["source_files_sha256"]),
+             "root": len(root_result["source_files_sha256"]),
+             "shared": len(shared_paths), "union": len(files),
+         }
+-        require(source_counts == {"legacy": 21, "root": 45, "shared": 1, "union": 65}
++        require(source_counts == {"legacy": 21, "root": 46, "shared": 1, "union": 66}
+                 and shared_paths == ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"],
+                 "declared source union changed; review the mapping")
+         scopes = bridge_primitives(children["legacy"], children["root"])
+         allocated = legacy.probability(old_result["allocated_sum"], "allocated sum")
+         target = legacy.probability(old_result["target"], "target")
+         result.update({
+             "manifest_sha256": hashlib.sha256(raw).hexdigest(),
+             "input_manifests": copy.deepcopy(INPUTS),
+-            "legacy_source_lock_sha256": old_result["source_lock_sha256"],
++            "legacy_source_lock_sha256": current_result["frozen_model_identity"]["source_lock_sha256"],
++            "legacy_frozen_model_identity": current_result["frozen_model_identity"],
++            "legacy_current_source_correspondence": current_sources,
+             "root_declared_source_snapshot_sha256": root_result["declared_source_snapshot_sha256"],
+             "declared_source_union_consistent": True,
+             "source_binding_scope": "declared-path-union-only",
+             "source_counts": source_counts,
+             "source_files_sha256": files,
+             "shared_source_paths": shared_paths,
+             "primitive_scope_union": scopes, "shared_primitive_scope_count": len(scopes),
+             "unknown_lifetime_query_budgets": sorted(scopes),
+             "unknown_role_lifetime_populations": list(root_register.ROLES),
+             "legacy_declared_arithmetic": {
+                 "experiment": old_result["experiment"],
+                 "model_arithmetic_sum": old_result["model_arithmetic_sum"],
+diff --git a/scripts/ci/pq_lifetime_current_v2.py b/scripts/ci/pq_lifetime_current_v2.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc
+--- /dev/null
++++ b/scripts/ci/pq_lifetime_current_v2.py
+@@ -0,0 +1,212 @@
++#!/usr/bin/env python3
++"""Bind the frozen PQ128 model to an explicit current declared-path map.
++
++The V1 reader, manifest and source lock keep their original meaning. This
++separate entry checks current bytes without relabeling the frozen experiment,
++proving a Git revision, importing historical code or granting qualification.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import re
++import sys
++
++import pq_lifetime_budget as legacy
++from pq_source_reader import SourceReadError, read_regular
++
++SCHEMA = "trnm-pq128-lifetime-current-result-v2"
++MAP_SCHEMA = "trnm-pq128-source-correspondence-current-v2"
++DEFAULT_MAP = "config/pon/pq128-source-correspondence-current-v2.json"
++FROZEN_REVISION = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
++MANIFEST_SHA256 = "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
++SOURCE_LOCK_SHA256 = "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
++EXPECTED_MAP_SHA256 = "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
++EXPECTED_CURRENT_FILES_SHA256 = "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140"
++EXPECTED_PATHS = frozenset((
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
++    "trillionnium/crates/trnm-pon-node/src/consensus.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
++    "trillionnium/crates/trnm-pon-node/src/store.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
++    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
++    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
++    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
++))
++MAX_MAP_BYTES = 32768
++MAX_REPORT_BYTES = 262144
++QUALIFICATION = {
++    "actual_lifetime_failure_bound": None,
++    "whole_chain_pq_qualified": False,
++    "pq_128_qualified": False,
++    "production_activation": False,
++    "composition_coverage_proved": False,
++    "theorem_applicability_verified": False,
++}
++
++
++class CurrentBudgetError(legacy.BudgetError):
++    pass
++
++
++def require(ok, message):
++    if not ok:
++        raise CurrentBudgetError(message)
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"),
++                      ensure_ascii=False, allow_nan=False).encode("utf-8")
++
++
++def frozen_identity():
++    return {
++        "source_revision": FROZEN_REVISION,
++        "manifest_path": legacy.DEFAULT_MANIFEST,
++        "manifest_sha256": MANIFEST_SHA256,
++        "source_lock_path": legacy.DEFAULT_SOURCE_LOCK,
++        "source_lock_sha256": SOURCE_LOCK_SHA256,
++    }
++
++
++def inspect(root):
++    """Read only the fixed model, lock, map and all 21 current source paths.
++
++    Each descriptor read is bounded and identity checked. Separate reads are
++    not an immutable checkout snapshot or protection from a privileged writer.
++    Source correspondence is not a theorem, deployment or Git provenance proof.
++    """
++    root = Path(root)
++    try:
++        map_raw = read_regular(root, DEFAULT_MAP, MAX_MAP_BYTES)
++        require(hashlib.sha256(map_raw).hexdigest() == EXPECTED_MAP_SHA256,
++                "current correspondence map differs from reviewed bytes")
++        mapping = legacy.strict_json(map_raw)
++        legacy.fields(mapping, "schema status frozen_model current_source_files_sha256 "
++                      "current_source_snapshot_sha256 qualification", "current correspondence")
++        require(mapping["schema"] == MAP_SCHEMA and mapping["status"] == "HOLD",
++                "unsupported current correspondence namespace")
++        require(canonical(mapping["frozen_model"]) == canonical(frozen_identity()),
++                "frozen model identity cannot be replaced by current identity")
++        require(canonical(mapping["qualification"]) == canonical(QUALIFICATION),
++                "current correspondence cannot promote a lifetime claim")
++        expected = mapping["current_source_files_sha256"]
++        require(type(expected) is dict and set(expected) == EXPECTED_PATHS,
++                "current paths must equal the fixed 21 declared event paths")
++        for path, digest in expected.items():
++            require(type(digest) is str
++                    and re.fullmatch(r"[0-9a-f]{64}", digest) is not None,
++                    "invalid current source SHA-256: " + path)
++        require(mapping["current_source_snapshot_sha256"] == EXPECTED_CURRENT_FILES_SHA256
++                and hashlib.sha256(canonical(expected)).hexdigest()
++                == EXPECTED_CURRENT_FILES_SHA256,
++                "current source map differs from the independent snapshot pin")
++
++        manifest_raw = read_regular(root, legacy.DEFAULT_MANIFEST, legacy.MAX_BYTES)
++        lock_raw = read_regular(root, legacy.DEFAULT_SOURCE_LOCK, legacy.MAX_BYTES)
++        require(hashlib.sha256(manifest_raw).hexdigest() == MANIFEST_SHA256,
++                "frozen model manifest differs from reviewed bytes")
++        require(hashlib.sha256(lock_raw).hexdigest() == SOURCE_LOCK_SHA256,
++                "frozen source lock differs from reviewed bytes")
++        model = legacy.evaluate(legacy.strict_json(manifest_raw))
++        model["manifest_sha256"] = MANIFEST_SHA256
++        lock = legacy.strict_json(lock_raw)
++        legacy.fields(lock, "schema source_revision files", "frozen source lock")
++        require(lock["schema"] == legacy.SOURCE_LOCK_SCHEMA
++                and lock["source_revision"] == FROZEN_REVISION,
++                "frozen source lock revision mismatch")
++        require(type(lock["files"]) is dict and set(lock["files"]) == EXPECTED_PATHS
++                and set(model["source_paths"]) == EXPECTED_PATHS,
++                "frozen and current declared path sets must be identical")
++        require(model["purpose"] == "research-model"
++                and model["experiment"]["source_revision"] == FROZEN_REVISION
++                and model["source_revision_bound"] is False
++                and model["source_binding_scope"] == "unbound"
++                and model["source_lock_sha256"] is None,
++                "frozen arithmetic must not claim a current source binding")
++        for key, value in QUALIFICATION.items():
++            require(type(model[key]) is type(value) and model[key] == value,
++                    "frozen model qualification changed: " + key)
++
++        observed = {
++            path: hashlib.sha256(read_regular(root, path, legacy.MAX_BYTES)).hexdigest()
++            for path in sorted(EXPECTED_PATHS)
++        }
++        for path in sorted(EXPECTED_PATHS):
++            require(observed[path] == expected[path],
++                    "current correspondence source hash mismatch: " + path)
++        # Retain the original small metadata bytes across all source reads.
++        for path, raw, limit in (
++                (legacy.DEFAULT_MANIFEST, manifest_raw, legacy.MAX_BYTES),
++                (legacy.DEFAULT_SOURCE_LOCK, lock_raw, legacy.MAX_BYTES),
++                (DEFAULT_MAP, map_raw, MAX_MAP_BYTES)):
++            require(read_regular(root, path, limit) == raw,
++                    "correspondence metadata changed during inspection: " + path)
++        return {
++            "schema": SCHEMA, "status": "HOLD", **QUALIFICATION,
++            "frozen_model_identity": frozen_identity(),
++            "frozen_model": model,
++            "current_source_correspondence": {
++                "schema": MAP_SCHEMA, "source_files_checked": True,
++                "source_binding_scope": "declared-event-paths-only",
++                "source_revision_bound": False,
++                "map_sha256": EXPECTED_MAP_SHA256,
++                "source_snapshot_sha256": EXPECTED_CURRENT_FILES_SHA256,
++                "source_files_sha256": observed,
++                "changed_from_frozen_paths": sorted(
++                    path for path in EXPECTED_PATHS if observed[path] != lock["files"][path]),
++            },
++            "note": "The frozen arithmetic remains unbound. The current map checks only the same 21 declared event paths; it proves no Git revision, theorem applicability, complete dependency coverage, deployment or lifetime security bound.",
++        }
++    except (legacy.BudgetError, SourceReadError, KeyError, TypeError, ValueError) as error:
++        if isinstance(error, CurrentBudgetError):
++            raise
++        raise CurrentBudgetError(str(error)) from error
++
++
++def verify_report(root, raw):
++    """Recompute current bytes; never trust a supplied report or its own hashes."""
++    require(type(raw) is bytes and 0 < len(raw) <= MAX_REPORT_BYTES,
++            "invalid current correspondence report bytes")
++    try:
++        report = legacy.strict_json(raw)
++        expected = inspect(root)
++        matches = type(report) is dict and canonical(report) == canonical(expected)
++    except (TypeError, ValueError, UnicodeError, RecursionError) as error:
++        raise CurrentBudgetError("invalid current correspondence report") from error
++    require(matches, "current correspondence report differs from fresh inspection")
++    return expected
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
++    args = parser.parse_args()
++    try:
++        result = inspect(args.root)
++    except (CurrentBudgetError, OSError) as error:
++        print(json.dumps({"schema": SCHEMA, "status": "REFUSE",
++                          "reason": str(error), **QUALIFICATION}, sort_keys=True),
++              file=sys.stderr)
++        return 2
++    print(json.dumps(result, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/scripts/w1_lifetime_current_observation.py b/scripts/w1_lifetime_current_observation.py
+index e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0..901634884d201df615370811f46a02ae88647631 100644
+--- a/scripts/w1_lifetime_current_observation.py
++++ b/scripts/w1_lifetime_current_observation.py
+@@ -10,30 +10,30 @@ from __future__ import annotations
+ 
+ import argparse
+ import hashlib
+ import json
+ import os
+ from pathlib import Path, PurePosixPath
+ import stat
+ import sys
+ from types import FunctionType, ModuleType
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
+-CONTRACT_SHA256 = 'bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7'
++CONTRACT_SHA256 = 'ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63'
+ # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
+ # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
+ LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
+ LEGACY_SHA256 = '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6'
+-CURRENT = '5c04c60e463462d9df8884786e0d5bb32af08a64'
++CURRENT = 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'
+ HISTORICAL = '7150d96a2112875b4afcf3023361a5cef4a0e4b1'
+ CHANGED = (
+     'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+     'trillionnium/Cargo.lock',
+     'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+     'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
+     'trillionnium/crates/trnm-pon-node/src/store.rs',
+     'trillionnium/crates/trnm-pon-node/src/consensus.rs',
+     'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+     'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
+ )
+ MAX_BYTES = 2 * 1024 * 1024

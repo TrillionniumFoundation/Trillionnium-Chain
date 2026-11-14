@@ -1,0 +1,34 @@
+diff --git a/config/pon/pq128-lifetime-composition-v2.json b/config/pon/pq128-lifetime-composition-v2.json
+index ebd3b69b78036120b361d9984b02b3a4f9b1b462..ea59e63ae7f0734f03429411d4fb9ff265fd83da 100644
+--- a/config/pon/pq128-lifetime-composition-v2.json
++++ b/config/pon/pq128-lifetime-composition-v2.json
+@@ -134,16 +134,16 @@
+   },
+   "input_manifests": {
+     "legacy": {
+-      "declared_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
++      "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+       "path": "config/pon/pq128-lifetime-budget-v1.json",
+       "revision_semantics": "declared-event-source-revision",
+-      "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc"
++      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+     },
+     "root": {
+-      "declared_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
++      "declared_revision": "975af9eb4a7f15b405de602552fa05021a176c11",
+       "path": "config/pon/pq-root-dependency-register-v3.json",
+       "revision_semantics": "review-base-context-not-all-source-revision",
+-      "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
++      "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8"
+     }
+   },
+   "primitive_scope_bridge": {
+@@ -356,7 +356,7 @@
+       }
+     }
+   },
+-  "review_base_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
++  "review_base_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+   "root_event_relation": {
+     "common_failure_obligations": [
+       "same-complete-statement-purpose-and-current-roster",

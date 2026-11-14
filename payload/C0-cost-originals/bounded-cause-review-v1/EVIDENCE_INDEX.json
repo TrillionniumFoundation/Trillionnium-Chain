@@ -1,0 +1,68 @@
+{
+  "schema": "trnm-C0-causal-review-evidence-index-v1",
+  "created_at": "2026-11-14T08:24:48.289134+00:00",
+  "files": [
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-logs-summary.json",
+      "bytes": 2593,
+      "sha256": "0a2876e7340f97b59bb101300c3aeea91f188fc12d659b7592b82fa68896277d"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957328.stdout.raw",
+      "bytes": 184796,
+      "sha256": "cfbdfbd664b2da3babc27026d6abf6529921c74296bb170a5e93087d54a74d76"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957441.stdout.raw",
+      "bytes": 184338,
+      "sha256": "382032e5ce118dbe178ba1cb73a5225ef66e1df6880bdd0c2f73c4fd828b1f74"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/critical-original-summary.json",
+      "bytes": 15375,
+      "sha256": "9f87cc034ef2f294773404b444a872168801581bb148a26283c630974d233ef9"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/critical-original-summary.json",
+      "bytes": 15395,
+      "sha256": "affe4d55d9edd262ce575b4cff3273ea88deba7e331bfbc3f4744309d4190e70"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-readonly-v2/all-replay-phases-and-waits.json",
+      "bytes": 277682,
+      "sha256": "920783335d16d47ee2c2ce469ea74afea0500ff0692c512b7d5a81b69e86db5c"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-source-discovery-v1/small-stage-table.json",
+      "bytes": 56500,
+      "sha256": "c0942b801082ab0335a2650256042df1cd9bf6d4ca411fb50104561dbe9c35a6"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/hotpath-readonly-v1/test-history-import-callsite.json",
+      "bytes": 5468,
+      "sha256": "627cd5aba9db48b5d60565a07a56acc4eae9657c371f6a1e732d8a317553d6cc"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/source-index.json",
+      "bytes": 1937,
+      "sha256": "199be3981cb1d4c5898638db99f42e2a12eabbb9c6873874fc7ba6dcc8dd05cc"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/runner-and-transport-review-v1/runner-cause-source.json",
+      "bytes": 17027,
+      "sha256": "c06cb660b0cccc80e364a62ebf30446854ce9b1f32613935c5809d09da0c4af6"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/causal-summary.json",
+      "bytes": 111116,
+      "sha256": "07c9620aca942d46dfef631650508a6e985e8f28f1f947a099b5aef0d97d78c7"
+    },
+    {
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/review.md",
+      "bytes": 4572,
+      "sha256": "a6e33926b598b9f68e4bbb5b3ae44aafd3b58f7821f4f1e6060241fc86590874"
+    }
+  ],
+  "private_http_or_auth_debug_files_included": false,
+  "whole_zip_verified_at_seal": false
+}

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "-c",
+    "core.commitGraph=false",
+    "merge-base",
+    "--is-ancestor",
+    "dba81d56be6598cec9df2774446ca3ab7fccca98",
+    "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-14T06:14:05.116034+00:00",
+  "label": "02-base-ancestry",
+  "started_at": "2026-11-14T06:14:05.104500+00:00"
+}

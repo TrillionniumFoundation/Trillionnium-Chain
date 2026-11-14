@@ -1,0 +1,1616 @@
+{
+  "source": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original",
+  "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
+  "ranges": [
+    {
+      "start": 1780,
+      "end": 1900,
+      "lines": [
+        {
+          "line": 1780,
+          "text": "                .queue_backpressure_events += 1;"
+        },
+        {
+          "line": 1781,
+          "text": "            Ok(Stage::Enqueue(Box::new(task)))"
+        },
+        {
+          "line": 1782,
+          "text": "        }"
+        },
+        {
+          "line": 1783,
+          "text": "        Err(TrySendError::Disconnected(_)) => Err(\"PUBLIC_QUEUE_CLOSED\".into()),"
+        },
+        {
+          "line": 1784,
+          "text": "    }"
+        },
+        {
+          "line": 1785,
+          "text": "}"
+        },
+        {
+          "line": 1786,
+          "text": "fn caller_write_half_alive("
+        },
+        {
+          "line": 1787,
+          "text": "    socket: &TcpStream,"
+        },
+        {
+          "line": 1788,
+          "text": "    cancelled: &AtomicBool,"
+        },
+        {
+          "line": 1789,
+          "text": "    metrics: &Mutex<PublicMetrics>,"
+        },
+        {
+          "line": 1790,
+          "text": "    observation: Option<&ConnectionObservation>,"
+        },
+        {
+          "line": 1791,
+          "text": "    phase: &'static str,"
+        },
+        {
+          "line": 1792,
+          "text": ") -> Result<()> {"
+        },
+        {
+          "line": 1793,
+          "text": "    let open = match caller_write_half_open(socket, true) {"
+        },
+        {
+          "line": 1794,
+          "text": "        Ok(open) => open,"
+        },
+        {
+          "line": 1795,
+          "text": "        Err(error) => {"
+        },
+        {
+          "line": 1796,
+          "text": "            // A complete request has no further client frame. In particular,"
+        },
+        {
+          "line": 1797,
+          "text": "            // one unread byte must not hide a FIN from every later peek. Keep"
+        },
+        {
+          "line": 1798,
+          "text": "            // the original task/CPU obligations until their owners settle."
+        },
+        {
+          "line": 1799,
+          "text": "            cancel_request_observed(cancelled, observation, \"peer_input_failure\", phase);"
+        },
+        {
+          "line": 1800,
+          "text": "            return Err(error);"
+        },
+        {
+          "line": 1801,
+          "text": "        }"
+        },
+        {
+          "line": 1802,
+          "text": "    };"
+        },
+        {
+          "line": 1803,
+          "text": "    if !open {"
+        },
+        {
+          "line": 1804,
+          "text": "        metrics"
+        },
+        {
+          "line": 1805,
+          "text": "            .lock()"
+        },
+        {
+          "line": 1806,
+          "text": "            .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 1807,
+          "text": "            .disconnected_await_requests += 1;"
+        },
+        {
+          "line": 1808,
+          "text": "        cancel_request_observed(cancelled, observation, \"peer_write_closed\", phase);"
+        },
+        {
+          "line": 1809,
+          "text": "        return Err(\"PUBLIC_EOF\".into());"
+        },
+        {
+          "line": 1810,
+          "text": "    }"
+        },
+        {
+          "line": 1811,
+          "text": "    Ok(())"
+        },
+        {
+          "line": 1812,
+          "text": "}"
+        },
+        {
+          "line": 1813,
+          "text": "fn caller_write_half_open(socket: &TcpStream, body_complete: bool) -> Result<bool> {"
+        },
+        {
+          "line": 1814,
+          "text": "    match socket.peek(&mut [0; 1]) {"
+        },
+        {
+          "line": 1815,
+          "text": "        Ok(0) => Ok(false),"
+        },
+        {
+          "line": 1816,
+          "text": "        Ok(_) if body_complete => Err(\"PUBLIC_TRAILING_INPUT\".into()),"
+        },
+        {
+          "line": 1817,
+          "text": "        Err(e)"
+        },
+        {
+          "line": 1818,
+          "text": "            if !matches!("
+        },
+        {
+          "line": 1819,
+          "text": "                e.kind(),"
+        },
+        {
+          "line": 1820,
+          "text": "                std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted"
+        },
+        {
+          "line": 1821,
+          "text": "            ) =>"
+        },
+        {
+          "line": 1822,
+          "text": "        {"
+        },
+        {
+          "line": 1823,
+          "text": "            Err(e.into())"
+        },
+        {
+          "line": 1824,
+          "text": "        }"
+        },
+        {
+          "line": 1825,
+          "text": "        _ => Ok(true),"
+        },
+        {
+          "line": 1826,
+          "text": "    }"
+        },
+        {
+          "line": 1827,
+          "text": "}"
+        },
+        {
+          "line": 1828,
+          "text": "fn pending_alive(conn: &Connection, stop: &AtomicBool, phase: &'static str) -> Result<()> {"
+        },
+        {
+          "line": 1829,
+          "text": "    task_alive(conn.deadline, stop, &conn.cancelled)?;"
+        },
+        {
+          "line": 1830,
+          "text": "    // Pending Challenge/Ready input may already contain the next legal frame."
+        },
+        {
+          "line": 1831,
+          "text": "    // It is not trailing input until the declared body has been fully read."
+        },
+        {
+          "line": 1832,
+          "text": "    if !caller_write_half_open(&conn.socket, false)? {"
+        },
+        {
+          "line": 1833,
+          "text": "        cancel_request_observed("
+        },
+        {
+          "line": 1834,
+          "text": "            &conn.cancelled,"
+        },
+        {
+          "line": 1835,
+          "text": "            conn.observation.as_ref(),"
+        },
+        {
+          "line": 1836,
+          "text": "            \"pending_peer_write_closed\","
+        },
+        {
+          "line": 1837,
+          "text": "            phase,"
+        },
+        {
+          "line": 1838,
+          "text": "        );"
+        },
+        {
+          "line": 1839,
+          "text": "        return Err(\"PUBLIC_EOF\".into());"
+        },
+        {
+          "line": 1840,
+          "text": "    }"
+        },
+        {
+          "line": 1841,
+          "text": "    Ok(())"
+        },
+        {
+          "line": 1842,
+          "text": "}"
+        },
+        {
+          "line": 1843,
+          "text": "fn decode_task_body<'a>("
+        },
+        {
+          "line": 1844,
+          "text": "    task: &'a Task,"
+        },
+        {
+          "line": 1845,
+          "text": "    server: &PublicServer,"
+        },
+        {
+          "line": 1846,
+          "text": "    settings: &Settings,"
+        },
+        {
+          "line": 1847,
+          "text": "    mutation_cpu: Option<&MutationCpuMeasurement>,"
+        },
+        {
+          "line": 1848,
+          "text": ") -> Result<DecodedTaskBody<'a>> {"
+        },
+        {
+          "line": 1849,
+          "text": "    let stamp = mutation_cpu.and_then(|_| ThreadCpuStamp::start());"
+        },
+        {
+          "line": 1850,
+          "text": "    if let Some(cpu) = mutation_cpu {"
+        },
+        {
+          "line": 1851,
+          "text": "        if stamp.is_none() {"
+        },
+        {
+          "line": 1852,
+          "text": "            cpu.record_phase(&cpu.body_decode_ns, None);"
+        },
+        {
+          "line": 1853,
+          "text": "            return Err(\"PUBLIC_MUTATION_CPU_UNAVAILABLE\".into());"
+        },
+        {
+          "line": 1854,
+          "text": "        }"
+        },
+        {
+          "line": 1855,
+          "text": "    }"
+        },
+        {
+          "line": 1856,
+          "text": "    let decoded = (|| {"
+        },
+        {
+          "line": 1857,
+          "text": "        ensure("
+        },
+        {
+          "line": 1858,
+          "text": "            task.raw_body.len() == task.cookie.body_len as usize,"
+        },
+        {
+          "line": 1859,
+          "text": "            \"PUBLIC_BODY_LIMIT\","
+        },
+        {
+          "line": 1860,
+          "text": "        )?;"
+        },
+        {
+          "line": 1861,
+          "text": "        ensure("
+        },
+        {
+          "line": 1862,
+          "text": "            task.cookie.body_digest"
+        },
+        {
+          "line": 1863,
+          "text": "                == hex::encode(hash(b\"public-request-body-v3\", &[&task.raw_body])),"
+        },
+        {
+          "line": 1864,
+          "text": "            \"PUBLIC_BODY_DIGEST\","
+        },
+        {
+          "line": 1865,
+          "text": "        )?;"
+        },
+        {
+          "line": 1866,
+          "text": "        let request = if task.cookie.op == 1 && !server.identity.is_pq() && !server.native_growth {"
+        },
+        {
+          "line": 1867,
+          "text": "            // This borrow cannot outlive or mutate the original paid body."
+        },
+        {
+          "line": 1868,
+          "text": "            // It proves transport grammar only; Packet decoding stays after"
+        },
+        {
+          "line": 1869,
+          "text": "            // the original cookie checks, inside the original Decode phase."
+        },
+        {
+          "line": 1870,
+          "text": "            DecodedTaskBody::CanonicalSubmit(CanonicalPacketText::from_body(&task.raw_body)?)"
+        },
+        {
+          "line": 1871,
+          "text": "        } else {"
+        },
+        {
+          "line": 1872,
+          "text": "            DecodedTaskBody::Owned(canonical_request(&task.raw_body, task.cookie.op)?)"
+        },
+        {
+          "line": 1873,
+          "text": "        };"
+        },
+        {
+          "line": 1874,
+          "text": "        server.validate(&task.cookie, settings, false)?;"
+        },
+        {
+          "line": 1875,
+          "text": "        Ok(request)"
+        },
+        {
+          "line": 1876,
+          "text": "    })();"
+        },
+        {
+          "line": 1877,
+          "text": "    if let Some(cpu) = mutation_cpu {"
+        },
+        {
+          "line": 1878,
+          "text": "        cpu.record_phase(&cpu.body_decode_ns, stamp.and_then(ThreadCpuStamp::finish));"
+        },
+        {
+          "line": 1879,
+          "text": "        ensure(!cpu.unavailable.get(), \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;"
+        },
+        {
+          "line": 1880,
+          "text": "    }"
+        },
+        {
+          "line": 1881,
+          "text": "    decoded"
+        },
+        {
+          "line": 1882,
+          "text": "}"
+        },
+        {
+          "line": 1883,
+          "text": "struct PublicDispatchObservation<'a> {"
+        },
+        {
+          "line": 1884,
+          "text": "    observation: Option<&'a TaskObservation>,"
+        },
+        {
+          "line": 1885,
+          "text": "    mutation_cpu: Option<&'a MutationCpuMeasurement>,"
+        },
+        {
+          "line": 1886,
+          "text": "    arithmetic_facts:"
+        },
+        {
+          "line": 1887,
+          "text": "        Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,"
+        },
+        {
+          "line": 1888,
+          "text": "    w1_rejection_cache:"
+        },
+        {
+          "line": 1889,
+          "text": "        Option<&'a trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,"
+        },
+        {
+          "line": 1890,
+          "text": "}"
+        },
+        {
+          "line": 1891,
+          "text": "fn public_dispatch_submit("
+        },
+        {
+          "line": 1892,
+          "text": "    node: &Mutex<Node>,"
+        },
+        {
+          "line": 1893,
+          "text": "    packet: SubmitPacketText<'_>,"
+        },
+        {
+          "line": 1894,
+          "text": "    deadline: Instant,"
+        },
+        {
+          "line": 1895,
+          "text": "    stop: &AtomicBool,"
+        },
+        {
+          "line": 1896,
+          "text": "    cancelled: &AtomicBool,"
+        },
+        {
+          "line": 1897,
+          "text": "    metrics: &Mutex<PublicMetrics>,"
+        },
+        {
+          "line": 1898,
+          "text": "    observation: PublicDispatchObservation<'_>,"
+        },
+        {
+          "line": 1899,
+          "text": ") -> Result<Value> {"
+        },
+        {
+          "line": 1900,
+          "text": "    let PublicDispatchObservation {"
+        }
+      ]
+    },
+    {
+      "start": 2850,
+      "end": 3050,
+      "lines": [
+        {
+          "line": 2850,
+          "text": "                            )?;"
+        },
+        {
+          "line": 2851,
+          "text": "                        }"
+        },
+        {
+          "line": 2852,
+          "text": "                        Err(TryRecvError::Empty) => break,"
+        },
+        {
+          "line": 2853,
+          "text": "                        Err(TryRecvError::Disconnected) => return Err(\"PUBLIC_WORKERS_GONE\".into()),"
+        },
+        {
+          "line": 2854,
+          "text": "                    }"
+        },
+        {
+          "line": 2855,
+          "text": "                }"
+        },
+        {
+          "line": 2856,
+          "text": "                let heads = PendingHeads::collect(&connections, Instant::now());"
+        },
+        {
+          "line": 2857,
+          "text": "                let mut remove = Vec::new();"
+        },
+        {
+          "line": 2858,
+          "text": "                for (id, conn) in &mut connections {"
+        },
+        {
+          "line": 2859,
+          "text": "                    if conn"
+        },
+        {
+          "line": 2860,
+          "text": "                        .intake_lease"
+        },
+        {
+          "line": 2861,
+          "text": "                        .as_ref()"
+        },
+        {
+          "line": 2862,
+          "text": "                        .is_some_and(ConnectionLease::pressure_cancelled)"
+        },
+        {
+          "line": 2863,
+          "text": "                    {"
+        },
+        {
+          "line": 2864,
+          "text": "                        remove.push(*id);"
+        },
+        {
+          "line": 2865,
+          "text": "                        continue;"
+        },
+        {
+          "line": 2866,
+          "text": "                    }"
+        },
+        {
+          "line": 2867,
+          "text": "                    if Instant::now() >= conn.deadline {"
+        },
+        {
+          "line": 2868,
+          "text": "                        let mut m = metrics.lock().map_err(|_| \"PUBLIC_METRICS\")?;"
+        },
+        {
+          "line": 2869,
+          "text": "                        m.expired_connections += 1;"
+        },
+        {
+          "line": 2870,
+          "text": "                        close_pending(&mut m, conn.stage.pending());"
+        },
+        {
+          "line": 2871,
+          "text": "                        *m.expired_phase_counts"
+        },
+        {
+          "line": 2872,
+          "text": "                            .entry(conn.stage.phase().into())"
+        },
+        {
+          "line": 2873,
+          "text": "                            .or_default() += 1;"
+        },
+        {
+          "line": 2874,
+          "text": "                        if let Some(record) = &conn.observation {"
+        },
+        {
+          "line": 2875,
+          "text": "                            record.terminal_error("
+        },
+        {
+          "line": 2876,
+          "text": "                                conn.stage.phase(),"
+        },
+        {
+          "line": 2877,
+          "text": "                                &\"PUBLIC_REQUEST_DEADLINE\".into(),"
+        },
+        {
+          "line": 2878,
+          "text": "                            );"
+        },
+        {
+          "line": 2879,
+          "text": "                        }"
+        },
+        {
+          "line": 2880,
+          "text": "                        remove.push(*id);"
+        },
+        {
+          "line": 2881,
+          "text": "                        continue;"
+        },
+        {
+          "line": 2882,
+          "text": "                    }"
+        },
+        {
+          "line": 2883,
+          "text": "                    let current = std::mem::replace(&mut conn.stage, Stage::Await);"
+        },
+        {
+          "line": 2884,
+          "text": "                    let progress_before = current.progress_key();"
+        },
+        {
+          "line": 2885,
+          "text": "                    let phase = current.phase();"
+        },
+        {
+          "line": 2886,
+          "text": "                    let pending_before = current.pending();"
+        },
+        {
+          "line": 2887,
+          "text": "                    let advanced = (|| -> Result<Stage> {"
+        },
+        {
+          "line": 2888,
+          "text": "                        match current {"
+        },
+        {
+          "line": 2889,
+          "text": "                            Stage::Hello(mut bytes) => {"
+        },
+        {
+          "line": 2890,
+          "text": "                                let before = bytes.len();"
+        },
+        {
+          "line": 2891,
+          "text": "                                let complete = read_available_observed("
+        },
+        {
+          "line": 2892,
+          "text": "                                    &mut conn.socket,"
+        },
+        {
+          "line": 2893,
+          "text": "                                    &mut bytes,"
+        },
+        {
+          "line": 2894,
+          "text": "                                    HELLO_BYTES,"
+        },
+        {
+          "line": 2895,
+          "text": "                                    conn.observation.as_ref(),"
+        },
+        {
+          "line": 2896,
+          "text": "                                    0,"
+        },
+        {
+          "line": 2897,
+          "text": "                                )?;"
+        },
+        {
+          "line": 2898,
+          "text": "                                let lease = conn"
+        },
+        {
+          "line": 2899,
+          "text": "                                    .intake_lease"
+        },
+        {
+          "line": 2900,
+          "text": "                                    .as_ref()"
+        },
+        {
+          "line": 2901,
+          "text": "                                    .ok_or(\"PUBLIC_INTAKE_UNAVAILABLE\")?;"
+        },
+        {
+          "line": 2902,
+          "text": "                                if complete {"
+        },
+        {
+          "line": 2903,
+          "text": "                                    lease.protect()?;"
+        },
+        {
+          "line": 2904,
+          "text": "                                } else {"
+        },
+        {
+          "line": 2905,
+          "text": "                                    if bytes.len() > before {"
+        },
+        {
+          "line": 2906,
+          "text": "                                        lease.waiting_for_input(Instant::now())?;"
+        },
+        {
+          "line": 2907,
+          "text": "                                    }"
+        },
+        {
+          "line": 2908,
+          "text": "                                    return Ok(Stage::Hello(bytes));"
+        },
+        {
+          "line": 2909,
+          "text": "                                }"
+        },
+        {
+          "line": 2910,
+          "text": "                                let hello = Hello::parse_for(&bytes, server.identity.is_pq())?;"
+        },
+        {
+          "line": 2911,
+          "text": "                                ensure("
+        },
+        {
+          "line": 2912,
+          "text": "                                    server.operation_allowed(hello.op),"
+        },
+        {
+          "line": 2913,
+          "text": "                                    \"PUBLIC_OPERATION_PROFILE\","
+        },
+        {
+          "line": 2914,
+          "text": "                                )?;"
+        },
+        {
+          "line": 2915,
+          "text": "                                if let Some(record) = &conn.observation {"
+        },
+        {
+          "line": 2916,
+          "text": "                                    record.request(hello.op, hello.digest);"
+        },
+        {
+          "line": 2917,
+          "text": "                                }"
+        },
+        {
+          "line": 2918,
+          "text": "                                let pending = PendingOrder::next(&mut next_pending_order)?;"
+        },
+        {
+          "line": 2919,
+          "text": "                                if let Some(record) = &conn.observation {"
+        },
+        {
+          "line": 2920,
+          "text": "                                    record.pending_started(false, pending.entered_at);"
+        },
+        {
+          "line": 2921,
+          "text": "                                }"
+        },
+        {
+          "line": 2922,
+          "text": "                                metrics"
+        },
+        {
+          "line": 2923,
+          "text": "                                    .lock()"
+        },
+        {
+          "line": 2924,
+          "text": "                                    .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 2925,
+          "text": "                                    .pending_challenge_entered += 1;"
+        },
+        {
+          "line": 2926,
+          "text": "                                Ok(Stage::WaitChallenge { hello, pending })"
+        },
+        {
+          "line": 2927,
+          "text": "                            }"
+        },
+        {
+          "line": 2928,
+          "text": "                            Stage::WaitChallenge { hello, pending } => {"
+        },
+        {
+          "line": 2929,
+          "text": "                                pending_alive(conn, &stop, phase)?;"
+        },
+        {
+          "line": 2930,
+          "text": "                                if !heads.is_head(PendingKind::Challenge, hello.op, *id)"
+        },
+        {
+          "line": 2931,
+          "text": "                                    || !intake.try_challenge(hello.op, Instant::now())?"
+        },
+        {
+          "line": 2932,
+          "text": "                                {"
+        },
+        {
+          "line": 2933,
+          "text": "                                    return Ok(Stage::WaitChallenge { hello, pending });"
+        },
+        {
+          "line": 2934,
+          "text": "                                }"
+        },
+        {
+          "line": 2935,
+          "text": "                                let cookie = server.cookie(&settings, hello, conn.peer)?;"
+        },
+        {
+          "line": 2936,
+          "text": "                                let frame = framed("
+        },
+        {
+          "line": 2937,
+          "text": "                                    serde_json::to_vec(&cookie)?,"
+        },
+        {
+          "line": 2938,
+          "text": "                                    pq_identity::challenge_maximum(server.identity.is_pq()),"
+        },
+        {
+          "line": 2939,
+          "text": "                                )?;"
+        },
+        {
+          "line": 2940,
+          "text": "                                metrics"
+        },
+        {
+          "line": 2941,
+          "text": "                                    .lock()"
+        },
+        {
+          "line": 2942,
+          "text": "                                    .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 2943,
+          "text": "                                    .issued_challenges += 1;"
+        },
+        {
+          "line": 2944,
+          "text": "                                {"
+        },
+        {
+          "line": 2945,
+          "text": "                                    let mut m = metrics.lock().map_err(|_| \"PUBLIC_METRICS\")?;"
+        },
+        {
+          "line": 2946,
+          "text": "                                    m.pending_challenge_granted += 1;"
+        },
+        {
+          "line": 2947,
+          "text": "                                    m.pending_challenge_wait_ns = m"
+        },
+        {
+          "line": 2948,
+          "text": "                                        .pending_challenge_wait_ns"
+        },
+        {
+          "line": 2949,
+          "text": "                                        .saturating_add(elapsed_ns(pending.entered_at));"
+        },
+        {
+          "line": 2950,
+          "text": "                                }"
+        },
+        {
+          "line": 2951,
+          "text": "                                conn.deadline = conn"
+        },
+        {
+          "line": 2952,
+          "text": "                                    .total_deadline"
+        },
+        {
+          "line": 2953,
+          "text": "                                    .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));"
+        },
+        {
+          "line": 2954,
+          "text": "                                if let Some(record) = &conn.observation {"
+        },
+        {
+          "line": 2955,
+          "text": "                                    record.pending_granted(false);"
+        },
+        {
+          "line": 2956,
+          "text": "                                }"
+        },
+        {
+          "line": 2957,
+          "text": "                                Ok(Stage::Challenge {"
+        },
+        {
+          "line": 2958,
+          "text": "                                    cookie,"
+        },
+        {
+          "line": 2959,
+          "text": "                                    bytes: frame,"
+        },
+        {
+          "line": 2960,
+          "text": "                                    cursor: 0,"
+        },
+        {
+          "line": 2961,
+          "text": "                                })"
+        },
+        {
+          "line": 2962,
+          "text": "                            }"
+        },
+        {
+          "line": 2963,
+          "text": "                            Stage::Challenge {"
+        },
+        {
+          "line": 2964,
+          "text": "                                cookie,"
+        },
+        {
+          "line": 2965,
+          "text": "                                bytes,"
+        },
+        {
+          "line": 2966,
+          "text": "                                mut cursor,"
+        },
+        {
+          "line": 2967,
+          "text": "                            } => {"
+        },
+        {
+          "line": 2968,
+          "text": "                                if write_available_observed("
+        },
+        {
+          "line": 2969,
+          "text": "                                    &mut conn.socket,"
+        },
+        {
+          "line": 2970,
+          "text": "                                    &bytes,"
+        },
+        {
+          "line": 2971,
+          "text": "                                    &mut cursor,"
+        },
+        {
+          "line": 2972,
+          "text": "                                    conn.observation.as_ref(),"
+        },
+        {
+          "line": 2973,
+          "text": "                                    1,"
+        },
+        {
+          "line": 2974,
+          "text": "                                )? {"
+        },
+        {
+          "line": 2975,
+          "text": "                                    conn.deadline = conn.total_deadline.min("
+        },
+        {
+          "line": 2976,
+          "text": "                                        server.started"
+        },
+        {
+          "line": 2977,
+          "text": "                                            + Duration::from_millis(cookie.expires_tick_ms),"
+        },
+        {
+          "line": 2978,
+          "text": "                                    );"
+        },
+        {
+          "line": 2979,
+          "text": "                                    conn.intake_lease"
+        },
+        {
+          "line": 2980,
+          "text": "                                        .as_ref()"
+        },
+        {
+          "line": 2981,
+          "text": "                                        .ok_or(\"PUBLIC_INTAKE_UNAVAILABLE\")?"
+        },
+        {
+          "line": 2982,
+          "text": "                                        .waiting_for_input(Instant::now())?;"
+        },
+        {
+          "line": 2983,
+          "text": "                                    Ok(Stage::Solution {"
+        },
+        {
+          "line": 2984,
+          "text": "                                        cookie,"
+        },
+        {
+          "line": 2985,
+          "text": "                                        bytes: Vec::with_capacity(pq_identity::solution_bytes("
+        },
+        {
+          "line": 2986,
+          "text": "                                            server.identity.is_pq(),"
+        },
+        {
+          "line": 2987,
+          "text": "                                        )),"
+        },
+        {
+          "line": 2988,
+          "text": "                                    })"
+        },
+        {
+          "line": 2989,
+          "text": "                                } else {"
+        },
+        {
+          "line": 2990,
+          "text": "                                    Ok(Stage::Challenge {"
+        },
+        {
+          "line": 2991,
+          "text": "                                        cookie,"
+        },
+        {
+          "line": 2992,
+          "text": "                                        bytes,"
+        },
+        {
+          "line": 2993,
+          "text": "                                        cursor,"
+        },
+        {
+          "line": 2994,
+          "text": "                                    })"
+        },
+        {
+          "line": 2995,
+          "text": "                                }"
+        },
+        {
+          "line": 2996,
+          "text": "                            }"
+        },
+        {
+          "line": 2997,
+          "text": "                            Stage::Solution { cookie, mut bytes } => {"
+        },
+        {
+          "line": 2998,
+          "text": "                                let before = bytes.len();"
+        },
+        {
+          "line": 2999,
+          "text": "                                let complete = read_available_observed("
+        },
+        {
+          "line": 3000,
+          "text": "                                    &mut conn.socket,"
+        },
+        {
+          "line": 3001,
+          "text": "                                    &mut bytes,"
+        },
+        {
+          "line": 3002,
+          "text": "                                    pq_identity::solution_bytes(server.identity.is_pq()),"
+        },
+        {
+          "line": 3003,
+          "text": "                                    conn.observation.as_ref(),"
+        },
+        {
+          "line": 3004,
+          "text": "                                    2,"
+        },
+        {
+          "line": 3005,
+          "text": "                                )?;"
+        },
+        {
+          "line": 3006,
+          "text": "                                let lease = conn"
+        },
+        {
+          "line": 3007,
+          "text": "                                    .intake_lease"
+        },
+        {
+          "line": 3008,
+          "text": "                                    .as_ref()"
+        },
+        {
+          "line": 3009,
+          "text": "                                    .ok_or(\"PUBLIC_INTAKE_UNAVAILABLE\")?;"
+        },
+        {
+          "line": 3010,
+          "text": "                                if complete {"
+        },
+        {
+          "line": 3011,
+          "text": "                                    // Protect before validation; failures are still closed"
+        },
+        {
+          "line": 3012,
+          "text": "                                    // by this reactor and never gain a paid lane or body."
+        },
+        {
+          "line": 3013,
+          "text": "                                    lease.protect()?;"
+        },
+        {
+          "line": 3014,
+          "text": "                                } else {"
+        },
+        {
+          "line": 3015,
+          "text": "                                    if bytes.len() > before {"
+        },
+        {
+          "line": 3016,
+          "text": "                                        lease.waiting_for_input(Instant::now())?;"
+        },
+        {
+          "line": 3017,
+          "text": "                                    }"
+        },
+        {
+          "line": 3018,
+          "text": "                                    return Ok(Stage::Solution { cookie, bytes });"
+        },
+        {
+          "line": 3019,
+          "text": "                                }"
+        },
+        {
+          "line": 3020,
+          "text": "                                server.validate(&cookie, &settings, true)?;"
+        },
+        {
+          "line": 3021,
+          "text": "                                ensure("
+        },
+        {
+          "line": 3022,
+          "text": "                                    bytes[..4]"
+        },
+        {
+          "line": 3023,
+          "text": "                                        == *pq_identity::solution_magic(server.identity.is_pq())"
+        },
+        {
+          "line": 3024,
+          "text": "                                        && bytes[4..36] == cookie.id()?,"
+        },
+        {
+          "line": 3025,
+          "text": "                                    \"PUBLIC_SOLUTION\","
+        },
+        {
+          "line": 3026,
+          "text": "                                )?;"
+        },
+        {
+          "line": 3027,
+          "text": "                                let nonce = u64::from_le_bytes("
+        },
+        {
+          "line": 3028,
+          "text": "                                    bytes[36..44].try_into().map_err(|_| \"PUBLIC_SOLUTION\")?,"
+        },
+        {
+          "line": 3029,
+          "text": "                                );"
+        },
+        {
+          "line": 3030,
+          "text": "                                if !winner(cookie.id()?, nonce, server.policy.bits) {"
+        },
+        {
+          "line": 3031,
+          "text": "                                    metrics"
+        },
+        {
+          "line": 3032,
+          "text": "                                        .lock()"
+        },
+        {
+          "line": 3033,
+          "text": "                                        .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 3034,
+          "text": "                                        .ticket_refusals += 1;"
+        },
+        {
+          "line": 3035,
+          "text": "                                    return Err(\"PUBLIC_TICKET_TARGET\".into());"
+        },
+        {
+          "line": 3036,
+          "text": "                                }"
+        },
+        {
+          "line": 3037,
+          "text": "                                if let Err(error) = server.verify_caller(&cookie, nonce, &bytes) {"
+        },
+        {
+          "line": 3038,
+          "text": "                                    metrics"
+        },
+        {
+          "line": 3039,
+          "text": "                                        .lock()"
+        },
+        {
+          "line": 3040,
+          "text": "                                        .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 3041,
+          "text": "                                        .signature_refusals += 1;"
+        },
+        {
+          "line": 3042,
+          "text": "                                    return Err(error);"
+        },
+        {
+          "line": 3043,
+          "text": "                                }"
+        },
+        {
+          "line": 3044,
+          "text": "                                if let Some(observation) = &conn.observation {"
+        },
+        {
+          "line": 3045,
+          "text": "                                    observation.authenticated_caller(&cookie.caller);"
+        },
+        {
+          "line": 3046,
+          "text": "                                }"
+        },
+        {
+          "line": 3047,
+          "text": "                                if let Err(e) = spent.reserve("
+        },
+        {
+          "line": 3048,
+          "text": "                                    cookie.id()?,"
+        },
+        {
+          "line": 3049,
+          "text": "                                    cookie.expires_tick_ms,"
+        },
+        {
+          "line": 3050,
+          "text": "                                    server.tick()?,"
+        }
+      ]
+    },
+    {
+      "start": 3050,
+      "end": 3125,
+      "lines": [
+        {
+          "line": 3050,
+          "text": "                                    server.tick()?,"
+        },
+        {
+          "line": 3051,
+          "text": "                                ) {"
+        },
+        {
+          "line": 3052,
+          "text": "                                    let mut m = metrics.lock().map_err(|_| \"PUBLIC_METRICS\")?;"
+        },
+        {
+          "line": 3053,
+          "text": "                                    if e.is(crate::ErrorCode::PublicTicketReplay) {"
+        },
+        {
+          "line": 3054,
+          "text": "                                        m.replay_refusals += 1;"
+        },
+        {
+          "line": 3055,
+          "text": "                                    } else {"
+        },
+        {
+          "line": 3056,
+          "text": "                                        m.spent_capacity_refusals += 1;"
+        },
+        {
+          "line": 3057,
+          "text": "                                    }"
+        },
+        {
+          "line": 3058,
+          "text": "                                    return Err(e);"
+        },
+        {
+          "line": 3059,
+          "text": "                                }"
+        },
+        {
+          "line": 3060,
+          "text": "                                {"
+        },
+        {
+          "line": 3061,
+          "text": "                                    let mut m = metrics.lock().map_err(|_| \"PUBLIC_METRICS\")?;"
+        },
+        {
+          "line": 3062,
+          "text": "                                    m.peak_spent = m.peak_spent.max(spent.rows.len());"
+        },
+        {
+          "line": 3063,
+          "text": "                                    m.spent_reservations += 1;"
+        },
+        {
+          "line": 3064,
+          "text": "                                }"
+        },
+        {
+          "line": 3065,
+          "text": "                                let pending = PendingOrder::next(&mut next_pending_order)?;"
+        },
+        {
+          "line": 3066,
+          "text": "                                if let Some(record) = &conn.observation {"
+        },
+        {
+          "line": 3067,
+          "text": "                                    record.pending_started(true, pending.entered_at);"
+        },
+        {
+          "line": 3068,
+          "text": "                                }"
+        },
+        {
+          "line": 3069,
+          "text": "                                metrics"
+        },
+        {
+          "line": 3070,
+          "text": "                                    .lock()"
+        },
+        {
+          "line": 3071,
+          "text": "                                    .map_err(|_| \"PUBLIC_METRICS\")?"
+        },
+        {
+          "line": 3072,
+          "text": "                                    .pending_grant_entered += 1;"
+        },
+        {
+          "line": 3073,
+          "text": "                                Ok(Stage::WaitGrant { cookie, pending })"
+        },
+        {
+          "line": 3074,
+          "text": "                            }"
+        },
+        {
+          "line": 3075,
+          "text": "                            Stage::WaitGrant { cookie, pending } => {"
+        },
+        {
+          "line": 3076,
+          "text": "                                pending_alive(conn, &stop, phase)?;"
+        },
+        {
+          "line": 3077,
+          "text": "                                if !heads.is_head(PendingKind::Grant, cookie.op, *id) {"
+        },
+        {
+          "line": 3078,
+          "text": "                                    return Ok(Stage::WaitGrant { cookie, pending });"
+        },
+        {
+          "line": 3079,
+          "text": "                                }"
+        },
+        {
+          "line": 3080,
+          "text": "                                // This private stage already validated the immutable cookie,"
+        },
+        {
+          "line": 3081,
+          "text": "                                // target, signature and spent id once. Only the original"
+        },
+        {
+          "line": 3082,
+          "text": "                                // absolute expiry is checked again; polling does no crypto."
+        },
+        {
+          "line": 3083,
+          "text": "                                ensure("
+        },
+        {
+          "line": 3084,
+          "text": "                                    server.tick()? < cookie.expires_tick_ms,"
+        },
+        {
+          "line": 3085,
+          "text": "                                    \"PUBLIC_COOKIE_EXPIRED\","
+        },
+        {
+          "line": 3086,
+          "text": "                                )?;"
+        },
+        {
+          "line": 3087,
+          "text": "                                let Some((lane, permit)) ="
+        },
+        {
+          "line": 3088,
+          "text": "                                    try_authenticated_paid_permits(&cookie, &intake)?"
+        },
+        {
+          "line": 3089,
+          "text": "                                else {"
+        },
+        {
+          "line": 3090,
+          "text": "                                    return Ok(Stage::WaitGrant { cookie, pending });"
+        },
+        {
+          "line": 3091,
+          "text": "                                };"
+        },
+        {
+          "line": 3092,
+          "text": "                                let frame = framed("
+        },
+        {
+          "line": 3093,
+          "text": "                                    serde_json::to_vec("
+        },
+        {
+          "line": 3094,
+          "text": "                                        &json!({\"schema\":pq_identity::schema(server.identity.is_pq(), \"public-body-ready-v3\", \"public-body-ready-pq-v4\"),\"cookie_digest\":hex::encode(cookie.id()?)}),"
+        },
+        {
+          "line": 3095,
+          "text": "                                    )?,"
+        },
+        {
+          "line": 3096,
+          "text": "                                    256,"
+        },
+        {
+          "line": 3097,
+          "text": "                                )?;"
+        },
+        {
+          "line": 3098,
+          "text": "                                pending_alive(conn, &stop, phase)?;"
+        },
+        {
+          "line": 3099,
+          "text": "                                conn.permit = Some(permit);"
+        },
+        {
+          "line": 3100,
+          "text": "                                conn.lane_permit = Some(Arc::new(lane));"
+        },
+        {
+          "line": 3101,
+          "text": "                                {"
+        },
+        {
+          "line": 3102,
+          "text": "                                    let used ="
+        },
+        {
+          "line": 3103,
+          "text": "                                        *body_pool.lock().map_err(|_| \"PUBLIC_BUFFER_POOL\")?;"
+        },
+        {
+          "line": 3104,
+          "text": "                                    let grant_pool = if mutating_operation(cookie.op) {"
+        },
+        {
+          "line": 3105,
+          "text": "                                        &mutating_grants"
+        },
+        {
+          "line": 3106,
+          "text": "                                    } else {"
+        },
+        {
+          "line": 3107,
+          "text": "                                        &read_grants"
+        },
+        {
+          "line": 3108,
+          "text": "                                    };"
+        },
+        {
+          "line": 3109,
+          "text": "                                    let grants ="
+        },
+        {
+          "line": 3110,
+          "text": "                                        *grant_pool.lock().map_err(|_| \"PUBLIC_BUFFER_POOL\")?;"
+        },
+        {
+          "line": 3111,
+          "text": "                                    let mut m = metrics.lock().map_err(|_| \"PUBLIC_METRICS\")?;"
+        },
+        {
+          "line": 3112,
+          "text": "                                    m.peak_paid_body_bytes = m.peak_paid_body_bytes.max(used);"
+        },
+        {
+          "line": 3113,
+          "text": "                                    if mutating_operation(cookie.op) {"
+        },
+        {
+          "line": 3114,
+          "text": "                                        m.peak_mutating_grants = m.peak_mutating_grants.max(grants);"
+        },
+        {
+          "line": 3115,
+          "text": "                                    } else {"
+        },
+        {
+          "line": 3116,
+          "text": "                                        m.peak_read_grants = m.peak_read_grants.max(grants);"
+        },
+        {
+          "line": 3117,
+          "text": "                                    }"
+        },
+        {
+          "line": 3118,
+          "text": "                                    m.pending_grant_granted += 1;"
+        },
+        {
+          "line": 3119,
+          "text": "                                    m.pending_grant_wait_ns = m"
+        },
+        {
+          "line": 3120,
+          "text": "                                        .pending_grant_wait_ns"
+        },
+        {
+          "line": 3121,
+          "text": "                                        .saturating_add(elapsed_ns(pending.entered_at));"
+        },
+        {
+          "line": 3122,
+          "text": "                                }"
+        },
+        {
+          "line": 3123,
+          "text": "                                conn.deadline = conn"
+        },
+        {
+          "line": 3124,
+          "text": "                                    .total_deadline"
+        },
+        {
+          "line": 3125,
+          "text": "                                    .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));"
+        }
+      ]
+    }
+  ]
+}

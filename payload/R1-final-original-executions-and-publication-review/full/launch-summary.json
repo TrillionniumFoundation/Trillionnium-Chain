@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-R1-original-full-package-launch-v1",
+  "started_at": "2026-11-14T11:53:16.811159+00:00",
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/package_original_repository_truth_2a8646_v1.py",
+    "--terminal-summary-sha256",
+    "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+    "--terminal-exit-code",
+    "0",
+    "--closed-log-manifest-sha256",
+    "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci",
+  "producer": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/package_original_repository_truth_2a8646_v1.py",
+    "bytes": 28913,
+    "sha256": "591e2a6539276d4942e74b756ac3ea43c6863da4a8cb5a440d7bd49079d6d8e8"
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/closed-original-logs.json",
+    "bytes": 2753,
+    "sha256": "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065"
+  },
+  "original_summary_sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+  "original_terminal_exit": 0,
+  "exit": 0,
+  "stdout": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-launch-v1-prci/package.stdout",
+    "bytes": 1157,
+    "sha256": "5888a9e3296632cab5ae3284afdf71709a15946252946df3a7265ee01f11c1cd"
+  },
+  "stderr": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-launch-v1-prci/package.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "finished_at": "2026-11-14T11:53:16.879790+00:00",
+  "source_git_lane_mutation": false
+}

@@ -1,0 +1,208 @@
+{
+  "apply_rules": [
+    [
+      "SELF = ROOT / \"apply_pr847_audit_update_and_ready_v2.py\"",
+      "SELF = ROOT / \"apply_pr847_audit_update_and_ready_v3.py\""
+    ],
+    [
+      "PREPARER = ROOT / \"prepare_pr847_audit_update_v4.py\"",
+      "PREPARER = ROOT / \"prepare_pr847_audit_update_v5.py\""
+    ],
+    [
+      "PREPARER_SHA = \"57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7\"",
+      "PREPARER_SHA = \"__PREPARER_V5_SHA__\""
+    ],
+    [
+      "PREPARED = preparer[\"evidence_directory\"](args.prepared_directory, \"prepare-pr847-audit-update-v4\")",
+      "PREPARED = preparer[\"evidence_directory\"](args.prepared_directory, \"prepare-pr847-audit-update-v5\")"
+    ],
+    [
+      "ev = preparer[\"evidence_directory\"](args.evidence_dir, \"apply-pr847-audit-update-and-ready-v2\")",
+      "ev = preparer[\"evidence_directory\"](args.evidence_dir, \"apply-pr847-audit-update-and-ready-v3\")"
+    ],
+    [
+      "\"schema\": \"trnm-pr847-audit-metadata-ready-v2\"",
+      "\"schema\": \"trnm-pr847-audit-metadata-ready-v3\""
+    ],
+    [
+      "retain(\"preparer-v4.py\", PREPARER, PREPARER_SHA)",
+      "retain(\"preparer-v5.py\", PREPARER, PREPARER_SHA)"
+    ],
+    [
+      "prepared[\"schema\"] == \"prepared-pr847-audit-update-v4\"",
+      "prepared[\"schema\"] == \"prepared-pr847-audit-update-v5\""
+    ]
+  ],
+  "originals": [
+    {
+      "bytes": 71594,
+      "filename": "publish_followup_candidate_execution_archive_v1.py",
+      "name": "publisher",
+      "sha256": "8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d"
+    },
+    {
+      "bytes": 32628,
+      "filename": "prepare_pr847_audit_update_v4.py",
+      "name": "preparer",
+      "sha256": "57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7"
+    },
+    {
+      "bytes": 20506,
+      "filename": "apply_pr847_audit_update_and_ready_v2.py",
+      "name": "apply",
+      "sha256": "ad29ad36815bd088d2b386bb996d28dc5cbe6b5a1b32766f51735598c6ff9776"
+    },
+    {
+      "bytes": 6355,
+      "filename": "pr847-audit-body-template-v3.md",
+      "name": "template",
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    {
+      "bytes": 17760,
+      "filename": "publish-followup-candidate-execution-2a6206-v1/summary.json",
+      "name": "original_hold",
+      "sha256": "c7878c180b7019ff635203f08fe05a9c09e00d8e8e9ee44232f4df7272d05183"
+    }
+  ],
+  "output_directory": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1",
+  "preparer_rules": [
+    [
+      "SELF = ROOT / \"prepare_pr847_audit_update_v4.py\"",
+      "SELF = ROOT / \"prepare_pr847_audit_update_v5.py\""
+    ],
+    [
+      "FOLLOWUP = ROOT / \"publish_followup_candidate_execution_archive_v1.py\"",
+      "FOLLOWUP = ROOT / \"publish_followup_candidate_execution_archive_v2.py\""
+    ],
+    [
+      "FOLLOWUP_BYTES = 71594",
+      "FOLLOWUP_BYTES = __FOLLOWUP_V2_BYTES__"
+    ],
+    [
+      "FOLLOWUP_SHA = \"8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d\"",
+      "FOLLOWUP_SHA = \"__FOLLOWUP_V2_SHA__\""
+    ],
+    [
+      "    head, tree = spec[\"candidate_head\"], spec[\"candidate_tree\"]",
+      "    head, tree = spec[\"candidate_head\"], spec[\"candidate_tree\"]\n    expected_remote_head = spec[\"expected_remote_head\"]"
+    ],
+    [
+      "pub[\"schema\"] == \"trnm-followup-candidate-execution-publication-receipt-v1\"",
+      "pub[\"schema\"] == \"trnm-followup-candidate-execution-publication-receipt-v2\""
+    ],
+    [
+      "            and pub[\"expected_previous_head\"] == F[\"BASE_HEAD\"] and pub[\"errors\"] == [],",
+      "            and pub[\"previous_own_published_head\"] == F[\"BASE_HEAD\"]\n            and pub[\"expected_remote_head\"] == expected_remote_head and pub[\"errors\"] == [],"
+    ],
+    [
+      "    expected, old_parents, frozen_raw, old_originals, old_snapshots = F[\"original_frozen_state\"]()",
+      "    published_heads, old_parents, frozen_raw, old_originals, old_snapshots = F[\"original_frozen_state\"]()\n    expected = F[\"bind_expected_remote_heads\"](published_heads, expected_remote_head)\n    published_heads_raw = (json.dumps(published_heads, indent=2, sort_keys=True) + \"\\n\").encode()\n    expected_remote_heads_raw = (json.dumps(expected, indent=2, sort_keys=True) + \"\\n\").encode()"
+    ],
+    [
+      "            and local(\"validated-rog-lane-receipt.json\") == rog_raw,",
+      "            and local(\"validated-rog-lane-receipt.json\") == rog_raw\n            and local(\"expected-published-dc42-heads.json\") == published_heads_raw\n            and local(\"expected-reviewed-remote-heads.json\") == expected_remote_heads_raw,"
+    ],
+    [
+      "    archive = pub[\"archive\"]",
+      "    # The reviewed remote advance and the independently tested ROG start have\n    # separate C0 lineages; the remote advance need not precede the ROG start.\n    for label, ancestor, descendant in (\n        (\"published-to-reviewed-remote\", F[\"BASE_HEAD\"], expected_remote_head),\n        (\"reviewed-remote-to-candidate\", expected_remote_head, head),\n        (\"published-to-rog-start\", F[\"BASE_HEAD\"], spec[\"rog_invocation\"][\"expected_start_head\"]),\n        (\"rog-start-to-candidate\", spec[\"rog_invocation\"][\"expected_start_head\"], head),\n    ):\n        require(step(label, [\"git\", \"--no-replace-objects\", \"merge-base\",\n                \"--is-ancestor\", ancestor, descendant], 60) == b\"\",\n                \"recorded ancestry proof differs: \" + label)\n    publication_pr_query = \"{number,state,draft,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,auto_merge}\"\n    publication_pr_argv = [\"gh\", \"api\", \"repos/\" + REPO + \"/pulls/847\", \"--jq\", publication_pr_query]\n    publication_pr = strict_json(step(\"pr-before\", publication_pr_argv, 180))\n    require(isinstance(publication_pr, dict) and set(publication_pr) == {\n            \"number\", \"state\", \"draft\", \"head\", \"head_ref\", \"base\", \"base_ref\", \"auto_merge\"}\n            and type(publication_pr[\"number\"]) is int and publication_pr[\"number\"] == 847\n            and publication_pr[\"state\"] == \"open\" and type(publication_pr[\"draft\"]) is bool\n            and publication_pr[\"head\"] == expected_remote_head\n            and publication_pr[\"head_ref\"] == HEAD_REF and publication_pr[\"base\"] == BASE\n            and publication_pr[\"base_ref\"] == \"main\" and publication_pr[\"auto_merge\"] is None\n            and pub[\"pr_before\"] == publication_pr,\n            \"publication original PR does not bind the reviewed remote head\")\n    require(strict_json(step(\"pr-prepush\", publication_pr_argv, 180)) == publication_pr,\n            \"publication prepush PR changed from its exact original\")\n\n    archive = pub[\"archive\"]"
+    ],
+    [
+      "\"refs/heads/\" + HEAD_REF: {\"local_ref\": head, \"new\": head, \"old\": F[\"BASE_HEAD\"]}",
+      "\"refs/heads/\" + HEAD_REF: {\"local_ref\": head, \"new\": head, \"old\": expected_remote_head}"
+    ],
+    [
+      "        \"metadata/frozen-0170-branches.json\": frozen_raw,",
+      "        \"metadata/frozen-0170-branches.json\": frozen_raw,\n        \"metadata/published-dc42-expected-heads.json\": published_heads_raw,\n        \"metadata/reviewed-remote-expected-heads.json\": expected_remote_heads_raw,"
+    ],
+    [
+      "    retained.append((\"archive-file-index.json\", str(pubdir / \"archive-file-index.json\"), index_raw))",
+      "    archive_scope = {\n        \"schema\": \"trnm-followup-execution-archive-scope-v2\",\n        \"candidate_head\": head, \"candidate_tree\": tree,\n        \"previous_own_published_head\": F[\"BASE_HEAD\"],\n        \"expected_remote_head\": expected_remote_head,\n        \"old_history_archive\": pub[\"old_archive_verified\"],\n        \"exact_ordered_parents\": [F[\"OLD_ARCHIVE_COMMIT\"], head],\n        \"frozen_remote_branch_names\": 908, \"original_distinct_tips\": 892,\n        \"payload_manifest_sha256\": sha(payload[\"raw\"]),\n        \"payload_files\": len(payload[\"payload\"]),\n        \"payload_bytes\": payload[\"manifest\"][\"total_bytes\"],\n        \"local_gate_receipt_sha256\": sha(gate_raw), \"rog_lane_receipt_sha256\": sha(rog_raw),\n        \"original_rog_producer_sha256\": sha(rog_producer),\n        \"main_merged\": False, \"branches_deleted\": False, \"protection_changed\": False,\n        \"hosted_ci_qualification\": False, \"qualification_granted\": False,\n        \"archive_preserves_history_not_semantic_equivalence\": True,\n        \"current_publication_outcome_included\": False,\n        \"new_full_fsck_performed\": False,\n    }\n    archive_bytes(\"metadata/archive-scope.json\",\n                  (json.dumps(archive_scope, indent=2, sort_keys=True) + \"\\n\").encode())\n    retained.append((\"archive-file-index.json\", str(pubdir / \"archive-file-index.json\"), index_raw))"
+    ],
+    [
+      "        \"head\": head, \"tree\": tree, \"base\": BASE, \"pr_number\": 847, \"head_ref\": HEAD_REF,",
+      "        \"head\": head, \"tree\": tree, \"base\": BASE, \"pr_number\": 847, \"head_ref\": HEAD_REF,\n        \"previous_own_published_head\": F[\"BASE_HEAD\"], \"expected_remote_head\": expected_remote_head,"
+    ],
+    [
+      "ev = evidence_directory(args.evidence_dir, \"prepare-pr847-audit-update-v4\")",
+      "ev = evidence_directory(args.evidence_dir, \"prepare-pr847-audit-update-v5\")"
+    ],
+    [
+      "\"schema\": \"prepared-pr847-audit-update-v4\"",
+      "\"schema\": \"prepared-pr847-audit-update-v5\""
+    ]
+  ],
+  "publisher_rules": [
+    [
+      "SELF = ROOT / \"publish_followup_candidate_execution_archive_v1.py\"",
+      "SELF = ROOT / \"publish_followup_candidate_execution_archive_v2.py\""
+    ],
+    [
+      "              \"execution_manifest\"}",
+      "              \"execution_manifest\", \"expected_remote_head\"}"
+    ],
+    [
+      "and spec[\"schema\"] == \"trnm-followup-candidate-execution-publication-spec-v1\"",
+      "and spec[\"schema\"] == \"trnm-followup-candidate-execution-publication-spec-v2\""
+    ],
+    [
+      "for key in (\"candidate_head\", \"candidate_tree\"):",
+      "for key in (\"candidate_head\", \"candidate_tree\", \"expected_remote_head\"):"
+    ],
+    [
+      "\"exact candidate object required\"",
+      "\"exact candidate or expected remote object required\""
+    ],
+    [
+      "    require(spec[\"candidate_head\"] != BASE_HEAD, \"follow-up candidate must be new\")",
+      "    require(spec[\"candidate_head\"] != BASE_HEAD, \"follow-up candidate must be new\")\n    require(spec[\"candidate_head\"] != spec[\"expected_remote_head\"],\n            \"candidate update must advance the exact reviewed remote head\")"
+    ],
+    [
+      "def validate_gate_payload(H, pin, head, tree, manifest):",
+      "def bind_expected_remote_heads(published_heads, expected_remote_head):\n    \"\"\"Bind only the candidate ref to the separately reviewed remote identity.\"\"\"\n    require(type(expected_remote_head) is str\n            and re.fullmatch(r\"[0-9a-f]{40}\", expected_remote_head),\n            \"exact reviewed remote head required\")\n    require(isinstance(published_heads, dict) and len(published_heads) == 908\n            and len(set(published_heads.values())) == 892\n            and published_heads[\"main\"] == MAIN_HEAD\n            and published_heads[CANDIDATE_REF[11:]] == BASE_HEAD,\n            \"original published C0 map differs\")\n    expected = dict(published_heads)\n    expected[CANDIDATE_REF[11:]] = expected_remote_head\n    require(len(expected) == 908 and len(set(expected.values())) == 892,\n            \"reviewed remote map count differs\")\n    return expected\n\ndef validate_gate_payload(H, pin, head, tree, manifest):"
+    ],
+    [
+      "    head, tree = spec[\"candidate_head\"], spec[\"candidate_tree\"]",
+      "    head, tree = spec[\"candidate_head\"], spec[\"candidate_tree\"]\n    expected_remote_head = spec[\"expected_remote_head\"]"
+    ],
+    [
+      "\"schema\": \"trnm-followup-candidate-execution-publication-receipt-v1\"",
+      "\"schema\": \"trnm-followup-candidate-execution-publication-receipt-v2\""
+    ],
+    [
+      "        \"head\": head, \"tree\": tree, \"expected_previous_head\": BASE_HEAD,",
+      "        \"head\": head, \"tree\": tree, \"previous_own_published_head\": BASE_HEAD,\n        \"expected_remote_head\": expected_remote_head,"
+    ],
+    [
+      "        expected, old_parents, frozen_raw, old_originals, original_snapshots = original_frozen_state()",
+      "        published_heads, old_parents, frozen_raw, old_originals, original_snapshots = original_frozen_state()\n        expected = bind_expected_remote_heads(published_heads, expected_remote_head)"
+    ],
+    [
+      "        emit(\"expected-published-dc42-heads.json\", encode(expected))",
+      "        emit(\"expected-published-dc42-heads.json\", encode(published_heads))\n        emit(\"expected-reviewed-remote-heads.json\", encode(expected))"
+    ],
+    [
+      "        rog_start = spec[\"rog_invocation\"][\"expected_start_head\"]",
+      "        run(\"published-to-reviewed-remote\", [\"git\", \"--no-replace-objects\", \"merge-base\",\n            \"--is-ancestor\", BASE_HEAD, expected_remote_head], timeout=60)\n        run(\"reviewed-remote-to-candidate\", [\"git\", \"--no-replace-objects\", \"merge-base\",\n            \"--is-ancestor\", expected_remote_head, head], timeout=60)\n        rog_start = spec[\"rog_invocation\"][\"expected_start_head\"]"
+    ],
+    [
+      "pr[\"state\"] == \"open\" and pr[\"head\"] == BASE_HEAD",
+      "pr[\"state\"] == \"open\" and pr[\"head\"] == expected_remote_head"
+    ],
+    [
+      "            \"schema\": \"trnm-followup-execution-archive-scope-v1\",\n            \"candidate_head\": head, \"candidate_tree\": tree,",
+      "            \"schema\": \"trnm-followup-execution-archive-scope-v2\",\n            \"candidate_head\": head, \"candidate_tree\": tree,\n            \"previous_own_published_head\": BASE_HEAD,\n            \"expected_remote_head\": expected_remote_head,"
+    ],
+    [
+      "            \"metadata/published-dc42-expected-heads.json\": encode(expected),",
+      "            \"metadata/published-dc42-expected-heads.json\": encode(published_heads),\n            \"metadata/reviewed-remote-expected-heads.json\": encode(expected),"
+    ],
+    [
+      "CANDIDATE_REF: {\"local_ref\": head, \"new\": head, \"old\": BASE_HEAD}",
+      "CANDIDATE_REF: {\"local_ref\": head, \"new\": head, \"old\": expected_remote_head}"
+    ]
+  ],
+  "reviewed_expected_remote_head": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "root": "/private/tmp/chain-consolidation-20261114-root",
+  "schema": "trnm-concurrent-publication-static-preparation-inputs-v1"
+}

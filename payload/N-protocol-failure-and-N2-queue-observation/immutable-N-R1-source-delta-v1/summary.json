@@ -1,0 +1,74 @@
+{
+  "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "R1": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "git_db": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+  "no_lazy_fetch": true,
+  "optional_locks": false,
+  "rows": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+      ],
+      "exit_code": 0,
+      "name": "N-commit",
+      "stderr_bytes": 0,
+      "stdout_bytes": 273,
+      "stdout_sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "exit_code": 0,
+      "name": "R1-commit",
+      "stderr_bytes": 0,
+      "stdout_bytes": 363,
+      "stdout_sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "diff",
+        "--raw",
+        "--no-abbrev",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "exit_code": 0,
+      "name": "N-to-R1-raw",
+      "stderr_bytes": 0,
+      "stdout_bytes": 63780,
+      "stdout_sha256": "a78ba39d404b22f36cb01d354547b402152970d713517101f26feea84607578f"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "diff",
+        "--name-status",
+        "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "exit_code": 0,
+      "name": "N-to-R1-names",
+      "stderr_bytes": 0,
+      "stdout_bytes": 30412,
+      "stdout_sha256": "5c3166221f186cd9b266c5a555bd7fac07e1d413c152d5b039e352734d8fcbe5"
+    }
+  ],
+  "schema": "trnm-N-R1-immutable-readonly-delta-v1",
+  "source_ref_config_mutated": false
+}

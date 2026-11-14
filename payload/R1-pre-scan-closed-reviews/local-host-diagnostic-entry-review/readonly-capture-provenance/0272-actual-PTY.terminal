@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m20[0m, in [35m<module>[0m
+    rp=B/artifact/"from-zero-native/confirmation/report.json";rr=[31mrd[0m[1;31m(rp,32*1024*1024)[0m;r=json.loads(rr)
+                                                                 [31m~~[0m[1;31m^^^^^^^^^^^^^^^^^[0m
+  File [35m"<string>"[0m, line [35m6[0m, in [35mrd[0m
+    with os.fdopen([31mos.open[0m[1;31m(path,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)[0m,"rb") as f:
+                   [31m~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[1;35mFileNotFoundError[0m: [35m[Errno 2] No such file or directory: '/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/inner-originals-v1/14111407094/from-zero-native/confirmation/report.json'[0m

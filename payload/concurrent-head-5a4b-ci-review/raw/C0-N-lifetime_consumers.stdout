@@ -1,0 +1,1333 @@
+diff --git a/scripts/ci/hash_use_contract.py b/scripts/ci/hash_use_contract.py
+index 0c8e2ac894a8a36a70ba69d10e8146c930541010..f58609ec7ea88ec9eadfdf92b3e09ab843b884c6 100644
+--- a/scripts/ci/hash_use_contract.py
++++ b/scripts/ci/hash_use_contract.py
+@@ -29,11 +29,13 @@ MAX_DEPTH = 64
+ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
+ # Preserve the 31-path/19-use semantics. At 975ab093, five selected source
+ # identities and the proof descriptor's 140-input W1 map were separately reviewed.
+ # New exported APIs outside these declared uses are not a complete callgraph
+ # review or current-use approval. The selected upstream profile remains withdrawn.
+-REVIEWED_SOURCE_MAP_SHA256 = "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf"
++# At 933d2d13, rebind only the proof descriptor after its separately reviewed
++# standalone verifier-lock map update; all 19 use semantics remain unchanged.
++REVIEWED_SOURCE_MAP_SHA256 = "1c79bdfe03c3303346f10ead1a91e31a583bbd6e7381b0dc2dffa80960c7aaa8"
+ 
+ USES = {
+     "model-legacy-root": "model",
+     "model-full-payload": "model",
+     "model-direct-dependencies": "model",
+diff --git a/scripts/ci/pq_authority_effect_register.py b/scripts/ci/pq_authority_effect_register.py
+index 1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6..e2d05b7332635e787137b513ed86186c0341054f 100644
+--- a/scripts/ci/pq_authority_effect_register.py
++++ b/scripts/ci/pq_authority_effect_register.py
+@@ -20,16 +20,16 @@ from pq_source_reader import SourceReadError, read_regular
+ SCHEMA = 'trnm-pq-authority-effects-v1'
+ RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
+ DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
+ # The seven route definitions and 44 source paths retain their reviewed scope.
+ # Prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
+-SOURCE_REVISION = '5c04c60e463462d9df8884786e0d5bb32af08a64'
++SOURCE_REVISION = 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'
+ PURPOSE = 'curated-source-consistency-only'
+ MAX_BYTES = 1024 * 1024
+ # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
+ # Generated from git show at the exact revision, not from current-tree hashes.
+-REVIEWED_SOURCE_LOCK_SHA256 = '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528'
++REVIEWED_SOURCE_LOCK_SHA256 = 'f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56'
+ 
+ CRATES = 'trillionnium/crates/'
+ TRANSFER = CRATES + 'trnm-types/src/transfer.rs'
+ MVCC = CRATES + 'trnm-mvcc-fee/'
+ EXECUTOR = MVCC + 'src/pon_executor.rs'
+diff --git a/scripts/ci/pq_chain_claim_guard.py b/scripts/ci/pq_chain_claim_guard.py
+index 89d2b42488f11e7cef44b59453fb6aad8962bff6..d29b8569a900473baf8281586394f12ba98d71df 100644
+--- a/scripts/ci/pq_chain_claim_guard.py
++++ b/scripts/ci/pq_chain_claim_guard.py
+@@ -14,11 +14,13 @@ from pathlib import Path
+ import sys
+ 
+ from pq_source_reader import SourceReadError, read_regular
+ from pq_lifetime_budget import (BudgetError, DEFAULT_MANIFEST as LIFETIME_BUDGET,
+                                 DEFAULT_SOURCE_LOCK as LIFETIME_SOURCE_LOCK,
+-                                inspect as inspect_lifetime_budget)
++                                )
++from pq_lifetime_current_v2 import (DEFAULT_MAP as LIFETIME_CURRENT_MAP,
++                                    inspect as inspect_lifetime_current)
+ 
+ CONFIG = 'config/pon/post-quantum-transition-v1.json'
+ CORPUS = 'config/pon/pq-cross-branch-corpus-v1.json'
+ CONSENSUS = 'config/consensus-mainline.json'
+ DEVNET = 'config/pon/devnet-v1.json'
+@@ -106,10 +108,13 @@ GATES = {
+         'scripts/ci/pq_source_reader.py',
+     ),
+     'lifetime_budget': (
+         LIFETIME_BUDGET,
+         LIFETIME_SOURCE_LOCK,
++        LIFETIME_CURRENT_MAP,
++        'scripts/ci/pq_lifetime_current_v2.py',
++        'scripts/ci/test_pq_lifetime_current_v2.py',
+         'scripts/ci/pq_lifetime_budget.py',
+         'scripts/ci/test_pq_lifetime_budget.py',
+         'docs/security/PQ128_LIFETIME_BUDGET_V1.md',
+     ),
+ }
+@@ -262,28 +267,22 @@ def inspect(root: Path) -> dict:
+         manifest = strict_json(root, PROOF_MANIFEST)
+         refuse_lifetime_promotion(manifest, PROOF_MANIFEST)
+         false_field(manifest, 'pq_128_security_qualified', PROOF_MANIFEST)
+         false_field(manifest, 'production_consensus_activation', PROOF_MANIFEST)
+     try:
+-        lifetime = inspect_lifetime_budget(root)
++        lifetime = inspect_lifetime_current(root)
+     except BudgetError as error:
+         raise UnsafePromotion('invalid lifetime budget: ' + str(error)) from error
+-    require(lifetime['purpose'] == 'research-model',
++    require(lifetime['frozen_model']['purpose'] == 'research-model',
+             'illustrative budget cannot replace the current research register')
+     return {
+         'schema': 'trnm-whole-chain-pq-claim-guard-v1',
+         'status': 'HOLD', 'whole_chain_pq_qualified': False,
+         'pq_128_qualified': False, 'production_activation': False,
+         'gates': {gate: {'status': 'UNQUALIFIED', 'source_paths': list(paths)}
+                   for gate, paths in GATES.items()},
+-        'lifetime_budget': {key: lifetime[key] for key in (
+-            'schema', 'status', 'manifest_sha256', 'allocated_sum',
+-            'source_revision_bound', 'source_binding_scope', 'source_lock_sha256',
+-            'model_arithmetic_sum', 'actual_lifetime_failure_bound',
+-            'unknown_terms', 'unknown_query_budgets',
+-            'composition_coverage_proved', 'theorem_applicability_verified',
+-        )},
++        'lifetime_budget': lifetime,
+         'note': 'Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.',
+     }
+ 
+ 
+ def main() -> int:
+diff --git a/scripts/ci/pq_lifetime_composition.py b/scripts/ci/pq_lifetime_composition.py
+index 270e0c4136faa996cd46df2bf9ff78ebc664fd69..32ba61ab1119e6e3c6697b69bce0eb722644d764 100644
+--- a/scripts/ci/pq_lifetime_composition.py
++++ b/scripts/ci/pq_lifetime_composition.py
+@@ -1,8 +1,9 @@
+ #!/usr/bin/env python3
+ """Review the declared V1/root inventory union and conditional AND arithmetic.
+ 
++The current-v3 entry retains the original v2 manifest by exact identity.
+ This is a research accounting contract, not a theorem checker. The two source
+ inventories do not instantiate one security game. No numeric declaration, source
+ checksum, or successful inspection can produce an actual lifetime bound.
+ """
+ from __future__ import annotations
+@@ -14,17 +15,18 @@ import hashlib
+ import json
+ from pathlib import Path
+ import sys
+ 
+ import pq_lifetime_budget as legacy
++import pq_lifetime_current_v2 as current_lifetime
+ import pq_root_dependency_register as root_register
+ from pq_source_reader import SourceReadError, read_regular
+ 
+-SCHEMA = "trnm-pq128-lifetime-composition-v2"
+-RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
++SCHEMA = "trnm-pq128-lifetime-composition-current-v3"
++RESULT_SCHEMA = "trnm-pq128-lifetime-composition-current-result-v3"
+ ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
+-DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
++DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-current-v3.json"
+ REVIEW_BASE = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
+ EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
+ COMMON_GAME = "uninstantiated-common-root-game-v2"
+ MAX_BYTES = legacy.MAX_BYTES
+ 
+@@ -35,15 +37,17 @@ INPUTS = {
+         "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+         "revision_semantics": "declared-event-source-revision",
+     },
+     "root": {
+         "path": root_register.DEFAULT_MANIFEST,
+-        "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
++        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725",
+         "declared_revision": root_register.REVIEW_BASE,
+         "revision_semantics": "review-base-context-not-all-source-revision",
+     },
+ }
++FROZEN_COMPOSITION = {'path': 'config/pon/pq128-lifetime-composition-v2.json', 'sha256': '5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052'}
++CURRENT_CORRESPONDENCE = {'path': 'config/pon/pq128-source-correspondence-current-v2.json', 'sha256': '2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93', 'source_snapshot_sha256': '5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140'}
+ PRIMITIVES = {
+     "sha256": "FIPS180-4/SHA-256", "sha512": "FIPS180-4/SHA-512",
+     "shake128": "FIPS202/SHAKE128", "shake256": "FIPS202/SHAKE256",
+ }
+ COVERAGE = [
+@@ -120,11 +124,13 @@ def default_arithmetic():
+ 
+ def default_manifest():
+     """Return reviewed declarations; never regenerate a source lock from files."""
+     return {
+         "schema": SCHEMA, "purpose": "research-obligation-bridge",
+-        "review_base_revision": REVIEW_BASE,
++        "frozen_review_base_revision": REVIEW_BASE,
++        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
++        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
+         "input_manifests": copy.deepcopy(INPUTS),
+         "experiment": {
+             "id": EXPERIMENT_ID, "model": legacy.MODEL,
+             "profile": "proposed-native-pnw1-with-root-v2-v3-v4",
+             "status": "uninstantiated", "horizon": None, "stopping_rule": None,
+@@ -418,11 +424,13 @@ def bridge_primitives(legacy_data, root_data):
+ 
+ def validate_manifest(data):
+     exact(data, default_manifest(), "composition manifest")
+     return {
+         "schema": RESULT_SCHEMA, "status": "HOLD", "inventory_contract_satisfied": True,
+-        "review_base_revision": REVIEW_BASE,
++        "frozen_review_base_revision": REVIEW_BASE,
++        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
++        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
+         "declared_source_union_consistent": False, "source_binding_scope": "unbound",
+         "source_revision_bound": False, "deployment_identity_proved": False,
+         "transitive_dependency_closure_proved": False,
+         "conditional_root_arithmetic": review_arithmetic(data["conditional_root_arithmetic"]),
+         "conditional_query_tail_arithmetic": review_query_tail_arithmetic(default_query_tail_arithmetic()),
+@@ -444,17 +452,25 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
+     root = Path(root)
+     try:
+         raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
+         data = legacy.strict_json(raw)
+         result = validate_manifest(data)
++        frozen_raw = read_regular(root, FROZEN_COMPOSITION["path"], MAX_BYTES)
++        require(hashlib.sha256(frozen_raw).hexdigest() == FROZEN_COMPOSITION["sha256"],
++                "input manifest differs from reviewed bytes: frozen composition")
+         children = {}
+         for name, item in INPUTS.items():
+             child_raw = read_regular(root, item["path"], MAX_BYTES)
+             require(hashlib.sha256(child_raw).hexdigest() == item["sha256"],
+                     "input manifest differs from reviewed bytes: " + name)
+             children[name] = legacy.strict_json(child_raw)
+-        old_result = legacy.inspect(root)
++        current_result = current_lifetime.inspect(root)
++        old_result = current_result['frozen_model']
++        current_sources = current_result['current_source_correspondence']
++        require(current_sources['map_sha256'] == CURRENT_CORRESPONDENCE['sha256']
++                and current_sources['source_snapshot_sha256'] == CURRENT_CORRESPONDENCE['source_snapshot_sha256'],
++                'current lifetime correspondence differs from the reviewed composition input')
+         root_result = root_register.inspect(root)
+         for name, child in (("legacy", old_result), ("root", root_result)):
+             require(child["manifest_sha256"] == INPUTS[name]["sha256"],
+                     "child manifest changed between inspections: " + name)
+             require(child["actual_lifetime_failure_bound"] is None
+@@ -463,34 +479,39 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
+                     and child["production_activation"] is False,
+                     "changed child qualification requires new review")
+         require(old_result["experiment"]["source_revision"] == INPUTS["legacy"]["declared_revision"]
+                 and root_result["review_base_revision"] == INPUTS["root"]["declared_revision"],
+                 "child revision semantics mismatch")
+-        require(old_result["purpose"] == "research-model" and old_result["source_revision_bound"] is True
++        require(old_result["purpose"] == "research-model"
++                and old_result["source_revision_bound"] is False
++                and current_sources["source_files_checked"] is True
++                and current_sources["source_revision_bound"] is False
+                 and root_result["source_files_checked"] is True,
+                 "source inventories must be checked research inputs")
+         require(len(old_result["unknown_terms"]) == 8
+                 and all(value is None for value in root_result["domain_failure_bounds"].values()),
+                 "new component bounds require explicit experiment and coverage review")
+-        files = merge_source_maps(old_result["source_files_sha256"], root_result["source_files_sha256"])
+-        shared_paths = sorted(set(old_result["source_files_sha256"])
++        files = merge_source_maps(current_sources["source_files_sha256"], root_result["source_files_sha256"])
++        shared_paths = sorted(set(current_sources["source_files_sha256"])
+                               & set(root_result["source_files_sha256"]))
+         source_counts = {
+-            "legacy": len(old_result["source_files_sha256"]),
++            "legacy": len(current_sources["source_files_sha256"]),
+             "root": len(root_result["source_files_sha256"]),
+             "shared": len(shared_paths), "union": len(files),
+         }
+-        require(source_counts == {"legacy": 21, "root": 45, "shared": 1, "union": 65}
++        require(source_counts == {"legacy": 21, "root": 46, "shared": 1, "union": 66}
+                 and shared_paths == ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"],
+                 "declared source union changed; review the mapping")
+         scopes = bridge_primitives(children["legacy"], children["root"])
+         allocated = legacy.probability(old_result["allocated_sum"], "allocated sum")
+         target = legacy.probability(old_result["target"], "target")
+         result.update({
+             "manifest_sha256": hashlib.sha256(raw).hexdigest(),
+             "input_manifests": copy.deepcopy(INPUTS),
+-            "legacy_source_lock_sha256": old_result["source_lock_sha256"],
++            "legacy_source_lock_sha256": current_result["frozen_model_identity"]["source_lock_sha256"],
++            "legacy_frozen_model_identity": current_result["frozen_model_identity"],
++            "legacy_current_source_correspondence": current_sources,
+             "root_declared_source_snapshot_sha256": root_result["declared_source_snapshot_sha256"],
+             "declared_source_union_consistent": True,
+             "source_binding_scope": "declared-path-union-only",
+             "source_counts": source_counts,
+             "source_files_sha256": files,
+diff --git a/scripts/ci/pq_lifetime_current_v2.py b/scripts/ci/pq_lifetime_current_v2.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc
+--- /dev/null
++++ b/scripts/ci/pq_lifetime_current_v2.py
+@@ -0,0 +1,212 @@
++#!/usr/bin/env python3
++"""Bind the frozen PQ128 model to an explicit current declared-path map.
++
++The V1 reader, manifest and source lock keep their original meaning. This
++separate entry checks current bytes without relabeling the frozen experiment,
++proving a Git revision, importing historical code or granting qualification.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import re
++import sys
++
++import pq_lifetime_budget as legacy
++from pq_source_reader import SourceReadError, read_regular
++
++SCHEMA = "trnm-pq128-lifetime-current-result-v2"
++MAP_SCHEMA = "trnm-pq128-source-correspondence-current-v2"
++DEFAULT_MAP = "config/pon/pq128-source-correspondence-current-v2.json"
++FROZEN_REVISION = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
++MANIFEST_SHA256 = "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
++SOURCE_LOCK_SHA256 = "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
++EXPECTED_MAP_SHA256 = "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
++EXPECTED_CURRENT_FILES_SHA256 = "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140"
++EXPECTED_PATHS = frozenset((
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
++    "trillionnium/crates/trnm-pon-node/src/consensus.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
++    "trillionnium/crates/trnm-pon-node/src/store.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
++    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
++    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
++    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
++))
++MAX_MAP_BYTES = 32768
++MAX_REPORT_BYTES = 262144
++QUALIFICATION = {
++    "actual_lifetime_failure_bound": None,
++    "whole_chain_pq_qualified": False,
++    "pq_128_qualified": False,
++    "production_activation": False,
++    "composition_coverage_proved": False,
++    "theorem_applicability_verified": False,
++}
++
++
++class CurrentBudgetError(legacy.BudgetError):
++    pass
++
++
++def require(ok, message):
++    if not ok:
++        raise CurrentBudgetError(message)
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"),
++                      ensure_ascii=False, allow_nan=False).encode("utf-8")
++
++
++def frozen_identity():
++    return {
++        "source_revision": FROZEN_REVISION,
++        "manifest_path": legacy.DEFAULT_MANIFEST,
++        "manifest_sha256": MANIFEST_SHA256,
++        "source_lock_path": legacy.DEFAULT_SOURCE_LOCK,
++        "source_lock_sha256": SOURCE_LOCK_SHA256,
++    }
++
++
++def inspect(root):
++    """Read only the fixed model, lock, map and all 21 current source paths.
++
++    Each descriptor read is bounded and identity checked. Separate reads are
++    not an immutable checkout snapshot or protection from a privileged writer.
++    Source correspondence is not a theorem, deployment or Git provenance proof.
++    """
++    root = Path(root)
++    try:
++        map_raw = read_regular(root, DEFAULT_MAP, MAX_MAP_BYTES)
++        require(hashlib.sha256(map_raw).hexdigest() == EXPECTED_MAP_SHA256,
++                "current correspondence map differs from reviewed bytes")
++        mapping = legacy.strict_json(map_raw)
++        legacy.fields(mapping, "schema status frozen_model current_source_files_sha256 "
++                      "current_source_snapshot_sha256 qualification", "current correspondence")
++        require(mapping["schema"] == MAP_SCHEMA and mapping["status"] == "HOLD",
++                "unsupported current correspondence namespace")
++        require(canonical(mapping["frozen_model"]) == canonical(frozen_identity()),
++                "frozen model identity cannot be replaced by current identity")
++        require(canonical(mapping["qualification"]) == canonical(QUALIFICATION),
++                "current correspondence cannot promote a lifetime claim")
++        expected = mapping["current_source_files_sha256"]
++        require(type(expected) is dict and set(expected) == EXPECTED_PATHS,
++                "current paths must equal the fixed 21 declared event paths")
++        for path, digest in expected.items():
++            require(type(digest) is str
++                    and re.fullmatch(r"[0-9a-f]{64}", digest) is not None,
++                    "invalid current source SHA-256: " + path)
++        require(mapping["current_source_snapshot_sha256"] == EXPECTED_CURRENT_FILES_SHA256
++                and hashlib.sha256(canonical(expected)).hexdigest()
++                == EXPECTED_CURRENT_FILES_SHA256,
++                "current source map differs from the independent snapshot pin")
++
++        manifest_raw = read_regular(root, legacy.DEFAULT_MANIFEST, legacy.MAX_BYTES)
++        lock_raw = read_regular(root, legacy.DEFAULT_SOURCE_LOCK, legacy.MAX_BYTES)
++        require(hashlib.sha256(manifest_raw).hexdigest() == MANIFEST_SHA256,
++                "frozen model manifest differs from reviewed bytes")
++        require(hashlib.sha256(lock_raw).hexdigest() == SOURCE_LOCK_SHA256,
++                "frozen source lock differs from reviewed bytes")
++        model = legacy.evaluate(legacy.strict_json(manifest_raw))
++        model["manifest_sha256"] = MANIFEST_SHA256
++        lock = legacy.strict_json(lock_raw)
++        legacy.fields(lock, "schema source_revision files", "frozen source lock")
++        require(lock["schema"] == legacy.SOURCE_LOCK_SCHEMA
++                and lock["source_revision"] == FROZEN_REVISION,
++                "frozen source lock revision mismatch")
++        require(type(lock["files"]) is dict and set(lock["files"]) == EXPECTED_PATHS
++                and set(model["source_paths"]) == EXPECTED_PATHS,
++                "frozen and current declared path sets must be identical")
++        require(model["purpose"] == "research-model"
++                and model["experiment"]["source_revision"] == FROZEN_REVISION
++                and model["source_revision_bound"] is False
++                and model["source_binding_scope"] == "unbound"
++                and model["source_lock_sha256"] is None,
++                "frozen arithmetic must not claim a current source binding")
++        for key, value in QUALIFICATION.items():
++            require(type(model[key]) is type(value) and model[key] == value,
++                    "frozen model qualification changed: " + key)
++
++        observed = {
++            path: hashlib.sha256(read_regular(root, path, legacy.MAX_BYTES)).hexdigest()
++            for path in sorted(EXPECTED_PATHS)
++        }
++        for path in sorted(EXPECTED_PATHS):
++            require(observed[path] == expected[path],
++                    "current correspondence source hash mismatch: " + path)
++        # Retain the original small metadata bytes across all source reads.
++        for path, raw, limit in (
++                (legacy.DEFAULT_MANIFEST, manifest_raw, legacy.MAX_BYTES),
++                (legacy.DEFAULT_SOURCE_LOCK, lock_raw, legacy.MAX_BYTES),
++                (DEFAULT_MAP, map_raw, MAX_MAP_BYTES)):
++            require(read_regular(root, path, limit) == raw,
++                    "correspondence metadata changed during inspection: " + path)
++        return {
++            "schema": SCHEMA, "status": "HOLD", **QUALIFICATION,
++            "frozen_model_identity": frozen_identity(),
++            "frozen_model": model,
++            "current_source_correspondence": {
++                "schema": MAP_SCHEMA, "source_files_checked": True,
++                "source_binding_scope": "declared-event-paths-only",
++                "source_revision_bound": False,
++                "map_sha256": EXPECTED_MAP_SHA256,
++                "source_snapshot_sha256": EXPECTED_CURRENT_FILES_SHA256,
++                "source_files_sha256": observed,
++                "changed_from_frozen_paths": sorted(
++                    path for path in EXPECTED_PATHS if observed[path] != lock["files"][path]),
++            },
++            "note": "The frozen arithmetic remains unbound. The current map checks only the same 21 declared event paths; it proves no Git revision, theorem applicability, complete dependency coverage, deployment or lifetime security bound.",
++        }
++    except (legacy.BudgetError, SourceReadError, KeyError, TypeError, ValueError) as error:
++        if isinstance(error, CurrentBudgetError):
++            raise
++        raise CurrentBudgetError(str(error)) from error
++
++
++def verify_report(root, raw):
++    """Recompute current bytes; never trust a supplied report or its own hashes."""
++    require(type(raw) is bytes and 0 < len(raw) <= MAX_REPORT_BYTES,
++            "invalid current correspondence report bytes")
++    try:
++        report = legacy.strict_json(raw)
++        expected = inspect(root)
++        matches = type(report) is dict and canonical(report) == canonical(expected)
++    except (TypeError, ValueError, UnicodeError, RecursionError) as error:
++        raise CurrentBudgetError("invalid current correspondence report") from error
++    require(matches, "current correspondence report differs from fresh inspection")
++    return expected
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
++    args = parser.parse_args()
++    try:
++        result = inspect(args.root)
++    except (CurrentBudgetError, OSError) as error:
++        print(json.dumps({"schema": SCHEMA, "status": "REFUSE",
++                          "reason": str(error), **QUALIFICATION}, sort_keys=True),
++              file=sys.stderr)
++        return 2
++    print(json.dumps(result, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/scripts/ci/test_pq_authority_effect_register.py b/scripts/ci/test_pq_authority_effect_register.py
+index d6e3ae6e2fcb16ceec62924c9407307feb8cd75d..9851b6a9bddc8b695fb6142c471a766977cb9ede 100644
+--- a/scripts/ci/test_pq_authority_effect_register.py
++++ b/scripts/ci/test_pq_authority_effect_register.py
+@@ -67,15 +67,15 @@ class AuthorityEffectTests(unittest.TestCase):
+         self.assertEqual(result['status'], 'HOLD')
+         self.assertEqual(result['source_consistency'], 'PASS')
+         self.assertEqual(result['curated_routes_checked'], 7)
+         self.assertEqual(len(result['source_files_sha256']), 44)
+         self.assertEqual(result['reviewed_source_lock_sha256'],
+-                         '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528')
++                         'f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56')
+         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
+                          EXPECTED_SCOPES)
+         self.assertEqual(result['source_revision'],
+-                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
++                         'fc39da5f35298ce8a4c34aa5bdb25849648612f9')
+         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
+         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
+                      'provenance_authenticated', 'call_graph_proved',
+                      'runtime_reachability_proved', 'native_tests_executed'):
+             self.assertIs(result[name], False, name)
+@@ -150,10 +150,11 @@ class AuthorityEffectTests(unittest.TestCase):
+         self.row('portable_consumption_settlement_v1')['state_or_effect_sources'] = [path]
+         self.refused('curated source set mismatch')
+ 
+     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
+         for field, value in (('source_revision', '0' * 40),
++                             ('source_revision', '5c04c60e463462d9df8884786e0d5bb32af08a64'),
+                              ('source_revision', '332d7f723d71707d88a2cffa52b3754579a46926'),
+                              ('source_revision', 'c82c6eabe8f27e2b918de850d237f6b0b06444bb'),
+                              ('source_revision', '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550'),
+                              ('source_revision', '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8'),
+                              ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),
+diff --git a/scripts/ci/test_pq_chain_claim_guard.py b/scripts/ci/test_pq_chain_claim_guard.py
+index 72682391155dd65d0f54606324ec5a01465bb653..624c16369129f3b8fbc44d4507fb22bc859bff39 100644
+--- a/scripts/ci/test_pq_chain_claim_guard.py
++++ b/scripts/ci/test_pq_chain_claim_guard.py
+@@ -18,10 +18,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ from pq_chain_claim_guard import (BOUNDARY, CONFIG, CONSENSUS, CORPUS, DEVNET, GATES,
+                                   LIFETIME_BUDGET, PROOF_MANIFEST, UnsafePromotion,
+                                   inspect, safe_file)
+ 
+ LIFETIME_SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'
++LIFETIME_CURRENT_MAP = 'config/pon/pq128-source-correspondence-current-v2.json'
+ 
+ 
+ class DescriptorReaderControls:
+     """Shared real-filesystem attacks for both public reader wrappers.
+ 
+@@ -285,30 +286,27 @@ class TestClaimGuard(unittest.TestCase):
+         }
+         # Use the actual research-only schema, without claiming that fixture
+         # source bytes establish a theorem or an implementation refinement.
+         self.configs[LIFETIME_BUDGET] = json.loads(
+             (Path(__file__).resolve().parents[2] / LIFETIME_BUDGET).read_text())
+-        self.configs[LIFETIME_BUDGET]['experiment']['source_revision'] = 'a' * 40
+         for name, obj in self.configs.items():
+             self.put(name, json.dumps(obj).encode())
+         for paths in GATES.values():
+             for path in paths:
+                 if path not in self.configs:
+                     self.put(path, b'research source only')
+-        for event in self.configs[LIFETIME_BUDGET]['events']:
+-            for path in event['source_paths']:
+-                if not (self.root / path).exists():
+-                    self.put(path, b'research source only')
++        source_root = Path(__file__).resolve().parents[2]
++        # Preserve exact frozen declarations and copy only the declared current
++        # owner bytes. No historical code or native program is executed.
++        for path in (LIFETIME_BUDGET, LIFETIME_SOURCE_LOCK, LIFETIME_CURRENT_MAP):
++            self.put(path, (source_root / path).read_bytes())
++        self.configs[LIFETIME_SOURCE_LOCK] = json.loads(
++            (source_root / LIFETIME_SOURCE_LOCK).read_bytes())
+         paths = {path for event in self.configs[LIFETIME_BUDGET]['events']
+                  for path in event['source_paths']}
+-        self.configs[LIFETIME_SOURCE_LOCK] = {
+-            'schema': 'trnm-pq128-source-lock-v1',
+-            'source_revision': self.configs[LIFETIME_BUDGET]['experiment']['source_revision'],
+-            'files': {path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+-                      for path in sorted(paths)},
+-        }
+-        self.put(LIFETIME_SOURCE_LOCK, json.dumps(self.configs[LIFETIME_SOURCE_LOCK]).encode())
++        for path in paths:
++            self.put(path, (source_root / path).read_bytes())
+ 
+     def put(self, path, data):
+         target = self.root / path
+         target.parent.mkdir(parents=True, exist_ok=True)
+         target.write_bytes(data)
+@@ -363,11 +361,11 @@ class TestClaimGuard(unittest.TestCase):
+         original['whole_chain_failure_probability'] = None
+         self.put(CONFIG, json.dumps(original).encode())
+         report = inspect(self.root)
+         self.assertEqual(report['status'], 'HOLD')
+         self.assertIsNone(report['lifetime_budget']['actual_lifetime_failure_bound'])
+-        self.assertEqual(len(report['lifetime_budget']['unknown_terms']), 8)
++        self.assertEqual(len(report['lifetime_budget']['frozen_model']['unknown_terms']), 8)
+ 
+     def test_missing_lifetime_manifest_refused(self):
+         (self.root / LIFETIME_BUDGET).unlink()
+         self.refused()
+ 
+diff --git a/scripts/ci/test_pq_lifetime_budget.py b/scripts/ci/test_pq_lifetime_budget.py
+index fde7fa3f388db9ab9f9760b9229f928a7b2f2767..5b785871fb42396b6ce7ae1c79761a10cace9d30 100644
+--- a/scripts/ci/test_pq_lifetime_budget.py
++++ b/scripts/ci/test_pq_lifetime_budget.py
+@@ -14,10 +14,11 @@ import sys
+ import tempfile
+ import unittest
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ import pq_lifetime_budget as budget
++import pq_lifetime_current_v2 as current_budget
+ 
+ 
+ EVENTS = ('signature', 'commitment', 'proof', 'ledger', 'transport', 'recovery',
+           'release', 'application')
+ COVERAGE = ['online', 'offline', 'preprocessing', 'failed', 'unpublished',
+@@ -532,20 +533,34 @@ class CheckedInContractTests(ContractCase):
+         self.assertEqual(len(data['terms']), 8)
+         self.assertTrue(all(term['status'] == 'unknown' and term['bound'] is None
+                             and term['theorem'] is None for term in data['terms']))
+         self.assertTrue(data['assumptions'])
+         self.assertTrue(all(row['status'] == 'unmet' for row in data['assumptions']))
+-        report = budget.inspect(self.root)
++        current = current_budget.inspect(self.root)
++        report = current['frozen_model']
+         self.assertEqual(len(report['unknown_terms']), 8)
+         self.assertEqual(len(report['unknown_query_budgets']), 4)
+         self.assertIsNone(report['model_arithmetic_sum'])
+         self.assertIsNone(report['target_met_under_declared_bounds'])
+-        self.assertIs(report['source_revision_bound'], True)
+-        self.assertEqual(report['source_binding_scope'], 'declared-event-paths-only')
+-        self.assertEqual(report['source_lock_sha256'],
++        self.assertIs(report['source_revision_bound'], False)
++        self.assertEqual(report['source_binding_scope'], 'unbound')
++        self.assertIsNone(report['source_lock_sha256'])
++        self.assertEqual(current['frozen_model_identity']['source_lock_sha256'],
+                          hashlib.sha256((self.root / SOURCE_LOCK).read_bytes()).hexdigest())
++        correspondence = current['current_source_correspondence']
++        self.assertIs(correspondence['source_files_checked'], True)
++        self.assertIs(correspondence['source_revision_bound'], False)
++        self.assertEqual(correspondence['source_binding_scope'], 'declared-event-paths-only')
++        self.assertEqual(set(correspondence['source_files_sha256']), set(report['source_paths']))
++        self.assertEqual(len(correspondence['source_files_sha256']), 21)
+         self.remains_unqualified(report)
++        self.assertEqual(current['status'], 'HOLD')
++        self.assertIsNone(current['actual_lifetime_failure_bound'])
++        for field in ('whole_chain_pq_qualified', 'pq_128_qualified',
++                      'production_activation', 'composition_coverage_proved',
++                      'theorem_applicability_verified'):
++            self.assertIs(current[field], False, field)
+ 
+     def test_checked_in_example_reproduces_only_the_illustrative_equality(self):
+         example_path = 'config/pon/pq128-lifetime-example-v1.json'
+         data = budget.strict_json((self.root / example_path).read_bytes())
+         self.assertEqual(data['purpose'], 'arithmetic-example')
+diff --git a/scripts/ci/test_pq_lifetime_composition.py b/scripts/ci/test_pq_lifetime_composition.py
+index 5350c9232e030d0de6d6e0102d9f9b5b64604f50..dfc384a37ec3da774ab77936cfe474858869cc0e 100644
+--- a/scripts/ci/test_pq_lifetime_composition.py
++++ b/scripts/ci/test_pq_lifetime_composition.py
+@@ -22,10 +22,12 @@ import pq_lifetime_composition as composition
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ MANIFEST = composition.DEFAULT_MANIFEST
+ LEGACY = composition.legacy.DEFAULT_MANIFEST
+ SOURCE_LOCK = composition.legacy.DEFAULT_SOURCE_LOCK
++CURRENT_MAP = composition.current_lifetime.DEFAULT_MAP
++FROZEN_COMPOSITION = "config/pon/pq128-lifetime-composition-v2.json"
+ ROOT_REGISTER = composition.root_register.DEFAULT_MANIFEST
+ TARGET = Fraction(1, 1 << 128)
+ 
+ 
+ def ratio(value):
+@@ -284,10 +286,15 @@ class ArithmeticContractTests(ContractCase):
+ class InventoryContractTests(ContractCase):
+     def test_checked_in_manifest_matches_the_frozen_contract(self):
+         data = load(MANIFEST)
+         self.assertEqual(data, composition.default_manifest())
+         self.remains_unqualified(composition.validate_manifest(data))
++        self.assertEqual(data["schema"], "trnm-pq128-lifetime-composition-current-v3")
++        self.assertEqual(data["frozen_composition"]["sha256"],
++                         hashlib.sha256((ROOT / FROZEN_COMPOSITION).read_bytes()).hexdigest())
++        with self.assertRaises(composition.CompositionError):
++            composition.validate_manifest(load(FROZEN_COMPOSITION))
+ 
+     def test_superseded_child_manifest_identities_are_refused(self):
+         previous = {
+             "legacy": {
+                 "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23",
+@@ -307,10 +314,12 @@ class InventoryContractTests(ContractCase):
+                     with self.assertRaises(composition.CompositionError):
+                         composition.validate_manifest(data)
+ 
+         # The pre-typed-error root input remains a refused historical identity.
+         for field, value in (
++            ("sha256", "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8"),
++            ("declared_revision", "975af9eb4a7f15b405de602552fa05021a176c11"),
+             ("sha256", "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8"),
+             ("declared_revision", "b683714cdd5ba241c16c335a81aebc12c1581902"),
+         ):
+             with self.subTest(root_continuation_field=field):
+                 data = load(MANIFEST)
+@@ -424,14 +433,15 @@ class InventoryContractTests(ContractCase):
+ class SourceInspectionTests(ContractCase):
+     def setUp(self):
+         self.temporary = tempfile.TemporaryDirectory(prefix="pq-lifetime-composition-test-")
+         self.addCleanup(self.temporary.cleanup)
+         self.root = Path(self.temporary.name)
+-        self.legacy_files = load(SOURCE_LOCK)["files"]
++        self.legacy_files = load(CURRENT_MAP)["current_source_files_sha256"]
+         self.root_files = load(ROOT_REGISTER)["source_files_sha256"]
+         paths = set(self.legacy_files) | set(self.root_files)
+-        paths.update((MANIFEST, LEGACY, SOURCE_LOCK, ROOT_REGISTER))
++        paths.update((MANIFEST, LEGACY, SOURCE_LOCK, ROOT_REGISTER, CURRENT_MAP,
++                      FROZEN_COMPOSITION))
+         for path in paths:
+             destination = self.root / path
+             destination.parent.mkdir(parents=True, exist_ok=True)
+             shutil.copyfile(ROOT / path, destination)
+ 
+@@ -441,16 +451,24 @@ class SourceInspectionTests(ContractCase):
+     def run_cli(self):
+         return subprocess.run([sys.executable, str(ROOT / "scripts/ci/pq_lifetime_composition.py"),
+                                "--root", str(self.root)], capture_output=True, text=True,
+                               check=False, timeout=20)
+ 
+-    def test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes(self):
++    def test_real_inspection_binds_66_current_declared_sources_and_four_scopes(self):
+         report = composition.inspect(self.root)
+-        self.assertEqual(report["source_counts"], {"legacy": 21, "root": 45, "shared": 1, "union": 65})
+-        self.assertEqual(len(report["source_files_sha256"]), 65)
++        self.assertEqual(report["source_counts"], {"legacy": 21, "root": 46, "shared": 1, "union": 66})
++        self.assertEqual(len(report["source_files_sha256"]), 66)
++        self.assertIn("trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
++                      report["source_files_sha256"])
+         self.assertEqual(set(report["source_files_sha256"]), set(self.legacy_files) | set(self.root_files))
+         self.assertIs(report["declared_source_union_consistent"], True)
++        current = report["legacy_current_source_correspondence"]
++        self.assertIs(current["source_files_checked"], True)
++        self.assertIs(current["source_revision_bound"], False)
++        self.assertEqual(current["source_files_sha256"], self.legacy_files)
++        self.assertEqual(report["legacy_frozen_model_identity"]["source_revision"],
++                         "0f9b30549328e5be20f4d3e6e27bd132b42d90de")
+         self.assertEqual(report["source_binding_scope"], "declared-path-union-only")
+         self.assertIs(report["source_revision_bound"], False)
+         self.assertIs(report["deployment_identity_proved"], False)
+         self.assertEqual(report["shared_primitive_scope_count"], 4)
+         self.assertEqual(report["shared_source_paths"],
+@@ -474,22 +492,22 @@ class SourceInspectionTests(ContractCase):
+         (self.root / MANIFEST).unlink()
+         with self.assertRaises(composition.CompositionError):
+             composition.inspect(self.root)
+ 
+     def test_missing_each_child_manifest_or_legacy_lock_is_refused(self):
+-        for path in (LEGACY, ROOT_REGISTER, SOURCE_LOCK):
++        for path in (LEGACY, ROOT_REGISTER, SOURCE_LOCK, FROZEN_COMPOSITION):
+             with self.subTest(path=path):
+                 data = (self.root / path).read_bytes()
+                 (self.root / path).unlink()
+                 try:
+                     with self.assertRaises(composition.CompositionError):
+                         composition.inspect(self.root)
+                 finally:
+                     (self.root / path).write_bytes(data)
+ 
+     def test_changed_child_manifest_bytes_are_refused_even_when_json_semantics_match(self):
+-        for path in (LEGACY, ROOT_REGISTER):
++        for path in (LEGACY, ROOT_REGISTER, FROZEN_COMPOSITION):
+             with self.subTest(path=path):
+                 data = (self.root / path).read_bytes()
+                 (self.root / path).write_bytes(data + b"\n")
+                 try:
+                     with self.assertRaisesRegex(composition.CompositionError, "input manifest differs"):
+@@ -543,11 +561,11 @@ class SourceInspectionTests(ContractCase):
+     def test_cli_inspection_returns_hold_and_null_not_a_security_pass(self):
+         process = self.run_cli()
+         self.assertEqual(process.returncode, 0, process.stderr)
+         self.assertEqual(process.stderr, "")
+         report = json.loads(process.stdout)
+-        self.assertEqual(report["source_counts"]["union"], 65)
++        self.assertEqual(report["source_counts"]["union"], 66)
+         self.remains_unqualified(report)
+ 
+     def test_cli_changed_input_returns_structured_refusal_without_qualification(self):
+         (self.root / LEGACY).write_bytes(b"{}\n")
+         process = self.run_cli()
+diff --git a/scripts/ci/test_pq_lifetime_current_v2.py b/scripts/ci/test_pq_lifetime_current_v2.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..9137a72b6871346959fc6b6243d58f42f5c9fffb
+--- /dev/null
++++ b/scripts/ci/test_pq_lifetime_current_v2.py
+@@ -0,0 +1,302 @@
++"""Finite current-correspondence controls; no historical or native execution."""
++from copy import deepcopy
++import hashlib
++import json
++from pathlib import Path
++import shutil
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++import pq_lifetime_budget as legacy
++import pq_lifetime_current_v2 as current
++
++ROOT = Path(__file__).resolve().parents[2]
++MAP = "config/pon/pq128-source-correspondence-current-v2.json"
++PATHS = frozenset((
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
++    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
++    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
++    "trillionnium/crates/trnm-pon-node/src/consensus.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
++    "trillionnium/crates/trnm-pon-node/src/store.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
++    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
++    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
++    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
++))
++FALSE_FLAGS = ("whole_chain_pq_qualified", "pq_128_qualified", "production_activation",
++               "composition_coverage_proved", "theorem_applicability_verified")
++
++
++class CurrentCorrespondenceTests(unittest.TestCase):
++    def setUp(self):
++        area = tempfile.TemporaryDirectory(prefix="pq-current-v2-")
++        self.addCleanup(area.cleanup)
++        self.root = Path(area.name)
++        for path in PATHS | {MAP, legacy.DEFAULT_MANIFEST, legacy.DEFAULT_SOURCE_LOCK}:
++            target = self.root / path
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copyfile(ROOT / path, target)
++        self.mapping = json.loads((self.root / MAP).read_bytes())
++        self.source = self.root / "trillionnium/crates/trnm-pon-node/src/store.rs"
++
++    def write_map(self, data):
++        (self.root / MAP).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
++
++    def refuses(self):
++        with self.assertRaises(current.CurrentBudgetError):
++            current.inspect(self.root)
++
++    def unqualified(self, result):
++        self.assertEqual(result["status"], "HOLD")
++        self.assertIsNone(result["actual_lifetime_failure_bound"])
++        for name in FALSE_FLAGS:
++            self.assertIs(result[name], False, name)
++
++    def test_current_map_keeps_frozen_model_and_current_bytes_separate(self):
++        report = current.inspect(self.root)
++        self.assertEqual(report["schema"], "trnm-pq128-lifetime-current-result-v2")
++        self.assertEqual(report["frozen_model_identity"], {
++            "source_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
++            "manifest_path": "config/pon/pq128-lifetime-budget-v1.json",
++            "manifest_sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
++            "source_lock_path": "config/pon/pq128-source-lock-v1.json",
++            "source_lock_sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2",
++        })
++        model = report["frozen_model"]
++        self.assertIs(model["source_revision_bound"], False)
++        self.assertEqual(model["source_binding_scope"], "unbound")
++        self.assertIsNone(model["source_lock_sha256"])
++        self.assertEqual(len(model["unknown_terms"]), 8)
++        self.assertEqual(len(model["unknown_query_budgets"]), 4)
++        self.assertIsNone(model["model_arithmetic_sum"])
++        self.assertIsNone(model["target_met_under_declared_bounds"])
++        self.unqualified(model)
++        observed = report["current_source_correspondence"]
++        self.assertEqual(observed["schema"], "trnm-pq128-source-correspondence-current-v2")
++        self.assertEqual(set(observed["source_files_sha256"]), PATHS)
++        self.assertEqual(len(PATHS), 21)
++        self.assertIs(observed["source_files_checked"], True)
++        self.assertIs(observed["source_revision_bound"], False)
++        self.assertEqual(observed["source_binding_scope"], "declared-event-paths-only")
++        self.assertEqual(observed["source_files_sha256"],
++                         self.mapping["current_source_files_sha256"])
++        self.assertEqual(observed["map_sha256"],
++                         hashlib.sha256((self.root / MAP).read_bytes()).hexdigest())
++        self.assertFalse((self.root / ".git").exists())
++        self.unqualified(report)
++
++    def test_original_v1_reader_does_not_relabel_current_bytes(self):
++        with self.assertRaisesRegex(legacy.BudgetError, "source lock hash mismatch"):
++            legacy.inspect(self.root)
++
++    def test_changed_current_source_is_refused(self):
++        self.source.write_bytes(self.source.read_bytes() + b"\n// changed current fixture\n")
++        self.refuses()
++
++    def test_missing_current_source_is_refused(self):
++        self.source.unlink()
++        self.refuses()
++
++    def test_symlink_source_with_matching_bytes_is_refused(self):
++        copy = self.root / "same-source"
++        copy.write_bytes(self.source.read_bytes())
++        self.source.unlink()
++        self.source.symlink_to(copy)
++        self.refuses()
++
++    def test_symlinked_source_parent_is_refused(self):
++        parent = self.source.parent
++        moved = parent.with_name(parent.name + "-copy")
++        parent.rename(moved)
++        parent.symlink_to(moved, target_is_directory=True)
++        self.refuses()
++
++    def test_current_map_missing_or_symlinked_is_refused(self):
++        path = self.root / MAP
++        raw = path.read_bytes()
++        path.unlink()
++        self.refuses()
++        copy = self.root / "same-map"
++        copy.write_bytes(raw)
++        path.symlink_to(copy)
++        self.refuses()
++
++    def test_map_byte_pin_rejects_semantically_equivalent_reformatting(self):
++        path = self.root / MAP
++        path.write_bytes(path.read_bytes() + b"\n")
++        self.refuses()
++
++    def test_missing_and_extra_current_paths_are_refused(self):
++        for add in (False, True):
++            with self.subTest(extra=add):
++                data = deepcopy(self.mapping)
++                if add:
++                    data["current_source_files_sha256"]["extra.rs"] = "0" * 64
++                else:
++                    del data["current_source_files_sha256"][next(iter(PATHS))]
++                self.write_map(data)
++                self.refuses()
++
++    def test_duplicate_map_json_keys_are_refused(self):
++        path = self.root / MAP
++        raw = path.read_bytes()
++        path.write_bytes(b'{"status":"HOLD",' + raw.lstrip()[1:])
++        self.refuses()
++
++    def test_malformed_current_digest_encodings_are_refused(self):
++        for digest in ("0" * 40, "A" * 64, "g" * 64, True, None):
++            with self.subTest(digest=digest):
++                data = deepcopy(self.mapping)
++                data["current_source_files_sha256"][next(iter(PATHS))] = digest
++                self.write_map(data)
++                self.refuses()
++
++    def test_source_and_map_cannot_be_changed_together(self):
++        self.source.write_bytes(b"Simultaneously changed source and map fixture.\n")
++        data = deepcopy(self.mapping)
++        data["current_source_files_sha256"][self.source.relative_to(self.root).as_posix()] = (
++            hashlib.sha256(self.source.read_bytes()).hexdigest())
++        data["current_source_snapshot_sha256"] = hashlib.sha256(
++            current.canonical(data["current_source_files_sha256"])).hexdigest()
++        self.write_map(data)
++        self.refuses()
++
++    def test_frozen_map_cannot_be_substituted_for_current_map(self):
++        lock = json.loads((self.root / legacy.DEFAULT_SOURCE_LOCK).read_bytes())
++        data = deepcopy(self.mapping)
++        data["current_source_files_sha256"] = lock["files"]
++        data["current_source_snapshot_sha256"] = hashlib.sha256(
++            current.canonical(lock["files"])).hexdigest()
++        self.write_map(data)
++        self.refuses()
++
++    def test_current_map_cannot_rewrite_frozen_identity(self):
++        data = deepcopy(self.mapping)
++        data["frozen_model"]["source_revision"] = "d" * 40
++        data["frozen_model"]["source_lock_sha256"] = data["current_source_snapshot_sha256"]
++        self.write_map(data)
++        self.refuses()
++
++    def test_frozen_manifest_missing_or_modified_is_refused(self):
++        path = self.root / legacy.DEFAULT_MANIFEST
++        raw = path.read_bytes()
++        path.unlink()
++        self.refuses()
++        path.write_bytes(raw + b"\n")
++        self.refuses()
++
++    def test_frozen_lock_missing_or_modified_is_refused(self):
++        path = self.root / legacy.DEFAULT_SOURCE_LOCK
++        raw = path.read_bytes()
++        path.unlink()
++        self.refuses()
++        path.write_bytes(raw + b"\n")
++        self.refuses()
++
++    def test_unknown_fields_and_qualification_promotions_are_refused(self):
++        changes = (
++            lambda data: data.update(unreviewed=True),
++            lambda data: data["qualification"].update(whole_chain_pq_qualified=True),
++            lambda data: data["qualification"].update(actual_lifetime_failure_bound=0),
++            lambda data: data["qualification"].update(production_activation=0),
++        )
++        for change in changes:
++            data = deepcopy(self.mapping)
++            change(data)
++            self.write_map(data)
++            self.refuses()
++
++    def test_oversize_map_is_refused(self):
++        (self.root / MAP).write_bytes(b" " * (32768 + 1))
++        self.refuses()
++
++    def test_changed_metadata_during_source_read_is_refused(self):
++        original = current.read_regular
++        changed = False
++
++        def read(root, path, ceiling):
++            nonlocal changed
++            raw = original(root, path, ceiling)
++            if path == self.source.relative_to(self.root).as_posix() and not changed:
++                changed = True
++                target = self.root / MAP
++                target.write_bytes(target.read_bytes() + b"\n")
++            return raw
++
++        with patch.object(current, "read_regular", side_effect=read):
++            self.refuses()
++        self.assertTrue(changed)
++
++    def test_exact_report_is_revalidated_against_current_bytes(self):
++        report = current.inspect(self.root)
++        raw = json.dumps(report, sort_keys=True).encode()
++        self.assertEqual(current.verify_report(self.root, raw), report)
++
++    def test_old_v1_report_is_not_a_current_report(self):
++        data = legacy.strict_json((self.root / legacy.DEFAULT_MANIFEST).read_bytes())
++        raw = json.dumps(legacy.evaluate(data)).encode()
++        with self.assertRaises(current.CurrentBudgetError):
++            current.verify_report(self.root, raw)
++
++    def test_report_false_zero_swaps_extra_and_missing_fields_are_refused(self):
++        original = current.inspect(self.root)
++        changes = (
++            lambda data: data.update(whole_chain_pq_qualified=0),
++            lambda data: data.update(actual_lifetime_failure_bound=False),
++            lambda data: data.update(extra="unreviewed"),
++            lambda data: data.pop("frozen_model_identity"),
++            lambda data: data["current_source_correspondence"].update(source_revision_bound=True),
++        )
++        for change in changes:
++            data = deepcopy(original)
++            change(data)
++            with self.assertRaises(current.CurrentBudgetError):
++                current.verify_report(self.root, json.dumps(data).encode())
++
++    def test_map_and_report_hashes_cannot_be_laundered_together(self):
++        report = current.inspect(self.root)
++        self.source.write_bytes(b"Changed current source for simultaneous-tamper control.\n")
++        path = self.source.relative_to(self.root).as_posix()
++        data = deepcopy(self.mapping)
++        data["current_source_files_sha256"][path] = hashlib.sha256(self.source.read_bytes()).hexdigest()
++        snapshot = hashlib.sha256(current.canonical(data["current_source_files_sha256"])).hexdigest()
++        data["current_source_snapshot_sha256"] = snapshot
++        self.write_map(data)
++        report["current_source_correspondence"].update(
++            source_files_sha256=data["current_source_files_sha256"],
++            source_snapshot_sha256=snapshot,
++            map_sha256=hashlib.sha256((self.root / MAP).read_bytes()).hexdigest())
++        with self.assertRaises(current.CurrentBudgetError):
++            current.verify_report(self.root, json.dumps(report).encode())
++
++    def test_report_cannot_survive_a_later_source_change(self):
++        raw = json.dumps(current.inspect(self.root)).encode()
++        self.source.write_bytes(self.source.read_bytes() + b"\n")
++        with self.assertRaises(current.CurrentBudgetError):
++            current.verify_report(self.root, raw)
++
++    def test_report_bytes_are_bounded_and_strict(self):
++        for raw in (b"", b" " * (262144 + 1), b'{"status":"HOLD","status":"HOLD"}',
++                    b'{"value":NaN}', b'{"value":1.0}', b"[]", "not bytes"):
++            with self.subTest(size=len(raw)):
++                with self.assertRaises(current.CurrentBudgetError):
++                    current.verify_report(self.root, raw)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/ci/test_w1_lifetime_current_observation.py b/scripts/ci/test_w1_lifetime_current_observation.py
+index 9e6989095794564623e9b56e58ab97af3cc42517..7cedb1e646aae60bcd0104d82ae969706a497802 100644
+--- a/scripts/ci/test_w1_lifetime_current_observation.py
++++ b/scripts/ci/test_w1_lifetime_current_observation.py
+@@ -85,21 +85,21 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
+         lock = next(row for row in self.contract['sources'] if row['path'] == 'trillionnium/Cargo.lock')
+         self.assertEqual(lock['bytes'], 42127)
+         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
+         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
+         self.assertEqual(self.contract['sources'][7]['current_sha256'],
+-                         '5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c')
++                         'ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5')
+         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
+                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
+ 
+         oracle = next(row for row in self.contract['sources']
+                       if row['path'] == 'formal/pon-nakamoto-v1/quantum_oracle_resources.py')
+         self.assertEqual(oracle['bytes'], 29812)
+         self.assertEqual(oracle['current_sha256'],
+                          '3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049')
+         self.assertEqual(self.contract['source_base_commit'],
+-                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
++                         'fc39da5f35298ce8a4c34aa5bdb25849648612f9')
+ 
+     def test_historical_reader_and_contract_hashes_are_independently_frozen(self):
+         self.assertEqual(current.LEGACY, 'tests/fixtures/w1-lifetime-historical-7150/ledger.py')
+         self.assertEqual(current.LEGACY_SHA256,
+                          '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6')
+diff --git a/scripts/ci/test_w1_qrom_closure_current_controls.py b/scripts/ci/test_w1_qrom_closure_current_controls.py
+index 79898f0dd2e44a433f6bd4e4a039893bab7cb819..20722e2f119014791f1c87b3c666a4eb03606b32 100644
+--- a/scripts/ci/test_w1_qrom_closure_current_controls.py
++++ b/scripts/ci/test_w1_qrom_closure_current_controls.py
+@@ -510,30 +510,43 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+             gate.check_semantics(self.root, self.current)
+ 
+     def test_actual_report_has_only_the_reviewed_lock_provenance_delta(self):
+         historical = (self.root / gate.HISTORICAL_SEMANTICS).read_bytes()
+         result = gate.check_semantics(self.root, self.current)
++        self.assertEqual(result['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3')
+         self.assertEqual(result['only_changed_json_pointers'], [
+             '/provenance/lock_checks/0/sha256', '/provenance/lock_checks/2/sha256'])
+         self.assertEqual([(row['path'], row['current_sha256'])
+                           for row in result['reviewed_lock_changes']], [
+             ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+              '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
+             ('formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock',
+              'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'),
+         ])
++        self.assertEqual(
++            [(row['path'], row['historical_sha256'], row['current_sha256'])
++             for row in result['reviewed_lock_changes']],
++            [(path, old, current) for _, path, old, current in gate.REVIEWED_LOCK_CHANGES])
+         self.assertTrue(result['all_other_report_fields_identical'])
+         self.assertFalse(result['historical_report_bytes_rewritten'])
+         self.assertFalse(result['new_native_execution_or_dependency_equivalence_proved'])
+         self.assertEqual(result['qualification'], gate.QUALIFICATION)
+         self.assertEqual((self.root / gate.HISTORICAL_SEMANTICS).read_bytes(), historical)
+ 
+     def test_any_other_report_field_change_is_refused(self):
+-        value = json.loads(self.current.read_text())
+-        value['unreviewed_extra_claim'] = True
+-        self.current.write_text(json.dumps(value))
+-        self.reject()
++        for change in ('extra_claim', 'boolean_integer_alias', 'integer_float_alias'):
++            with self.subTest(change=change):
++                value = json.loads(self.actual_bytes)
++                if change == 'extra_claim':
++                    value['unreviewed_extra_claim'] = True
++                elif change == 'boolean_integer_alias':
++                    value['qualification']['end_to_end_qrom_bound_established'] = 0
++                else:
++                    value['guest_binary']['binary_bytes'] = float(
++                        value['guest_binary']['binary_bytes'])
++                self.current.write_text(json.dumps(value))
++                self.reject()
+ 
+     def test_missing_or_relabelled_reviewed_lock_entry_is_refused(self):
+         for index in (0, 2):
+             with self.subTest(index=index):
+                 value = json.loads(self.actual_bytes)
+@@ -565,10 +578,11 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+                     value['provenance']['lock_checks'][index]['sha256'] = hashlib.sha256(changed).hexdigest()
+                     self.current.write_text(json.dumps(value))
+                     self.reject()
+                 finally:
+                     path.write_bytes(original)
++                    self.current.write_bytes(self.actual_bytes)
+ 
+     def test_historical_report_bytes_are_frozen_even_for_json_whitespace(self):
+         path = self.root / gate.HISTORICAL_SEMANTICS
+         path.write_bytes(path.read_bytes() + b'\n')
+         self.reject()
+diff --git a/scripts/ci/test_w1_qrom_current_ci.py b/scripts/ci/test_w1_qrom_current_ci.py
+index ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f..172c14f5c7b55bc35ae1b73248fa0971217561f2 100644
+--- a/scripts/ci/test_w1_qrom_current_ci.py
++++ b/scripts/ci/test_w1_qrom_current_ci.py
+@@ -140,12 +140,22 @@ class CurrentCiTests(unittest.TestCase):
+             'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+             'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+             'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+             'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+         ))
+-        self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
+-                         [11172, 46018, 106066, 32654])
++        self.assertEqual(
++            [(row['path'], row['observed_bytes'], row['observed_sha256'])
++             for row in self.drift['selected_source_differences']], [
++                ('formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs', 11172,
++                 '5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7'),
++                ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock', 46018,
++                 '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
++                ('trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs', 106066,
++                 '7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e'),
++                ('trillionnium/crates/trnm-protocol/src/pon_wire.rs', 32654,
++                 'ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b'),
++            ])
+ 
+     def test_named_runner_records_every_real_start_and_success(self):
+         report, roster = self.execute_fixture()
+         ci.validate_named(report, roster)
+         self.assertEqual(report['suites'][0]['tests_run'], 2)
+@@ -211,21 +221,36 @@ class CurrentCiTests(unittest.TestCase):
+             with self.assertRaises(ci.ObservationError):
+                 ci.observe_drift(ROOT, self.temp)
+         failed = json.loads((self.temp / 'historical-drift.json').read_bytes())
+         self.assertEqual(failed['classification'], 'UNCLASSIFIED_HISTORICAL_RESULT')
+         self.assertEqual((self.temp / 'historical-on-current.stderr.log').read_bytes(), fake.stderr)
+-        for mutation in ('missing', 'extra', 'wrong_digest', 'self_consistent_omission',
++        for mutation in ('missing', 'extra', 'wrong_digest', 'lock_digest',
++                         'self_consistent_lock_omission', 'self_consistent_omission',
+                          'self_consistent_extra', 'self_consistent_substitution',
+                          'self_consistent_reorder', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
+             with self.subTest(mutation=mutation):
+                 report = deepcopy(self.drift)
+                 contract = deepcopy(self.contract)
+                 if mutation == 'missing':
+                     report['selected_source_differences'].pop()
+                 elif mutation == 'extra':
+                     report['selected_source_differences'].append(
+                         deepcopy(report['selected_source_differences'][0]))
++                elif mutation == 'lock_digest':
++                    lock = next(row for row in report['selected_source_differences']
++                                if row['path'].endswith('/w1_v2_verifier/Cargo.lock'))
++                    lock['observed_sha256'] = '0' * 64
++                elif mutation == 'self_consistent_lock_omission':
++                    lock_path = 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock'
++                    original = next(row for row in self.legacy['project_files']
++                                    if row['path'] == lock_path)
++                    contract['project_files'] = [
++                        deepcopy(original) if row['path'] == lock_path else row
++                        for row in contract['project_files']]
++                    report['selected_source_differences'] = [
++                        row for row in report['selected_source_differences']
++                        if row['path'] != lock_path]
+                 elif mutation == 'wrong_digest':
+                     report['selected_source_differences'][2]['observed_sha256'] = '0' * 64
+                 elif mutation == 'self_consistent_omission':
+                     removed = report['selected_source_differences'].pop(2)
+                     for row in contract['project_files']:
+diff --git a/scripts/ci/test_w1_qrom_semantics_audit.py b/scripts/ci/test_w1_qrom_semantics_audit.py
+index 5339b28b50fae5c58f0d1de8f1111c6b8ad02af7..4d7f18b7146aad5459b967eab10dc41010e979e6 100644
+--- a/scripts/ci/test_w1_qrom_semantics_audit.py
++++ b/scripts/ci/test_w1_qrom_semantics_audit.py
+@@ -272,38 +272,50 @@ class W1SemanticsAuditTests(unittest.TestCase):
+         self.assertEqual({key for key, value in qualification.items() if value is True}, closed)
+         self.assertTrue(all(value is False for key, value in qualification.items() if key not in closed))
+         self.assertIs(qualification['valid_code_zero_control_digest_excluded'], False)
+         self.assertIs(qualification['fresh_receipt_cryptographically_verified'], False)
+         self.assertIs(self.report['kernel_release_match']['kernel_source_to_binary_rebuilt'], False)
+-        # Both preceding source observations remain frozen. The present two-lock
+-        # correspondence is explicit; neither saved report is rewritten as current.
+-        current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
++        # Both preceding source observations remain frozen. The separately
++        # retained Nov14 observation binds the current two-lock correspondence.
++        current_path = 'evidence/pon-w1-qrom-semantics-current-20261114/report.json'
++        prior_current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
+         historical_path = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
+         current_raw = (ROOT / current_path).read_bytes()
++        prior_current_raw = (ROOT / prior_current_path).read_bytes()
+         historical_raw = (ROOT / historical_path).read_bytes()
+         encoded = (json.dumps(self.report, indent=2, sort_keys=True) + '\n').encode()
+         self.assertEqual(AUDIT.sha256(current_raw),
++                         '5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f')
++        self.assertEqual(AUDIT.sha256(prior_current_raw),
+                          '129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe')
+         self.assertEqual(AUDIT.sha256(historical_raw),
+                          '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221')
+-        self.assertNotEqual(encoded, current_raw)
++        self.assertEqual(encoded, current_raw)
++        self.assertNotEqual(encoded, prior_current_raw)
+         self.assertNotEqual(encoded, historical_raw)
+         historical = json.loads(historical_raw)
+         self.assertEqual(historical['provenance']['lock_checks'][2]['sha256'],
+                          'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f')
+         historical['provenance']['lock_checks'][2]['sha256'] = (
+             'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a')
+         # Preserve the preceding one-lock observation under its original SHA.
+-        self.assertEqual(historical, json.loads(current_raw))
++        self.assertEqual(historical, json.loads(prior_current_raw))
+         self.assertEqual(historical['provenance']['lock_checks'][0]['path'],
+                          'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock')
+         self.assertEqual(historical['provenance']['lock_checks'][0]['sha256'],
+                          '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
+         historical['provenance']['lock_checks'][0]['sha256'] = (
+             '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
+         # Compare all JSON values; the audit's in-memory structures include tuples.
+         self.assertEqual(historical, json.loads(encoded))
++        prior_current = json.loads(prior_current_raw)
++        self.assertEqual(prior_current['provenance']['lock_checks'][0]['sha256'],
++                         '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
++        prior_current['provenance']['lock_checks'][0]['sha256'] = (
++            '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
++        self.assertEqual((json.dumps(prior_current, indent=2, sort_keys=True) + '\n').encode(),
++                         encoded)
+         workflow = (ROOT / '.github/workflows/pon-w1-qrom-closure.yml').read_text()
+         # The two explicitly different source jobs have different consumers.
+         # Keep the historical byte comparison in its fixed checkout; the current
+         # job must call the independently pinned correspondence reader.
+         self.assertEqual(workflow.count('  closure-historical:\n'), 1)
+@@ -320,10 +332,11 @@ class W1SemanticsAuditTests(unittest.TestCase):
+             '--output "$W1_CLOSURE_OUT/semantics.json" '
+             '> "$W1_CLOSURE_OUT/semantics-correspondence.json"')
+         self.assertEqual(current_job.count('          ' + current_command + '\n'), 1)
+         self.assertNotIn(historical_command, current_job)
+         self.assertNotIn('cmp ' + current_path, current_job)
++        self.assertNotIn('cmp ' + prior_current_path, current_job)
+         self.assertNotIn(current_command, historical_job)
+ 
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/scripts/w1_lifetime_current_observation.py b/scripts/w1_lifetime_current_observation.py
+index e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0..901634884d201df615370811f46a02ae88647631 100644
+--- a/scripts/w1_lifetime_current_observation.py
++++ b/scripts/w1_lifetime_current_observation.py
+@@ -17,16 +17,16 @@ import stat
+ import sys
+ from types import FunctionType, ModuleType
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
+-CONTRACT_SHA256 = 'bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7'
++CONTRACT_SHA256 = 'ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63'
+ # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
+ # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
+ LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
+ LEGACY_SHA256 = '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6'
+-CURRENT = '5c04c60e463462d9df8884786e0d5bb32af08a64'
++CURRENT = 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'
+ HISTORICAL = '7150d96a2112875b4afcf3023361a5cef4a0e4b1'
+ CHANGED = (
+     'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+     'trillionnium/Cargo.lock',
+     'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',

@@ -1,0 +1,62 @@
+{
+  "schema": "audit-receipt-representation-repair-v1",
+  "prior_head": "318527b4b2a07b5037d755547acd92e46ae3aded",
+  "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "old_target": "evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json",
+  "new_target": "evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json.raw",
+  "original_source_path": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-4.json",
+  "original_raw_bytes": 0,
+  "original_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "original_failure_preserved": true,
+  "index_before_sha256": "c0df6e5c29b5e91a99b91f9b746e024feb29c5b84e80ae71c646a6490e1d991f",
+  "index_after_sha256": "c7554324094f652d33616ae5f6701ce584313951bbe73638fa35690497a3d9df",
+  "index_semantic_change": "/entries/145/path only",
+  "payload_count": 527,
+  "patch_sha256": "6e6988b2fdd479a506bb438622c0d11ad81e439c4012749f7b40d712f2f356fa",
+  "remote_writes": false,
+  "steps": [
+    {
+      "label": "preflight-audit",
+      "exit": 0,
+      "seconds": 0.063,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "rename-original-raw-receipt",
+      "exit": 0,
+      "seconds": 0.027,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "repository-check",
+      "exit": 0,
+      "seconds": 9.086,
+      "sha256": "675c81659943d2588e809be78d64ec924719e54552e86de17eb3a7b602c50757"
+    },
+    {
+      "label": "diff-check",
+      "exit": 0,
+      "seconds": 0.04,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "stage-index",
+      "exit": 0,
+      "seconds": 0.027,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit-preflight",
+      "exit": 0,
+      "seconds": 0.056,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "commit-receipt-representation",
+      "exit": 0,
+      "seconds": 0.086,
+      "sha256": "2f7ebfac7f0af4faf94a72478692f9d7d92c125f3a96bd5153ff00e1ea16c2c7"
+    }
+  ]
+}

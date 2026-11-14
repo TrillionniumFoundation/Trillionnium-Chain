@@ -1,0 +1,48 @@
+diff --git a/scripts/ci/check_public_readiness_evidence.py b/scripts/ci/check_public_readiness_evidence.py
+index 397bebcfffe47fe3747df625f053e1b7b7c4de53..cba090808890320880b58036096e91604a4807a0 100644
+--- a/scripts/ci/check_public_readiness_evidence.py
++++ b/scripts/ci/check_public_readiness_evidence.py
+@@ -8,10 +8,11 @@ import hashlib
+ import json
+ import math
+ import os
+ import re
+ import sqlite3
++from contextlib import closing
+ import stat
+ import subprocess
+ import sys
+ from pathlib import Path
+ from unittest.mock import patch
+@@ -507,14 +508,14 @@ def native_durable_schema(root):
+                 # Rust control flow: an early return into another opener can
+                 # leave every recognized schema assignment intact. New bodies
+                 # require explicit review; no historical fallback is allowed.
+                 reviewed_bodies = {
+                     'growth_observation_only': '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
+-                    # Reviewed E1 body keeps the M06 account-profile refusal and
+-                    # requires the PQ TLS endpoint witness before namespace effects.
+-                    # See evidence/public-readiness-selected-body-binding-20261114.
+-                    # Deleting or bypassing either check is not a legacy fallback.
++                    # Current body includes the M06 account-profile refusal before
++                    # namespace effects; deleting or bypassing it is not a legacy fallback.
++                    # The reviewed current body also requires the canonical endpoint
++                    # policy to select PqWitnessV4 with a retained witness before effects.
+                     'observation_only': 'f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978',
+                 }
+                 require(sha(selected_body.encode()) == reviewed_bodies[observation_field],
+                         'durable backend selected implementation')
+         else:
+@@ -593,11 +594,11 @@ def validate_durable_store(root, folder, summary, packets, roots, cumulative, st
+                               for path in (folder/owner).rglob('*') if path.is_file())
+     require(integer(summary['ledger_disk_bytes'],1) == actual_ledger_bytes, 'actual ledger disk denominator')
+     for owner in ('producer','validator'):
+         path = safe(folder,owner+'/native.sqlite')
+         require(not path.with_name(path.name+'-wal').exists(), 'uncheckpointed durable evidence')
+-        with sqlite3.connect(path.as_uri()+'?mode=ro&immutable=1',uri=True) as database:
++        with closing(sqlite3.connect(path.as_uri()+'?mode=ro&immutable=1',uri=True)) as database, database:
+             database.execute('PRAGMA trusted_schema=OFF')
+             require(database.execute('PRAGMA integrity_check').fetchall() == [('ok',)], 'durable SQLite integrity')
+             schema = dict(database.execute("SELECT name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'"))
+             require(set(schema) == schema_names and {name:' '.join(sql.split()) for name,sql in schema.items()} == expected_sql, 'durable schema additions/omissions/changes')
+             metadata = dict(database.execute('SELECT key,value FROM metadata'))

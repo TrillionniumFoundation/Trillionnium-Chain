@@ -1,0 +1,13 @@
+diff --git a/config/pon/pq128-lifetime-budget-v1.json b/config/pon/pq128-lifetime-budget-v1.json
+index 1035073e635a2cecd2841cfdc2e6166659f1599d..1d5a659df6777ab4346212344d9502ba545f359d 100644
+--- a/config/pon/pq128-lifetime-budget-v1.json
++++ b/config/pon/pq128-lifetime-budget-v1.json
+@@ -154,7 +154,7 @@
+     "id": "trnm-pq128-proposed-lifetime-experiment-v1",
+     "model": "quantum-adaptive-lifetime",
+     "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+-    "source_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
++    "source_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
+   },
+   "primitives": [
+     {

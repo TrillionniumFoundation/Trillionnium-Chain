@@ -1,0 +1,428 @@
+{"acceptance_granted": false, "branch_refs_changed": false, "fetched": [], "verified_object_trees": {"1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3", "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502", "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0", "3c63c8368187de895e1dc0df8bbc105c6f39f842": "54d2f12c0d783f827d43bc626489f58ab75d7c31", "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60", "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73", "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762", "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579", "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8", "c2b1ca2503aeca35873d20d1b188689369edc752": "5df72527b22520b27f5ad858bbca98456c7ad9cf", "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee", "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954", "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c", "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"}}
+{"activation": false, "head": "08c9becab740ab2c375b970f376a7638f44c9e8e", "local_links": 8595, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1616, "source_state": "committed-clean", "tree": "036868dfcc953b6f5574c627e0027c3d4e2d3523", "workspace_packages": 26}
+{"archive_commit": "5d59b9540268914794a62e8fa237caf999499314", "consistency": "verified-historical", "evidence_files": 43, "implementation_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d", "independent_accepted": false, "matches_current_source": false, "production_activation": false, "source_bindings": 704, "tracked_artifacts_verified": true}
+{"artifact_files": 76, "executed_invariant_selectors": 61, "implementation_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5", "independent_accepted": false, "native_tests": 1801, "physical_hosts": 3, "production_activation": false, "python_suites": 17, "runtime_matches_measured_source": false}
+{"comparison_samples": 216, "executed_invariant_selectors": 66, "historical_only": true, "independent_accepted": false, "measured_commit": "30b85c34d1be404dcccd9f415286bb43b00f64ea", "native_tests": 1801, "ordinary_hepta_entry": false, "physical_hosts": 3, "production_activation": false, "runtime_matches": null}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "50e158640d8278ca94dbecb6539dab96c6a9fb84", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "ed4d95c3e558ad28b5f3132152704bdf77df5f49", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "faf144086067f9b0a301a2b46760164d80fec04e", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"actual_confirmed_transfers": 20480, "current_source_qualified_by_this_check": false, "engineering_observations_verified": true, "future_window_accepted": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "c2b1ca2503aeca35873d20d1b188689369edc752", "native_execution_authenticated": false, "physical_power_loss": false, "pipeline_cases": 4, "production_activation": false, "public_network_ready": false, "runtime_matches": false, "work_profile_qualified": false}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+# Responsibility evidence at 08c9becab740ab2c375b970f376a7638f44c9e8e
+
+Working tree dirty: False. No tests are executed by this report.
+
+| Responsibility | Package / measured source | Subject bytes | Complete recorded runtime | Exact tests observed / declared |
+|---|---|---|---|---|
+| M00.DecodeHeader | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M00.DecodeHeader | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M00.DecodeHeader | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M00.DecodeHeader | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M00.DecodeHeader | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M00.DecodeHeader | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/2 |
+| M00.DecodeHeader | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M00.DecodeTransaction | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/3 |
+| M00.DecodeTransaction | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/3 |
+| M00.DecodeTransaction | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/3 |
+| M00.DecodeTransaction | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/3 |
+| M00.DecodeTransaction | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/3 |
+| M00.DecodeTransaction | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/3 |
+| M00.DecodeTransaction | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/3 |
+| M01.VerifyWork | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/16 |
+| M01.VerifyWork | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/16 |
+| M01.VerifyWork | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/16 |
+| M01.VerifyWork | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/16 |
+| M01.VerifyWork | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/16 |
+| M01.VerifyWork | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/16 |
+| M01.VerifyWork | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/16 |
+| M01.VerifyTransactionSignature | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M01.VerifyTransactionSignature | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M02.AdmitBlock | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/3 |
+| M02.AdmitBlock | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/3 |
+| M02.AdmitBlock | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/3 |
+| M02.AdmitBlock | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/3 |
+| M02.AdmitBlock | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/3 |
+| M02.AdmitBlock | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/3 |
+| M02.AdmitBlock | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 3/3 |
+| M02.ChooseBranch | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/3 |
+| M02.ChooseBranch | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/3 |
+| M02.ChooseBranch | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/3 |
+| M02.ChooseBranch | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/3 |
+| M02.ChooseBranch | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/3 |
+| M02.ChooseBranch | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/3 |
+| M02.ChooseBranch | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 3/3 |
+| M03.RunWorkAttempt | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/38 |
+| M03.RunWorkAttempt | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/38 |
+| M03.RunWorkAttempt | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/38 |
+| M03.RunWorkAttempt | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/38 |
+| M03.RunWorkAttempt | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/38 |
+| M03.RunWorkAttempt | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/38 |
+| M03.RunWorkAttempt | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/38 |
+| M03.EnterExternalEffect | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M03.EnterExternalEffect | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M03.EnterExternalEffect | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M03.EnterExternalEffect | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M03.EnterExternalEffect | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M03.EnterExternalEffect | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/2 |
+| M03.EnterExternalEffect | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M04.ReadFrame | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M04.ReadFrame | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/2 |
+| M04.ReadFrame | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/2 |
+| M04.ReadFrame | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/2 |
+| M04.ReadFrame | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/2 |
+| M04.ReadFrame | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/2 |
+| M04.ReadFrame | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/2 |
+| M04.PropagateVerifiedBlock | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/3 |
+| M04.PropagateVerifiedBlock | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/3 |
+| M04.AuthenticateRequest | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/4 |
+| M04.AuthenticateRequest | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/4 |
+| M04.AuthenticateRequest | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/4 |
+| M04.AuthenticateRequest | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/4 |
+| M04.AuthenticateRequest | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/4 |
+| M04.AuthenticateRequest | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/4 |
+| M04.AuthenticateRequest | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/4 |
+| M05.ValidateTransaction | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/4 |
+| M05.ValidateTransaction | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/4 |
+| M05.ValidateTransaction | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/4 |
+| M05.ValidateTransaction | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/4 |
+| M05.ValidateTransaction | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/4 |
+| M05.ValidateTransaction | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/4 |
+| M05.ValidateTransaction | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/4 |
+| M05.ReconsiderAfterReorg | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/4 |
+| M05.ReconsiderAfterReorg | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/4 |
+| M06.ExecuteCandidate | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/89 |
+| M06.ExecuteCandidate | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/89 |
+| M06.ExecuteCandidate | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/89 |
+| M06.ExecuteCandidate | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/89 |
+| M06.ExecuteCandidate | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/89 |
+| M06.ExecuteCandidate | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 6/89 |
+| M06.ExecuteCandidate | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 6/89 |
+| M06.DeriveBranchDelta | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/31 |
+| M06.DeriveBranchDelta | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/31 |
+| M06.DeriveBranchDelta | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/31 |
+| M06.DeriveBranchDelta | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/31 |
+| M06.DeriveBranchDelta | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/31 |
+| M06.DeriveBranchDelta | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/31 |
+| M06.DeriveBranchDelta | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/31 |
+| M07.OpenNamespace | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/28 |
+| M07.OpenNamespace | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/28 |
+| M07.OpenNamespace | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/28 |
+| M07.OpenNamespace | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/28 |
+| M07.OpenNamespace | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/28 |
+| M07.OpenNamespace | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/28 |
+| M07.OpenNamespace | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 3/28 |
+| M07.StageBranch | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/25 |
+| M07.StageBranch | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/25 |
+| M07.StageBranch | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/25 |
+| M07.StageBranch | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/25 |
+| M07.StageBranch | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/25 |
+| M07.StageBranch | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/25 |
+| M07.StageBranch | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 3/25 |
+| M08.PlanReorg | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/9 |
+| M08.PlanReorg | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/9 |
+| M08.PlanReorg | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/9 |
+| M08.PlanReorg | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/9 |
+| M08.PlanReorg | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/9 |
+| M08.PlanReorg | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/9 |
+| M08.PlanReorg | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 3/9 |
+| M08.RecoverAndPublish | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/16 |
+| M08.RecoverAndPublish | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/16 |
+| M08.RecoverAndPublish | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/16 |
+| M08.RecoverAndPublish | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/16 |
+| M08.RecoverAndPublish | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/16 |
+| M08.RecoverAndPublish | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/16 |
+| M08.RecoverAndPublish | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 4/16 |
+| M09.ValidateArtifact | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M09.ValidateArtifact | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/6 |
+| M09.ValidateArtifact | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M09.ValidateArtifact | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M09.ValidateArtifact | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M09.ValidateArtifact | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/6 |
+| M09.ValidateArtifact | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/6 |
+| M09.FetchWithoutAuthor | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/7 |
+| M09.FetchWithoutAuthor | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/7 |
+| M10.SubmitContribution | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M10.SubmitContribution | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M10.SubmitContribution | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M10.SubmitContribution | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M10.SubmitContribution | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M10.SubmitContribution | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/2 |
+| M10.SubmitContribution | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M10.PublishEvaluatedRelease | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/9 |
+| M10.PublishEvaluatedRelease | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/9 |
+| M10.PublishEvaluatedRelease | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/9 |
+| M10.PublishEvaluatedRelease | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/9 |
+| M10.PublishEvaluatedRelease | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/9 |
+| M10.PublishEvaluatedRelease | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/9 |
+| M10.PublishEvaluatedRelease | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/9 |
+| M10.SubmitFactorContribution | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/12 |
+| M10.SubmitFactorContribution | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/12 |
+| M10.SubmitFactorContribution | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/12 |
+| M10.SubmitFactorContribution | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/12 |
+| M10.SubmitFactorContribution | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/12 |
+| M10.SubmitFactorContribution | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/12 |
+| M10.SubmitFactorContribution | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/12 |
+| M11.EvaluateFrozenModel | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/24 |
+| M11.EvaluateFrozenModel | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/24 |
+| M11.EvaluateFrozenModel | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/24 |
+| M11.EvaluateFrozenModel | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/24 |
+| M11.EvaluateFrozenModel | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/24 |
+| M11.EvaluateFrozenModel | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/24 |
+| M11.EvaluateFrozenModel | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 5/24 |
+| M11.AdmitEvaluation | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M11.AdmitEvaluation | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/6 |
+| M11.AdmitEvaluation | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M11.AdmitEvaluation | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M11.AdmitEvaluation | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M11.AdmitEvaluation | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/6 |
+| M11.AdmitEvaluation | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/6 |
+| M12.ClaimContributionReward | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/7 |
+| M12.ClaimContributionReward | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/7 |
+| M12.ClaimContributionReward | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/7 |
+| M12.ClaimContributionReward | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/7 |
+| M12.ClaimContributionReward | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/7 |
+| M12.ClaimContributionReward | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 6/7 |
+| M12.ClaimContributionReward | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 6/7 |
+| M12.ConsumeSponsoredQuota | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M12.ConsumeSponsoredQuota | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 6/6 |
+| M12.ConsumeSponsoredQuota | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 6/6 |
+| M13.RebuildBranchState | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M13.RebuildBranchState | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/2 |
+| M13.RebuildBranchState | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/2 |
+| M13.RebuildBranchState | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/2 |
+| M13.RebuildBranchState | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/2 |
+| M13.RebuildBranchState | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/2 |
+| M13.RebuildBranchState | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M13.VerifyIncomingHistory | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/10 |
+| M13.VerifyIncomingHistory | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/10 |
+| M13.VerifyIncomingHistory | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/10 |
+| M13.VerifyIncomingHistory | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/10 |
+| M13.VerifyIncomingHistory | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 5/10 |
+| M13.VerifyIncomingHistory | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 6/10 |
+| M13.VerifyIncomingHistory | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 8/10 |
+| M14.QueryCurrentState | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/17 |
+| M14.QueryCurrentState | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/17 |
+| M14.QueryCurrentState | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/17 |
+| M14.QueryCurrentState | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/17 |
+| M14.QueryCurrentState | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 7/17 |
+| M14.QueryCurrentState | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 10/17 |
+| M14.QueryCurrentState | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 17/17 |
+| M14.ConsumePublishedModel | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M14.ConsumePublishedModel | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/1 |
+| M14.ConsumePublishedModel | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/1 |
+| M14.ConsumePublishedModel | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/1 |
+| M14.ConsumePublishedModel | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/1 |
+| M14.ConsumePublishedModel | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 1/1 |
+| M14.ConsumePublishedModel | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/1 |
+| M15.StartExecutableSpecPeer | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/24 |
+| M15.StartExecutableSpecPeer | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 1/24 |
+| M15.SendDurableAuthenticatedRequest | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/11 |
+| M15.SendDurableAuthenticatedRequest | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/11 |
+| M15.StopAndReconcile | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/8 |
+| M15.StopAndReconcile | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/8 |
+| M15.StopAndReconcile | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/8 |
+| M15.StopAndReconcile | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/8 |
+| M15.StopAndReconcile | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/8 |
+| M15.StopAndReconcile | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/8 |
+| M15.StopAndReconcile | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/8 |
+| M16.TrainCompatibleCandidate | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/0 |
+| M16.CompareOrAbstain | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M16.CompareOrAbstain | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/2 |
+| M16.CompareOrAbstain | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/2 |
+| M16.CompareOrAbstain | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M16.CompareOrAbstain | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M16.CompareOrAbstain | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 2/2 |
+| M16.CompareOrAbstain | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 2/2 |
+| M17.CheckDetailedContracts | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/5 |
+| M17.CheckDetailedContracts | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/5 |
+| M17.CheckDetailedContracts | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/5 |
+| M17.CheckDetailedContracts | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/5 |
+| M17.CheckDetailedContracts | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/5 |
+| M17.CheckDetailedContracts | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/5 |
+| M17.CheckDetailedContracts | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/5 |
+| M17.QualifyExecutedCampaign | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | False | 0/336 |
+| M17.QualifyExecutedCampaign | native_node / `b34561d1ade376512a34fed3fd78938ed2431ecd` | False | False | 0/336 |
+
+**M00.DecodeHeader:** Independent implementation and production upgrade acceptance; decoding is not admission.
+
+**M00.DecodeTransaction:** No nonce reservation or balance authority from decoded bytes.
+
+**M01.VerifyWork:** Fastest-adversary work cost, independent cross-hardware qualification, public ingress fairness and ordinary product integration remain unqualified; source-bound diagnostics are not current timing receipts.
+
+**M01.VerifyTransactionSignature:** Component signature parity does not establish independent cryptographic acceptance.
+
+**M02.AdmitBlock:** Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M02.ChooseBranch:** Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M03.RunWorkAttempt:** Open public P2P, production mining/mempool lifecycle, full-state and history cost bounds, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M03.EnterExternalEffect:** Entry is not actual dispatch, target-side exactly-once, final-use authority or coherent rollback protection.
+
+**M04.ReadFrame:** No confidentiality, peer discovery, open gossip, Sybil fairness, WAN qualification or public service acceptance.
+
+**M04.PropagateVerifiedBlock:** Allowlisted same-owner development delivery is not open discovery, independent operation, WAN liveness or public attack acceptance.
+
+**M04.AuthenticateRequest:** Authentication supplies identity/integrity/replay control only; confidentiality, permissionless identity, public fairness and independent operators remain absent.
+
+**M05.ValidateTransaction:** Full-prefix decoding and state-dependent gates, complete output roots, SQL/lock costs, ordinary peer event wiring and public service acceptance remain separately scoped.
+
+**M05.ReconsiderAfterReorg:** Explicit local pool/status/miner callers are implemented; automatic external event consumption, ordinary product integration, public fairness and physical-effect reconciliation remain unqualified. Source bindings do not assert a fresh executed receipt.
+
+**M06.ExecuteCandidate:** Derived execution caches remain disposable; explicitly selected native authenticated commitments have their own checked persistent authority. Full-State execution and non-account scans remain, without a partial-State verifier or global incremental cost guarantee. Default Node storage is unchanged; ordinary product integration, public service and physical power-loss acceptance remain open. Revision16 is a bounded three-expert development family, not arbitrary Hepta topology; controlled new-text windows do not establish independent prospective utility or data governance.
+
+**M06.DeriveBranchDelta:** Optional authenticated native persistence closes the same-transaction state binding but does not remove full-State scans, full-history confirmation or global retention costs. Disposable caches and separate local MVCC stores confer no extra authority; physical power-loss, external effects and ordinary product integration remain unqualified.
+
+**M07.OpenNamespace:** Authenticated-v1 is an explicit local backend; legacy-v2 stays default and consensus revisions are unchanged. Full State, linear non-account scans, full-history confirmation and retained-history storage remain. Public P2P, production mining/mempool lifecycle, physical power-loss, ordinary resource/effect integration and independent work acceptance remain unqualified. Migration intentionally cannot transfer deployed data or an external owner journal and provides no physical power-loss acceptance.
+
+**M07.StageBranch:** Authenticated-v1 is an explicit local backend; legacy-v2 stays default and consensus revisions are unchanged. Full State, linear non-account scans, full-history confirmation and retained-history storage remain. Public P2P, production mining/mempool lifecycle, physical power-loss, ordinary resource/effect integration and independent work acceptance remain unqualified.
+
+**M08.PlanReorg:** Authenticated-v1 is an explicit local backend; legacy-v2 stays default and consensus revisions are unchanged. Full State, linear non-account scans, full-history confirmation and retained-history storage remain. Public P2P, production mining/mempool lifecycle, physical power-loss, ordinary resource/effect integration and independent work acceptance remain unqualified.
+
+**M08.RecoverAndPublish:** Authenticated-v1 is an explicit local backend; legacy-v2 stays default and consensus revisions are unchanged. Full State, linear non-account scans, full-history confirmation and retained-history storage remain. Public P2P, production mining/mempool lifecycle, physical power-loss, ordinary resource/effect integration and independent work acceptance remain unqualified.
+
+**M09.ValidateArtifact:** Pinned byte integrity is not arbitrary large-model loading, model quality/provenance or a grant to publish, change CURRENT, defeat withdrawal or execute. Materialization assumes an owner-controlled destination directory; no protection from an equally privileged hostile filesystem process is claimed.
+
+**M09.FetchWithoutAuthor:** Local byte and failure tests do not establish independent custodians, WAN service, DHT discovery/eclipse resistance, encrypted private-model distribution, long-term storage economics, complete loader integration or public acceptance. The original controlled copy experiments and zero-adoption E3 receipts retain their historical scopes.
+
+**M10.SubmitContribution:** Bounded windows are not public economic Sybil fairness or authentic task provenance.
+
+**M10.PublishEvaluatedRelease:** Synthetic signed release transitions and public retrospective integer-model generations do not certify improving public models, training causality, hidden-source independence or fair coalition allocation.
+
+**M10.SubmitFactorContribution:** Exact source selectors name controlled native regression obligations; historical receipts retain their original coverage. Bounded graph reachability and normalized-byte equality do not qualify arbitrary topology, general functional equivalence, independent future utility, public fairness or Hepta installation.
+
+**M11.EvaluateFrozenModel:** Independent prospective model utility, undisclosed common control, general-model proof and public evaluation governance are unaccepted. Public-corpus memorizer tests establish routing and rewards only. The tested 12 new texts are explicitly controlled-source fixtures. Pre-genesis owner pinning is not live permissionless governance, label truth, hidden-task custody or a production generalization result.
+
+**M11.AdmitEvaluation:** Complete-roster aggregation is order-independent for a fixed set; availability, objective disputes, functional-copy attribution and independent evaluator/model authority remain unaccepted.
+
+**M12.ClaimContributionReward:** No monetary-value, fairness or external payout reconciliation claim.
+
+**M12.ConsumeSponsoredQuota:** Real GPU availability, delivery evidence, sponsor self-traffic and sustainable funding remain separate.
+
+**M13.RebuildBranchState:** Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M13.VerifyIncomingHistory:** Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M14.QueryCurrentState:** Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped.
+
+**M14.ConsumePublishedModel:** Not an ordinary Hepta destination, a final-use token or a proof of actual provider delivery.
+
+**M15.StartExecutableSpecPeer:** Open public P2P/discovery, confidentiality, continuous mining/mempool lifecycle, full-State and history costs, physical power-loss, ordinary Hepta resources/effects and independent work acceptance remain unqualified; authenticated-v1 is not enabled by default.
+
+**M15.SendDurableAuthenticatedRequest:** This closes exact retry for the private development request path, not target-side physical exactly-once, confidential transport, public routing or production custody.
+
+**M15.StopAndReconcile:** Child cleanup tests do not prove full node shutdown, durable miner stop or physical target reconciliation.
+
+**M16.TrainCompatibleCandidate:** Training executions are retained campaign observations, not a unit-test result or real future user-task generation.
+
+**M16.CompareOrAbstain:** Three no-update attempts do not establish prospective improving generations.
+
+**M17.CheckDetailedContracts:** Current checker-source changes need their own executed PR checks; historic source-contract logs are not proof of this checker revision.
+
+**M17.QualifyExecutedCampaign:** Does not execute old tests again, confer scientific independence or grant deployment authority.
+
+Subject matches are not a new execution, a dependency-closure proof, integration, or independent acceptance.
+
+{
+  "current_measured_inputs_match": false,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "dbb1c989342639c4c04366a0d12bc3ecb4760e04",
+  "work_hardness_accepted": false
+}
+{
+  "current_measured_inputs_match": false,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "1a512c613951af5640dac06cc663392d08927e00",
+  "work_hardness_accepted": false
+}
+{
+  "current_measured_inputs_match": false,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd",
+  "work_hardness_accepted": false
+}
+{
+  "current_measured_inputs_match": false,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "faf144086067f9b0a301a2b46760164d80fec04e",
+  "work_hardness_accepted": false
+}
+{"acceptance_granted": false, "current_measured_inputs_match": false, "experiment_reexecuted": false, "git_index_bytes_verified": true, "historical_observations_verified": true, "measured_source": "3c63c8368187de895e1dc0df8bbc105c6f39f842", "package_files": 25, "result": "PASS"}
+{
+  "current_measured_inputs_match": false,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+  "work_hardness_accepted": false
+}

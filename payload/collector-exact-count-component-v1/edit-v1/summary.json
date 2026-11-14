@@ -1,0 +1,205 @@
+{
+  "base": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "changes": [
+    {
+      "after": {
+        "blob_oid": "fef70851f7fb3348f30148ab390a76fc523dde0e",
+        "bytes": 46547,
+        "sha256": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9"
+      },
+      "before": {
+        "blob_oid": "ba703105bcbec8a368c08309abd0e8705ddd4a40",
+        "bytes": 46547,
+        "sha256": "625e2b0da839618033638cb0b141f0daa146022d3d0527d46eb0164ef1e6010b"
+      },
+      "path": "scripts/ci/ci_job.sh"
+    },
+    {
+      "after": {
+        "blob_oid": "0634074cefc7eee3ed1e7edbb99c830931dfbe5e",
+        "bytes": 199207,
+        "sha256": "caff843dd3e1f4bf23a9160a87fcccc9690455bfcbf95781625c74fcdb4bb37a"
+      },
+      "before": {
+        "blob_oid": "e12e7839f406056bab9c05086baacb0059627835",
+        "bytes": 199207,
+        "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2"
+      },
+      "path": "scripts/ci/check_ci_contract.py"
+    },
+    {
+      "after": {
+        "blob_oid": "9710a402113cee366b869d00071ff90d5868f015",
+        "bytes": 247470,
+        "sha256": "6ad902b690ab50bd27c939a727bd8917adaa9c6e569cdad19554b462ed0f9250"
+      },
+      "before": {
+        "blob_oid": "8683f6b319cb6104bf7dc201e3b363c648901468",
+        "bytes": 247302,
+        "sha256": "75c1c7345288916d99d3646fc44ac8c3bacc778e1839b1dda70d20a1e2ec1910"
+      },
+      "path": "scripts/ci/test_ci_contract.py"
+    }
+  ],
+  "collector_production_and_16_tests_unchanged": true,
+  "new_old_or_incomplete_counts_rejected": [
+    14,
+    15
+  ],
+  "original_bad_counts_preserved": [
+    0,
+    13
+  ],
+  "patch": {
+    "bytes": 2859,
+    "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/full-patch.stdout",
+    "sha256": "85fd36f54e4c7fa98ccb94a51c4fe4f11bd8e3c6e4c4cbf83ff3f47d21d92ef2"
+  },
+  "schema": "trnm-owned-collector-exact-count-edit-v1",
+  "status": "THREE_PATH_MINIMAL_COUNT_EDIT",
+  "steps": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "label": "head-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/head-before.stdout",
+        "sha256": "373033a51f066da6caf6fd8d5f532b6d995c5d782ec7a7ff9c953b960be0e08e"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "exit": 0,
+      "label": "status-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/status-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/status-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "label": "project-preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/project-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 177,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/project-preflight.stdout",
+        "sha256": "034a45038ba21853f9c3e814aefa59447362aa337748cc238244ccb79201d734"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exit": 0,
+      "label": "changed-paths",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/changed-paths.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 84,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/changed-paths.stdout",
+        "sha256": "bcfa398b180b47e86d586df4678ab2d335df13e9c640e81a351d69b51cf48807"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "--full-index",
+        "--",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/check_ci_contract.py",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit": 0,
+      "label": "full-patch",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/full-patch.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2859,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/full-patch.stdout",
+        "sha256": "85fd36f54e4c7fa98ccb94a51c4fe4f11bd8e3c6e4c4cbf83ff3f47d21d92ef2"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/check_ci_contract.py",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit": 0,
+      "label": "diff-check",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/ci/ci_job.sh"
+      ],
+      "exit": 0,
+      "label": "bash-syntax",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/bash-syntax.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-owned-process-control-count-evidence-20261114-v1/edit-v1/bash-syntax.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "tests_run": false,
+  "zero_skip_OK_exact_count_logic_unchanged": true
+}

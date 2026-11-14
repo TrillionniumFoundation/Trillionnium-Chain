@@ -1,0 +1,453 @@
+{
+  "schema": "trnm-final-linux-repository-truth-offline-source-v4",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "driver": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py",
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "invocation": {
+    "argv": [
+      "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py",
+      "--head",
+      "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "--tree",
+      "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "--expected-start-head",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+      "--bundle-path",
+      "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle",
+      "--bundle-bytes",
+      "11223",
+      "--bundle-sha256",
+      "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+      "--evidence-dir",
+      "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1"
+    ],
+    "executable": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+    "optimize": 0
+  },
+  "source": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+  "status": "passed",
+  "steps": [
+    {
+      "label": "initial-head",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.004,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/initial-head.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/initial-head.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "initial-status",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/initial-status.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/initial-status.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pre-update-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/pre-update-preflight.stdout",
+      "stdout_bytes": 177,
+      "stdout_sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/pre-update-preflight.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "local-bundle-verify",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "bundle",
+        "verify",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.016,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/local-bundle-verify.stdout",
+      "stdout_bytes": 236,
+      "stdout_sha256": "ac299b6ab681088d8a5e00a486e1e6bf7d2ab6d7776ffdbfbe74eca51ca66ae8",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/local-bundle-verify.stderr",
+      "stderr_bytes": 133,
+      "stderr_sha256": "7815d8cc09af20d87850faa98d15e37b64d7aa27a726840d44b829206a416ca4"
+    },
+    {
+      "label": "local-bundle-list-heads",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "bundle",
+        "list-heads",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.001,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/local-bundle-list-heads.stdout",
+      "stdout_bytes": 46,
+      "stdout_sha256": "66c63f53084c528848d3124880cd28e6fe0983653119c4cf80c390d573db9c7e",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/local-bundle-list-heads.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fetch-exact-local-bundle",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "fetch",
+        "--no-tags",
+        "--no-recurse-submodules",
+        "--no-write-fetch-head",
+        "--no-auto-maintenance",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.364,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetch-exact-local-bundle.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetch-exact-local-bundle.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fetched-commit",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "2a86462a1ab20c68151719ba4635e3c294391e64^{commit}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.004,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetched-commit.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetched-commit.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fetched-tree",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "2a86462a1ab20c68151719ba4635e3c294391e64^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.003,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetched-tree.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fetched-tree.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fast-forward-ancestry",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge-base",
+        "--is-ancestor",
+        "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.003,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fast-forward-ancestry.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fast-forward-ancestry.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fast-forward",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "merge",
+        "--ff-only",
+        "--no-edit",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fast-forward.stdout",
+      "stdout_bytes": 487,
+      "stdout_sha256": "00bd5614b14bc8e131aed586336f3e00dbdc02678cd81d7de3366d16a0af8833",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/fast-forward.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "preflight-audit",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/preflight-audit.stdout",
+      "stdout_bytes": 177,
+      "stdout_sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/preflight-audit.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "rust-version",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.114,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/rust-version.stdout",
+      "stdout_bytes": 36,
+      "stdout_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/rust-version.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cargo-version",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.033,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/cargo-version.stdout",
+      "stdout_bytes": 36,
+      "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/cargo-version.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "conformance-environment",
+      "argv": [
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+        "-B",
+        "-c",
+        "import importlib.metadata as m,json,sys; expected={'numpy': '1.26.4', 'cryptography': '50.0.2'}; actual={k:m.version(k) for k in expected}; assert actual==expected and sys.version_info[:2]==(3,12); print(json.dumps({'actual':actual,'python':sys.version,'executable':sys.executable}))"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/conformance-environment.stdout",
+      "stdout_bytes": 223,
+      "stdout_sha256": "6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/conformance-environment.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "runtime-environment",
+      "argv": [
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-runtime-release-env/bin/python",
+        "-B",
+        "-c",
+        "import importlib.metadata as m,json,sys; expected={'packaging': '26.3'}; actual={k:m.version(k) for k in expected}; assert actual==expected and sys.version_info[:2]==(3,12); print(json.dumps({'actual':actual,'python':sys.version,'executable':sys.executable}))"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 0.064,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/runtime-environment.stdout",
+      "stdout_bytes": 205,
+      "stdout_sha256": "aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/runtime-environment.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "verify-source-before",
+      "argv": [
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--output",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 11.233,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/verify-source-before.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/verify-source-before.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "repository-truth",
+      "argv": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 2700,
+      "elapsed_seconds": 543.61,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/repository-truth.stdout",
+      "stdout_bytes": 473283,
+      "stdout_sha256": "9a64f3316899471773b461d9a534a882008c480f9ac1949d87a72239be4cf19e",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/repository-truth.stderr",
+      "stderr_bytes": 359825,
+      "stderr_sha256": "8b50e7b5928291aac41a3ae461571cc4ff5cb43642a09e103f9e1d64f919fa5c"
+    },
+    {
+      "label": "verify-source-after",
+      "argv": [
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--output",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "exit": 0,
+      "timeout_seconds": 300,
+      "elapsed_seconds": 10.934,
+      "stdout_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/verify-source-after.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+      "stderr_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/verify-source-after.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "errors": [],
+  "environment": {
+    "PATH": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin:/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "TRNM_RUNTIME_RELEASE_PYTHON": "/home/qian-qi/chain-final-consolidation-20261114-root/final-runtime-release-env/bin/python",
+    "TRNM_CI_RECEIPT_DIR": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/ci-observations",
+    "TMPDIR": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/tmp",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-final-consolidation-20261114-root/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TERM_COLOR": "never",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "hosted_ci_qualification": false,
+  "host_provisioning_performed": false,
+  "remote_mutations_performed": false,
+  "local_bundle_source": true,
+  "remote_publication_verified": false,
+  "source_acquisition": "fixed-local-bundle",
+  "bundle_input": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle",
+    "bytes": 11223,
+    "sha256": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4"
+  },
+  "started_at": "2026-11-14T11:41:11.026396+00:00",
+  "bundle_before": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle",
+    "bytes": 11223,
+    "sha256": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+    "version": {
+      "device": 66306,
+      "inode": 36089801,
+      "mode": 33152,
+      "links": 1,
+      "bytes": 11223,
+      "mtime_ns": 1794656451413247410,
+      "ctime_ns": 1794656451415073059
+    }
+  },
+  "bundle_after_fetch": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/concurrent-ci-2a86462a-after-6a8cd555.bundle",
+    "bytes": 11223,
+    "sha256": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+    "version": {
+      "device": 66306,
+      "inode": 36089801,
+      "mode": 33152,
+      "links": 1,
+      "bytes": 11223,
+      "mtime_ns": 1794656451413247410,
+      "ctime_ns": 1794656451415073059
+    }
+  },
+  "lane_exit": 0,
+  "source_before_after_verified": true,
+  "finished_at": "2026-11-14T11:50:37.742738+00:00"
+}

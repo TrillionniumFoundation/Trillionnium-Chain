@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "blob_sha": "a0b25b46149ab389a87ef94f083d630f06824141",
+    "repository_full_name": "TrillionniumFoundation/Trillionnium-Chain"
+  },
+  "bytes": 35058,
+  "declared_paths": [
+    {
+      "mode": "100644",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source": "242906bae4f281c738c60adbd2c053d2ded1eae5"
+    }
+  ],
+  "end_unix_ms": 1794645447462,
+  "git_sha1_verified": true,
+  "oid": "a0b25b46149ab389a87ef94f083d630f06824141",
+  "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/remaining-explicit-18-v1/blobs/a0b25b46149ab389a87ef94f083d630f06824141",
+  "provider": "GitHub.fetch_blob",
+  "sha256": "08ff5631932f901642c17f16ea6054976d67aad5a786359cf68b3b8df0b23ac2",
+  "start_unix_ms": 1794645411719,
+  "tool_response": {
+    "bytes": 36934,
+    "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/remaining-explicit-18-v1/tool-originals/a0b25b46149ab389a87ef94f083d630f06824141.json",
+    "sha256": "b05ae57045fe637ce43dda94c73bbce92bdc8858d6fdb2d3364f9a7a0c50a073"
+  },
+  "type": "blob"
+}

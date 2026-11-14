@@ -1,0 +1,53 @@
+{
+  "arch": "x64",
+  "artifact": 14105076236,
+  "range_start": 9796187,
+  "range_end": 9927258,
+  "requested_bytes": 131072,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "--include",
+    "-H",
+    "Range: bytes=9796187-9927258",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14105076236/zip"
+  ],
+  "started_at": "2026-11-14T08:05:05.975684+00:00",
+  "seconds": 11.978956833001575,
+  "returncode": 0,
+  "timed_out": false,
+  "raw_response": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/x64.tail-9796187-9927258.response.private",
+    "bytes": 132207,
+    "sha256": "d110933445f9297b76dcc368fab1c33b8a78ee9179a788aad1e8d97b111a5b24",
+    "excluded_from_public_receipts": true
+  },
+  "stderr": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/x64.tail-9796187-9927258.stderr.private",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "excluded_from_public_receipts": true
+  },
+  "complete_range_verified": true,
+  "http": [
+    {
+      "status": 206,
+      "headers": {
+        "accept-ranges": "bytes",
+        "content-length": "131072",
+        "content-range": "bytes 9796187-9927258/9927259",
+        "content-type": "application/zip",
+        "date": "Sat, 14 Nov 2026 08:05:11 GMT",
+        "etag": "\"0x8DF4222D1B0C76C\"",
+        "last-modified": "Sat, 14 Nov 2026 07:42:22 GMT"
+      }
+    }
+  ],
+  "body": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/x64.tail-9796187-9927258.body.raw",
+    "bytes": 131072,
+    "sha256": "903a89a34c67f7d50f7486c79558db6aad12e8b711931ac0cad81a82086f16db"
+  }
+}

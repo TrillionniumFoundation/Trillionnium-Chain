@@ -1,0 +1,32 @@
+{
+  "schema": "trnm-P1-full-v2-packager-preparation-summary-v1",
+  "status": "PREPARED_ONLY_WAIT_FOR_REAL_TERMINAL",
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "prepared_script": {
+    "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+    "bytes": 28912,
+    "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967"
+  },
+  "precise_patch": {
+    "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/full-M8-to-P1-v2.patch",
+    "bytes": 5730,
+    "sha256": "b5b0d7499f10096dd0cd6f12ca5c9e34ce3bb2a2b688c739aec65e6e9419d195"
+  },
+  "static_identity_proof": {
+    "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/static-identity-proof.json",
+    "bytes": 7916,
+    "sha256": "9b5a8282e903672f1ee918c10f615a47a14b675b95d4a808cc1eaf3128a28003"
+  },
+  "index": {
+    "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/EVIDENCE_INDEX.json",
+    "bytes": 2058,
+    "sha256": "de6e47a2f00fb2bbfe31e481af19cc9a79b624c1ec72b5d833710d87bfbe48bc"
+  },
+  "base_bytes_unchanged": true,
+  "packager_executed": false,
+  "actual_full_terminal_not_observed": true,
+  "prior_v1_17_stage_failure_not_normalized": true,
+  "stage_source_git_network_test_actions": false
+}

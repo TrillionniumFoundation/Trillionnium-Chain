@@ -1,0 +1,90 @@
+{
+  "execution": {
+    "network_calls": false,
+    "scanner_helpers_executed": false,
+    "scans_performed": false,
+    "source_or_Git_or_stage_changes": false,
+    "target_programs_executed": false,
+    "tests_performed": false
+  },
+  "finding_dispositions": [
+    {
+      "id": "S1",
+      "proof": "An ordinary if sys.flags.optimize: raise RuntimeError executes immediately after imports and before every assertion and scanner import. This is not removed by Python optimization. The actual pinned launcher is still required to compile with optimize=0; the V1 finding is retained as a static pre-execution issue, not a runtime failure.",
+      "status": "CLOSED_IN_V2"
+    },
+    {
+      "id": "S2",
+      "proof": "Outer JSON rejects duplicate keys and nonfinite constants. Inputs/pins are exact dictionaries; phase is an exact string; pin.bytes is an int excluding bool/float and is bounded 1..16MiB; SHA is lowerhex64; path uses the strict canonical absolute-path helper. Existing inner manifest integer/path/origin/hash validation remains unchanged.",
+      "status": "CLOSED_IN_V2"
+    },
+    {
+      "id": "S3",
+      "proof": "V2 fixes __file__ to the reviewed V2 path, reads program_raw through absolute_snapshot, compares to the actual bytes supplied by the pinned launcher, saves those same bytes, and checks program identity again before execv. The reviewer has not executed or reviewed an unprovided future launcher. The unchanged scanner pathname must remain the pinned version during launch.",
+      "status": "PRODUCER_BINDING_CLOSED_WITH_DECLARED_PINNED_LAUNCHER"
+    }
+  ],
+  "positive_conclusions": [
+    "V2 does not weaken row preservation, nonempty residual, count/byte sum, manifest raw SHA or stable identity assertions.",
+    "Content phase must use the fixed P path, the exact original 2100-file/150184002-byte baseline and its fixed raw SHA.",
+    "Scan-records phase must use fixed P as baseline and fixed F as full. Its independent hash values still come from pinned actual freeze receipts.",
+    "All preserved rows, including origins, must equal full rows; delta is precisely full minus baseline by unique path.",
+    "The phase outputs and scanner evidence remain outside the payload; no stage path is opened for writing by this code.",
+    "V2 does not change the scanner, regex bytes, five categories, raw-byte-only scope, file/total caps, hit handling or no-auto-classification rule.",
+    "Keeping the last scan/independent proof outside F avoids self-reference; the final proof is not claimed to have scanned itself."
+  ],
+  "precise_patch_equals_full_static_diff": true,
+  "remaining_publication_gates": [
+    "Actual SHA-pinned launcher reads the reviewed 4994-byte V2 file, rejects optimization, compiles with optimize=0 and supplies the matching __file__/argv.",
+    "Keep the reviewed scanner path immutable through the actual execv and preserve actual producer/terminal identities.",
+    "Final independent checker binds the same exact P SHA across both phases, exact final F, and the original old manifest.",
+    "Final checker proves pairwise disjoint old/A/B sets and exact F union of complete rows, counts and byte totals.",
+    "Final checker validates three actual scanner receipts: status NO_PATTERN_HITS_IN_DECLARED_SCOPE, true complete coverage, false review_required, exact integer zero category counts, matching scope manifests, exact coverage rows, empty hits, and authoritative exit0/output_complete.",
+    "No additions to F after its final frozen scan; any later receipt stays outside the declared F payload.",
+    "No all-secrets absence, ZIP/pack content scan, repository semantic proof, hosted pass or publication approval follows from this static review."
+  ],
+  "review_closed_at_utc": "2026-11-14T12:09:27.781968+00:00",
+  "root_acknowledged_actions": "V1 is retained unexecuted. V2 is create-only. Root will launch and perform the final independent union/receipt closure separately.",
+  "schema": "trnm-R1-two-phase-payload-scope-static-review-v2",
+  "scope": "Pinned V2 full file and exact V1-to-V2 diff, plus the already-read unchanged scanner validation boundary. No wrapper/scanner/helper/test execution.",
+  "sources": [
+    {
+      "bytes": 4994,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/prepare_scope_and_scan.py",
+      "sha256": "c9bf8f7d90440f36ec0608f0b714cc4a445b5745b8460cbbce0e47d61b0be012",
+      "tool_version": "16777233:607069737:4994:1794658066983467025:1794658066983467025"
+    },
+    {
+      "bytes": 4761,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/precise-v1-to-v2.patch",
+      "sha256": "a567693fbc473daaa041d6b5e94f5f1898de69e3ba26f164b85e37cce4aa43c4",
+      "tool_version": "16777233:607069738:4761:1794658066983573358:1794658066983573358"
+    },
+    {
+      "bytes": 440,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/preparation.json",
+      "sha256": "7d2060fd512b6117abf1a56ca991a4311f5ec60fe047a56dd470038d4b415eba",
+      "tool_version": "16777233:607069740:440:1794658066983796107:1794658066983796107"
+    },
+    {
+      "bytes": 711,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/PLAN.txt",
+      "sha256": "c0e55abf3e92c68ccdb63b2407462a4b21086e5e1d96981c5b6123d625210ebe",
+      "tool_version": "16777233:607069739:711:1794658066983659357:1794658066983659357"
+    }
+  ],
+  "status": "STATIC_REVIEW_COMPLETE_NO_REMAINING_SCOPE_BLOCKER_UNDER_PINNED_LAUNCHER",
+  "unchanged_scanner": {
+    "bytes": 14664,
+    "executed_by_this_review": false,
+    "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py",
+    "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6"
+  },
+  "v1_review": {
+    "bytes": 8620,
+    "index_sha256": "888c0852ee4259c158d9861784446f63d21eb2e9a32087e9896c914bd6d6e12f",
+    "original_preserved": true,
+    "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v1/review.json",
+    "sha256": "6c49751c887b6b1c01eae2801f7dcbcfc062253b7ca3569cf00bb6bdf445107a"
+  }
+}

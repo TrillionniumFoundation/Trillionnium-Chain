@@ -1,0 +1,39 @@
+{
+  "schema": "trnm-M8-full-original-materialization-completion-v2",
+  "status": "materialized_verified",
+  "started_at": "2026-11-14T10:47:04.492582+00:00",
+  "finished_at": "2026-11-14T10:47:04.697771+00:00",
+  "prefix": "M8-original-repository-truth",
+  "new_count": 138,
+  "new_bytes": 2767222,
+  "prior_count": 3276,
+  "prior_bytes": 180978142,
+  "final_count": 3414,
+  "final_bytes": 183745364,
+  "all_selected_sources_preverified": true,
+  "all_new_target_bytes_sha_readback": true,
+  "old_stage_identities_unchanged": true,
+  "previous_materializer": {
+    "exit": 1,
+    "cause": "OSError 24 Too many open files during target readback",
+    "preserved": true,
+    "exact_existing_targets_retained": 110,
+    "missing_targets_created": 28
+  },
+  "source_descriptor_policy": "bounded per-file stable held-FD read; close after complete read; pinned bytes plus pre/post source identity fences",
+  "original_full_result": "passed",
+  "original_full_elapsed_seconds": 546.128,
+  "external_result": "launch_only_not_observed",
+  "source_git_network_test_actions": false,
+  "hosted_qualification": false,
+  "files": {
+    "path": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1/files.json",
+    "bytes": 54892,
+    "sha256": "24d1d5c5c32455ce9d669be3445f6369944c4feac8576525ea8106ad89f89faf"
+  },
+  "baseline": {
+    "path": "/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1/stage-before.json",
+    "sha256": "a8eb882dc0392613103fcc0a3d8ed18ce5b67a05b3d460cde8fed9e0fc67dc22"
+  },
+  "writer_released": true
+}

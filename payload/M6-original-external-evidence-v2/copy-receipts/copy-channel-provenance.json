@@ -1,0 +1,280 @@
+{
+  "schema": "trnm-M6-original-external-evidence-official-copy-provenance-v1",
+  "channel": "official version-pinned h_binary_read / create-only h_binary_upload",
+  "file_infos_before": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/original-external-evidence-2a6206-v2.zip",
+      "sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5",
+      "size": 38337,
+      "version": "66306:35297072:38337:1794649568210272253:1794649568210272253"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/EVIDENCE_INDEX.json",
+      "sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc",
+      "size": 26704,
+      "version": "66306:35297068:26704:1794649568207198078:1794649568207198078"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/package-summary.json",
+      "sha256": "8c02f1e0bfdd1150af80d4dd865586906f3cd924dbf82b1863ded8472ac265ef",
+      "size": 4040,
+      "version": "66306:35297076:4040:1794649568211443671:1794649568211443671"
+    }
+  ],
+  "operations": [
+    {
+      "operation": "binary_read",
+      "request": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/original-external-evidence-2a6206-v2.zip",
+        "offset": 0,
+        "limit": 65535,
+        "expected_version": "66306:35297072:38337:1794649568210272253:1794649568210272253"
+      },
+      "response": {
+        "chunk_sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5",
+        "eof": true,
+        "next_offset": 38337,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/original-external-evidence-2a6206-v2.zip",
+        "size": 38337,
+        "version": "66306:35297072:38337:1794649568210272253:1794649568210272253"
+      }
+    },
+    {
+      "operation": "binary_read",
+      "request": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/EVIDENCE_INDEX.json",
+        "offset": 0,
+        "limit": 65535,
+        "expected_version": "66306:35297068:26704:1794649568207198078:1794649568207198078"
+      },
+      "response": {
+        "chunk_sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc",
+        "eof": true,
+        "next_offset": 26704,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/EVIDENCE_INDEX.json",
+        "size": 26704,
+        "version": "66306:35297068:26704:1794649568207198078:1794649568207198078"
+      }
+    },
+    {
+      "operation": "binary_read",
+      "request": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/package-summary.json",
+        "offset": 0,
+        "limit": 65535,
+        "expected_version": "66306:35297076:4040:1794649568211443671:1794649568211443671"
+      },
+      "response": {
+        "chunk_sha256": "8c02f1e0bfdd1150af80d4dd865586906f3cd924dbf82b1863ded8472ac265ef",
+        "eof": true,
+        "next_offset": 4040,
+        "offset": 0,
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/package-summary.json",
+        "size": 4040,
+        "version": "66306:35297076:4040:1794649568211443671:1794649568211443671"
+      }
+    },
+    {
+      "operation": "binary_upload_chunk",
+      "request": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/original-external-evidence-2a6206-v2.zip",
+        "upload_id": "prci-M6-external-copy-0-5f79d5a1dbf8",
+        "expected_version": "absent",
+        "offset": 0,
+        "bytes": 38337
+      },
+      "response": {
+        "next_offset": 38337,
+        "upload_id": "prci-M6-external-copy-0-5f79d5a1dbf8",
+        "visible": false
+      }
+    },
+    {
+      "operation": "binary_upload_commit",
+      "request": {
+        "action": "commit",
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/original-external-evidence-2a6206-v2.zip",
+        "upload_id": "prci-M6-external-copy-0-5f79d5a1dbf8",
+        "expected_version": "absent",
+        "size": 38337,
+        "sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5"
+      },
+      "response": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5",
+        "size": 38337,
+        "version": "16777233:606872598:38337:1794649608864156248:1794649610378996888"
+      }
+    },
+    {
+      "operation": "binary_upload_chunk",
+      "request": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/EVIDENCE_INDEX.json",
+        "upload_id": "prci-M6-external-copy-1-d0b2c797aa71",
+        "expected_version": "absent",
+        "offset": 0,
+        "bytes": 26704
+      },
+      "response": {
+        "next_offset": 26704,
+        "upload_id": "prci-M6-external-copy-1-d0b2c797aa71",
+        "visible": false
+      }
+    },
+    {
+      "operation": "binary_upload_commit",
+      "request": {
+        "action": "commit",
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/EVIDENCE_INDEX.json",
+        "upload_id": "prci-M6-external-copy-1-d0b2c797aa71",
+        "expected_version": "absent",
+        "size": 26704,
+        "sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc"
+      },
+      "response": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc",
+        "size": 26704,
+        "version": "16777233:606872671:26704:1794649611737991617:1794649613163575170"
+      }
+    },
+    {
+      "operation": "binary_upload_chunk",
+      "request": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/package-summary.json",
+        "upload_id": "prci-M6-external-copy-2-8c02f1e0bfdd",
+        "expected_version": "absent",
+        "offset": 0,
+        "bytes": 4040
+      },
+      "response": {
+        "next_offset": 4040,
+        "upload_id": "prci-M6-external-copy-2-8c02f1e0bfdd",
+        "visible": false
+      }
+    },
+    {
+      "operation": "binary_upload_commit",
+      "request": {
+        "action": "commit",
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/original-external-evidence-2a6206-copy-v2-prci/package-summary.json",
+        "upload_id": "prci-M6-external-copy-2-8c02f1e0bfdd",
+        "expected_version": "absent",
+        "size": 4040,
+        "sha256": "8c02f1e0bfdd1150af80d4dd865586906f3cd924dbf82b1863ded8472ac265ef"
+      },
+      "response": {
+        "committed": true,
+        "mode": 384,
+        "reused": false,
+        "sha256": "8c02f1e0bfdd1150af80d4dd865586906f3cd924dbf82b1863ded8472ac265ef",
+        "size": 4040,
+        "version": "16777233:606872761:4040:1794649615002488118:1794649615883407249"
+      }
+    }
+  ],
+  "file_infos_after": [
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/original-external-evidence-2a6206-v2.zip",
+      "sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5",
+      "size": 38337,
+      "version": "66306:35297072:38337:1794649568210272253:1794649568210272253"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/EVIDENCE_INDEX.json",
+      "sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc",
+      "size": 26704,
+      "version": "66306:35297068:26704:1794649568207198078:1794649568207198078"
+    },
+    {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 384,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 384,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/package-summary.json",
+      "sha256": "8c02f1e0bfdd1150af80d4dd865586906f3cd924dbf82b1863ded8472ac265ef",
+      "size": 4040,
+      "version": "66306:35297076:4040:1794649568211443671:1794649568211443671"
+    }
+  ],
+  "source_versions_unchanged": true,
+  "payload_base64_not_duplicated_in_metadata": true,
+  "payload_bytes_preserved_in_copied_files": true
+}

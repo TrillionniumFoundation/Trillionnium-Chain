@@ -1,0 +1,1145 @@
+{
+  "actual": {
+    "N": {
+      "count": 31,
+      "matching": 25,
+      "rows": [
+        {
+          "bytes": 2378,
+          "declared": {
+            "bytes": 2378,
+            "sha256": "03dea45629a872ed5f59d8583fc43adb12970c76269455ff0359a534f67e1ec3"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+          "path": "config/pon/pq-proof-profile-binding-v1.json",
+          "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+        },
+        {
+          "bytes": 5246,
+          "declared": {
+            "bytes": 5246,
+            "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+          "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+          "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+        },
+        {
+          "bytes": 13329,
+          "declared": {
+            "bytes": 13329,
+            "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1c6f2028dd753e611112ba8b7a3d85a8585eb635",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+          "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+        },
+        {
+          "bytes": 11732,
+          "declared": {
+            "bytes": 11732,
+            "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1d54eadd41166a6660ee09f499da7c76dd68ac80",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+          "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+        },
+        {
+          "bytes": 284,
+          "declared": {
+            "bytes": 284,
+            "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "88688018617bae938184329bc70d2851f76f656f",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+          "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+        },
+        {
+          "bytes": 11172,
+          "declared": {
+            "bytes": 11172,
+            "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+        },
+        {
+          "bytes": 106066,
+          "declared": {
+            "bytes": 104121,
+            "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+        },
+        {
+          "bytes": 3525,
+          "declared": {
+            "bytes": 3525,
+            "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a20a9d26a02027055f59c861a6bc3beb70876f70",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+          "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+        },
+        {
+          "bytes": 11609,
+          "declared": {
+            "bytes": 11609,
+            "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+          "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+        },
+        {
+          "bytes": 15173,
+          "declared": {
+            "bytes": 14762,
+            "sha256": "af920ebe2fc0d998c5083418b6d2e312aa90e4109b84241e44ee585c656c2739"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+          "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+        },
+        {
+          "bytes": 12578,
+          "declared": {
+            "bytes": 12578,
+            "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "c1a5569fca04316526132148c232005c175defd3",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs",
+          "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+        },
+        {
+          "bytes": 15264,
+          "declared": {
+            "bytes": 15264,
+            "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+        },
+        {
+          "bytes": 23468,
+          "declared": {
+            "bytes": 23468,
+            "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9840744362447c406d7eab7554a53f53635e748c",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs",
+          "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+        },
+        {
+          "bytes": 10447,
+          "declared": {
+            "bytes": 10447,
+            "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "12fac3738fa388a633ff1634195632b04a20ff26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+          "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+        },
+        {
+          "bytes": 10027,
+          "declared": {
+            "bytes": 10027,
+            "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "d94ed4545bef1ec79ebb70f7b239f5341ea1c742",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs",
+          "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+        },
+        {
+          "bytes": 11176,
+          "declared": {
+            "bytes": 11176,
+            "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+          "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+        },
+        {
+          "bytes": 6915,
+          "declared": {
+            "bytes": 6915,
+            "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+          "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+        },
+        {
+          "bytes": 28154,
+          "declared": {
+            "bytes": 27237,
+            "sha256": "bb95507ff80d5a0f01931098f91fc1d7d1a9985e72d49937354ec2b86a966486"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "eb18bccfc79019c6fe2a8231c7ad92f90991bfcd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a"
+        },
+        {
+          "bytes": 12483,
+          "declared": {
+            "bytes": 12483,
+            "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "907f5b2ee663d1b0d4f4665ec941b7597dc915f4",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs",
+          "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+        },
+        {
+          "bytes": 10548,
+          "declared": {
+            "bytes": 10548,
+            "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ea12a52cbcadeefded2108c7682f3c90f58d3588",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs",
+          "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+        },
+        {
+          "bytes": 37947,
+          "declared": {
+            "bytes": 37665,
+            "sha256": "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "594d06db78ce4d3b3d5c417f6abe3a0a93b3df6b",
+          "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+        },
+        {
+          "bytes": 391556,
+          "declared": {
+            "bytes": 387798,
+            "sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17"
+          },
+          "matches_declared": false,
+          "mode": "100644",
+          "oid": "3bce39ce1aef265a18f304085bc08c0240547065",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+        },
+        {
+          "bytes": 51391,
+          "declared": {
+            "bytes": 51391,
+            "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+          "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+        },
+        {
+          "bytes": 13942,
+          "declared": {
+            "bytes": 13942,
+            "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+          "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+        },
+        {
+          "bytes": 9650,
+          "declared": {
+            "bytes": 9650,
+            "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e3ff2fa1f3ef4600e5198a69821e1bc3614e5650",
+          "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+          "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+        },
+        {
+          "bytes": 41595,
+          "declared": {
+            "bytes": 41595,
+            "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+        },
+        {
+          "bytes": 19189,
+          "declared": {
+            "bytes": 19189,
+            "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+          "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+        },
+        {
+          "bytes": 32654,
+          "declared": {
+            "bytes": 32654,
+            "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+        },
+        {
+          "bytes": 13891,
+          "declared": {
+            "bytes": 13891,
+            "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+        },
+        {
+          "bytes": 6151,
+          "declared": {
+            "bytes": 6151,
+            "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "019cfc40eb58839fd5184e0731d58dd628d47259",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+          "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+        },
+        {
+          "bytes": 5453,
+          "declared": {
+            "bytes": 5453,
+            "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+          "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+          "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+        }
+      ]
+    },
+    "N2": {
+      "count": 31,
+      "matching": 31,
+      "rows": [
+        {
+          "bytes": 2378,
+          "declared": {
+            "bytes": 2378,
+            "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+          "path": "config/pon/pq-proof-profile-binding-v1.json",
+          "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+        },
+        {
+          "bytes": 5246,
+          "declared": {
+            "bytes": 5246,
+            "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+          "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+          "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+        },
+        {
+          "bytes": 13329,
+          "declared": {
+            "bytes": 13329,
+            "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1c6f2028dd753e611112ba8b7a3d85a8585eb635",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+          "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+        },
+        {
+          "bytes": 11732,
+          "declared": {
+            "bytes": 11732,
+            "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1d54eadd41166a6660ee09f499da7c76dd68ac80",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+          "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+        },
+        {
+          "bytes": 284,
+          "declared": {
+            "bytes": 284,
+            "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "88688018617bae938184329bc70d2851f76f656f",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+          "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+        },
+        {
+          "bytes": 11172,
+          "declared": {
+            "bytes": 11172,
+            "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+        },
+        {
+          "bytes": 106066,
+          "declared": {
+            "bytes": 106066,
+            "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+        },
+        {
+          "bytes": 3525,
+          "declared": {
+            "bytes": 3525,
+            "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a20a9d26a02027055f59c861a6bc3beb70876f70",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+          "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+        },
+        {
+          "bytes": 11609,
+          "declared": {
+            "bytes": 11609,
+            "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+          "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+        },
+        {
+          "bytes": 15173,
+          "declared": {
+            "bytes": 15173,
+            "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+          "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+        },
+        {
+          "bytes": 12578,
+          "declared": {
+            "bytes": 12578,
+            "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "c1a5569fca04316526132148c232005c175defd3",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs",
+          "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+        },
+        {
+          "bytes": 15264,
+          "declared": {
+            "bytes": 15264,
+            "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+        },
+        {
+          "bytes": 23468,
+          "declared": {
+            "bytes": 23468,
+            "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9840744362447c406d7eab7554a53f53635e748c",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs",
+          "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+        },
+        {
+          "bytes": 10447,
+          "declared": {
+            "bytes": 10447,
+            "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "12fac3738fa388a633ff1634195632b04a20ff26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+          "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+        },
+        {
+          "bytes": 10027,
+          "declared": {
+            "bytes": 10027,
+            "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "d94ed4545bef1ec79ebb70f7b239f5341ea1c742",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs",
+          "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+        },
+        {
+          "bytes": 11176,
+          "declared": {
+            "bytes": 11176,
+            "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+          "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+        },
+        {
+          "bytes": 6915,
+          "declared": {
+            "bytes": 6915,
+            "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+          "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+        },
+        {
+          "bytes": 28154,
+          "declared": {
+            "bytes": 28154,
+            "sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "eb18bccfc79019c6fe2a8231c7ad92f90991bfcd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a"
+        },
+        {
+          "bytes": 12483,
+          "declared": {
+            "bytes": 12483,
+            "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "907f5b2ee663d1b0d4f4665ec941b7597dc915f4",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs",
+          "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+        },
+        {
+          "bytes": 10548,
+          "declared": {
+            "bytes": 10548,
+            "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ea12a52cbcadeefded2108c7682f3c90f58d3588",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs",
+          "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+        },
+        {
+          "bytes": 37947,
+          "declared": {
+            "bytes": 37947,
+            "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "594d06db78ce4d3b3d5c417f6abe3a0a93b3df6b",
+          "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+        },
+        {
+          "bytes": 391556,
+          "declared": {
+            "bytes": 391556,
+            "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "3bce39ce1aef265a18f304085bc08c0240547065",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+        },
+        {
+          "bytes": 51391,
+          "declared": {
+            "bytes": 51391,
+            "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+          "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+        },
+        {
+          "bytes": 13942,
+          "declared": {
+            "bytes": 13942,
+            "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+          "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+        },
+        {
+          "bytes": 9650,
+          "declared": {
+            "bytes": 9650,
+            "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e3ff2fa1f3ef4600e5198a69821e1bc3614e5650",
+          "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+          "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+        },
+        {
+          "bytes": 41595,
+          "declared": {
+            "bytes": 41595,
+            "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+        },
+        {
+          "bytes": 19189,
+          "declared": {
+            "bytes": 19189,
+            "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+          "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+        },
+        {
+          "bytes": 32654,
+          "declared": {
+            "bytes": 32654,
+            "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+        },
+        {
+          "bytes": 13891,
+          "declared": {
+            "bytes": 13891,
+            "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+        },
+        {
+          "bytes": 6151,
+          "declared": {
+            "bytes": 6151,
+            "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "019cfc40eb58839fd5184e0731d58dd628d47259",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+          "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+        },
+        {
+          "bytes": 5453,
+          "declared": {
+            "bytes": 5453,
+            "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+          "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+          "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+        }
+      ]
+    },
+    "P2": {
+      "count": 31,
+      "matching": 31,
+      "rows": [
+        {
+          "bytes": 2378,
+          "declared": {
+            "bytes": 2378,
+            "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+          "path": "config/pon/pq-proof-profile-binding-v1.json",
+          "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+        },
+        {
+          "bytes": 5246,
+          "declared": {
+            "bytes": 5246,
+            "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+          "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+          "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+        },
+        {
+          "bytes": 13329,
+          "declared": {
+            "bytes": 13329,
+            "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1c6f2028dd753e611112ba8b7a3d85a8585eb635",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+          "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+        },
+        {
+          "bytes": 11732,
+          "declared": {
+            "bytes": 11732,
+            "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1d54eadd41166a6660ee09f499da7c76dd68ac80",
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+          "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+        },
+        {
+          "bytes": 284,
+          "declared": {
+            "bytes": 284,
+            "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "88688018617bae938184329bc70d2851f76f656f",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+          "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+        },
+        {
+          "bytes": 11172,
+          "declared": {
+            "bytes": 11172,
+            "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+        },
+        {
+          "bytes": 106066,
+          "declared": {
+            "bytes": 106066,
+            "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+        },
+        {
+          "bytes": 3525,
+          "declared": {
+            "bytes": 3525,
+            "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a20a9d26a02027055f59c861a6bc3beb70876f70",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+          "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+        },
+        {
+          "bytes": 11609,
+          "declared": {
+            "bytes": 11609,
+            "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+          "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+        },
+        {
+          "bytes": 15173,
+          "declared": {
+            "bytes": 15173,
+            "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+          "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+        },
+        {
+          "bytes": 12578,
+          "declared": {
+            "bytes": 12578,
+            "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "c1a5569fca04316526132148c232005c175defd3",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs",
+          "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+        },
+        {
+          "bytes": 15264,
+          "declared": {
+            "bytes": 15264,
+            "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+        },
+        {
+          "bytes": 23468,
+          "declared": {
+            "bytes": 23468,
+            "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "9840744362447c406d7eab7554a53f53635e748c",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs",
+          "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+        },
+        {
+          "bytes": 10447,
+          "declared": {
+            "bytes": 10447,
+            "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "12fac3738fa388a633ff1634195632b04a20ff26",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+          "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+        },
+        {
+          "bytes": 10027,
+          "declared": {
+            "bytes": 10027,
+            "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "d94ed4545bef1ec79ebb70f7b239f5341ea1c742",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs",
+          "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+        },
+        {
+          "bytes": 11176,
+          "declared": {
+            "bytes": 11176,
+            "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+          "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+        },
+        {
+          "bytes": 6915,
+          "declared": {
+            "bytes": 6915,
+            "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+          "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+        },
+        {
+          "bytes": 28154,
+          "declared": {
+            "bytes": 28154,
+            "sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "eb18bccfc79019c6fe2a8231c7ad92f90991bfcd",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a"
+        },
+        {
+          "bytes": 12483,
+          "declared": {
+            "bytes": 12483,
+            "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "907f5b2ee663d1b0d4f4665ec941b7597dc915f4",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs",
+          "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+        },
+        {
+          "bytes": 10548,
+          "declared": {
+            "bytes": 10548,
+            "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "ea12a52cbcadeefded2108c7682f3c90f58d3588",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs",
+          "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+        },
+        {
+          "bytes": 37947,
+          "declared": {
+            "bytes": 37947,
+            "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "594d06db78ce4d3b3d5c417f6abe3a0a93b3df6b",
+          "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+        },
+        {
+          "bytes": 391470,
+          "declared": {
+            "bytes": 391470,
+            "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+        },
+        {
+          "bytes": 51391,
+          "declared": {
+            "bytes": 51391,
+            "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+          "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+        },
+        {
+          "bytes": 13942,
+          "declared": {
+            "bytes": 13942,
+            "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+          "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+        },
+        {
+          "bytes": 9650,
+          "declared": {
+            "bytes": 9650,
+            "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "e3ff2fa1f3ef4600e5198a69821e1bc3614e5650",
+          "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+          "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+        },
+        {
+          "bytes": 41595,
+          "declared": {
+            "bytes": 41595,
+            "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+          "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+          "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+        },
+        {
+          "bytes": 19189,
+          "declared": {
+            "bytes": 19189,
+            "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+          "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+        },
+        {
+          "bytes": 32654,
+          "declared": {
+            "bytes": 32654,
+            "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+          "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+        },
+        {
+          "bytes": 13891,
+          "declared": {
+            "bytes": 13891,
+            "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+        },
+        {
+          "bytes": 6151,
+          "declared": {
+            "bytes": 6151,
+            "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "019cfc40eb58839fd5184e0731d58dd628d47259",
+          "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+          "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+        },
+        {
+          "bytes": 5453,
+          "declared": {
+            "bytes": 5453,
+            "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+          },
+          "matches_declared": true,
+          "mode": "100644",
+          "oid": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+          "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+          "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+        }
+      ]
+    }
+  },
+  "heads": {
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "P2": "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+  },
+  "total_raw_bytes": 1336463,
+  "unique_object_count": 32
+}

@@ -1,0 +1,54 @@
+3590: /// reports elapsed stage time and available client search CPU, never an
+3591: /// adversarial cost bound or server CPU time.
+3592: pub fn call_public_protected_v3(
+3593:     address: SocketAddr,
+3594:     request: &Request,
+3595:     settings: &Settings,
+3596:     pinned_server: &str,
+3597:     caller: &DevelopmentIdentity,
+3598:     policy: PublicPolicy,
+3599: ) -> Result<PublicReply> {
+3600:     call_public_protected_v3_with_metrics(address, request, settings, pinned_server, caller, policy)
+3601:         .0
+3602: }
+3603: pub fn call_public_protected_v3_with_metrics(
+3604:     address: SocketAddr,
+3605:     request: &Request,
+3606:     settings: &Settings,
+3607:     pinned_server: &str,
+3608:     caller: &DevelopmentIdentity,
+3609:     policy: PublicPolicy,
+3610: ) -> (Result<PublicReply>, PublicClientMetrics) {
+3611:     call_public_protected_v3_with_deadline(
+3612:         address,
+3613:         request,
+3614:         settings,
+3615:         pinned_server,
+3616:         caller,
+3617:         policy,
+3618:         None,
+3619:     )
+3620: }
+3621: 
+3622: /// Optional caller-local absolute deadline. It only shortens the existing call
+3623: /// and phase limits; it changes no signed bytes, cookie policy or server budget.
+3624: /// The ordinary client passes None and retains its original behavior.
+3625: pub fn call_public_protected_v3_with_deadline(
+3626:     address: SocketAddr,
+3627:     request: &Request,
+3628:     settings: &Settings,
+3629:     pinned_server: &str,
+3630:     caller: &DevelopmentIdentity,
+3631:     policy: PublicPolicy,
+3632:     outer_deadline: Option<Instant>,
+3633: ) -> (Result<PublicReply>, PublicClientMetrics) {
+3634:     call_public_protected_v3_with_profile(
+3635:         address,
+3636:         request,
+3637:         settings,
+3638:         pinned_server,
+3639:         caller,
+3640:         (policy, ClientProfile::Legacy),
+3641:         outer_deadline,
+3642:     )
+3643: }

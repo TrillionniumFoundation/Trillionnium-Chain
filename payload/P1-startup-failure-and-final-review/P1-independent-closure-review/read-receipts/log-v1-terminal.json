@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "text": "{\"archive_path\":\"/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-1c5a29341102204c464d6f63fa1fb6c29fccdceb890adb449a9b6371f9a09b15/output.log\",\"available_end\":305,\"bytes_hex\":\"54726163656261636b20286d6f737420726563656e742063616c6c206c617374293a0d0a202046696c65201b5b33356d223c737472696e673e221b5b306d2c206c696e65201b5b33356d34391b5b306d2c20696e201b5b33356d3c6d6f64756c653e1b5b306d0d0a202020206f6b3d72652e66696e64616c6c2872275e746573745f5c532b202e2a205c2e5c2e5c2e206f6b24272c746578742c72652e4d293b617373657274201b5b313b33316d6c656e286f6b293d3d35331b5b306d0d0a2020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020201b5b313b33316d5e5e5e5e5e5e5e5e5e5e5e1b5b306d0d0a1b5b313b33356d417373657274696f6e4572726f721b5b306d0d0a\",\"chunk_sha256\":\"217f3705c30c82467b3b3059d2c98751e80e2d39ec9c05f792d8feef0a6cd953\",\"host\":\"mac\",\"next_offset\":305,\"offset\":0,\"output_complete\":true,\"persistent_across_runtime_restart\":true,\"session_id\":\"dpty-1c5a29341102204c464d6f63fa1fb6c29fccdceb890adb449a9b6371f9a09b15\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":305,\"bytes_stored\":305,\"capture_error\":null,\"closed\":false,\"created_unix_ms\":1794655177504,\"exit_code\":1,\"output_complete\":true,\"owner_pid\":72537,\"pid\":72538,\"state\":\"exited\"},\"storage\":\"target_archive\",\"text\":\"Traceback (most recent call last):\\r\\n  File \\u001b[35m\\\"<string>\\\"\\u001b[0m, line \\u001b[35m49\\u001b[0m, in \\u001b[35m<module>\\u001b[0m\\r\\n    ok=re.findall(r'^test_\\\\S+ .* \\\\.\\\\.\\\\. ok$',text,re.M);assert \\u001b[1;31mlen(ok)==53\\u001b[0m\\r\\n                                                               \\u001b[1;31m^^^^^^^^^^^\\u001b[0m\\r\\n\\u001b[1;35mAssertionError\\u001b[0m\\r\\n\",\"text_is_lossy\":false,\"truncated_before_offset\":false,\"utf8_pending\":false}",
+      "type": "text"
+    }
+  ],
+  "isError": false,
+  "structuredContent": null
+}

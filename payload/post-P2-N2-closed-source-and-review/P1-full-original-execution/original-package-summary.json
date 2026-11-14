@@ -1,0 +1,77 @@
+{
+  "schema": "trnm-P1-original-repository-truth-package-completion-v1",
+  "packaging_status": "verified",
+  "started_at": "2026-11-14T11:34:42.865792+00:00",
+  "finished_at": "2026-11-14T11:34:42.900658+00:00",
+  "original_status": "passed",
+  "original_lane_exit": 0,
+  "original_errors": [],
+  "original_lane_elapsed_seconds": 546.056,
+  "original_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "original_tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "original_terminal_summary_sha256": "a61aca5c4745c4a4e6f89c8cdc18b489679662b135061bee1357ca4072ca0f3b",
+  "operator_terminal_exit_code": 0,
+  "original_file_count": 51,
+  "original_bytes": 886983,
+  "required_flat_original_file_count": 39,
+  "nested_original_log_count": 12,
+  "closed_log_manifest_sha256": "84d28a8d4fc53c949c13ddd69e042e9f2c92707497e719caeba84a4c802c9fa2",
+  "original_step_count": 18,
+  "payload_file_count": 54,
+  "zip_member_count": 55,
+  "original_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "original_lane_timeout_seconds": 2700,
+  "original_invocation": {
+    "argv": [
+      "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py",
+      "--head",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+      "--tree",
+      "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+      "--expected-start-head",
+      "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+      "--bundle-path",
+      "/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/policy-prefix-6a8cd555-after-ed0d3548.bundle",
+      "--bundle-bytes",
+      "8575",
+      "--bundle-sha256",
+      "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389",
+      "--evidence-dir",
+      "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v2"
+    ],
+    "executable": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+    "optimize": 0
+  },
+  "zip": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-6a8cd5-v2-prci/original-repository-truth-6a8cd5-v2.zip",
+    "bytes": 196874,
+    "sha256": "2cca00ebffe36ac67ebdaa09907072728200789181702f3fb5a0655a7d1dce28"
+  },
+  "index": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-6a8cd5-v2-prci/EVIDENCE_INDEX.json",
+    "bytes": 43169,
+    "sha256": "1f21cf3b4f925b909cd45b276134eb3cd49a04992c20b2e5b215f512b07f89d5"
+  },
+  "producer": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-6a8cd5-v2-prci/package_original_repository_truth_6a8cd5_v2.py",
+    "bytes": 28912,
+    "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967"
+  },
+  "all_member_crc_size_sha_verified": true,
+  "original_source_versions_unchanged": true,
+  "source_before_after_equal": true,
+  "raw_flat_originals_required_for_mac_copy": 39,
+  "original_driver_flat_required_for_mac_copy": true,
+  "unexpected_nested_files_excluded": [],
+  "tests_rerun": false,
+  "source_or_git_objects_modified": false,
+  "network_actions_by_packager": false,
+  "hosted_ci_qualification": false,
+  "remote_publication_verified": false,
+  "future_revision_qualification": false
+}

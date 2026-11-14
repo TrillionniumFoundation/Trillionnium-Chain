@@ -1,0 +1,129 @@
+{
+  "schema": "trnm-N-native-failure-followup-materialize-inputs-v1",
+  "stage": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "output": "/private/tmp/chain-prci-N-native-failure-followup-materialization-20261114-v1",
+  "prefix": "N-native-failure-followup",
+  "expected_stage_files": 3594,
+  "expected_stage_bytes": 187247568,
+  "cap_bytes": 50331648,
+  "source_roots": [
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2",
+      "target": "remote-observation",
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1",
+      "target": "outer-job-and-initial-unknown",
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1",
+      "target": "x64-artifact-and-completion",
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    }
+  ],
+  "pins": [
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/summary.json",
+      "bytes": 107925,
+      "sha256": "511582eb74e1a0c01cdcf6e1f04a0e600169b34de314ff0e0fdde920badc61b3"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.log",
+      "bytes": 184799,
+      "sha256": "154555d87f24fbaed2609d14b18837c228256c65af29633eb42f611b9e291c81"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/findings.json",
+      "bytes": 2702,
+      "sha256": "47b471396b87a83a579fd54a922986a1d233143b4abc0f735cb71097da9e75c3"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip",
+      "bytes": 9884207,
+      "sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-summary.json",
+      "bytes": 1090,
+      "sha256": "8756e9f81f023df2cac84a111373ad0b1b9b92ca99a918d8276bff9de1a62909"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/EVIDENCE_INDEX.json",
+      "bytes": 23424,
+      "sha256": "fe8b3a5ed21db1a322684f984346bb5d01cdf7f119c81ad60949578359117455"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/findings.json",
+      "bytes": 36198,
+      "sha256": "8f8f519b23b33d598548f6602ae56fd4d41d7bdde5b55d41dd9a3b713e2787eb"
+    },
+    {
+      "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/review.md",
+      "bytes": 3298,
+      "sha256": "a41ac93f3b9cac399896be2cbeb434386f0ef58c174224438f874a8f05d1621f"
+    }
+  ],
+  "completion_seal_terminal": {
+    "launch": {
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "host": "mac",
+      "persistent_across_runtime_restart": true,
+      "reused": false,
+      "session_id": "dpty-85c878ea9b2b80df47761c50dd07974138fd320275a9124057bb1c33608395fb",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 0,
+        "bytes_stored": 0,
+        "capture_error": null,
+        "created_unix_ms": 1794654514229,
+        "output_complete": false,
+        "owner_pid": 64767,
+        "pid": 64768,
+        "state": "running"
+      }
+    },
+    "reads": [
+      {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-85c878ea9b2b80df47761c50dd07974138fd320275a9124057bb1c33608395fb/output.log",
+        "available_end": 989,
+        "bytes_hex": "7b2273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d4e2d7836342d6e61746976652d61727469666163742d31343130393635383834342d32303236313131342d76312f636f6d706c6574696f6e2d7265766965772d76312f7365616c2d73756d6d6172792e6a736f6e222c20226279746573223a20313039302c2022736861323536223a202238373536653966383166303233646632636163383461313131333733616430623162396239326361393961393138643832373662666639646531613632393039227d2c2022696e646578223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d4e2d7836342d6e61746976652d61727469666163742d31343130393635383834342d32303236313131342d76312f636f6d706c6574696f6e2d7265766965772d76312f45564944454e43455f494e4445582e6a736f6e222c20226279746573223a2032333432342c2022736861323536223a202266653862336135656432316462316133323236383466393834333436626235643031636466376631313963383161643630393439353738333539313137343535227d2c202266696e64696e6773223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d4e2d7836342d6e61746976652d61727469666163742d31343130393635383834342d32303236313131342d76312f636f6d706c6574696f6e2d7265766965772d76312f66696e64696e67732e6a736f6e222c20226279746573223a2033363139382c2022736861323536223a202238663866353139623233623333643539383534386636363032616535366664346434316437626464653562353564343164643961336237313365323738376562227d2c2022726576696577223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d4e2d7836342d6e61746976652d61727469666163742d31343130393635383834342d32303236313131342d76312f636f6d706c6574696f6e2d7265766965772d76312f7265766965772e6d64222c20226279746573223a20333239382c2022736861323536223a202261343161633933663362396361633339393839366265326362656234333433383666306566353863313734323234343338663837346138663035643136323166227d2c2022696e64657865645f66696c6573223a2034332c2022696e64657865645f6279746573223a2031303933393733382c2022737461747573223a20227365616c6564222c20226e6f5f73746167655f777269746573223a20747275657d0d0a",
+        "chunk_sha256": "a037f8770a30c3dd174ffae998a784e9ad384128f48d3f348d40bc471be3845c",
+        "host": "mac",
+        "next_offset": 989,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-85c878ea9b2b80df47761c50dd07974138fd320275a9124057bb1c33608395fb",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 989,
+          "bytes_stored": 989,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794654514229,
+          "exit_code": 0,
+          "output_complete": true,
+          "owner_pid": 64767,
+          "pid": 64768,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"summary\": {\"path\": \"/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-summary.json\", \"bytes\": 1090, \"sha256\": \"8756e9f81f023df2cac84a111373ad0b1b9b92ca99a918d8276bff9de1a62909\"}, \"index\": {\"path\": \"/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/EVIDENCE_INDEX.json\", \"bytes\": 23424, \"sha256\": \"fe8b3a5ed21db1a322684f984346bb5d01cdf7f119c81ad60949578359117455\"}, \"findings\": {\"path\": \"/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/findings.json\", \"bytes\": 36198, \"sha256\": \"8f8f519b23b33d598548f6602ae56fd4d41d7bdde5b55d41dd9a3b713e2787eb\"}, \"review\": {\"path\": \"/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/review.md\", \"bytes\": 3298, \"sha256\": \"a41ac93f3b9cac399896be2cbeb434386f0ef58c174224438f874a8f05d1621f\"}, \"indexed_files\": 43, \"indexed_bytes\": 10939738, \"status\": \"sealed\", \"no_stage_writes\": true}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    ]
+  },
+  "fixed_identities": {
+    "head": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+    "run_id": 43582713392,
+    "job_id": 132415017426,
+    "artifact_id": 14109658844
+  },
+  "new_network_or_native_actions": false
+}

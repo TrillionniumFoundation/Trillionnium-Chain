@@ -1,0 +1,292 @@
+1: //! Public development intake: resource tickets confer no ledger/source authority.
+2: //! Explicit development profile. No guest identity/replay row is persisted.
+3: //! Pool writes are exact signed transaction facts, under the existing shared Node owner.
+4: //! V2 retains separate signed domains; both select the current derived-index resource bound.
+5: //! Work and bounded M06 transaction boundaries check cancellation; deep State/root/history/SQLite are not preempted.
+6: use super::{
+7:     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node, Result, Settings,
+8:     WorkCheckedPacket,
+9: };
+10: #[cfg(test)]
+11: mod input_decode_tests;
+12: mod intake;
+13: #[cfg(test)]
+14: mod output_reservation_tests;
+15: mod pq_identity;
+16: use intake::{CallerMutationPermit, ConnectionLease, ListenerIntake};
+17: pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
+18: use pq_identity::{Caller, ServerPin, SigningIdentity};
+19: mod canonical_packet;
+20: mod growth;
+21: mod history_response;
+22: pub(super) mod request_observation;
+23: pub mod scalar_cpu;
+24: mod work_arithmetic;
+25: mod work_rejection;
+26: use canonical_packet::{CanonicalPacketText, DecodedTaskBody, SubmitPacketText};
+27: use growth::ClientProfile;
+28: pub use growth::{call_public_protected_growth_v1, GROWTH_PROFILE};
+29: pub use request_observation::{
+30:     ApplicationFrameBytes, ApplicationFramePhase, PublicCpuSettlementObservation,
+31:     PublicRequestObservation, PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase,
+32:     SubmitPhaseObservation, MAX_REQUEST_OBSERVATION_RECORDS,
+33: };
+34: use request_observation::{ConnectionObservation, ReactorIoStamp, TaskObservation, ThreadCpuStamp};
+35: #[cfg(test)]
+36: use scalar_cpu::ScopedWorkerInterval;
+37: use scalar_cpu::{
+38:     LiveRequestCpu, PaidMutationCpuBudget, ScopedWorkerCpu, MUTATION_CPU_BURST_NS,
+39:     MUTATION_CPU_REFILL_NS_PER_SECOND, MUTATION_CPU_START_RESERVE_NS, MUTATION_CPU_WORKERS,
+40: };
+41: pub use scalar_cpu::{
+42:     ServiceCompletionWorkObservation, ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain,
+43:     ServiceMutationCpuOperation, ServiceMutationCpuSettlement,
+44: };
+45: use serde::{Deserialize, Serialize};
+46: use serde_json::{json, Value};
+47: use sha2::{Digest, Sha256};
+48: #[cfg(test)]
+49: use std::sync::atomic::AtomicU64;
+50: use std::{
+51:     cell::{Cell, RefCell},
+52:     collections::BTreeMap,
+53:     io::{Read, Write},
+54:     net::{SocketAddr, TcpListener, TcpStream},
+55:     sync::{
+56:         atomic::{AtomicBool, Ordering},
+57:         mpsc::{self, RecvTimeoutError, TryRecvError, TrySendError},
+58:         Arc, Mutex, OnceLock,
+59:     },
+60:     thread,
+61:     time::{Duration, Instant},
+62: };
+63: use trnm_crypto_primitives::verify_hex_strict;
+64: use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionWorkerAccounting};
+65: use trnm_protocol::pon_wire::Hash;
+66: pub use work_arithmetic::{
+67:     call_public_protected_v3_with_arithmetic_facts, PublicArithmeticFactObservation,
+68:     PublicArithmeticWorkObservation,
+69: };
+70: pub use work_rejection::{PublicRejectionFactObservation, PublicRejectionWorkObservation};
+71: 
+72: /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
+73: #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+74: #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
+75: pub enum Request {
+76:     Submit {
+77:         packet: String,
+78:     },
+79:     Head,
+80:     History {
+81:         tip: String,
+82:         after: String,
+83:     },
+84:     PoolSubmitBundle {
+85:         pool_context: String,
+86:         transactions: Vec<String>,
+87:     },
+88:     PoolStatus,
+89:     GrowthSubmitV1 {
+90:         packet: String,
+91:     },
+92:     GrowthPacketStatusV1 {
+93:         packet: String,
+94:     },
+95:     GrowthHeadV1,
+96: }
+97: pub const PROFILE: &str = "public-protected-development-v3";
+98: const HELLO_BYTES: usize = 108;
+99: const SOLUTION_BYTES: usize = 108;
+100: const MAX_PACKET: usize = 1_048_576;
+101: const MAX_BODY: usize = 2 * MAX_PACKET + 64;
+102: const MAX_READ_BODY: usize = 512;
+103: const MIN_POOL_RAW: usize = 159;
+104: const MAX_POOL_RAW: usize = 2048;
+105: const MAX_POOL_MEMBERS: usize = 16;
+106: const MAX_POOL_BUNDLE_BYTES: usize = MAX_POOL_RAW * MAX_POOL_MEMBERS;
+107: const MAX_POOL_BODY: usize = MAX_POOL_BUNDLE_BYTES * 2 + 512;
+108: const MAX_SERVICE_SECONDS: u64 = 72 * 3600;
+109: const MAX_RESPONSE: usize = 2 * MAX_PACKET + 4096;
+110: const MAX_CONNECTIONS: usize = 64;
+111: // Each active V3 listener starts three worker threads and bounded proof/read
+112: // channels; cap aggregate count per already-pinned Node service domain.
+113: const MAX_LISTENERS_PER_CPU_DOMAIN: usize = 4;
+114: const MAX_PAID_BODY_BYTES: usize = 8 * 1024 * 1024;
+115: // Reservations partition the existing totals; they add no socket/worker/queue.
+116: const READ_BODY_RESERVE: usize = 128 * 1024;
+117: const CONTROL_OUTPUT_RESERVE: usize = 512 * 1024;
+118: // A refusal may borrow only this slice of the existing control reserve. It is
+119: // still charged to the one output pool, leaving 448 KiB for control responses.
+120: const REFUSAL_OUTPUT_HEADROOM: usize = 64 * 1024;
+121: const CLASSICAL_REFUSAL_FRAME: usize = 2 * 1024;
+122: const PQ_REFUSAL_FRAME: usize = 8 * 1024;
+123: const MAX_MUTATING_GRANTS: usize = 8;
+124: const MAX_READ_GRANTS: usize = 8;
+125: const MAX_SPENT: usize = 1024;
+126: const MAX_HISTORY_STEPS: u64 = 1024;
+127: const PREFIX_MS: u64 = 2000;
+128: const CHALLENGE_MS: u64 = 2000;
+129: const BODY_MS: u64 = 5000;
+130: const OVERALL_MS: u64 = 30000;
+131: const MAX_OUTPUT_BYTES: usize = 32 * 1024 * 1024;
+132: const OUTPUT_MS: u64 = 5000;
+133: const WORK_MS: u64 = 10_000;
+134: const CHALLENGES_PER_SECOND: u64 = 128;
+135: const CHALLENGE_BURST: u64 = 32;
+136: const READ_CHALLENGE_RESERVE: u64 = 8;
+137: const IO_QUANTUM: usize = 64 * 1024;
+138: #[derive(Default)]
+139: struct MutationCpuMeasurement {
+140:     full_work_ns: Cell<Option<u64>>,
+141:     body_decode_ns: Cell<Option<u64>>,
+142:     response_ns: Cell<Option<u64>>,
+143:     unavailable: Cell<bool>,
+144:     workers: ScopedWorkerCpu,
+145:     continuous_scope: RefCell<Option<crate::store::PublicContinuousScope>>,
+146: }
+147: impl MutationCpuMeasurement {
+148:     fn for_permit(permit: Option<&PaidMutationCpuPermit>) -> Self {
+149:         Self {
+150:             workers: ScopedWorkerCpu {
+151:                 budget: permit.map(|permit| permit.budget.clone()),
+152:                 live: permit.map(|permit| permit.live.clone()),
+153:                 ..ScopedWorkerCpu::default()
+154:             },
+155:             ..Self::default()
+156:         }
+157:     }
+158: 
+159:     fn record_phase(&self, phase: &Cell<Option<u64>>, cpu: Option<u64>) {
+160:         phase.set(cpu);
+
+770:     #[cfg(test)]
+771:     fn encode(self) -> Vec<u8> {
+772:         self.encode_for(false)
+773:     }
+774:     fn encode_for(self, pq: bool) -> Vec<u8> {
+775:         let mut xs = if pq { b"PPH4" } else { b"PPH3" }.to_vec();
+776:         xs.push(self.op);
+777:         xs.extend([0; 3]);
+778:         xs.extend((self.len as u32).to_le_bytes());
+779:         xs.extend(self.caller);
+780:         xs.extend(self.digest);
+781:         xs.extend(self.client_nonce);
+782:         xs
+783:     }
+784: }
+785: pub struct PublicServer {
+786:     identity: SigningIdentity,
+787:     policy: PublicPolicy,
+788:     native_growth: bool,
+789:     secret: Hash,
+790:     epoch: Hash,
+791:     started: Instant,
+792:     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
+793:     arithmetic_facts:
+794:         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+795:     w1_rejection_cache: Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
+796:     #[cfg(test)]
+797:     fail_next_output: AtomicBool,
+798:     #[cfg(test)]
+799:     fail_next_cpu_start: AtomicBool,
+800:     #[cfg(test)]
+801:     fail_next_cpu_finish: AtomicBool,
+802:     #[cfg(test)]
+803:     fail_next_worker_cpu_finish: AtomicBool,
+804:     #[cfg(test)]
+805:     fail_next_live_cpu_finish: AtomicBool,
+806: }
+807: impl PublicServer {
+808:     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
+809:         Self::new_identity(SigningIdentity::Classical(Box::new(identity)), policy)
+810:     }
+811:     fn new_identity(identity: SigningIdentity, policy: PublicPolicy) -> Result<Self> {
+812:         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+813:         Ok(Self {
+814:             identity,
+815:             policy,
+816:             native_growth: false,
+817:             secret: entropy()?,
+818:             epoch: entropy()?,
+819:             started: Instant::now(),
+820:             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
+821:             arithmetic_facts: None,
+822:             w1_rejection_cache: None,
+823:             #[cfg(test)]
+824:             fail_next_output: AtomicBool::new(false),
+825:             #[cfg(test)]
+826:             fail_next_cpu_start: AtomicBool::new(false),
+827:             #[cfg(test)]
+828:             fail_next_cpu_finish: AtomicBool::new(false),
+829:             #[cfg(test)]
+830:             fail_next_worker_cpu_finish: AtomicBool::new(false),
+831:             #[cfg(test)]
+832:             fail_next_live_cpu_finish: AtomicBool::new(false),
+833:         })
+834:     }
+835:     /// Explicit exact invalid-math suppression settings for one V3 service.
+836:     /// Does not alter W1 validity, signed profile, caller admission budgets or
+837:     /// the complete verifier; NEW bogus traces still consume one full replay.
+838:     /// Ordinary classical service startup otherwise installs the fixed bounded
+839:     /// default. Explicit settings and the separate arithmetic profile are exclusive.
+840:     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
+841:         ensure(
+842:             self.arithmetic_facts.is_none() && self.w1_rejection_cache.is_none(),
+843:             "PUBLIC_W1_CACHE_MODE",
+844:         )?;
+845:         self.w1_rejection_cache = Some(
+846:             trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
+847:                 .ok_or("PUBLIC_W1_CACHE_LIMIT")?,
+848:         );
+849:         Ok(self)
+850:     }
+851:     /// Actual fresh native CLI process: zero initial CPU and challenge credit.
+852:     /// It remains a development-unqualified service, not a host CPU proof.
+853:     /// PublicPolicy signature bytes are unchanged; the local cost policy is
+854:     /// strictly less permissive at startup.
+855:     pub fn new_process_cold(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
+856:         let mut server = Self::new(identity, policy)?;
+857:         server.mutation_cpu = Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start()));
+858:         Ok(server)
+859:     }
+860:     /// The returned handle shares this exact service CPU epoch with a trusted
+861:     /// local owner. It is a meter, not task or packet admission authority.
+862:     pub fn mutation_cpu_domain(&self) -> ServiceMutationCpuDomain {
+863:         ServiceMutationCpuDomain::from_shared(self.mutation_cpu.clone())
+864:     }
+865:     /// Trusted same-operator service binds the Node's existing scalar domain,
+866:     /// including zero credit after clean cold reopen. No fresh burst is minted.
+867:     pub fn with_continuous_domain(
+868:         identity: DevelopmentIdentity,
+869:         policy: PublicPolicy,
+870:         domain: &ServiceMutationCpuDomain,
+871:     ) -> Result<Self> {
+872:         let mut server = Self::new(identity, policy)?;
+873:         server.mutation_cpu = domain.shared_budget();
+874:         Ok(server)
+875:     }
+876:     fn tick(&self) -> Result<u64> {
+877:         u64::try_from(self.started.elapsed().as_millis()).map_err(|_| "PUBLIC_CLOCK".into())
+878:     }
+879:     fn cookie(&self, s: &Settings, h: Hello, peer: SocketAddr) -> Result<Cookie> {
+880:         ensure(self.operation_allowed(h.op), "PUBLIC_OPERATION_PROFILE")?;
+881:         let tick = self.tick()?;
+882:         let mut c = Cookie {
+883:             schema: pq_identity::schema(
+884:                 self.identity.is_pq(),
+885:                 "public-resource-cookie-v3",
+886:                 "public-resource-cookie-pq-v4",
+887:             )
+888:             .into(),
+889:             profile: hex::encode(self.resource_profile()),
+890:             network: hex::encode(s.network()),
+891:             parameters: hex::encode(s.parameters()),
+892:             genesis: hex::encode(s.genesis()),
+893:             server: self.identity.public_key().into(),
+894:             epoch: hex::encode(self.epoch),
+895:             connection_nonce: hex::encode(entropy::<32>()?),
+896:             peer_binding: hex::encode(hash(
+897:                 b"public-peer-binding-v3",
+898:                 &[peer.to_string().as_bytes()],
+899:             )),
+900:             caller: hex::encode(h.caller),

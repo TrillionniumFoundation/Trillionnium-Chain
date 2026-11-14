@@ -1,0 +1,90 @@
+name: Chain Hepta closure evidence contracts
+on:
+  pull_request:
+    paths:
+      - .github/workflows/chain-hepta-closure-candidate.yml
+      - scripts/cell_learning_scope_join.py
+      - scripts/test_cell_learning_scope_join.py
+      - scripts/cell_learning_iteration_join.py
+      - scripts/cell_learning_completion_join.py
+      - scripts/cell_learning_business_join.py
+      - scripts/cell_learning_business_economics.py
+      - scripts/test_cell_learning_business_join.py
+      - scripts/test_cell_learning_business_economics.py
+      - scripts/test_cell_learning_training_no_update_join.py
+      - scripts/ci/pq_proof_profile_binding.py
+      - scripts/ci/test_pq_proof_profile_binding.py
+      - scripts/ci/w1_upstream_security.py
+      - scripts/ci/test_w1_upstream_security.py
+      - scripts/ci/audit_native_campaign_outcomes.py
+      - scripts/ci/test_audit_native_campaign_outcomes.py
+      - config/pon/pq-proof-profile-binding-v1.json
+      - config/pon/w1-upstream-security-v1.json
+      - config/pon/w1-qrom-implementation-current-v2.json
+      - config/pon/pq128-lifetime-budget-v1.json
+      - evidence/**
+      - formal/pon-nakamoto-v1/**
+      - trillionnium/**
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [scope, proof-profile, campaign-reader]
+        lane: [head, prospective-merge]
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE: ${{ github.event.pull_request.head.sha }}
+      BASE: ${{ github.event.pull_request.base.sha }}
+      TESTED: ${{ matrix.lane == 'head' && github.event.pull_request.head.sha || github.sha }}
+      LANE: ${{ matrix.lane }}
+      SUITE: ${{ matrix.suite }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ env.TESTED }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Observe the actual source
+        run: |
+          set -euo pipefail
+          args=(--kind "$LANE" --expected-head "$SOURCE")
+          if test "$LANE" = prospective-merge; then
+            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/closure-source-before.json"
+          cat "$RUNNER_TEMP/closure-source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Check the selected evidence contract
+        run: |
+          set -euo pipefail
+          case "$SUITE" in
+            scope)
+              python3 scripts/test_cell_learning_scope_join.py -v
+              python3 scripts/test_cell_learning_training_no_update_join.py -v
+              ;;
+            proof-profile)
+              python3 scripts/ci/test_pq_proof_profile_binding.py -v
+              python3 scripts/ci/pq_proof_profile_binding.py \
+                --expected-profile-descriptor-sha256 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+              ;;
+            campaign-reader)
+              python3 scripts/ci/test_audit_native_campaign_outcomes.py -v
+              ;;
+            *) exit 2 ;;
+          esac
+      - name: Recheck the actual source
+        if: always()
+        run: |
+          set -euo pipefail
+          args=(--kind "$LANE" --expected-head "$SOURCE")
+          if test "$LANE" = prospective-merge; then
+            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/closure-source-after.json"
+          cat "$RUNNER_TEMP/closure-source-after.json"
+          git diff --exit-code

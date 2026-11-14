@@ -1,0 +1,24 @@
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index 17d6cfd501ce311f3239dc0c9eb53753c255f3be..88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -670,6 +670,8 @@
+     "evidence/pon-w1-qrom-semantics-20261107/report.json",
+     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
++    "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
++    "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+ ))
+ # Historical fixture controls must retain the original exact source contract.
+ # Their success does not accept the current worktree as that historical source.
+@@ -1136,6 +1138,10 @@
+ 
+ # Preserve complete inputs of the independently retained research components.
+ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.json',
++ 'config/pon/pq128-lifetime-composition-current-v3.json',
++ 'config/pon/pq128-source-correspondence-current-v2.json',
++ 'scripts/ci/pq_lifetime_current_v2.py',
++ 'scripts/ci/test_pq_lifetime_current_v2.py',
+  'docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md',
+  'docs/security/PQ128_LIFETIME_COMPOSITION_V2.md',
+  'docs/security/PQ_CONTENT_CHAIN_REVIEW_V1.md',

@@ -1,0 +1,7 @@
+/private/tmp/chain-consolidation-20261114-root/source-bundle-2a8646-after-6a8cd5-v1/concurrent-ci-2a86462a-after-6a8cd555.bundle is okay
+The bundle contains this ref:
+2a86462a1ab20c68151719ba4635e3c294391e64 HEAD
+The bundle requires these 2 refs:
+5a4b7fe8de1adce803184f262fd9f704ead1930c 
+6a8cd55573065ceb50cdb65a7834615f79b521ae 
+The bundle uses this hash algorithm: sha1

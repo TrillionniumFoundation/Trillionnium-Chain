@@ -1,0 +1,29 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-269ea810c13ba094030fd99ae0b43f72f960309729a13af7e0fc4077dc792932/output.log",
+  "available_end": 1265,
+  "chunk_sha256": "38b45e1e9e4bbedc82f2b673e09fda8b0600c4b91a4e2d26ab3ca0e5bffcfbbb",
+  "host": "mac",
+  "next_offset": 1265,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-269ea810c13ba094030fd99ae0b43f72f960309729a13af7e0fc4077dc792932",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 31127 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 1265,
+    "bytes_stored": 1265,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794646069396,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 69068,
+    "pid": 69069,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"summary\": {\"path\": \"/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit-summary.json\", \"bytes\": 6541, \"sha256\": \"e6e08399879524b6c19b3aa8e1e5617205b0ea057bea3726cd7ece3811bcc092\"}, \"head\": \"b71b84bbccd9bc403384921802e7edcf2e682242\", \"tree\": \"d4b694838d70191a5206f7cec3253c8f63613e8e\", \"parent\": \"1a7afcdb820b051d1e4bfde3d436f96fc050c487\", \"path_count\": 20, \"source_files\": [{\"path\": \"scripts/w1_owned_process_collector_v1.py\", \"bytes\": 48204, \"sha256\": \"01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc\", \"git_blob\": \"7049001ace23192d6d32e4f438ca85e4b0ac16cc\"}, {\"path\": \"scripts/test_w1_owned_process_collector_v1.py\", \"bytes\": 26879, \"sha256\": \"31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa\", \"git_blob\": \"0c683b183d64d71e8ae6c6f44dca857b4f6e77b3\"}], \"patch\": {\"path\": \"/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit.patch\", \"bytes\": 274079, \"sha256\": \"8f05556057bb3291eb5c9309d7d00160bafb08a95e0d226f4d56145180777ce2\"}, \"two_source_patch\": {\"path\": \"/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/source-and-tests.patch\", \"bytes\": 6467, \"sha256\": \"2dd93726b371e584947a4af909d6b2895f88828c207d41d4a60638afbfd96dbf\"}, \"clean\": true}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

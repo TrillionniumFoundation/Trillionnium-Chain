@@ -1,0 +1,104 @@
+{
+  "schema": "trnm-P1-original-lane-packager-preparation-inputs-v1",
+  "output": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1",
+  "source_of_P1_pins": "explicit root handoff after actual P1 Mac seven gates passed; not an observed P1 Linux terminal",
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+  "start_head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "source_bytes": 423,
+  "source_sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+  "source_entries": 41677,
+  "source_tracked_bytes": 3994959368,
+  "bundle_bytes": 8575,
+  "bundle_sha256": "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389",
+  "bundle_filename": "policy-prefix-6a8cd555-after-ed0d3548.bundle",
+  "bases": [
+    {
+      "kind": "external",
+      "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_ed0d35_v1.py",
+      "bytes": 14207,
+      "sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f",
+      "copy_name": "M8-external-packager.py.original",
+      "output_name": "package_original_external_evidence_6a8cd5_v1.py",
+      "patch_name": "external-M8-to-P1.patch",
+      "replacements": [
+        {
+          "old": "\"final-external-evidence-existing-source-ed0d35-v2\"",
+          "new": "\"final-external-evidence-existing-source-6a8cd5-v2\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-external-evidence-ed0d35-v1-prci\"",
+          "new": "\"package-original-external-evidence-6a8cd5-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "HEAD=\"ed0d35487f2a67239e4d646fd41c2c7acb5cc740\"",
+          "new": "HEAD=\"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "count": 1
+        },
+        {
+          "old": "TREE=\"1aa9c21812489080980bdc3c1c2bb43611e88354\"",
+          "new": "TREE=\"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "count": 1
+        },
+        {
+          "old": "operator-pinned M8 external lane",
+          "new": "operator-pinned P1 external lane",
+          "count": 1
+        },
+        {
+          "old": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d",
+          "new": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "count": 1
+        },
+        {
+          "old": "3994947385",
+          "new": "3994959368",
+          "count": 1
+        },
+        {
+          "old": "trnm-M8-original-external-evidence-package-index-v1",
+          "new": "trnm-P1-original-external-evidence-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-M8-original-external-evidence-package-completion-v1",
+          "new": "trnm-P1-original-external-evidence-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-external-evidence-ed0d35-v1.zip\"",
+          "new": "\"original-external-evidence-6a8cd5-v1.zip\"",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "old_manifest_contract": {
+    "path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/closed-log-manifest-contract.json",
+    "bytes": 3461,
+    "sha256": "0a74c98f482e01f29c7d8fe2c08b4c161df514e93b461c6d6d489bb3286f96fb"
+  },
+  "original_full_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_external_driver": {
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "external_readiness_count": 78,
+  "packagers_executed": false,
+  "live_rog_receipts_read": false,
+  "stage_source_git_network_test_actions": false,
+  "full_adapter_state": "PAUSED_PENDING_NEW_EXPECTED_START_HEAD_AND_RECEIPT_DIRECTORY",
+  "coordinator_reported_full_v1_failure": {
+    "summary_sha256": "de19c39a28328ac3f53b849b37e75962b0005cbf6b1980670857c583bfedfbc9",
+    "bytes": 20640,
+    "steps": 17,
+    "lane_started": false,
+    "raw_not_read_by_this_preparer": true
+  },
+  "actual_external_terminal_summary_sha256": null
+}

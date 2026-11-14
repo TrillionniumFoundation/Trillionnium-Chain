@@ -1,0 +1,9 @@
+test_another_self_consistent_winner_record_is_rejected (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_another_self_consistent_winner_record_is_rejected) ... ok
+test_pre_search_intent_change_is_rejected_even_with_same_deadline (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_pre_search_intent_change_is_rejected_even_with_same_deadline) ... ok
+test_semantically_identical_json_rewrite_cannot_reuse_original_bytes (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_semantically_identical_json_rewrite_cannot_reuse_original_bytes) ... ok
+test_unchanged_record_identity_reads_without_claiming_execution (test_w1_postwin_identity.WinnerIdentityReadbackTests.test_unchanged_record_identity_reads_without_claiming_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+OK

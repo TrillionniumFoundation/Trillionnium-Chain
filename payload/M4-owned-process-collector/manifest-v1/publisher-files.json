@@ -1,0 +1,587 @@
+[
+  {
+    "path": "M4-owned-process-collector/commit-v1/git-add.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/git-add.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v1/git-add.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/git-add.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v1/preflight-before-evidence.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/preflight-before-evidence.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v1/preflight-before-evidence.stdout",
+    "bytes": 169,
+    "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/preflight-before-evidence.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v1/staged-diff-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/staged-diff-check.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v1/staged-diff-check.stdout",
+    "bytes": 456,
+    "sha256": "5a7c5009a3c60c8528266ec5324f8feae9ecadd0b83e79037b3a55243dbc39e2",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/staged-diff-check.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/git-add-component.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/git-add-component.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/git-add-component.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/git-add-component.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/git-add-source.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/git-add-source.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/git-add-source.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/git-add-source.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/preflight-before-portable-mock.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/preflight-before-portable-mock.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/preflight-before-portable-mock.stdout",
+    "bytes": 169,
+    "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/preflight-before-portable-mock.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/source-and-tests.patch",
+    "bytes": 6467,
+    "sha256": "2dd93726b371e584947a4af909d6b2895f88828c207d41d4a60638afbfd96dbf",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/source-and-tests.patch"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/staged-diff-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/staged-diff-check.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/staged-diff-check.stdout",
+    "bytes": 556,
+    "sha256": "205b29cb014d8de9e2d7987bef0f51cf565c9845989df93c033e1d2406eb9808",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/staged-diff-check.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v2/static-summary.json",
+    "bytes": 1581,
+    "sha256": "4c231364a4c90bf99af5d71cb1b6a579679dcef51c7add290a8db84622234970",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/static-summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/commit-object.raw",
+    "bytes": 325,
+    "sha256": "5e98ffff5be849b550a6b48cf7f5be3501d3854bf8b4f0fb49f61d280521524d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit-object.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/commit-summary.json",
+    "bytes": 6541,
+    "sha256": "e6e08399879524b6c19b3aa8e1e5617205b0ea057bea3726cd7ece3811bcc092",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit-summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/commit.patch",
+    "bytes": 274079,
+    "sha256": "8f05556057bb3291eb5c9309d7d00160bafb08a95e0d226f4d56145180777ce2",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/commit.patch"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/git-add-component.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/git-add-component.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/git-add-component.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/git-add-component.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/git-commit.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/git-commit.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/git-commit.stdout",
+    "bytes": 1824,
+    "sha256": "934c6aa1d78d20ffc6a0792b0fad748f07384f7c506e6e4cb5123776869eb0ca",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/git-commit.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/preflight-before-carrier.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/preflight-before-carrier.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/preflight-before-carrier.stdout",
+    "bytes": 169,
+    "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/preflight-before-carrier.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/preflight-staged.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/preflight-staged.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/preflight-staged.stdout",
+    "bytes": 172,
+    "sha256": "5129bb8dd22f8b9c2593e75249fbc8c5d58ba20183ba82586c93f137dcc03573",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/preflight-staged.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/staged-diff-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/staged-diff-check.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/staged-diff-check.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/staged-diff-check.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/commit-v3/staged.patch",
+    "bytes": 274079,
+    "sha256": "8f05556057bb3291eb5c9309d7d00160bafb08a95e0d226f4d56145180777ce2",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v3/staged.patch"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/design-v1/design-summary.json",
+    "bytes": 2795,
+    "sha256": "13074e331ab289f57ea6e433c2563a43e0d4e301e50e1c653c0ccc0635c7c024",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/design-v1/design-summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/design-v1/original-failure-extract.json",
+    "bytes": 6337,
+    "sha256": "c59d9e7fcd3fb25f84199bdb066ef5f4fc563d3e2edeff0d92c761c0debf73c7",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/design-v1/original-failure-extract.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/design-v1/original-relevant-functions.json",
+    "bytes": 12788,
+    "sha256": "e6cec3f95ade7cd6da7c7777af0ce31821a0cbfa01cc9bfa22a8ca0efdea19c3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/design-v1/original-relevant-functions.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/design-v1/proposed-collector.py.raw",
+    "bytes": 48204,
+    "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/design-v1/proposed-collector.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/design-v1/proposed-source.patch",
+    "bytes": 1430,
+    "sha256": "18c134b1d13e8932d7ca03a45f8c04f1561897fbae54839f0c10c4892c2dd47c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/design-v1/proposed-source.patch"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/direct-consumer-index.json",
+    "bytes": 3540,
+    "sha256": "ec6374e0406315084226bb0f514dd1061961d25a379aad5b2f4f1872d88ea87a",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/direct-consumer-index.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/direct-consumers-git-grep.stdout",
+    "bytes": 2859,
+    "sha256": "6ae2e1020672d2cf7d1f9934f04bad72d906e44451830b5e2853aca703e41322",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/direct-consumers-git-grep.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/edit-static-v1/original14-source-ast-proof.json",
+    "bytes": 5423,
+    "sha256": "d383d2a4588d1c02c8e583b053a0f2671df7c5cb7aa393f874b149c9cf50581c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/original14-source-ast-proof.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/edit-static-v1/preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/preflight.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/edit-static-v1/preflight.stdout",
+    "bytes": 169,
+    "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/preflight.stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/edit-static-v1/source-and-tests.patch",
+    "bytes": 6317,
+    "sha256": "a8c3d5ecbf2b563efde4ac4bb535309e9657145e59c45c3957ca2ecf7e131b91",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/source-and-tests.patch"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/edit-static-v1/summary.json",
+    "bytes": 1392,
+    "sha256": "23096bd61d45ccfda5e169e9c142dcb45348a19c48ea16e90969ed4f4da113ea",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/edit-static-v1/summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4CommitDriver.py.raw",
+    "bytes": 5924,
+    "sha256": "0d025cab4b11cf1cb796943ebd4ad307bd012c003978cecb6c290e6905bcf0ad",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4CommitDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4CommitDriverV2.py.raw",
+    "bytes": 7636,
+    "sha256": "80a7e97f36fcd7749ea7d56b91d7f7c50f728e4f4ef03c730bc3e5754846b87d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4CommitDriverV2.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4CommitDriverV3.py.raw",
+    "bytes": 4668,
+    "sha256": "89408b41bdfb395c8629d45abaf7492652ceb88c2ac9410acd44c90e9a322c4b",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4CommitDriverV3.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4ConsumersAndProtocolExtractDriver.py.raw",
+    "bytes": 2205,
+    "sha256": "d27799de8e84d977c8f3b69f9e963d5873e9d1a5d32337548f9cfceb8ee62b42",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4ConsumersAndProtocolExtractDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4DesignDriverV1.py.raw",
+    "bytes": 115705,
+    "sha256": "84e8c78cd770b821e9aeab700565943ef45abf82a836d6897bfdab31661ca51f",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4DesignDriverV1.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4EditStaticDriver.py.raw",
+    "bytes": 12076,
+    "sha256": "b24afd05538fb773b73c6142f9ebfafb894c002c71713c25477c3e77980d843b",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4EditStaticDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4OriginalFailureExtractDriver.py.raw",
+    "bytes": 1143,
+    "sha256": "16e86601e98888b06a2518122addee3aa93926ad1ae499080776cfcc6af5caae",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4OriginalFailureExtractDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4PreflightBeforeEditDriver.py.raw",
+    "bytes": 1427,
+    "sha256": "433b0b3c21b2e1bc7829e9b64d03263f6f7505395b5899b53aeeb51d5718a43c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4PreflightBeforeEditDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4SourceExtractDriver.py.raw",
+    "bytes": 1399,
+    "sha256": "34031bd34d3ab5c4406316d53e1a5db571eadd3a10f905056edc6c2b5d172fe2",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4SourceExtractDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/producers/M4WorktreePreflightDriver.py.raw",
+    "bytes": 1811,
+    "sha256": "a392c4c13cb36a1cb94cc75205bebd016083b0f1c23bd1510b0d5f09c9db2b4e",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/producers/M4WorktreePreflightDriver.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/terminal-observations/M4CommitRead.json",
+    "bytes": 1675,
+    "sha256": "3bea3a654d9fc01269e1e182650758604e395b765b0c08a5edbbf8fb52b1a40e",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/terminal-observations/M4CommitRead.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/terminal-observations/M4CommitReadV2.json",
+    "bytes": 1675,
+    "sha256": "50c13785d35951c347142248e8ede21690d10e4dedba7401aed22e64c3f24045",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/terminal-observations/M4CommitReadV2.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/terminal-observations/M4CommitReadV3.json",
+    "bytes": 2318,
+    "sha256": "c68fbe7501a309f4c03bce004ff827ba518273eb73528c26a82bc8f856831bf3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/terminal-observations/M4CommitReadV3.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/external-originals-manifest-v1/terminal-observations/M4PreflightBeforeEditRead.json",
+    "bytes": 2243,
+    "sha256": "3570a5667c3d65bfe2b6b45540f1115c43f49b38c8f3526426c040fb9d3b745c",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/external-originals-manifest-v1/terminal-observations/M4PreflightBeforeEditRead.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/project-preflight-before-edit-v1/stderr",
+    "bytes": 253,
+    "sha256": "7aba2ef6719a8e581c9042bb0116e857656e02a73790192ddd4fc0d3f96bf2b9",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1/stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/project-preflight-before-edit-v1/stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1/stdout"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/project-preflight-before-edit-v1/summary.json",
+    "bytes": 835,
+    "sha256": "1ebaa4450d80a580b1f9d5513e2fddf31337d0a41254cec020820562dfa7a826",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1/summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/scripts--test_w1_owned_process_collector_v1.py.raw",
+    "bytes": 22760,
+    "sha256": "2d9912f9bd4dfe7f708a5b9125e7ce72e7cbe7396be2aad1119401d136db0b8d",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/scripts--test_w1_owned_process_collector_v1.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/scripts--w1_owned_process_collector_v1.py.raw",
+    "bytes": 47663,
+    "sha256": "e250f1a75794c35d9583e55e56f159366b5d15fa13118d7a142d10a38fd6394f",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/scripts--w1_owned_process_collector_v1.py.raw"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/source-index.json",
+    "bytes": 1060,
+    "sha256": "ed9ea4bdee7b0a7ff126e8303d0b32cc5b3d192d4c2e0471fee9eddbc0535504",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/source-index.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/worktree-preflight-v1/summary.json",
+    "bytes": 391,
+    "sha256": "d3a5f191edc8bd2824240ba36a5d2bcf8e25c76d97ebda2faa12ba83d2637523",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/worktree-preflight-v1/summary.json"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/worktree-preflight-v1/worktree-add.stderr",
+    "bytes": 3703,
+    "sha256": "2067c568c48088b4f6aa25defc3d4d1ef557b70a417f0bd33ccf9ad0bb5e32f0",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/worktree-preflight-v1/worktree-add.stderr"
+    }
+  },
+  {
+    "path": "M4-owned-process-collector/worktree-preflight-v1/worktree-add.stdout",
+    "bytes": 101,
+    "sha256": "46fd408161ac535a7687de4aa4797d020c884b5dbd9e941c0cae9cbc86d236e3",
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/worktree-preflight-v1/worktree-add.stdout"
+    }
+  }
+]

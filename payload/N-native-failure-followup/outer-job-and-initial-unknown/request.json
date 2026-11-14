@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-single-original-job-log-request-v1",
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132415017426/logs"
+  ],
+  "cwd": "/private/tmp",
+  "endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132415017426/logs",
+  "method": "GET",
+  "single_gh_invocation": true,
+  "redirect_handled_by_official_gh": true,
+  "http_response_headers_not_requested_or_saved": true,
+  "HTTP_status_not_independently_exposed": true,
+  "source": {
+    "run_id": 43582713392,
+    "job_id": 132415017426,
+    "head_sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "tree_from_run_metadata": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+  },
+  "stdout_cap_bytes": 20971520,
+  "stderr_cap_bytes": 1048576,
+  "timeout_seconds": 120,
+  "started_at": "2026-11-14T10:57:00.519464+00:00",
+  "gh_executable": "/opt/homebrew/bin/gh",
+  "gh_canonical_executable": "/opt/homebrew/Cellar/gh/2.86.0/bin/gh"
+}

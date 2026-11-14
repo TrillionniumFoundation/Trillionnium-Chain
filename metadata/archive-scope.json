@@ -1,0 +1,39 @@
+{
+  "archive_preserves_history_not_semantic_equivalence": true,
+  "branches_deleted": false,
+  "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "candidate_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "current_publication_outcome_included": false,
+  "exact_ordered_parents": [
+    "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+    "2a86462a1ab20c68151719ba4635e3c294391e64"
+  ],
+  "expected_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+  "frozen_remote_branch_names": 908,
+  "hosted_ci_qualification": false,
+  "local_gate_receipt_sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33",
+  "main_merged": false,
+  "new_full_fsck_performed": false,
+  "old_history_archive": {
+    "commit": "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+    "commit_raw_sha256": "2f581bd59d740f3a0b6405ca5ed9db2f36ead80a91acad506bdd5a218eb82a41",
+    "exact_direct_parents": 893,
+    "historical_manifest_sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+    "new_full_fsck_performed": false,
+    "preservation_is_not_semantic_absorption": true,
+    "tag": "archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2",
+    "tag_oid": "9dafd9192e4040fab530958ef71598aaec9265b9",
+    "tag_raw_sha256": "fa23fe34446467989dc3774381ef2dc3dbad8ca794f68e44caaa6263a02defa1",
+    "tree": "b91f68e70a05e5475b850159033baffb0824c6ba"
+  },
+  "original_distinct_tips": 892,
+  "original_rog_producer_sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38",
+  "payload_bytes": 268174107,
+  "payload_files": 5649,
+  "payload_manifest_sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223",
+  "previous_own_published_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "protection_changed": false,
+  "qualification_granted": false,
+  "rog_lane_receipt_sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+  "schema": "trnm-followup-execution-archive-scope-v2"
+}

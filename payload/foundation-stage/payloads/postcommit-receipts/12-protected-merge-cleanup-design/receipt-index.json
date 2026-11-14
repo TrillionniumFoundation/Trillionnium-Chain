@@ -1,0 +1,85 @@
+{
+  "schema": "TRNM_PROTECTED_MERGE_CLEANUP_DESIGN_INDEX_V1",
+  "created_at": "2026-11-14T06:07:58.021196+00:00",
+  "execution_performed": false,
+  "member_count": 14,
+  "total_uncompressed_bytes": 579799,
+  "entries": [
+    {
+      "path": "PROTECTED_MERGE_AND_CLEANUP_DESIGN_V1.md",
+      "bytes": 16000,
+      "sha256": "59afefd8d1d6ba2338fff9d020a5dc7da578e928c101444e68542a0fe794e5c2"
+    },
+    {
+      "path": "build-terminal-receipts.json",
+      "bytes": 9251,
+      "sha256": "3200b7f6b33bfa6013baf5aba337f9e3657a032724df6fe047d3dbd5e78c8ebc"
+    },
+    {
+      "path": "deletion_advertisement_validator_draft.py",
+      "bytes": 5327,
+      "sha256": "8345a5f7334842fe0dcb04a0f11e2187f0f8866e7e1e043d85b88517ee14af64"
+    },
+    {
+      "path": "legacy-protection-0170.json",
+      "bytes": 792,
+      "sha256": "e35aeec405ef12a8acf5e1ae7aa1d5c26cfeefac767aade82f63c506d62747e6"
+    },
+    {
+      "path": "main-protection-0170.json",
+      "bytes": 1366,
+      "sha256": "fd93da11fd115fef636ff7678cfeb26047497a4153b69f3e1c9efd1a377d227a"
+    },
+    {
+      "path": "offline-controls-result.json",
+      "bytes": 3196,
+      "sha256": "4d969baaefe5507e1ce7325ebb626379c40096f7c6daea9ff8068815a189a047"
+    },
+    {
+      "path": "offline_validator_controls.py",
+      "bytes": 4109,
+      "sha256": "d274a6c2e53e37c156c0a669770717a65e004b05a03d222fe0bf56080e7bc847"
+    },
+    {
+      "path": "open-pr-impact-v1.json",
+      "bytes": 175147,
+      "sha256": "612d6fd15dc3d8024827a83afbc36a5067fabb47f9d7c5f616e599b66cc9c0d2"
+    },
+    {
+      "path": "open-pulls-0212-normalized.json",
+      "bytes": 307374,
+      "sha256": "5a0ad93370510112238f2a0a7870f03f9018b9486f63abceaa6c265bb728daaf"
+    },
+    {
+      "path": "planning-inputs.json",
+      "bytes": 4206,
+      "sha256": "273b6c139eaedc8c92fb94f6c58b42b5a95aa56aef598e5b1ae61ac172c40400"
+    },
+    {
+      "path": "plugin-settings-selected.json",
+      "bytes": 1383,
+      "sha256": "e81d50192b4247cec2670e66500cc505ad737455123af58dbd9c5147c94e46a5"
+    },
+    {
+      "path": "pull847-plugin-response-historical-e40d.json",
+      "bytes": 41442,
+      "sha256": "aa8333363d0273e7f08261620d4f9a7510d0f0a935b78235febc1ae6e0e546a9"
+    },
+    {
+      "path": "remote0170-summary.json",
+      "bytes": 1501,
+      "sha256": "f291d514967e6dd597830d46f8f4bb444eeb2c83ec0531a1851a2404efe5fd21"
+    },
+    {
+      "path": "repository-plugin-response.json",
+      "bytes": 8705,
+      "sha256": "200dcbaf476b9ef0e40c97ff032e0ff95ebaad3a05a61550109a47c2e36afabf"
+    }
+  ],
+  "limits": [
+    "Design and read-only planning input only.",
+    "Twenty synthetic pure controls; no real pre-push hook installed or run.",
+    "No current final CI, archive publication, merge or deletion completion claim.",
+    "Index and ZIP container are external to this member manifest."
+  ]
+}

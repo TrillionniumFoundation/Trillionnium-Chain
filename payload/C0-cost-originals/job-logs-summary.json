@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-C0-two-cross-cost-original-job-logs-v1",
+  "run": {
+    "id": 43567821538,
+    "run_attempt": 1,
+    "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "status": "in_progress",
+    "conclusion": null,
+    "event": "pull_request",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538"
+  },
+  "fixed_inputs_sha256": "2b59db99af8b7a1a5b4cc2bfee96fad9c951e3e699afa55d63c83405a4cacce2",
+  "captures": [
+    {
+      "job_id": 132376957328,
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132376957328/logs"
+      ],
+      "started_at": "2026-11-14T08:02:26.000642+00:00",
+      "elapsed_seconds": 12.156789000000572,
+      "returncode": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957328.stdout.raw",
+        "bytes": 184796,
+        "sha256": "cfbdfbd664b2da3babc27026d6abf6529921c74296bb170a5e93087d54a74d76"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957328.stderr.raw",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "download_complete_observed": true,
+      "auto_retry": false
+    },
+    {
+      "job_id": 132376957441,
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132376957441/logs"
+      ],
+      "started_at": "2026-11-14T08:02:26.000704+00:00",
+      "elapsed_seconds": 13.99573483299173,
+      "returncode": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957441.stdout.raw",
+        "bytes": 184338,
+        "sha256": "382032e5ce118dbe178ba1cb73a5225ef66e1df6880bdd0c2f73c4fd828b1f74"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/job-132376957441.stderr.raw",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "download_complete_observed": true,
+      "auto_retry": false
+    }
+  ],
+  "both_complete": true,
+  "native_execution_or_CI_mutation": false,
+  "artifact_integrity_status": "await architecture original ZIP producer terminal; not claimed complete here"
+}

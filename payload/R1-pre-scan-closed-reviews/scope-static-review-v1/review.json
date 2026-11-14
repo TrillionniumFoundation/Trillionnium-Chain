@@ -1,0 +1,180 @@
+{
+  "findings": [
+    {
+      "classification": "before-execution blocker unless independently enforced by an exact launcher",
+      "fact": "The wrapper uses assert not sys.flags.optimize to reject optimized execution. Python optimization strips this assert too, together with the other wrapper assertions. An inherited PYTHONOPTIMIZE or -O can therefore remove driver-pin, preservation and union guards.",
+      "id": "S1",
+      "locations": [
+        "prepare_scope_and_scan.py:2",
+        "prepare_scope_and_scan.py:6",
+        "prepare_scope_and_scan.py:20",
+        "prepare_scope_and_scan.py:26-31",
+        "prepare_scope_and_scan.py:37"
+      ],
+      "minimum_resolution": "Use an ordinary if sys.flags.optimize: raise ... before relying on assertions; the pinned launcher must compile with optimize=0 and bind actual wrapper bytes. Keep the final independent union validation.",
+      "static_counterexample": "An old path with a different SHA in full plus one new path still yields new=full\\old by path; without the preserved-row assertion the changed old path is omitted from the delta scan while the proof literal still claims old rows preserved. This was reasoned from source, not executed. The separately planned final exact-union checker should reject it if implemented correctly."
+    },
+    {
+      "classification": "narrow outer-envelope hardening; inner manifest types remain strict",
+      "fact": "Outer JSON uses ordinary json.loads and set equality. Duplicate keys and nonfinite constants are not independently rejected; pin bytes does not have type(value) is int, so a numerically equal float is accepted. Exact supplied SHA and delegated manifest validation still constrain the actual manifest.",
+      "id": "S2",
+      "locations": [
+        "prepare_scope_and_scan.py:8",
+        "prepare_scope_and_scan.py:17-20"
+      ],
+      "minimum_resolution": "Reject duplicate and nonfinite outer JSON, require the exact dict/keys, integer nonnegative bytes and canonical SHA/path. Do not weaken the existing manifest validator."
+    },
+    {
+      "classification": "producer execution identity assumption",
+      "fact": "The saved producer is sys.argv[1], not independently shown to be the executed wrapper bytes. The driver is hash-checked before import and later execv reopens its fixed path; keeping that path unchanged through launch is an execution assumption, not an atomic executable-byte guarantee.",
+      "id": "S3",
+      "locations": [
+        "prepare_scope_and_scan.py:15",
+        "prepare_scope_and_scan.py:5-7",
+        "prepare_scope_and_scan.py:39"
+      ],
+      "minimum_resolution": "Use the planned SHA-pinned file launcher; bind __file__ and save the exact verified wrapper bytes. Preserve the scanner pin and actual terminal/producer receipts. No path race was observed in this static task."
+    }
+  ],
+  "line_map": {
+    "scanner": {
+      "coverage": [
+        319
+      ],
+      "digest": [
+        176
+      ],
+      "duplicate_path": [
+        170
+      ],
+      "final_identity": [
+        304
+      ],
+      "hit": [
+        322
+      ],
+      "int_count": [
+        158
+      ],
+      "int_size": [
+        172
+      ],
+      "main_guard": [
+        352
+      ],
+      "manifest": [
+        142
+      ],
+      "manifest_changed": [
+        317
+      ],
+      "origin": [
+        179
+      ],
+      "outputs": [
+        249
+      ],
+      "payload_sha": [
+        269
+      ],
+      "row_fields": [
+        167
+      ],
+      "snapshot": [
+        116
+      ],
+      "unique": [
+        130
+      ]
+    },
+    "wrapper": {
+      "delta": [
+        27
+      ],
+      "exec": [
+        39
+      ],
+      "identity_fence": [
+        37
+      ],
+      "inputs": [
+        8
+      ],
+      "module_load": [
+        7
+      ],
+      "old_anchor": [
+        29
+      ],
+      "pin": [
+        17
+      ],
+      "producer": [
+        15
+      ],
+      "proof": [
+        35
+      ],
+      "row_preservation": [
+        26
+      ],
+      "scope_validation": [
+        33
+      ],
+      "snapshot": [
+        19
+      ]
+    }
+  },
+  "required_final_independent_closure": [
+    "Bind the content phase full manifest P to the exact baseline manifest of the scan-records phase, and bind that phase full manifest to final F.",
+    "Revalidate old, A, B and F strict rows and require pairwise disjoint path sets; full row including bytes/SHA/origin must match the exact union, with exact total count/bytes.",
+    "Verify the three actual scanner outputs and authoritative process terminals, not merely the scope_prepared prints or proof booleans.",
+    "Require status NO_PATTERN_HITS_IN_DECLARED_SCOPE, coverage_complete is True, review_required is False, exact five category integer zero counts, correct manifest path/size/SHA, exact scanned counts/bytes, empty hits, and complete coverage rows for each original scope.",
+    "Require the unchanged scanner/pattern-source pins and full terminal exit0/output_complete without capture error.",
+    "Do not append last scanner receipts, final verifier outputs or other new files to F after freezing unless they are explicitly treated as a new separately checked scope.",
+    "Keep the claim limited to raw bytes in declared files; there is no ZIP/pack decompression and no all-secrets-absence proof."
+  ],
+  "review_closed_at_utc": "2026-11-14T12:08:24.461613+00:00",
+  "root_direction": "Root is preparing a separate create-only V2 for strict outer pins and actual wrapper-byte provenance; S1 was additionally sent before execution. V1 original remains unchanged.",
+  "runtime_actions": {
+    "reviewed_wrapper_executed": false,
+    "scanner_executed": false,
+    "source_Git_stage_network_mutations": false,
+    "target_helpers_executed": false,
+    "tests_executed": false
+  },
+  "schema": "trnm-R1-two-phase-payload-scope-static-review-v1",
+  "scope": "Only the pinned 3788-byte wrapper, 711-byte plan, and necessary static validation boundaries in the unchanged 14664-byte scanner. No target module/helper/import/main, scan, test, network, source/Git/stage mutation executed.",
+  "sound_properties": [
+    "Both actual manifests are read through absolute_snapshot, which walks directories without symlinks, requires regular single-link files, caps size and verifies stable FDs.",
+    "validate_manifest rejects duplicate JSON keys/nonfinite constants, duplicate paths and path-prefix conflicts; file_count/total_bytes/row.bytes are actual ints, SHA strings and origin/path records are strict.",
+    "With wrapper assertions enabled, every old row equals the corresponding full row, including origin. Delta rows are precisely full paths absent from old, preserving full-manifest order.",
+    "New scope count and bytes are derived and validated; the content phase additionally binds the exact old 2100-file/150184002-byte manifest and its 6869bb... SHA.",
+    "The scope directory is ROOT/R1-execution-payload-scope-{phase}-v1 and the scanner results are outside payload under PREPARE_ROOT; the code does not add files to execution-receipts-followup-v1.",
+    "Loading the pinned scanner under ModuleType name reviewed_payload_manifest_validation does not run its if __name__ == __main__ block. This conclusion is static only.",
+    "The unchanged scanner hashes and scans every declared row, preserves per-file identity, reopens listed paths, rechecks root/manifest, and requires exact count/byte coverage before reporting complete.",
+    "The plan's F=P+B second scan and exclusion of its last receipt from F avoids an infinite self-scan claim."
+  ],
+  "sources": [
+    {
+      "bytes": 3788,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v1/prepare_scope_and_scan.py",
+      "sha256": "bd6531cd52adcc65bb301b35a1480a936046b839298eb0424ccc2275709630e6",
+      "tool_version": "16777233:607068190:3788:1794657916264406913:1794657916264406913"
+    },
+    {
+      "bytes": 711,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v1/PLAN.txt",
+      "sha256": "c0e55abf3e92c68ccdb63b2407462a4b21086e5e1d96981c5b6123d625210ebe",
+      "tool_version": "16777233:607068191:711:1794657916264511621:1794657916264511621"
+    },
+    {
+      "bytes": 14664,
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py",
+      "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6",
+      "tool_version": "16777233:606868819:14664:1794649191387134295:1794649191387134295"
+    }
+  ],
+  "status": "STATIC_REVIEW_COMPLETE_V2_EXECUTION_GUARD_REQUIRED"
+}

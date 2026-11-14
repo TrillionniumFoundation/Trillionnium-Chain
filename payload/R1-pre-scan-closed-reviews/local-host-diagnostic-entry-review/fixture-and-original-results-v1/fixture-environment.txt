@@ -1,0 +1,280 @@
+1: //! Finite local from-zero W1 traffic on the existing public service CPU domain.
+2: //! No WAN, cheapest-producer, saturation, energy or production qualification.
+3: //! CPU intervals are actual calling-thread measurements, never wall estimates.
+4: //! The new source must be compiled and executed; retained binaries do not test it.
+5: use serde_json::{json, Value};
+6: use std::{
+7:     fs,
+8:     net::{SocketAddr, TcpListener},
+9:     sync::{
+10:         atomic::{AtomicBool, AtomicU64, Ordering},
+11:         Arc, Barrier, Mutex,
+12:     },
+13:     thread::{self, JoinHandle},
+14:     time::{Duration, Instant},
+15: };
+16: use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
+17: use trnm_pon_node::{
+18:     development_public,
+19:     ingress::{
+20:         self,
+21:         public_v3::{self, PublicPolicy, PublicServer, Request},
+22:         DevelopmentIdentity,
+23:     },
+24:     maintenance, sequence_root, Node, Packet, PoolLimits, Settings,
+25: };
+26: use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header};
+27: 
+28: #[path = "../examples/support/w1_from_zero.rs"]
+29: mod w1_from_zero;
+30: 
+31: const SEARCH_BUDGET: u64 = 4096;
+32: const ATTACKS: usize = 8;
+33: const PROBES: usize = 8;
+34: const CALL_MS: u64 = 2000;
+35: 
+36: fn identity(n: u8) -> DevelopmentIdentity {
+37:     DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap()
+38: }
+39: fn ns(start: Instant) -> u64 {
+40:     start.elapsed().as_nanos().try_into().unwrap()
+41: }
+42: // Match the existing receiver's checked Linux clock semantics without making a
+43: // private receiver type public or adding a dependency. Missing clocks stay None.
+44: struct ThreadCpuStamp {
+45:     owner: thread::ThreadId,
+46:     value: u64,
+47: }
+48: impl ThreadCpuStamp {
+49:     fn start() -> Option<Self> {
+50:         Some(Self {
+51:             owner: thread::current().id(),
+52:             value: thread_cpu_ns()?,
+53:         })
+54:     }
+55:     fn finish(self) -> Option<u64> {
+56:         if self.owner != thread::current().id() {
+57:             return None;
+58:         }
+59:         thread_cpu_ns()?.checked_sub(self.value)
+60:     }
+61: }
+62: fn cpu_elapsed(stamp: Option<ThreadCpuStamp>) -> Option<u64> {
+63:     stamp.and_then(ThreadCpuStamp::finish)
+64: }
+65: fn checked_cpu_ns(seconds: i64, nanoseconds: i64) -> Option<u64> {
+66:     let seconds = u64::try_from(seconds).ok()?;
+67:     let nanoseconds = u64::try_from(nanoseconds).ok()?;
+68:     if nanoseconds >= 1_000_000_000 {
+69:         return None;
+70:     }
+71:     seconds.checked_mul(1_000_000_000)?.checked_add(nanoseconds)
+72: }
+73: #[cfg(target_os = "linux")]
+74: fn thread_cpu_ns() -> Option<u64> {
+75:     use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+76:     let value = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
+77:     checked_cpu_ns(value.tv_sec, value.tv_nsec)
+78: }
+79: #[cfg(not(target_os = "linux"))]
+80: fn thread_cpu_ns() -> Option<u64> {
+81:     None
+82: }
+83: // Process CPU includes every native mining worker. This is a direct clock
+84: // observation of the complete acquisition interval, not a kernel-only or
+85: // per-actor allocation; unrelated concurrent tests would also be included.
+86: #[cfg(target_os = "linux")]
+87: fn process_cpu_ns() -> Option<u64> {
+88:     use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+89:     let value = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ProcessCPUTime)).ok()?;
+90:     checked_cpu_ns(value.tv_sec, value.tv_nsec)
+91: }
+92: #[cfg(not(target_os = "linux"))]
+93: fn process_cpu_ns() -> Option<u64> {
+94:     None
+95: }
+96: fn policy() -> PublicPolicy {
+97:     PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
+98: }
+99: 
+100: struct Search {
+101:     packet: Option<Packet>,
+102:     observation: Value,
+103: }
+104: 
+105: // Inputs are public context and task material, never a valid packet, product,
+106: // producer, cached trace or verifier result. Even the claimed C is merely zero
+107: // bytes. Every hash trial (including misses) remains in the returned observation.
+108: fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search {
+
+270: fn phase(
+271:     number: u64,
+272:     node: Node,
+273:     producer: &mut Node,
+274:     server: PublicServer,
+275:     target: Hash,
+276:     epoch: Instant,
+277: ) -> (Node, Value) {
+278:     let complete_phase_start = Instant::now();
+279:     let settings = node.settings().clone();
+280:     let build_start = Instant::now();
+281:     let preparation_cpu = ThreadCpuStamp::start();
+282:     let (a, b) = maintenance();
+283:     let task = pon_work::task_id(&a, &b).unwrap();
+284:     let mut searches = Vec::new();
+285:     for index in 0..ATTACKS {
+286:         // Distinct fresh headers, not repeated accepted-block identities.
+287:         let nonce = 10_000 + number * ATTACKS as u64 + index as u64;
+288:         searches.push(search_from_zero(
+289:             genesis_header(&settings, target, nonce, task),
+290:             &a,
+291:             &b,
+292:             SEARCH_BUDGET,
+293:         ));
+294:     }
+295:     let all_preparation_thread_cpu_ns = cpu_elapsed(preparation_cpu);
+296:     let all_preparation_wall_ns = ns(build_start);
+297:     // Construction above finishes before this phase generates any honest proof.
+298:     let owner = Arc::new(Mutex::new(node));
+299:     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+300:     let address = listener.local_addr().unwrap();
+301:     let stop = Arc::new(AtomicBool::new(false));
+302:     let (shared, signal) = (owner.clone(), stop.clone());
+303:     let worker = thread::spawn(move || {
+304:         match public_v3::serve_public_protected_v3(
+305:             listener,
+306:             shared,
+307:             Duration::from_secs(30),
+308:             signal,
+309:             server,
+310:         ) {
+311:             Ok(metrics) => json!({"metrics": metrics, "error": null}),
+312:             Err(error) => json!({"metrics": null, "error": error.to_string()}),
+313:         }
+314:     });
+315:     let service = RunningService {
+316:         stop,
+317:         worker: Some(worker),
+318:     };
+319:     let client = Client {
+320:         address,
+321:         settings: settings.clone(),
+322:         epoch,
+323:     };
+324:     let barrier = Arc::new(Barrier::new(3));
+325:     let (attack_client, attack_barrier) = (client.clone(), barrier.clone());
+326:     let attack = thread::spawn(move || {
+327:         let worker_cpu = ThreadCpuStamp::start();
+328:         attack_barrier.wait();
+329:         let mut records = Vec::new();
+330:         for (index, search) in searches.into_iter().enumerate() {
+331:             let submission_start = Instant::now();
+332:             let wire = search.observation["packet"].as_str().map(str::to_owned);
+333:             // Exhaustion remains None and never starts a submitted proof.
+334:             let call = wire.map(|packet| {
+335:                 attack_client.call("from_zero", 100 + index as u8, Request::Submit { packet })
+336:             });
+337:             records.push(json!({"construction": search.observation, "call": call,
+338:                 "submission_total_wall_ns": ns(submission_start)}));
+339:         }
+340:         // This enclosing interval also charges request cloning, failures and
+341:         // diagnostic construction between individual client-call intervals.
+342:         let attacker_worker_cpu_ns = cpu_elapsed(worker_cpu);
+343:         (records, attacker_worker_cpu_ns)
+344:     });
+345:     let (read_client, read_barrier) = (client.clone(), barrier.clone());
+346:     let reads = thread::spawn(move || {
+347:         read_barrier.wait();
+348:         (0..PROBES)
+349:             .map(|_| read_client.call("honest_read", 72, Request::Head))
+350:             .collect::<Vec<_>>()
+351:     });
+352:     barrier.wait();
+353:     let honest_start = Instant::now();
+354:     let honest_cpu = ThreadCpuStamp::start();
+355:     let honest = producer.mine(
+
+486: #[test]
+487: fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
+488:     let temporary = tempfile::tempdir().unwrap();
+489:     let output = std::env::var_os("TRNM_PUBLIC_V3_FROM_ZERO_DIR")
+490:         .map(std::path::PathBuf::from)
+491:         .or_else(|| {
+492:             // The full workspace lane does not use the standalone driver.
+493:             // Keep its actual failure reports inside the existing upload root,
+494:             // rather than deleting them with a temporary directory on unwind.
+495:             std::env::var_os("TRNM_CI_RECEIPT_DIR")
+496:                 .map(|root| std::path::PathBuf::from(root).join("public-v3-from-zero-suite"))
+497:         });
+498:     let path = if let Some(path) = output {
+499:         fs::create_dir(&path).unwrap(); // Never overwrite an earlier observation.
+500:         path
+501:     } else {
+502:         temporary.path().to_path_buf()
+503:     };
+504:     let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+505:     let receiver = path.join("receiver");
+506:     let mut node = Node::open(&receiver, settings.clone(), 2).unwrap();
+507:     node.enable_local_mempool(PoolLimits {
+508:         max_records: 16,
+509:         max_bytes: 32768,
+510:         max_group_members: 4,
+511:         critical_reserve: 0,
+512:         max_removals: 64,
+513:         preview_miner: development_public(0).unwrap(),
+514:     })
+515:     .unwrap();
+516:     let context_start = Instant::now();
+517:     let target = node.expected_target(settings.genesis()).unwrap();
+518:     let public_context_read_wall_ns = ns(context_start);
+519:     let mut producer = Node::open(&path.join("producer"), settings.clone(), 2).unwrap();
+520:     let server = PublicServer::new(identity(71), policy()).unwrap();
+521:     let domain = server.mutation_cpu_domain();
+522:     let epoch = Instant::now();
+523:     let (node, first) = phase(0, node, &mut producer, server, target, epoch);
+524:     let before = node.read_active().unwrap();
+525:     drop(node);
+526:     let reopen_start = Instant::now();
+527:     let reopened = Node::open(&receiver, settings.clone(), 2).unwrap();
+528:     let after = reopened.read_active().unwrap();
+529:     let reopen_wall_ns = ns(reopen_start);
+530:     let reopen_equal = before == after;
+531:     // Crucially retain the exact CPU domain, rather than mint a fresh service
+532:     // burst on the owner reopen. This is still same-process, not a power cut.
+533:     let server = PublicServer::with_continuous_domain(identity(71), policy(), &domain).unwrap();
+534:     let (node, second) = phase(1, reopened, &mut producer, server, target, epoch);
+535:     let passed =
+536:         reopen_equal && first["finite_target_met"] == true && second["finite_target_met"] == true;
+537:     let report = json!({
+538:         "schema": "public-v3-local-from-zero-service-v2", "network": hex::encode(settings.network()),
+539:         "parameters": hex::encode(settings.parameters()), "genesis": hex::encode(settings.genesis()),
+540:         "target": hex::encode(target), "policy_id": hex::encode(policy().id()),
+541:         "public_context_read_wall_ns": public_context_read_wall_ns,
+542:         "phases": [first, second], "reopen_wall_ns": reopen_wall_ns, "reopen_state_equal": reopen_equal,
+543:         "cpu_domain_retained_across_owner_reopen": true,
+544:         "scope": "finite local TCP; from-zero preparation and calling-thread client CPU, with real shared receiver CPU; zero claimed C; default honest producer; same-process owner reopen; no aggregate honest CPU or global speedup/energy ratio",
+545:         "budget_depletion_demonstrated": false,
+546:         "all_requested_reads_required_on_time": true,
+547:         "public_network_ready": false, "independent_accepted": false,
+548:         "work_profile_qualified": false, "resource_fairness_qualified": false,
+549:         "physical_power_loss": false, "production_activation": false, "finite_target_met": passed,
+550:     });
+551:     fs::write(
+552:         path.join("report.json"),
+553:         serde_json::to_vec_pretty(&report).unwrap(),
+554:     )
+555:     .unwrap();
+556:     drop(node);
+557:     drop(producer);
+558:     println!(
+559:         "{}",
+560:         json!({"schema": report["schema"], "finite_target_met": passed, "public_network_ready": false})
+561:     );
+562:     assert!(
+563:         passed,
+564:         "see retained from-zero trials, request failures and service CPU observations"
+565:     );
+566:     sustained_observation(&path);
+567: }
+568: 
+569: #[test]

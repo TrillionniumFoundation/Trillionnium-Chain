@@ -1,0 +1,13 @@
+{
+  "baseline_manifest": {
+    "bytes": 855220,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4"
+  },
+  "full_manifest": {
+    "bytes": 2309045,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-content-v2/frozen-execution-payload-manifest-v1.json",
+    "sha256": "56fcf87fd5e69248284912e7f4fbdcbb1d4598b5280b4750bb26ba80fe2c006c"
+  },
+  "phase": "content"
+}

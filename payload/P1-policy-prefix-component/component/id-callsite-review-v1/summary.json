@@ -1,0 +1,116 @@
+{
+  "inputs": [
+    {
+      "bytes": 433736,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original",
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selected_calls": [
+        {
+          "containing_function": "pub fn id(self) -> Hash {",
+          "line": 448,
+          "text": "    pub fn id(self) -> Hash {"
+        },
+        {
+          "containing_function": "fn id(&self) -> Result<Hash> {",
+          "line": 590,
+          "text": "    fn id(&self) -> Result<Hash> {"
+        },
+        {
+          "containing_function": "fn response_maximum(op: u8) -> usize {",
+          "line": 634,
+          "text": "fn response_maximum(op: u8) -> usize {"
+        },
+        {
+          "containing_function": "fn cookie(&self, s: &Settings, h: Hello, peer: SocketAddr) -> Result<Cookie> {",
+          "line": 845,
+          "text": "    fn cookie(&self, s: &Settings, h: Hello, peer: SocketAddr) -> Result<Cookie> {"
+        },
+        {
+          "containing_function": "fn reserve(&mut self, id: Hash, expiry: u64, tick: u64) -> Result<()> {",
+          "line": 927,
+          "text": "    fn reserve(&mut self, id: Hash, expiry: u64, tick: u64) -> Result<()> {"
+        },
+        {
+          "containing_function": "fn response(",
+          "line": 985,
+          "text": "fn response("
+        }
+      ],
+      "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+    },
+    {
+      "bytes": 10762,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs.original",
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "selected_calls": [
+        {
+          "containing_function": "pub(super) fn id(self, policy: PublicPolicy) -> Hash {",
+          "line": 18,
+          "text": "    pub(super) fn id(self, policy: PublicPolicy) -> Hash {"
+        },
+        {
+          "containing_function": "pub(super) fn id(self, policy: PublicPolicy) -> Hash {",
+          "line": 20,
+          "text": "            Self::Legacy => policy.id(),"
+        },
+        {
+          "containing_function": "pub(super) fn operation_allowed(self, op: u8) -> bool {",
+          "line": 37,
+          "text": "    /// CPU, queue, response and kernel limits remain bound through policy.id()."
+        },
+        {
+          "containing_function": "pub fn growth_id(self) -> Hash {",
+          "line": 40,
+          "text": "            GROWTH_PROFILE.as_bytes(), &self.id(),"
+        }
+      ],
+      "sha256": "2799bd30b73fae3b89b894e2c55f2dcb4c3231b670eb40f4f79a6e29d8362dbd"
+    },
+    {
+      "bytes": 7198,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.original",
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "selected_calls": [
+        {
+          "containing_function": "pub fn arithmetic_facts_id(self) -> Hash {",
+          "line": 26,
+          "text": "                &self.id(),"
+        },
+        {
+          "containing_function": "pub fn resource_profile(&self) -> Hash {",
+          "line": 60,
+          "text": "            self.policy.id()"
+        }
+      ],
+      "sha256": "c1fc7c88249daff102c2cdb045bb1b38e5fd115e15dc4c608a2f1a5725171724"
+    },
+    {
+      "bytes": 12757,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original",
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "selected_calls": [
+        {
+          "containing_function": "pub fn pq_history_id(self) -> Hash {",
+          "line": 231,
+          "text": "            PQ_HISTORY_PROFILE.as_bytes(), &self.id(),"
+        },
+        {
+          "containing_function": "pub(super) fn response_maximum_for(op: u8, pq: bool) -> usize {",
+          "line": 322,
+          "text": "pub(super) fn response_maximum_for(op: u8, pq: bool) -> usize {"
+        }
+      ],
+      "sha256": "ee7b44de5d90db0931dd22624c9e4e4b1ac89f10395f34a642088f83f13cc3e7"
+    },
+    {
+      "bytes": 5368,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_rejection.rs.original",
+      "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection.rs",
+      "selected_calls": [],
+      "sha256": "8ee630c87ed4fed442bd434c372f562a93a38846f27e17926e3c923956e5fe12"
+    }
+  ],
+  "schema": "trnm-public-policy-id-callsite-source-v1",
+  "source": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "tests_or_measurements": false
+}

@@ -1,0 +1,357 @@
+end(name + " read exit " + str(q.returncode))
+                continue
+            try:
+                observation[name] = parse_refs(q.stdout, heads=name == "heads",
+                                               allowed=allowed_tags if name == "tags" else None)
+            except Exception as error:
+                observation["errors"].append(name + " parse " + type(error).__name__ + ": " + str(error))
+        observation["both_old"] = observation["heads"] == expected and observation["tags"] == old_tags
+        if archive is not None:
+            wanted_heads = dict(expected)
+            wanted_heads[CANDIDATE_REF[11:]] = head
+            wanted_tags = dict(old_tags)
+            wanted_tags.update({tagref: archive["tag_oid"], tagref + "^{}": archive["commit"]})
+            observation["both_new"] = (observation["heads"] == wanted_heads
+                                       and observation["tags"] == wanted_tags)
+        return observation
+
+    snapshots = [spec_snapshot, self_snapshot, publisher_snapshot, resume_snapshot]
+    expected = None
+    gate_source = None
+    fresh_source_raw = None
+    hook_dir = None
+    hook_raw = expected_hook_raw = expected_hook = None
+    try:
+        published_heads, old_parents, frozen_raw, old_originals, original_snapshots = original_frozen_state()
+        expected = bind_expected_remote_heads(published_heads, expected_remote_head)
+        snapshots.extend(original_snapshots)
+        manifest = load_manifest(spec["execution_manifest"])
+        snapshots.extend(manifest["snapshots"])
+        gate, gate_raw, gate_source, gate_snapshots, gate_producer = validate_gate_payload(
+            H, spec["local_gate_receipt"], head, tree, manifest)
+        snapshots.extend(gate_snapshots)
+        rog, rog_raw, rog_snapshots, rog_producer = validate_rog_payload(
+            H, spec["rog_lane_receipt"], spec["rog_invocation"], head, tree, gate_source, manifest)
+        snapshots.extend(rog_snapshots)
+        state["validated_inputs"] = {
+            "gate_receipt": spec["local_gate_receipt"],
+            "rog_receipt": spec["rog_lane_receipt"],
+            "rog_invocation": spec["rog_invocation"],
+            "execution_manifest": spec["execution_manifest"],
+            "payload_files": manifest["manifest"]["file_count"],
+            "payload_bytes": manifest["manifest"]["total_bytes"],
+            "rog_producer_sha256": sha(rog_producer),
+            "exact_gate_commands": len(gate["steps"]), "exact_rog_commands": len(rog["steps"]),
+        }
+        emit("validated-execution-manifest.json", manifest["raw"])
+        emit("validated-local-gate-receipt.json", gate_raw)
+        emit("validated-rog-lane-receipt.json", rog_raw)
+        emit("expected-published-dc42-heads.json", encode(published_heads))
+        emit("expected-reviewed-remote-heads.json", encode(expected))
+        require(H["identity_snapshot"](env) == {"head": head, "tree": tree, "status": ""},
+                "local candidate HEAD/tree/status differs")
+        state["source_before_identity"] = {"head": head, "tree": tree, "status": ""}
+        for label, argv in (
+            ("origin-push-url", ["git", "remote", "get-url", "--push", "--all", "origin"]),
+            ("origin-fetch-url", ["git", "remote", "get-url", "--all", "origin"]),
+        ):
+            require(run(label, argv, timeout=60).stdout.decode().splitlines() == [URL],
+                    "exactly one fixed origin URL required")
+        configured = run("existing-hook-config", ["git", "config", "--get", "core.hooksPath"],
+                         timeout=60, require_zero=False)
+        require(configured.returncode == 1 and not configured.stdout and not configured.stderr,
+                "existing configured hook must not be overridden")
+        default_hook = pathlib.Path(git_value("default-hook-path", "rev-parse",
+                                   "--path-format=absolute", "--git-path", "hooks/pre-push"))
+        require(not default_hook.exists() and not default_hook.is_symlink(),
+                "existing default pre-push hook must not be overridden")
+        run("project-preflight", ["bash", "scripts/project-preflight.sh", "--audit"])
+        source_before = run("verify-source-before", [H["PYTHON"], "-B", "scripts/ci/verify_ci_source.py",
+             "--kind", "head", "--expected-head", head, "--output", str(ev / "source-before.json")])
+        fresh_source_raw, fresh_source_snapshot = stable_bytes(ev / "source-before.json")
+        require(fresh_source_raw == source_before.stdout
+                and H["validate_source_identity"](fresh_source_raw, head, tree) == gate_source,
+                "fresh source identity differs from completed gate/ROG receipts")
+        snapshots.append(fresh_source_snapshot)
+        for label, ancestor in (("candidate-fast-forward", BASE_HEAD),
+                                ("main-ancestry", MAIN_HEAD),
+                                ("semantic-ledger-ancestry", "5c04c60e463462d9df8884786e0d5bb32af08a64")):
+            run(label, ["git", "--no-replace-objects", "merge-base", "--is-ancestor", ancestor, head],
+                timeout=60)
+        run("published-to-reviewed-remote", ["git", "--no-replace-objects", "merge-base",
+            "--is-ancestor", BASE_HEAD, expected_remote_head], timeout=60)
+        run("reviewed-remote-to-candidate", ["git", "--no-replace-objects", "merge-base",
+            "--is-ancestor", expected_remote_head, head], timeout=60)
+        rog_start = spec["rog_invocation"]["expected_start_head"]
+        run("published-to-rog-start", ["git", "--no-replace-objects", "merge-base",
+            "--is-ancestor", BASE_HEAD, rog_start], timeout=60)
+        run("rog-start-to-candidate", ["git", "--no-replace-objects", "merge-base",
+            "--is-ancestor", rog_start, head], timeout=60)
+        actor = strict_json(run("actor", ["gh", "api", "user", "--jq", "{login,id}"]).stdout)
+        require(actor["login"] == "ProfHepta", "unexpected authenticated actor")
+        pr = strict_json(run("pr-before", ["gh", "api", "repos/" + REPOSITORY + "/pulls/847",
+            "--jq", "{number,state,draft,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,auto_merge}"]).stdout)
+        require(pr["number"] == 847 and pr["state"] == "open" and pr["head"] == expected_remote_head
+                and pr["head_ref"] == CANDIDATE_REF[11:] and pr["base_ref"] == "main"
+                and pr["base"] == MAIN_HEAD and pr["auto_merge"] is None
+                and type(pr["draft"]) is bool, "PR/base/head/auto-merge guard differs")
+        state["actor"], state["pr_before"] = actor, pr
+        state["remote_before"] = observe_remote("before", expected)
+        save()
+        require(state["remote_before"]["both_old"],
+                "fresh complete heads/old archive/new-tag absence differ; new review required")
+        run("archive-ref-format", ["git", "check-ref-format", tagref], timeout=60)
+        absent = run("new-local-tag-absence", ["git", "show-ref", "--verify", "--quiet", tagref],
+                     timeout=60, require_zero=False)
+        require(absent.returncode == 1 and not absent.stdout and not absent.stderr,
+                "new local tag already exists or absence check failed")
+        require(git_value("old-local-tag", "rev-parse", OLD_TAG_REF) == OLD_TAG_OID
+                and git_value("old-local-peel", "rev-parse", OLD_TAG_REF + "^{}") == OLD_ARCHIVE_COMMIT,
+                "local original archive tag changed")
+        old_tag_raw = object_bytes("old-archive-tag-object", "tag", OLD_TAG_OID, 64 * 1024)
+        check_tag_object(old_tag_raw, OLD_TAG_OID, OLD_TAG, OLD_ARCHIVE_COMMIT)
+        old_commit_raw = object_bytes("old-archive-commit-object", "commit", OLD_ARCHIVE_COMMIT, 128 * 1024)
+        check_commit_object(old_commit_raw, OLD_ARCHIVE_COMMIT, OLD_ARCHIVE_TREE, old_parents)
+        state["old_archive_verified"] = {
+            "tag": OLD_TAG, "tag_oid": OLD_TAG_OID, "commit": OLD_ARCHIVE_COMMIT,
+            "tree": OLD_ARCHIVE_TREE, "exact_direct_parents": len(old_parents),
+            "commit_raw_sha256": sha(old_commit_raw), "tag_raw_sha256": sha(old_tag_raw),
+            "historical_manifest_sha256": sha(frozen_raw),
+            "new_full_fsck_performed": False, "preservation_is_not_semantic_absorption": True,
+        }
+
+        archive_scope = {
+            "schema": "trnm-followup-execution-archive-scope-v2",
+            "candidate_head": head, "candidate_tree": tree,
+            "previous_own_published_head": BASE_HEAD,
+            "expected_remote_head": expected_remote_head,
+            "old_history_archive": state["old_archive_verified"],
+            "exact_ordered_parents": [OLD_ARCHIVE_COMMIT, head],
+            "frozen_remote_branch_names": 908, "original_distinct_tips": 892,
+            "payload_manifest_sha256": sha(manifest["raw"]),
+            "payload_files": len(manifest["payload"]),
+            "payload_bytes": manifest["manifest"]["total_bytes"],
+            "local_gate_receipt_sha256": sha(gate_raw), "rog_lane_receipt_sha256": sha(rog_raw),
+            "original_rog_producer_sha256": sha(rog_producer),
+            "main_merged": False, "branches_deleted": False, "protection_changed": False,
+            "hosted_ci_qualification": False, "qualification_granted": False,
+            "archive_preserves_history_not_semantic_equivalence": True,
+            "current_publication_outcome_included": False,
+            "new_full_fsck_performed": False,
+        }
+        files = {"payload/" + name: raw for name, raw in manifest["payload"].items()}
+        files.update({
+            "metadata/publication-spec.json": spec_raw,
+            "metadata/execution-manifest.json": manifest["raw"],
+            "metadata/frozen-0170-branches.json": frozen_raw,
+            "metadata/published-dc42-expected-heads.json": encode(published_heads),
+            "metadata/reviewed-remote-expected-heads.json": encode(expected),
+            "metadata/archive-scope.json": encode(archive_scope),
+            "metadata/local-gates.json": gate_raw,
+            "metadata/rog-full-lane.json": rog_raw,
+            "metadata/live-source-before.json": fresh_source_raw,
+            "metadata/original-archive-commit.raw": old_commit_raw,
+            "metadata/original-archive-tag.raw": old_tag_raw,
+            "producers/followup-publisher.py": self_raw,
+            "producers/original-publisher-v4.py": publisher_raw,
+            "producers/original-resume-v2.py": resume_raw,
+            "producers/seven-source-gates.py": gate_producer,
+            "producers/rog-offline-v4.py": rog_producer,
+            "README.md": (
+                "# Frozen execution receipts and follow-up candidate\n\n"
+                "This archive has exactly two ordered parents: the immutable original history archive, "
+                "then the reviewed follow-up candidate. The first parent retains the original 893-parent "
+                "history record; the second retains the candidate. Payload files are exact frozen bytes "
+                "with explicit original paths, lengths and SHA256 values. Failed and UNKNOWN receipts "
+                "remain failed and UNKNOWN. Historical preservation does not establish semantic equivalence.\n\n"
+                "The selected local seven-gate receipt and original ROG repository-truth lane passed on "
+                "the exact candidate. These local receipts do not confer hosted head/prospective CI, "
+                "protocol, performance, production or activation qualification. Main was not merged, "
+                "no branch was deleted, and no protection was changed by this archive operation.\n\n"
+                "The outcome of the current publication is recorded externally after the push and is "
+                "not self-referentially included. The archive index covers every other file, explicitly "
+                "excluding itself. No new full object fsck is claimed here.\n"
+            ).encode(),
+        })
+        for name, raw in old_originals.items():
+            files["metadata/original-publication/" + name] = raw
+        for name in files:
+            safe_relative(name)
+        archive_index = {"schema": "trnm-execution-archive-file-index-v1",
+                         "self_excluded": "metadata/archive-file-index.json",
+                         "files": [{"path": name, "bytes": len(raw), "sha256": sha(raw),
+                                    "git_blob": git_object_oid("blob", raw), "mode": "100644"}
+                                   for name, raw in sorted(files.items())]}
+        files["metadata/archive-file-index.json"] = encode(archive_index)
+        check_versions(snapshots)
+        root_node, file_oids = {}, {}
+        for index, (name, raw) in enumerate(sorted(files.items()), 1):
+            parts = safe_relative(name).parts
+            node = root_node
+            for part in parts[:-1]:
+                require(part not in node or isinstance(node[part], dict), "archive path collision")
+                node = node.setdefault(part, {})
+            require(parts[-1] not in node, "duplicate archive file")
+            oid = run("archive-blob-" + str(index), ["git", "hash-object", "-w", "--stdin"],
+                      data=raw, timeout=60).stdout.decode("ascii").strip()
+            require(oid == git_object_oid("blob", raw), "written Git blob differs from held payload")
+            node[parts[-1]] = oid
+            file_oids[name] = oid
+        tree_counter = [0]
+        def write_tree(node):
+            entries = []
+            for name, value in sorted(node.items()):
+                if isinstance(value, dict):
+                    oid, mode, kind = write_tree(value), "040000", "tree"
+                else:
+                    oid, mode, kind = value, "100644", "blob"
+                entries.append((mode + " " + kind + " " + oid + "\t" + name).encode("utf-8") + b"\0")
+            tree_counter[0] += 1
+            result = run("archive-tree-" + str(tree_counter[0]), ["git", "mktree", "-z"],
+                         data=b"".join(entries), timeout=60).stdout.decode("ascii").strip()
+            require(re.fullmatch(r"[0-9a-f]{40}", result), "invalid generated tree OID")
+            return result
+        archive_tree = write_tree(root_node)
+        listing = run("archive-exact-tree-list", ["git", "ls-tree", "-r", "-z", archive_tree],
+                      timeout=60).stdout
+        actual_files = {}
+        for record in listing.split(b"\0"):
+            if not record:
+                continue
+            metadata, name = record.split(b"\t", 1)
+            mode, kind, oid = metadata.decode("ascii").split()
+            name = name.decode("utf-8")
+            require(mode == "100644" and kind == "blob" and name not in actual_files,
+                    "generated archive contains unexpected mode/type/duplicate")
+            actual_files[name] = oid
+        require(actual_files == file_oids, "generated archive tree path/blob roster differs")
+        archive_commit = run("archive-commit", ["git", "commit-tree", archive_tree,
+            "-p", OLD_ARCHIVE_COMMIT, "-p", head],
+            data=("Preserve frozen follow-up execution receipts and candidate " + head + "\n").encode(),
+            timeout=60).stdout.decode("ascii").strip()
+        require(re.fullmatch(r"[0-9a-f]{40}", archive_commit), "invalid generated archive commit")
+        new_commit_raw = object_bytes("new-archive-commit-object", "commit", archive_commit, 128 * 1024)
+        check_commit_object(new_commit_raw, archive_commit, archive_tree, [OLD_ARCHIVE_COMMIT, head])
+        run("archive-annotated-tag", ["git", "tag", "-a", tag, archive_commit, "-m",
+            "Frozen follow-up execution receipts; original history archive " + OLD_ARCHIVE_COMMIT +
+            "; candidate " + head + ". No main merge, deletion, hosted or protocol qualification."],
+            timeout=60)
+        tag_oid = git_value("new-local-tag", "rev-parse", tagref)
+        require(git_value("new-local-peel", "rev-parse", tagref + "^{}") == archive_commit,
+                "new annotated archive peel differs")
+        new_tag_raw = object_bytes("new-archive-tag-object", "tag", tag_oid, 64 * 1024)
+        check_tag_object(new_tag_raw, tag_oid, tag, archive_commit)
+        state["archive"] = {
+            "tag": tag, "tag_oid": tag_oid, "commit": archive_commit, "tree": archive_tree,
+            "direct_parents": [OLD_ARCHIVE_COMMIT, head], "candidate_head": head,
+            "payload_manifest_sha256": sha(manifest["raw"]), "archive_files": len(files),
+            "archive_bytes": sum(map(len, files.values())),
+            "file_index_sha256": sha(files["metadata/archive-file-index.json"]),
+        }
+        emit("archive-local.json", encode(state["archive"]))
+        emit("archive-file-index.json", files["metadata/archive-file-index.json"])
+        hook_dir = ev / "hooks"
+        hook_dir.mkdir(mode=0o700)
+        expected_hook = {
+            "origin": URL, "remote_heads": expected, "old_archive_tags": old_tags,
+            "new_tag_ref": tagref, "updates": {
+                CANDIDATE_REF: {"local_ref": head, "new": head, "old": expected_remote_head},
+                tagref: {"local_ref": tagref, "new": tag_oid, "old": ZERO},
+            },
+        }
+        expected_hook_raw = encode(expected_hook)
+        with (hook_dir / "expected.json").open("xb") as stream:
+            stream.write(expected_hook_raw)
+        hook_raw = HOOK_TEMPLATE.replace("__EXPECTED_SHA__", sha(expected_hook_raw)).replace(
+            "__EXPECTED_BYTES__", str(len(expected_hook_raw))).encode()
+        hook_path = hook_dir / "pre-push"
+        with hook_path.open("xb") as stream:
+            stream.write(hook_raw)
+        hook_path.chmod(0o700)
+        require(stat.S_ISREG(hook_path.lstat().st_mode)
+                and hook_path.lstat().st_mode & 0o111
+                and hook_path.resolve(strict=True) == hook_path, "actual executable hook missing")
+        run("prepush-preflight", ["bash", "scripts/project-preflight.sh", "--audit"])
+        require(H["identity_snapshot"](env) == {"head": head, "tree": tree, "status": ""},
+                "candidate source changed before push")
+        require(run("prepush-origin-push-url", ["git", "remote", "get-url", "--push", "--all", "origin"],
+                    timeout=60).stdout.decode().splitlines() == [URL], "push URL changed")
+        # These stable held-input identities are rechecked after archive creation.
+        # The actual send transaction still uses the normal server old-OID check.
+        current_hook_config = run("prepush-existing-hook-config",
+            ["git", "config", "--get", "core.hooksPath"], timeout=60, require_zero=False)
+        require(current_hook_config.returncode == 1 and not current_hook_config.stdout
+                and not current_hook_config.stderr
+                and not default_hook.exists() and not default_hook.is_symlink(),
+                "another required pre-push hook appeared")
+        current_pr = strict_json(run("pr-prepush", ["gh", "api", "repos/" + REPOSITORY + "/pulls/847",
+            "--jq", "{number,state,draft,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,auto_merge}"]).stdout)
+        require(current_pr == pr, "PR changed during archive preparation")
+        current_actor = strict_json(run("actor-prepush", ["gh", "api", "user", "--jq", "{login,id}"]).stdout)
+        require(current_actor == actor, "authenticated actor changed during archive preparation")
+        check_versions(snapshots)
+        require(stable_bytes(hook_path)[0] == hook_raw
+                and stable_bytes(hook_dir / "expected.json")[0] == expected_hook_raw,
+                "hook inputs changed before push")
+        state["push_started"], state["status"] = True, "UNKNOWN"
+        state["push_started_at"] = now()
+        save()
+        push = run("atomic-publish", ["git", "-c", "core.hooksPath=" + str(hook_dir),
+                    "push", "--verify", "--atomic", "--porcelain", "--verbose", "--progress",
+                    "origin", head + ":" + CANDIDATE_REF, tagref + ":" + tagref],
+                   timeout=1800, require_zero=False, sampled=True)
+        state["push_exit"] = push.returncode
+        save()
+    except Exception as error:
+        state["errors"].append({"phase": "prepare-or-push", "type": type(error).__name__,
+                                "message": str(error)})
+    finally:
+        # No retry follows any transport status. Both destinations are always
+        # observed independently once a push was attempted, even after failure.
+        if state["push_started"]:
+            try:
+                state["remote_after"] = observe_remote("after", expected, state["archive"])
+            except Exception as error:
+                state["errors"].append({"phase": "remote-after", "type": type(error).__name__,
+                                        "message": str(error)})
+            try:
+                state["hook_receipt"] = verify_hook_receipt(
+                    hook_dir, expected_hook_raw, hook_raw, expected_hook)
+                state["exact_hook_verified"] = True
+            except Exception as error:
+                state["errors"].append({"phase": "hook-readback", "type": type(error).__name__,
+                                        "message": str(error)})
+        if gate_source is not None:
+            try:
+                source_after = run("verify-source-after", [H["PYTHON"], "-B",
+                    "scripts/ci/verify_ci_source.py", "--kind", "head", "--expected-head", head,
+                    "--output", str(ev / "source-after.json")], require_zero=False)
+                require(source_after.returncode == 0, "final source check failed")
+                after_raw, _ = stable_bytes(ev / "source-after.json")
+                require(after_raw == source_after.stdout
+                        and H["validate_source_identity"](after_raw, head, tree) == gate_source,
+                        "final source stdout/sidecar/receipt differs")
+                if fresh_source_raw is not None:
+                    require(after_raw == fresh_source_raw, "live before/after source bytes differ")
+                state["source_after_identity"] = H["identity_snapshot"](env)
+                require(state["source_after_identity"] == {"head": head, "tree": tree, "status": ""},
+                        "final HEAD/tree/status differs")
+                state["source_after_valid"] = True
+            except Exception as error:
+                state["errors"].append({"phase": "source-after", "type": type(error).__name__,
+                                        "message": str(error)})
+        after = state["remote_after"]
+        confirmed = (state["push_started"] and isinstance(after, dict) and after["both_new"]
+                     and state["source_after_valid"] and state["exact_hook_verified"])
+        state["status"] = "confirmed" if confirmed else ("UNKNOWN" if state["push_started"] else "HOLD")
+        state["finished_at"] = now()
+        save()
+    print(json.dumps({"schema": state["schema"], "status": state["status"],
+                      "head": head, "tree": tree, "push_exit": state["push_exit"],
+                      "source_after_valid": state["source_after_valid"],
+                      "exact_hook_verified": state["exact_hook_verified"],
+                      "receipt": str(ev / "summary.json")}), flush=True)
+    return 0 if state["status"] == "confirmed" else 1
+
+if __name__ == "__main__":
+    sys.exit(main())

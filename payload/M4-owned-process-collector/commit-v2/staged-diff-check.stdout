@@ -1,0 +1,10 @@
+docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:2: trailing whitespace.
+++ 
+docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:4: trailing whitespace.
+++ 
+docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:6: trailing whitespace.
+++ 
+docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:8: trailing whitespace.
+++ 
+docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:10: trailing whitespace.
+++ 

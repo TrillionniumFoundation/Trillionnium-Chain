@@ -1,0 +1,410 @@
+{
+  "active_contract_leaf_changes": 1,
+  "actual_default_reader": "PASS/HOLD_NO_GO",
+  "branch": "fix/chain-fixed-joint-source-binding-20261114",
+  "changed_existing_paths": [
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+    "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md"
+  ],
+  "clean": true,
+  "commit": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6",
+  "current_contract_sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092",
+  "evidence_index": {
+    "bytes": 6360,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/EVIDENCE_INDEX.json",
+    "sha256": "1ef48406dc679e9d12df8bd1af4b9d837d44c5bfb09b46cd1b0e94b044690521"
+  },
+  "full_lane_run": false,
+  "hosted_qualification": false,
+  "no_test_rerun_for_evidence_carrier": true,
+  "old_mapping_refused": true,
+  "original_controls_passed": 16,
+  "original_failed_attempts": 2,
+  "original_reader_and16_controls_unchanged": true,
+  "parent": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "patch": {
+    "bytes": 354314,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/commit.patch",
+    "sha256": "61850965c6fcc71c8e8e1fc801fbb7376b801058da6d86bfdd51b68162f0ff47"
+  },
+  "production_activation": false,
+  "schema": "fixed-probability-F1-commit-summary-v1",
+  "staged_paths": [
+    "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/README.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/EVIDENCE_INDEX.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/README.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/branch-rule-recovery-summary.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-branch-preflight.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-branch-preflight.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-staged-check-failures.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-staged-diff-check-failures.zip",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/patch-carrier.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/pon_work-2bb56596-to-7d8d4c59.patch.zip",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/reviewed-source-mapping.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-control.py",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/source-inputs-after.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/source-inputs-before.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/summary.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/fixed_probability_contract_v1-2bb56596.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/selection-index.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/summary.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-006-lines-74-74.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-006-lines-74-74.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-010-lines-78-78.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-010-lines-78-78.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-022-lines-90-90.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-022-lines-90-90.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-023-lines-91-91.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-023-lines-91-91.stdout",
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+  ],
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "name": "head-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/head-before.stdout",
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit": 0,
+      "name": "preflight-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/preflight-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 179,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/preflight-before.stdout",
+        "sha256": "abfabf3b8872f43d8a9c71075da947647cb420e6f3065b43cf0f4dc6c2cf3e6b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rm",
+        "--cached",
+        "--",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-commit-staged-diff-check.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-commit-staged-diff-check.stderr"
+      ],
+      "exit": 0,
+      "name": "unstage-raw-failure-streams",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/unstage-raw-failure-streams.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 208,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/unstage-raw-failure-streams.stdout",
+        "sha256": "351ef99750f1b66c4ee658f8c597fc8a531542d4bcef544bd53a3b70ef99706b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "add",
+        "--",
+        "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+        "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/README.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/README.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/branch-rule-recovery-summary.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-branch-preflight.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-branch-preflight.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-staged-check-failures.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/setup/original-staged-diff-check-failures.zip",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/patch-carrier.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/pon_work-2bb56596-to-7d8d4c59.patch.zip",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/source-review/reviewed-source-mapping.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-control.py",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/source-inputs-after.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/source-inputs-before.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/validation/summary.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/historical/fixed_probability_contract_v1-2bb56596.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/selection-index.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/summary.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-006-lines-74-74.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-006-lines-74-74.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-010-lines-78-78.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-010-lines-78-78.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-022-lines-90-90.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-022-lines-90-90.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-023-lines-91-91.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics/unit-023-lines-91-91.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1/EVIDENCE_INDEX.json"
+      ],
+      "exit": 0,
+      "name": "stage-exact",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/stage-exact.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/stage-exact.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only",
+        "-z"
+      ],
+      "exit": 0,
+      "name": "staged-paths",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-paths.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3356,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-paths.stdout",
+        "sha256": "18d0898786a5817c2e38e269bc160a72620ada902f8cf6d14d4d4342a9e7a5cf"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit": 0,
+      "name": "staged-diff-check",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit": 0,
+      "name": "preflight-staged",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/preflight-staged.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 179,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/preflight-staged.stdout",
+        "sha256": "abfabf3b8872f43d8a9c71075da947647cb420e6f3065b43cf0f4dc6c2cf3e6b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "--",
+        "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+        "formal/pon-nakamoto-v1/test_fixed_probability_contract.py"
+      ],
+      "exit": 0,
+      "name": "original-reader-test-diff",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/original-reader-test-diff.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/original-reader-test-diff.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--binary",
+        "--full-index",
+        "--no-ext-diff"
+      ],
+      "exit": 0,
+      "name": "staged-full-patch",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-full-patch.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 354314,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/staged-full-patch.stdout",
+        "sha256": "61850965c6fcc71c8e8e1fc801fbb7376b801058da6d86bfdd51b68162f0ff47"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "commit",
+        "-m",
+        "fix(chain): review current fixed-probability source binding"
+      ],
+      "exit": 0,
+      "name": "commit",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4113,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/commit.stdout",
+        "sha256": "f1e46aaa294b64d0fc7c2bff4935fd860be24d3f28caea232b34bb4d3b136e8f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "name": "head-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/head-after.stdout",
+        "sha256": "c9b7896356f9ebf5ecf32a3c81b62b26602563a80546c781cd947360cc3a07ca"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "name": "tree-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/tree-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/tree-after.stdout",
+        "sha256": "00759664d86a37bc0dad7d094f1b5c68b9dead55e93aac42270aa2163bd01a5e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^"
+      ],
+      "exit": 0,
+      "name": "parent-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/parent-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/parent-after.stdout",
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "name": "status-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v2/status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "tree": "9d85026774e6d5d8ba63162db5332954831fab74",
+  "validation_summary": {
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/summary.json",
+    "sha256": "cf27d1e898280b73322ac97b43137e8edd3369c8e058b038245ae107a09dd471"
+  },
+  "worktree": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114"
+}

@@ -1,0 +1,21 @@
+{
+  "label": "root-preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+  "started": 1794653462.173229,
+  "ended": 1794653462.2076185,
+  "returncode": 0,
+  "stdout": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/root-preflight.stdout",
+    "bytes": 175,
+    "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640"
+  },
+  "stderr": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/root-preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

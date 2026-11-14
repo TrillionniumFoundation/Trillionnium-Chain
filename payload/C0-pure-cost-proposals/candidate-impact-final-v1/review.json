@@ -1,0 +1,99 @@
+{
+  "at_utc": "2026-11-14T09:19:25.688469+00:00",
+  "candidate_status": "PROPOSED_NOT_IMPLEMENTED_UNMEASURED_NOT_A_CONFIRMATION_TARGET_FIX",
+  "clone_finish_blocks": 2,
+  "contract_literal_bytes": 5027,
+  "counts": {
+    "arm64": {
+      "conservative_saved_blocks_if_first_init_in_interval": 122608,
+      "direct_invocation_counter": false,
+      "exact_four_second_interval": false,
+      "host_checkpoint_count": false,
+      "original": {
+        "bytes": 16002976,
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+        "pointer": "/phases/1",
+        "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333"
+      },
+      "source_derived_lower_bound": 1553,
+      "stage_counters": {
+        "delivered_response_frames": 510,
+        "issued_challenges": 524,
+        "spent_reservations": 519
+      }
+    },
+    "x64": {
+      "conservative_saved_blocks_if_first_init_in_interval": 86742,
+      "direct_invocation_counter": false,
+      "exact_four_second_interval": false,
+      "host_checkpoint_count": false,
+      "original": {
+        "bytes": 12119117,
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+        "pointer": "/phases/1",
+        "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0"
+      },
+      "source_derived_lower_bound": 1099,
+      "stage_counters": {
+        "delivered_response_frames": 360,
+        "issued_challenges": 370,
+        "spent_reservations": 369
+      }
+    }
+  },
+  "direct_dependency": {
+    "copy": {
+      "bytes": 2357,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/node-Cargo.toml.original",
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    "git_blob": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+    "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "sha2_lines": [
+      {
+        "line": 37,
+        "text": "sha2 = \"0.10\""
+      }
+    ]
+  },
+  "dynamic_suffix_bytes": 61,
+  "evidence": [
+    {
+      "bytes": 3147,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/profile-prefix-preimage-proof.json",
+      "sha256": "95b931d675d9c565aba57c6be6bcb7527fb4b002e6253eaf2292bd4d411784ac"
+    },
+    {
+      "bytes": 17637,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/search-summary.json",
+      "sha256": "971842bed396dcba06c1cbc02c6b7087cc688607f1d5501147212e7f862e1316"
+    },
+    {
+      "bytes": 43593,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/summary.json",
+      "sha256": "fdf91739562b1327e8cac41cb922f7bc8b8308a5c6dedd7004e88a0dc67eb753"
+    },
+    {
+      "bytes": 11152,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/summary.json",
+      "sha256": "d50f2c14cc892989b6cc56c7ebfda682be80af9497a493d4f54efc7357656b5e"
+    },
+    {
+      "bytes": 11474,
+      "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/pressure-charge-review-v1/pressure-charge-summary.json",
+      "sha256": "f6e03e362e7884df9f4b7ee516df61a40c91678df3a187111aca7ecd92925793"
+    }
+  ],
+  "immutable_prefix_bytes": 5105,
+  "native_or_tests_executed": false,
+  "original_padded_blocks": 81,
+  "prefix_whole_blocks": 79,
+  "production_source_mutated": false,
+  "schema": "trnm-readonly-public-policy-prefix-candidate-impact-v1",
+  "source": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "target": {
+    "git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+  }
+}

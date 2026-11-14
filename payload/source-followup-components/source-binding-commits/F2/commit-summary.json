@@ -1,0 +1,547 @@
+{
+  "EVIDENCE_INDEX": {
+    "bytes": 4996,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/EVIDENCE_INDEX.json",
+    "sha256": "9a692e0b337d0a8f75ce0e1cf2e1a509ebccc40b033f0e03190e6f45892d14ea"
+  },
+  "F1_original_evidence_unchanged": true,
+  "README": {
+    "bytes": 1740,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/README.md",
+    "sha256": "2fb603866f6be42cb3590320ab240ec8af6386e780e746c776b1ae39204fa975"
+  },
+  "actual_check": "PASS/HOLD_NO_GO",
+  "actual_require_qualified_exit": 3,
+  "all_source_inputs": {
+    "bytes": 17243,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/all-23-inputs-review.json",
+    "sha256": "c663bc6e8db23401f7e395e066bec8df0a9f50424accae76cd6ec845725b46cf"
+  },
+  "changed_source_inputs": 4,
+  "clean": true,
+  "commit": "6418023d7f60e6e0c42f08c8726085a2b983757b",
+  "corpus_pins_to_update_by_root": {
+    "config/pon/joint-consensus-qualification-v1.json": "b2ce9946df65598ea1068ee5d2fbdcac131de6c8",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md": "fb577f6b424f19db48e21d0027cf3618e3556bbf",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py": "675a93aef57d928cb7054778b64232e922ca57e4",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": "7983a260ff6cfb91c4f2f8ab4b128f0769fa166c"
+  },
+  "existing_paths": [
+    "config/pon/joint-consensus-qualification-v1.json",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md"
+  ],
+  "full_repository_lane_run": false,
+  "historical_revision_and_map_refused": true,
+  "hosted_qualification": false,
+  "mathematical_or_parameter_changes": false,
+  "native_execution": false,
+  "new_source_map_sha256": "5fd6aea2f2d1a6a3831853f54c8cc6e83cc8233cc61ab97a01a8e482749be674",
+  "one_identity_method_adapted_and_old_2bb_rejection_added": true,
+  "original_named_methods_all_observed": true,
+  "original_test_methods": 35,
+  "parent": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6",
+  "patch": {
+    "bytes": 180285,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/commit.patch",
+    "sha256": "c009416b3a880542a7d6d0ccb6ed11257f0e06cd0ec3f6b33b92734f642fee52"
+  },
+  "production_activation": false,
+  "runtime_source_edited": false,
+  "schema": "joint-qualification-F2-commit-summary-v1",
+  "selected_validation_inputs": 35,
+  "sole_plan_or_corpus_edited": false,
+  "source_before_after_equal": true,
+  "source_checkpoint": "2d9baf313e54e49a4507c5057578e89ddbe7a1b6",
+  "source_files": 23,
+  "staged_paths": [
+    "config/pon/joint-consensus-qualification-v1.json",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/EVIDENCE_INDEX.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/README.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/all-23-inputs-review.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/minimal-change-proof.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas-index.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas.zip",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/old-mapping-control.py",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stderr",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stdout",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-after.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-before.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/steps-progress.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/summary.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/joint-consensus-qualification-v1-2bb56596.json",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/joint_consensus_qualification-2bb56596.py.original",
+    "evidence/pon-fixed-joint-source-binding-20261114/historical/test_joint_consensus_qualification-2bb56596.py.original",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py"
+  ],
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "label": "head-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/head-before.stdout",
+        "sha256": "c9b7896356f9ebf5ecf32a3c81b62b26602563a80546c781cd947360cc3a07ca"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit": 0,
+      "label": "index-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/index-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/index-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--name-only",
+        "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
+      ],
+      "exit": 0,
+      "label": "existing-diff-paths",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/existing-diff-paths.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 240,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/existing-diff-paths.stdout",
+        "sha256": "4bbe6e68a9a51dd57afe7c13aaa5b244d59c0bcbacc507ff0ed957f533e144d5"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "label": "preflight-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/preflight-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 176,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/preflight-before.stdout",
+        "sha256": "9d6c19e895e5795b948d5f0f9a61fe95dd345bb61ecfa7af950c9f8ba1c37fb3"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--name-only",
+        "2d9baf313e54e49a4507c5057578e89ddbe7a1b6",
+        "--",
+        "evidence/pon-fixed-joint-source-binding-20261114/f1",
+        "evidence/pon-fixed-joint-source-binding-20261114/README.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/original-diagnostics"
+      ],
+      "exit": 0,
+      "label": "F1-evidence-not-edited",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/F1-evidence-not-edited.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/F1-evidence-not-edited.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "-z"
+      ],
+      "exit": 0,
+      "label": "untracked-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/untracked-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2484,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/untracked-before.stdout",
+        "sha256": "a6b1e79191188ba5b7cd12d674f2e9e9b5151e521ebfaaf011b8787ddf6cefee"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "add",
+        "--",
+        "config/pon/joint-consensus-qualification-v1.json",
+        "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+        "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+        "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/README.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/all-23-inputs-review.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/minimal-change-proof.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas-index.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/source-review/reviewed-source-deltas.zip",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/old-mapping-control.py",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stderr",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stdout",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-after.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/source-inputs-before.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/steps-progress.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/validation/summary.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/historical/JOINT_CONSENSUS_QUALIFICATION_V1-2bb56596.md",
+        "evidence/pon-fixed-joint-source-binding-20261114/historical/joint-consensus-qualification-v1-2bb56596.json",
+        "evidence/pon-fixed-joint-source-binding-20261114/historical/joint_consensus_qualification-2bb56596.py.original",
+        "evidence/pon-fixed-joint-source-binding-20261114/historical/test_joint_consensus_qualification-2bb56596.py.original",
+        "evidence/pon-fixed-joint-source-binding-20261114/f2/EVIDENCE_INDEX.json"
+      ],
+      "exit": 0,
+      "label": "stage-exact",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/stage-exact.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/stage-exact.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only",
+        "-z"
+      ],
+      "exit": 0,
+      "label": "staged-paths",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-paths.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2724,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-paths.stdout",
+        "sha256": "c52a6ec25a735013535cc1361f1baf081bac39c0c83a55cac659a80b19386646"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit": 0,
+      "label": "staged-diff-check",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit": 0,
+      "label": "preflight-staged",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/preflight-staged.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 179,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/preflight-staged.stdout",
+        "sha256": "abfabf3b8872f43d8a9c71075da947647cb420e6f3065b43cf0f4dc6c2cf3e6b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--binary",
+        "--full-index",
+        "--no-ext-diff"
+      ],
+      "exit": 0,
+      "label": "staged-full-patch",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-full-patch.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 180285,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/staged-full-patch.stdout",
+        "sha256": "c009416b3a880542a7d6d0ccb6ed11257f0e06cd0ec3f6b33b92734f642fee52"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "commit",
+        "-m",
+        "fix(chain): bind joint qualification to reviewed current sources"
+      ],
+      "exit": 0,
+      "label": "commit",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3202,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/commit.stdout",
+        "sha256": "93b09ec8c4375c5ac1e8bdf490dcf1a0e1893b0ab6d4880063913ff35bcdbf2a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "label": "head-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/head-after.stdout",
+        "sha256": "16177e29119508c37f55b5210c82bf4027055696ce00c2caca99ccdfddce9718"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "label": "tree-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/tree-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/tree-after.stdout",
+        "sha256": "8a3173fb8d997a83d48634a5a104ad560ff1525dda5e0d61cb37895a3257e622"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^"
+      ],
+      "exit": 0,
+      "label": "parent-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/parent-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/parent-after.stdout",
+        "sha256": "c9b7896356f9ebf5ecf32a3c81b62b26602563a80546c781cd947360cc3a07ca"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "label": "status-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "6418023d7f60e6e0c42f08c8726085a2b983757b:config/pon/joint-consensus-qualification-v1.json"
+      ],
+      "exit": 0,
+      "label": "corpus-oid-0",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-0.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-0.stdout",
+        "sha256": "54e7e22e7520d6c502d9c2a43e7efeaa2936f06dfd1180dc4505309d2cc9ffae"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "6418023d7f60e6e0c42f08c8726085a2b983757b:formal/pon-nakamoto-v1/joint_consensus_qualification.py"
+      ],
+      "exit": 0,
+      "label": "corpus-oid-1",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-1.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-1.stdout",
+        "sha256": "937e9bb2ab8cb723b20bdbe7e346b69d20b607de493d20876a2ad3ae196cc1a2"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "6418023d7f60e6e0c42f08c8726085a2b983757b:formal/pon-nakamoto-v1/test_joint_consensus_qualification.py"
+      ],
+      "exit": 0,
+      "label": "corpus-oid-2",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-2.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-2.stdout",
+        "sha256": "69a6ed83388097b9f5f7bfa19a741252976035aa00444d78195cce1a4d1bce51"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "6418023d7f60e6e0c42f08c8726085a2b983757b:docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md"
+      ],
+      "exit": 0,
+      "label": "corpus-oid-3",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-3.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f2-commit-v1/corpus-oid-3.stdout",
+        "sha256": "235e062f2f4a27224954f0e30a9c851d92f689f26f25b61944e76c47e354a5ea"
+      }
+    }
+  ],
+  "tree": "599592262612172df960793d34146ccc776e25e6",
+  "unchanged_source_inputs": 19,
+  "unchanged_test_method_ASTs": 34,
+  "validation_summary": {
+    "bytes": 7489,
+    "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/summary.json",
+    "sha256": "f6cf7c529788fa3f70fe4878f7c8076cf6f494d6c7e00e489897e9a6531511d0"
+  },
+  "worktree": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114"
+}

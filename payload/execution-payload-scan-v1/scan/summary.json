@@ -1,0 +1,31 @@
+{
+  "all_secrets_absence_proved": false,
+  "automatic_hit_classification": false,
+  "bytes_scanned": 150184002,
+  "counts": {
+    "aws_access_key_id": 0,
+    "github_classic_token": 0,
+    "github_fine_grained_token": 0,
+    "private_key_header": 0,
+    "slack_token": 0
+  },
+  "coverage_complete": true,
+  "files_scanned": 2100,
+  "limits": {
+    "file_bytes": 268435456,
+    "files": 10000,
+    "manifest_bytes": 16777216,
+    "total_bytes": 536870912
+  },
+  "manifest": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a6206-prescan-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "6869bb859742174128f390f6d868f73c49559f5b8e354425dff5eccf06f762d4",
+    "size": 855220
+  },
+  "pattern_source_sha256": "5c292f6554bbf1345d6e58a3c64cf9099230223fc9c70f217a575f6f20ee7368",
+  "payload_root": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "regex_flags": [],
+  "review_required": false,
+  "scope": "Only explicit frozen manifest files; raw bytes, no archive or pack decompression.",
+  "status": "NO_PATTERN_HITS_IN_DECLARED_SCOPE"
+}

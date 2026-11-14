@@ -1,0 +1,1786 @@
+[
+  {
+    "M6": {
+      "bytes": 36165,
+      "mode": "100644",
+      "oid": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+      "sha256": "993298ead6b3de0a2157eea6e5060238f8c3459d24c5e15bfcb6889731430c3d"
+    },
+    "N": {
+      "bytes": 36165,
+      "mode": "100644",
+      "oid": "10370fb69e7398d976b2e5516ff5e139bf298455",
+      "sha256": "0abf32e534d30bfe2287516c1767f05ae9bb0cc17248fcc6cb6d7ab01f1a21a3"
+    },
+    "changed_from_M6": false,
+    "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+    "selected": {
+      "bytes": 36165,
+      "mode": "100644",
+      "oid": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+      "sha256": "993298ead6b3de0a2157eea6e5060238f8c3459d24c5e15bfcb6889731430c3d"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Keep exact d596 selected store pin; do not bind rejected N store."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 35218,
+      "mode": "100644",
+      "oid": "c347199fa7022743f4b25247dc1c194603bdab4e",
+      "sha256": "267a1dabf2807da22a71c3576246db77b056cac142e172ea16af11d0bd7b892d"
+    },
+    "N": {
+      "bytes": 36890,
+      "mode": "100644",
+      "oid": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+      "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 2405,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/.github--workflows--pon-w1-transparent-profile.yml.patch",
+      "sha256": "9c508018bfea10900872f1073aa2a0a7ec2a12a48ebd36d6fc0248c753910852"
+    },
+    "path": ".github/workflows/pon-w1-transparent-profile.yml",
+    "payload": {
+      "bytes": 36890,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/.github/workflows/pon-w1-transparent-profile.yml",
+      "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581"
+    },
+    "selected": {
+      "bytes": 36890,
+      "mode": "100644",
+      "oid": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+      "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 72224,
+      "mode": "100644",
+      "oid": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    "N": {
+      "bytes": 72224,
+      "mode": "100644",
+      "oid": "2a45fdfefc70881853dc6045491943d819f1a209",
+      "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+    },
+    "changed_from_M6": false,
+    "path": "config/pon/hash-use-contract-v1.json",
+    "selected": {
+      "bytes": 72224,
+      "mode": "100644",
+      "oid": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain M6 H1 all31 current-correct sources and19 purposes; N still has6 stale pins."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 14196,
+      "mode": "100644",
+      "oid": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+    },
+    "N": {
+      "bytes": 14196,
+      "mode": "100644",
+      "oid": "1c6dc60f31c13a00e3eaf0d01c85042ece00408f",
+      "sha256": "89ca3f7736f08003aad69da03151f1bbf487e3648917aaad88f1a53f7e93e88f"
+    },
+    "changed_from_M6": false,
+    "path": "config/pon/pq-authority-effects-v1.json",
+    "selected": {
+      "bytes": 14196,
+      "mode": "100644",
+      "oid": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Selected store equals M6; retain reviewed44-map context, routes and allfalse flags."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 522809,
+      "mode": "100644",
+      "oid": "fa4b1825d78ca25f25780fb43f73bee148bf5f66",
+      "sha256": "487aca500aa606572c0263b5c5c36e4983c5f718fd8713a1286e1f34865f4c7a"
+    },
+    "N": {
+      "bytes": 523581,
+      "mode": "100644",
+      "oid": "bb95d44c93af114719a26e39da95c4626be76d79",
+      "sha256": "128954354019f6311e4ab71adb70f6c178874a0b8278d4a6c6477a6197b2d546"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 21289,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq-cross-branch-corpus-v1.json.patch",
+      "sha256": "ffa1562e5674288b3bd5f9a9b19131c6aa4b08d23945a29d55c181c4c2ec9efe"
+    },
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "payload": {
+      "bytes": 523769,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "5f478a5bd909a484a0f6b6f71c9286af4e821e1cb11d937644681a2168b22d9f"
+    },
+    "selected": {
+      "bytes": 523769,
+      "mode": "100644",
+      "oid": "32701bae1883b89f0e506c96709c3d86250e13a1",
+      "sha256": "5f478a5bd909a484a0f6b6f71c9286af4e821e1cb11d937644681a2168b22d9f"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Union M6 required/pinned set plus only6 N additions; rebind exactly the selected source file OIDs including independent worker; no removal, historical evidence rewrite or global regeneration."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 18358,
+      "oid": "1035073e635a2cecd2841cfdc2e6166659f1599d",
+      "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/M6-config--pon--pq128-lifetime-budget-v1.json.stdout"
+    },
+    "N": {
+      "bytes": 18358,
+      "oid": "1d5a659df6777ab4346212344d9502ba545f359d",
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/N-config--pon--pq128-lifetime-budget-v1.json.stdout"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 632,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq128-lifetime-budget-v1.json.patch",
+      "sha256": "1cd4bf1967019a6619fedab960e1d3ae26d52fba83338ba0cc601037f36c116c"
+    },
+    "path": "config/pon/pq128-lifetime-budget-v1.json",
+    "payload": {
+      "bytes": 18358,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq128-lifetime-budget-v1.json",
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+    },
+    "selected": {
+      "bytes": 18358,
+      "mode": "100644",
+      "oid": "1d5a659df6777ab4346212344d9502ba545f359d",
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+    },
+    "selection": {
+      "disposition": "select_frozen_C0_exact",
+      "owner": "ci_repairs",
+      "reason": "Restore exact C0/N frozen model/lock/composition bytes; preserve M6 L1 mapping, receipts and source review in Git/evidence."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 13647,
+      "mode": "100644",
+      "oid": "5d85b9337ff09d3dffd0b52404115c8c9996e039",
+      "sha256": "1f29c93399d387abe2a676793a7f9de94bfb88406eeac6ff2bdc93125f31ec99"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 14377,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq128-lifetime-composition-current-v3.json.patch",
+      "sha256": "5297e8c7c8940a3fd60dcbe4087063507817a76a41f037796a0d4f3150d7b797"
+    },
+    "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+    "payload": {
+      "bytes": 13647,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq128-lifetime-composition-current-v3.json",
+      "sha256": "3ce2905d79ac787f5a97174bf9ad1f60fe117d46f8b27f69e756ee5d07af06d1"
+    },
+    "selected": {
+      "bytes": 13647,
+      "mode": "100644",
+      "oid": "48fd25bd32da1cb2900afb2f43e7105ecc3248c1",
+      "sha256": "3ce2905d79ac787f5a97174bf9ad1f60fe117d46f8b27f69e756ee5d07af06d1"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Adopt explicit frozen/current namespace with same reviewed21-map bytes and independent snapshot; no reader branch, limit, arithmetic or false qualification change."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 13166,
+      "oid": "ebd3b69b78036120b361d9984b02b3a4f9b1b462",
+      "sha256": "035053b5e938801ff15fc091898519d47ffb4fc8065502cf989f45535f893b26",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/M6-config--pon--pq128-lifetime-composition-v2.json.stdout"
+    },
+    "N": {
+      "bytes": 13166,
+      "oid": "ea59e63ae7f0734f03429411d4fb9ff265fd83da",
+      "sha256": "5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/N-config--pon--pq128-lifetime-composition-v2.json.stdout"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1640,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq128-lifetime-composition-v2.json.patch",
+      "sha256": "78b1eb421c551484f96098fe1fe4b2d0ca3e96ad444668a8e227a8c929fa09d8"
+    },
+    "path": "config/pon/pq128-lifetime-composition-v2.json",
+    "payload": {
+      "bytes": 13166,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq128-lifetime-composition-v2.json",
+      "sha256": "5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052"
+    },
+    "selected": {
+      "bytes": 13166,
+      "mode": "100644",
+      "oid": "ea59e63ae7f0734f03429411d4fb9ff265fd83da",
+      "sha256": "5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052"
+    },
+    "selection": {
+      "disposition": "select_frozen_C0_exact",
+      "owner": "ci_repairs",
+      "reason": "Restore exact C0/N frozen model/lock/composition bytes; preserve M6 L1 mapping, receipts and source review in Git/evidence."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 3782,
+      "mode": "100644",
+      "oid": "434d1cb328a3072ba08c174285eda3f0b31b51dd",
+      "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4152,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq128-source-correspondence-current-v2.json.patch",
+      "sha256": "a8bc7ade8505f8108b21889796c87a404bbf57ef19c4eb8491bcd767b9426fb3"
+    },
+    "path": "config/pon/pq128-source-correspondence-current-v2.json",
+    "payload": {
+      "bytes": 3782,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq128-source-correspondence-current-v2.json",
+      "sha256": "b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a"
+    },
+    "selected": {
+      "bytes": 3782,
+      "mode": "100644",
+      "oid": "cac5ec525f34f10e966826561ef1e9fa918f82af",
+      "sha256": "b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Only selected store SHA changes; independent canonical21-map snapshot updated; exact frozen identity/21 roster/caps/qualification unchanged."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 3017,
+      "oid": "283ff219ff0b9483b988bfb2c4af25f79fcd9e0e",
+      "sha256": "59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/M6-config--pon--pq128-source-lock-v1.json.stdout"
+    },
+    "N": {
+      "bytes": 3017,
+      "oid": "3b83e4ea0e6caf93c9dde488fab6dda24d36749c",
+      "sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2",
+      "source_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v1/raw/N-config--pon--pq128-source-lock-v1.json.stdout"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4488,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/config--pon--pq128-source-lock-v1.json.patch",
+      "sha256": "f63d68f2bee65bed0f585925ec875fe1662d48fa19bc49bb5c3c2ee6b8cc1acd"
+    },
+    "path": "config/pon/pq128-source-lock-v1.json",
+    "payload": {
+      "bytes": 3017,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/config/pon/pq128-source-lock-v1.json",
+      "sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
+    },
+    "selected": {
+      "bytes": 3017,
+      "mode": "100644",
+      "oid": "3b83e4ea0e6caf93c9dde488fab6dda24d36749c",
+      "sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
+    },
+    "selection": {
+      "disposition": "select_frozen_C0_exact",
+      "owner": "ci_repairs",
+      "reason": "Restore exact C0/N frozen model/lock/composition bytes; preserve M6 L1 mapping, receipts and source review in Git/evidence."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 6997,
+      "mode": "100644",
+      "oid": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    "N": {
+      "bytes": 6997,
+      "mode": "100644",
+      "oid": "96aa4ba7a8f4634e4d82778b87eae7791eaca716",
+      "sha256": "ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63"
+    },
+    "changed_from_M6": false,
+    "path": "config/pon/w1-lifetime-current-source-v2.json",
+    "selected": {
+      "bytes": 6997,
+      "mode": "100644",
+      "oid": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain exact M6 current20 map; N store variation not selected."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 1146849,
+      "mode": "100644",
+      "oid": "ffc58007ca67dedc3aa3808c1b1e2d6ff957cac8",
+      "sha256": "8b6a751f59cc725793f10dbf7ef3c604e692dfaf20fb9ca6f2aea986ba70abd4"
+    },
+    "N": {
+      "bytes": 1142496,
+      "mode": "100644",
+      "oid": "2a83106b73a65c78f826bcb2b4fd4794c6df12d2",
+      "sha256": "df48870ab7c0f1beba890cd3e375087784a0b73bd9e5c004caf237a8e4264386"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4579,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/docs--development--TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md.patch",
+      "sha256": "c71efc8e48915e9ce2b62e2984785cecaff2e5af3349e021e420ccf4454c48e6"
+    },
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "payload": {
+      "bytes": 1149745,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "24e805efab8b1acce3c5c6217acad27f90aa8295f9bb51154f019ee6946ab423"
+    },
+    "selected": {
+      "bytes": 1149745,
+      "mode": "100644",
+      "oid": "4c956d6703dd87bb3cc07d40001d1c3f684ba410",
+      "sha256": "24e805efab8b1acce3c5c6217acad27f90aa8295f9bb51154f019ee6946ab423"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Preserve M6 history and append only reviewed combined-source selections/pending validation; do not import N checkpoint execution claims or conflicting store/source locks."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 34109,
+      "oid": "c9b43d27d1408969017c2b8d3afd19080c216278",
+      "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/M6-docs--security--PQ128_LIFETIME_BUDGET_V1.md.stdout",
+      "sha256": "085784f77f915f990496ea64f029dbce452642646c3b717a151f02fa7e9895c0"
+    },
+    "N": {
+      "bytes": 31715,
+      "oid": "e3682e7af54d60b85ad35a2a5c92706c837a1051",
+      "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-docs--security--PQ128_LIFETIME_BUDGET_V1.md.stdout",
+      "sha256": "107a5a40bb546d198a6ab138529c1baa04d0e79025812ee8e99f97e6b96d7513"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3130,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/docs--security--PQ128_LIFETIME_BUDGET_V1.md.patch",
+      "sha256": "c65dade8e39a42c048f44b874010b90f253534d9e81f56c134b2af9c9ca07395"
+    },
+    "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+    "payload": {
+      "bytes": 36093,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "sha256": "e293e68546b8727675ede127fff6e2ef40c928b101c5af4d4a3f83448b3d9f1b"
+    },
+    "selected": {
+      "bytes": 36093,
+      "mode": "100644",
+      "oid": "ca27d838f08a7bb78f7074aac5ceaf8bc6e1c91b",
+      "sha256": "e293e68546b8727675ede127fff6e2ef40c928b101c5af4d4a3f83448b3d9f1b"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Retain complete L1 source-review/failure record, label its prior default historical, document explicit current namespace and accurate reproduction commands."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 22739,
+      "mode": "100644",
+      "oid": "01569efdd43a4d9adee2b9585845e8250067cdc2",
+      "sha256": "69973d73b1278a3573724baeddc7c9ccf93b1632eab773f7bba1d8d755ffef59"
+    },
+    "N": {
+      "bytes": 21527,
+      "mode": "100644",
+      "oid": "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7",
+      "sha256": "4fbe2d7b880b445d04bba9eb66f81c4e3dcdc375ecec869b7ed3eecb24488117"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 2775,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.patch",
+      "sha256": "156ba213f8b0cf1e84e8eec278376dbfdfa2aca70aaa96296874aaffe74e55a1"
+    },
+    "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+    "payload": {
+      "bytes": 25102,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+      "sha256": "920c39bea1615f5f219fb0ffb7fd66a0bdaa5198fa575e4025b6dd2ef616995d"
+    },
+    "selected": {
+      "bytes": 25102,
+      "mode": "100644",
+      "oid": "b47c30622f0f2175351d1940618852d44a72b55c",
+      "sha256": "920c39bea1615f5f219fb0ffb7fd66a0bdaa5198fa575e4025b6dd2ef616995d"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Keep M6 L1 provenance plus N explicit current-v3 explanation; state actual frozen C0 identities and selected map rather than relabelling prior observations."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 39183,
+      "mode": "100644",
+      "oid": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+    },
+    "N": {
+      "bytes": 40485,
+      "mode": "100644",
+      "oid": "f4230d0b39b32cf59d294272bac2f5049ba70aba",
+      "sha256": "402b1fd2bcb3be75762e38d372142152cc16188379ac35c5d03cfa13b5892cec"
+    },
+    "changed_from_M6": false,
+    "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "selected": {
+      "bytes": 39183,
+      "mode": "100644",
+      "oid": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "N context/pin describes unselected store; retain true M6 binding context."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 9888,
+      "mode": "100644",
+      "oid": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+      "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+    },
+    "N": {
+      "bytes": 10341,
+      "mode": "100644",
+      "oid": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+      "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 5139,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.patch",
+      "sha256": "a25f85ab02e29074ecd5b2a2c8602fce57957e5ba96ae0934e93f9dc2a289341"
+    },
+    "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+    "payload": {
+      "bytes": 10341,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+    },
+    "selected": {
+      "bytes": 10341,
+      "mode": "100644",
+      "oid": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+      "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 7324,
+      "mode": "100644",
+      "oid": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+    },
+    "N": {
+      "bytes": 8531,
+      "mode": "100644",
+      "oid": "42967be8d2e492d9d294f36271fec9758df20203",
+      "sha256": "22d0ec8240b1420f2d104f7394e425feb287e4a413aa407fe10928748c882409"
+    },
+    "changed_from_M6": false,
+    "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+    "selected": {
+      "bytes": 7324,
+      "mode": "100644",
+      "oid": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain true M6 current20 binding; no N fc39 relabelling."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 14936,
+      "mode": "100644",
+      "oid": "d8641eb1cdc0edf01e6b155460de9173245432db",
+      "sha256": "d211381d9db8013035c68168183e8e740c907ffd0c6ce50a04ec51fef6048a73"
+    },
+    "N": {
+      "bytes": 15988,
+      "mode": "100644",
+      "oid": "60124687f605c8727c26bfbdd168ef45c50839a3",
+      "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3120,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.patch",
+      "sha256": "ece7f28489af21da4c6c4d724648bf30557c8b1166e504e485ff3e79cc58b1af"
+    },
+    "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    "payload": {
+      "bytes": 15988,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+    },
+    "selected": {
+      "bytes": 15988,
+      "mode": "100644",
+      "oid": "60124687f605c8727c26bfbdd168ef45c50839a3",
+      "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 2964,
+      "mode": "100644",
+      "oid": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+      "sha256": "90dce7223a1cd955312f15695e0840ca544d126bab5ba17933da6a5c006458c8"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3358,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/evidence--pon-w1-qrom-semantics-current-20261114--README.md.patch",
+      "sha256": "1795d3b5639d8000e9371c1e90603786cc9d0a0e34c31d697b1e27ae09ac904e"
+    },
+    "path": "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+    "payload": {
+      "bytes": 2964,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+      "sha256": "90dce7223a1cd955312f15695e0840ca544d126bab5ba17933da6a5c006458c8"
+    },
+    "selected": {
+      "bytes": 2964,
+      "mode": "100644",
+      "oid": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+      "sha256": "90dce7223a1cd955312f15695e0840ca544d126bab5ba17933da6a5c006458c8"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 76729,
+      "mode": "100644",
+      "oid": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd",
+      "sha256": "5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 78849,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/evidence--pon-w1-qrom-semantics-current-20261114--report.json.patch",
+      "sha256": "e2a0f473ec288505815a671b178bee254476fb278c58a7ba9df087778aa695da"
+    },
+    "path": "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+    "payload": {
+      "bytes": 76729,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+      "sha256": "5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f"
+    },
+    "selected": {
+      "bytes": 76729,
+      "mode": "100644",
+      "oid": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd",
+      "sha256": "5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 37446,
+      "mode": "100644",
+      "oid": "d3f2dc52acfd9ee5d9451c5ac4a732747019561b",
+      "sha256": "0077217ca0b33a2d21dda50f5baa3828192087199eea6afc04425aed136bb125"
+    },
+    "N": {
+      "bytes": 37850,
+      "mode": "100644",
+      "oid": "19d0ff0825bc93b9e140cb3ee0e5d34894e126fc",
+      "sha256": "86d659a55c4aa12325fabedb9685a4abed7fbdbb3dda25e1f5dc25acea815d44"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1675,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/formal--throughput-v1--test_execution_report.py.patch",
+      "sha256": "ebe770277b0ebe746fd7e249a56402cce883de9712111c254cfb3fea7dda4622"
+    },
+    "path": "formal/throughput-v1/test_execution_report.py",
+    "payload": {
+      "bytes": 37850,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/formal/throughput-v1/test_execution_report.py",
+      "sha256": "86d659a55c4aa12325fabedb9685a4abed7fbdbb3dda25e1f5dc25acea815d44"
+    },
+    "selected": {
+      "bytes": 37850,
+      "mode": "100644",
+      "oid": "19d0ff0825bc93b9e140cb3ee0e5d34894e126fc",
+      "sha256": "86d659a55c4aa12325fabedb9685a4abed7fbdbb3dda25e1f5dc25acea815d44"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 199207,
+      "mode": "100644",
+      "oid": "0634074cefc7eee3ed1e7edbb99c830931dfbe5e",
+      "sha256": "caff843dd3e1f4bf23a9160a87fcccc9690455bfcbf95781625c74fcdb4bb37a"
+    },
+    "N": {
+      "bytes": 201190,
+      "mode": "100644",
+      "oid": "0c45b3c88437c8903faa3f6f1fb998cd5220fef8",
+      "sha256": "a29ca3515c7d70f6d0691523af6de525f8a2a175a4d7d8a515ed9ea59a6c97e1"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4845,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--check_ci_contract.py.patch",
+      "sha256": "b7c2833558eb62609edd41a832007eb2cbbca516815e5bf9bdfa267ad632e510"
+    },
+    "path": "scripts/ci/check_ci_contract.py",
+    "payload": {
+      "bytes": 201190,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/check_ci_contract.py",
+      "sha256": "6792d59146bf89b1aa5eb0438025254388585b7ba885d18d541f2b289342f7f8"
+    },
+    "selected": {
+      "bytes": 201190,
+      "mode": "100644",
+      "oid": "aa3971a204b45b00908b8798b75c3c3cb3462372",
+      "sha256": "6792d59146bf89b1aa5eb0438025254388585b7ba885d18d541f2b289342f7f8"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Union N current-reader/independent10-control wiring with M6 exact16 collector count; no >= matcher, skip/failure/timeout changes."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 113472,
+      "mode": "100644",
+      "oid": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+      "sha256": "a84324de473404cdb6c78f39e7e15ba4c448ac7aa994dbe5917ca0eab17bf03d"
+    },
+    "N": {
+      "bytes": 113739,
+      "mode": "100644",
+      "oid": "a4200bf6db7e26864c1cd2e5c2e58758abd1f743",
+      "sha256": "c394b32d8350a37a9f00f71c4d04f4b93b08993df37023a9f2ec2e9f20ccc5d0"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1360,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--check_pq_research_integration.py.patch",
+      "sha256": "af9590739a25fc54790aad3997922c126c1c6c20ff0a9000cf2df13f6af2d74c"
+    },
+    "path": "scripts/ci/check_pq_research_integration.py",
+    "payload": {
+      "bytes": 113808,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/check_pq_research_integration.py",
+      "sha256": "d571d62e9ce201854253e634340b8e656db747f0b531b02fde13baed1c1539cb"
+    },
+    "selected": {
+      "bytes": 113808,
+      "mode": "100644",
+      "oid": "88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d",
+      "sha256": "d571d62e9ce201854253e634340b8e656db747f0b531b02fde13baed1c1539cb"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Union all6 new N required paths with M6 B1 historical carrier; no required path removed."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 72428,
+      "mode": "100644",
+      "oid": "397bebcfffe47fe3747df625f053e1b7b7c4de53",
+      "sha256": "6cf838deac78ae2f185c74b0f5d5c3c1ad12ca1116a874210570bfe57bbfe86d"
+    },
+    "N": {
+      "bytes": 72496,
+      "mode": "100644",
+      "oid": "cba090808890320880b58036096e91604a4807a0",
+      "sha256": "c0cc9f9671616169aad369fec6e24d3d9b741e9551a2f7d2da2ed444d5c96ed3"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1143,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--check_public_readiness_evidence.py.patch",
+      "sha256": "c766695cb8eb2061df7e07c2302f666d177530b4a529b5f28261c0e52b1e845e"
+    },
+    "path": "scripts/ci/check_public_readiness_evidence.py",
+    "payload": {
+      "bytes": 72478,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/check_public_readiness_evidence.py",
+      "sha256": "fa543d232dd89c90d3be42931be6834d736a46cbcaaf90dd702bd01e3d6d92be"
+    },
+    "selected": {
+      "bytes": 72478,
+      "mode": "100644",
+      "oid": "7684557b73d8cf7884133fbe55c8b35a9481a0a6",
+      "sha256": "fa543d232dd89c90d3be42931be6834d736a46cbcaaf90dd702bd01e3d6d92be"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "M6 selected endpoint body binding/comment retained; N deterministic connection closure is added after the original transaction context."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 46547,
+      "mode": "100644",
+      "oid": "fef70851f7fb3348f30148ab390a76fc523dde0e",
+      "sha256": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9"
+    },
+    "N": {
+      "bytes": 46605,
+      "mode": "100644",
+      "oid": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+      "sha256": "fd01401165e843100a375caccc3122bc97e97459f59c723287eece53350f20bc"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 777,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--ci_job.sh.patch",
+      "sha256": "fddf94016d29b9bc30f3a91b1edc78bb429008921e78291a89e57f8d3a7550d9"
+    },
+    "path": "scripts/ci/ci_job.sh",
+    "payload": {
+      "bytes": 46605,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/ci_job.sh",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    "selected": {
+      "bytes": 46605,
+      "mode": "100644",
+      "oid": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Union N current-reader/independent10-control wiring with M6 exact16 collector count; no >= matcher, skip/failure/timeout changes."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 18146,
+      "mode": "100644",
+      "oid": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    "N": {
+      "bytes": 18159,
+      "mode": "100644",
+      "oid": "f58609ec7ea88ec9eadfdf92b3e09ab843b884c6",
+      "sha256": "d16a951434a098809d65d2ebd23b0032dc7cd4c5394e1ec16eb69976171f392c"
+    },
+    "changed_from_M6": false,
+    "path": "scripts/ci/hash_use_contract.py",
+    "selected": {
+      "bytes": 18146,
+      "mode": "100644",
+      "oid": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain independent M6 H1 map commitment; no historical identity waiver."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 11127,
+      "mode": "100644",
+      "oid": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    "N": {
+      "bytes": 11127,
+      "mode": "100644",
+      "oid": "e2d05b7332635e787137b513ed86186c0341054f",
+      "sha256": "4faf1ba7badb0186c7d89a1ae1132a8bd2a32a5d6316ab75a9a85c479b24dc0d"
+    },
+    "changed_from_M6": false,
+    "path": "scripts/ci/pq_authority_effect_register.py",
+    "selected": {
+      "bytes": 11127,
+      "mode": "100644",
+      "oid": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain exact M6 independent44-source commitment and strict reader."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 14584,
+      "mode": "100644",
+      "oid": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+      "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+    },
+    "N": {
+      "bytes": 14458,
+      "mode": "100644",
+      "oid": "d29b8569a900473baf8281586394f12ba98d71df",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 2757,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--pq_chain_claim_guard.py.patch",
+      "sha256": "10b21c54e9a98c21e53089c431eac90ef75e8d63999f600a8922d04182bc0094"
+    },
+    "path": "scripts/ci/pq_chain_claim_guard.py",
+    "payload": {
+      "bytes": 14458,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/pq_chain_claim_guard.py",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+    },
+    "selected": {
+      "bytes": 14458,
+      "mode": "100644",
+      "oid": "d29b8569a900473baf8281586394f12ba98d71df",
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 26814,
+      "mode": "100644",
+      "oid": "4a63635251bbe36e729d0f9ad6928c532cce6183",
+      "sha256": "83170b4a37571e53af2b2d0bbae914a111dfafe0f5324dbc25b3f695212bbc8a"
+    },
+    "N": {
+      "bytes": 28724,
+      "mode": "100644",
+      "oid": "32ba61ab1119e6e3c6697b69bce0eb722644d764",
+      "sha256": "26381e93a96132c139458e9d3c1c9b0f6f7485013695207913f5d38c2e7659b5"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 8050,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--pq_lifetime_composition.py.patch",
+      "sha256": "d8d16549f1c3992d6259393e883c065944675531b2b3211b69210ea5a7a960af"
+    },
+    "path": "scripts/ci/pq_lifetime_composition.py",
+    "payload": {
+      "bytes": 28724,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/pq_lifetime_composition.py",
+      "sha256": "6c03ef4544ddd1bfc0da7c9e74b358bad21560c05ade0a2866e55eea13837a5c"
+    },
+    "selected": {
+      "bytes": 28724,
+      "mode": "100644",
+      "oid": "a99eb8b5915c5eb300ae7233dc5f4d797b3fa1f7",
+      "sha256": "6c03ef4544ddd1bfc0da7c9e74b358bad21560c05ade0a2866e55eea13837a5c"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Adopt explicit frozen/current namespace with same reviewed21-map bytes and independent snapshot; no reader branch, limit, arithmetic or false qualification change."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 10522,
+      "mode": "100644",
+      "oid": "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc",
+      "sha256": "251123229e5abf417f2c07ed023368091e11aa7200ff017338209e83a6d684ad"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 11008,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--pq_lifetime_current_v2.py.patch",
+      "sha256": "c4d30583fe69feb15deb9fddc9a3004758dc547432fb8e6109029fe279f8dc24"
+    },
+    "path": "scripts/ci/pq_lifetime_current_v2.py",
+    "payload": {
+      "bytes": 10522,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/pq_lifetime_current_v2.py",
+      "sha256": "3fc874ccfca2e65849bbef70205cce423d094cfc523613b115cd706f9604b93a"
+    },
+    "selected": {
+      "bytes": 10522,
+      "mode": "100644",
+      "oid": "cc805ba9cc83e9e1160e037725af8a968a2ece12",
+      "sha256": "3fc874ccfca2e65849bbef70205cce423d094cfc523613b115cd706f9604b93a"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Adopt explicit frozen/current namespace with same reviewed21-map bytes and independent snapshot; no reader branch, limit, arithmetic or false qualification change."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 11875,
+      "mode": "100644",
+      "oid": "1d3d7547524bab86db38a69a935e801066ba9e25",
+      "sha256": "4c97035d750a9f4c5813da67b48ce64e62a27d3b6ffa4841e78f800989e00bcb"
+    },
+    "N": {
+      "bytes": 14617,
+      "mode": "100644",
+      "oid": "0ae22bec4563858aa9735c4334593459f1b9b236",
+      "sha256": "0a4c9a361d428e7a603ec956d926b03923da3fd3b781fb031db5dcef2b581d88"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 5140,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--run_cell_learning_business_readback.py.patch",
+      "sha256": "a6df9c2455271ce8a2c0feadb09f68a12731cbc9bb3cb64c89e91527101a5776"
+    },
+    "path": "scripts/ci/run_cell_learning_business_readback.py",
+    "payload": {
+      "bytes": 14617,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/run_cell_learning_business_readback.py",
+      "sha256": "0a4c9a361d428e7a603ec956d926b03923da3fd3b781fb031db5dcef2b581d88"
+    },
+    "selected": {
+      "bytes": 14617,
+      "mode": "100644",
+      "oid": "0ae22bec4563858aa9735c4334593459f1b9b236",
+      "sha256": "0a4c9a361d428e7a603ec956d926b03923da3fd3b781fb031db5dcef2b581d88"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 45114,
+      "mode": "100644",
+      "oid": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+      "sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479"
+    },
+    "N": {
+      "bytes": 47276,
+      "mode": "100644",
+      "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+      "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 6006,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--run_pon_budget_controls.py.patch",
+      "sha256": "765ac5f80b3a7322eea2ddc23dc41da1ee548171e498ce6d94abaeda5d559e2a"
+    },
+    "path": "scripts/ci/run_pon_budget_controls.py",
+    "payload": {
+      "bytes": 47276,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/run_pon_budget_controls.py",
+      "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+    },
+    "selected": {
+      "bytes": 47276,
+      "mode": "100644",
+      "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+      "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 18143,
+      "mode": "100644",
+      "oid": "9c80ee11fa6b6d2dc5461f7a4a2cdbe8f51eff93",
+      "sha256": "8fa2fff07e15eab9bc724c30c14bac3d7325168197d5dea544c5118864e34084"
+    },
+    "N": {
+      "bytes": 18547,
+      "mode": "100644",
+      "oid": "fb440145ded4a7b4fcc9e8216c7fd6d0780f6286",
+      "sha256": "d16701eb61c7949912d45694520b24e395436d1e1492680d6ce6228085a85476"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1196,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--run_sp27_receiver_controls.py.patch",
+      "sha256": "454481ee3d81bb4b55a4a58b568cfc2c4c0672b0102e34fafc2e8e4753300d30"
+    },
+    "path": "scripts/ci/run_sp27_receiver_controls.py",
+    "payload": {
+      "bytes": 18547,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/run_sp27_receiver_controls.py",
+      "sha256": "d16701eb61c7949912d45694520b24e395436d1e1492680d6ce6228085a85476"
+    },
+    "selected": {
+      "bytes": 18547,
+      "mode": "100644",
+      "oid": "fb440145ded4a7b4fcc9e8216c7fd6d0780f6286",
+      "sha256": "d16701eb61c7949912d45694520b24e395436d1e1492680d6ce6228085a85476"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 37918,
+      "mode": "100644",
+      "oid": "7202f000438a06f017c5e00416431900dc919b83",
+      "sha256": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653"
+    },
+    "N": {
+      "bytes": 38322,
+      "mode": "100644",
+      "oid": "45ca070ace5981fc481061fc2c1d979046eec4b6",
+      "sha256": "459dafde601c9fdad23cb36f9f8931fd0a7a7967439a6b7cc933464eb9f7a907"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 1188,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--run_sp27_strata_controls.py.patch",
+      "sha256": "2a0e68c3689bbf518d78d78bc2f8a49ba49f75825831392511e5ae500b498d36"
+    },
+    "path": "scripts/ci/run_sp27_strata_controls.py",
+    "payload": {
+      "bytes": 38322,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/run_sp27_strata_controls.py",
+      "sha256": "459dafde601c9fdad23cb36f9f8931fd0a7a7967439a6b7cc933464eb9f7a907"
+    },
+    "selected": {
+      "bytes": 38322,
+      "mode": "100644",
+      "oid": "45ca070ace5981fc481061fc2c1d979046eec4b6",
+      "sha256": "459dafde601c9fdad23cb36f9f8931fd0a7a7967439a6b7cc933464eb9f7a907"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 247470,
+      "mode": "100644",
+      "oid": "9710a402113cee366b869d00071ff90d5868f015",
+      "sha256": "6ad902b690ab50bd27c939a727bd8917adaa9c6e569cdad19554b462ed0f9250"
+    },
+    "N": {
+      "bytes": 248810,
+      "mode": "100644",
+      "oid": "5ed407bb9590217423e5642cf0ceb45433c796db",
+      "sha256": "6092ddfc9ef8137c3e4b795c4d496f93be6acb8dc0afb79b1a096e6028166af5"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3545,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_ci_contract.py.patch",
+      "sha256": "578bc81779f19a6adf416f6ca1daf87a34cb45bf898b69bc1f297411909240c4"
+    },
+    "path": "scripts/ci/test_ci_contract.py",
+    "payload": {
+      "bytes": 248978,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_ci_contract.py",
+      "sha256": "7c8c56de795c4c609b6eafbc15aa3974599bfdd3eb099153e2259d24d5e2ed1f"
+    },
+    "selected": {
+      "bytes": 248978,
+      "mode": "100644",
+      "oid": "0593d7870b0675d7e642085b1771ace2cce84656",
+      "sha256": "7c8c56de795c4c609b6eafbc15aa3974599bfdd3eb099153e2259d24d5e2ed1f"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Preserve complete M6 exact16/bad0,13,14,15 method; N current-reader omission/duplication/move and10-control workflow negatives also remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 52662,
+      "mode": "100644",
+      "oid": "7e23896549563972f7e5951610c6b54c20bb896a",
+      "sha256": "3b64118b9fc78ea94d49d3e51fbaf0c6b64501b0a0e2454d104512ce73222245"
+    },
+    "N": {
+      "bytes": 59699,
+      "mode": "100644",
+      "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+      "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 9024,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_pon_budget_controls.py.patch",
+      "sha256": "00a496acc236207d5bc1ba0cd8372b1b79f2bbeb2b5ef369335302531c9655df"
+    },
+    "path": "scripts/ci/test_pon_budget_controls.py",
+    "payload": {
+      "bytes": 59699,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_pon_budget_controls.py",
+      "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+    },
+    "selected": {
+      "bytes": 59699,
+      "mode": "100644",
+      "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+      "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 16302,
+      "mode": "100644",
+      "oid": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d",
+      "sha256": "fedf6595bdb51b188e65a1c8a7c3b1f4942ddcbd170d4cdfee189d5ccfb7efbb"
+    },
+    "N": {
+      "bytes": 16396,
+      "mode": "100644",
+      "oid": "9851b6a9bddc8b695fb6142c471a766977cb9ede",
+      "sha256": "0fb7e418d27b80a4de9c03a9536ed3bd273eb633594f69f6ed62c0589a6e2348"
+    },
+    "changed_from_M6": false,
+    "path": "scripts/ci/test_pq_authority_effect_register.py",
+    "selected": {
+      "bytes": 16302,
+      "mode": "100644",
+      "oid": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d",
+      "sha256": "fedf6595bdb51b188e65a1c8a7c3b1f4942ddcbd170d4cdfee189d5ccfb7efbb"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain M6 original18 controls and selected-source literals."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 30219,
+      "mode": "100644",
+      "oid": "72682391155dd65d0f54606324ec5a01465bb653",
+      "sha256": "1dcd04932e73cff44b7d309e6b65412e977475667ea21c054a00402d32150cd0"
+    },
+    "N": {
+      "bytes": 30140,
+      "mode": "100644",
+      "oid": "624c16369129f3b8fbc44d4507fb22bc859bff39",
+      "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3049,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_pq_chain_claim_guard.py.patch",
+      "sha256": "43481b97596a5bb8b6843b2797e1b3372db7ce824ee198fa289d8175d1fdc30d"
+    },
+    "path": "scripts/ci/test_pq_chain_claim_guard.py",
+    "payload": {
+      "bytes": 30140,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_pq_chain_claim_guard.py",
+      "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9"
+    },
+    "selected": {
+      "bytes": 30140,
+      "mode": "100644",
+      "oid": "624c16369129f3b8fbc44d4507fb22bc859bff39",
+      "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 34544,
+      "mode": "100644",
+      "oid": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+      "sha256": "721ed07762d84cde999c16cdc519b4b796e407d8d3a224aa96956fd2c2d2115f"
+    },
+    "N": {
+      "bytes": 35557,
+      "mode": "100644",
+      "oid": "5b785871fb42396b6ce7ae1c79761a10cace9d30",
+      "sha256": "0353cc145d7d8a4c6b0bf093b96556fdf1b6597d94bedf916e311fb5844aadbc"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 2828,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_pq_lifetime_budget.py.patch",
+      "sha256": "0fe6fe1baa76601699e17630dbebfb52bfb75f6ad285bbab1a6ec02c218554a0"
+    },
+    "path": "scripts/ci/test_pq_lifetime_budget.py",
+    "payload": {
+      "bytes": 35557,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_pq_lifetime_budget.py",
+      "sha256": "0353cc145d7d8a4c6b0bf093b96556fdf1b6597d94bedf916e311fb5844aadbc"
+    },
+    "selected": {
+      "bytes": 35557,
+      "mode": "100644",
+      "oid": "5b785871fb42396b6ce7ae1c79761a10cace9d30",
+      "sha256": "0353cc145d7d8a4c6b0bf093b96556fdf1b6597d94bedf916e311fb5844aadbc"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 41465,
+      "mode": "100644",
+      "oid": "35e1ba409aaaaae951dc1f85c8c1a45667ffb223",
+      "sha256": "181ec0081311ec85102d9d152c76e36f0566069e22f69f6896f4976d363bde45"
+    },
+    "N": {
+      "bytes": 42830,
+      "mode": "100644",
+      "oid": "dfc384a37ec3da774ab77936cfe474858869cc0e",
+      "sha256": "9070208a62c0152bd52e651e164711945abe1ab7d887403e55ff568ed5b5ed08"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 5062,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_pq_lifetime_composition.py.patch",
+      "sha256": "83ee2bf4326a47aadbe20c101660b8dc463f1a542ef8196a56514bb0238b38a5"
+    },
+    "path": "scripts/ci/test_pq_lifetime_composition.py",
+    "payload": {
+      "bytes": 42830,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_pq_lifetime_composition.py",
+      "sha256": "9070208a62c0152bd52e651e164711945abe1ab7d887403e55ff568ed5b5ed08"
+    },
+    "selected": {
+      "bytes": 42830,
+      "mode": "100644",
+      "oid": "dfc384a37ec3da774ab77936cfe474858869cc0e",
+      "sha256": "9070208a62c0152bd52e651e164711945abe1ab7d887403e55ff568ed5b5ed08"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": null,
+    "N": {
+      "bytes": 13912,
+      "mode": "100644",
+      "oid": "9137a72b6871346959fc6b6243d58f42f5c9fffb",
+      "sha256": "4236ef17e9245989853637ce64d46c52701744e974ba0718e7d9331f43ab82b3"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 14503,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_pq_lifetime_current_v2.py.patch",
+      "sha256": "8c175cc746b8b2b1762765eb7ecaefc2da805c960dc13179db0962ff797088dd"
+    },
+    "path": "scripts/ci/test_pq_lifetime_current_v2.py",
+    "payload": {
+      "bytes": 13912,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_pq_lifetime_current_v2.py",
+      "sha256": "4236ef17e9245989853637ce64d46c52701744e974ba0718e7d9331f43ab82b3"
+    },
+    "selected": {
+      "bytes": 13912,
+      "mode": "100644",
+      "oid": "9137a72b6871346959fc6b6243d58f42f5c9fffb",
+      "sha256": "4236ef17e9245989853637ce64d46c52701744e974ba0718e7d9331f43ab82b3"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 127133,
+      "mode": "100644",
+      "oid": "7f2275d74692eb89c3b85b8048f5b514d490e8ec",
+      "sha256": "e514e11f8835f58a281f9d35a2d31a3c890134a3742b8a6cec2e01038c51216e"
+    },
+    "N": {
+      "bytes": 128178,
+      "mode": "100644",
+      "oid": "30a4e2dd3f2a78faf196ca75b484df0e4b2bd062",
+      "sha256": "0da6ad73ab38297c88870795f8ee02ed197024b6fa13196eb7518a532409268a"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 20071,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_public_readiness_evidence.py.patch",
+      "sha256": "31400e0ddfd97ff972f9901d006a351c7d694e844e79a640aec1dce0890895d9"
+    },
+    "path": "scripts/ci/test_public_readiness_evidence.py",
+    "payload": {
+      "bytes": 129879,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_public_readiness_evidence.py",
+      "sha256": "323944dbc7fc4a6f7d8a712942a2a8fe32901897ba6d67c8187ffddaf46afbb7"
+    },
+    "selected": {
+      "bytes": 129879,
+      "mode": "100644",
+      "oid": "f09640852443d301f206b0f9143720b9cdda1328",
+      "sha256": "323944dbc7fc4a6f7d8a712942a2a8fe32901897ba6d67c8187ffddaf46afbb7"
+    },
+    "selection": {
+      "disposition": "compose_reviewed",
+      "owner": "ci_repairs",
+      "reason": "Retain all N connection-closing adaptations and additional endpoint mutations, plus complete original M6 endpoint method; static total78, not an execution claim."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 16016,
+      "mode": "100644",
+      "oid": "e7c658baf937963336bc76f2ff59919698270961",
+      "sha256": "9373bda092c0ef615488221925723019c02bc18eff4826467f6f3ff5cb2f71c7"
+    },
+    "N": {
+      "bytes": 20152,
+      "mode": "100644",
+      "oid": "9764950c120b1e7636685100cef8c473c2d96ddf",
+      "sha256": "6e97054b0fd10abe5afa4d2f29e76137a5ca7d3c2a07e7de436a1ebea23d4e58"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4636,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_sp27_receiver_controls.py.patch",
+      "sha256": "1006e3ce5c23b2145e4ee02c7acf7e54be716c41b3bf35ec32c73bedb35ca4fa"
+    },
+    "path": "scripts/ci/test_sp27_receiver_controls.py",
+    "payload": {
+      "bytes": 20152,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_sp27_receiver_controls.py",
+      "sha256": "6e97054b0fd10abe5afa4d2f29e76137a5ca7d3c2a07e7de436a1ebea23d4e58"
+    },
+    "selected": {
+      "bytes": 20152,
+      "mode": "100644",
+      "oid": "9764950c120b1e7636685100cef8c473c2d96ddf",
+      "sha256": "6e97054b0fd10abe5afa4d2f29e76137a5ca7d3c2a07e7de436a1ebea23d4e58"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 25735,
+      "mode": "100644",
+      "oid": "948f9964aeb88aeccebc9b7b01448c1b4a6f3b4d",
+      "sha256": "c84031dbbce6becc4003903d2fa68d8daac42429be8c96ad8d5aa8004a085b0e"
+    },
+    "N": {
+      "bytes": 29891,
+      "mode": "100644",
+      "oid": "69c8289f41253cddbf0ec57eebf1a074cbda5697",
+      "sha256": "0899b9e7de96352f4045a2aa2f159985878c3a911ae5725e2a45519a8202dc29"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4650,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_sp27_strata_controls.py.patch",
+      "sha256": "8d5cbb0764aa64d2c3cdb8b4f08f102224f6dd8753294eff71618c2d519b7a0c"
+    },
+    "path": "scripts/ci/test_sp27_strata_controls.py",
+    "payload": {
+      "bytes": 29891,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_sp27_strata_controls.py",
+      "sha256": "0899b9e7de96352f4045a2aa2f159985878c3a911ae5725e2a45519a8202dc29"
+    },
+    "selected": {
+      "bytes": 29891,
+      "mode": "100644",
+      "oid": "69c8289f41253cddbf0ec57eebf1a074cbda5697",
+      "sha256": "0899b9e7de96352f4045a2aa2f159985878c3a911ae5725e2a45519a8202dc29"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 30842,
+      "mode": "100644",
+      "oid": "748c21550dda37f69ddc5f9208e9dc07fc384b69",
+      "sha256": "2348b7df4ca60558720a5855b190d76084f67e7d0cef25d6efcffe0a1cb43321"
+    },
+    "N": {
+      "bytes": 33523,
+      "mode": "100644",
+      "oid": "79214af83feab98f32a73c18280fa539df0eb16f",
+      "sha256": "a8ee40e47830be80f2d0582eaf8fa04701b2d468d1120377f422242c0a6e4723"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3198,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_throughput_cost_coverage.py.patch",
+      "sha256": "f8cbae133d7940690ac37b728f2671f1de34bdf185528b05d7c0634dca4d6503"
+    },
+    "path": "scripts/ci/test_throughput_cost_coverage.py",
+    "payload": {
+      "bytes": 33523,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_throughput_cost_coverage.py",
+      "sha256": "a8ee40e47830be80f2d0582eaf8fa04701b2d468d1120377f422242c0a6e4723"
+    },
+    "selected": {
+      "bytes": 33523,
+      "mode": "100644",
+      "oid": "79214af83feab98f32a73c18280fa539df0eb16f",
+      "sha256": "a8ee40e47830be80f2d0582eaf8fa04701b2d468d1120377f422242c0a6e4723"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 10621,
+      "mode": "100644",
+      "oid": "9e6989095794564623e9b56e58ab97af3cc42517",
+      "sha256": "8e4f8e6f3131da630ff00849465a8f0bc356173464347ca6b44b6ad14e99b982"
+    },
+    "N": {
+      "bytes": 10621,
+      "mode": "100644",
+      "oid": "7cedb1e646aae60bcd0104d82ae969706a497802",
+      "sha256": "2b90c4b1494f94af1dcb91d72c38d25751ab363204cdd28c816f5b65993ef95b"
+    },
+    "changed_from_M6": false,
+    "path": "scripts/ci/test_w1_lifetime_current_observation.py",
+    "selected": {
+      "bytes": 10621,
+      "mode": "100644",
+      "oid": "9e6989095794564623e9b56e58ab97af3cc42517",
+      "sha256": "8e4f8e6f3131da630ff00849465a8f0bc356173464347ca6b44b6ad14e99b982"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain M6 original14 controls and selected store literal."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 31742,
+      "mode": "100644",
+      "oid": "79898f0dd2e44a433f6bd4e4a039893bab7cb819",
+      "sha256": "4105a7a2e5e0102c25f0cf17d76632bef78fdf1f8bd940d861dfba272a355283"
+    },
+    "N": {
+      "bytes": 32644,
+      "mode": "100644",
+      "oid": "20722e2f119014791f1c87b3c666a4eb03606b32",
+      "sha256": "da6ef8fe424bda44ea9d9707387d26e2810eabcf13725998c887b061890c87f7"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3012,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_w1_qrom_closure_current_controls.py.patch",
+      "sha256": "2c986f7e6dd6f3aec11f040876bbe863d5342d47d7dfc0314dec75e2b6e794f9"
+    },
+    "path": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+    "payload": {
+      "bytes": 32644,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "sha256": "da6ef8fe424bda44ea9d9707387d26e2810eabcf13725998c887b061890c87f7"
+    },
+    "selected": {
+      "bytes": 32644,
+      "mode": "100644",
+      "oid": "20722e2f119014791f1c87b3c666a4eb03606b32",
+      "sha256": "da6ef8fe424bda44ea9d9707387d26e2810eabcf13725998c887b061890c87f7"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 19687,
+      "mode": "100644",
+      "oid": "ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f",
+      "sha256": "82e752078e462aa1b9f1c803bbd6928081a3d6bd53da79790455cdbd38e878fe"
+    },
+    "N": {
+      "bytes": 21400,
+      "mode": "100644",
+      "oid": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+      "sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 3752,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_w1_qrom_current_ci.py.patch",
+      "sha256": "6e14be295542d796c2d95827b2d4dc24a23f8584a05c2c3868fac58148df81ec"
+    },
+    "path": "scripts/ci/test_w1_qrom_current_ci.py",
+    "payload": {
+      "bytes": 21400,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_w1_qrom_current_ci.py",
+      "sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26"
+    },
+    "selected": {
+      "bytes": 21400,
+      "mode": "100644",
+      "oid": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+      "sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 20104,
+      "mode": "100644",
+      "oid": "5339b28b50fae5c58f0d1de8f1111c6b8ad02af7",
+      "sha256": "b5ab498400ac5bf2af0e3db4b854b94c4b73788cb270c411c84700dbc166e234"
+    },
+    "N": {
+      "bytes": 21038,
+      "mode": "100644",
+      "oid": "4d7f18b7146aad5459b967eab10dc41010e979e6",
+      "sha256": "d8de82b10efa2b21eac503a451578f675e6e79bb27710747b4551e6f0c41ddd7"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 4311,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--test_w1_qrom_semantics_audit.py.patch",
+      "sha256": "19b5f78d261a7a26d144f6ba3063fc20fd0f6b8b6a880ee983e1620c936e2a07"
+    },
+    "path": "scripts/ci/test_w1_qrom_semantics_audit.py",
+    "payload": {
+      "bytes": 21038,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/test_w1_qrom_semantics_audit.py",
+      "sha256": "d8de82b10efa2b21eac503a451578f675e6e79bb27710747b4551e6f0c41ddd7"
+    },
+    "selected": {
+      "bytes": 21038,
+      "mode": "100644",
+      "oid": "4d7f18b7146aad5459b967eab10dc41010e979e6",
+      "sha256": "d8de82b10efa2b21eac503a451578f675e6e79bb27710747b4551e6f0c41ddd7"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 32315,
+      "mode": "100644",
+      "oid": "4aa91a62595b5771a09cfe017395af652f93a0aa",
+      "sha256": "7511d967fe7f38ebc7e83005b8274b5de0382bcaa426649f57ef337a71d1cc03"
+    },
+    "N": {
+      "bytes": 32485,
+      "mode": "100644",
+      "oid": "8d5e8a370df1fee8d84e493f55f2a9417f3b8e99",
+      "sha256": "1d11e8d815cd5c9f912f7ccf2bf6882684782086d53bb1fbaeab5a7540b805e6"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 970,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/scripts--ci--throughput_cost_coverage.py.patch",
+      "sha256": "fb603af228bf0191d29cca40a9cc93b2c3ee59aa6f65fff9814c92590ba9abeb"
+    },
+    "path": "scripts/ci/throughput_cost_coverage.py",
+    "payload": {
+      "bytes": 32485,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/scripts/ci/throughput_cost_coverage.py",
+      "sha256": "1d11e8d815cd5c9f912f7ccf2bf6882684782086d53bb1fbaeab5a7540b805e6"
+    },
+    "selected": {
+      "bytes": 32485,
+      "mode": "100644",
+      "oid": "8d5e8a370df1fee8d84e493f55f2a9417f3b8e99",
+      "sha256": "1d11e8d815cd5c9f912f7ccf2bf6882684782086d53bb1fbaeab5a7540b805e6"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact",
+      "owner": "ci_repairs",
+      "reason": "Independently reviewed C0-to-N delta; unchanged M6 obligations outside this path remain."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 9216,
+      "mode": "100644",
+      "oid": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    "N": {
+      "bytes": 9216,
+      "mode": "100644",
+      "oid": "901634884d201df615370811f46a02ae88647631",
+      "sha256": "2cb8cc34baa59ef559d8abc1058414ae3c0bd848deacf0166c1f817bca5b248c"
+    },
+    "changed_from_M6": false,
+    "path": "scripts/w1_lifetime_current_observation.py",
+    "selected": {
+      "bytes": 9216,
+      "mode": "100644",
+      "oid": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    "selection": {
+      "disposition": "retain_M6_exact",
+      "owner": "ci_repairs",
+      "reason": "Retain current20 independent contract hash and historical7150/1f2b boundaries."
+    }
+  },
+  {
+    "M6": {
+      "bytes": 10842,
+      "oid": "06add57cd798a627630a6f5467d7891ab58c323d",
+      "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/M6-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "sha256": "18152e02b6b465ea5ba9b70d1a2c7348188ce304d9701d8c755641418070a568"
+    },
+    "N": {
+      "bytes": 12283,
+      "oid": "f021a33e2969305241099998f703172d29b15251",
+      "raw_path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/final-consumer-edges-v1/raw/N-trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+    },
+    "changed_from_M6": true,
+    "patch": {
+      "bytes": 2829,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/patches/trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.patch",
+      "sha256": "2e4ada8c8f4b80500461f07b171321d697c5689ed374e5e1c6ec7fe1c2f0faef"
+    },
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+    "payload": {
+      "bytes": 12283,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/selected-merge-proposal-v2/files/trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+      "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+    },
+    "selected": {
+      "bytes": 12283,
+      "mode": "100644",
+      "oid": "f021a33e2969305241099998f703172d29b15251",
+      "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+    },
+    "selection": {
+      "disposition": "adopt_N_exact_root_selected",
+      "owner": "architecture_audit/root",
+      "reason": "Root-selected exact N worker artifact prevalidation/locked-metadata tightening and2 controls; static production review owned by architecture."
+    }
+  }
+]

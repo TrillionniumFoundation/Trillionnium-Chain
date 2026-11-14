@@ -1,0 +1,87 @@
+diff --git a/scripts/ci/test_sp27_receiver_controls.py b/scripts/ci/test_sp27_receiver_controls.py
+index e7c658baf937963336bc76f2ff59919698270961..9764950c120b1e7636685100cef8c473c2d96ddf 100644
+--- a/scripts/ci/test_sp27_receiver_controls.py
++++ b/scripts/ci/test_sp27_receiver_controls.py
+@@ -280,5 +280,82 @@
+             sp27.bind_execution(self.prepared, self.out)
+ 
+ 
++    def binding_manifest(self):
++        # Only synthetic ordinary files are used; no native command is run.
++        report, observed, readback = self.read()
++        run = self.out / 'run'
++        run.mkdir()
++        stdout = ('running 1 test\n'
++                  f'test {sp27.SELECTOR} ... ok\n'
++                  'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; '
++                  '0 filtered out; finished in 0.001s\n')
++        (run / 'stdout').write_text(stdout)
++        (run / 'stderr').write_bytes(b'')
++        process = {
++            'command': [self.prepared['binary']['path'], sp27.SELECTOR,
++                        '--exact', '--ignored', '--show-output', '--test-threads=1'],
++            'exit_code': 0, 'timed_out': False,
++            'stdout_sha256': sp27.digest(run / 'stdout'),
++            'stderr_sha256': sp27.digest(run / 'stderr'),
++        }
++        return {
++            'schema': sp27.SCHEMA, 'collection_completed': True, 'failures': [],
++            'job': self.prepared['job'], 'causal_mechanism_established': False,
++            'runtime_limits_or_deadlines_changed': False,
++            'source_before': self.prepared['source_before'],
++            'source_after': self.prepared['source_before'],
++            'binary_before': self.prepared['binary'], 'binary_after': self.prepared['binary'],
++            'report_file': observed, 'qualification': report['qualification'],
++            'native_readback_files': readback, 'process': process,
++            'named_execution': sp27.named_test(stdout.splitlines(), sp27.SELECTOR),
++        }
++
++    def bind_manifest(self, value):
++        (self.out / 'manifest.json').write_text(json.dumps(value, sort_keys=True) + '\n')
++        with patch.object(sp27, 'validate_preparation', return_value=self.prepared), \
++                patch.object(sp27.history, 'job_identity', return_value=self.prepared['job']):
++            return sp27.bind_execution(self.prepared, self.out)
++
++    def test_execution_binding_accepts_exact_synthetic_process(self):
++        result = self.bind_manifest(self.binding_manifest())
++        self.assertFalse(result['successful_collection_is_business_qualification'])
++        self.assertFalse(result['runtime_limits_or_deadlines_changed'])
++
++    def test_execution_binding_rejects_changed_process_with_unchanged_logs(self):
++        original = self.binding_manifest()
++        command = original['process']['command']
++        changes = [
++            ('command missing', 'command', None, True),
++            ('command null', 'command', None, False),
++            ('command string', 'command', ' '.join(command), False),
++            ('different binary', 'command', ['/synthetic/other-binary', *command[1:]], False),
++            ('different selector', 'command', [command[0], 'different_selector', *command[2:]], False),
++            ('extra flag', 'command', [*command, '--nocapture'], False),
++            ('missing flag', 'command', [*command[:3], *command[4:]], False),
++            ('reordered flags', 'command', [*command[:4], command[5], command[4]], False),
++            ('exit missing', 'exit_code', None, True),
++            ('exit positive', 'exit_code', 1, False),
++            ('exit negative', 'exit_code', -1, False),
++            ('exit true', 'exit_code', True, False),
++            ('exit false', 'exit_code', False, False),
++            ('exit null', 'exit_code', None, False),
++            ('exit float', 'exit_code', 0.0, False),
++            ('timeout missing', 'timed_out', None, True),
++            ('timeout true', 'timed_out', True, False),
++            ('timeout numeric zero', 'timed_out', 0, False),
++            ('timeout null', 'timed_out', None, False),
++            ('timeout text', 'timed_out', 'false', False),
++        ]
++        for label, field, value, missing in changes:
++            changed = copy.deepcopy(original)
++            if missing:
++                del changed['process'][field]
++            else:
++                changed['process'][field] = value
++            with self.subTest(change=label), self.assertRaisesRegex(
++                    ValueError, 'SP27_NATIVE_PROCESS_REQUIRED'):
++                self.bind_manifest(changed)
++
++
+ if __name__ == '__main__':
+     unittest.main()

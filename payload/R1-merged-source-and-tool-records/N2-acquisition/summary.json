@@ -1,0 +1,101 @@
+{
+  "changed_path_count": 7,
+  "changed_paths": [
+    ".github/workflows/pon-w1-work-security.yml",
+    "config/pon/hash-use-contract-v1.json",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/test_w1_v2_controls_gate.py",
+    "scripts/ci/w1_v2_controls_gate.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "errors": [],
+  "new_commits": [
+    "096c6b5f9b952c49389fd975515744074ba61317"
+  ],
+  "new_tree": "aab22f6d1bdff4aa55a79a1e9136f14490c6b057",
+  "observed_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+  "old_is_ancestor": true,
+  "parents": [
+    "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+  ],
+  "previous_remote_head": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "remote_mutation": false,
+  "root_head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+  "root_merge_bases": [
+    "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+  ],
+  "root_tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb",
+  "schema": "trnm-concurrent-head-096c6b-acquisition-v1",
+  "source_head_tree_status_unchanged": true,
+  "source_or_branch_mutation": false,
+  "status": "EXACT_OBSERVED_HEAD_ACQUIRED_FOR_REVIEW",
+  "steps": [
+    {
+      "exit": 0,
+      "label": "status-before",
+      "seconds": 0.364,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "preflight-audit",
+      "seconds": 0.052,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "exit": 0,
+      "label": "fetch-exact-observed-object",
+      "seconds": 0.021,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "raw-new-commit",
+      "seconds": 0.006,
+      "sha256": "9123d667955f86fd121c81ea8e26e406af06d1ba36ef7c9b7244ecc8d0989551"
+    },
+    {
+      "exit": 0,
+      "label": "old-is-ancestor",
+      "seconds": 0.006,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "root-merge-bases",
+      "seconds": 0.007,
+      "sha256": "6bd96fb642c86d0ae049cf59ca19a8877045c0d1e0c5a380341323ae8d02ec70"
+    },
+    {
+      "exit": 0,
+      "label": "bounded-new-commits",
+      "seconds": 0.006,
+      "sha256": "f867fc71e32b4d71f2b92ea2bc8960f334bfb42f7b50f2b217ffb672bba154c4"
+    },
+    {
+      "exit": 0,
+      "label": "changed-paths",
+      "seconds": 0.007,
+      "sha256": "ed775e0972bc3408cba7bcc6a19f35f30d75e51028d49057c4d691c889a781ef"
+    },
+    {
+      "exit": 0,
+      "label": "diff-stat",
+      "seconds": 0.01,
+      "sha256": "2cac5138321c68b4b5f3d8b3b121e65af646db5c798bef12d8768207650c6dea"
+    },
+    {
+      "exit": 0,
+      "label": "diff-numstat",
+      "seconds": 0.009,
+      "sha256": "95fe9f33dd851629f879a34cdb6bcf473504a4b118ef5fe6705726d1f60ebc75"
+    },
+    {
+      "exit": 0,
+      "label": "status-after",
+      "seconds": 0.132,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

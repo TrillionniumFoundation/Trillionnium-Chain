@@ -1,0 +1,129 @@
+{
+  "after": {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b"
+  },
+  "before": {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b"
+  },
+  "bundle": {
+    "bytes": 25623074,
+    "header": [
+      "# v2 git bundle",
+      "-e82419698aa3fd527c6f828da11cc8749dcb007b Preserve original Rust-token-reader controls in current source",
+      "-dba81d56be6598cec9df2774446ca3ab7fccca98 Merge original wall-clock mining controls on registered material",
+      "dc42ce4df5cff79cc61c5addbaf01074b56b06ca HEAD"
+    ],
+    "list_heads": [
+      "dc42ce4df5cff79cc61c5addbaf01074b56b06ca HEAD"
+    ],
+    "path": "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle",
+    "prerequisites": [
+      "e82419698aa3fd527c6f828da11cc8749dcb007b",
+      "dba81d56be6598cec9df2774446ca3ab7fccca98"
+    ],
+    "sha256": "90b35afbf628b6713331b77598d52ee53fefcf47596d5111f059df28874357d5"
+  },
+  "completed_at": "2026-11-14T06:14:05.581127+00:00",
+  "excluded_base": "dba81d56be6598cec9df2774446ca3ab7fccca98",
+  "expected_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "git_executable": "/usr/bin/git",
+  "git_version": "git version 2.54.0 (Apple Git-157)",
+  "official_review_index": {
+    "bytes": 440,
+    "path": "/private/tmp/chain-architecture-git-official-semantics-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "c6ed59e494150603cdad51d6cd4199e27df32b1df95d0c21dbfb3d748d8812c7"
+  },
+  "official_review_receipt": {
+    "bytes": 27278,
+    "path": "/private/tmp/chain-architecture-git-official-semantics-20261114-v1/review-receipt.json",
+    "sha256": "9c850278cbc4eb17381e4d2217af4302cab1d61dfb4cd85e1b099e2ef84abc5b"
+  },
+  "refs_created": false,
+  "remote_git_writes": false,
+  "schema": "trnm-fixed-candidate-incremental-bundle-v1",
+  "source": "/private/tmp/chain-consolidation-20261114-mainline",
+  "source_consistent": true,
+  "source_updated": false,
+  "steps": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-14T06:14:05.104329+00:00",
+      "label": "01-project-preflight",
+      "started_at": "2026-11-14T06:14:05.056890+00:00"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "core.commitGraph=false",
+        "merge-base",
+        "--is-ancestor",
+        "dba81d56be6598cec9df2774446ca3ab7fccca98",
+        "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-14T06:14:05.116034+00:00",
+      "label": "02-base-ancestry",
+      "started_at": "2026-11-14T06:14:05.104500+00:00"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "core.commitGraph=false",
+        "bundle",
+        "create",
+        "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle",
+        "HEAD",
+        "^dba81d56be6598cec9df2774446ca3ab7fccca98"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-14T06:14:05.326101+00:00",
+      "label": "03-bundle-create",
+      "started_at": "2026-11-14T06:14:05.116598+00:00"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "core.commitGraph=false",
+        "bundle",
+        "verify",
+        "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-14T06:14:05.416253+00:00",
+      "label": "04-bundle-verify",
+      "started_at": "2026-11-14T06:14:05.326342+00:00"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "core.commitGraph=false",
+        "bundle",
+        "list-heads",
+        "/private/tmp/chain-architecture-offline-candidate-dc42-20261114-v1/candidate-dc42-after-dba.bundle"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-14T06:14:05.428300+00:00",
+      "label": "05-bundle-list-heads",
+      "started_at": "2026-11-14T06:14:05.416521+00:00"
+    }
+  ],
+  "tests_run": false
+}

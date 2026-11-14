@@ -1,0 +1,146 @@
+2930:                                 if !heads.is_head(PendingKind::Challenge, hello.op, *id)
+2931:                                     || !intake.try_challenge(hello.op, Instant::now())?
+2932:                                 {
+2933:                                     return Ok(Stage::WaitChallenge { hello, pending });
+2934:                                 }
+2935:                                 let cookie = server.cookie(&settings, hello, conn.peer)?;
+2936:                                 let frame = framed(
+2937:                                     serde_json::to_vec(&cookie)?,
+2938:                                     pq_identity::challenge_maximum(server.identity.is_pq()),
+2939:                                 )?;
+2940:                                 metrics
+2941:                                     .lock()
+2942:                                     .map_err(|_| "PUBLIC_METRICS")?
+2943:                                     .issued_challenges += 1;
+2944:                                 {
+2945:                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+2946:                                     m.pending_challenge_granted += 1;
+2947:                                     m.pending_challenge_wait_ns = m
+2948:                                         .pending_challenge_wait_ns
+2949:                                         .saturating_add(elapsed_ns(pending.entered_at));
+2950:                                 }
+2951:                                 conn.deadline = conn
+2952:                                     .total_deadline
+2953:                                     .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));
+2954:                                 if let Some(record) = &conn.observation {
+2955:                                     record.pending_granted(false);
+2956:                                 }
+2957:                                 Ok(Stage::Challenge {
+2958:                                     cookie,
+2959:                                     bytes: frame,
+2960:                                     cursor: 0,
+2961:                                 })
+2962:                             }
+2963:                             Stage::Challenge {
+2964:                                 cookie,
+2965:                                 bytes,
+2966:                                 mut cursor,
+2967:                             } => {
+2968:                                 if write_available_observed(
+2969:                                     &mut conn.socket,
+2970:                                     &bytes,
+2971:                                     &mut cursor,
+2972:                                     conn.observation.as_ref(),
+2973:                                     1,
+2974:                                 )? {
+2975:                                     conn.deadline = conn.total_deadline.min(
+2976:                                         server.started
+2977:                                             + Duration::from_millis(cookie.expires_tick_ms),
+2978:                                     );
+2979:                                     conn.intake_lease
+2980:                                         .as_ref()
+2981:                                         .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?
+2982:                                         .waiting_for_input(Instant::now())?;
+2983:                                     Ok(Stage::Solution {
+2984:                                         cookie,
+2985:                                         bytes: Vec::with_capacity(pq_identity::solution_bytes(
+2986:                                             server.identity.is_pq(),
+2987:                                         )),
+2988:                                     })
+2989:                                 } else {
+2990:                                     Ok(Stage::Challenge {
+2991:                                         cookie,
+2992:                                         bytes,
+2993:                                         cursor,
+2994:                                     })
+2995:                                 }
+2996:                             }
+2997:                             Stage::Solution { cookie, mut bytes } => {
+2998:                                 let before = bytes.len();
+2999:                                 let complete = read_available_observed(
+3000:                                     &mut conn.socket,
+3001:                                     &mut bytes,
+3002:                                     pq_identity::solution_bytes(server.identity.is_pq()),
+3003:                                     conn.observation.as_ref(),
+3004:                                     2,
+3005:                                 )?;
+3006:                                 let lease = conn
+3007:                                     .intake_lease
+3008:                                     .as_ref()
+3009:                                     .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+3010:                                 if complete {
+3011:                                     // Protect before validation; failures are still closed
+3012:                                     // by this reactor and never gain a paid lane or body.
+3013:                                     lease.protect()?;
+3014:                                 } else {
+3015:                                     if bytes.len() > before {
+3016:                                         lease.waiting_for_input(Instant::now())?;
+3017:                                     }
+3018:                                     return Ok(Stage::Solution { cookie, bytes });
+3019:                                 }
+3020:                                 server.validate(&cookie, &settings, true)?;
+3021:                                 ensure(
+3022:                                     bytes[..4]
+3023:                                         == *pq_identity::solution_magic(server.identity.is_pq())
+3024:                                         && bytes[4..36] == cookie.id()?,
+3025:                                     "PUBLIC_SOLUTION",
+3026:                                 )?;
+3027:                                 let nonce = u64::from_le_bytes(
+3028:                                     bytes[36..44].try_into().map_err(|_| "PUBLIC_SOLUTION")?,
+3029:                                 );
+3030:                                 if !winner(cookie.id()?, nonce, server.policy.bits) {
+3031:                                     metrics
+3032:                                         .lock()
+3033:                                         .map_err(|_| "PUBLIC_METRICS")?
+3034:                                         .ticket_refusals += 1;
+3035:                                     return Err("PUBLIC_TICKET_TARGET".into());
+3036:                                 }
+3037:                                 if let Err(error) = server.verify_caller(&cookie, nonce, &bytes) {
+3038:                                     metrics
+3039:                                         .lock()
+3040:                                         .map_err(|_| "PUBLIC_METRICS")?
+3041:                                         .signature_refusals += 1;
+3042:                                     return Err(error);
+3043:                                 }
+3044:                                 if let Some(observation) = &conn.observation {
+3045:                                     observation.authenticated_caller(&cookie.caller);
+3046:                                 }
+3047:                                 if let Err(e) = spent.reserve(
+3048:                                     cookie.id()?,
+3049:                                     cookie.expires_tick_ms,
+3050:                                     server.tick()?,
+3051:                                 ) {
+3052:                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+3053:                                     if e.is(crate::ErrorCode::PublicTicketReplay) {
+3054:                                         m.replay_refusals += 1;
+3055:                                     } else {
+3056:                                         m.spent_capacity_refusals += 1;
+3057:                                     }
+3058:                                     return Err(e);
+3059:                                 }
+3060:                                 {
+3061:                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+3062:                                     m.peak_spent = m.peak_spent.max(spent.rows.len());
+3063:                                     m.spent_reservations += 1;
+3064:                                 }
+3065:                                 let pending = PendingOrder::next(&mut next_pending_order)?;
+3066:                                 if let Some(record) = &conn.observation {
+3067:                                     record.pending_started(true, pending.entered_at);
+3068:                                 }
+3069:                                 metrics
+3070:                                     .lock()
+3071:                                     .map_err(|_| "PUBLIC_METRICS")?
+3072:                                     .pending_grant_entered += 1;
+3073:                                 Ok(Stage::WaitGrant { cookie, pending })
+3074:                             }
+3075:                             Stage::WaitGrant { cookie, pending } => {

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a6206-v1-prci/package_original_repository_truth_2a6206_v1.py", line 389, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a6206-v1-prci/package_original_repository_truth_2a6206_v1.py", line 261, in main
+    require(set(initial_inventory["files"]) == names and len(names) == 39,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "unexpected/missing original files; notify operator before any exclusions: "
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            + json.dumps({"unexpected": sorted(set(initial_inventory["files"]) - names),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          "missing": sorted(names - set(initial_inventory["files"]))}))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a6206-v1-prci/package_original_repository_truth_2a6206_v1.py", line 46, in require
+    raise ValueError(message)
+ValueError: unexpected/missing original files; notify operator before any exclusions: {"unexpected": ["ci-observations/w1-postwin-contracts/cancellation-handoff.log", "ci-observations/w1-postwin-contracts/coordinator-contract.log", "ci-observations/w1-postwin-contracts/deployment-comparison-audit.log", "ci-observations/w1-postwin-contracts/deployment-evidence-binding.log", "ci-observations/w1-postwin-contracts/generation-target.log", "ci-observations/w1-postwin-contracts/kaggle-worker-contract.log", "ci-observations/w1-postwin-contracts/owned-process-collector.log", "ci-observations/w1-postwin-contracts/owned-runtime-reader.log", "ci-observations/w1-postwin-contracts/owner-cancellation.log", "ci-observations/w1-postwin-contracts/provider-contract.log", "ci-observations/w1-postwin-contracts/source-builder.log", "ci-observations/w1-postwin-contracts/winner-identity.log"], "missing": []}

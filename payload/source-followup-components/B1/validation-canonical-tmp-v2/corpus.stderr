@@ -1,0 +1,6 @@
+test_retained_native_collector_data_cannot_omit_or_mutate (scripts.ci.test_pq_research_integration.CorpusGateTests.test_retained_native_collector_data_cannot_omit_or_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.683s
+
+OK

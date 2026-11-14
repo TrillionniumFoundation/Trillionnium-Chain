@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-B1-original-inline-producer-identities-v1",
+  "producers": [
+    {
+      "path": "producers/prepare_isolated_history_patch.py.txt",
+      "bytes": 10615,
+      "sha256": "6fd66096dfabbdd2c3943f7b0ae97e502a85795e0e11cbe559d0875fb62d068f",
+      "actual_invocation": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/python3",
+        "mode": "-c exact source argument",
+        "session_id": "dpty-6a398f72be04c08745139f953f8d8a58199704ec67c195ed004ed306c6639dd4"
+      },
+      "file_frozen_after_execution": true
+    },
+    {
+      "path": "producers/run_original_and_added_controls.py.txt",
+      "bytes": 2964,
+      "sha256": "854e739ea54b2e587e93bcea890010406681dcae8909ccc93cfbdb6c2e0c3803",
+      "actual_invocation": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/python3",
+        "mode": "-c exact source argument",
+        "session_id": "dpty-93036735e74d37787e23f3b0523f5dd62b220f9ecb1545789bfb42ffa7df05ef"
+      },
+      "file_frozen_after_execution": true
+    },
+    {
+      "path": "producers/run_canonical_tmp_corpus_control.py.txt",
+      "bytes": 2855,
+      "sha256": "399cdf27a8eeaac7f3aa05d7d0c416f0e220f1a516ad299a34fdf87b3287a52a",
+      "actual_invocation": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/python3",
+        "mode": "-c exact source argument",
+        "session_id": "dpty-efc6f008fa091bcecbad6774294cc65f039fc1bf480897b9a82c1c20145f785e"
+      },
+      "file_frozen_after_execution": true
+    },
+    {
+      "path": "producers/prepare_review_handoff.py.txt",
+      "bytes": 6141,
+      "sha256": "1985e2ecda888e3fbd1f4c522e503b48656d2016d0b0aa55dd94ed83ca14a039",
+      "actual_invocation": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/python3",
+        "mode": "-c exact source argument",
+        "session_id": "dpty-fd6d789b81c1819bbaa7f19d1ee49beb2d7e983c815017d74a456c39436913e7"
+      },
+      "file_frozen_after_execution": true
+    },
+    {
+      "path": "producers/commit_approved_twelve_paths.py.txt",
+      "bytes": 4428,
+      "sha256": "89ed7ed5f0ffdda3c16ab3efa6cbc95532ba00ed8008b5be37fb2578fccb0629",
+      "actual_invocation": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/python3",
+        "mode": "-c exact source argument",
+        "session_id": "dpty-18f0f96799d82a7d41b0ee506e0170edae21bc400560b689de7ad65463e36b3b"
+      },
+      "file_frozen_after_execution": true
+    }
+  ],
+  "patch_payload": {
+    "path": "producers/patch-payload.json",
+    "bytes": 11345,
+    "sha256": "f083a87fede127b39adad8d1a56caa08254aafcaa426f0f8ade9e38b869ac339"
+  },
+  "note": "The Python source strings were passed as -c arguments. These files preserve those exact strings after execution; no claim that they were executed by this saved filename."
+}

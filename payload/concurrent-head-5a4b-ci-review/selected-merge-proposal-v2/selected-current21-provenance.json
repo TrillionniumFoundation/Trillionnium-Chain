@@ -1,0 +1,366 @@
+{
+  "N_canonical_snapshot_sha256": "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140",
+  "N_source_map_sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93",
+  "canonical_snapshot_sha256": "69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9",
+  "paths": [
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 106066,
+        "mode": "100644",
+        "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "selected": {
+        "bytes": 106066,
+        "mode": "100644",
+        "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 12902,
+        "mode": "100644",
+        "oid": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "selected": {
+        "bytes": 12902,
+        "mode": "100644",
+        "oid": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 11609,
+        "mode": "100644",
+        "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+      "selected": {
+        "bytes": 11609,
+        "mode": "100644",
+        "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 15173,
+        "mode": "100644",
+        "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+        "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "selected": {
+        "bytes": 15173,
+        "mode": "100644",
+        "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+        "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 11176,
+        "mode": "100644",
+        "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+        "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+      "selected": {
+        "bytes": 11176,
+        "mode": "100644",
+        "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+        "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 6915,
+        "mode": "100644",
+        "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+        "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+      "selected": {
+        "bytes": 6915,
+        "mode": "100644",
+        "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+        "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 17612,
+        "mode": "100644",
+        "oid": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+        "sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "selected": {
+        "bytes": 17612,
+        "mode": "100644",
+        "oid": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+        "sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 18698,
+        "mode": "100644",
+        "oid": "8bb6dcc43adfcd06794cce01d80fb676268bd1f6",
+        "sha256": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
+      "selected": {
+        "bytes": 18698,
+        "mode": "100644",
+        "oid": "8bb6dcc43adfcd06794cce01d80fb676268bd1f6",
+        "sha256": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 10863,
+        "mode": "100644",
+        "oid": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+        "sha256": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+      "selected": {
+        "bytes": 10863,
+        "mode": "100644",
+        "oid": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+        "sha256": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 21641,
+        "mode": "100644",
+        "oid": "880cae5f3ee7c9bcc1e8444d4193cd884acddf93",
+        "sha256": "4b1df7fd0500303667873e560c66f90a86ed7cae0ae7784cc46bcc49e69ef57c"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+      "selected": {
+        "bytes": 21641,
+        "mode": "100644",
+        "oid": "880cae5f3ee7c9bcc1e8444d4193cd884acddf93",
+        "sha256": "4b1df7fd0500303667873e560c66f90a86ed7cae0ae7784cc46bcc49e69ef57c"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 13549,
+        "mode": "100644",
+        "oid": "47f024a03405ae471b74522c98ee37488fb00e84",
+        "sha256": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
+      "selected": {
+        "bytes": 13549,
+        "mode": "100644",
+        "oid": "47f024a03405ae471b74522c98ee37488fb00e84",
+        "sha256": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 22190,
+        "mode": "100644",
+        "oid": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+        "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "selected": {
+        "bytes": 22190,
+        "mode": "100644",
+        "oid": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+        "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 20510,
+        "mode": "100644",
+        "oid": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "selected": {
+        "bytes": 20510,
+        "mode": "100644",
+        "oid": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 46767,
+        "mode": "100644",
+        "oid": "dfad36b1032617e1ec9b95486bc8a0b0015639fc",
+        "sha256": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "selected": {
+        "bytes": 46767,
+        "mode": "100644",
+        "oid": "dfad36b1032617e1ec9b95486bc8a0b0015639fc",
+        "sha256": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 433736,
+        "mode": "100644",
+        "oid": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+        "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selected": {
+        "bytes": 433736,
+        "mode": "100644",
+        "oid": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+        "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 38829,
+        "mode": "100644",
+        "oid": "89a0acf1f7851822fc3b54fdcf7a91596252ec98",
+        "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "selected": {
+        "bytes": 38829,
+        "mode": "100644",
+        "oid": "89a0acf1f7851822fc3b54fdcf7a91596252ec98",
+        "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+      }
+    },
+    {
+      "M6_identity_basis": "root-selected exact complete store",
+      "N": {
+        "bytes": 391556,
+        "mode": "100644",
+        "oid": "3bce39ce1aef265a18f304085bc08c0240547065",
+        "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+      },
+      "changed_from_N": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "selected": {
+        "bytes": 391470,
+        "mode": "100644",
+        "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 24683,
+        "mode": "100644",
+        "oid": "8ed6300d48b28ed19bc8df2b06ffb532d7acdb32",
+        "sha256": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "selected": {
+        "bytes": 24683,
+        "mode": "100644",
+        "oid": "8ed6300d48b28ed19bc8df2b06ffb532d7acdb32",
+        "sha256": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 32181,
+        "mode": "100644",
+        "oid": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+        "sha256": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "selected": {
+        "bytes": 32181,
+        "mode": "100644",
+        "oid": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+        "sha256": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 16053,
+        "mode": "100644",
+        "oid": "f6e24fba99f1b23008ba6a96f812964d53a2a1a0",
+        "sha256": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+      "selected": {
+        "bytes": 16053,
+        "mode": "100644",
+        "oid": "f6e24fba99f1b23008ba6a96f812964d53a2a1a0",
+        "sha256": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0"
+      }
+    },
+    {
+      "M6_identity_basis": "exact M6..N full path diff excludes this path; N content-addressed receipt",
+      "N": {
+        "bytes": 71463,
+        "mode": "100644",
+        "oid": "7c2efcb189f7908b8923f95207a892ae36cfe423",
+        "sha256": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
+      },
+      "changed_from_N": false,
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "selected": {
+        "bytes": 71463,
+        "mode": "100644",
+        "oid": "7c2efcb189f7908b8923f95207a892ae36cfe423",
+        "sha256": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
+      }
+    }
+  ],
+  "source_checks": "immutable Git blob evidence and exact M6..N full path-diff join; no reader executed",
+  "source_map_sha256": "b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a"
+}

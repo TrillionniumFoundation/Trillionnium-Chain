@@ -1,0 +1,21 @@
+{
+  "candidate": "096c6b5f9b952c49389fd975515744074ba61317",
+  "differences": [
+    {
+      "expected": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "observed": "096c6b5f9b952c49389fd975515744074ba61317",
+      "ref": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716"
+    }
+  ],
+  "distinct_tips": 892,
+  "finished_at": "2026-11-14T11:25:41.668455+00:00",
+  "head_count": 908,
+  "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "raw": {
+    "bytes": 87154,
+    "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/refs-heads.stdout",
+    "sha256": "c24ac4d1acc2a6f1cd58abb63bec4087abbc878bbd5636b89242c97bb8d0f043"
+  },
+  "started_at": "2026-11-14T11:25:36.703980+00:00",
+  "status": "CHANGED"
+}

@@ -1,0 +1,59 @@
+diff --git a/scripts/ci/test_throughput_cost_coverage.py b/scripts/ci/test_throughput_cost_coverage.py
+index 748c21550dda37f69ddc5f9208e9dc07fc384b69..79214af83feab98f32a73c18280fa539df0eb16f 100644
+--- a/scripts/ci/test_throughput_cost_coverage.py
++++ b/scripts/ci/test_throughput_cost_coverage.py
+@@ -531,7 +531,54 @@ class FiniteBusinessControls(unittest.TestCase):
+         self.assertIsNone(self.analyze()['phases'][0]['phase_process_memory'])
+         value['phases'][0]['rss']['scope'] = 'per-request exact physical peak'
+         with self.assertRaisesRegex(ValueError, 'memory scope'):
+             self.analyze(value)
+ 
++
++class SourceReceiptTypeControls(unittest.TestCase):
++    def test_exact_typed_head_and_merge_source_pairs_are_accepted(self):
++        before = source()
++        reader.source_binding(before, copy.deepcopy(before), head=HEAD, tree=TREE)
++        base, merge = 'c' * 40, 'd' * 40
++        before.update(kind='prospective-merge', base=base, prospective_merge=merge,
++                      tested_commit=merge)
++        reader.source_binding(before, dict(reversed(list(before.items()))),
++                              head=HEAD, tree=TREE, kind='prospective-merge',
++                              base=base, merge=merge)
++
++    def test_changed_after_source_types_refuse_equal_python_values(self):
++        before = source()
++        for field, changed in (
++                ('tracked_entries', True), ('tracked_entries', 1.0),
++                ('tracked_bytes', True), ('tracked_bytes', 1.0),
++                ('tracked_worktree_verified', 1), ('tracked_worktree_verified', 1.0),
++                ('tests_executed_by_identity_check', 0),
++                ('tests_executed_by_identity_check', 0.0)):
++            after = copy.deepcopy(before)
++            after[field] = changed
++            self.assertEqual(before, after)  # The counterexample for untyped equality.
++            with self.subTest(field=field, value=changed, value_type=type(changed).__name__):
++                with self.assertRaisesRegex(ValueError, 'unchanged complete source receipts'):
++                    reader.source_binding(before, after, head=HEAD, tree=TREE)
++
++    def test_source_shape_original_types_and_error_order_are_preserved(self):
++        before = source()
++        invalid_pairs = [
++            (before, None),
++            (before, {key: value for key, value in before.items() if key != 'schema'}),
++            (before, dict(before, extra=False)),
++            (before, dict(before, tested_tree='c' * 40)),
++        ]
++        for original, after in invalid_pairs:
++            with self.subTest(after=after), self.assertRaisesRegex(
++                    ValueError, 'unchanged complete source receipts'):
++                reader.source_binding(original, after, head=HEAD, tree=TREE)
++        invalid = dict(before, tracked_entries=True)
++        with self.assertRaisesRegex(ValueError, 'measured u64 required'):
++            reader.source_binding(invalid, copy.deepcopy(invalid), head=HEAD, tree=TREE)
++        with self.assertRaisesRegex(ValueError, 'canonical digest required'):
++            reader.source_binding(before, None, head='invalid', tree=TREE)
++        with self.assertRaisesRegex(ValueError, 'unexpected merge source arguments'):
++            reader.source_binding(before, None, head=HEAD, tree=TREE, base='c' * 40)
++
+ if __name__ == '__main__':
+     unittest.main()

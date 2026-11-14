@@ -1,0 +1,21 @@
+import pathlib,subprocess,os,json,datetime,hashlib
+G="/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git"
+H="1a7afcdb820b051d1e4bfde3d436f96fc050c487";T="18c3d20df915f5c31ee38c7037775c61e5c12e3f"
+W=pathlib.Path("/private/tmp/chain-M4-owned-process-collector-20261114");B="fix/chain-m4-closed-exec-gate-20261114"
+O=pathlib.Path("/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/worktree-preflight-v1");O.mkdir(exist_ok=False)
+env=dict(os.environ,GIT_NO_LAZY_FETCH="1",GIT_OPTIONAL_LOCKS="0",GIT_NO_REPLACE_OBJECTS="1")
+base=["/usr/bin/git","--no-replace-objects","--git-dir="+G]
+def run(args,timeout=60):
+ p=subprocess.run(args,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout)
+ return p
+p=run(base+["rev-parse",H+"^{commit}",H+"^{tree}"]);assert p.returncode==0 and p.stdout.decode().splitlines()==[H,T]
+assert not W.exists()
+p=run(base+["show-ref","--verify","--quiet","refs/heads/"+B]);assert p.returncode==1
+p=run(base+["worktree","add","-b",B,str(W),H],300)
+(O/"worktree-add.stdout").write_bytes(p.stdout);(O/"worktree-add.stderr").write_bytes(p.stderr)
+assert p.returncode==0
+q=run(["/usr/bin/git","-C",str(W),"status","--porcelain=v1"]);assert q.returncode==0 and not q.stdout
+r=run(["/usr/bin/git","-C",str(W),"rev-parse","HEAD","HEAD^{tree}"]);assert r.returncode==0 and r.stdout.decode().splitlines()==[H,T]
+summary={"schema":"trnm-M4-private-worktree-preflight-v1","observed_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"worktree":str(W),"branch":B,"head":H,"tree":T,"clean":True,"no_remote_operation":True}
+raw=(json.dumps(summary,indent=2)+"\n").encode();(O/"summary.json").write_bytes(raw)
+print(json.dumps(dict(summary,summary_path=str(O/"summary.json"),summary_sha256=hashlib.sha256(raw).hexdigest())))

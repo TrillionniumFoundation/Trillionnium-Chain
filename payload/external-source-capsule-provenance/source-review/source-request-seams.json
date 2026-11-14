@@ -1,0 +1,132 @@
+{
+  "scripts/ci/check_client_confirmation_evidence.py": [
+    {
+      "line": 15,
+      "text": "from check_invariant_evidence import ROOT, load, require, safe, source_bytes"
+    },
+    {
+      "line": 402,
+      "text": "if __name__ == '__main__':\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--evidence')\n    parser.add_argument('--root', type=Path, default=ROOT)\n    parser.add_argument('--historical', action='store_true')\n    parser.add_argument('--session', action='store_true')\n    parser.add_argument('--native-node', action='store_true')\n    args = parser.parse_args()\n    if args.native_node:\n        if args.session or args.historical:\n            parser.error('--native-node selects current native-node qualification')\n        args.evidence = args.evidence or args.root / 'evidence/pon-native-node-v1'\n    if args.session:\n        if args.historical:\n            parser.error('--session and --historical select different claims')\n        args.evidence = args.evidence or args.root / 'evidence/pon-native-session-v1'\n    if args.historical:\n        from historical_evidence import validate_historical_cli\n        value = validate_historical_cli(__file__, args.root, args.evidence or args.root / 'evidence/pon-client-confirmation-v1')\n    else:\n        value = validate(root=args.root, evidence=args.evidence)\n    if args.native_node:\n        require(value.get('native_development_entry') is True, 'native-node qualification cannot downgrade to session-only')\n    print(json.dumps(value, sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_completion_evidence.py": [
+    {
+      "line": 6,
+      "text": "from check_invariant_evidence import ROOT,require,load,safe,source_bytes"
+    },
+    {
+      "line": 130,
+      "text": "if __name__=='__main__':\n    import argparse\n    parser=argparse.ArgumentParser();parser.add_argument('--historical',action='store_true');args=parser.parse_args()\n    result=validate(current_runtime=not args.historical);manifest=load(ROOT/'evidence/pon-v4/manifest.json')\n    tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())\n    require({'evidence/pon-v4/'+p for p in manifest['files']}<=tracked,'evidence not tracked')\n    print(json.dumps(result,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_evaluation_bundle_evidence.py": [
+    {
+      "line": 6,
+      "text": "from check_invariant_evidence import ROOT,load,require,safe,source_bytes"
+    },
+    {
+      "line": 163,
+      "text": "if __name__=='__main__':\n import argparse\n parser=argparse.ArgumentParser();parser.add_argument('--component-scope',action='store_true',help='Check all original runtime bytes; report additional runtime as unmeasured, never as covered')\n parser.add_argument('--root',type=Path,default=ROOT);parser.add_argument('--evidence',type=Path)\n parser.add_argument('--historical',action='store_true')\n args=parser.parse_args()\n folder=args.evidence or args.root/'evidence/pon-evaluation-bundle-v1'\n if args.historical:\n  from historical_evidence import validate_historical_cli\n  result=validate_historical_cli(__file__,args.root,folder)\n else:result=validate(root=args.root,evidence=folder,exact_inventory=not args.component_scope)\n if args.evidence is None:\n  manifest=load(folder/'manifest.json')\n  tracked=set(subprocess.check_output(['git','ls-files'],cwd=args.root,text=True).splitlines())\n  require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')\n print(json.dumps(result,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_four_priority_evidence.py": [
+    {
+      "line": 11,
+      "text": "from check_invariant_evidence import ROOT, load, require, safe, source_bytes"
+    },
+    {
+      "line": 205,
+      "text": "if __name__ == '__main__':\n    try:\n        print(json.dumps(validate(), sort_keys=True))\n    except (ValueError, KeyError, TypeError, OSError, subprocess.CalledProcessError) as error:\n        print('FAIL: ' + str(error), file=sys.stderr)\n        sys.exit(1)"
+    }
+  ],
+  "scripts/ci/check_invariant_evidence.py": [
+    {
+      "line": 25,
+      "text": "def source_bytes(root,commit,paths):\n    require(re.fullmatch('[0-9a-f]{40}',commit)is not None,'invalid source identity')\n    for relative in paths:\n        require(not Path(relative).is_absolute()and '..'not in Path(relative).parts and '\\n'not in relative,'invalid source path')\n    queries=''.join(commit+':'+p+'\\n'for p in paths).encode()\n    run=subprocess.run(['git','cat-file','--batch'],cwd=root,input=queries,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True)\n    cursor=0;values={}\n    for relative in paths:\n        end=run.stdout.index(b'\\n',cursor);header=run.stdout[cursor:end].split()\n        require(len(header)==3 and header[1]==b'blob','measured source unavailable; fetch complete candidate history')\n        size=int(header[2]);start=end+1;values[relative]=run.stdout[start:start+size];cursor=start+size+1\n    return values"
+    },
+    {
+      "line": 143,
+      "text": "if __name__=='__main__':\n    import argparse\n    parser=argparse.ArgumentParser();parser.add_argument('--historical',action='store_true')\n    args=parser.parse_args()\n    result=validate(require_current_runtime=not args.historical);manifest=load(ROOT/'evidence/pon-v3/manifest.json')\n    tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())\n    require({'evidence/pon-v3/'+p for p in manifest['files']}<=tracked,'evidence absent from Git index')\n    print(json.dumps(result,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_native_node_supplements.py": [
+    {
+      "line": 223,
+      "text": "if __name__=='__main__':\n    import argparse\n    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--evidence',type=Path)\n    parser.add_argument('--root',type=Path,default=ROOT)\n    parser.add_argument('--historical',action='store_true')\n    args=parser.parse_args()\n    if args.historical:\n        from historical_evidence import validate_historical_cli\n        result=validate_historical_cli(__file__,args.root,args.evidence or args.root/'evidence/pon-native-node-v1')\n    else:\n        result=validate(root=args.root,folder=args.evidence)\n    print(json.dumps(result,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_pon_evidence.py": [
+    {
+      "line": 54,
+      "text": "if __name__=='__main__':\n    root=Path(__file__).resolve().parents[2];report=validate(root)\n    manifest=json.loads((root/'evidence/pon-v1/manifest.json').read_text())\n    tracked=set(subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines())\n    required={'evidence/pon-v1/'+name for name in manifest['files']}\n    require(required<=tracked,'evidence exists locally but is absent from the Git index: '+repr(sorted(required-tracked)))\n    report['tracked_artifacts_verified']=True\n    print(json.dumps(report,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_public_readiness_evidence.py": [
+    {
+      "line": 126,
+      "text": "def source_inventory(root, commit):\n    inventory = {}\n    for row in git(root, 'ls-tree', '-r', commit).splitlines():\n        metadata, path = row.split('\\t', 1)\n        if relevant(path):\n            mode, kind, oid = metadata.split()\n            require(mode in ('100644', '100755') and kind == 'blob', 'source symlink or non-file')\n            raw = subprocess.check_output(['git', 'cat-file', 'blob', oid], cwd=root)\n            inventory[path] = sha(raw)\n    return inventory"
+    },
+    {
+      "line": 1043,
+      "text": "if __name__ == '__main__':\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--root',type=Path,default=ROOT)\n    parser.add_argument('--evidence',type=Path)\n    parser.add_argument('--historical',action='store_true')\n    args = parser.parse_args()\n    folder = args.evidence or args.root/('evidence/pon-public-readiness-v1' if args.historical else 'evidence/pon-public-readiness-v2')\n    if args.historical:\n        from historical_evidence import measured_checkout\n        validate_artifacts(args.root.resolve(),folder.absolute(),load(safe(folder,'manifest.json')))\n        with measured_checkout(args.root,folder) as source:\n            child = subprocess.run([sys.executable,'-B',str(source/'scripts/ci/check_public_readiness_evidence.py'),\n                                    '--root',str(source),'--evidence',str(folder.absolute())],\n                                   cwd=source,check=True,capture_output=True,text=True)\n            original = json.loads(child.stdout.splitlines()[-1])\n        result = dict(original,current_source_qualified_by_this_check=False,runtime_matches=False,\n                      historical_semantics_verified=True,**{flag:False for flag in FLAGS})\n    else:\n        result = validate(args.root,folder)\n    print(json.dumps(result,sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_repository.py": [
+    {
+      "line": 200,
+      "text": "if __name__=='__main__':\n    try:\n        report=check();report['head']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()\n        report['tree']=subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=ROOT,text=True).strip()\n        report['source_state']='dirty-candidate' if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip() else 'committed-clean'\n        print(json.dumps(report,sort_keys=True))\n    except (Invalid,KeyError,ValueError,OSError) as e:\n        print('Repository check failed: '+str(e),file=sys.stderr);sys.exit(2)"
+    }
+  ],
+  "scripts/pon_work_cost_report.py": [
+    {
+      "line": 29,
+      "text": "from check_invariant_evidence import load, require, safe, source_bytes"
+    },
+    {
+      "line": 30,
+      "text": "from bounded_process import run_bounded"
+    },
+    {
+      "line": 117,
+      "text": "def source_inventory(paths: set[str]) -> set[str]:\n    require(SOURCE_PATHS <= paths, 'missing collector/source configuration input')\n    return {p for p in paths if p.startswith('trillionnium/') and not p.endswith('.md')} | SOURCE_PATHS"
+    },
+    {
+      "line": 182,
+      "text": "def verify(out: Path, require_current: bool = True) -> dict[str, Any]:\n    out = out.resolve()\n    manifest = load(safe(out, 'manifest.json'))\n    require(manifest['schema'] == 'pon-native-cost-files-v1', 'manifest schema')\n    required = {'build.log', 'native-work.json', 'native-stderr.log', 'summary.json', 'execution.json'}\n    require(set(manifest['files']) == required, 'missing or extra collection artifact')\n    for name, expected in manifest['files'].items():\n        require(digest(safe(out, name).read_bytes()) == expected, 'changed retained artifact ' + name)\n    record = load(out / 'execution.json')\n    require(record['schema'] == 'pon-native-cost-execution-v1' and\n            record['source_clean_before_and_after'] is True, 'execution scope')\n    for value in (manifest, record):\n        for flag in FALSE_FLAGS:\n            require(value[flag] is False, 'false collection authority ' + flag)\n    require(type(record['returncode']) is int and record['returncode'] == 0 and\n            type(record['build_returncode']) is int and record['build_returncode'] == 0, 'failed recorded command')\n    require(re.fullmatch('[0-9a-f]{64}', record['binary_sha256']), 'missing binary identity')\n    commit = record['source_commit']\n    require(re.fullmatch('[0-9a-f]{40}', commit), 'bad source identity')\n    require(git('rev-parse', commit + '^{tree}') == record['source_tree'], 'wrong source tree')\n    require(record['build_command'] == BUILD_COMMAND, 'unexpected native build command')\n    require(isinstance(record['command'], list) and len(record['command']) == 1 and\n            Path(record['command'][0]).name == 'pon_adversarial_cost', 'unexpected native cost command')\n    require(type(record['process_wall_ns']) is int and record['process_wall_ns'] > 0, 'invalid process timing')\n    measured_inventory = source_inventory(set(git('ls-tree', '-r', '--name-only', commit).splitlines()))\n    require(set(record['source_files_sha256']) == measured_inventory, 'incomplete measured source inventory')\n    original = source_bytes(ROOT, commit, list(record['source_files_sha256']))\n    for name, raw in original.items():\n        require(digest(raw) == record['source_files_sha256'][name], 'wrong measured source ' + name)\n    source_target = json.loads(original['config/pon/devnet-v1.json'])['initial_target_hex']\n    require(record['target'] == source_target, 'target differs from measured configuration')\n    expected_summary = summarize(load(out / 'native-work.json'), source_target)\n    require(encoded(expected_summary) == safe(out, 'summary.json').read_bytes(), 'summary differs from raw observations')\n    matches = record['source_files_sha256'] == current_inputs()\n    if require_current:\n        require(matches, 'source changed: retain historical costs and execute a new collection')\n    return {'source_commit': commit, 'current_measured_inputs_match': matches,\n            'retained_observations_verified': True, 'experiment_reexecuted_by_verifier': False,\n            **{flag: False for flag in FALSE_FLAGS}}"
+    },
+    {
+      "line": 414,
+      "text": "if __name__ == '__main__':\n    parser = argparse.ArgumentParser(description=__doc__)\n    mode = parser.add_mutually_exclusive_group(required=True)\n    mode.add_argument('--run', action='store_true')\n    mode.add_argument('--input', type=Path)\n    mode.add_argument('--verify', type=Path)\n    mode.add_argument('--matrix-v2', type=Path, help='read explicit native all-producer CPU/fact-cache V2 JSONL; never relabel V1 evidence')\n    parser.add_argument('--out', type=Path)\n    parser.add_argument('--expected-target')\n    parser.add_argument('--historical', action='store_true')\n    parser.add_argument('--prepared', type=Path, help='evaluate supplied paired costs under the reporting-only acceptance profile')\n    parser.add_argument('--service', type=Path, help='complete local honest/attacker event ledger; missing is unmeasured')\n    parser.add_argument('--require-local-acceptance', action='store_true', help='exit 2 unless every local observation gate passes; never grants external acceptance')\n    parser.add_argument('--require-cost-gates', action='store_true',\n                        help='V2 only: exit 2 unless original numeric cost gates pass; does not grant service or hardness acceptance')\n    args = parser.parse_args()\n    require(not args.require_cost_gates or args.matrix_v2 is not None,\n            '--require-cost-gates requires --matrix-v2')\n    require(not (args.prepared or args.service) or\n            (args.input is not None and args.prepared is not None),\n            'acceptance options require --input and --prepared')\n    require(not args.require_local_acceptance or args.matrix_v2 is not None or\n            (args.input is not None and args.prepared is not None),\n            'local acceptance requires explicit cost inputs')\n    if args.matrix_v2 is not None:\n        from pon_w1_cost_matrix_reader import analyze\n        value = analyze(args.matrix_v2)\n    elif args.run:\n        require(args.out is not None, '--run requires --out')\n        value = collect(args.out)\n    elif args.verify:\n        value = verify(args.verify, require_current=not args.historical)\n    else:\n        require(args.expected_target is not None, '--input requires an explicit --expected-target')\n        if args.prepared:\n            value = acceptance(load(args.input), load(args.prepared), args.expected_target,\n                               load(args.service) if args.service else None)\n        else:\n            require(args.service is None, '--service requires --prepared')\n            value = {'input_sha256': digest(args.input.read_bytes()), 'fresh_measurement': False,\n                     'summary': summarize(load(args.input), args.expected_target)}\n    print(encoded(value).decode(), end='')\n    if args.require_local_acceptance and value['local_observation_gate'] != 'pass':\n        sys.exit(2)\n\n    if args.require_cost_gates and value['local_cost_gate'] != 'pass':\n        sys.exit(2)\n\n    # Keep the matrix reader's semantic-failure status after explicit gate failures.\n    if args.matrix_v2 is not None and value['semantic_alerts']:\n        sys.exit(1)"
+    }
+  ],
+  "scripts/ci/check_ci_contract.py": [
+    {
+      "line": 2723,
+      "text": "if __name__ == '__main__':\n    print(json.dumps(validate(), sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_detailed_contracts.py": [
+    {
+      "line": 77,
+      "text": "if __name__=='__main__':\n    root=Path(__file__).resolve().parents[2]\n    print(json.dumps(validate(root),sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_applicability.py": [
+    {
+      "line": 333,
+      "text": "if __name__ == '__main__':\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--format', choices=['json', 'markdown'], default='json')\n    args = parser.parse_args()\n    result = validate()\n    git = lambda *args: subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()\n    result['source_identity'] = {'baseline_head': git('rev-parse', 'HEAD'),\n                                 'baseline_tree': git('rev-parse', 'HEAD^{tree}'),\n                                 'candidate_state': 'dirty-candidate' if git('status', '--porcelain') else 'committed-clean'}\n    print(markdown(result) if args.format == 'markdown' else json.dumps(result, indent=2))"
+    }
+  ],
+  "scripts/ci/check_invariants.py": [
+    {
+      "line": 54,
+      "text": "if __name__=='__main__':print(json.dumps(validate(Path(__file__).resolve().parents[2]),sort_keys=True))"
+    }
+  ],
+  "scripts/ci/check_cross_arch_cost.py": [
+    {
+      "line": 640,
+      "text": "if __name__ == '__main__':\n    raise SystemExit(main())"
+    }
+  ]
+}

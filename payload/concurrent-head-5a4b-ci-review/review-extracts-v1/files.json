@@ -1,0 +1,512 @@
+[
+  {
+    "bytes": 1886,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--.github--workflows--pon-recent-batch-acceptance.yml.patch",
+    "sha256": "c8b172173781426ec9455b93f170d111224248caa1e0e3c77231bb5a0b8bf769"
+  },
+  {
+    "bytes": 2572,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--.github--workflows--pon-w1-transparent-profile.yml.patch",
+    "sha256": "ff1978d4d12477f015e2c3f9b928454ec3d8039b3355adbcba6f31eab9832daf"
+  },
+  {
+    "bytes": 1886,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--.github--workflows--pon-recent-batch-acceptance.yml.patch",
+    "sha256": "c8b172173781426ec9455b93f170d111224248caa1e0e3c77231bb5a0b8bf769"
+  },
+  {
+    "bytes": 2572,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--.github--workflows--pon-w1-transparent-profile.yml.patch",
+    "sha256": "ff1978d4d12477f015e2c3f9b928454ec3d8039b3355adbcba6f31eab9832daf"
+  },
+  {
+    "bytes": 6386,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--check_ci_contract.py.patch",
+    "sha256": "321fb1f5cf2d378fbd152ea52909d5a2c4ba1dfbbcb89ce994296e41b464d14d"
+  },
+  {
+    "bytes": 1826,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--check_pq_research_integration.py.patch",
+    "sha256": "19a0343d0e2726df1a8713de003db281cac3d5a8f66b8ae17a3319457e855830"
+  },
+  {
+    "bytes": 1074,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--ci_job.sh.patch",
+    "sha256": "d6ec0b9e3149c5f78d68f64fe267ab314551ffa813169f6f8a3120f7bb81ff1a"
+  },
+  {
+    "bytes": 4552,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_ci_contract.py.patch",
+    "sha256": "7fa9a02da3062f9842ae55a8e3185f3c9caae4159027b7414f776b610c142931"
+  },
+  {
+    "bytes": 7229,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--check_ci_contract.py.patch",
+    "sha256": "9cc4b98e8da0c2a6d3a754634537fbdeed36b1f6f06d53e51211cbe6fea33c54"
+  },
+  {
+    "bytes": 2628,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--check_pq_research_integration.py.patch",
+    "sha256": "1d50bd2baa15987475849ee578a80dffe5904970a3432c9242591b65aed6bf94"
+  },
+  {
+    "bytes": 1917,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--ci_job.sh.patch",
+    "sha256": "3580a0452ac7f3aedf756c500f6bf7ab4494462e0927611cac4a2b24eef2846d"
+  },
+  {
+    "bytes": 5905,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_ci_contract.py.patch",
+    "sha256": "a607f659dd5711206d52f1e00e045311929fe40d6afedd9e052717348f7b6779"
+  },
+  {
+    "bytes": 2242,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--formal--throughput-v1--test_execution_report.py.patch",
+    "sha256": "51e41cb612e525d2d9e0fd0e991a1420d0caa5344a633fafe74bbd8271607d71"
+  },
+  {
+    "bytes": 6020,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--run_cell_learning_business_readback.py.patch",
+    "sha256": "e207ad6816cd06f752c2b28f2cc821001bd9234390392b731eeb36a81463d24a"
+  },
+  {
+    "bytes": 7020,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--run_pon_budget_controls.py.patch",
+    "sha256": "f98c8ec68a27816559f095c92399aa3c8350ad2f7ca05f6f3081d28064f3920b"
+  },
+  {
+    "bytes": 1491,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--run_sp27_receiver_controls.py.patch",
+    "sha256": "25c678fd98a73ed230704dd2df617fc7a2072b6f98cfc95dd637a19ba97321e3"
+  },
+  {
+    "bytes": 1485,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--run_sp27_strata_controls.py.patch",
+    "sha256": "55bd0002a67b434c4a250dbfa0794b701cc7fd14a1bc2e07d17d1639c4a74a6f"
+  },
+  {
+    "bytes": 10167,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pon_budget_controls.py.patch",
+    "sha256": "17bdcc6d701123efdda939fddac3d3f90f84dc85f46983cd0150d3e46883f491"
+  },
+  {
+    "bytes": 4877,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_sp27_receiver_controls.py.patch",
+    "sha256": "80a9e51f891ee5cfd1e104108f2f17f2a34c9ce9e9ba29b7a3a1654bed97bd3f"
+  },
+  {
+    "bytes": 4887,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_sp27_strata_controls.py.patch",
+    "sha256": "1896d7ee4206c4d92b5caa114d404fcb9e6c289d36176eac4269f6456be55837"
+  },
+  {
+    "bytes": 3407,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_throughput_cost_coverage.py.patch",
+    "sha256": "853e651db79a1a20a8572d8478f2b88c84f61b8859977124b6d46e1a930d30a2"
+  },
+  {
+    "bytes": 1229,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--throughput_cost_coverage.py.patch",
+    "sha256": "06d1fd330552feca8fa09f1e0d52d9d426ae0302ef94e6a44ca8da2ab24d34a3"
+  },
+  {
+    "bytes": 2242,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--formal--throughput-v1--test_execution_report.py.patch",
+    "sha256": "51e41cb612e525d2d9e0fd0e991a1420d0caa5344a633fafe74bbd8271607d71"
+  },
+  {
+    "bytes": 6020,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--run_cell_learning_business_readback.py.patch",
+    "sha256": "e207ad6816cd06f752c2b28f2cc821001bd9234390392b731eeb36a81463d24a"
+  },
+  {
+    "bytes": 7020,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--run_pon_budget_controls.py.patch",
+    "sha256": "f98c8ec68a27816559f095c92399aa3c8350ad2f7ca05f6f3081d28064f3920b"
+  },
+  {
+    "bytes": 1491,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--run_sp27_receiver_controls.py.patch",
+    "sha256": "25c678fd98a73ed230704dd2df617fc7a2072b6f98cfc95dd637a19ba97321e3"
+  },
+  {
+    "bytes": 1485,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--run_sp27_strata_controls.py.patch",
+    "sha256": "55bd0002a67b434c4a250dbfa0794b701cc7fd14a1bc2e07d17d1639c4a74a6f"
+  },
+  {
+    "bytes": 10167,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pon_budget_controls.py.patch",
+    "sha256": "17bdcc6d701123efdda939fddac3d3f90f84dc85f46983cd0150d3e46883f491"
+  },
+  {
+    "bytes": 4877,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_sp27_receiver_controls.py.patch",
+    "sha256": "80a9e51f891ee5cfd1e104108f2f17f2a34c9ce9e9ba29b7a3a1654bed97bd3f"
+  },
+  {
+    "bytes": 4887,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_sp27_strata_controls.py.patch",
+    "sha256": "1896d7ee4206c4d92b5caa114d404fcb9e6c289d36176eac4269f6456be55837"
+  },
+  {
+    "bytes": 3407,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_throughput_cost_coverage.py.patch",
+    "sha256": "853e651db79a1a20a8572d8478f2b88c84f61b8859977124b6d46e1a930d30a2"
+  },
+  {
+    "bytes": 1229,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--throughput_cost_coverage.py.patch",
+    "sha256": "06d1fd330552feca8fa09f1e0d52d9d426ae0302ef94e6a44ca8da2ab24d34a3"
+  },
+  {
+    "bytes": 2980,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--check_public_readiness_evidence.py.patch",
+    "sha256": "d8efadb1250b97cad268b9d519e6ed34ad84ff23a97a68b0c679f98b9e081ac6"
+  },
+  {
+    "bytes": 19979,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_public_readiness_evidence.py.patch",
+    "sha256": "5b210f96e932b4f8ddaad8d92ba031da713ff594bcb498192f9f43c6dddab44e"
+  },
+  {
+    "bytes": 3221,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--check_public_readiness_evidence.py.patch",
+    "sha256": "f5dc83dfa89f0d12c2571582399fd302dec5f966e8adb0245f7073dd27a0eb13"
+  },
+  {
+    "bytes": 22320,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_public_readiness_evidence.py.patch",
+    "sha256": "1ecaba2ea46d157a070eaf784f9516014d6619dcd1122883739942e315149ba4"
+  },
+  {
+    "bytes": 1182,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--hash_use_contract.py.patch",
+    "sha256": "2bb3b383ec4b39a313a1a4e241e0a4962f0e53fde9f296de4c6798ad81ca0e3c"
+  },
+  {
+    "bytes": 1397,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--pq_authority_effect_register.py.patch",
+    "sha256": "f83ad1521345ffe18db4735d48ce81ad4fae2f10fdcfa200524ce2c72d0f402e"
+  },
+  {
+    "bytes": 3167,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--pq_chain_claim_guard.py.patch",
+    "sha256": "55ab52a8eeb72880b655b07bd63244fd619f55811bf0643c0137c83b4f3009b0"
+  },
+  {
+    "bytes": 9609,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--pq_lifetime_composition.py.patch",
+    "sha256": "808a5adfa053e19bb26efba4b539fc107a9a4f5e93a2c8b74d9fc70b9016b237"
+  },
+  {
+    "bytes": 11008,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--pq_lifetime_current_v2.py.patch",
+    "sha256": "307e00ae0817f4d637b22c91ed4345ce15e2036a64065f25e44866867c399ea4"
+  },
+  {
+    "bytes": 2529,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pq_authority_effect_register.py.patch",
+    "sha256": "162fdc5098afd51d4bef1b140945de8973dab9817d48f7184828739658756b7c"
+  },
+  {
+    "bytes": 3762,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pq_chain_claim_guard.py.patch",
+    "sha256": "82ae61403f3c84360265a5f7809915ee6330469a27d2f6be343bc18f47840898"
+  },
+  {
+    "bytes": 3263,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pq_lifetime_budget.py.patch",
+    "sha256": "263f25b4687995ea7ad960962df1407282d71482caee5bd2a43a56b629f5256e"
+  },
+  {
+    "bytes": 7487,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pq_lifetime_composition.py.patch",
+    "sha256": "f3ca3a0438f237b28849eaabc3b5d1713b8443346a211712681358917407e205"
+  },
+  {
+    "bytes": 14503,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_pq_lifetime_current_v2.py.patch",
+    "sha256": "8c175cc746b8b2b1762765eb7ecaefc2da805c960dc13179db0962ff797088dd"
+  },
+  {
+    "bytes": 2115,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_w1_lifetime_current_observation.py.patch",
+    "sha256": "f34fb4e71f0c27e023c0d420020a4f7185bca575160d9e215beaa0466ab3949a"
+  },
+  {
+    "bytes": 3803,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_w1_qrom_closure_current_controls.py.patch",
+    "sha256": "aeb8074bc7611e78a257342043dec043bedb8c68984fa9bdf368ea3dd8819dd5"
+  },
+  {
+    "bytes": 4504,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_w1_qrom_current_ci.py.patch",
+    "sha256": "2fd056aa362d2aa3f7f231acb12cb874215f9aa33f0ac6ccd63c88ecfeb22855"
+  },
+  {
+    "bytes": 5145,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--ci--test_w1_qrom_semantics_audit.py.patch",
+    "sha256": "6986e152646337ec6da1cc11a9801fb42661db16f4f5f0b96fba35e0ae45d6dc"
+  },
+  {
+    "bytes": 1324,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--scripts--w1_lifetime_current_observation.py.patch",
+    "sha256": "d82eec2222d70e13f2a85648f33b0c1dc054c5308630648a3b895d37417253ba"
+  },
+  {
+    "bytes": 1872,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--hash_use_contract.py.patch",
+    "sha256": "3485e1b3a5c97a0b02d4f98093d8d0424011cc72bd15c07d447723d41fba4869"
+  },
+  {
+    "bytes": 1397,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--pq_authority_effect_register.py.patch",
+    "sha256": "f83ad1521345ffe18db4735d48ce81ad4fae2f10fdcfa200524ce2c72d0f402e"
+  },
+  {
+    "bytes": 3167,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--pq_chain_claim_guard.py.patch",
+    "sha256": "55ab52a8eeb72880b655b07bd63244fd619f55811bf0643c0137c83b4f3009b0"
+  },
+  {
+    "bytes": 9710,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--pq_lifetime_composition.py.patch",
+    "sha256": "fb84fd410da0e86b82b80a3a1b2c9bae7af421f120e20dfc0eb69bfd7851c7f6"
+  },
+  {
+    "bytes": 11008,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--pq_lifetime_current_v2.py.patch",
+    "sha256": "307e00ae0817f4d637b22c91ed4345ce15e2036a64065f25e44866867c399ea4"
+  },
+  {
+    "bytes": 2529,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pq_authority_effect_register.py.patch",
+    "sha256": "162fdc5098afd51d4bef1b140945de8973dab9817d48f7184828739658756b7c"
+  },
+  {
+    "bytes": 3762,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pq_chain_claim_guard.py.patch",
+    "sha256": "82ae61403f3c84360265a5f7809915ee6330469a27d2f6be343bc18f47840898"
+  },
+  {
+    "bytes": 3263,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pq_lifetime_budget.py.patch",
+    "sha256": "263f25b4687995ea7ad960962df1407282d71482caee5bd2a43a56b629f5256e"
+  },
+  {
+    "bytes": 6638,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pq_lifetime_composition.py.patch",
+    "sha256": "4fdd14120a61f50fe920835b76c375108166eb49fbe5fe91c1614c5777e738c8"
+  },
+  {
+    "bytes": 14503,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_pq_lifetime_current_v2.py.patch",
+    "sha256": "8c175cc746b8b2b1762765eb7ecaefc2da805c960dc13179db0962ff797088dd"
+  },
+  {
+    "bytes": 2115,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_w1_lifetime_current_observation.py.patch",
+    "sha256": "f34fb4e71f0c27e023c0d420020a4f7185bca575160d9e215beaa0466ab3949a"
+  },
+  {
+    "bytes": 3803,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_w1_qrom_closure_current_controls.py.patch",
+    "sha256": "aeb8074bc7611e78a257342043dec043bedb8c68984fa9bdf368ea3dd8819dd5"
+  },
+  {
+    "bytes": 4504,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_w1_qrom_current_ci.py.patch",
+    "sha256": "2fd056aa362d2aa3f7f231acb12cb874215f9aa33f0ac6ccd63c88ecfeb22855"
+  },
+  {
+    "bytes": 5145,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--ci--test_w1_qrom_semantics_audit.py.patch",
+    "sha256": "6986e152646337ec6da1cc11a9801fb42661db16f4f5f0b96fba35e0ae45d6dc"
+  },
+  {
+    "bytes": 1324,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--scripts--w1_lifetime_current_observation.py.patch",
+    "sha256": "d82eec2222d70e13f2a85648f33b0c1dc054c5308630648a3b895d37417253ba"
+  },
+  {
+    "bytes": 793,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--hash-use-contract-v1.json.patch",
+    "sha256": "e81a72aebad811d0e656aabfeb38d586620e5d28802d1fc2ec5a7b9a34222b5c"
+  },
+  {
+    "bytes": 2270,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--pq-authority-effects-v1.json.patch",
+    "sha256": "f35e40d6bf980e730fcdc903c2f6e6158614efa1ce047c7dab3e2541b862d8fe"
+  },
+  {
+    "bytes": 36646,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--pq-cross-branch-corpus-v1.json.patch",
+    "sha256": "f9c06338fe8cff8af74ac08c00cfe5752d94e32ae66478056fc0831e75465c68"
+  },
+  {
+    "bytes": 14377,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--pq128-lifetime-composition-current-v3.json.patch",
+    "sha256": "ca84b89a7adfc729c8e849ad89d26c2e0db013493426018fba0215c26248a00b"
+  },
+  {
+    "bytes": 4152,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--pq128-source-correspondence-current-v2.json.patch",
+    "sha256": "21b475532ab317b88166e577ba74d97668f42a07a735b5b3478017f4df555955"
+  },
+  {
+    "bytes": 1671,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--config--pon--w1-lifetime-current-source-v2.json.patch",
+    "sha256": "0b62a354a8a4c65587de059963e12e0b4b9f9db08ce2303f98a21e3b7ec2adc2"
+  },
+  {
+    "bytes": 3994,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--hash-use-contract-v1.json.patch",
+    "sha256": "0bad494a5ce5f0f55d6e0f060bcc43166c859a954c8d5e61c3969b5d8b41b427"
+  },
+  {
+    "bytes": 2270,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--pq-authority-effects-v1.json.patch",
+    "sha256": "f35e40d6bf980e730fcdc903c2f6e6158614efa1ce047c7dab3e2541b862d8fe"
+  },
+  {
+    "bytes": 47060,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--pq-cross-branch-corpus-v1.json.patch",
+    "sha256": "b104e49171d2d2f795df3de059c890d0ccd816913521003f194f58626fae7229"
+  },
+  {
+    "bytes": 14377,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--pq128-lifetime-composition-current-v3.json.patch",
+    "sha256": "ca84b89a7adfc729c8e849ad89d26c2e0db013493426018fba0215c26248a00b"
+  },
+  {
+    "bytes": 4152,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--pq128-source-correspondence-current-v2.json.patch",
+    "sha256": "21b475532ab317b88166e577ba74d97668f42a07a735b5b3478017f4df555955"
+  },
+  {
+    "bytes": 1671,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--config--pon--w1-lifetime-current-source-v2.json.patch",
+    "sha256": "0b62a354a8a4c65587de059963e12e0b4b9f9db08ce2303f98a21e3b7ec2adc2"
+  },
+  {
+    "bytes": 8032,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--development--TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md.patch",
+    "sha256": "8f0e409fcc3ca0dc39995ce270aee44693a579dae90a9072aef9fb0f52fad2fa"
+  },
+  {
+    "bytes": 1569,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.patch",
+    "sha256": "943560511cc0d80159bd32f787225f08bc5b4f9bdf6f0b008cb563c99bede58e"
+  },
+  {
+    "bytes": 5586,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.patch",
+    "sha256": "447639881d8774f860632dae719e4aee7cc8d8cf895566eb34c4053da4cd5bbb"
+  },
+  {
+    "bytes": 6125,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.patch",
+    "sha256": "447d720644369de16f85247d5ecb53ea2f3c52428596823b8a4dd1851e6c7268"
+  },
+  {
+    "bytes": 6944,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.patch",
+    "sha256": "3b455d06dcb1fe8ebe85d716158497304bd67fe698a3458a078759dd2a3d2208"
+  },
+  {
+    "bytes": 4296,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.patch",
+    "sha256": "73fc54133201eee98bae48f334ee5f7bb25349dd7d95c81507568ecdf82fd63e"
+  },
+  {
+    "bytes": 18253,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--development--TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md.patch",
+    "sha256": "d7893850c36a9a5c693d18df9b222561c8c34fa8ec3420e80eea88386f39d329"
+  },
+  {
+    "bytes": 4608,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.patch",
+    "sha256": "3578c8ae2c59b598101b1cf88f9ab9f8a0e36e562983d6f893feac019cfbc4b7"
+  },
+  {
+    "bytes": 5586,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--security--PQ_AUTHORITY_EFFECT_REGISTER_V1.md.patch",
+    "sha256": "447639881d8774f860632dae719e4aee7cc8d8cf895566eb34c4053da4cd5bbb"
+  },
+  {
+    "bytes": 6125,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--security--PQ_PROOF_PROFILE_BINDING_V1.md.patch",
+    "sha256": "447d720644369de16f85247d5ecb53ea2f3c52428596823b8a4dd1851e6c7268"
+  },
+  {
+    "bytes": 6944,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--security--W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md.patch",
+    "sha256": "3b455d06dcb1fe8ebe85d716158497304bd67fe698a3458a078759dd2a3d2208"
+  },
+  {
+    "bytes": 4296,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--docs--security--W1_QROM_CURRENT_SOURCE_MAPPING_V2.md.patch",
+    "sha256": "73fc54133201eee98bae48f334ee5f7bb25349dd7d95c81507568ecdf82fd63e"
+  },
+  {
+    "bytes": 3358,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--evidence--pon-w1-qrom-semantics-current-20261114--README.md.patch",
+    "sha256": "1795d3b5639d8000e9371c1e90603786cc9d0a0e34c31d697b1e27ae09ac904e"
+  },
+  {
+    "bytes": 78849,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--evidence--pon-w1-qrom-semantics-current-20261114--report.json.patch",
+    "sha256": "e2a0f473ec288505815a671b178bee254476fb278c58a7ba9df087778aa695da"
+  },
+  {
+    "bytes": 3358,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--evidence--pon-w1-qrom-semantics-current-20261114--README.md.patch",
+    "sha256": "1795d3b5639d8000e9371c1e90603786cc9d0a0e34c31d697b1e27ae09ac904e"
+  },
+  {
+    "bytes": 78849,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--evidence--pon-w1-qrom-semantics-current-20261114--report.json.patch",
+    "sha256": "e2a0f473ec288505815a671b178bee254476fb278c58a7ba9df087778aa695da"
+  },
+  {
+    "bytes": 3206,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/C0--ci-job-exact-count-excerpts.txt",
+    "sha256": "9f2a2e08d1a6d1130e10e881c91bd506d088ca08fa06cb41461db72fb0726754"
+  },
+  {
+    "bytes": 3206,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/N--ci-job-exact-count-excerpts.txt",
+    "sha256": "705bd77c5146b2dd3322d237b6633d12caff6a91c58954478bf7a05fa3709b77"
+  },
+  {
+    "bytes": 3206,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--ci-job-exact-count-excerpts.txt",
+    "sha256": "dd56204ec3f594dca6c9128c6ac9be9f0ed1f03cccc3425a79b68a449e8fb37f"
+  },
+  {
+    "bytes": 2273,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/N--default-budget.txt",
+    "sha256": "ccccbd95f4d9dbf893c93c3e48aed8c05d82e9c6f8a19054dd713094c0a45132"
+  },
+  {
+    "bytes": 1308,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--default-budget.txt",
+    "sha256": "30b59adcd5c40281f68a76395313882d613a65a6c730c82e3761e4e571a56de6"
+  },
+  {
+    "bytes": 2270,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/N--readiness-added.txt",
+    "sha256": "64eb5da601724837f30220141b2ff1291a292a4ee9a19cbc064ddd85f6a79702"
+  },
+  {
+    "bytes": 1694,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/M6--readiness-added.txt",
+    "sha256": "d4a2e9ef4fcbc4b9ef482868c22789267acaffb2aaf89001a85afb05d33787f1"
+  },
+  {
+    "bytes": 138,
+    "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/review-extracts-v1/source-objects-excerpt-policy.json",
+    "sha256": "88c19b203610e5e12141fb0731f3645d8f049fc4937f9ea8321eb0c6af18492e"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-461337f087d9ac767902acdbeba831b92fb75d9afedcfb98ca82e872270fa3cb/output.log",
+    "available_end": 161,
+    "chunk_sha256": "a9a6726a323c8327e1a78ebacce16dc8ca335fdc8235e6ff7e4b6349e0b4411a",
+    "host": "mac",
+    "next_offset": 161,
+    "offset": 0,
+    "output_complete": true,
+    "session_id": "dpty-461337f087d9ac767902acdbeba831b92fb75d9afedcfb98ca82e872270fa3cb",
+    "status": {
+      "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+      "bytes_seen": 161,
+      "bytes_stored": 161,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794657311658,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 21319,
+      "pid": 21320,
+      "state": "exited"
+    },
+    "store_key": "N-protocol-provenance-preserver-terminal"
+  },
+  {
+    "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-9c2712e728af1465fd933ad15c1678b8bdbac79f5fb867fa1eb4135467847075/output.log",
+    "available_end": 884,
+    "chunk_sha256": "155494c2afca3c9eb39d94ac096bc131ccbebfd9c4bfe8d2c0c7a75ca8b836c3",
+    "host": "mac",
+    "next_offset": 884,
+    "offset": 0,
+    "output_complete": true,
+    "session_id": "dpty-9c2712e728af1465fd933ad15c1678b8bdbac79f5fb867fa1eb4135467847075",
+    "status": {
+      "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+      "bytes_seen": 884,
+      "bytes_stored": 884,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794657484212,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 24093,
+      "pid": 24094,
+      "state": "exited"
+    },
+    "store_key": "N-protocol-root-inventory-terminal"
+  }
+]

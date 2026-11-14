@@ -1,0 +1,17 @@
+diff --git a/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json b/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json
+index 3d0ae154b..b5083bc71 100644
+--- a/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json
++++ b/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json
+@@ -1313,7 +1313,7 @@
+       "compression": null
+     },
+     {
+-      "path": "remote/remote-open-pr-graphql-0210-v1/page-4.json",
++      "path": "remote/remote-open-pr-graphql-0210-v1/page-4.json.raw",
+       "bytes": 0,
+       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+       "source_path": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-4.json",
+diff --git a/evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json b/evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json.raw
+similarity index 100%
+rename from evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json
+rename to evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json.raw

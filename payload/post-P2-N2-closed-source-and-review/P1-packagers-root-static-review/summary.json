@@ -1,0 +1,31 @@
+{
+  "cases": [
+    {
+      "actual_diff_equals_independently_reviewed_diff": true,
+      "compiled_without_execution": true,
+      "label": "full",
+      "new_bytes": 28912,
+      "new_path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+      "new_sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967",
+      "old_path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_ed0d35_v1.py",
+      "old_sha256": "cef78f3610541a8056b297fd5256a2493227d3aa78cd0d964a92c57c687889d8",
+      "patch_sha256": "b5b0d7499f10096dd0cd6f12ca5c9e34ce3bb2a2b688c739aec65e6e9419d195"
+    },
+    {
+      "actual_diff_equals_independently_reviewed_diff": true,
+      "compiled_without_execution": true,
+      "label": "external",
+      "new_bytes": 14207,
+      "new_path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+      "new_sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811",
+      "old_path": "/private/tmp/chain-prci-M8-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_ed0d35_v1.py",
+      "old_sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f",
+      "patch_sha256": "f880d789b7bbfdbfffd73a6e4ad2adaabdf99430e522060b546623a72cad5fee"
+    }
+  ],
+  "notes": "Full v2 preserves 18 stages and actual P1 start; the original v1 incomplete failure cannot pass the complete-lane packager. External P1 remains prepared-only and will not run because final source is P2.",
+  "packagers_executed": false,
+  "schema": "trnm-P1-packagers-root-static-review-v1",
+  "status": "PASS",
+  "test_receipts_read": false
+}

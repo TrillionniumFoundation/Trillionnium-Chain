@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-11-14T11:05:28.628448+00:00",
+  "conclusion": "NO_SUBSTANTIVE_EQUIVALENCE_OR_ISOLATION_DEFECT_IDENTIFIED_IN_FIXED_DIFF",
+  "four_second_fix_claimed": false,
+  "index": {
+    "bytes": 12611,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/EVIDENCE_INDEX.json"
+    },
+    "path": "final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "c16f2cbe76107d6c227d79e36b7cdae84147e285c177dc3f83827cab9eee3fca"
+  },
+  "input_files_identity_and_hash_rechecked": true,
+  "note": "No stage materialization requested or performed; all jobs in read-receipts have authoritative terminal states.",
+  "schema": "trnm-policy-prefix-independent-review-seal-v1",
+  "source_helpers_or_tests_executed": false
+}

@@ -1,0 +1,45 @@
+.github/workflows/pon-model-parent-acceptance.yml:46:          "$RUNNER_TEMP/model-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/pon-pq-system-continuation.yml:336:            cryptography==50.0.2 cffi==2.1.1 pycparser==3.12
+.github/workflows/pon-priority-acceptance.yml:162:          "$RUNNER_TEMP/model-context-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/release-finality-reference.yml:80:          "$RUNNER_TEMP/finality-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/trnm-required-baseline.yml:271:          "$RUNNER_TEMP/pon-contract-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/trnm-required-baseline.yml:359:          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/trnm-required-baseline.yml:461:          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/trnm-required-baseline.yml:552:          "$RUNNER_TEMP/pon-evidence-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+.github/workflows/trnm-required-baseline.yml:603:          "$RUNNER_TEMP/pon-merge-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+scripts/run_evaluation_qualification.py:84:          'numpy':__import__('numpy').__version__,'cryptography':__import__('cryptography').__version__,
+scripts/ci/hash_use_contract.py:2:"""Inspect the reviewed per-purpose hash contract; never qualify cryptography.
+scripts/qualification_runtime.py:116:        'import sys,platform,json,numpy,cryptography; '
+scripts/qualification_runtime.py:118:        'numpy=numpy.__version__,cryptography=cryptography.__version__)))',
+scripts/qualification_runtime.py:127:    fields = {'executable', 'python', 'numpy', 'cryptography'}
+scripts/test_qualification_runtime.py:297:                                numpy='test-numpy', cryptography='test-cryptography')
+scripts/run_public_readiness_qualification.py:21:from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
+scripts/run_public_readiness_qualification.py:161:            numpy=__import__('numpy').__version__, cryptography=__import__('cryptography').__version__,
+scripts/run_public_readiness_qualification.py:162:            cryptography_openssl=openssl_backend.openssl_version_text(), cffi=version('cffi'),
+scripts/ci/run_account_execution_conformance.py:59:    'formal/pon-nakamoto-v1/requirements.txt',
+scripts/ci/run_account_execution_conformance.py:421:            'cryptography': importlib.metadata.version('cryptography')}
+scripts/ci/check_ci_contract.py:45:          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+scripts/ci/test_public_readiness_evidence.py:358:        requirements=self.root/'formal/pon-nakamoto-v1/requirements.txt';requirements.parent.mkdir(parents=True)
+scripts/ci/test_public_readiness_evidence.py:359:        requirements.write_text('numpy==1.26.4\ncryptography==50.0.2\n')
+scripts/ci/test_public_readiness_evidence.py:360:        report={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2',
+scripts/ci/test_public_readiness_evidence.py:361:                                  cryptography_openssl='OpenSSL 4.0.3',cffi='2.1.1')}
+scripts/ci/test_public_readiness_evidence.py:362:        baseline={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2')}
+scripts/ci/test_public_readiness_evidence.py:363:        child=dict(executable='/isolated/venv/bin/python3',python='3.12.14',numpy='1.26.4',cryptography='50.0.2')
+scripts/ci/test_public_readiness_evidence.py:367:        for field,value in [('executable','python3'),('numpy','1.26.3'),('cryptography','41.0.7'),('python','3.12.13')]:
+scripts/ci/test_public_readiness_evidence.py:374:        for field,value in [('cryptography','41.0.7'),('numpy','1.26.3'),('python','3.12.13'),
+scripts/ci/test_public_readiness_evidence.py:375:                            ('python','3.12'),('cryptography_openssl',''),('cryptography_openssl',None),
+scripts/ci/test_public_readiness_evidence.py:381:        old_report['environment']['cryptography']=old_baseline['environment']['cryptography']='41.0.7'
+scripts/ci/test_public_readiness_evidence.py:382:        with self.assertRaisesRegex(ValueError,'environment dependency pin cryptography'):
+scripts/ci/test_public_readiness_evidence.py:384:        requirements.write_text('numpy==1.26.4\ncryptography>=50\n')
+scripts/ci/test_public_readiness_evidence.py:385:        with self.assertRaisesRegex(ValueError,'missing or ambiguous environment pin cryptography'):
+scripts/ci/test_public_readiness_evidence.py:397:            'import sys,platform,json,numpy,cryptography; print(json.dumps(dict('
+scripts/ci/test_public_readiness_evidence.py:399:            'cryptography=cryptography.__version__)))'],env=bound,text=True))
+scripts/ci/test_ci_contract.py:560:        # Only this harmless synthetic shell function executes; no cryptography
+scripts/ci/check_pq_research_integration.py:5:cryptography, verify PoN security, or establish production qualification.
+scripts/ci/check_public_readiness_evidence.py:186:    requirements=safe(root,'formal/pon-nakamoto-v1/requirements.txt').read_text()
+scripts/ci/check_public_readiness_evidence.py:188:    for package in ('numpy','cryptography'):
+scripts/ci/check_public_readiness_evidence.py:196:    for package in ('cryptography_openssl','cffi'):
+scripts/ci/check_public_readiness_evidence.py:204:        for package in ('python','numpy','cryptography'):
+scripts/ci/analyze_zero_paired_cost.py:73:    """Account for a complete v2 grid. This does not replay W1 cryptography."""
+scripts/ci/test_sp27_receiver_controls.py:85:            # bytes/inventory; only the native verifier validates cryptography.
+scripts/ci/pq_authority_surface_scan.py:2:"""Source-only inventory of Rust authorization cryptography, never PQ qualification.

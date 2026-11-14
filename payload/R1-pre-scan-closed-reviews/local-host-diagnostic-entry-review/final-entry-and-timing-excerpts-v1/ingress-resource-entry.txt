@@ -1,0 +1,806 @@
+1742:     // AdmissionPolicy; the unpriced authenticated-only transport is local-only.
+1743:     if !listener_address.ip().is_loopback() {
+1744:         ensure(admission.is_some(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED")?;
+1745:     }
+1746:     // An allowlisted peer is not a CPU resource owner. All remotely exposed
+1747:     // legacy authenticated listeners must join the SAME administrator-owned
+1748:     // host cgroup as public V3 before accepting a single socket. A service
+1749:     // without that parent fails closed; no fresh per-listener CPU allowance.
+1750:     let host_kernel = crate::host_kernel_parent::require_for_listener(listener_address)?;
+1751:     ensure(
+1752:         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
+1753:         "SERVER_BUDGET",
+1754:     )?;
+1755:     listener.set_nonblocking(true)?;
+1756:     let listeners = (0..3)
+1757:         .map(|_| listener.try_clone())
+1758:         .collect::<std::io::Result<Vec<_>>>()?;
+1759:     let settings = node.settings().clone();
+1760:     let node = Arc::new(Mutex::new(node));
+1761:     let metrics = Arc::new(Mutex::new(Metrics::default()));
+1762:     let active_requests = Arc::new(Mutex::new(BTreeSet::new()));
+1763:     let (public, _local_recovery) = bounded_ingress();
+1764:     let mut handoff_senders = Vec::new();
+1765:     let mut handoff_receivers = Vec::new();
+1766:     for _ in 0..2 {
+1767:         let (sender, receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+1768:         handoff_senders.push(sender);
+1769:         handoff_receivers.push(Some(receiver));
+1770:     }
+1771:     handoff_receivers.push(None);
+1772:     let deadline = Instant::now() + lifetime;
+1773:     thread::scope(|scope| -> Result<()> {
+1774:         let mut workers = Vec::new();
+1775:         for (worker_index, (listener, handoff_receiver)) in
+1776:             listeners.into_iter().zip(handoff_receivers).enumerate()
+1777:         {
+1778:             let node = node.clone();
+1779:             let metrics = metrics.clone();
+1780:             let active_requests = active_requests.clone();
+1781:             let public = public.clone();
+1782:             let stop = stop.clone();
+1783:             let authentication = authentication.clone();
+1784:             let settings = settings.clone();
+1785:             let handoff_senders = handoff_senders.clone();
+1786:             let host_kernel_for_worker = host_kernel.as_ref();
+1787:             workers.push(scope.spawn(move || -> Result<()> {
+1788:                 // Membership is checked on the ACTUAL native thread, not
+1789:                 // only on the listener's different parent thread.
+1790:                 if let Some(kernel) = host_kernel_for_worker {
+1791:                     kernel.verify()?;
+1792:                 }
+1793:                 while !stop.load(Ordering::Acquire) && Instant::now() < deadline {
+1794:                     let handed = if admission.is_some() {
+1795:                         handoff_receiver.as_ref().and_then(|receiver| {
+1796:                             receiver
+1797:                                 .recv_timeout(
+1798:                                     PROOF_HANDOFF_POLL
+1799:                                         .min(deadline.saturating_duration_since(Instant::now())),
+1800:                                 )
+1801:                                 .ok()
+1802:                         })
+1803:                     } else {
+1804:                         None
+1805:                     };
+1806:                     if stop.load(Ordering::Acquire) || Instant::now() >= deadline {
+1807:                         break;
+1808:                     }
+1809:                     let connection = if let Some(connection) = handed {
+1810:                         connection
+1811:                     } else {
+1812:                         let (mut socket, address) = match listener.accept() {
+1813:                             Ok(pair) => pair,
+1814:                             Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+1815:                                 thread::sleep(Duration::from_millis(2));
+1816:                                 continue;
+1817:                             }
+1818:                             Err(e) => return Err(e.into()),
+1819:                         };
+1820:                         let request_deadline =
+1821:                             deadline.min(Instant::now() + Duration::from_secs(10));
+1822:                         metrics
+1823:                             .lock()
+1824:                             .map_err(|_| "METRICS_POISONED")?
+1825:                             .socket_connections += 1;
+1826:                         socket.set_nonblocking(false)?;
+1827:                         if admission.is_some() {
+1828:                             socket.set_nodelay(true)?;
+1829:                         }
+1830:                         socket.set_read_timeout(Some(Duration::from_secs(5)))?;
+1831:                         socket.set_write_timeout(Some(Duration::from_secs(5)))?;
+1832:                         let preface_deadline = request_deadline.min(
+1833:                             Instant::now()
+1834:                                 + if admission.is_some() {
+1835:                                     PROTECTED_PREFACE_BUDGET
+1836:                                 } else {
+1837:                                     Duration::from_secs(5)
+1838:                                 },
+1839:                         );
+1840:                         let bytes = match read_frame_deadline(&mut socket, preface_deadline) {
+1841:                             Ok(bytes) => bytes,
+1842:                             Err(e) => {
+1843:                                 let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+1844:                                 counts.malformed_requests += 1;
+1845:                                 if admission.is_some() {
+1846:                                     counts.protected_preface_refusals += 1;
+1847:                                 }
+1848:                                 drop(counts);
+1849:                                 let _ = write_untrusted_error(&mut socket, &e, admission.is_some());
+1850:                                 continue;
+1851:                             }
+1852:                         };
+1853:                         PrefacedSocket {
+1854:                             socket,
+1855:                             address,
+1856:                             request_deadline,
+1857:                             preface_deadline,
+1858:                             first: bytes,
+1859:                         }
+1860:                     };
+1861:                     let connection = if admission.is_some()
+1862:                         && worker_index == 2
+1863:                         && connection.first.len() <= 512
+1864:                         && admission_hello(&connection.first).is_ok_and(|hello| hello.is_some())
+1865:                     {
+1866:                         match try_handoff_hello(connection, &handoff_senders) {
+1867:                             Ok(()) => {
+1868:                                 metrics
+1869:                                     .lock()
+
+2594:     node: &mut Node,
+2595:     source: SocketAddr,
+2596:     page: Page,
+2597:     tip: Hash,
+2598:     after: Hash,
+2599:     clock: u64,
+2600:     deadline: Instant,
+2601: ) -> Result<Hash> {
+2602:     let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+2603:     if let Some(kernel) = &host_kernel {
+2604:         kernel.verify()?;
+2605:     }
+2606:     let resource = || {
+2607:         if let Some(kernel) = &host_kernel {
+2608:             kernel.verify()?;
+2609:         }
+2610:         Ok(())
+2611:     };
+2612:     let native = history_import::receive(
+2613:         history_import::Owner::Exclusive(node),
+2614:         page,
+2615:         tip,
+2616:         after,
+2617:         clock,
+2618:         history_import::Control {
+2619:             deadline,
+2620:             resource: &resource,
+2621:         },
+2622:     );
+2623:     // A completed native admission cannot be undone by a post-verification
+2624:     // host fault. That fault still makes the overall synchronization fail.
+2625:     history_import::finish_with_resource(native, deadline, resource)
+2626: }
+2627: /// Public History import is untrusted even when a local TCP proxy carries
+2628: /// remote packets through a loopback address. No external caller can select
+2629: /// the weaker native development compatibility wrapper.
+2630: ///
+2631: /// ```compile_fail
+2632: /// use trnm_pon_node::ingress::receive_page_from;
+2633: /// fn main() {}
+2634: /// ```
+2635: pub fn receive_public_page_from(
+2636:     node: &mut Node,
+2637:     source: SocketAddr,
+2638:     page: Page,
+2639:     tip: Hash,
+2640:     after: Hash,
+2641:     clock: u64,
+2642: ) -> Result<Hash> {
+2643:     receive_public_page_from_before(
+2644:         node,
+2645:         source,
+2646:         page,
+2647:         tip,
+2648:         after,
+2649:         clock,
+2650:         Instant::now() + history_import::PAGE_BUDGET,
+2651:     )
+2652: }
+2653: /// The caller supplies one original business deadline, shared across pages.
+2654: /// Busy/expiry does not classify a proof as invalid or undo a durable commit.
+2655: pub fn receive_public_page_from_before(
+2656:     node: &mut Node,
+2657:     source: SocketAddr,
+2658:     page: Page,
+2659:     tip: Hash,
+2660:     after: Hash,
+2661:     clock: u64,
+2662:     deadline: Instant,
+2663: ) -> Result<Hash> {
+2664:     receive_public_page_from_before_observed(node, source, page, tip, after, clock, deadline, None)
+2665: }
+2666: 
+2667: /// Explicit optional local measurements over the identical full importer. The
+2668: /// observer adds no admission capability, budget, deadline or signed bytes.
+2669: #[allow(clippy::too_many_arguments)] // Original seven inputs plus one optional diagnostic sink.
+2670: pub fn receive_public_page_from_before_observed(
+2671:     node: &mut Node,
+2672:     source: SocketAddr,
+2673:     page: Page,
+2674:     tip: Hash,
+2675:     after: Hash,
+2676:     clock: u64,
+2677:     deadline: Instant,
+2678:     observation: Option<&HistoryImportObserver>,
+2679: ) -> Result<Hash> {
+2680:     use history_import::{observe_host, HistoryHostPhase};
+2681:     // The ORIGINAL fixed administrator-owned Host parent is required even
+2682:     // for a loopback source: a caller's socket address is not provenance.
+2683:     let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {
+2684:         crate::host_kernel_parent::require_host_kernel_budget(
+2685:             source,
+2686:             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2687:         )?
+2688:         .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
+2689:     })?;
+2690:     observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;
+2691:     let native = history_import::receive_observed(
+2692:         history_import::Owner::Exclusive(node),
+2693:         page,
+2694:         tip,
+2695:         after,
+2696:         clock,
+2697:         history_import::Control {
+2698:             deadline,
+2699:             resource: &|| {
+2700:                 observe_host(observation, HistoryHostPhase::Checkpoint, || {
+2701:                     kernel.verify()
+2702:                 })
+2703:             },
+2704:         },
+2705:         observation,
+2706:     );
+2707:     // Do not convert an already committed block into an invalid work proof
+2708:     // when the last local Host owner observation fails.
+2709:     history_import::finish_with_resource(native, deadline, || {
+2710:         observe_host(observation, HistoryHostPhase::Final, || kernel.verify())
+2711:     })
+2712: }
+2713: 
+2714: /// Shared public History import: refill and full W1 never hold the Node mutex.
+2715: /// It uses the same Host parent, original CPU account and durable epoch as the
+2716: /// exclusive compatibility API; continuous imports stay denied by #498.
+2717: pub fn receive_public_page_from_shared(
+2718:     node: &Mutex<Node>,
+2719:     source: SocketAddr,
+2720:     page: Page,
+2721:     tip: Hash,
+2722:     after: Hash,
+2723:     clock: u64,
+2724:     deadline: Instant,
+2725: ) -> Result<Hash> {
+2726:     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+2727:         source,
+2728:         Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2729:     )?
+2730:     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+2731:     kernel.verify()?;
+2732:     let result = history_import::receive(
+2733:         history_import::Owner::Shared(node),
+2734:         page,
+2735:         tip,
+2736:         after,
+2737:         clock,
+2738:         history_import::Control {
+2739:             deadline,
+2740:             resource: &|| kernel.verify(),
+2741:         },
+2742:     );
+2743:     history_import::finish_with_resource(result, deadline, || kernel.verify())
+2744: }
+2745: 
+2746: pub fn sync_from(
+2747:     node: &mut Node,
+2748:     address: SocketAddr,
+2749:     tip: Hash,
+2750:     mut after: Hash,
+2751:     page_budget: usize,
+2752: ) -> Result<Hash> {
+2753:     require_classical_network_owner(node)?;
+2754:     let deadline = Instant::now() + history_import::SYNC_BUDGET;
+2755:     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+2756:     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+2757:     // administrator-owned host cgroup used by V3 must already contain this
+2758:     // actual sync thread; no new per-peer budget or consensus authority.
+2759:     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+2760:     for _ in 0..page_budget {
+2761:         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2762:         if let Some(kernel) = &host_kernel {
+2763:             kernel.verify()?;
+2764:         }
+2765:         let request = Request::History {
+2766:             tip: hex::encode(tip),
+2767:             after: hex::encode(after),
+2768:         };
+2769:         let connect_end = bounded_rpc_deadline(Some(deadline))?;
+2770:         let remaining = connect_end
+2771:             .checked_duration_since(Instant::now())
+2772:             .filter(|duration| !duration.is_zero())
+2773:             .ok_or("PUBLIC_CLIENT_DEADLINE")?;
+2774:         let mut stream = TcpStream::connect_timeout(&address, remaining)?;
+2775:         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+2776:         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+2777:         write_frame_deadline(
+2778:             &mut stream,
+2779:             &serde_json::to_vec(&request)?,
+2780:             bounded_rpc_deadline(Some(deadline))?,
+2781:         )?;
+2782:         let page: Page = serde_json::from_slice(&read_frame_deadline(
+2783:             &mut stream,
+2784:             bounded_rpc_deadline(Some(deadline))?,
+2785:         )?)?;
+2786:         let complete = page.complete;
+2787:         after = receive_page_from_before(node, address, page, tip, after, now()?, deadline)?;
+2788:         // Resource-counter/membership failure does not roll back any already
+2789:         // admitted native block; it makes this sync result unqualified.
+2790:         if let Some(kernel) = &host_kernel {
+2791:             kernel.verify()?;
+2792:         }
+2793:         if complete {
+2794:             ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2795:             return Ok(after);
+2796:         }
+2797:     }
+2798:     Err(format!(
+2799:         "INCOMPLETE_HISTORY:page_budget:after={}",
+2800:         hex::encode(after)
+2801:     )
+2802:     .into())
+2803: }
+2804: 
+2805: pub fn sync_from_authenticated(
+2806:     node: &mut Node,
+2807:     address: SocketAddr,
+2808:     tip: Hash,
+2809:     mut after: Hash,
+2810:     page_budget: usize,
+2811:     client: &AuthenticatedClient,
+2812:     replay_nonce: &mut u64,
+2813: ) -> Result<Hash> {
+2814:     require_classical_network_owner(node)?;
+2815:     let deadline = Instant::now() + history_import::SYNC_BUDGET;
+2816:     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+2817:     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+2818:     // administrator-owned host cgroup used by V3 must already contain this
+2819:     // actual sync thread; no new per-peer budget or consensus authority.
+2820:     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+2821:     let settings = node.settings().clone();
+2822:     for _ in 0..page_budget {
+2823:         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2824:         if let Some(kernel) = &host_kernel {
+2825:             kernel.verify()?;
+2826:         }
+2827:         let value = call_authenticated_inner(
+2828:             address,
+2829:             &Request::History {
+2830:                 tip: hex::encode(tip),
+2831:                 after: hex::encode(after),
+2832:             },
+2833:             &settings,
+2834:             client,
+2835:             replay_nonce,
+2836:             false,
+2837:             Some(deadline),
+2838:         )?;
+2839:         let page: Page = serde_json::from_value(value)?;
+2840:         let complete = page.complete;
+2841:         after = receive_page_from_before(node, address, page, tip, after, now()?, deadline)?;
+2842:         // Resource-counter/membership failure does not roll back any already
+2843:         // admitted native block; it makes this sync result unqualified.
+2844:         if let Some(kernel) = &host_kernel {
+2845:             kernel.verify()?;
+2846:         }
+2847:         if complete {
+2848:             ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2849:             return Ok(after);
+2850:         }
+2851:     }
+2852:     Err(format!(
+2853:         "INCOMPLETE_HISTORY:page_budget:after={}",
+2854:         hex::encode(after)
+2855:     )
+2856:     .into())
+2857: }
+2858: 
+2859: pub fn sync_from_authenticated_durable(
+2860:     node: &mut Node,
+2861:     address: SocketAddr,
+2862:     tip: Hash,
+2863:     mut after: Hash,
+2864:     page_budget: usize,
+2865:     client: &AuthenticatedClient,
+2866: ) -> Result<Hash> {
+2867:     require_classical_network_owner(node)?;
+2868:     let deadline = Instant::now() + history_import::SYNC_BUDGET;
+2869:     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+2870:     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+2871:     // administrator-owned host cgroup used by V3 must already contain this
+2872:     // actual sync thread; no new per-peer budget or consensus authority.
+2873:     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+2874:     for _ in 0..page_budget {
+2875:         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2876:         if let Some(kernel) = &host_kernel {
+2877:             kernel.verify()?;
+2878:         }
+2879:         let value = call_authenticated_durable_inner(
+2880:             node,
+2881:             address,
+2882:             &Request::History {
+2883:                 tip: hex::encode(tip),
+2884:                 after: hex::encode(after),
+2885:             },
+2886:             client,
+2887:             false,
+2888:             Some(deadline),
+2889:         )?;
+2890:         let page: Page = serde_json::from_value(value)?;
+2891:         let complete = page.complete;
+2892:         after = receive_page_from_before(node, address, page, tip, after, now()?, deadline)?;
+2893:         // Resource-counter/membership failure does not roll back any already
+2894:         // admitted native block; it makes this sync result unqualified.
+2895:         if let Some(kernel) = &host_kernel {
+2896:             kernel.verify()?;
+2897:         }
+2898:         if complete {
+2899:             ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2900:             return Ok(after);
+2901:         }
+2902:     }
+2903:     Err(format!(
+2904:         "INCOMPLETE_HISTORY:page_budget:after={}",
+2905:         hex::encode(after)
+2906:     )
+2907:     .into())
+2908: }
+2909: 
+2910: /// Fetch explicitly PQ-authenticated History pages, then feed the existing
+2911: /// paid importer. The configured server pin fixes the signature algorithm;
+2912: /// neither a classical response nor a different ledger profile is a fallback.
+2913: /// All pages share one original deadline, Host parent and Node CPU/crash epoch.
+2914: #[allow(clippy::too_many_arguments)]
+2915: pub fn sync_from_public_history_pq_v4(
+2916:     node: &mut Node,
+2917:     address: SocketAddr,
+2918:     tip: Hash,
+2919:     mut after: Hash,
+2920:     page_budget: usize,
+2921:     pinned_server_spki: &[u8],
+2922:     pinned_server_id: Hash,
+2923:     caller: &public_v3::PqPublicIdentity,
+2924:     policy: public_v3::PublicPolicy,
+2925: ) -> Result<Hash> {
+2926:     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+2927:     node.require_pq_history_transport()?;
+2928:     let deadline = Instant::now() + history_import::SYNC_BUDGET;
+2929:     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+2930:         address,
+2931:         Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2932:     )?
+2933:     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+2934:     kernel.verify()?;
+2935:     let settings = node.settings().clone();
+2936:     for _ in 0..page_budget {
+2937:         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2938:         kernel.verify()?;
+2939:         let (response, _) = public_v3::call_public_history_pq_v4(
+2940:             address,
+2941:             &public_v3::Request::History {
+2942:                 tip: hex::encode(tip),
+2943:                 after: hex::encode(after),
+2944:             },
+2945:             &settings,
+2946:             pinned_server_spki,
+2947:             pinned_server_id,
+2948:             caller,
+2949:             policy,
+2950:             Some(deadline),
+2951:         );
+2952:         let response = response?;
+2953:         ensure(response.ok, "PUBLIC_HISTORY_REJECTED")?;
+2954:         let page: Page = serde_json::from_value(response.value)?;
+2955:         let complete = page.complete;
+2956:         after = receive_public_page_from_before(node, address, page, tip, after, now()?, deadline)?;
+2957:         kernel.verify()?;
+2958:         if complete {
+2959:             ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+2960:             return Ok(after);
+2961:         }
+2962:     }
+2963:     Err(format!(
+2964:         "INCOMPLETE_HISTORY:page_budget:after={}",
+2965:         hex::encode(after)
+2966:     )
+2967:     .into())
+2968: }
+2969: 
+2970: #[cfg(test)]
+2971: mod account_scope_tests;
+2972: 
+2973: #[cfg(test)]
+2974: mod tests {
+2975:     use super::*;
+2976: 
+2977:     #[test]
+2978:     fn packet_hex_decoder_matches_retained_canonical_domain() {
+2979:         fn reference(text: &str) -> std::result::Result<Vec<u8>, String> {
+2980:             if text.len() > 2_097_152 {
+2981:                 return Err("PACKET_HEX".into());
+2982:             }
+2983:             let bytes = hex::decode(text).map_err(|_| "PACKET_HEX".to_owned())?;
+2984:             // The retained general decoder accepts uppercase; the packet domain
+2985:             // is exactly the canonical lowercase round trip.
+2986:             if hex::encode(&bytes) != text {
+2987:                 return Err("PACKET_HEX".into());
+2988:             }
+2989:             Ok(bytes)
+2990:         }
+2991:         let compare = |text: &str| {
+2992:             assert_eq!(
+
+3712:         // mathematical statement or turn it into a cached invalid W1 fact.
+3713:         let admitted = node.admit(&packet, now().unwrap()).unwrap();
+3714:         assert_eq!(admitted, packet.id().unwrap());
+3715:     }
+3716: 
+3717:     #[test]
+3718:     fn public_loopback_history_requires_real_fixed_host_parent() {
+3719:         let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+3720:         let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
+3721:         assert!(
+3722:             legacy.is_none(),
+3723:             "weak local compatibility remains local only"
+3724:         );
+3725:         let strict = crate::host_kernel_parent::require_host_kernel_budget(
+3726:             loopback,
+3727:             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+3728:         );
+3729:         // A real matching parent yields Some; an unprovisioned one returns an
+3730:         // operational refusal. Neither is an unguarded None for public import.
+3731:         assert!(!matches!(strict, Ok(None)));
+3732:     }
+3733: 
+3734:     #[test]
+3735:     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
+3736:         // Documentation-only network address. If this host really has the
+3737:         // registered fixed cgroup, its owner is tested by the kernel checker.
+3738:         // Otherwise remote history cannot reach a complete W1 verifier.
+3739:         let remote: SocketAddr = "192.0.2.1:12345".parse().unwrap();
+3740:         let budget = crate::host_kernel_parent::require_for_listener(remote);
+3741:         assert!(!matches!(budget, Ok(None)), "remote must never be unowned");
+3742:         if let Err(expected) = budget {
+3743:             let dir = tempfile::tempdir().unwrap();
+3744:             let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+3745:             let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+3746:             let original = node.stats().unwrap();
+3747:             let error = sync_from(&mut node, remote, settings.genesis(), settings.genesis(), 1)
+3748:                 .unwrap_err();
+3749:             assert_eq!(error.to_string(), expected.to_string());
+3750:             // Public untrusted page API refuses the same unbudgeted source
+3751:             // before it even attempts a page context/W1/State lookup.
+3752:             let unchecked_page = Page {
+3753:                 schema: String::new(),
+3754:                 network: String::new(),
+3755:                 parameters: String::new(),
+3756:                 genesis: String::new(),
+3757:                 tip: String::new(),
+3758:                 after: String::new(),
+3759:                 packets: vec![],
+3760:                 next: String::new(),
+3761:                 complete: false,
+3762:             };
+3763:             let page_error = receive_page_from(
+3764:                 &mut node,
+3765:                 remote,
+3766:                 unchecked_page,
+3767:                 settings.genesis(),
+3768:                 settings.genesis(),
+3769:                 now().unwrap(),
+3770:             )
+3771:             .unwrap_err();
+3772:             assert_eq!(page_error.to_string(), expected.to_string());
+3773:             // Authenticating a remote service is not equivalent to a CPU
+3774:             // budget. Both signed and durable signed sync must refuse before
+3775:             // connecting, same as the unauthenticated remote sync above.
+3776:             let (_, client) = authentication_fixture(&settings);
+3777:             let mut replay_nonce = 1_u64;
+3778:             let auth_error = sync_from_authenticated(
+3779:                 &mut node,
+3780:                 remote,
+3781:                 settings.genesis(),
+3782:                 settings.genesis(),
+3783:                 1,
+3784:                 &client,
+3785:                 &mut replay_nonce,
+3786:             )
+3787:             .unwrap_err();
+3788:             assert_eq!(auth_error.to_string(), expected.to_string());
+3789:             let durable_error = sync_from_authenticated_durable(
+3790:                 &mut node,
+3791:                 remote,
+3792:                 settings.genesis(),
+3793:                 settings.genesis(),
+3794:                 1,
+3795:                 &client,
+3796:             )
+3797:             .unwrap_err();
+3798:             assert_eq!(durable_error.to_string(), expected.to_string());
+3799:             assert_eq!(node.stats().unwrap(), original);
+3800:             assert_eq!(node.read_active().unwrap().0, settings.genesis());
+3801:         }
+3802:     }
+3803: 
+3804:     #[test]
+3805:     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
+3806:         let (_dir, node, packet) = pending_packet();
+3807:         let settings = node.lock().unwrap().settings().clone();
+3808:         let expected = packet.id().unwrap();
+3809:         let request = Request::Submit {
+3810:             packet: hex::encode(packet.encode().unwrap()),
+3811:         };
+3812:         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+3813:         let address = listener.local_addr().unwrap();
+3814:         let (sender, receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+3815:         let (waiting_sender, waiting_receiver) = mpsc::channel();
+3816:         let (deadlines_sender, deadlines_receiver) = mpsc::channel();
+3817:         let policy = AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap();
+3818:         let proof_settings = settings.clone();
+3819:         let proof = thread::spawn(move || {
+3820:             waiting_sender.send(()).unwrap();
+3821:             // This controlled receiver is idle before the only listener accepts.
+3822:             // The production workers use the same zero-capacity channel with a
+3823:             // 2 ms receive/accept alternation; no stub verifier is injected here.
+3824:             let mut connection = receiver.recv_timeout(Duration::from_secs(2)).unwrap();
+3825:             let (request_deadline, preface_deadline, accepted_address) =
+3826:                 deadlines_receiver.recv().unwrap();
+3827:             assert_eq!(connection.request_deadline, request_deadline);
+3828:             assert_eq!(connection.preface_deadline, preface_deadline);
+3829:             assert_eq!(connection.address, accepted_address);
+3830:             let (wire, negotiated) = receive_protected_request(
+3831:                 &mut connection.socket,
+3832:                 connection.first,
+3833:                 Some(policy),
+3834:                 connection.preface_deadline,
+3835:                 true,
+3836:             )
+3837:             .unwrap();
+3838:             let request: Request = serde_json::from_slice(&wire).unwrap();
+3839:             let metrics = Mutex::new(Metrics::default());
+3840:             let mut progress = |_| ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE");
+3841:             protect_submit(
+3842:                 &mut connection.socket,
+3843:                 &request,
+3844:                 &wire,
+3845:                 AdmissionHost {
+3846:                     settings: &proof_settings,
+3847:                     policy: Some(policy),
+3848:                     authentication: None,
+3849:                     metrics: &metrics,
+3850:                     negotiated,
+3851:                 },
+3852:                 &mut progress,
+3853:             )
+3854:             .unwrap();
+3855:             let reply = dispatch_shared_with(&node, request, &mut progress, |packet| {
+3856:                 measured_work_verify(packet, &metrics)
+3857:             })
+3858:             .unwrap();
+3859:             write_frame(&mut connection.socket, &serde_json::to_vec(&reply).unwrap()).unwrap();
+
+5081: 
+5082:     #[test]
+5083:     fn authenticated_legacy_nonloopback_has_no_unmetered_host_bypass() {
+5084:         // V3 and legacy authenticated ingress now check the SAME fixed parent.
+5085:         // This regression works with either an unprivileged CI host (denied)
+5086:         // or an actual admin-provisioned parent (must be verified, never None).
+5087:         let remote: SocketAddr = "0.0.0.0:0".parse().unwrap();
+5088:         assert!(crate::host_kernel_parent::require_host_kernel_budget(remote, None).is_err());
+5089:         let probe = crate::host_kernel_parent::require_for_listener(remote);
+5090:         match &probe {
+5091:             Ok(Some(kernel)) => kernel.verify().unwrap(),
+5092:             Err(_) => {}
+5093:             Ok(None) => panic!("nonloopback must not run without host budget"),
+5094:         }
+5095:         // Even when an administrator provisioned a valid cgroup, the
+5096:         // unaffordable no-cookie authenticated-only WAN transport is denied.
+5097:         {
+5098:             let dir = tempfile::tempdir().unwrap();
+5099:             let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+5100:             let (authentication, _) = authentication_fixture(&settings);
+5101:             let node = Node::open(dir.path(), settings, 2).unwrap();
+5102:             let listener = TcpListener::bind(remote).unwrap();
+5103:             let error = serve_authenticated(
+5104:                 listener,
+5105:                 node,
+5106:                 Duration::from_secs(1),
+5107:                 Arc::new(AtomicBool::new(true)),
+5108:                 authentication,
+5109:             )
+5110:             .unwrap_err();
+5111:             assert_eq!(error.to_string(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED");
+5112:         }
+5113:         // The priced, authenticated legacy WAN route requires the original
+5114:         // host parent too; no second identity-scoped host budget is allowed.
+5115:         if let Err(expected) = probe {
+5116:             let dir = tempfile::tempdir().unwrap();
+5117:             let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+5118:             let (authentication, _) = authentication_fixture(&settings);
+5119:             let node = Node::open(dir.path(), settings, 2).unwrap();
+5120:             let listener = TcpListener::bind(remote).unwrap();
+5121:             let error = serve_authenticated_protected(
+5122:                 listener,
+5123:                 node,
+5124:                 Duration::from_secs(1),
+5125:                 Arc::new(AtomicBool::new(true)),
+5126:                 authentication,
+5127:                 AdmissionPolicy::development(),
+5128:             )
+5129:             .unwrap_err();
+5130:             assert_eq!(error.to_string(), expected.to_string());
+5131:         }
+5132:     }
+5133: 
+5134:     #[test]
+5135:     fn measured_native_w1_rejection_reports_real_or_explicitly_unknown_thread_cpu() {
+5136:         let dir = tempfile::tempdir().unwrap();
+5137:         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+5138:         let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+5139:         let original = node
+5140:             .make(
+5141:                 settings.genesis(),
+5142:                 vec![],
+5143:                 crate::development_public(0).unwrap(),
+5144:                 settings.genesis_time() + 10,
+5145:                 4096,
+5146:             )
+5147:             .unwrap();
+5148:         let mut bad = original;
+5149:         let last = bad.proof.len() - 1;
+5150:         bad.proof[last] ^= 1;
+5151:         let metrics = Mutex::new(Metrics::default());
+5152:         // The adjusted trace may happen to miss target; accept either a
+5153:         // cheap TARGET refusal or expensive TRANSCRIPT refusal as invalid.
+5154:         assert!(measured_work_verify(bad, &metrics).is_err());
+5155:         let snapshot = metrics.lock().unwrap();
+5156:         assert_eq!(snapshot.work_verifications, 1);
+5157:         assert_eq!(
+5158:             snapshot.work_verification_thread_cpu_unknown_calls
+5159:                 + snapshot.work_verification_thread_cpu_known_calls,
+5160:             1
+5161:         );
+5162:         assert!(snapshot.work_verification_ns > 0);
+5163:     }
+5164: 
+5165:     #[test]
+5166:     fn test_authenticated_bytes_bind_session_signature_and_canonical_request() {
+5167:         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+5168:         let (server, client) = authentication_fixture(&settings);
+5169:         let bytes = authenticated_request_bytes(&settings, &client, 1, Request::Head).unwrap();
+5170:         let verified = authenticate_request(&bytes, &settings, &server).unwrap();
+5171:         assert_eq!(verified.frame.replay_nonce(), 1);
+5172:         assert!(matches!(verified.request, Request::Head));
+5173: 
+5174:         let mut context: AuthenticatedRequest = serde_json::from_slice(&bytes).unwrap();
+5175:         context.session.parameters = hex::encode([7; 32]);
+5176:         assert_eq!(
+5177:             authenticate_request(&serde_json::to_vec(&context).unwrap(), &settings, &server)
+5178:                 .unwrap_err()
+5179:                 .to_string(),
+5180:             "AUTH_SESSION_CONTEXT"
+5181:         );
+5182: 
+5183:         let mut changed: AuthenticatedRequest = serde_json::from_slice(&bytes).unwrap();
+5184:         changed.request = Request::History {
+5185:             tip: hex::encode(settings.genesis()),
+5186:             after: hex::encode(settings.genesis()),
+5187:         };
+5188:         assert!(
+5189:             authenticate_request(&serde_json::to_vec(&changed).unwrap(), &settings, &server,)
+5190:                 .unwrap_err()
+5191:                 .to_string()
+5192:                 .starts_with("AUTH_SIGNATURE:")
+5193:         );
+5194: 
+5195:         let mut noncanonical = bytes;
+5196:         noncanonical.push(b' ');
+5197:         assert_eq!(
+5198:             authenticate_request(&noncanonical, &settings, &server)
+5199:                 .unwrap_err()
+5200:                 .to_string(),
+5201:             "AUTH_NONCANONICAL"
+5202:         );
+5203:     }
+5204: 
+5205:     #[test]
+5206:     fn test_durable_pending_request_recovers_and_completed_response_replays() {
+5207:         let temp = tempfile::tempdir().unwrap();
+5208:         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();

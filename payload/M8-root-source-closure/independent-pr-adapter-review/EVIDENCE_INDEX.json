@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "bytes": 3421,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/review.json",
+      "sha256": "36cc36c9eb353428f9f65019417584c15c13fa966b419f1e855565a465dcf2b7"
+    },
+    {
+      "bytes": 22991,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/all-three-precise.original.patch",
+      "sha256": "0d7fb044b15ed0f14847f2d30913ec50af37f7b509db7f4ebb81710c6cad039a"
+    },
+    {
+      "bytes": 32628,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/prepare_pr847_audit_update_v4.py",
+      "sha256": "57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7"
+    },
+    {
+      "bytes": 36663,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/prepare_pr847_audit_update_v5.py",
+      "sha256": "12776f0a436732589e46ef13548cb8f34180a532ab1ff63671560326c541cd6d"
+    },
+    {
+      "bytes": 20506,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/apply_pr847_audit_update_and_ready_v2.py",
+      "sha256": "ad29ad36815bd088d2b386bb996d28dc5cbe6b5a1b32766f51735598c6ff9776"
+    },
+    {
+      "bytes": 20506,
+      "path": "/private/tmp/chain-ci-concurrent-pr-adapter-independent-review-20261114-v1/apply_pr847_audit_update_and_ready_v3.py",
+      "sha256": "d89eeaa8f7ba2514d411e8ed5b8bb8b3d1270d611b444f832f36fc4d60f9efdc"
+    }
+  ],
+  "schema": "trnm-static-adapter-independent-review-index-v1"
+}

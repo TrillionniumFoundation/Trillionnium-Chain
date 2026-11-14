@@ -1,0 +1,63 @@
+{
+  "file_count": 6,
+  "files": [
+    {
+      "bytes": 4994,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/prepare_scope_and_scan.py"
+      },
+      "path": "prepare_scope_and_scan.py.original",
+      "sha256": "c9bf8f7d90440f36ec0608f0b714cc4a445b5745b8460cbbce0e47d61b0be012"
+    },
+    {
+      "bytes": 4761,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/precise-v1-to-v2.patch"
+      },
+      "path": "precise-v1-to-v2.patch.original",
+      "sha256": "a567693fbc473daaa041d6b5e94f5f1898de69e3ba26f164b85e37cce4aa43c4"
+    },
+    {
+      "bytes": 440,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/preparation.json"
+      },
+      "path": "preparation.json.original",
+      "sha256": "7d2060fd512b6117abf1a56ca991a4311f5ec60fe047a56dd470038d4b415eba"
+    },
+    {
+      "bytes": 711,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v2/PLAN.txt"
+      },
+      "path": "PLAN.txt.original",
+      "sha256": "c0e55abf3e92c68ccdb63b2407462a4b21086e5e1d96981c5b6123d625210ebe"
+    },
+    {
+      "bytes": 6214,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v2/review.json"
+      },
+      "path": "review.json",
+      "sha256": "90a1e817e90b927b8ec32c8fc3e0a774a55d12f40f743279b621afc63890d76f"
+    },
+    {
+      "bytes": 2501,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v2/README.md"
+      },
+      "path": "README.md",
+      "sha256": "5a0d4f878eb6723e309cef7bc5b0f521c961b4a0acd61600c4c44cc010e83afd"
+    }
+  ],
+  "no_reviewed_code_executed": true,
+  "root": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v2",
+  "schema": "trnm-R1-payload-scope-static-review-index-v2",
+  "total_bytes": 19621
+}

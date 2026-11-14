@@ -1,0 +1,8 @@
+import datetime,hashlib,json,os,pathlib,subprocess
+O=pathlib.Path("/private/tmp/chain-M4-owned-process-collector-review-20261114-v1");O.mkdir(exist_ok=False)
+G="/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git";H="1a7afcdb820b051d1e4bfde3d436f96fc050c487";env=dict(os.environ,GIT_NO_LAZY_FETCH="1",GIT_NO_REPLACE_OBJECTS="1",GIT_OPTIONAL_LOCKS="0")
+def git(a):return subprocess.run(["/usr/bin/git","--no-replace-objects","--git-dir="+G]+a,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=60).stdout
+paths=git(["ls-tree","-r","--name-only",H,"--","scripts"]).decode().splitlines();paths=[p for p in paths if "w1_owned_process_collector_v1" in p];assert len(paths)>=2;rows=[]
+for p in paths:
+ b=git(["show",H+":"+p]);name=p.replace("/","--")+".raw";(O/name).write_bytes(b);rows.append({"path":p,"source_path":str(O/name),"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest(),"git_blob":hashlib.sha1(b"blob "+str(len(b)).encode()+bytes([0])+b).hexdigest()})
+summary={"schema":"trnm-M4-owned-process-collector-immutable-source-read-v1","read_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"head":H,"tree":git(["rev-parse",H+"^{tree}"]).decode().strip(),"files":rows,"source_modified":False,"tests_executed":False};(O/"source-index.json").write_text(json.dumps(summary,indent=2)+"\n");print(json.dumps(summary),flush=True)

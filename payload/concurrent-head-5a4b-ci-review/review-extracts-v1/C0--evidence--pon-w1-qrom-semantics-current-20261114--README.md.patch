@@ -1,0 +1,64 @@
+diff --git a/evidence/pon-w1-qrom-semantics-current-20261114/README.md b/evidence/pon-w1-qrom-semantics-current-20261114/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..bceffb1db824f79cfa6d1b57b4aafb76ffe3732c
+--- /dev/null
++++ b/evidence/pon-w1-qrom-semantics-current-20261114/README.md
+@@ -0,0 +1,58 @@
++# Current W1 semantics fixture, 2026-11-14
++
++Status: **fixed-input expected observation; security HOLD**.
++
++[report.json](report.json) is the expected current output for the reviewed
++inputs at source `73d5a17b9b7fb5f67040554f22ff37d20725e548`. It contains
++76,729 bytes with SHA256
++`5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f`.
++The current controls independently regenerate the complete report and require
++exact byte equality. The fixture by itself is not an execution receipt.
++
++The [2026-11-07 original](../pon-w1-qrom-semantics-20261107/report.json) and
++[2026-11-09 observation](../pon-w1-qrom-semantics-current-20261109/report.json)
++remain unchanged, with respective SHA256
++`66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221` and
++`129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe`.
++The November 9 report remains its original M10 observation; it is not
++relabeled as a report from the later dependency graph.
++
++## Exact current differences
++
++The only change from the November 9 JSON is
++`/provenance/lock_checks/0/sha256`, identifying
++`formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock`:
++`9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef`
++becomes
++`93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b`.
++
++Relative to the November 7 report, the previously reviewed
++`/provenance/lock_checks/2/sha256` also differs:
++`formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock` is bound to
++`ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a`
++instead of
++`af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f`.
++
++The middle guest-v2 lock, all checked RISC0 package identities, six complete
++crate archives, selected archive members, helper, source snapshot, fixed
++guest and image declaration are unchanged. The v2 verifier lock update
++aligns the shared crypto dependency with the reviewed ed25519-dalek 3
++closure. This provenance correction does not prove dependency equivalence.
++
++## Independent current check
++
++The [generator](../../scripts/w1_qrom_semantics_audit.py) remains unchanged.
++The [current correspondence gate](../../scripts/ci/w1_qrom_closure_current_controls.py)
++reads both exact reviewed locks as bounded regular files, checks their
++independent byte pins, and allows only the two JSON pointers above.
++All other report fields must have identical canonical JSON, including
++numeric types, the guest memory image, AIR analysis and qualification.
++The current source test additionally byte-compares this complete fixture.
++The historical workflow continues to use its original fixed checkout and
++original report.
++
++The three true report fields still concern fixed guest image recomputation,
++the matching embedded release kernel and the fixed generated constraint
++degree bound. Every other qualification field remains false. No compiler
++correctness, full trace validity, fresh receipt verification, end-to-end
++QROM security, consensus admission or production qualification is added.

@@ -1,0 +1,57 @@
+--- R1-full-copy-verifier.py
++++ R1-external-copy-verifier.py
+@@ -40,20 +40,25 @@
+ assert D["package_terminal"]["status"]["exit_code"]==0 and D["package_terminal"]["output_complete"]is True and D["package_terminal"]["offset"]==0 and D["package_terminal"]["next_offset"]==D["package_terminal"]["available_end"]
+ index=json.loads(buffers["EVIDENCE_INDEX.json"]);summary=json.loads(buffers["original-package-summary.json"])
+ assert index["source_head"]=="2a86462a1ab20c68151719ba4635e3c294391e64" and index["source_tree"]=="5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+-assert index["original_status"]==summary["original_status"]=="passed" and index["original_lane_exit"]==summary["original_lane_exit"]==0
+-assert index["operator_terminal_summary_sha256"]=="70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+-assert index["required_flat_original_file_count"]==39 and index["nested_original_log_count"]==12 and index["original_file_count"]==51 and index["original_bytes"]==887502
+-assert summary["zip_member_count"]==55 and summary["payload_file_count"]==54 and summary["all_member_crc_size_sha_verified"]is True
+-rows=index["files"];by={r["path"]:r for r in rows};assert len(rows)==len(by)==54
++assert index["original_result"]==summary["original_result"]=="passed" and index["original_lane_exit"]==summary["original_lane_exit"]==0
++assert index["operator_terminal_summary_sha256"]=="e261ab55ca4eb6104c3087d3e5d2a82fde3009d6cb848a782255cc1e35a83360"
++assert index["required_flat_original_file_count"]==27 and index["nested_original_log_count"]==0 and index["original_file_count"]==27 and index["original_bytes"]==112033
++assert summary["zip_member_count"]==31 and summary["payload_file_count"]==30 and summary["all_member_crc_size_sha_verified"]is True
++assert summary["original_all_12_steps_exit0"] is True and len(index["original_step_invocations"])==12 and all(s["exit"]==0 for s in index["original_step_invocations"])
++assert index["original_lane"]=="external-evidence-contract" and index["original_lane_argv"]==["bash","scripts/ci/ci_job.sh","external-evidence-contract"]
++assert len(index["required_object_tree_map"])==14 and summary["verified_object_trees"]==index["required_object_tree_map"] and index["lane_fetched"]==summary["fetched"]==[]
++assert summary["original_readiness_suite"]=={"tests":78,"elapsed_seconds":34.516,"result":"OK","stderr_member":"original/external-evidence-contract.stderr","scope":"original readiness suite within this external lane; not all lane test methods"}
++assert summary["repository_truth_pass_claimed"] is False and summary["hosted_ci_qualification"] is False
++rows=index["files"];by={r["path"]:r for r in rows};assert len(rows)==len(by)==30
+ orig=[r for r in rows if r["role"].startswith("original-execution")]
+-assert len(orig)==51
++assert len(orig)==27
+ actual=D["observed_roster"];old={r["path"]:r for r in actual["rows"]}
+ assert {r["path"][9:]for r in orig}==set(old)
+ for r in orig:assert r["bytes"]==old[r["path"][9:]]["bytes"] and r["sha256"]==old[r["path"][9:]]["sha256"] and r["origin"]==old[r["path"][9:]]["origin"]
+ assert not (C/"flat").exists()
+ verified=[];flat=[];flatdata={}
+-with zipfile.ZipFile(io.BytesIO(buffers["original-repository-truth-2a8646-v1.zip"]))as z:
+- zs=z.infolist();assert len(zs)==55 and len({i.filename for i in zs})==55 and {i.filename for i in zs}==set(by)|{"EVIDENCE_INDEX.json"}
++with zipfile.ZipFile(io.BytesIO(buffers["original-external-evidence-2a8646-v1.zip"]))as z:
++ zs=z.infolist();assert len(zs)==31 and len({i.filename for i in zs})==31 and {i.filename for i in zs}==set(by)|{"EVIDENCE_INDEX.json"}
+  for item in zs:
+   n=item.filename;p=pathlib.PurePosixPath(n);assert str(p)==n and not p.is_absolute() and ".."not in p.parts and re.fullmatch(r"[A-Za-z0-9._/-]+",n) and not item.is_dir() and not item.flag_bits&1
+   mode=item.external_attr>>16;assert not stat.S_ISLNK(mode) and (stat.S_IFMT(mode) in (0,stat.S_IFREG))
+@@ -63,7 +68,7 @@
+    row=by[n];assert len(raw)==row["bytes"] and hashlib.sha256(raw).hexdigest()==row["sha256"]
+    flatdata[n]=raw
+   verified.append({"path":n,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"crc32":format(item.CRC,"08x")})
+-assert len(flatdata)==54
++assert len(flatdata)==30
+ # All members verified before any flat publication.
+ for n,raw in flatdata.items():
+  out=save(C/"flat"/n,raw);flat.append({**out,"origin":by[n]["origin"],"role":by[n]["role"]})
+@@ -73,8 +78,8 @@
+  raw=read(pathlib.Path(x["path"]));assert len(raw)==x["bytes"] and hashlib.sha256(raw).hexdigest()==x["sha256"]
+ producer=save(C/"verify_official_copy.py",SELF.encode())
+ provenance=save(C/"official-copy-provenance.json",js(D))
+-verification={"schema":"trnm-R1-original-full-official-copy-verification-v1","started_at":started,"finished_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"status":"verified","source_head":index["source_head"],"source_tree":index["source_tree"],"original_lane_status":"passed","original_lane_elapsed_seconds":summary["original_lane_elapsed_seconds"],"original_summary_sha256":index["operator_terminal_summary_sha256"],"zip_source":D["source_infos"][0],"direct_copies":direct,"flat_copies":flat,"zip_member_count":55,"members_verified":verified,"all_member_crc_sha_size_verified":True,"all_binary_read_chunks_verified":True,"required_flat_originals":39,"actual_originals":51,"original_driver_flat_present":True,"flat_payload_count":54,"no_extractall":True,"tests_rerun":False,"source_git_or_stage_mutation":False,"hosted_qualification":False,"future_revision_qualification":False,"producer":producer,"copy_provenance":provenance}
++verification={"schema":"trnm-R1-original-external-official-copy-verification-v1","started_at":started,"finished_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"status":"verified","source_head":index["source_head"],"source_tree":index["source_tree"],"original_lane_status":"passed","original_lane_elapsed_seconds":summary["original_lane_elapsed_seconds"],"original_summary_sha256":index["operator_terminal_summary_sha256"],"zip_source":D["source_infos"][0],"direct_copies":direct,"flat_copies":flat,"zip_member_count":31,"members_verified":verified,"all_member_crc_sha_size_verified":True,"all_binary_read_chunks_verified":True,"required_flat_originals":27,"actual_originals":27,"original_driver_flat_present":True,"flat_payload_count":30,"no_extractall":True,"tests_rerun":False,"source_git_or_stage_mutation":False,"hosted_qualification":False,"future_revision_qualification":False,"repository_truth_pass_claimed":False,"original_readiness_suite":summary["original_readiness_suite"],"original_lane":"external-evidence-contract","producer":producer,"copy_provenance":provenance}
+ vf=save(C/"copy-verification.json",js(verification))
+-copyindex=save(C/"copy-files.json",js({"schema":"trnm-R1-official-copy-source-origins-v1","files":direct+flat}))
+-print(json.dumps({"verification":vf,"copy_files":copyindex,"producer":producer,"provenance":provenance,"originals":51,"flat":54,"members":55,"status":"verified"}),flush=True)
++copyindex=save(C/"copy-files.json",js({"schema":"trnm-R1-external-official-copy-source-origins-v1","files":direct+flat}))
++print(json.dumps({"verification":vf,"copy_files":copyindex,"producer":producer,"provenance":provenance,"originals":27,"flat":30,"members":31,"status":"verified"}),flush=True)
+ for f,_,_ in held:os.close(f)

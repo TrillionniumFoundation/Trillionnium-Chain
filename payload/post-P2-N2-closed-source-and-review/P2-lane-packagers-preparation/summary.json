@@ -1,0 +1,55 @@
+{
+  "schema": "trnm-P2-packagers-preparation-summary-v1",
+  "status": "PREPARED_ONLY_WAIT_FOR_REAL_TERMINAL",
+  "head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+  "tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "scripts": [
+    {
+      "kind": "full",
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_1e54c4_v1.py",
+      "bytes": 28911,
+      "sha256": "c87a84c011ceb4be30dfbc39e406a3b54344f7919179b47684fcdec4a4d98e21"
+    },
+    {
+      "kind": "external",
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_1e54c4_v1.py",
+      "bytes": 14207,
+      "sha256": "c1dcd6428301d247c91c6928eab2fb22d646744f9917ed3240a11b8896388a76"
+    }
+  ],
+  "patches": [
+    {
+      "kind": "full",
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/full-P1-v2-to-P2.patch",
+      "bytes": 5673,
+      "sha256": "bdc5d3335058ec8d4def086479001aa8bb137de62c6fbebcbb6229cdf74d56a4"
+    },
+    {
+      "kind": "external",
+      "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/external-P1-to-P2.patch",
+      "bytes": 9152,
+      "sha256": "119911c85acea43ba371ffaa374bac6aad8532d11934961e98ca401d6825edee"
+    }
+  ],
+  "both_patch": {
+    "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/both-packagers-precise.patch",
+    "bytes": 14825,
+    "sha256": "b5201125d4a65506ee3803b6b192c6f9899c8f0affb286b2b20f1060a7259e78"
+  },
+  "proof": {
+    "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/static-identity-proof.json",
+    "bytes": 14296,
+    "sha256": "32e26ede93b000104ba839cf65df08997d31e6b2792e62de7715f0ee295f0577"
+  },
+  "index": {
+    "path": "/private/tmp/chain-prci-P2-original-lane-packagers-preparation-20261114-v1/EVIDENCE_INDEX.json",
+    "bytes": 3013,
+    "sha256": "4ab35000ca6c529ddcabfe82f03672f0a36f4b68e7e608ec6b4cccc4d93c01e8"
+  },
+  "P1_base_files_unchanged": true,
+  "packagers_executed": false,
+  "live_ROG_receipts_read": false,
+  "actual_P2_terminal_not_observed": true,
+  "stage_source_git_network_test_actions": false
+}

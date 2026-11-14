@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-11-14T06:11:26.529472+00:00",
+  "argv": [
+    "git",
+    "--version"
+  ],
+  "executable": "/usr/bin/git",
+  "PATH": "/Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+  "exit": 0,
+  "stdout": "git version 2.54.0 (Apple Git-157)\n",
+  "stderr_bytes": 0,
+  "stdout_sha256": "2aa6da9ca331dc6de6fe72460146b9d1ebc22c8df24f3eb2a4c4f7c3c41b93ca",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_or_remote_mutated": false
+}

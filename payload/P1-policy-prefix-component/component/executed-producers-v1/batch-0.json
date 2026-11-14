@@ -1,0 +1,66 @@
+[
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/isolate_mac_worktree.py",
+    "bytes": 3760,
+    "sha256": "d30052381ec68482579aa4ca3b20d212a1b969e6ea279967a0bcd465462eb7a7",
+    "executed_host": "mac",
+    "executed_session_id": "dpty-a73e752f761aade12847085866fce87b844b5d60e03da5771e495a4b40960ae1",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/implement_reviewed_prefix.py",
+    "bytes": 12152,
+    "sha256": "ab6ce801defcf039d436719f32485b8aeec4c63a33a6be8db598001188ad47ba",
+    "executed_host": "mac",
+    "executed_session_id": "dpty-e201d7168cb72acf33f4b6ff3b8e4d38017c23c71e4cd54d0f11f12f8e8bc4f5",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/mac_native_attempt.py",
+    "bytes": 5328,
+    "sha256": "7f7761a7fcb6a66446050ce867692e90ab3330d4cb8af2716807f2fdf88eb4a6",
+    "executed_host": "mac",
+    "executed_session_id": "dpty-6d88447e53ff90d9ca88fe2f102540ca3ed677c0719e025c9f17dc14c993f5c4",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_prepare_isolated_validation.py",
+    "bytes": 4507,
+    "sha256": "a6f4a3b3a4b6963153b85e616da5dd4852d512bc2a12feaca22caba6fae461fe",
+    "executed_host": "rog",
+    "executed_session_id": "dpty-d791d385cc81a1a7d8636b10476eee1d4c2942464e1d293d6f4c56b1e73235dc",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_serial_and_clippy_validation.py",
+    "bytes": 8832,
+    "sha256": "0c6dd517ac5bd62d439a676a736f9d013a70321f13498172e7dd3c8f2adfa40a",
+    "executed_host": "rog",
+    "executed_session_id": "dpty-c303476984a28fbe487e6269f4dd1ab80041148ec62393f247c823d13fd15367",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_default_harness_followup.py",
+    "bytes": 5785,
+    "sha256": "6cd720fcf83d0a0d04b37bac06d442373ccd15a8c60dccdcca6d224168c23d95",
+    "executed_host": "rog",
+    "executed_session_id": "dpty-da61427691a1481537db3019ac3a78a0654d0395b20f3a5d198570c08ea73139",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/mac_policy_hash_use_controls.py",
+    "bytes": 4752,
+    "sha256": "196d7acf8713958456ab6580dd5958e09f589fe0a9fd94fec847a3f52ef6381e",
+    "executed_host": "mac",
+    "executed_session_id": "dpty-4259d3b80396f47a5bf4ccba17ec7768fd6adaed32cea03fc2316ac5da1a42e3",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  },
+  {
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/exact_framing_and_call_frequency.py",
+    "bytes": 9929,
+    "sha256": "8c9edd4b5ec9205a47199c24229906835f5af8b0c6ec45e38f3b1c237b18e671",
+    "executed_host": "mac",
+    "executed_session_id": "dpty-abdac2ca444329770aa0dfe2ab0bf0922b6097d4d5bdc9fd4c0a42f73d222200",
+    "scope": "Exact program argument retained from the executed HeptaRuntime PTY call; saved after execution, not a prior script file on ROG."
+  }
+]

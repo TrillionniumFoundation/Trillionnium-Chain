@@ -1,0 +1,377 @@
+{
+  "schema": "trnm-R1-packagers-static-identity-proof-v1",
+  "created_at": "2026-11-14T11:41:10.879042+00:00",
+  "packagers": [
+    {
+      "kind": "full",
+      "base": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/P1-full-v2-packager.py.original",
+        "bytes": 28912,
+        "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967"
+      },
+      "new": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_2a8646_v1.py",
+        "bytes": 28913,
+        "sha256": "591e2a6539276d4942e74b756ac3ea43c6863da4a8cb5a440d7bd49079d6d8e8"
+      },
+      "patch": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/full-P1-v2-to-R1.patch",
+        "bytes": 5675,
+        "sha256": "38e7ae0ae71ebac60980b8ada994d6e6450aa3d9ec809c917625af960b5760fb"
+      },
+      "exact_ordered_replacement_count": 13,
+      "replacements": [
+        {
+          "old": "closed P1 repository-truth execution",
+          "new": "closed R1 repository-truth execution",
+          "count": 1
+        },
+        {
+          "old": "\"final-repository-truth-offline-6a8cd5-v2\"",
+          "new": "\"final-repository-truth-offline-2a8646-v1\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-repository-truth-6a8cd5-v2-prci\"",
+          "new": "\"package-original-repository-truth-2a8646-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "\nHEAD = \"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "\nHEAD = \"2a86462a1ab20c68151719ba4635e3c294391e64\"",
+          "count": 1
+        },
+        {
+          "old": "\nTREE = \"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "\nTREE = \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"",
+          "count": 1
+        },
+        {
+          "old": "SOURCE_SHA256 = \"cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5\"",
+          "new": "SOURCE_SHA256 = \"1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03\"",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_BYTES = 8575",
+          "new": "BUNDLE_BYTES = 11223",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_SHA256 = \"cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389\"",
+          "new": "BUNDLE_SHA256 = \"40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4\"",
+          "count": 1
+        },
+        {
+          "old": "recorded P1 bundle differs",
+          "new": "recorded R1 bundle differs",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994964901",
+          "count": 2
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-index-v1",
+          "new": "trnm-R1-original-repository-truth-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-completion-v1",
+          "new": "trnm-R1-original-repository-truth-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-repository-truth-6a8cd5-v2.zip\"",
+          "new": "\"original-repository-truth-2a8646-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "exact_reverse_reconstruction_of_old_bytes": true,
+      "compile_only_passed": true,
+      "ast_structure_identical_except_listed_constant_values": true,
+      "constant_changes": [
+        {
+          "ast_path": "module.body[0].value",
+          "old": "Package the closed P1 repository-truth execution after an exact terminal handoff.\nThis program must not run against a live receipt directory. It does not run Git,\nsource verification, tests, builds, network requests, or the original lane.\n",
+          "new": "Package the closed R1 repository-truth execution after an exact terminal handoff.\nThis program must not run against a live receipt directory. It does not run Git,\nsource verification, tests, builds, network requests, or the original lane.\n",
+          "old_line": 2,
+          "new_line": 2
+        },
+        {
+          "ast_path": "module.body[13].value.right",
+          "old": "final-repository-truth-offline-6a8cd5-v2",
+          "new": "final-repository-truth-offline-2a8646-v1",
+          "old_line": 19,
+          "new_line": 19
+        },
+        {
+          "ast_path": "module.body[14].value.right",
+          "old": "package-original-repository-truth-6a8cd5-v2-prci",
+          "new": "package-original-repository-truth-2a8646-v1-prci",
+          "old_line": 20,
+          "new_line": 20
+        },
+        {
+          "ast_path": "module.body[21].value",
+          "old": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+          "new": "2a86462a1ab20c68151719ba4635e3c294391e64",
+          "old_line": 27,
+          "new_line": 27
+        },
+        {
+          "ast_path": "module.body[22].value",
+          "old": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+          "new": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+          "old_line": 28,
+          "new_line": 28
+        },
+        {
+          "ast_path": "module.body[27].value",
+          "old": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "new": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+          "old_line": 33,
+          "new_line": 33
+        },
+        {
+          "ast_path": "module.body[32].value",
+          "old": 8575,
+          "new": 11223,
+          "old_line": 51,
+          "new_line": 51
+        },
+        {
+          "ast_path": "module.body[33].value",
+          "old": "cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389",
+          "new": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+          "old_line": 52,
+          "new_line": 52
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[10].value.args[1]",
+          "old": "recorded P1 bundle differs from the operator-reviewed bundle",
+          "new": "recorded R1 bundle differs from the operator-reviewed bundle",
+          "old_line": 287,
+          "new_line": 287
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[39].value.args[0].comparators[0].values[8]",
+          "old": 3994959368,
+          "new": 3994964901,
+          "old_line": 355,
+          "new_line": 355
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[54].value.values[0]",
+          "old": "trnm-P1-original-repository-truth-package-index-v1",
+          "new": "trnm-R1-original-repository-truth-package-index-v1",
+          "old_line": 397,
+          "new_line": 397
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[54].value.values[22].values[3]",
+          "old": 3994959368,
+          "new": 3994964901,
+          "old_line": 414,
+          "new_line": 414
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[58].value.right",
+          "old": "original-repository-truth-6a8cd5-v2.zip",
+          "new": "original-repository-truth-2a8646-v1.zip",
+          "old_line": 426,
+          "new_line": 426
+        },
+        {
+          "ast_path": "module.body[44].body[15].body[63].value.values[0]",
+          "old": "trnm-P1-original-repository-truth-package-completion-v1",
+          "new": "trnm-R1-original-repository-truth-package-completion-v1",
+          "old_line": 446,
+          "new_line": 446
+        }
+      ],
+      "unchanged_function_source_segments": [
+        "expected_commands",
+        "file_info",
+        "inventory",
+        "now",
+        "open_regular",
+        "read_closed_log_manifest",
+        "require",
+        "save_new",
+        "signature"
+      ],
+      "full_start_head_unchanged": true,
+      "original_stage_counts_raw_rosters_budgets_and_driver_schema_unchanged": true
+    },
+    {
+      "kind": "external",
+      "base": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/P1-external-packager.py.original",
+        "bytes": 14207,
+        "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811"
+      },
+      "new": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_2a8646_v1.py",
+        "bytes": 14191,
+        "sha256": "8785a7c4ed28c96b4977efc983301278be5bef065188456ab8e405606610f192"
+      },
+      "patch": {
+        "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/external-P1-to-R1.patch",
+        "bytes": 9136,
+        "sha256": "03ddd83a7d9c493e0432084a7497a5d638fee136600cb5cab09c44839dd73282"
+      },
+      "exact_ordered_replacement_count": 10,
+      "replacements": [
+        {
+          "old": "\"final-external-evidence-existing-source-6a8cd5-v2\"",
+          "new": "\"final-external-evidence-2a8646-v1\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-external-evidence-6a8cd5-v1-prci\"",
+          "new": "\"package-original-external-evidence-2a8646-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "HEAD=\"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "HEAD=\"2a86462a1ab20c68151719ba4635e3c294391e64\"",
+          "count": 1
+        },
+        {
+          "old": "TREE=\"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "TREE=\"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"",
+          "count": 1
+        },
+        {
+          "old": "operator-pinned P1 external lane",
+          "new": "operator-pinned R1 external lane",
+          "count": 1
+        },
+        {
+          "old": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "new": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994964901",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-index-v1",
+          "new": "trnm-R1-original-external-evidence-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-completion-v1",
+          "new": "trnm-R1-original-external-evidence-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-external-evidence-6a8cd5-v1.zip\"",
+          "new": "\"original-external-evidence-2a8646-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "exact_reverse_reconstruction_of_old_bytes": true,
+      "compile_only_passed": true,
+      "ast_structure_identical_except_listed_constant_values": true,
+      "constant_changes": [
+        {
+          "ast_path": "module.body[2].value.right",
+          "old": "final-external-evidence-existing-source-6a8cd5-v2",
+          "new": "final-external-evidence-2a8646-v1",
+          "old_line": 3,
+          "new_line": 3
+        },
+        {
+          "ast_path": "module.body[3].value.right",
+          "old": "package-original-external-evidence-6a8cd5-v1-prci",
+          "new": "package-original-external-evidence-2a8646-v1-prci",
+          "old_line": 4,
+          "new_line": 4
+        },
+        {
+          "ast_path": "module.body[4].value",
+          "old": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+          "new": "2a86462a1ab20c68151719ba4635e3c294391e64",
+          "old_line": 5,
+          "new_line": 5
+        },
+        {
+          "ast_path": "module.body[5].value",
+          "old": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5",
+          "new": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+          "old_line": 5,
+          "new_line": 5
+        },
+        {
+          "ast_path": "module.body[17].value.keywords[0].value",
+          "old": "Package only a closed, operator-pinned P1 external lane.",
+          "new": "Package only a closed, operator-pinned R1 external lane.",
+          "old_line": 36,
+          "new_line": 36
+        },
+        {
+          "ast_path": "module.body[60].body[1].value.args[4]",
+          "old": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "new": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+          "old_line": 90,
+          "new_line": 90
+        },
+        {
+          "ast_path": "module.body[76].test.comparators[0].values[8]",
+          "old": 3994959368,
+          "new": 3994964901,
+          "old_line": 110,
+          "new_line": 110
+        },
+        {
+          "ast_path": "module.body[96].value.values[0]",
+          "old": "trnm-P1-original-external-evidence-package-index-v1",
+          "new": "trnm-R1-original-external-evidence-package-index-v1",
+          "old_line": 130,
+          "new_line": 130
+        },
+        {
+          "ast_path": "module.body[100].value.right",
+          "old": "original-external-evidence-6a8cd5-v1.zip",
+          "new": "original-external-evidence-2a8646-v1.zip",
+          "old_line": 132,
+          "new_line": 132
+        },
+        {
+          "ast_path": "module.body[108].value.values[0]",
+          "old": "trnm-P1-original-external-evidence-package-completion-v1",
+          "new": "trnm-R1-original-external-evidence-package-completion-v1",
+          "old_line": 159,
+          "new_line": 159
+        }
+      ],
+      "unchanged_function_source_segments": [
+        "fi",
+        "now",
+        "open_abs",
+        "retain",
+        "save",
+        "sig"
+      ],
+      "full_start_head_unchanged": null,
+      "original_stage_counts_raw_rosters_budgets_and_driver_schema_unchanged": true
+    }
+  ],
+  "both_precise_patch": {
+    "path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/both-packagers-precise.patch",
+    "bytes": 14811,
+    "sha256": "7572f99a9f466fe4e99345c04acadf13eeb9b87b855d8ac09de2e92aa85777c3"
+  },
+  "original_false_qualification_flags_unchanged": true,
+  "original_failure_preservation_unchanged": true,
+  "no_control_flow_or_operator_or_call_structure_changes": true,
+  "no_packager_import_or_execution": true,
+  "no_actual_terminal_invented": true,
+  "P1_original_versions_unchanged": true,
+  "no_ROG_live_receipts_read": true,
+  "stage_source_git_network_test_actions": false
+}

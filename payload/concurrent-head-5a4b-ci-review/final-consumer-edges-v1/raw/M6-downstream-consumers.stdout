@@ -1,0 +1,24 @@
+2a62061177852dc3ebd200fa8d7c66c661a119a1:.github/workflows/pon-legacy-reorg-cost-20261104.yml:96:          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
+2a62061177852dc3ebd200fa8d7c66c661a119a1:.github/workflows/pon-legacy-reorg-cost-20261104.yml:101:          bash "$TRNM_CI_RECEIPT_DIR/run-command.sh" pq-hold python3 scripts/ci/pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:.github/workflows/pon-pq-system-continuation.yml:418:          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
+2a62061177852dc3ebd200fa8d7c66c661a119a1:.github/workflows/pon-pq-system-continuation.yml:422:          bash "$PQ_OUT/run-command.sh" pq-hold python3 scripts/ci/pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:config/pon/pq-cross-branch-corpus-v1.json:1741:    "scripts/ci/pq_chain_claim_guard.py": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:config/pon/pq-cross-branch-corpus-v1.json:1820:    "scripts/ci/test_pq_chain_claim_guard.py": "72682391155dd65d0f54606324ec5a01465bb653",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:config/pon/pq-cross-branch-corpus-v1.json:4286:    "scripts/ci/pq_chain_claim_guard.py",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:config/pon/pq-cross-branch-corpus-v1.json:4364:    "scripts/ci/test_pq_chain_claim_guard.py",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/check_ci_contract.py:828:    python3 scripts/ci/test_pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/check_ci_contract.py:897:    python3 scripts/ci/pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/check_pq_research_integration.py:290:    "scripts/ci/pq_chain_claim_guard.py",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/check_pq_research_integration.py:291:    "scripts/ci/test_pq_chain_claim_guard.py",
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/ci_job.sh:42:    python3 scripts/ci/test_pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/ci_job.sh:111:    python3 scripts/ci/pq_chain_claim_guard.py
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_chain_claim_guard.py:19:                                inspect as inspect_lifetime_budget)
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_chain_claim_guard.py:267:        lifetime = inspect_lifetime_budget(root)
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_chain_claim_guard.py:273:        'schema': 'trnm-whole-chain-pq-claim-guard-v1',
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_chain_claim_guard.py:296:        print(json.dumps({'schema': 'trnm-whole-chain-pq-claim-guard-v1',
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_lifetime_composition.py:23:RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_ci_contract.py:3164:        ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_ci_contract.py:3173:        'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_pq_chain_claim_guard.py:18:from pq_chain_claim_guard import (BOUNDARY, CONFIG, CONSENSUS, CORPUS, DEVNET, GATES,
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_pq_chain_claim_guard.py:503:        from pq_chain_claim_guard import strict_json
+2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_pq_research_integration.py:16:from test_pq_chain_claim_guard import DescriptorReaderControls

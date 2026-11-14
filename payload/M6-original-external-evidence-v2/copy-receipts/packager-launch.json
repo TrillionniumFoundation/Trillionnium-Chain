@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"rog\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-38d99099822fa5928f9f226812dd1e00d9b0426501126eb17e9dc4f473e74e68\",\"status\":{\"boot\":\"fcdd2477-a952-4ef2-9bdc-2237255080f1\",\"bytes_seen\":1320,\"bytes_stored\":1320,\"capture_error\":null,\"closed\":false,\"created_unix_ms\":1794649568175,\"exit_code\":0,\"output_complete\":true,\"owner_pid\":2511930,\"pid\":2511931,\"state\":\"exited\"}}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

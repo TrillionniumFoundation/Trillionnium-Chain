@@ -1,0 +1,127 @@
+{
+  "actual_terminal_exit_and_original_status_must_agree": true,
+  "bundle_four_actual_prerequisites_not_reduced": true,
+  "closed_manifest_in_package": true,
+  "explicit_current_78_readiness_replaces_historical_77_only_for_M8": true,
+  "external_12_labels_byte_identical": true,
+  "full_18_labels_byte_identical": true,
+  "full_expected_commands_function_byte_identical": true,
+  "old_log_hashes_and_terminal_timing_not_reused": true,
+  "original_2700_seconds_unchanged": true,
+  "original_driver_sources_not_modified": true,
+  "original_external_driver": {
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "original_full_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_source_pins": {
+    "external": {
+      "bytes": 8897,
+      "fingerprint": [
+        16777233,
+        606872003,
+        33152,
+        1,
+        8897,
+        1794649536960928537,
+        1794649536960928537
+      ],
+      "path": "/private/tmp/chain-prci-M6-original-external-evidence-preparation-20261114-v1/package_original_external_evidence_2a6206_v2.py",
+      "sha256": "62f177ea0964b01a87c862fa38bb0ff2d4814e6443963e9ae79f7629e02a895f"
+    },
+    "full": {
+      "bytes": 25585,
+      "fingerprint": [
+        16777233,
+        606869420,
+        33152,
+        1,
+        25585,
+        1794649256842353470,
+        1794649256842353470
+      ],
+      "path": "/private/tmp/chain-prci-M6-original-repository-truth-preparation-20261114-v2/package_original_repository_truth_2a6206_v2.py",
+      "sha256": "744d34e71ed6036af795a6971fd1e3d855bebc195f9634dc9cd3509ac8a67c1a"
+    }
+  },
+  "qualified_full_native_or_hosted_execution_claimed": false,
+  "schema": "trnm-M8-packager-static-preparation-proof-v1",
+  "source_eleven_fields_and_raw_equality_required": true,
+  "sources_imported_or_executed": false,
+  "started_at": "2026-11-14T10:37:00.458015+00:00",
+  "syntax_compiled_in_memory_only": true,
+  "unchanged_external_original_helpers": [
+    {
+      "bytes": 105,
+      "name": "fi",
+      "sha256": "cf2d24518330515adb0c6761f81c89ac8e14be20d16f76f8607f7f6b0861d3c1"
+    },
+    {
+      "bytes": 73,
+      "name": "now",
+      "sha256": "d4c9401fe48508973b09b76508527136e24c7d1f6eff9a2293f9c7a869817213"
+    },
+    {
+      "bytes": 394,
+      "name": "open_abs",
+      "sha256": "419f06c8d3a937cabbe24e418bea1f6c145bef331e4ec917b61e9ef67edf64de"
+    },
+    {
+      "bytes": 80,
+      "name": "save",
+      "sha256": "a2204030327791f829a54b28643258f8efec993133310a6a3e55162665be0bd8"
+    },
+    {
+      "bytes": 96,
+      "name": "sig",
+      "sha256": "4e59048a16cb70d6f8a9330099615ac8d8cfff5e084e3f19bec2613f0d2f330b"
+    }
+  ],
+  "unchanged_full_original_helpers": [
+    {
+      "bytes": 2294,
+      "name": "expected_commands",
+      "sha256": "a9c24d0b5f68316afbfb7e3d8cb5a7b60273900437de44ed360d1761d3867792"
+    },
+    {
+      "bytes": 448,
+      "name": "file_info",
+      "sha256": "edf4b9f9754f80a6038802c1e07249c37f07fbb93aa2d515d4b6d3ae4deef3a5"
+    },
+    {
+      "bytes": 899,
+      "name": "inventory",
+      "sha256": "5c849245ca8b369f970370f6111594f9fcf63ee04a4672ce8393a28f7cdb8abe"
+    },
+    {
+      "bytes": 78,
+      "name": "now",
+      "sha256": "4947c8b7dae7be0e7963b915d710951c83b98a37e44432a37055d0bf3dd3eb9a"
+    },
+    {
+      "bytes": 860,
+      "name": "open_regular",
+      "sha256": "ea0acc07dfb1645f5da4b8391ee41bf1f46954a527c98b2629fd711b46e9d287"
+    },
+    {
+      "bytes": 74,
+      "name": "require",
+      "sha256": "9775a8b3969599d5d1f620d9717824195d7ab69490eafb5e7b8d1bacbf14df85"
+    },
+    {
+      "bytes": 402,
+      "name": "save_new",
+      "sha256": "bd664c74b6594b0d9fb328a7a72beb41ab650b13fc70abeaa95c6af3b29dd1e2"
+    },
+    {
+      "bytes": 149,
+      "name": "signature",
+      "sha256": "ed00457cab3b759f7e9ce92648e3f33719c2726668901fc5e566d07088624ba3"
+    }
+  ],
+  "unknown_original_files_excluded": false,
+  "verified_at": "2026-11-14T10:37:00.479105+00:00"
+}

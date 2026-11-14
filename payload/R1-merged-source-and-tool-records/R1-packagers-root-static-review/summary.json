@@ -1,0 +1,33 @@
+{
+  "cases": [
+    {
+      "AST_structure_unchanged_except_constants": true,
+      "actual_diff_equals_independently_reviewed_diff": true,
+      "compiled_without_execution": true,
+      "label": "full",
+      "new_bytes": 28913,
+      "new_path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/package_original_repository_truth_2a8646_v1.py",
+      "new_sha256": "591e2a6539276d4942e74b756ac3ea43c6863da4a8cb5a440d7bd49079d6d8e8",
+      "old_path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+      "old_sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967",
+      "patch_sha256": "38e7ae0ae71ebac60980b8ada994d6e6450aa3d9ec809c917625af960b5760fb"
+    },
+    {
+      "AST_structure_unchanged_except_constants": true,
+      "actual_diff_equals_independently_reviewed_diff": true,
+      "compiled_without_execution": true,
+      "label": "external",
+      "new_bytes": 14191,
+      "new_path": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1/package_original_external_evidence_2a8646_v1.py",
+      "new_sha256": "8785a7c4ed28c96b4977efc983301278be5bef065188456ab8e405606610f192",
+      "old_path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+      "old_sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811",
+      "patch_sha256": "03ddd83a7d9c493e0432084a7497a5d638fee136600cb5cab09c44839dd73282"
+    }
+  ],
+  "notes": "Exact reviewed identity constants only. Full starts at actual P1 and requires its original 18 steps. External and full are still prepared-only pending each actual R1 terminal.",
+  "packagers_executed": false,
+  "schema": "trnm-R1-packagers-root-static-review-v1",
+  "status": "PASS",
+  "test_receipts_read": false
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 25769367,
+  "user_cpu_ns": 15824000,
+  "system_cpu_ns": 6515000,
+  "cpu_ns": 22339000,
+  "max_rss_kib": 53292,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 538,
+  "major_faults": 0,
+  "voluntary_switches": 29,
+  "involuntary_switches": 0,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "94bac4c3c4c181cc1216ecd4b99e5f56aa3f12f075bafd5154f453346bd5d2f5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,18 @@
+{
+  "all_5597_file_identities_unchanged": true,
+  "bytes": 261120585,
+  "files": 5597,
+  "original_HOLD_directory_preserved": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-content-v1",
+  "removed_only_empty_owned_stage_directories": [
+    "P1-startup-failure-and-final-review/closed-sparse-results/payloads/originals/final-repository-truth-offline-6a8cd5-v1/ci-observations",
+    "P1-startup-failure-and-final-review/closed-sparse-results/payloads/originals/final-repository-truth-offline-6a8cd5-v1/tmp"
+  ],
+  "schema": "trnm-owned-stage-empty-directory-correction-v1",
+  "scope_v3_prepared": {
+    "bytes": 4994,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-payload-scope-static-review-input-v3/prepare_scope_and_scan.py",
+    "sha256": "8699cf5f1dda53ed12a1a537325d7a01fc09d8fbc1fa2964b1117eb02649e0c9"
+  },
+  "source_and_Git_untouched": true,
+  "status": "CORRECTED"
+}

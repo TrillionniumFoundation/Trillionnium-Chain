@@ -1,0 +1,62 @@
+{
+  "file_count": 6,
+  "files": [
+    {
+      "bytes": 14115,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.original"
+      },
+      "path": "ci-format-lint-lines.original",
+      "sha256": "d22434932703ddb2368bb27f1601953830f715ab66384d3bc4f9dcb36305be7e"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci-format-lint-lines.stderr"
+      },
+      "path": "ci-format-lint-lines.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 46547,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/ci_job.sh.original"
+      },
+      "path": "ci_job.sh.original",
+      "sha256": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9"
+    },
+    {
+      "bytes": 4315,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/source-read.json"
+      },
+      "path": "source-read.json",
+      "sha256": "789bd31ee349fdea1701679af4cf8e9594649b8a83d8dee4870687fa609794ef"
+    },
+    {
+      "bytes": 3036,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/lint-review.json"
+      },
+      "path": "lint-review.json",
+      "sha256": "112ba81baac821f4d429bb9ece565d9df47454edab8ab2acbee5890297b54e17"
+    },
+    {
+      "bytes": 1456,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/lint-review-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "3f8628f3d385a6108d81cedb8ca28b3182ae21a82e778f5708a1f7ce28ca571a"
+    }
+  ],
+  "schema": "trnm-worker-artifact-lint-review-index-v1",
+  "static_only": true,
+  "total_bytes": 69469
+}

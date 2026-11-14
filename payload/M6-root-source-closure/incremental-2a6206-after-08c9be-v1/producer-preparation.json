@@ -1,0 +1,28 @@
+{
+  "original": {
+    "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/incremental-7d8-after-dc42-v1/bounded_scan_driver.py",
+    "bytes": 9487,
+    "sha256": "dca090d3146a652854f811b5052ad37437e64e199ef8e5a7d52a56dbe709b172"
+  },
+  "new": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/incremental-2a6206-after-08c9be-v1/bounded_scan_driver.py",
+    "bytes": 9623,
+    "sha256": "95fed3213e3592c4c6f9216bb47f9299514a7bf2f5bb25663279d3742ef20fc8"
+  },
+  "reused_inputs": [
+    {
+      "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/incremental-7d8-after-dc42-v1/prior-scan_driver.py",
+      "name": "prior-scan_driver.py",
+      "bytes": 10539,
+      "sha256": "5c292f6554bbf1345d6e58a3c64cf9099230223fc9c70f217a575f6f20ee7368"
+    },
+    {
+      "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/incremental-7d8-after-dc42-v1/prior-patterns-and-scope.json",
+      "name": "prior-patterns-and-scope.json",
+      "bytes": 1227,
+      "sha256": "33cdf0d872006fd692c72388443f0e8a47e804cfe679b28c6e612074ef5cf479"
+    }
+  ],
+  "source_edits": false,
+  "tests_rerun": false
+}

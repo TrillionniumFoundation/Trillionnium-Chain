@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-M4-private-worktree-preflight-v1",
+  "observed_at": "2026-11-14T08:39:45.075412+00:00",
+  "worktree": "/private/tmp/chain-M4-owned-process-collector-20261114",
+  "branch": "fix/chain-m4-closed-exec-gate-20261114",
+  "head": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "tree": "18c3d20df915f5c31ee38c7037775c61e5c12e3f",
+  "clean": true,
+  "no_remote_operation": true
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "chain-readonly-push-diagnostic-static-review-v1",
+  "driver": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/diagnose_candidate_archive_push_dry_run_v1.py",
+    "bytes": 25107,
+    "sha256": "a8dcfa92f1cbfad0cbaa96a3b8a49510d03f4d236379f8f05dbbd11be67b99c7"
+  },
+  "publisher_dependency_sha256": "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038",
+  "syntax_compile_pass": true,
+  "driver_executed": false,
+  "network_commands_executed": false,
+  "git_objects_or_refs_changed": false,
+  "only_push_site_has_dry_run": true,
+  "original_300_seconds_retained": true,
+  "trace2_targets_explicitly_disabled": true,
+  "hook_original_bytes": 933,
+  "hook_original_sha256": "f0df66af0e6d360386f72475c79a38d2e40567396b00aca492d175195d503730",
+  "hook_diagnostic_bytes": 1111,
+  "hook_diagnostic_sha256": "6ea0332c8e94e67af08e15bcc4cd96b5c384f1af60a1e978d23049812cf1d37c",
+  "hook_restoration_byte_identical": true,
+  "hook_original_assertions_retained": true,
+  "expected_json_sha256": "ee1e1fca066b62525016cd60803cadb3a2183cb8f9a5f367872341bd0ec2ca1a",
+  "original_hook_timeout_seconds": 90,
+  "artifacts": [
+    {
+      "path": "/private/tmp/chain-ci-publication-safety-review-20261114/push-dry-run-driver-v1-review/driver.patch",
+      "bytes": 25679,
+      "sha256": "44ac39c602e98cf19ff33f782c755b43f15c196ab3d03fba526f29fd510d1038"
+    },
+    {
+      "path": "/private/tmp/chain-ci-publication-safety-review-20261114/push-dry-run-driver-v1-review/hook-markers-only.patch",
+      "bytes": 941,
+      "sha256": "224bb87ff489d5b3e890f413f4ea5b4f13932e9acfdfa6ddec879d726e9386ad"
+    },
+    {
+      "path": "/private/tmp/chain-ci-publication-safety-review-20261114/push-dry-run-driver-v1-review/diagnostic-pre-push",
+      "bytes": 1111,
+      "sha256": "6ea0332c8e94e67af08e15bcc4cd96b5c384f1af60a1e978d23049812cf1d37c"
+    }
+  ],
+  "invocation": [
+    "/private/tmp/chain-consolidation-20261114-root/diagnose_candidate_archive_push_dry_run_v1.py",
+    "--evidence-dir",
+    "/private/tmp/chain-consolidation-20261114-root/diagnose-candidate-archive-dry-run-dc42ce-v1"
+  ],
+  "scope": "Preparation only. No diagnostic or publication was executed."
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "root-bounded-source-followup-bundle-v1",
+  "head": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "tree": "036868dfcc953b6f5574c627e0027c3d4e2d3523",
+  "prerequisites": [
+    "1a7afcdb820b051d1e4bfde3d436f96fc050c487"
+  ],
+  "advertised_heads": [
+    [
+      "08c9becab740ab2c375b970f376a7638f44c9e8e",
+      "HEAD"
+    ]
+  ],
+  "archive_history_included": false,
+  "source_clean": true,
+  "bundle": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/source-bundle-08c9-after-1a7-v1/closed-exec-gate-08c9beca-after-1a7afcdb.bundle",
+    "bytes": 182560,
+    "sha256": "8886a3acbe3ac3be04d70b0bf19b5310a4434ba1c78ec0c07f48b68099dd044a"
+  },
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "create-bounded-bundle",
+      "exit": 0,
+      "seconds": 0.037,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "verify-bundle",
+      "exit": 0,
+      "seconds": 0.021,
+      "sha256": "4ba6830c1e8dcd94114dc676ac06dce45136cf12de0597e65488ed12abb9a6b8"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "capture": {
+    "argv": [
+      "/usr/bin/git",
+      "--git-dir",
+      "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "show",
+      "ed0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs"
+    ],
+    "bytes": 12757,
+    "exit_code": 0,
+    "git_blob": "1c2c7aad3754cd54e3a05182fede5f6357ef9df6",
+    "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original",
+    "sha256": "ee7b44de5d90db0931dd22624c9e4e4b1ac89f10395f34a642088f83f13cc3e7",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs"
+  },
+  "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "pq_identity_policy_id": [],
+  "pq_identity_resource_profile": [],
+  "public_v3_resource_profile": [
+    {
+      "end": 863,
+      "line": 855,
+      "start": 850,
+      "text": "850:                 self.identity.is_pq(),\n851:                 \"public-resource-cookie-v3\",\n852:                 \"public-resource-cookie-pq-v4\",\n853:             )\n854:             .into(),\n855:             profile: hex::encode(self.resource_profile()),\n856:             network: hex::encode(s.network()),\n857:             parameters: hex::encode(s.parameters()),\n858:             genesis: hex::encode(s.genesis()),\n859:             server: self.identity.public_key().into(),\n860:             epoch: hex::encode(self.epoch),\n861:             connection_nonce: hex::encode(entropy::<32>()?),\n862:             peer_binding: hex::encode(hash(\n863:                 b\"public-peer-binding-v3\","
+    },
+    {
+      "end": 901,
+      "line": 893,
+      "start": 888,
+      "text": "888:                 == pq_identity::schema(\n889:                     self.identity.is_pq(),\n890:                     \"public-resource-cookie-v3\",\n891:                     \"public-resource-cookie-pq-v4\",\n892:                 )\n893:                 && c.profile == hex::encode(self.resource_profile())\n894:                 && c.network == hex::encode(s.network())\n895:                 && c.parameters == hex::encode(s.parameters())\n896:                 && c.genesis == hex::encode(s.genesis())\n897:                 && c.server == self.identity.public_key()\n898:                 && c.epoch == hex::encode(self.epoch)\n899:                 && c.bits == self.policy.bits\n900:                 && c.lifetime_ms == self.policy.lifetime_ms,\n901:             \"PUBLIC_COOKIE_CONTEXT\","
+    },
+    {
+      "end": 1015,
+      "line": 1007,
+      "start": 1002,
+      "text": "1002:             server.identity.is_pq(),\n1003:             \"public-protected-response-v3\",\n1004:             \"public-protected-response-pq-v4\",\n1005:         )\n1006:         .into(),\n1007:         profile: hex::encode(server.resource_profile()),\n1008:         network: hex::encode(s.network()),\n1009:         parameters: hex::encode(s.parameters()),\n1010:         genesis: hex::encode(s.genesis()),\n1011:         server: server.identity.public_key().into(),\n1012:         cookie_digest: hex::encode(c.id()?),\n1013:         request_digest: c.body_digest.clone(),\n1014:         ok,\n1015:         value,"
+    }
+  ],
+  "schema": "trnm-policy-prefix-readonly-reachable-server-callsite-v1",
+  "scope": "Textual selected contexts of already identified ordinary server stages; not a global callgraph or direct runtime counter",
+  "tests_or_source_helpers_run": false
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "bytes": 522809,
+    "changed_paths": [
+      {
+        "new_blob": "fa4b1825d78ca25f25780fb43f73bee148bf5f66",
+        "new_mode": "100644",
+        "old_blob": "9bb43fcaec3667b5a78c920e9641ef01275feb66",
+        "old_mode": "100644",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "fa4b1825d78ca25f25780fb43f73bee148bf5f66",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 522809,
+    "sha256": "487aca500aa606572c0263b5c5c36e4983c5f718fd8713a1286e1f34865f4c7a"
+  },
+  {
+    "bytes": 46379,
+    "changed_paths": [
+      {
+        "new_blob": "0abb715d5055eca6d5427598d145375470ca0e7e",
+        "new_mode": "100644",
+        "old_blob": "ceccd430a44b3023284749f26030508cae7f7248",
+        "old_mode": "100644",
+        "path": "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "0abb715d5055eca6d5427598d145375470ca0e7e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 46379,
+    "sha256": "b3765e2b9fec9b10872716870d55754935308e79e6bdb5251c5d3d3963fdc126"
+  },
+  {
+    "bytes": 1146849,
+    "changed_paths": [
+      {
+        "new_blob": "ffc58007ca67dedc3aa3808c1b1e2d6ff957cac8",
+        "new_mode": "100644",
+        "old_blob": "a01648ca39d5e1f8ee0e16b606abec2bd3f2e150",
+        "old_mode": "100644",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "ffc58007ca67dedc3aa3808c1b1e2d6ff957cac8",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1146849,
+    "sha256": "8b6a751f59cc725793f10dbf7ef3c604e692dfaf20fb9ca6f2aea986ba70abd4"
+  },
+  {
+    "bytes": 199207,
+    "changed_paths": [
+      {
+        "new_blob": "0634074cefc7eee3ed1e7edbb99c830931dfbe5e",
+        "new_mode": "100644",
+        "old_blob": "e12e7839f406056bab9c05086baacb0059627835",
+        "old_mode": "100644",
+        "path": "scripts/ci/check_ci_contract.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "0634074cefc7eee3ed1e7edbb99c830931dfbe5e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 199207,
+    "sha256": "caff843dd3e1f4bf23a9160a87fcccc9690455bfcbf95781625c74fcdb4bb37a"
+  },
+  {
+    "bytes": 46547,
+    "changed_paths": [
+      {
+        "new_blob": "fef70851f7fb3348f30148ab390a76fc523dde0e",
+        "new_mode": "100644",
+        "old_blob": "ba703105bcbec8a368c08309abd0e8705ddd4a40",
+        "old_mode": "100644",
+        "path": "scripts/ci/ci_job.sh",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "fef70851f7fb3348f30148ab390a76fc523dde0e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 46547,
+    "sha256": "a7cfd7382dc937e5320ace91aa7c05e618807828bb19f64ee89c83b31ed4ace9"
+  },
+  {
+    "bytes": 247470,
+    "changed_paths": [
+      {
+        "new_blob": "9710a402113cee366b869d00071ff90d5868f015",
+        "new_mode": "100644",
+        "old_blob": "8683f6b319cb6104bf7dc201e3b363c648901468",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_ci_contract.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "9710a402113cee366b869d00071ff90d5868f015",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 247470,
+    "sha256": "6ad902b690ab50bd27c939a727bd8917adaa9c6e569cdad19554b462ed0f9250"
+  }
+]

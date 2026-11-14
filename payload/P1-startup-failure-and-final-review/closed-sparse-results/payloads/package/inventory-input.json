@@ -1,0 +1,435 @@
+{
+  "active_full_v2_read": false,
+  "file_count": 95,
+  "roots": [
+    {
+      "bytes": 24402,
+      "directories": [
+        ".",
+        "ci-observations",
+        "tmp"
+      ],
+      "directory": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1",
+      "file_count": 35,
+      "files": [
+        {
+          "bytes": 0,
+          "path": "initial-status.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "verify-source-after.stdout"
+        },
+        {
+          "bytes": 177,
+          "path": "pre-update-preflight.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "local-bundle-list-heads.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "fetched-commit.stderr"
+        },
+        {
+          "bytes": 223,
+          "path": "conformance-environment.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "fast-forward-ancestry.stderr"
+        },
+        {
+          "bytes": 839,
+          "path": "verify-source-after.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "fetch-exact-local-bundle.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "conformance-environment.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "initial-head.stderr"
+        },
+        {
+          "bytes": 177,
+          "path": "preflight-audit.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "initial-status.stderr"
+        },
+        {
+          "bytes": 133,
+          "path": "local-bundle-verify.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "verify-source-before.stdout"
+        },
+        {
+          "bytes": 41,
+          "path": "fetched-commit.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "fast-forward-ancestry.stdout"
+        },
+        {
+          "bytes": 36,
+          "path": "rust-version.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "fetched-tree.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "preflight-audit.stderr"
+        },
+        {
+          "bytes": 839,
+          "path": "verify-source-before.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "cargo-version.stderr"
+        },
+        {
+          "bytes": 190,
+          "path": "local-bundle-verify.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "fast-forward.stderr"
+        },
+        {
+          "bytes": 20640,
+          "path": "summary.json"
+        },
+        {
+          "bytes": 0,
+          "path": "rust-version.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "pre-update-preflight.stderr"
+        },
+        {
+          "bytes": 738,
+          "path": "fast-forward.stdout"
+        },
+        {
+          "bytes": 41,
+          "path": "fetched-tree.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "fetch-exact-local-bundle.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "runtime-environment.stderr"
+        },
+        {
+          "bytes": 41,
+          "path": "initial-head.stdout"
+        },
+        {
+          "bytes": 46,
+          "path": "local-bundle-list-heads.stdout"
+        },
+        {
+          "bytes": 36,
+          "path": "cargo-version.stdout"
+        },
+        {
+          "bytes": 205,
+          "path": "runtime-environment.stdout"
+        }
+      ]
+    },
+    {
+      "bytes": 4199223,
+      "directories": [
+        "."
+      ],
+      "directory": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1",
+      "file_count": 22,
+      "files": [
+        {
+          "bytes": 0,
+          "path": "config-core.fsmonitor.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "status.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "index-path.stderr"
+        },
+        {
+          "bytes": 11,
+          "path": "index-path.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.preloadindex.stdout"
+        },
+        {
+          "bytes": 41,
+          "path": "tree.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.preloadindex.stderr"
+        },
+        {
+          "bytes": 2445,
+          "path": "producer.py"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.sparsecheckout.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "head.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "status.stdout"
+        },
+        {
+          "bytes": 4191866,
+          "path": "ls-files-v.stdout"
+        },
+        {
+          "bytes": 31,
+          "path": "config-core.sparsecheckout.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.fsmonitor.stdout"
+        },
+        {
+          "bytes": 41,
+          "path": "head.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.ignorestat.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "tree.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "ls-files-v.stderr"
+        },
+        {
+          "bytes": 4788,
+          "path": "summary.json"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.untrackedcache.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.ignorestat.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "config-core.untrackedcache.stdout"
+        }
+      ]
+    },
+    {
+      "bytes": 4133,
+      "directories": [
+        "."
+      ],
+      "directory": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1",
+      "file_count": 5,
+      "files": [
+        {
+          "bytes": 2249,
+          "path": "producer.py"
+        },
+        {
+          "bytes": 241,
+          "path": "sparse-checkout.original"
+        },
+        {
+          "bytes": 1227,
+          "path": "summary.json"
+        },
+        {
+          "bytes": 58,
+          "path": "config.worktree.original"
+        },
+        {
+          "bytes": 358,
+          "path": "two-tree-entries.stdout"
+        }
+      ]
+    },
+    {
+      "bytes": 8396904,
+      "directories": [
+        "."
+      ],
+      "directory": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1",
+      "file_count": 33,
+      "files": [
+        {
+          "bytes": 0,
+          "path": "head-before.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "sparse-config-after.stderr"
+        },
+        {
+          "bytes": 41,
+          "path": "tree-before.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "flags-after.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "object-present-0.stdout"
+        },
+        {
+          "bytes": 41,
+          "path": "head-after.stdout"
+        },
+        {
+          "bytes": 423,
+          "path": "verified-source.json"
+        },
+        {
+          "bytes": 4191,
+          "path": "producer.py"
+        },
+        {
+          "bytes": 177,
+          "path": "preflight-audit.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "disable-sparse-checkout.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "status-after.stderr"
+        },
+        {
+          "bytes": 41,
+          "path": "head-before.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "tree-after.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "original-verify-source.stderr"
+        },
+        {
+          "bytes": 6,
+          "path": "sparse-config-after.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "preflight-audit.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "object-present-1.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "object-present-1.stdout"
+        },
+        {
+          "bytes": 241,
+          "path": "info--sparse-checkout.before"
+        },
+        {
+          "bytes": 7489,
+          "path": "summary.json"
+        },
+        {
+          "bytes": 423,
+          "path": "original-verify-source.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "status-before.stdout"
+        },
+        {
+          "bytes": 58,
+          "path": "config.worktree.before"
+        },
+        {
+          "bytes": 41,
+          "path": "tree-after.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "head-after.stderr"
+        },
+        {
+          "bytes": 4191866,
+          "path": "flags-before.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "disable-sparse-checkout.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "status-after.stdout"
+        },
+        {
+          "bytes": 0,
+          "path": "object-present-0.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "tree-before.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "flags-before.stderr"
+        },
+        {
+          "bytes": 0,
+          "path": "status-before.stderr"
+        },
+        {
+          "bytes": 4191866,
+          "path": "flags-after.stdout"
+        }
+      ]
+    }
+  ],
+  "scope": [
+    "final-repository-truth-offline-6a8cd5-v1",
+    "P1-index-flag-diagnostic-v1",
+    "P1-sparse-checkout-precorrection-v1",
+    "P1-sparse-checkout-correction-v1"
+  ],
+  "total_bytes": 12624662
+}

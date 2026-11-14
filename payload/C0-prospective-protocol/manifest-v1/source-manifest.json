@@ -1,0 +1,261 @@
+{
+  "schema": "trnm-C0-prospective-protocol-complete-receipts-manifest-v1",
+  "run": 43567821538,
+  "job": 132376957499,
+  "files": [
+    {
+      "path": "C0-prospective-protocol/bounded-cause-final-v1/causal-summary.json",
+      "bytes": 50561,
+      "sha256": "e60702de245d6512d2f53cb83fbe3865d1569f87f158b3687625bb094c50eafb",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/bounded-cause-final-v1/causal-summary.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/bounded-cause-final-v1/causal-summary.json"
+    },
+    {
+      "path": "C0-prospective-protocol/bounded-cause-final-v1/review.md",
+      "bytes": 2099,
+      "sha256": "b5810245ba60655c8b75c914a52bb28b80870ad28291f4a8bba44fd330e6f229",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/bounded-cause-final-v1/review.md"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/bounded-cause-final-v1/review.md"
+    },
+    {
+      "path": "C0-prospective-protocol/failure-line-extract.json",
+      "bytes": 1384,
+      "sha256": "639c3ca4012210eea9582bd582780fce7cb4fa1b8aa33d2ec4a0970d00b69663",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/failure-line-extract.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/failure-line-extract.json"
+    },
+    {
+      "path": "C0-prospective-protocol/job-132376957499.stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stderr.raw"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stderr.raw"
+    },
+    {
+      "path": "C0-prospective-protocol/job-132376957499.stdout.raw",
+      "bytes": 221700,
+      "sha256": "50b3b4fab0cb804210065d6bd748b6c3d9d63ff0127c67a4f55d33db74a81461",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stdout.raw"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/job-132376957499.stdout.raw"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/C0-prospective-protocol-14106191819.index.json",
+      "bytes": 30047,
+      "sha256": "b588b4e1e84e10fe12a46a5222af5deaeb50a3ba810c17fb805051665732c020",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/C0-prospective-protocol-14106191819.index.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/C0-prospective-protocol-14106191819.index.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/C0-prospective-protocol-14106191819.zip",
+      "bytes": 7440365,
+      "sha256": "8a7a6847941eb40a0844ac210dbdece9d412902a2f0217d3f94b876517642643",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/C0-prospective-protocol-14106191819.zip"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/C0-prospective-protocol-14106191819.zip"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/artifact-metadata.json",
+      "bytes": 856,
+      "sha256": "10c1ce9e7e4b9f91a59a76e1edb3b8424080e825c7415ef0af9a44dc055c9d4b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/artifact-metadata.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/artifact-metadata.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/completion-summary.json",
+      "bytes": 26356,
+      "sha256": "125f782111f47d4902c4d8df980dfdfda781a8656584da41b08ba36600d72802",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/completion-summary.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/completion-summary.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native/confirmation/report.json",
+      "bytes": 16000217,
+      "sha256": "671c8395639c5bfdae0e5034cedbb40edcb125594ab03a84159795a3a2bf2f39",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/confirmation/report.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/confirmation/report.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 951,
+      "sha256": "8320d3652a0d9dcf33bdb8168d499c42999da9eb45c1c754b1b863a5e0309104",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 408,
+      "sha256": "e0b3cd0f5c40ab8b3570efed709843b150263a30be0c5bbfa9deab14e2c400fc",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native/manifest.json",
+      "bytes": 73820,
+      "sha256": "14ea30e75c70443d2ba9c549bf20752818b936a22d1dc2bb0f88e0395a9315b7",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/manifest.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native/manifest.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/child-result.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/controller-result.json",
+      "bytes": 9359,
+      "sha256": "3aacf0baa4f011a4fbe26873ded6b33a7acd076232d8b1aec65b50d38ee726a0",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/controller-result.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/systemd-run.log",
+      "bytes": 6911,
+      "sha256": "b21f834c8749bc61e66f0b1eb81a28d817e3948bf3e44a49a0eab648e0737320",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/systemd-run.log"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/from-zero-native-host/systemd-run.log"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-after.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-after.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-after.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-before.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-before.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-continuation-v4/source-before.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-after.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-after.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-after.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-before.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-before.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-native-v3/source-before.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-after.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-after.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-after.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-before.json",
+      "bytes": 423,
+      "sha256": "f267f4c71a0e186da72134e23fbdd5c07acefa16e48a362eeb0dcdec9fcd92aa",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-before.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/root-witness-v5/source-before.json"
+    },
+    {
+      "path": "C0-prospective-protocol/official-complete-artifact-v1/critical-originals-v1/source.json",
+      "bytes": 512,
+      "sha256": "06d4f10a9277671a7366045854632a422d749d9a4f2d028fb072dc222a6a70be",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/source.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/official-complete-artifact-v1/critical-originals-v1/source.json"
+    },
+    {
+      "path": "C0-prospective-protocol/summary.json",
+      "bytes": 1079,
+      "sha256": "4e1934b5a1bc9863e44e6f70b5e401e06c91decddb61c14c2de30fceff70d4cd",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/summary.json"
+      },
+      "source_path": "/private/tmp/chain-C0-prospective-protocol-job132376957499-original-20261114-v1/summary.json"
+    }
+  ],
+  "file_count": 25,
+  "payload_bytes": 23869496,
+  "whole_zip_verified": true,
+  "no_runtime_or_ci_mutation": true
+}

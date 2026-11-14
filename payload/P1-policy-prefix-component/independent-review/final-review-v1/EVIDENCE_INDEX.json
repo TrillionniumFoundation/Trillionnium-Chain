@@ -1,0 +1,299 @@
+{
+  "evidence_root": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1",
+  "file_count": 32,
+  "files": [
+    {
+      "bytes": 16945,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/source-diff.original"
+      },
+      "path": "source-diff.original",
+      "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37"
+    },
+    {
+      "bytes": 433736,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original",
+      "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+    },
+    {
+      "bytes": 221433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress.rs.original",
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "bytes": 32654,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-protocol--src--pon_wire.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-protocol--src--pon_wire.rs.original",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    },
+    {
+      "bytes": 438782,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/candidate-public_v3.rs.reconstructed.original"
+      },
+      "path": "candidate-public_v3.rs.reconstructed.original",
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    },
+    {
+      "bytes": 3961,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/source-capture.json"
+      },
+      "path": "source-capture.json",
+      "sha256": "07e67697f78ba10e85038f495c0d13f93eebf737f283e987756b05b54681a2a2"
+    },
+    {
+      "bytes": 20772,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/framing-and-callsite-contexts.json"
+      },
+      "path": "framing-and-callsite-contexts.json",
+      "sha256": "c76e57f78cdca6a5d3e66fb993167ebd5a9780aef9c34b255fc05aa0cb336960"
+    },
+    {
+      "bytes": 6606,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-callsite-and-test-proof.json"
+      },
+      "path": "production-callsite-and-test-proof.json",
+      "sha256": "587a541f4471df2ec1d055bfc4a9c8b5da5d430d89839d27b0b3cb8b59cbb073"
+    },
+    {
+      "bytes": 12757,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original",
+      "sha256": "ee7b44de5d90db0931dd22624c9e4e4b1ac89f10395f34a642088f83f13cc3e7"
+    },
+    {
+      "bytes": 3561,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-server-policy-callchain.json"
+      },
+      "path": "production-server-policy-callchain.json",
+      "sha256": "530b7d6496ca9b76310b480c6dd160d07afb32b1b8d2f65b65b51e248576451f"
+    },
+    {
+      "bytes": 10762,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs.original",
+      "sha256": "2799bd30b73fae3b89b894e2c55f2dcb4c3231b670eb40f4f79a6e29d8362dbd"
+    },
+    {
+      "bytes": 2282,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/resource-profile-definition-location.json"
+      },
+      "path": "resource-profile-definition-location.json",
+      "sha256": "c9d2c9d5d49e1f39a1ee292863b134693bd6096b7b69c438587bb61502d806c5"
+    },
+    {
+      "bytes": 7198,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.original"
+      },
+      "path": "M8--trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.original",
+      "sha256": "c1fc7c88249daff102c2cdb045bb1b38e5fd115e15dc4c608a2f1a5725171724"
+    },
+    {
+      "bytes": 10422,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/production-profile-dispatch-closure.json"
+      },
+      "path": "production-profile-dispatch-closure.json",
+      "sha256": "e9a8405d0d7c3ff255acf7c63a5938f1d0598d23821e31c36e5d104536bd9d12"
+    },
+    {
+      "bytes": 10308,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/review.json"
+      },
+      "path": "final-review-v1/review.json",
+      "sha256": "a9b43147342a084e73778e0f755becfabafe3e1fd3921497cde97ed08df14eab"
+    },
+    {
+      "bytes": 7872,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/README.md"
+      },
+      "path": "final-review-v1/README.md",
+      "sha256": "cbaf55dc55e14f166792985ed22a7e2f17aefda56aa8ca7b0dab845f0848e933"
+    },
+    {
+      "bytes": 6778,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/INPUTS_INDEX.json"
+      },
+      "path": "final-review-v1/INPUTS_INDEX.json",
+      "sha256": "16d03fce0f382983ef260f0500492423e9a6f76e48a2dfc51f2d2580698e0997"
+    },
+    {
+      "bytes": 610,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/extra-read-start.json"
+      },
+      "path": "final-review-v1/read-receipts/extra-read-start.json",
+      "sha256": "5e4168f8cb7e2b92402d29d217ac6ae8ef0da85df88f687e4e73e6f280c96501"
+    },
+    {
+      "bytes": 39621,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/extra-read-terminal.json"
+      },
+      "path": "final-review-v1/read-receipts/extra-read-terminal.json",
+      "sha256": "0ac71c93fa58ea5b40c9008bfd571ebf8b1264e5dfdc60748d01ad5c5095d25a"
+    },
+    {
+      "bytes": 608,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/server-callchain-start.json"
+      },
+      "path": "final-review-v1/read-receipts/server-callchain-start.json",
+      "sha256": "d8695c452dc6f6fb8a7322f015031a4ee6824c79a1256a03174ecf59ebcf7390"
+    },
+    {
+      "bytes": 12239,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/server-callchain-terminal.json"
+      },
+      "path": "final-review-v1/read-receipts/server-callchain-terminal.json",
+      "sha256": "a545080aa467c32148d2d56584347e251ffd46589c3cbb30c5ab9b51c5ecd0de"
+    },
+    {
+      "bytes": 602,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/growth-read-start.json"
+      },
+      "path": "final-review-v1/read-receipts/growth-read-start.json",
+      "sha256": "61ad79a5ff089dc714decd0e71b01dda68a36d1777f22080dfe33ff8a8beb879"
+    },
+    {
+      "bytes": 2100,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/growth-read-terminal.json"
+      },
+      "path": "final-review-v1/read-receipts/growth-read-terminal.json",
+      "sha256": "98c1a8e3eb00bb501a53248bf51ac2dd305c17da58c14605885ec7770345b1da"
+    },
+    {
+      "bytes": 639,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/definition-location-start.json"
+      },
+      "path": "final-review-v1/read-receipts/definition-location-start.json",
+      "sha256": "cdb662388622da601b28ce76cb843df89bec705a47c616cfd18f362d31acadd2"
+    },
+    {
+      "bytes": 9106,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/definition-location-terminal.json"
+      },
+      "path": "final-review-v1/read-receipts/definition-location-terminal.json",
+      "sha256": "df634578566a5108b73f52325b792e5a3a13cc7be0acc660ff6e6cfc5964d219"
+    },
+    {
+      "bytes": 641,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/dispatch-closure-start.json"
+      },
+      "path": "final-review-v1/read-receipts/dispatch-closure-start.json",
+      "sha256": "303adbc56b9b063a38b40f16d2fdf05230017d5785ab503edb54589c57ed88ab"
+    },
+    {
+      "bytes": 34246,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-receipts/dispatch-closure-terminal.json"
+      },
+      "path": "final-review-v1/read-receipts/dispatch-closure-terminal.json",
+      "sha256": "d17209b8a799e594514845f21ae9d0cbda3ba2ca5fff7a77eef7d40382f36d9b"
+    },
+    {
+      "bytes": 3629,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-producers/extra-read.py"
+      },
+      "path": "final-review-v1/read-producers/extra-read.py",
+      "sha256": "0348dac3a0eaa7c549f4dc4bf69738ac1f906ac4ad23f4c6307cecb3e6706978"
+    },
+    {
+      "bytes": 3067,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-producers/server-callchain-read.py"
+      },
+      "path": "final-review-v1/read-producers/server-callchain-read.py",
+      "sha256": "3451bc6444fbdfc7100682b1246811d40ada1cc4dd1c9a36a50181074827867f"
+    },
+    {
+      "bytes": 1953,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-producers/growth-read.py"
+      },
+      "path": "final-review-v1/read-producers/growth-read.py",
+      "sha256": "1c6143913ae18acee397ad91dd2884d9eb91df5768c9b69f97be23cf58d4857a"
+    },
+    {
+      "bytes": 1312,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-producers/definition-location.py"
+      },
+      "path": "final-review-v1/read-producers/definition-location.py",
+      "sha256": "0e99985514eae5326bf291179858f46a070e4b7327f7a2da27e05ed75d3965be"
+    },
+    {
+      "bytes": 2656,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-public-policy-prefix-independent-review-20261114-v1/final-review-v1/read-producers/dispatch-closure.py"
+      },
+      "path": "final-review-v1/read-producers/dispatch-closure.py",
+      "sha256": "f45c39494302866f7ee34d864ca4f764e6e252bb0b42c527cd05d2250965d464"
+    }
+  ],
+  "schema": "trnm-policy-prefix-independent-review-evidence-index-v1",
+  "scope": "Fourteen immutable source/proof captures and this final static review. Prior closed reports are references, not copied. Excludes index and seal from their own file roster.",
+  "source_git_stage_mutated": false,
+  "source_helpers_or_tests_executed": false,
+  "total_bytes": 1359858
+}

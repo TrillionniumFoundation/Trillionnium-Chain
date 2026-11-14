@@ -1,0 +1,45 @@
+{
+  "all_staged_blobs_equal_reviewed_raw_bytes": true,
+  "branch": "refs/heads/fix/chain-hash-use-current-binding-20261114",
+  "changed_paths": 94,
+  "clean": true,
+  "commit": "e811c204e039565c06f5bb2cba3543564f510f7b",
+  "corpus_and_soleplan_not_modified": true,
+  "corpus_update_proposal": [
+    {
+      "bytes": 72224,
+      "new_git_blob": "986a94eaf6b1c44a11595cc98ac4f9925e7c943e",
+      "path": "config/pon/hash-use-contract-v1.json",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    {
+      "bytes": 18146,
+      "new_git_blob": "cf55d45678bfb27d9ad9fcf2863a05aa1bc0540b",
+      "path": "scripts/ci/hash_use_contract.py",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    {
+      "bytes": 15317,
+      "new_git_blob": "caeef93f9bc11228fc8fe5d18923ffca42a7af16",
+      "path": "docs/security/HASH_USE_CONTRACT_V1.md",
+      "sha256": "216c7cb253fb08010af0e990c691efdce5850da7620d175bb19290e6d8388a50"
+    }
+  ],
+  "existing_paths": 3,
+  "final_review_summary_sha256": "6333a06ec0af0ffb008fca3f6e66cdb6e0ab5d0f7dbc0ef98e2e0be5916e99bb",
+  "index_sha256": "8c8e89ab7e905ee5c1f88d7ffd3e37730c5fbff5bfb8eb8a235f013689e3f1df",
+  "indexed_payload_bytes": 771334,
+  "indexed_payload_files": 90,
+  "new_evidence_files": 91,
+  "original_33_tests_unchanged": true,
+  "parents": [
+    "7d8d4c59fcd01480a12e1c64835b202079091800"
+  ],
+  "raw_receipts_or_patches_reformatted": false,
+  "remote_or_rog_writes": false,
+  "schema": "hash-use-reviewed-current-map-local-commit-v1",
+  "tests_rerun_during_commit": false,
+  "tree": "1d94ccf0b0be26944633cb1eec5933b644d195e5",
+  "validation_summary_sha256": "bab2fb51c8b5cb3976e40fefeadb8f4771e475c90dd2bae524ccf445d2f9809c",
+  "worktree": "/private/tmp/chain-hash-use-current-binding-20261114"
+}

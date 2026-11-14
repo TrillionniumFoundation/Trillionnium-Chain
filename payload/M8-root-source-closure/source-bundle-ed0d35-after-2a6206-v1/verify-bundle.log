@@ -1,0 +1,9 @@
+/private/tmp/chain-consolidation-20261114-root/source-bundle-ed0d35-after-2a6206-v1/concurrent-ed0d3548-after-2a620611.bundle is okay
+The bundle contains this ref:
+ed0d35487f2a67239e4d646fd41c2c7acb5cc740 HEAD
+The bundle requires these 4 refs:
+e40d7071c4724e6600deef8a2820bf35c1982289 
+73d5a17b9b7fb5f67040554f22ff37d20725e548 
+dc42ce4df5cff79cc61c5addbaf01074b56b06ca 
+2a62061177852dc3ebd200fa8d7c66c661a119a1 
+The bundle uses this hash algorithm: sha1

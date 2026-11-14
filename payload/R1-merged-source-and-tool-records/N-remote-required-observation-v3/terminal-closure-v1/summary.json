@@ -1,0 +1,44 @@
+{
+  "schema": "trnm-fresh-N-observer-v3-terminal-closure-v1",
+  "sealed_at": "2026-11-14T11:27:23.808517+00:00",
+  "operations": 2,
+  "all_output_bytes_and_terminal_exit_verified": true,
+  "original_observer_summary": {
+    "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/summary.json",
+    "bytes": 109017,
+    "sha256": "31553ed8610a17457680962d4b2e60ce37c57c6d9ba52c7b9e70488a539fa302"
+  },
+  "derived_existing_response_status": {
+    "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/closed-status-extract-v1/status.json",
+    "bytes": 5367,
+    "sha256": "6ff78299044e439806d4afcce0ce060dee315e74da51816cf173c090ef0762b8"
+  },
+  "no_new_remote_requests_or_stage_source_git_actions": true,
+  "files": [
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/terminal-closure-v1/producer.py",
+      "bytes": 1765,
+      "sha256": "519cd34e7ee5e2f145c616e4ccfbc58f9383dd5f06a60b57e51ed97f31e77fe4"
+    },
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/terminal-closure-v1/observer-terminal.json",
+      "bytes": 41372,
+      "sha256": "c1590eefbaf2a89d5e4c14dc347d0e0c1be1549561a8d6ec0c3afa7d940b5c75"
+    },
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/terminal-closure-v1/observer-terminal.log",
+      "bytes": 12456,
+      "sha256": "3327b5a078cb9b6668568d5f70b75ba8a99bab105b72a52170620ab5604beebe"
+    },
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/terminal-closure-v1/status-extract-terminal.json",
+      "bytes": 15755,
+      "sha256": "991921b957e686621493993c93f6835d097f3c2225ec250879b3100a1dc330f0"
+    },
+    {
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v3/terminal-closure-v1/status-extract-terminal.log",
+      "bytes": 4519,
+      "sha256": "2aba3b97f77737c38cb7f68a8bd4adc831486826f12f771d7613812017c9b4d5"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "trnm-closed-original-sublogs-manifest-v1",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "receipt_directory": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1",
+  "terminal_summary_sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+  "files": [
+    {
+      "path": "ci-observations/w1-postwin-contracts/cancellation-handoff.log",
+      "bytes": 4351,
+      "sha256": "84b347e50c8e24978dae863b53ff15add21a4e43d0d723381e335a651c5f82e7"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/coordinator-contract.log",
+      "bytes": 3833,
+      "sha256": "c6a71726687e7c5a6f3ecfdbd28674b6ae6451908dd61a78a6689dab3dcc061f"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/deployment-comparison-audit.log",
+      "bytes": 3505,
+      "sha256": "7b6fcbdf54ee64748d5e7f9b7aca04162fed47b748f2f078b776650b47de16eb"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/deployment-evidence-binding.log",
+      "bytes": 2465,
+      "sha256": "e5a5d6dde41af10949feaf88cd4960fdea3147bf1546ade1d828c14be3a1a32b"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/generation-target.log",
+      "bytes": 2457,
+      "sha256": "390ad595640257e3cb4f26e641a5fdb2ac4d4e60913f4b955f03860bd9d63b2f"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/kaggle-worker-contract.log",
+      "bytes": 2195,
+      "sha256": "4d3ca2bd31e7221bea296bcca1d30b94da4c47889bc006c055c06af8a2ad0848"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/owned-process-collector.log",
+      "bytes": 2851,
+      "sha256": "045366a58e44bfbf6d60a79eb5fd9f35fc4bbce0c757825c70e0b7bb5d6b980e"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/owned-runtime-reader.log",
+      "bytes": 1555,
+      "sha256": "1ba65af9e0d98843129bcd57cb273fc901a423455551a403fa356a3def4cbfc4"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/owner-cancellation.log",
+      "bytes": 1642,
+      "sha256": "d66c2d32e80d4b8b77d09bd5600320ebda7f6dad707572b4b86bec010446e390"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/provider-contract.log",
+      "bytes": 2099,
+      "sha256": "c399949ef3f6fadfeb0df366ab70a9c018e4e7297cd146523d493c7ffeb1ee3b"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/source-builder.log",
+      "bytes": 1662,
+      "sha256": "3a6b3053a5607fabbf4c9f3535f4a74b520db6783316ce73ed3651a44018b372"
+    },
+    {
+      "path": "ci-observations/w1-postwin-contracts/winner-identity.log",
+      "bytes": 854,
+      "sha256": "8e007f089cfba20e09038233bec72b2652d1adb382ce0dc17e66fc6057a2d259"
+    }
+  ]
+}

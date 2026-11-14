@@ -1,0 +1,98 @@
+{
+  "C0": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "Rust_Cargo_delta_paths": [
+    "evidence/hash-use-current-source-review-20261114/diagnostics/function-precheck_proof_statement.rs",
+    "evidence/hash-use-current-source-review-20261114/diagnostics/function-sequence_root.rs",
+    "evidence/hash-use-current-source-review-20261114/diagnostics/function-task_id.rs",
+    "evidence/hash-use-current-source-review-20261114/diagnostics/function-verify.rs"
+  ],
+  "current": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "current_tree": "18c3d20df915f5c31ee38c7037775c61e5c12e3f",
+  "native_executed": false,
+  "prior_read_only_driver_failure": "assertion assuming zero entire Rust/Cargo delta failed; this is a source inventory observation, not a native test failure",
+  "reviewed_at": "2026-11-14T08:22:29.409401+00:00",
+  "schema": "w1-progress-scheduling-source-index-v1",
+  "source_or_Git_mutation": false,
+  "sources": [
+    {
+      "C0_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "bytes": 106066,
+      "current_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "lines": 2889,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.raw",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "same_blob": true,
+      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+    },
+    {
+      "C0_oid": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+      "bytes": 67363,
+      "current_oid": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+      "lines": 1583,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "same_blob": true,
+      "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836"
+    },
+    {
+      "C0_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "bytes": 32240,
+      "current_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "lines": 822,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import--observation.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+      "same_blob": true,
+      "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed"
+    },
+    {
+      "C0_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "bytes": 27612,
+      "current_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "lines": 704,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "same_blob": true,
+      "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
+    },
+    {
+      "C0_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "bytes": 114097,
+      "current_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "lines": 2823,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--request_observation.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "same_blob": true,
+      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+    },
+    {
+      "C0_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "bytes": 82351,
+      "current_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "lines": 2026,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--scalar_cpu.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "same_blob": true,
+      "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+    },
+    {
+      "C0_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "bytes": 221433,
+      "current_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "lines": 5545,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "same_blob": true,
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "C0_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "bytes": 391470,
+      "current_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "lines": 9445,
+      "local": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--store.rs.raw",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "same_blob": true,
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    }
+  ]
+}

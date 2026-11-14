@@ -1,0 +1,10 @@
+{
+  "no_execution_or_stage_write": true,
+  "review": {
+    "bytes": 2278,
+    "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v3/review.json",
+    "sha256": "634ffaa5b40517201e4ce2ec98049d314015f872595051a9b37bee04f97cad31"
+  },
+  "schema": "trnm-R1-payload-scope-static-v3-seal",
+  "status": "STATIC_ONLY_CLOSED"
+}

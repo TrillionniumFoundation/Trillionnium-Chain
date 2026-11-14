@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-P1-sparse-precorrection-v1",
+  "paths": [
+    {
+      "path": "evidence/pon-joint-resource-contract-20261109/archives/original-campaign-42553751914.zip",
+      "blob": "98688dc8f3ae8773ae8070cd05a378f3bec34ed1",
+      "bytes": 76217297,
+      "physical": {
+        "exists": false
+      }
+    },
+    {
+      "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip",
+      "blob": "88f7833357720ad7ada74911b9ef508d2456ff4f",
+      "bytes": 71722426,
+      "physical": {
+        "exists": false
+      }
+    }
+  ],
+  "settings_saved": [
+    {
+      "label": "config.worktree",
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/source/.git/config.worktree",
+      "bytes": 58,
+      "sha256": "97997ba84fd1c44263deb6f412fc3bef4b05e0103d00c5a97a97ca928299aa13"
+    },
+    {
+      "label": "sparse-checkout",
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/source/.git/info/sparse-checkout",
+      "bytes": 241,
+      "sha256": "07c0bfe8afef62cdd40b8ff208965346a0096ebe8afb5dce077b7cd020827a54"
+    }
+  ],
+  "disk_free_bytes": 7392751616,
+  "source_or_git_mutation": false
+}

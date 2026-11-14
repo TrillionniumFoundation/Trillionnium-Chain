@@ -1,0 +1,85 @@
+{
+  "adapter_executions": 0,
+  "files": [
+    {
+      "bytes": 20506,
+      "path": "/private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v2.py",
+      "sha256": "ad29ad36815bd088d2b386bb996d28dc5cbe6b5a1b32766f51735598c6ff9776"
+    },
+    {
+      "bytes": 6355,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md",
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    {
+      "bytes": 4229,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/README.md",
+      "sha256": "08715af8131e26153d633354c4f7d6edabc73e8607bcffc46a467f53b16ef529"
+    },
+    {
+      "bytes": 22096,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/apply_pr847_audit_update_and_ready_v1.py--to--apply_pr847_audit_update_and_ready_v2.py.patch",
+      "sha256": "be70b43f349cb61ed4dae02fda0e074998fcf3b78736d9fa5115e6bc02f55251"
+    },
+    {
+      "bytes": 685,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/pr847-audit-body-template-v2.md--to--pr847-audit-body-template-v3.md.patch",
+      "sha256": "93d4b06b23eea911de39dc9d4bb9159abc55ab8fbf2310efcd4b9e42e9c754fb"
+    },
+    {
+      "bytes": 40702,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/prepare_pr847_audit_update_v3.py--to--prepare_pr847_audit_update_v4.py.patch",
+      "sha256": "5fe27a3127d3fd38b27d6868de67bf64dfd8153f5b8022bb6dbd529813d0eb85"
+    },
+    {
+      "bytes": 1213,
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/static-checks.json",
+      "sha256": "4cccf9e84cdc8d73568edca6ac114cd1f42dea2c59762c1ee6ae5ebd5a4f042c"
+    },
+    {
+      "bytes": 32628,
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v4.py",
+      "sha256": "57e13006474151c9ce3006cf9c490e797ae73f0f16566eb1f3b33c08f94015c7"
+    }
+  ],
+  "index": {
+    "bytes": 2154,
+    "path": "/private/tmp/chain-consolidation-20261114-root/pr847-dynamic-adapter-review-v1/build-v1/EVIDENCE_INDEX.json",
+    "sha256": "fdeee07bc271f653921f35bd431372a609f62ce453953863fca7e5efd0ea6820"
+  },
+  "remote_calls": 0,
+  "source_changes": false,
+  "static_checks": {
+    "accepted_publication_status": "confirmed",
+    "actual_gh_mutation_calls": 2,
+    "adapters_executed": false,
+    "compiled": 2,
+    "future_final_identity_supplied": false,
+    "hosted_result_input_accepted": false,
+    "network_calls": 0,
+    "original_apply_helpers_byte_identical": [
+      "require",
+      "sha",
+      "now",
+      "strict_json",
+      "read_regular",
+      "load_helpers"
+    ],
+    "original_gh_mutation_call_asts_identical": true,
+    "original_mutation_readback_final_source_tail_identical_after_explicit_head_argument": true,
+    "publication_schema": "trnm-followup-candidate-execution-publication-receipt-v1",
+    "qualification_granted": false,
+    "repository_or_git_writes": false,
+    "schema": "trnm-pr847-dynamic-adapter-static-review-v1",
+    "source_pins": {
+      "old_apply": "d7c5954011dbc34c54896d737fcd550e88050356b6865c63490622c0159cced5",
+      "old_preparer": "47276c88927c8bd40efe4bd5847334d8c3c3e25cea3e9a37c125ad2763133bc2",
+      "old_template": "7c0c8d5bb04d7ff9bbd902f62876e5fd829b669ab8630fdaa0b99f03670f7625",
+      "reviewed_publisher": "8510653d14ac5e9870e624137197c0f7d2fd193a37dc4c57a5f65b127a45398d"
+    },
+    "status": "static-compile-passed",
+    "template_changes": 1,
+    "validators_executed": false
+  },
+  "status": "prepared-only"
+}

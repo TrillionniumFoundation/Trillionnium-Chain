@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "bytes": 602,
+      "path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-launch.json",
+      "sha256": "6a6b81e4bd19ee15cb33991f60607e722162e9ea0b89556f89f82b5c5f49c008"
+    },
+    {
+      "bytes": 5451,
+      "path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/preparation-terminal.json",
+      "sha256": "2f3e73512997ab27f489efc5142778689fd997505773460b2f94842e202badf9"
+    },
+    {
+      "bytes": 2462,
+      "path": "/private/tmp/chain-prci-concurrent-publication-preparation-20261114-v1/readback-review-v1.json",
+      "sha256": "75361930604eb77b98ee4e7e46e6c96083888d735c1c139ae39d5ce7d2f983f5"
+    }
+  ],
+  "schema": "trnm-concurrent-publication-review-index-v1",
+  "self_excluded": "readback-review-v1.index.json"
+}

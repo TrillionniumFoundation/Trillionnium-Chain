@@ -1,0 +1,37 @@
+--- /private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/incremental-7d8-after-dc42-v1/bounded_scan_driver.py
++++ /private/tmp/chain-consolidation-20261114-root/incremental-2a6206-after-08c9be-v1/bounded_scan_driver.py
+@@ -1,10 +1,10 @@
+ import ast, collections, datetime, hashlib, json, os, pathlib, re, stat, subprocess, sys, time
+ sys.dont_write_bytecode=True
+-W=pathlib.Path("/private/tmp/chain-pq-lifetime-source-binding-20261114")
+-E=pathlib.Path("/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/incremental-7d8-after-dc42-v1")
+-HEAD="7d8d4c59fcd01480a12e1c64835b202079091800"
+-TREE="47b283f20c7b2afdb668316c26d098e378b4b849"
+-BASE="dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
++W=pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
++E=pathlib.Path("/private/tmp/chain-consolidation-20261114-root/incremental-2a6206-after-08c9be-v1")
++HEAD="2a62061177852dc3ebd200fa8d7c66c661a119a1"
++TREE="f8d170ff75990e879e93888a95e5408f36b36f6c"
++BASE="08c9becab740ab2c375b970f376a7638f44c9e8e"
+ env=dict(os.environ,PATH="/Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",GIT_NO_REPLACE_OBJECTS="1",GIT_NO_LAZY_FETCH="1",GIT_OPTIONAL_LOCKS="0",GIT_TERMINAL_PROMPT="0",PYTHONDONTWRITEBYTECODE="1",PYTHONOPTIMIZE="0")
+ steps=[]
+ def sha(b):return hashlib.sha256(b).hexdigest()
+@@ -43,7 +43,8 @@
+  commit=run("head-commit",["cat-file","commit",HEAD])
+  assert hashlib.sha1(b"commit "+str(len(commit)).encode()+b"\0"+commit).hexdigest()==HEAD
+  headers=commit.split(b"\n\n",1)[0].splitlines()
+- assert [x.split(b" ",1)[1].decode() for x in headers if x.startswith(b"parent ")]==[BASE]
++ assert [x.split(b" ",1)[1].decode() for x in headers if x.startswith(b"parent ")]==["08c9becab740ab2c375b970f376a7638f44c9e8e","f0f6a4192dc3bcda2fca20110322f7cff07e4644"]
++ run("base-is-ancestor",["merge-base","--is-ancestor",BASE,HEAD])
+  stage="bounded enumeration"
+  raw=run("new-objects",["rev-list","--objects","--no-object-names",HEAD,"^"+BASE])
+  oids=raw.decode("ascii").splitlines()
+@@ -109,7 +110,7 @@
+  dump("blob-coverage.json",coverage);dump("hits-redacted.json",hits)
+  after=fence("source-after");assert before==after
+  dump("steps.json",steps)
+- summary={"schema":"bounded-new-blobs-7d8-after-dc42-v1","started_utc":started,"finished_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"source_before":before,"source_after":after,"head":HEAD,"tree":TREE,"excluded_base":BASE,"enumerated_objects":len(inv),"object_types":dict(collections.Counter(kind for kind,size in inv.values())),"new_blobs":len(blobs),"new_blob_raw_bytes":total,"all_new_blob_content_addresses_verified":True,"all_new_blob_raw_bytes_scanned":True,"same_five_regex_bytes_as_reviewed_prior_producer":True,"match_counts":counts,"hit_blob_count":len(hits),"hits_require_context_review":bool(hits),"credential_values_disclosed":False,"only_external_evidence_written":True,"source_head_tree_status_unchanged":True,"no_git_object_ref_or_network_writes":True,"tests_run":False,"full_history_scanned":False,"fsck_run":False,"recursive_archive_decompression":False,"all_secret_types_excluded":False,"prior_8gb_scanner_regex_equivalence_claimed":False,"limitations":["Five exact explicit patterns only; absence is not proof that every secret type is absent.","No recursive archive decompression.","Only fixed commit difference; no future object or outside-range claim."],"status":"REVIEW_REQUIRED" if hits else "PASS_FOR_DECLARED_SCOPE"}
++ summary={"schema":"bounded-new-blobs-2a6206-after-08c9be-v1","started_utc":started,"finished_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"source_before":before,"source_after":after,"head":HEAD,"tree":TREE,"excluded_base":BASE,"enumerated_objects":len(inv),"object_types":dict(collections.Counter(kind for kind,size in inv.values())),"new_blobs":len(blobs),"new_blob_raw_bytes":total,"all_new_blob_content_addresses_verified":True,"all_new_blob_raw_bytes_scanned":True,"same_five_regex_bytes_as_reviewed_prior_producer":True,"match_counts":counts,"hit_blob_count":len(hits),"hits_require_context_review":bool(hits),"credential_values_disclosed":False,"only_external_evidence_written":True,"source_head_tree_status_unchanged":True,"no_git_object_ref_or_network_writes":True,"tests_run":False,"full_history_scanned":False,"fsck_run":False,"recursive_archive_decompression":False,"all_secret_types_excluded":False,"prior_8gb_scanner_regex_equivalence_claimed":False,"limitations":["Five exact explicit patterns only; absence is not proof that every secret type is absent.","No recursive archive decompression.","Only fixed commit difference; no future object or outside-range claim."],"status":"REVIEW_REQUIRED" if hits else "PASS_FOR_DECLARED_SCOPE"}
+  s=dump("summary.json",summary)
+  entries=[]
+  for f in sorted(E.iterdir()):

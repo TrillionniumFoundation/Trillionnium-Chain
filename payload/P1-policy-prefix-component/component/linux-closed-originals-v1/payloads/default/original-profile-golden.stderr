@@ -1,0 +1,3 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+    Finished `release` profile [optimized] target(s) in 0.05s
+     Running unittests src/lib.rs (/home/qian-qi/chain-final-consolidation-20261114-root/target/release/deps/trnm_pon_node-7e72ecc7d68abf1a)

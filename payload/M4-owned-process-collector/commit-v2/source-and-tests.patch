@@ -1,0 +1,123 @@
+diff --git a/scripts/test_w1_owned_process_collector_v1.py b/scripts/test_w1_owned_process_collector_v1.py
+index 15072e49434166d0d286a710cd3ef4e0f0a71776..0c683b183d64d71e8ae6c6f44dca857b4f6e77b3 100644
+--- a/scripts/test_w1_owned_process_collector_v1.py
++++ b/scripts/test_w1_owned_process_collector_v1.py
+@@ -14,7 +14,9 @@ import subprocess
+ import sys
+ import tempfile
+ import time
++import types
+ import unittest
++from unittest import mock
+ 
+ import w1_owned_process_collector_v1 as collector
+ 
+@@ -394,5 +396,74 @@ else:
+         self.assertFalse(row["result"]["can_authorize_payment"])
+ 
+ 
++class ClosedExecGateSignalControls(unittest.TestCase):
++    """Deterministic signal ordering; actual fork/wait4 controls remain above."""
++
++    def closed_gate_collector(self, *, grace=2, released=False, closed=True):
++        value = collector.Collector.__new__(collector.Collector)
++        value.args = types.SimpleNamespace(cleanup_grace_seconds=grace)
++        value.cleanup_started = 1_000_000_000
++        value.root_pid = 101
++        value.root_exec_released = released
++        value.root_exec_gate_closed = closed
++        value.root_returncode = None
++        value.owned = {
++            (101, 11): {"identity": {"pid": 101}, "pidfd": 51, "signals": set()},
++            (102, 12): {"identity": {"pid": 102}, "pidfd": 52, "signals": set()},
++        }
++        value.events = []
++        value.emit = lambda kind, item: value.events.append((kind, item))
++        return value
++
++    def test_closed_unreleased_gate_defers_term_without_extending_original_kill_threshold(self):
++        for grace, threshold in ((2, 250_000_000), (.1, 50_000_000)):
++            with self.subTest(cleanup_grace_seconds=grace):
++                value = self.closed_gate_collector(grace=grace)
++                with mock.patch.object(collector.time, "monotonic_ns") as clock, \
++                        mock.patch.object(collector.signal, "pidfd_send_signal", create=True) as send:
++                    # Force cleanup to run before the gated root consumes EOF.
++                    # The descendant is not covered by the root's exec gate.
++                    for elapsed in (0, threshold - 1):
++                        clock.return_value = value.cleanup_started + elapsed
++                        value.signal_owned()
++                    self.assertEqual(send.call_args_list, [mock.call(52, signal.SIGTERM)])
++                    self.assertEqual(value.owned[(101, 11)]["signals"], set())
++                    self.assertIsNone(value.root_returncode)
++
++                    # The exact original escalation boundary must still kill
++                    # both identities if no terminal wait record has arrived.
++                    clock.return_value = value.cleanup_started + threshold
++                    value.signal_owned()
++                    self.assertEqual(send.call_args_list, [
++                        mock.call(52, signal.SIGTERM),
++                        mock.call(51, signal.SIGKILL),
++                        mock.call(52, signal.SIGKILL),
++                    ])
++                    self.assertEqual(value.owned[(101, 11)]["signals"], {signal.SIGKILL})
++                    self.assertEqual(value.owned[(102, 12)]["signals"], {signal.SIGTERM, signal.SIGKILL})
++                    self.assertIsNone(value.root_returncode)
++                    clock.return_value += 1
++                    value.signal_owned()
++                    self.assertEqual(send.call_count, 3)
++                self.assertEqual([event[1]["signal"] for event in value.events],
++                                 [signal.SIGTERM, signal.SIGKILL, signal.SIGKILL])
++
++    def test_released_root_or_unconfirmed_gate_keeps_original_term_cleanup(self):
++        for released, closed in ((True, True), (False, False), (True, False)):
++            with self.subTest(root_exec_released=released, root_exec_gate_closed=closed):
++                value = self.closed_gate_collector(released=released, closed=closed)
++                with mock.patch.object(collector.time, "monotonic_ns",
++                                       return_value=value.cleanup_started), \
++                        mock.patch.object(collector.signal, "pidfd_send_signal", create=True) as send:
++                    value.signal_owned()
++                    self.assertEqual(send.call_args_list, [
++                        mock.call(51, signal.SIGTERM), mock.call(52, signal.SIGTERM)])
++                    value.signal_owned()
++                    self.assertEqual(send.call_count, 2)
++                self.assertIsNone(value.root_returncode)
++                self.assertEqual([event[1]["signal"] for event in value.events],
++                                 [signal.SIGTERM, signal.SIGTERM])
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/scripts/w1_owned_process_collector_v1.py b/scripts/w1_owned_process_collector_v1.py
+index eaa24403674c9b5448d49187f0d2d0ade6bc9127..7049001ace23192d6d32e4f438ca85e4b0ac16cc 100644
+--- a/scripts/w1_owned_process_collector_v1.py
++++ b/scripts/w1_owned_process_collector_v1.py
+@@ -213,6 +213,7 @@ class Collector:
+         self.root_pid = None
+         self.root_returncode = None
+         self.root_exec_released = False
++        self.root_exec_gate_closed = False
+         self.echild = None
+         self.records_truncated = False
+         self.events_count = 0
+@@ -394,6 +395,13 @@ class Collector:
+         elapsed = time.monotonic_ns() - self.cleanup_started
+         sig = signal.SIGKILL if elapsed >= min(250_000_000, int(self.args.cleanup_grace_seconds * 500_000_000)) else signal.SIGTERM
+         for item in list(self.owned.values()):
++            # A closed, never-released exec gate already tells this root to exit
++            # with 125. Do not race that refusal with TERM before it can read
++            # EOF. The original KILL escalation and total cleanup bound remain.
++            if (sig == signal.SIGTERM and self.root_exec_gate_closed
++                    and not self.root_exec_released
++                    and item["identity"]["pid"] == self.root_pid):
++                continue
+             if sig in item["signals"]:
+                 continue
+             item["signals"].add(sig)
+@@ -507,6 +515,7 @@ class Collector:
+                 self.emit("root-exec-released", {"identity": self.root})
+         finally:
+             os.close(gate_writer)
++            self.root_exec_gate_closed = True
+ 
+     def loop(self):
+         while True:

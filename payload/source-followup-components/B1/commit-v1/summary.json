@@ -1,0 +1,821 @@
+{
+  "schema": "trnm-B1-retained-native-collector-history-commit-v1",
+  "committed_at": "2026-11-14T07:56:35.204673+00:00",
+  "commit": "341a8b5f751342b51a4aaf9512534853c79d7b5b",
+  "tree": "234b37f6a0dfd8adf758d78d533b055499b295b8",
+  "parent": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "worktree": "/private/tmp/chain-native-bridge-history-binding-port-20261114",
+  "clean": true,
+  "exact_paths": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py",
+      "bytes": 25803,
+      "sha256": "3584142abcd60bffe424ed110e6852fbebca1418819574b246f245eb79f65a30",
+      "git_blob_sha1": "61731a92ddf7e5fd27f8712dc204c2d065b22eff",
+      "base_sha256": "43b055fd4fa5c48f4b47d5049095a8207d1e266276fd30827f9e5a133d67effb"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py",
+      "bytes": 22303,
+      "sha256": "4403332891f58923f7f10f4e2bfcc762f42ca4c97d6c54d696d2ff748c049220",
+      "git_blob_sha1": "89bbe4a78c3d258e7799556257f4919cc280e17f",
+      "base_sha256": "dbda0446b97929ab9c89d8ee7c8a848c8e4e5c044f54979e7c9b8e406c7d5af7"
+    },
+    {
+      "path": "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md",
+      "bytes": 8933,
+      "sha256": "f7f61a55684e622f2b07d8a82f68bd58887dc1dbe5bc7ebfc9bb5284e9fe140b",
+      "git_blob_sha1": "bae4d5c9692e451bddb2e46e67facefeb649848b",
+      "base_sha256": "20e0eda18278dcbf3eca358b2726a038870e03578131627646858c5073b22ce4"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "bytes": 113472,
+      "sha256": "a84324de473404cdb6c78f39e7e15ba4c448ac7aa994dbe5917ca0eab17bf03d",
+      "git_blob_sha1": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+      "base_sha256": "558e77a040d1f89e0771227cd46b32289f575112b5b63f6d7983d1c9ae6964e3"
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "bytes": 145132,
+      "sha256": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+      "git_blob_sha1": "b43c38008095eff5ab7a5cac35c00beddd2803d0",
+      "base_sha256": "b6c961a331259583d8f811cd8078a3d701aa8734bb853186437a09cb4389e3ec"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+      "bytes": 23639,
+      "sha256": "f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254",
+      "git_blob_sha1": "421b10241820580efcdabc692ccb1f6dd27b6586",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw",
+      "bytes": 303,
+      "sha256": "a58b2d5e343f82326080912b4d48f6c18a5ccda98520349cbad4d4fb2112dcb9",
+      "git_blob_sha1": "cef4eb0a5aae12eb68cadaf54722b2847f3bef3d",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw",
+      "bytes": 882,
+      "sha256": "94ea5f4c6381214b2491532cc4f3b43c2aa2c33f6a51b4584a72be59598142df",
+      "git_blob_sha1": "da58f5e34d3c7f4e0c40505922ff717e0c71870c",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw",
+      "bytes": 230,
+      "sha256": "c2b3dff4d655057d608c9ae03400c82cc39264107ea03da21bed66fff6de3198",
+      "git_blob_sha1": "caf466cfabbcfb763dceaa3b01fd19bbbeb219d4",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw",
+      "bytes": 476,
+      "sha256": "8771fdd6552e852861ccc5ae6614dc16131bf03cb309bffdc2e5227eb92947f9",
+      "git_blob_sha1": "d27a702527516a8c4b7e23bdc2ebe1d216685b1f",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json",
+      "bytes": 3265,
+      "sha256": "fd9dcf1226c35a2dcea780893dd5c288eff27e08b98972fdb0bf451cde58f1d5",
+      "git_blob_sha1": "32964264b730cc8d97c5a58b254b0e25b79c0b74",
+      "base_sha256": null
+    },
+    {
+      "path": "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md",
+      "bytes": 1845,
+      "sha256": "e83a127e6bcb3245d1af021cd7490fe1044261d531bb182bc8d1967ea28cc569",
+      "git_blob_sha1": "dcd6a8bec4b2cac4e84cc087e70751ba10b5e1c1",
+      "base_sha256": null
+    }
+  ],
+  "original_25_methods_source_ast_preserved": true,
+  "focused_bridge_controls_passed": 31,
+  "new_required_source_control_passed": 1,
+  "initial_canonical_temp_failure_preserved": true,
+  "current_collector_and_historical_evidence_unchanged": true,
+  "corpus_and_soleplan_left_for_root": true,
+  "qualification": {
+    "native_processes_executed": false,
+    "original_full_repository_lane_passed": false,
+    "production_activation": false
+  },
+  "commit_patch": {
+    "path": "/private/tmp/chain-native-bridge-history-binding-review-20261114/commit-v1/commit.patch",
+    "bytes": 50136,
+    "sha256": "f15283899cb9af925844c0447f629fbc7901b3dc8169f79e142161c89ad63dd1"
+  },
+  "steps": [
+    {
+      "label": "01-fixed-parent",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "started_at": "2026-11-14T07:56:34.512658+00:00",
+      "seconds": 0.006974666001042351,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-project-preflight",
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "started_at": "2026-11-14T07:56:34.521251+00:00",
+      "seconds": 0.043416667002020404,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 133,
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "03-stage-exact-twelve",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py",
+        "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py",
+        "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json",
+        "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md"
+      ],
+      "started_at": "2026-11-14T07:56:34.564806+00:00",
+      "seconds": 0.07701758400071412,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "04-staged-paths",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--name-only",
+        "--no-renames"
+      ],
+      "started_at": "2026-11-14T07:56:34.641979+00:00",
+      "seconds": 0.01807833400380332,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 964,
+        "sha256": "a26b86592efd6464ca1d7579ff11fb05616283908bfb2db5da58d03d92ffcf8e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "05-staged-whitespace",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "started_at": "2026-11-14T07:56:34.660218+00:00",
+      "seconds": 0.022512875002576038,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "06-staged-full-patch",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--binary",
+        "--full-index"
+      ],
+      "started_at": "2026-11-14T07:56:34.682927+00:00",
+      "seconds": 0.021730292006395757,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 50136,
+        "sha256": "f15283899cb9af925844c0447f629fbc7901b3dc8169f79e142161c89ad63dd1"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-00",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":formal/pon-nakamoto-v1/w1_quantum_native_bridge.py"
+      ],
+      "started_at": "2026-11-14T07:56:34.704836+00:00",
+      "seconds": 0.008380083992960863,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5cc02e49490fd8f3fa2a01fdbc210571521e7041ed6efec82377e26d5c8f69a3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-01",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py"
+      ],
+      "started_at": "2026-11-14T07:56:34.713369+00:00",
+      "seconds": 0.007626375008840114,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "eb319065ccedf1d04033bab4f657dc902b3063c837aa959af5a95f42b056a9a7"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-02",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md"
+      ],
+      "started_at": "2026-11-14T07:56:34.721134+00:00",
+      "seconds": 0.007277625001734123,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "dab3ab913b55736b5fe29033673dc7bbbd03727f683b9b3ccf0b91280cbc3932"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-03",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_at": "2026-11-14T07:56:34.728554+00:00",
+      "seconds": 0.0072983330028364435,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "ffae63febfc7dab0145a38e9c762b5d62a498c236d6aec5797edbd559ead5135"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-04",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":scripts/ci/test_pq_research_integration.py"
+      ],
+      "started_at": "2026-11-14T07:56:34.735993+00:00",
+      "seconds": 0.007219790990347974,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "e85a7dc95a81468f99c3e680ab72dedd49730ab425ba9a2d95facda876caa4dc"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-05",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+      ],
+      "started_at": "2026-11-14T07:56:34.743356+00:00",
+      "seconds": 0.007161417001043446,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "28e87fbb8b440bd6648c2718dd76536d8c0c42170209a60fda9944e1d6941c25"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-06",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw"
+      ],
+      "started_at": "2026-11-14T07:56:34.750695+00:00",
+      "seconds": 0.0072983330028364435,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "4c4f84468d662dba9d099c4fed83ae09c894963da1323e7729f1caebec92d568"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-07",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw"
+      ],
+      "started_at": "2026-11-14T07:56:34.758133+00:00",
+      "seconds": 0.007343666002270766,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5e93a8b3700029dcd0e7dbc85977541282b37d1ade4676f722ac174b2b8bbc8e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-08",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw"
+      ],
+      "started_at": "2026-11-14T07:56:34.765649+00:00",
+      "seconds": 0.007107000012183562,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "afcd5827e5a3bd2824d8134c6b12d1f575351d0e277124635c4631d71247df28"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-09",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw"
+      ],
+      "started_at": "2026-11-14T07:56:34.772944+00:00",
+      "seconds": 0.007255167001858354,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "7efc1f426c4a6d493c829c9c50d20b7c2449a845e41e4d04f759aea923270a9e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-10",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json"
+      ],
+      "started_at": "2026-11-14T07:56:34.780374+00:00",
+      "seconds": 0.007118875000742264,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "2179f3f483df910807b477bb560a47c96a9b046806b036ac2a02c823cf6dcecb"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-staged-blob-11",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        ":evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md"
+      ],
+      "started_at": "2026-11-14T07:56:34.787663+00:00",
+      "seconds": 0.007161125002312474,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "224628178ff62a979af9e4934059ad00336f1047e834fb044fe56c279f9de39f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "08-normal-local-commit",
+      "argv": [
+        "/usr/bin/git",
+        "commit",
+        "-m",
+        "fix(research): bind retained native collector as data"
+      ],
+      "started_at": "2026-11-14T07:56:34.795008+00:00",
+      "seconds": 0.08394187501107808,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 998,
+        "sha256": "7a6013a41def9e7b94cdc1e4e7e09c0b6b785c7f4ee3edf22636b9975a04ac26"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "09-committed-head",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "started_at": "2026-11-14T07:56:34.879174+00:00",
+      "seconds": 0.007457625004462898,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "583f5ad4ff0e7f517215ea57b3f4c6f627bba3e5eef23ac1fd448333faf97923"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "10-committed-tree",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "started_at": "2026-11-14T07:56:34.886842+00:00",
+      "seconds": 0.006969499998376705,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "f17d3664dc54fcac680a7612da8d5429fca758abbcaba126fc39614e9540c550"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "11-committed-parent",
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "-s",
+        "--format=%P",
+        "HEAD"
+      ],
+      "started_at": "2026-11-14T07:56:34.894017+00:00",
+      "seconds": 0.0149750410055276,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "12-final-status",
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "started_at": "2026-11-14T07:56:34.909184+00:00",
+      "seconds": 0.19417587500356603,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "13-commit-patch",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--binary",
+        "--full-index",
+        "7d8d4c59fcd01480a12e1c64835b202079091800",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b"
+      ],
+      "started_at": "2026-11-14T07:56:35.103587+00:00",
+      "seconds": 0.02185183300753124,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 50136,
+        "sha256": "f15283899cb9af925844c0447f629fbc7901b3dc8169f79e142161c89ad63dd1"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-00",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:formal/pon-nakamoto-v1/w1_quantum_native_bridge.py"
+      ],
+      "started_at": "2026-11-14T07:56:35.125748+00:00",
+      "seconds": 0.007485041991458274,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5cc02e49490fd8f3fa2a01fdbc210571521e7041ed6efec82377e26d5c8f69a3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-01",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py"
+      ],
+      "started_at": "2026-11-14T07:56:35.133428+00:00",
+      "seconds": 0.006354415992973372,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "eb319065ccedf1d04033bab4f657dc902b3063c837aa959af5a95f42b056a9a7"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-02",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md"
+      ],
+      "started_at": "2026-11-14T07:56:35.139954+00:00",
+      "seconds": 0.006322040993836708,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "dab3ab913b55736b5fe29033673dc7bbbd03727f683b9b3ccf0b91280cbc3932"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-03",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_at": "2026-11-14T07:56:35.146442+00:00",
+      "seconds": 0.0062969590071588755,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "ffae63febfc7dab0145a38e9c762b5d62a498c236d6aec5797edbd559ead5135"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-04",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:scripts/ci/test_pq_research_integration.py"
+      ],
+      "started_at": "2026-11-14T07:56:35.152897+00:00",
+      "seconds": 0.006092875002650544,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "e85a7dc95a81468f99c3e680ab72dedd49730ab425ba9a2d95facda876caa4dc"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-05",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+      ],
+      "started_at": "2026-11-14T07:56:35.159182+00:00",
+      "seconds": 0.006285875002504326,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "28e87fbb8b440bd6648c2718dd76536d8c0c42170209a60fda9944e1d6941c25"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-06",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw"
+      ],
+      "started_at": "2026-11-14T07:56:35.165652+00:00",
+      "seconds": 0.006335250000120141,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "4c4f84468d662dba9d099c4fed83ae09c894963da1323e7729f1caebec92d568"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-07",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw"
+      ],
+      "started_at": "2026-11-14T07:56:35.172164+00:00",
+      "seconds": 0.006288082993705757,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "5e93a8b3700029dcd0e7dbc85977541282b37d1ade4676f722ac174b2b8bbc8e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-08",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw"
+      ],
+      "started_at": "2026-11-14T07:56:35.178630+00:00",
+      "seconds": 0.0062618750089313835,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "afcd5827e5a3bd2824d8134c6b12d1f575351d0e277124635c4631d71247df28"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-09",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw"
+      ],
+      "started_at": "2026-11-14T07:56:35.185066+00:00",
+      "seconds": 0.006155499999294989,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "7efc1f426c4a6d493c829c9c50d20b7c2449a845e41e4d04f759aea923270a9e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-10",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json"
+      ],
+      "started_at": "2026-11-14T07:56:35.191397+00:00",
+      "seconds": 0.006045500005711801,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "2179f3f483df910807b477bb560a47c96a9b046806b036ac2a02c823cf6dcecb"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "14-committed-blob-11",
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "341a8b5f751342b51a4aaf9512534853c79d7b5b:evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md"
+      ],
+      "started_at": "2026-11-14T07:56:35.197612+00:00",
+      "seconds": 0.0061192499997559935,
+      "returncode": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "224628178ff62a979af9e4934059ad00336f1047e834fb044fe56c279f9de39f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ]
+}

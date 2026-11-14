@@ -1,0 +1,2 @@
+rg: scripts/ci/check_hash_uses.py: No such file or directory (os error 2)
+rg: scripts/ci/test_check_hash_uses.py: No such file or directory (os error 2)

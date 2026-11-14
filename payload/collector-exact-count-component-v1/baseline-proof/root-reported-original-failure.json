@@ -1,0 +1,12 @@
+{
+  "collector_test_result": "16 passed in 2.664 seconds",
+  "original_logs_copied_by_root_separately": true,
+  "source_pin_reported": "c39d394f383dd88f31544292e3222b8a76f69ebea86377099a6192e8bbba9777",
+  "stderr_bytes": 313730,
+  "stderr_sha256": "84fdca0c1008ca8baa7c052e74f5955ac51a8891aba63a38f129ce44151dba76",
+  "stdout_bytes": 357264,
+  "stdout_sha256": "5c54c3bd2dd7828c8cdd74e3ca6b1f827fb784839ffe084db8901dcc8efb1e6a",
+  "subsequent_failure": "owned-process-collector: all 14 controls must execute without skips",
+  "summary_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-08c9be-v1/summary.json",
+  "type": "root-reported-original-M5-Linux-failure-reference-not-a-copied-log"
+}

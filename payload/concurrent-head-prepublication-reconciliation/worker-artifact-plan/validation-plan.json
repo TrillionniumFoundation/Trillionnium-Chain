@@ -1,0 +1,104 @@
+{
+  "acceptance": [
+    "The actual Cargo/test-harness process exits zero, with complete raw stdout/stderr and authoritative terminal receipt.",
+    "Each of the ten full names appears exactly once with outcome ok in the actual run; the required set equals the executed module set.",
+    "The harness reports ten passed, zero failed and zero ignored; no required control is skipped, absent, duplicated, filtered out or replaced.",
+    "Both validation_to_lock controls must execute and pass. Their source-controlled helper must retain the reached assertion and exact identity-changed refusal.",
+    "Tests outside the selected module may be reported as filtered out; that is not a skipped required control and must not inflate the ten-test result.",
+    "Source identity is reverified after every outcome, including error or timeout, and equals the fixed before state.",
+    "Any failed, missing or ambiguous result remains failure or UNKNOWN; retain original logs and do not automatically rerun or change assertions."
+  ],
+  "before_run": [
+    "Root supplies exact final HEAD and tree and grants execution; verify the designated worktree matches both and is clean.",
+    "Run only the existing root-approved source preflight and capture/source-identity logic; record toolchain, exact argv, working directory, timeout and existing selected environment.",
+    "Verify selected artifact Git OID/size/SHA equals the reviewed source; inspect any changed Cargo/module boundaries before execution.",
+    "Reuse the existing owned Linux component target/cache and capture directories; do not change Cargo.lock, dependencies, compiler flags, cfg, test code, permissions, quota or source.",
+    "Confirm the original test roster on the fixed source. A list-only inventory, if used by the existing runner, is not test execution evidence."
+  ],
+  "cargo_metadata_run": false,
+  "evidence_to_capture": [
+    "exact source-before and source-after identities",
+    "actual argv/cwd/toolchain/budget/selected environment",
+    "complete stdout and stderr",
+    "authoritative terminal/process receipt",
+    "ten-name execution/outcome reconciliation and the two new names",
+    "input/receipt bytes and SHA256"
+  ],
+  "existing_source_checkpoint": {
+    "M6": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+  },
+  "future_execution_authorized": false,
+  "future_source_head": null,
+  "future_source_tree": null,
+  "proposed_command": {
+    "argv": [
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-worker-agent",
+      "--bin",
+      "trnm-worker-agent",
+      "audit::artifact::tests::",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "ROOT_APPROVED_FINAL_SOURCE_WORKTREE",
+    "executable": "ROOT_EXISTING_PINNED_CARGO",
+    "harness_threads": "default; no test-thread override",
+    "profile": "ordinary Cargo test profile; no new profile override",
+    "timeout_note": "Root must choose and record a component-run budget; this proposal does not claim an inherited or original budget.",
+    "timeout_seconds": null
+  },
+  "required_test_roster": [
+    "audit::artifact::tests::exact_stream_bound_includes_eof_and_limits_a_growing_reader",
+    "audit::artifact::tests::pretty_index_and_jsonl_keep_original_format_and_missing_file_errors",
+    "audit::artifact::tests::sparse_oversize_invalid_utf8_and_oversize_record_fail_closed",
+    "audit::artifact::tests::path_aliases_nonregular_inputs_and_untrusted_permissions_are_refused",
+    "audit::artifact::tests::replacement_growth_and_same_length_metadata_change_after_open_are_refused",
+    "audit::artifact::tests::a_live_writer_lock_is_not_reported_as_an_empty_artifact",
+    "audit::artifact::tests::query_bounds_both_export_and_pretty_index_before_reporting_records",
+    "audit::artifact::tests::fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check",
+    "audit::artifact::tests::validation_to_lock_permission_change_is_refused",
+    "audit::artifact::tests::validation_to_lock_hardlink_change_is_refused"
+  ],
+  "schema": "trnm-worker-artifact-validation-plan-v1",
+  "scope": [
+    "Ordinary Rust unit tests of bounded local worker artifact reads, including controlled real filesystem mutations at the validation-to-lock boundary.",
+    "No run_from_zero_host, Host controller/simulation, benchmark, old protocol, fixture replacement, quota/deadline/worker-count change or performance claim.",
+    "This plan and any future pass do not qualify public activation, custody, consensus, full repository semantics or the separate 4-second/16-worker CONFIRMATION_TARGET."
+  ],
+  "selected_artifact": {
+    "bytes": 12283,
+    "git_blob": "f021a33e2969305241099998f703172d29b15251",
+    "repository_path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+    "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+  },
+  "source_or_git_mutation": false,
+  "source_review_only": true,
+  "source_target_review": {
+    "bytes": 11405,
+    "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/source-target-review.json",
+    "sha256": "6645f2a6815ef6c76d583e8274e04745434853d503381d7fedef1049823615cd"
+  },
+  "stage_mutation": false,
+  "status": "PREPARE_ONLY_NOT_EXECUTED",
+  "target": {
+    "binary": "trnm-worker-agent",
+    "linux_only_test": "audit::artifact::tests::fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check",
+    "linux_test_count": 10,
+    "macos_test_count": 9,
+    "module": "audit::artifact::tests",
+    "module_gate": "cfg(unix)",
+    "new_controls": [
+      "audit::artifact::tests::validation_to_lock_permission_change_is_refused",
+      "audit::artifact::tests::validation_to_lock_hardlink_change_is_refused"
+    ],
+    "package": "trnm-worker-agent",
+    "recommended_host": "ROG Linux"
+  },
+  "tests_run": false
+}

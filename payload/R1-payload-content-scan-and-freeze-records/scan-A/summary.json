@@ -1,0 +1,31 @@
+{
+  "all_secrets_absence_proved": false,
+  "automatic_hit_classification": false,
+  "bytes_scanned": 110936583,
+  "counts": {
+    "aws_access_key_id": 0,
+    "github_classic_token": 0,
+    "github_fine_grained_token": 0,
+    "private_key_header": 0,
+    "slack_token": 0
+  },
+  "coverage_complete": true,
+  "files_scanned": 3497,
+  "limits": {
+    "file_bytes": 268435456,
+    "files": 10000,
+    "manifest_bytes": 16777216,
+    "total_bytes": 536870912
+  },
+  "manifest": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-execution-payload-scope-content-v1/delta-payload-manifest.json",
+    "sha256": "b821db8fe03fb241e9f4c5a0c88035412836a4b51b5a2b5b01b57bb8d840c483",
+    "size": 1454051
+  },
+  "pattern_source_sha256": "5c292f6554bbf1345d6e58a3c64cf9099230223fc9c70f217a575f6f20ee7368",
+  "payload_root": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "regex_flags": [],
+  "review_required": false,
+  "scope": "Only explicit frozen manifest files; raw bytes, no archive or pack decompression.",
+  "status": "NO_PATTERN_HITS_IN_DECLARED_SCOPE"
+}

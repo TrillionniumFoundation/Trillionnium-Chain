@@ -1,0 +1,33 @@
+{
+  "arch": "x64",
+  "range": [
+    6716362,
+    7240650
+  ],
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "--include",
+    "-H",
+    "Range: bytes=6716362-7240649",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14105076236/zip"
+  ],
+  "started_at": "2026-11-14T08:26:02.762864+00:00",
+  "seconds": 30.100128625010257,
+  "returncode": 1,
+  "timed_out": false,
+  "response_private": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/x64/005-6716362-7240649.response.private",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_private": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/x64/005-6716362-7240649.stderr.private",
+    "bytes": 151,
+    "sha256": "7e3fd21d4775da7292642e7438c472f64e94914649a46f75997be43d7b3693b4"
+  },
+  "valid": false,
+  "failure": "request incomplete"
+}

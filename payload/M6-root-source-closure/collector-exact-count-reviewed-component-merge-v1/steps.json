@@ -1,0 +1,38 @@
+[
+  {
+    "label": "preflight-before",
+    "exit": 0,
+    "seconds": 0.047,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "normal-component-merge",
+    "exit": 0,
+    "seconds": 0.13,
+    "sha256": "96bb6a194a796153cbd0c640642866371219451832063763d544b942a8d97c4e"
+  },
+  {
+    "label": "stage-root-metadata",
+    "exit": 0,
+    "seconds": 0.04,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "staged-diff-check",
+    "exit": 0,
+    "seconds": 0.016,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "preflight-staged",
+    "exit": 0,
+    "seconds": 0.044,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "normal-commit",
+    "exit": 0,
+    "seconds": 0.066,
+    "sha256": "087685f00507700501e1de0dcbe47178ad4108f94c3283254d4c3ae6aca2180f"
+  }
+]

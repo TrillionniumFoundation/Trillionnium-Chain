@@ -1,0 +1,24 @@
+{
+  "all_member_CRC_SHA_verified": true,
+  "failure": "All 16 collector tests passed; shell exact-count gate still requires 14 and exits 1",
+  "finished_at": "2026-11-14T09:15:23.046187+00:00",
+  "index": {
+    "bytes": 14927,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-08c9be-failure-v1/EVIDENCE_INDEX.json",
+    "sha256": "a9a1526200a71268f4af6fc6bcdedf135ebeb223338c377bbacd0b2c6bb88233"
+  },
+  "original_execution_bytes": 698678,
+  "original_execution_file_count": 39,
+  "original_files_unchanged": true,
+  "original_result": "failed",
+  "payload_file_count": 41,
+  "schema": "trnm-original-M5-repository-failure-package-completion-v1",
+  "source_or_Git_objects_modified": false,
+  "tests_rerun": false,
+  "zip": {
+    "bytes": 149540,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-08c9be-failure-v1/original-repository-truth-08c9be-failure-v1.zip",
+    "sha256": "ecfdac2590899bd7c3d1478dac402f9231c69adb5873194d99b38dee73177b36"
+  },
+  "zip_member_count": 42
+}

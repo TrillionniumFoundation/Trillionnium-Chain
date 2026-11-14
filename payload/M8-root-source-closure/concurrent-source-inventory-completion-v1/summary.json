@@ -1,0 +1,24 @@
+{
+  "errors": [
+    "AssertionError: "
+  ],
+  "old_head": "c3ae6e71d7b0da4b43b0c7aa6df34aeabf838f47",
+  "remote_mutated": false,
+  "schema": "trnm-root-concurrent-source-inventory-completion-v1",
+  "status": "HOLD",
+  "steps": [
+    {
+      "exit": 0,
+      "label": "source-before-status",
+      "seconds": 0.348,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "exit": 0,
+      "label": "preflight-before-edit",
+      "seconds": 0.052,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    }
+  ],
+  "tests_or_final_gates_executed": false
+}

@@ -1,0 +1,14 @@
+{
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "historical_run_documentation_corrections": 1,
+  "index": {
+    "bytes": 6476,
+    "path": "/private/tmp/chain-public-policy-P1-independent-closure-review-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "52a9877e34d54b9795650eaf6a7618d9a1e1d0b9291bba0a1637516073366836"
+  },
+  "schema": "trnm-P1-independent-final-review-seal-v1",
+  "source_blockers": [],
+  "source_stage_git_network_mutated": false,
+  "status": "SOURCE_AND_CURRENT_BINDING_CLOSURE_VERIFIED_WITH_ONE_HISTORICAL_RUN_COUNT_DOCUMENTATION_CORRECTION",
+  "tests_or_project_helpers_run": false
+}

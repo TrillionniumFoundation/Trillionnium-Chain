@@ -1,0 +1,89 @@
+{
+  "schema": "trnm-C0-two-cost-full-original-artifact-completion-v1",
+  "completed_at": "2026-11-14T08:27:26.814125+00:00",
+  "results": [
+    {
+      "schema": "trnm-C0-official-artifact-download-v1",
+      "arch": "x64",
+      "artifact_id": 14105076236,
+      "run": 43567821538,
+      "connector_file_id": "file_0000000092e481fda19b9ee960adcf2f",
+      "source": "Official GitHub connector download_workflow_artifact followed GitHub redirect and returned reusable original ZIP bytes",
+      "expected_bytes": 9927259,
+      "expected_sha256": "be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599",
+      "started_at": "2026-11-14T08:26:35.538214+00:00",
+      "whole_zip_verified": true,
+      "all_member_bytes_crc_sha_verified": true,
+      "signed_url_retained_in_receipt": false,
+      "automatic_retry": false,
+      "http_status": 200,
+      "safe_response_headers": {
+        "Content-Type": "application/zip",
+        "Content-Length": "9927259",
+        "Last-Modified": "Sat, 14 Nov 2026 08:26:04 GMT",
+        "ETag": "\"0x8DF4228ECAB5DBA\""
+      },
+      "downloaded_bytes": 9927259,
+      "downloaded_sha256": "be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599",
+      "zip": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.zip",
+        "bytes": 9927259,
+        "sha256": "be00534a03ed2fc66d0eaaca471d0ba16e476f0c944f3503e6b574fd934b3599"
+      },
+      "index": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/x64/cost-x64-14105076236.index.json",
+        "bytes": 39423,
+        "sha256": "63d25082d83e8f56724ff5b1fe2aac05859714f6f8b8bbfd7eaae9b4e9285b7c"
+      },
+      "member_count": 161,
+      "expanded_bytes": 72024404,
+      "original_critical_nine_members_match": true,
+      "original_partial_prefix_matches": true,
+      "finished_at": "2026-11-14T08:27:09.767035+00:00",
+      "wall_seconds": 34.228952500008745
+    },
+    {
+      "schema": "trnm-C0-official-artifact-download-v1",
+      "arch": "arm64",
+      "artifact_id": 14104567861,
+      "run": 43567821538,
+      "connector_file_id": "file_00000000894c81fd88f01dae9fa76b1c",
+      "source": "Official GitHub connector download_workflow_artifact followed GitHub redirect and returned reusable original ZIP bytes",
+      "expected_bytes": 9927566,
+      "expected_sha256": "242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909",
+      "started_at": "2026-11-14T08:26:35.538454+00:00",
+      "whole_zip_verified": true,
+      "all_member_bytes_crc_sha_verified": true,
+      "signed_url_retained_in_receipt": false,
+      "automatic_retry": false,
+      "http_status": 200,
+      "safe_response_headers": {
+        "Content-Type": "application/zip",
+        "Content-Length": "9927566",
+        "Last-Modified": "Sat, 14 Nov 2026 08:25:33 GMT",
+        "ETag": "\"0x8DF4228DA40A451\""
+      },
+      "downloaded_bytes": 9927566,
+      "downloaded_sha256": "242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909",
+      "zip": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.zip",
+        "bytes": 9927566,
+        "sha256": "242415c50e6be6bf479b10e52930f2cfa8a671b8ae0f5b06039d831f6ae91909"
+      },
+      "index": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/arm64/cost-arm64-14104567861.index.json",
+        "bytes": 39431,
+        "sha256": "3239b32cb6890c243ff64dc4968c61052ce91bca934b5d332224cdc6033a82e8"
+      },
+      "member_count": 161,
+      "expanded_bytes": 78386949,
+      "original_critical_nine_members_match": true,
+      "original_partial_prefix_matches": true,
+      "finished_at": "2026-11-14T08:27:26.813840+00:00",
+      "wall_seconds": 51.27572333299031
+    }
+  ],
+  "both_whole_zip_verified": true,
+  "earlier_range_receipts_unchanged": true,
+  "no_native_or_remote_mutation": true
+}

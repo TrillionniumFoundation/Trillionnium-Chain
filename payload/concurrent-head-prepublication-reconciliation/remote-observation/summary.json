@@ -1,0 +1,2088 @@
+{
+  "schema": "trnm-remote-advance-5a4-observation-v1",
+  "started_at": "2026-11-14T09:57:36.352488+00:00",
+  "finished_at": "2026-11-14T09:57:42.670227+00:00",
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "old_published_candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "reported_new_candidate": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "main_expected": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "pr": {
+    "number": 847,
+    "state": "open",
+    "draft": true,
+    "created_at": "2026-11-09T14:37:45Z",
+    "updated_at": "2026-11-14T09:53:56Z",
+    "closed_at": null,
+    "merged_at": null,
+    "merge_commit_sha": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "title": "Converge fixed Chain/Hepta closure source and evidence contracts",
+    "auto_merge": null,
+    "head": {
+      "label": "TrillionniumFoundation:fix/chain-hepta-closure-candidate-20261109-481716",
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "repo": "TrillionniumFoundation/Trillionnium-Chain"
+    },
+    "base": {
+      "label": "TrillionniumFoundation:main",
+      "ref": "main",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "repo": "TrillionniumFoundation/Trillionnium-Chain"
+    }
+  },
+  "commit": {
+    "author": {
+      "html_url": "https://github.com/Tomasrgbsf",
+      "id": 273673612,
+      "login": "Tomasrgbsf"
+    },
+    "commit": {
+      "author": {
+        "date": "2026-11-14T09:49:51Z",
+        "email": "tomasbraynt@gmail.com",
+        "name": "Tomasrgbsf"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2026-11-14T09:49:51Z",
+        "email": "tomasbraynt@gmail.com",
+        "name": "Tomasrgbsf"
+      },
+      "message": "Bind recent acceptance workflow to reviewed store source",
+      "tree": {
+        "sha": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+      },
+      "verification": {
+        "reason": "unsigned",
+        "verified": false,
+        "verified_at": null
+      }
+    },
+    "committer": {
+      "html_url": "https://github.com/Tomasrgbsf",
+      "id": 273673612,
+      "login": "Tomasrgbsf"
+    },
+    "files": [
+      {
+        "additions": 1,
+        "blob_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5a4b7fe8de1adce803184f262fd9f704ead1930c/.github%2Fworkflows%2Fpon-recent-batch-acceptance.yml",
+        "changes": 2,
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/.github%2Fworkflows%2Fpon-recent-batch-acceptance.yml?ref=5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "deletions": 1,
+        "filename": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "previous_filename": null,
+        "sha": "10370fb69e7398d976b2e5516ff5e139bf298455",
+        "status": "modified"
+      },
+      {
+        "additions": 1,
+        "blob_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5a4b7fe8de1adce803184f262fd9f704ead1930c/config%2Fpon%2Fpq-cross-branch-corpus-v1.json",
+        "changes": 2,
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/config%2Fpon%2Fpq-cross-branch-corpus-v1.json?ref=5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "deletions": 1,
+        "filename": "config/pon/pq-cross-branch-corpus-v1.json",
+        "previous_filename": null,
+        "sha": "bb95d44c93af114719a26e39da95c4626be76d79",
+        "status": "modified"
+      }
+    ],
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "parents": [
+      {
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/2635e6f11a90b9dcd05101ab386d60d61f8ef7d4",
+        "sha": "2635e6f11a90b9dcd05101ab386d60d61f8ef7d4",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/2635e6f11a90b9dcd05101ab386d60d61f8ef7d4"
+      }
+    ],
+    "sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "stats": {
+      "additions": 2,
+      "deletions": 2,
+      "total": 4
+    },
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "files_pagination_complete": true,
+    "patches_requested_or_preserved": false
+  },
+  "compare": {
+    "ahead_by": 14,
+    "base_commit": {
+      "commit": {
+        "author": {
+          "date": "2026-11-14T05:46:47Z",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "name": "Qian QI"
+        },
+        "comment_count": 0,
+        "committer": {
+          "date": "2026-11-14T05:46:47Z",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "name": "Qian QI"
+        },
+        "message": "docs: preserve empty network receipt as raw evidence",
+        "tree": {
+          "sha": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/9fda17fed2542b2baccaa34585bb00afd699e12b"
+        },
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "verification": {
+          "payload": null,
+          "reason": "unsigned",
+          "signature": null,
+          "verified": false,
+          "verified_at": null
+        }
+      },
+      "parents": [
+        {
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/318527b4b2a07b5037d755547acd92e46ae3aded",
+          "sha": "318527b4b2a07b5037d755547acd92e46ae3aded",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/318527b4b2a07b5037d755547acd92e46ae3aded"
+        }
+      ],
+      "sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+    },
+    "behind_by": 0,
+    "commits": [
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T02:56:11Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T02:56:11Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "fix(ci): bind current QROM checks to reviewed dependency locks\n\nRetain the November 7 and 9 observations and reproduce a separate current fixture. Require the exact three reviewed implementation drift paths and only the two independently pinned semantics provenance changes.\n\nKeep every qualification limit and historical failure. Verified 22 semantics, 31 closure, 13 current CI and 67 corpus controls; the finite generator output exactly matches the new fixture.",
+          "tree": {
+            "sha": "90710ff28af8ab610ca818965627bc899b09445b",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/90710ff28af8ab610ca818965627bc899b09445b"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/885b8a9c68f54e63a8b37db4a7cfaca187493a85",
+        "parents": [
+          {
+            "sha": "73d5a17b9b7fb5f67040554f22ff37d20725e548",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/73d5a17b9b7fb5f67040554f22ff37d20725e548"
+          }
+        ],
+        "sha": "885b8a9c68f54e63a8b37db4a7cfaca187493a85"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T03:03:25Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T03:03:25Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "fix(ci): validate native-completion budget observations by phase\n\nKeep historical v2 refusal evidence separate from current v3 completion controls. Require the original CPU settlement, completed first commit, exact successor page, postcommit cancellation or complete successor import, and the unchanged crash fence.\n\nAll 43 reader controls pass. A separate passive check accepts the three exact original native stdout/process records; their original failed aggregate report is retained. Native rosters, paired-input equality and runtime budgets are unchanged.",
+          "tree": {
+            "sha": "74b3dc70b4ac3a7b6d34f86ab7629368c2da0b33",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/74b3dc70b4ac3a7b6d34f86ab7629368c2da0b33"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69",
+        "parents": [
+          {
+            "sha": "885b8a9c68f54e63a8b37db4a7cfaca187493a85",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/885b8a9c68f54e63a8b37db4a7cfaca187493a85"
+          }
+        ],
+        "sha": "7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T03:38:59Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T03:38:59Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "merge: preserve concurrent History CI corrections with audited source fixes\n\nIntegrate the observed e40d7071 candidate commit through an ordinary two-parent merge. Retain the complete 41-name History roster, its original ignored child, and exact successful diagnostic-bearing libtest records while preserving local QROM dependency bindings and native-completion budget reader corrections.\n\nThe native three-way tree contains only the five reviewed incoming paths; the research corpus retains all 2462 current pins and 2364 required paths. Current workflow parser and roster controls pass, and all current corpus bindings verify. No Rust runtime, deadline, budget or historical outcome is changed.",
+          "tree": {
+            "sha": "398a8047c0f0e61148997764fd1f4d5e391e2120",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/398a8047c0f0e61148997764fd1f4d5e391e2120"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/933d2d13821617c3003796c04eb440ff5e30dba3",
+        "parents": [
+          {
+            "sha": "7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/7559fc1d59d7ce2e18a40003d58f6dfe4ca0ad69"
+          },
+          {
+            "sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/e40d7071c4724e6600deef8a2820bf35c1982289"
+          }
+        ],
+        "sha": "933d2d13821617c3003796c04eb440ff5e30dba3"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T05:03:02Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T05:03:02Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Fix reviewed hash-purpose descriptor binding\n\nThe source guard correctly refused the proof descriptor after the reviewed\nstandalone verifier lock-map alignment. Rebind that one descriptor and the\nfixed reviewed source-map digest while preserving all19 use semantics,\nall31 input paths, refusal of automatic repinning and HOLD_NO_GO flags.\n\nRefresh only the three corresponding source-corpus blob identities and\nrecord the exact review and validation scope in the single development plan.\nThe existing33 controls, positive purpose inspection and research-source\nintegrity checks pass. No native workload or production qualification is\nclaimed; original failed CI observations remain intact.",
+          "tree": {
+            "sha": "062657519f43b1633973e7903ebe34d9d70d9467",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/062657519f43b1633973e7903ebe34d9d70d9467"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/d426d86cc7d8b457f8a0a2a566b17f4aa55e7e57",
+        "parents": [
+          {
+            "sha": "933d2d13821617c3003796c04eb440ff5e30dba3",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/933d2d13821617c3003796c04eb440ff5e30dba3"
+          }
+        ],
+        "sha": "d426d86cc7d8b457f8a0a2a566b17f4aa55e7e57"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:07:40Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:07:40Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Merge current candidate with retained audit corrections\n\nPreserve both current-candidate history and the independent AR budget, hash-purpose, and QROM fixture corrections. Resolve seven conflicts with the reviewed combined candidates.\n\nThis local integration checkpoint retains original failures. Remaining source review, current pin rebinding, targeted fixes, and required validation are pending.",
+          "tree": {
+            "sha": "a15f0474822eccbe9868e7695581f04daea81f0f",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/a15f0474822eccbe9868e7695581f04daea81f0f"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/3ccbc6666f4256bdd752d68d0b7f5eab255ac69c",
+        "parents": [
+          {
+            "sha": "d426d86cc7d8b457f8a0a2a566b17f4aa55e7e57",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/d426d86cc7d8b457f8a0a2a566b17f4aa55e7e57"
+          },
+          {
+            "sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+          }
+        ],
+        "sha": "3ccbc6666f4256bdd752d68d0b7f5eab255ac69c"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:11:00Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:11:00Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Fix retained control coverage and audited source regressions\n\nKeep the worker artifact identity snapshot from initial validation, retain store readiness ordering, restore ten current-stage controls, require all21 Cell CI control names, and align two synthetic throughput rows with the unchanged native schedule.\n\nThe worker regressions and bounded readback controls retain their original failures and fixed results. Final source pin rebinding, remaining review, and complete required validation are pending.",
+          "tree": {
+            "sha": "051686ea0c5a8cffb5bdc2d91b034c01a5e36b96",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/051686ea0c5a8cffb5bdc2d91b034c01a5e36b96"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/cb1e6108ed2508e454d4e14ef518b9fa12369efe",
+        "parents": [
+          {
+            "sha": "3ccbc6666f4256bdd752d68d0b7f5eab255ac69c",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/3ccbc6666f4256bdd752d68d0b7f5eab255ac69c"
+          }
+        ],
+        "sha": "cb1e6108ed2508e454d4e14ef518b9fa12369efe"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:20:44Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:20:44Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Bind current durable reader to reviewed endpoint witness gate\n\nKeep the strict full selected-body binding and reject old-body fallback, policy bypass, ignored refusal and late namespace checks. Preserve every original evidence-control method and add six independent negative cases.\n\nThe exact current source body is statically reviewed. Current finite controls and final required validation remain pending.",
+          "tree": {
+            "sha": "b52d8070a029e3429a5e0af05ea79a39833e75a2",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/b52d8070a029e3429a5e0af05ea79a39833e75a2"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/f9cf4c4256ed86fef739f6f31962dd4122eb63fb",
+        "parents": [
+          {
+            "sha": "cb1e6108ed2508e454d4e14ef518b9fa12369efe",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/cb1e6108ed2508e454d4e14ef518b9fa12369efe"
+          }
+        ],
+        "sha": "f9cf4c4256ed86fef739f6f31962dd4122eb63fb"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:35:24Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:35:24Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Separate frozen PQ models from current source correspondence\n\nRetain the exact v1 model and source lock and the v2 composition register. Add an explicit current 21-path correspondence and current-v3 composition contract binding the reviewed 46-path root inventory and exact 66-path union. Keep all arithmetic, unknown bounds, HOLD results and qualification refusals unchanged.\n\nRetain all original control methods, add 25 current correspondence controls, and register four new mandatory inputs. Final corpus/source pin updates and integrated validation remain pending.",
+          "tree": {
+            "sha": "6a9d74b841edb8cffd5843c34e315f88282c0e1c",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/6a9d74b841edb8cffd5843c34e315f88282c0e1c"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/9b57c817ff7db396d8e606a74403f48bce65862f",
+        "parents": [
+          {
+            "sha": "f9cf4c4256ed86fef739f6f31962dd4122eb63fb",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/f9cf4c4256ed86fef739f6f31962dd4122eb63fb"
+          }
+        ],
+        "sha": "9b57c817ff7db396d8e606a74403f48bce65862f"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:43:35Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:43:35Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Close SQLite evidence connections after each transaction\n\nRetain the existing SQLite commit and rollback context while explicitly closing each reader and fixture connection on all exit paths. Preserve all 77 test methods and all other statements and assertions under an independently checked AST comparison.\n\nThe prior run passed all 77 controls and retained 121 ResourceWarnings. Validate the resource repair against the original controls without suppressing warnings.",
+          "tree": {
+            "sha": "09791dc1721adc81dd80e5c5984c157f3a8f7c76",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/09791dc1721adc81dd80e5c5984c157f3a8f7c76"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/55255ebba9001df7ff858a79f378719624c200bf",
+        "parents": [
+          {
+            "sha": "9b57c817ff7db396d8e606a74403f48bce65862f",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/9b57c817ff7db396d8e606a74403f48bce65862f"
+          }
+        ],
+        "sha": "55255ebba9001df7ff858a79f378719624c200bf"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T08:50:23Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T08:50:23Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Assert the current PQ report at its explicit namespace\n\nThe original 58-control run retained one KeyError because the current report was passed to the legacy term-results helper. Keep the full nested frozen-model helper and directly assert all five false qualification flags plus HOLD and the null failure bound on the outer current report.\n\nAll 58 method names and the other 57 method bodies remain unchanged. No production reader, frozen lock, resource bound or probability assertion changes.",
+          "tree": {
+            "sha": "9c284deade341bed0ee2341e2100b5b0ce160417",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/9c284deade341bed0ee2341e2100b5b0ce160417"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/cecc3041ae1f0e0a1da4c82c7f0467254f76cdfb",
+        "parents": [
+          {
+            "sha": "55255ebba9001df7ff858a79f378719624c200bf",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/55255ebba9001df7ff858a79f378719624c200bf"
+          }
+        ],
+        "sha": "cecc3041ae1f0e0a1da4c82c7f0467254f76cdfb"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T09:06:02Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T09:06:02Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Revalidate the persisted SP27 native process at readback\n\nBind the exact prepared binary, selector and ordered flags, a strictly typed zero exit code, and literal false timeout after the existing raw-readback check. This prevents unchanged stdout and report bytes from hiding altered process evidence.\n\nPreserve all 36 original methods, original error ordering, resource limits and qualification flags. The same 40-method finite synthetic registry reproduced 40 tamper subtest failures on the original controllers and passed on the candidate. No native campaign result is reclassified.",
+          "tree": {
+            "sha": "44ff60875e230a6d202802b49584bb8010b3b6bd",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/44ff60875e230a6d202802b49584bb8010b3b6bd"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/a365d6937ccda638e3a096adbab1ce84217e6d22",
+        "parents": [
+          {
+            "sha": "cecc3041ae1f0e0a1da4c82c7f0467254f76cdfb",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/cecc3041ae1f0e0a1da4c82c7f0467254f76cdfb"
+          }
+        ],
+        "sha": "a365d6937ccda638e3a096adbab1ce84217e6d22"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T09:10:49Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T09:10:49Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Require matching JSON types in complete source receipt pairs\n\nPython dictionary equality treated true/1/1.0 and false/0/0.0 as unchanged values after only the before receipt was typed. Require the same closed fields, exact value types and equal values on both receipts before the existing source-contract checks.\n\nAll original 27 methods and error ordering remain unchanged. Three added JSON-only controls reproduce eight original type-substitution failures and pass with this patch. Resource limits, phase timing, costs, null observations and qualification flags are preserved.",
+          "tree": {
+            "sha": "20ef410a1ea847a3585de91d5f0a0380009cf874",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/20ef410a1ea847a3585de91d5f0a0380009cf874"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/fc39da5f35298ce8a4c34aa5bdb25849648612f9",
+        "parents": [
+          {
+            "sha": "a365d6937ccda638e3a096adbab1ce84217e6d22",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/a365d6937ccda638e3a096adbab1ce84217e6d22"
+          }
+        ],
+        "sha": "fc39da5f35298ce8a4c34aa5bdb25849648612f9"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T09:30:44Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T09:30:44Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Bind reviewed corrective source inventories and current audit documentation\n\nThe current authority44 and lifetime20 maps still pointed to the prior Node store bytes. Bind the independently checked fc39 source checkpoint, update strict reader and independent test constants, and add the former authority revision to the retained negative cases. The selected QROM145 bytes and frozen historical namespaces remain unchanged.\n\nRefresh only reviewed current corpus pins, retain every existing required path, and add the four explicit current PQ correspondence/composition reader and contract paths. Correct stale document introductions and preserve dated historical observations. Record actual finite control results and the still pending hosted gates, historical review and protected merge in the sole development plan.",
+          "tree": {
+            "sha": "0a9fee1e73a82ea849fc8aa21da8a33872c62e30",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/0a9fee1e73a82ea849fc8aa21da8a33872c62e30"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/2635e6f11a90b9dcd05101ab386d60d61f8ef7d4",
+        "parents": [
+          {
+            "sha": "fc39da5f35298ce8a4c34aa5bdb25849648612f9",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/fc39da5f35298ce8a4c34aa5bdb25849648612f9"
+          }
+        ],
+        "sha": "2635e6f11a90b9dcd05101ab386d60d61f8ef7d4"
+      },
+      {
+        "author": "Tomasrgbsf",
+        "commit": {
+          "author": {
+            "date": "2026-11-14T09:49:51Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "committer": {
+            "date": "2026-11-14T09:49:51Z",
+            "email": "tomasbraynt@gmail.com",
+            "name": "Tomasrgbsf"
+          },
+          "message": "Bind recent acceptance workflow to reviewed store source",
+          "tree": {
+            "sha": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+          }
+        },
+        "committer": "Tomasrgbsf",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "parents": [
+          {
+            "sha": "2635e6f11a90b9dcd05101ab386d60d61f8ef7d4",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/2635e6f11a90b9dcd05101ab386d60d61f8ef7d4"
+          }
+        ],
+        "sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+      }
+    ],
+    "diff_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/dc42ce4df5cff79cc61c5addbaf01074b56b06ca...5a4b7fe8de1adce803184f262fd9f704ead1930c.diff",
+    "files": [
+      {
+        "additions": 1,
+        "changes": 2,
+        "deletions": 1,
+        "filename": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "previous_filename": null,
+        "sha": "10370fb69e7398d976b2e5516ff5e139bf298455",
+        "status": "modified"
+      },
+      {
+        "additions": 25,
+        "changes": 25,
+        "deletions": 0,
+        "filename": ".github/workflows/pon-w1-transparent-profile.yml",
+        "previous_filename": null,
+        "sha": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+        "status": "modified"
+      },
+      {
+        "additions": 1,
+        "changes": 2,
+        "deletions": 1,
+        "filename": "config/pon/hash-use-contract-v1.json",
+        "previous_filename": null,
+        "sha": "2a45fdfefc70881853dc6045491943d819f1a209",
+        "status": "modified"
+      },
+      {
+        "additions": 2,
+        "changes": 4,
+        "deletions": 2,
+        "filename": "config/pon/pq-authority-effects-v1.json",
+        "previous_filename": null,
+        "sha": "1c6dc60f31c13a00e3eaf0d01c85042ece00408f",
+        "status": "modified"
+      },
+      {
+        "additions": 51,
+        "changes": 90,
+        "deletions": 39,
+        "filename": "config/pon/pq-cross-branch-corpus-v1.json",
+        "previous_filename": null,
+        "sha": "bb95d44c93af114719a26e39da95c4626be76d79",
+        "status": "modified"
+      },
+      {
+        "additions": 405,
+        "changes": 405,
+        "deletions": 0,
+        "filename": "config/pon/pq128-lifetime-composition-current-v3.json",
+        "previous_filename": null,
+        "sha": "5d85b9337ff09d3dffd0b52404115c8c9996e039",
+        "status": "added"
+      },
+      {
+        "additions": 43,
+        "changes": 43,
+        "deletions": 0,
+        "filename": "config/pon/pq128-source-correspondence-current-v2.json",
+        "previous_filename": null,
+        "sha": "434d1cb328a3072ba08c174285eda3f0b31b51dd",
+        "status": "added"
+      },
+      {
+        "additions": 3,
+        "changes": 6,
+        "deletions": 3,
+        "filename": "config/pon/w1-lifetime-current-source-v2.json",
+        "previous_filename": null,
+        "sha": "96aa4ba7a8f4634e4d82778b87eae7791eaca716",
+        "status": "modified"
+      },
+      {
+        "additions": 88,
+        "changes": 89,
+        "deletions": 1,
+        "filename": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "previous_filename": null,
+        "sha": "2a83106b73a65c78f826bcb2b4fd4794c6df12d2",
+        "status": "modified"
+      },
+      {
+        "additions": 18,
+        "changes": 18,
+        "deletions": 0,
+        "filename": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "previous_filename": null,
+        "sha": "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7",
+        "status": "modified"
+      },
+      {
+        "additions": 27,
+        "changes": 31,
+        "deletions": 4,
+        "filename": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "previous_filename": null,
+        "sha": "f4230d0b39b32cf59d294272bac2f5049ba70aba",
+        "status": "modified"
+      },
+      {
+        "additions": 37,
+        "changes": 61,
+        "deletions": 24,
+        "filename": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "previous_filename": null,
+        "sha": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+        "status": "modified"
+      },
+      {
+        "additions": 33,
+        "changes": 45,
+        "deletions": 12,
+        "filename": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+        "previous_filename": null,
+        "sha": "42967be8d2e492d9d294f36271fec9758df20203",
+        "status": "modified"
+      },
+      {
+        "additions": 26,
+        "changes": 32,
+        "deletions": 6,
+        "filename": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+        "previous_filename": null,
+        "sha": "60124687f605c8727c26bfbdd168ef45c50839a3",
+        "status": "modified"
+      },
+      {
+        "additions": 58,
+        "changes": 58,
+        "deletions": 0,
+        "filename": "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+        "previous_filename": null,
+        "sha": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+        "status": "added"
+      },
+      {
+        "additions": 1776,
+        "changes": 1776,
+        "deletions": 0,
+        "filename": "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+        "previous_filename": null,
+        "sha": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd",
+        "status": "added"
+      },
+      {
+        "additions": 9,
+        "changes": 10,
+        "deletions": 1,
+        "filename": "formal/throughput-v1/test_execution_report.py",
+        "previous_filename": null,
+        "sha": "19d0ff0825bc93b9e140cb3ee0e5d34894e126fc",
+        "status": "modified"
+      },
+      {
+        "additions": 32,
+        "changes": 35,
+        "deletions": 3,
+        "filename": "scripts/ci/check_ci_contract.py",
+        "previous_filename": null,
+        "sha": "0c45b3c88437c8903faa3f6f1fb998cd5220fef8",
+        "status": "modified"
+      },
+      {
+        "additions": 6,
+        "changes": 6,
+        "deletions": 0,
+        "filename": "scripts/ci/check_pq_research_integration.py",
+        "previous_filename": null,
+        "sha": "a4200bf6db7e26864c1cd2e5c2e58758abd1f743",
+        "status": "modified"
+      },
+      {
+        "additions": 5,
+        "changes": 7,
+        "deletions": 2,
+        "filename": "scripts/ci/check_public_readiness_evidence.py",
+        "previous_filename": null,
+        "sha": "cba090808890320880b58036096e91604a4807a0",
+        "status": "modified"
+      },
+      {
+        "additions": 2,
+        "changes": 3,
+        "deletions": 1,
+        "filename": "scripts/ci/ci_job.sh",
+        "previous_filename": null,
+        "sha": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+        "status": "modified"
+      },
+      {
+        "additions": 3,
+        "changes": 4,
+        "deletions": 1,
+        "filename": "scripts/ci/hash_use_contract.py",
+        "previous_filename": null,
+        "sha": "f58609ec7ea88ec9eadfdf92b3e09ab843b884c6",
+        "status": "modified"
+      },
+      {
+        "additions": 2,
+        "changes": 4,
+        "deletions": 2,
+        "filename": "scripts/ci/pq_authority_effect_register.py",
+        "previous_filename": null,
+        "sha": "e2d05b7332635e787137b513ed86186c0341054f",
+        "status": "modified"
+      },
+      {
+        "additions": 9,
+        "changes": 19,
+        "deletions": 10,
+        "filename": "scripts/ci/pq_chain_claim_guard.py",
+        "previous_filename": null,
+        "sha": "d29b8569a900473baf8281586394f12ba98d71df",
+        "status": "modified"
+      },
+      {
+        "additions": 34,
+        "changes": 47,
+        "deletions": 13,
+        "filename": "scripts/ci/pq_lifetime_composition.py",
+        "previous_filename": null,
+        "sha": "32ba61ab1119e6e3c6697b69bce0eb722644d764",
+        "status": "modified"
+      },
+      {
+        "additions": 212,
+        "changes": 212,
+        "deletions": 0,
+        "filename": "scripts/ci/pq_lifetime_current_v2.py",
+        "previous_filename": null,
+        "sha": "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc",
+        "status": "added"
+      },
+      {
+        "additions": 46,
+        "changes": 51,
+        "deletions": 5,
+        "filename": "scripts/ci/run_cell_learning_business_readback.py",
+        "previous_filename": null,
+        "sha": "0ae22bec4563858aa9735c4334593459f1b9b236",
+        "status": "modified"
+      },
+      {
+        "additions": 47,
+        "changes": 61,
+        "deletions": 14,
+        "filename": "scripts/ci/run_pon_budget_controls.py",
+        "previous_filename": null,
+        "sha": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "status": "modified"
+      },
+      {
+        "additions": 6,
+        "changes": 6,
+        "deletions": 0,
+        "filename": "scripts/ci/run_sp27_receiver_controls.py",
+        "previous_filename": null,
+        "sha": "fb440145ded4a7b4fcc9e8216c7fd6d0780f6286",
+        "status": "modified"
+      },
+      {
+        "additions": 6,
+        "changes": 6,
+        "deletions": 0,
+        "filename": "scripts/ci/run_sp27_strata_controls.py",
+        "previous_filename": null,
+        "sha": "45ca070ace5981fc481061fc2c1d979046eec4b6",
+        "status": "modified"
+      },
+      {
+        "additions": 26,
+        "changes": 28,
+        "deletions": 2,
+        "filename": "scripts/ci/test_ci_contract.py",
+        "previous_filename": null,
+        "sha": "5ed407bb9590217423e5642cf0ceb45433c796db",
+        "status": "modified"
+      },
+      {
+        "additions": 122,
+        "changes": 124,
+        "deletions": 2,
+        "filename": "scripts/ci/test_pon_budget_controls.py",
+        "previous_filename": null,
+        "sha": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+        "status": "modified"
+      },
+      {
+        "additions": 3,
+        "changes": 5,
+        "deletions": 2,
+        "filename": "scripts/ci/test_pq_authority_effect_register.py",
+        "previous_filename": null,
+        "sha": "9851b6a9bddc8b695fb6142c471a766977cb9ede",
+        "status": "modified"
+      },
+      {
+        "additions": 11,
+        "changes": 24,
+        "deletions": 13,
+        "filename": "scripts/ci/test_pq_chain_claim_guard.py",
+        "previous_filename": null,
+        "sha": "624c16369129f3b8fbc44d4507fb22bc859bff39",
+        "status": "modified"
+      },
+      {
+        "additions": 19,
+        "changes": 23,
+        "deletions": 4,
+        "filename": "scripts/ci/test_pq_lifetime_budget.py",
+        "previous_filename": null,
+        "sha": "5b785871fb42396b6ce7ae1c79761a10cace9d30",
+        "status": "modified"
+      },
+      {
+        "additions": 26,
+        "changes": 34,
+        "deletions": 8,
+        "filename": "scripts/ci/test_pq_lifetime_composition.py",
+        "previous_filename": null,
+        "sha": "dfc384a37ec3da774ab77936cfe474858869cc0e",
+        "status": "modified"
+      },
+      {
+        "additions": 302,
+        "changes": 302,
+        "deletions": 0,
+        "filename": "scripts/ci/test_pq_lifetime_current_v2.py",
+        "previous_filename": null,
+        "sha": "9137a72b6871346959fc6b6243d58f42f5c9fffb",
+        "status": "added"
+      },
+      {
+        "additions": 62,
+        "changes": 85,
+        "deletions": 23,
+        "filename": "scripts/ci/test_public_readiness_evidence.py",
+        "previous_filename": null,
+        "sha": "30a4e2dd3f2a78faf196ca75b484df0e4b2bd062",
+        "status": "modified"
+      },
+      {
+        "additions": 77,
+        "changes": 77,
+        "deletions": 0,
+        "filename": "scripts/ci/test_sp27_receiver_controls.py",
+        "previous_filename": null,
+        "sha": "9764950c120b1e7636685100cef8c473c2d96ddf",
+        "status": "modified"
+      },
+      {
+        "additions": 77,
+        "changes": 77,
+        "deletions": 0,
+        "filename": "scripts/ci/test_sp27_strata_controls.py",
+        "previous_filename": null,
+        "sha": "69c8289f41253cddbf0ec57eebf1a074cbda5697",
+        "status": "modified"
+      },
+      {
+        "additions": 47,
+        "changes": 47,
+        "deletions": 0,
+        "filename": "scripts/ci/test_throughput_cost_coverage.py",
+        "previous_filename": null,
+        "sha": "79214af83feab98f32a73c18280fa539df0eb16f",
+        "status": "modified"
+      },
+      {
+        "additions": 2,
+        "changes": 4,
+        "deletions": 2,
+        "filename": "scripts/ci/test_w1_lifetime_current_observation.py",
+        "previous_filename": null,
+        "sha": "7cedb1e646aae60bcd0104d82ae969706a497802",
+        "status": "modified"
+      },
+      {
+        "additions": 18,
+        "changes": 22,
+        "deletions": 4,
+        "filename": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+        "previous_filename": null,
+        "sha": "20722e2f119014791f1c87b3c666a4eb03606b32",
+        "status": "modified"
+      },
+      {
+        "additions": 28,
+        "changes": 31,
+        "deletions": 3,
+        "filename": "scripts/ci/test_w1_qrom_current_ci.py",
+        "previous_filename": null,
+        "sha": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+        "status": "modified"
+      },
+      {
+        "additions": 18,
+        "changes": 23,
+        "deletions": 5,
+        "filename": "scripts/ci/test_w1_qrom_semantics_audit.py",
+        "previous_filename": null,
+        "sha": "4d7f18b7146aad5459b967eab10dc41010e979e6",
+        "status": "modified"
+      },
+      {
+        "additions": 3,
+        "changes": 4,
+        "deletions": 1,
+        "filename": "scripts/ci/throughput_cost_coverage.py",
+        "previous_filename": null,
+        "sha": "8d5e8a370df1fee8d84e493f55f2a9417f3b8e99",
+        "status": "modified"
+      },
+      {
+        "additions": 2,
+        "changes": 4,
+        "deletions": 2,
+        "filename": "scripts/w1_lifetime_current_observation.py",
+        "previous_filename": null,
+        "sha": "901634884d201df615370811f46a02ae88647631",
+        "status": "modified"
+      },
+      {
+        "additions": 5,
+        "changes": 9,
+        "deletions": 4,
+        "filename": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "previous_filename": null,
+        "sha": "3bce39ce1aef265a18f304085bc08c0240547065",
+        "status": "modified"
+      },
+      {
+        "additions": 48,
+        "changes": 49,
+        "deletions": 1,
+        "filename": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        "previous_filename": null,
+        "sha": "f021a33e2969305241099998f703172d29b15251",
+        "status": "modified"
+      }
+    ],
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/dc42ce4df5cff79cc61c5addbaf01074b56b06ca...5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "merge_base_commit": {
+      "commit": {
+        "author": {
+          "date": "2026-11-14T05:46:47Z",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "name": "Qian QI"
+        },
+        "comment_count": 0,
+        "committer": {
+          "date": "2026-11-14T05:46:47Z",
+          "email": "102159240+ProfHepta@users.noreply.github.com",
+          "name": "Qian QI"
+        },
+        "message": "docs: preserve empty network receipt as raw evidence",
+        "tree": {
+          "sha": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/9fda17fed2542b2baccaa34585bb00afd699e12b"
+        },
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "verification": {
+          "payload": null,
+          "reason": "unsigned",
+          "signature": null,
+          "verified": false,
+          "verified_at": null
+        }
+      },
+      "parents": [
+        {
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/318527b4b2a07b5037d755547acd92e46ae3aded",
+          "sha": "318527b4b2a07b5037d755547acd92e46ae3aded",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/318527b4b2a07b5037d755547acd92e46ae3aded"
+        }
+      ],
+      "sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
+    },
+    "patch_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/dc42ce4df5cff79cc61c5addbaf01074b56b06ca...5a4b7fe8de1adce803184f262fd9f704ead1930c.patch",
+    "status": "ahead",
+    "total_commits": 14,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/dc42ce4df5cff79cc61c5addbaf01074b56b06ca...5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "commit_pagination_complete": true,
+    "compare_files_scope": "GitHub compare metadata files field; API first-page limit applies",
+    "patches_requested_or_preserved": false
+  },
+  "archive_tag_refs": {
+    "refs/tags/archive/branches-before-consolidation-20261113-5954": "b9cc24f76617e28015ee890635ece8449b52ee7c",
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2": "9dafd9192e4040fab530958ef71598aaec9265b9",
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2^{}": "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b"
+  },
+  "new_execution_tag": "refs/tags/archive/execution-receipts-20261114-2a6206117785-v1",
+  "new_execution_tag_present": false,
+  "recent_push_events_first_page": [
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T08:31:43Z",
+      "id": "27100202128",
+      "payload": {
+        "before": "523bee8709645e7dbc3455f1dc74737f7067af62",
+        "head": "b5c193ad6695bd883c0554da3bc9365364bb4478",
+        "push_id": 49978671950,
+        "ref": "refs/heads/fix/chain-source-aggregation-20261112-6478",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T11:59:36Z",
+      "id": "27090376394",
+      "payload": {
+        "before": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+        "head": "fea6bcbde02cabab5b624a784ff20e57cac72586",
+        "push_id": 50001704766,
+        "ref": "refs/heads/fix/chain-cell-storage-four-gates-20261111-2bfb",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T06:38:05Z",
+      "id": "27089584726",
+      "payload": {
+        "before": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+        "head": "a8035f3ef1834a33046c8ecf5d03420994485106",
+        "push_id": 49967255166,
+        "ref": "refs/heads/fix/chain-hash-transitive-20261111-976f",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T01:02:38Z",
+      "id": "27080456573",
+      "payload": {
+        "before": "a7c7f370f852f6a3b56d8c9b108eb8d1ba048dd2",
+        "head": "5ffab5968ae1a9cf2e11d756535d9b18961872a2",
+        "push_id": 49938438073,
+        "ref": "refs/heads/audit/pq-root-raw-witness-guards-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T02:13:20Z",
+      "id": "27079635089",
+      "payload": {
+        "before": "d3cb17dffa75208fbc4fd28b0c4d18ba5f43dc3a",
+        "head": "f3743d6d817aa718f9a29735e60b1bb7573f3cd7",
+        "push_id": 49944503521,
+        "ref": "refs/heads/audit/pq-root-meter-snapshot-consistency-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T06:32:37Z",
+      "id": "27079163033",
+      "payload": {
+        "before": "229b14c2d366a257f51f287d502a550df2332338",
+        "head": "420a05acaec1d68f8a2b0b5bdf4658f3379e8abb",
+        "push_id": 49966762349,
+        "ref": "refs/heads/fix/chain-w1-baseline-20261111-9082",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:25:15Z",
+      "id": "27077477117",
+      "payload": {
+        "before": "e5254dc4c72b498f0f9862d46adb349d91aa9452",
+        "head": "35ab24b8847c09de4af6bb11ac7a3aba9ebf8bb1",
+        "push_id": 49935222232,
+        "ref": "refs/heads/fix/pq-root-copied-lease-probe-nonconsuming-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:30:45Z",
+      "id": "27070448268",
+      "payload": {
+        "before": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+        "head": "bc485f46beb3b6acb244a0be06197bc1a8dfd0a8",
+        "push_id": 49935694788,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:03:00Z",
+      "id": "27070119842",
+      "payload": {
+        "before": "4f6d152caaafd4f25885e99e9792a18dde015cd9",
+        "head": "0fc1794558e9b3a907a7d89227ee8722da19c30e",
+        "push_id": 49927854797,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T01:30:59Z",
+      "id": "27065246656",
+      "payload": {
+        "before": "2bfe40f44c593d13346e916eed06bbf94cf4a894",
+        "head": "dc5b73ce087217060cdcbc828ce01ff4ebf5d74d",
+        "push_id": 49940868806,
+        "ref": "refs/heads/fix/pq-root-copied-lease-required-ci-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:00:29Z",
+      "id": "27062343944",
+      "payload": {
+        "before": "ca27bca4a5a322a4018ab98c38e02717c08926d2",
+        "head": "4f6d152caaafd4f25885e99e9792a18dde015cd9",
+        "push_id": 49927597880,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:25:43Z",
+      "id": "27050627785",
+      "payload": {
+        "before": "69aef6f7ceeca3d20a6fb11a4b929c1c3c92fec8",
+        "head": "2bfe40f44c593d13346e916eed06bbf94cf4a894",
+        "push_id": 49935262807,
+        "ref": "refs/heads/fix/pq-root-copied-lease-probe-nonconsuming-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:24:18Z",
+      "id": "27050539431",
+      "payload": {
+        "before": "38a9108b5dcf1a3c4f50db1a4fb9404b4309d71f",
+        "head": "b5362185c2d4b5aaeaefadb760ea9090e84beee2",
+        "push_id": 49935140362,
+        "ref": "refs/heads/audit/pq-root-depletion-claim-gate-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T05:25:18Z",
+      "id": "27049780292",
+      "payload": {
+        "before": "b192712ca096c79766d3570fc4fa224da68d026d",
+        "head": "810e1cbf8aed8e479afaf187b5af59be49d98019",
+        "push_id": 49960816579,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:25:40Z",
+      "id": "27048373783",
+      "payload": {
+        "before": "04b374aded0e7c88a4590f32eba5dcc687a2d344",
+        "head": "e5254dc4c72b498f0f9862d46adb349d91aa9452",
+        "push_id": 49929952328,
+        "ref": "refs/heads/fix/checkpoint-live-socket-lease-guard-20261111-pqroot",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:21:46Z",
+      "id": "27047999786",
+      "payload": {
+        "before": "55b2e7102f622cbc17d3b3bf997a92ba0acdb972",
+        "head": "04b374aded0e7c88a4590f32eba5dcc687a2d344",
+        "push_id": 49929602122,
+        "ref": "refs/heads/fix/checkpoint-live-socket-lease-guard-20261111-pqroot",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T19:20:38Z",
+      "id": "27047956615",
+      "payload": {
+        "before": "379b38a59da22eb690a1a8e0ce89f2ee8e97a114",
+        "head": "84f85578bfecb6f304bedf3cf415433ea13494dc",
+        "push_id": 49905090378,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T05:02:26Z",
+      "id": "27047718729",
+      "payload": {
+        "before": "55c93539e812bf0d467ff915c07b358b10ef8ca2",
+        "head": "73c75aa67d46deb01712b6332d6a5fd3aaa641f1",
+        "push_id": 49958851782,
+        "ref": "refs/heads/audit/pq-root-depletion-booking-discard-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T01:49:31Z",
+      "id": "27047371137",
+      "payload": {
+        "before": "31f7740ed57eb3bca2e17f7e0a5f4f63cb320f5f",
+        "head": "df2a4f59edf1a181c2968eda131a2ddb0e5f33a1",
+        "push_id": 49942425894,
+        "ref": "refs/heads/fix/chain-daa-monotone-witness-20261111-7f73",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T03:50:17Z",
+      "id": "27041547206",
+      "payload": {
+        "before": "a6e79dfbfc30d829a8527d0546091d005ecdce06",
+        "head": "8da34affb9fe77fbb14da75d331746a17fdd6816",
+        "push_id": 49952791867,
+        "ref": "refs/heads/test/chain-sp27-02-native-mechanism-20261111-e815",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:30:04Z",
+      "id": "27040614080",
+      "payload": {
+        "before": "e6b90e1e7934cf4b64106f98a7c793dc89234a17",
+        "head": "bc411aa4a81970d822c073f3ab4ce24ff8c9bc22",
+        "push_id": 49935629482,
+        "ref": "refs/heads/audit/pq-root-depletion-claim-gate-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:25:29Z",
+      "id": "27040259698",
+      "payload": {
+        "before": "35ab24b8847c09de4af6bb11ac7a3aba9ebf8bb1",
+        "head": "69aef6f7ceeca3d20a6fb11a4b929c1c3c92fec8",
+        "push_id": 49935242236,
+        "ref": "refs/heads/fix/pq-root-copied-lease-probe-nonconsuming-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T19:20:49Z",
+      "id": "27037053617",
+      "payload": {
+        "before": "84f85578bfecb6f304bedf3cf415433ea13494dc",
+        "head": "2574c160f02b66c7d41b66cfecda985c1674035c",
+        "push_id": 49905112404,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:17:38Z",
+      "id": "27033630596",
+      "payload": {
+        "before": "c63b705733e7ba49ef27906590c4c797a304d6cf",
+        "head": "55b2e7102f622cbc17d3b3bf997a92ba0acdb972",
+        "push_id": 49929229344,
+        "ref": "refs/heads/fix/checkpoint-live-socket-lease-guard-20261111-pqroot",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T02:14:12Z",
+      "id": "27033461108",
+      "payload": {
+        "before": "f3743d6d817aa718f9a29735e60b1bb7573f3cd7",
+        "head": "eb46a77edfe95c619f239cffc2f80d1079a7af81",
+        "push_id": 49944576034,
+        "ref": "refs/heads/audit/pq-root-meter-snapshot-consistency-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T20:26:52Z",
+      "id": "27033248229",
+      "payload": {
+        "before": "2574c160f02b66c7d41b66cfecda985c1674035c",
+        "head": "5ee99b252015ae7ca23d3c35162da56860d5b962",
+        "push_id": 49912402742,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T18:22:24Z",
+      "id": "27030124933",
+      "payload": {
+        "before": "6a5f751f5434afe7e18eb3651776ad4f0a0fb49f",
+        "head": "02a6e33814774d162a1c2895969f120836acdad1",
+        "push_id": 49898461890,
+        "ref": "refs/heads/fix/pq-root-hash-use-reviewed-source-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T01:16:31Z",
+      "id": "27028800998",
+      "payload": {
+        "before": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+        "head": "31f7740ed57eb3bca2e17f7e0a5f4f63cb320f5f",
+        "push_id": 49939649346,
+        "ref": "refs/heads/fix/chain-daa-monotone-witness-20261111-7f73",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:59:23Z",
+      "id": "27027221527",
+      "payload": {
+        "before": "8df0089e48ff314f37808affb18cfa481a48f01e",
+        "head": "a7c7f370f852f6a3b56d8c9b108eb8d1ba048dd2",
+        "push_id": 49938134805,
+        "ref": "refs/heads/audit/pq-root-raw-witness-guards-20261112-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:57:57Z",
+      "id": "27027066924",
+      "payload": {
+        "before": "0bc51795a978494af1b4659712ecf78c290c1a88",
+        "head": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "push_id": 49938015501,
+        "ref": "refs/heads/test/chain-sp27-02-native-mechanism-20261111-e815",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T01:29:31Z",
+      "id": "27025621698",
+      "payload": {
+        "before": "bc485f46beb3b6acb244a0be06197bc1a8dfd0a8",
+        "head": "b192712ca096c79766d3570fc4fa224da68d026d",
+        "push_id": 49940737560,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T19:17:36Z",
+      "id": "27025598800",
+      "payload": {
+        "before": "454ae116159867ff6cddd91b964523df7f7e16f0",
+        "head": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+        "push_id": 49904748927,
+        "ref": "refs/heads/fix/chain-pq-live-retry-20261111-fa62381e",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T15:46:27Z",
+      "id": "27024808186",
+      "payload": {
+        "before": "038c74645ecec7dff9557ee998c41eef584dcc21",
+        "head": "2ba0218f30153229cf2da74025b4d98422c0234d",
+        "push_id": 49879904534,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T15:36:45Z",
+      "id": "27023770046",
+      "payload": {
+        "before": "32c32b35f435b16b988ee9dbb6c6f8c4836d826b",
+        "head": "038c74645ecec7dff9557ee998c41eef584dcc21",
+        "push_id": 49878708640,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:11:39Z",
+      "id": "27023005333",
+      "payload": {
+        "before": "8b7a37bd8de3705e4cf56878da7c738a58fc21f5",
+        "head": "38a9108b5dcf1a3c4f50db1a4fb9404b4309d71f",
+        "push_id": 49934041008,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-12T00:11:10Z",
+      "id": "27022967676",
+      "payload": {
+        "before": "a450df7fbf1149e62b9470b81e6a0e1b07834e25",
+        "head": "8b7a37bd8de3705e4cf56878da7c738a58fc21f5",
+        "push_id": 49933997899,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T15:04:34Z",
+      "id": "27022792101",
+      "payload": {
+        "before": "44c1000be98dad839b58df4af4609e2267177052",
+        "head": "734138681285ed77928d394c0f50db7795a0b751",
+        "push_id": 49874731835,
+        "ref": "refs/heads/fix/pqroot-proof-descriptor-bind-20261111-r13",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T14:49:30Z",
+      "id": "27020854146",
+      "payload": {
+        "before": "3c98e08e92094bb79ac811b682192d7252a7c325",
+        "head": "454ae116159867ff6cddd91b964523df7f7e16f0",
+        "push_id": 49872849452,
+        "ref": "refs/heads/fix/chain-pq-live-retry-20261111-fa62381e",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T14:17:47Z",
+      "id": "27016946975",
+      "payload": {
+        "before": "3c98e08e92094bb79ac811b682192d7252a7c325",
+        "head": "156ae166423fb1681106d90ed33db261ebe38ae0",
+        "push_id": 49868954957,
+        "ref": "refs/heads/fix/pq-root-908-native-inventory-20261111-gpt6-1415",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T20:27:05Z",
+      "id": "27016542309",
+      "payload": {
+        "before": "5ee99b252015ae7ca23d3c35162da56860d5b962",
+        "head": "3882dc0a765c654aaecd6f0fb13d841d1150e4e5",
+        "push_id": 49912422318,
+        "ref": "refs/heads/perf/pon-pq-packet-one-pass-20261110",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T22:58:40Z",
+      "id": "27016217820",
+      "payload": {
+        "before": "8c6b45240223e635107f1eeb4270e82c19868617",
+        "head": "56b7b70bfa51b2eacb14874b0d517eba5f8c312a",
+        "push_id": 49927421762,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T14:20:58Z",
+      "id": "27015284677",
+      "payload": {
+        "before": "156ae166423fb1681106d90ed33db261ebe38ae0",
+        "head": "809ec5c2b5d3126d38dca0e6dd7b995dc7023fef",
+        "push_id": 49869338673,
+        "ref": "refs/heads/fix/pq-root-908-native-inventory-20261111-gpt6-1415",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T23:03:06Z",
+      "id": "27014196707",
+      "payload": {
+        "before": "0fc1794558e9b3a907a7d89227ee8722da19c30e",
+        "head": "a450df7fbf1149e62b9470b81e6a0e1b07834e25",
+        "push_id": 49927865448,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T22:59:02Z",
+      "id": "27013780557",
+      "payload": {
+        "before": "56b7b70bfa51b2eacb14874b0d517eba5f8c312a",
+        "head": "a161eef94f91cbf15a97435fbc24f3ef2f7061b2",
+        "push_id": 49927453749,
+        "ref": "refs/heads/audit/pq-root-native-readback-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T18:22:40Z",
+      "id": "27002394157",
+      "payload": {
+        "before": "02a6e33814774d162a1c2895969f120836acdad1",
+        "head": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526",
+        "push_id": 49898492229,
+        "ref": "refs/heads/fix/pq-root-hash-use-reviewed-source-20261111-r11",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T14:28:26Z",
+      "id": "27000923693",
+      "payload": {
+        "before": "a41ba4e8958cd8bc5738127e702ecbc3f498cafc",
+        "head": "b08b6914f8248bf9f35ac3d691e40454c987e063",
+        "push_id": 49870251702,
+        "ref": "refs/heads/fix/pq-root-908-native-inventory-20261111-gpt6-1415",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    },
+    {
+      "actor": {
+        "id": 102159240,
+        "login": "ProfHepta"
+      },
+      "created_at": "2026-11-11T14:25:02Z",
+      "id": "27000473658",
+      "payload": {
+        "before": "c84162378f34b9284e90587df4c466dfee3e193b",
+        "head": "58f225e973054f69661bf06aeda936f9126ea8e1",
+        "push_id": 49869833051,
+        "ref": "refs/heads/fix/chain-pon-five-claims-20261111-d6cb",
+        "repository_id": 1323087357
+      },
+      "public": true,
+      "repo": "TrillionniumFoundation/Trillionnium-Chain",
+      "type": "PushEvent"
+    }
+  ],
+  "events_are_bounded_recent_window_not_exhaustive": true,
+  "frozen_baseline_error": "KeyError: 'commit'",
+  "failures": [],
+  "steps": [
+    {
+      "label": "commit-5a4-page-001",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/5a4b7fe8de1adce803184f262fd9f704ead1930c?per_page=100&page=1",
+        "--jq",
+        "{sha,url,html_url,commit:{author:.commit.author,committer:.commit.committer,message:.commit.message,tree:.commit.tree,comment_count:.commit.comment_count,verification:{verified:.commit.verification.verified,reason:.commit.verification.reason,verified_at:.commit.verification.verified_at}},author:(if .author then {login:.author.login,id:.author.id,html_url:.author.html_url} else null end),committer:(if .committer then {login:.committer.login,id:.committer.id,html_url:.committer.html_url} else null end),parents:[.parents[]|{sha,url,html_url}],stats,files:[.files[]|{sha,filename,status,additions,deletions,changes,previous_filename,blob_url,contents_url}]}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.355022+00:00",
+      "finished_at": "2026-11-14T09:57:38.192762+00:00",
+      "elapsed_seconds": 1.838,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/commit-5a4-page-001.stdout",
+        "bytes": 2517,
+        "sha256": "05d99940e80cd1513267ed14852a4e4d1d3d2ae5ec33cbb3fc3ec2689e610fba"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/commit-5a4-page-001.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "recent-push-events",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/events?per_page=100",
+        "--jq",
+        "[.[]|select(.type==\"PushEvent\")|{id,type,created_at,public,actor:{login:.actor.login,id:.actor.id},repo:.repo.name,payload}]"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.357764+00:00",
+      "finished_at": "2026-11-14T09:57:38.702920+00:00",
+      "elapsed_seconds": 2.345,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/recent-push-events.stdout",
+        "bytes": 19450,
+        "sha256": "0e44486d2ff9b90e8934a94f8f7743a19dc13db0fb924e50936300d219af676a"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/recent-push-events.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "refs-archive-tags",
+      "argv": [
+        "/usr/bin/git",
+        "ls-remote",
+        "--tags",
+        "origin",
+        "refs/tags/archive/*"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.354810+00:00",
+      "finished_at": "2026-11-14T09:57:39.506182+00:00",
+      "elapsed_seconds": 3.151,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-archive-tags.stdout",
+        "bytes": 334,
+        "sha256": "4f59feec9c15d4e778b84856da3c26baba57a3c8ca70ce4eb301120a0765e4df"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-archive-tags.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "compare-C0-to-5a4-page-001",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/compare/dc42ce4df5cff79cc61c5addbaf01074b56b06ca...5a4b7fe8de1adce803184f262fd9f704ead1930c?per_page=100&page=1",
+        "--jq",
+        "{url,html_url,diff_url,patch_url,status,ahead_by,behind_by,total_commits,base_commit:{sha:.base_commit.sha,commit:.base_commit.commit,parents:.base_commit.parents},merge_base_commit:{sha:.merge_base_commit.sha,commit:.merge_base_commit.commit,parents:.merge_base_commit.parents},commits:[.commits[]|{sha,html_url,commit:{author:.commit.author,committer:.commit.committer,message:.commit.message,tree:.commit.tree},author:(if .author then .author.login else null end),committer:(if .committer then .committer.login else null end),parents:[.parents[]|{sha,url}]}],files:[.files[]?|{sha,filename,status,additions,deletions,changes,previous_filename}]}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.356614+00:00",
+      "finished_at": "2026-11-14T09:57:39.776470+00:00",
+      "elapsed_seconds": 3.42,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/compare-C0-to-5a4-page-001.stdout",
+        "bytes": 31634,
+        "sha256": "4c50214e799a98d692e44ee64e5a4c548a05bdbd3638e2057ece530cd7c9d6ca"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/compare-C0-to-5a4-page-001.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "pr847",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.354893+00:00",
+      "finished_at": "2026-11-14T09:57:42.029131+00:00",
+      "elapsed_seconds": 5.674,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/pr847.stdout",
+        "bytes": 38700,
+        "sha256": "7db19e6ecbd0b195816283a9a2dde54163182b633cda672c384b6e1572ac94f0"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/pr847.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "refs-heads",
+      "argv": [
+        "/usr/bin/git",
+        "ls-remote",
+        "--heads",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "started_at": "2026-11-14T09:57:36.354740+00:00",
+      "finished_at": "2026-11-14T09:57:42.664823+00:00",
+      "elapsed_seconds": 6.31,
+      "exit": 0,
+      "timed_out": false,
+      "timeout_seconds": 120,
+      "stdout": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-heads.stdout",
+        "bytes": 87154,
+        "sha256": "4bb28d857e62ad05457ff6f58b3e6caa9a436b1d5d02f802e4abed0b1925487d"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-prci-remote-advance-5a4b7f-observation-20261114-v1/refs-heads.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "non_atomic_across_observations": true,
+  "remote_mutations": false,
+  "fetch_performed": false,
+  "source_git_objects_or_refs_modified": false,
+  "CI_actions": false
+}

@@ -1,0 +1,12 @@
+{
+  "args": [
+    "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/finalize_archive_v1.py"
+  ],
+  "cwd": "/private/tmp",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "executable": "/opt/homebrew/bin/python3",
+  "host": "mac",
+  "idempotency_key": "architecture-P1-closed-sparse-finalize-v1-20261114"
+}

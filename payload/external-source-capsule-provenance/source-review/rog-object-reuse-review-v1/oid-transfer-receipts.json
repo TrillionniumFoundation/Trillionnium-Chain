@@ -1,0 +1,73 @@
+{
+  "commit": {
+    "committed": true,
+    "mode": 384,
+    "reused": false,
+    "sha256": "780ab6e86e2124105704c0f6dea3b81d88a2a241c09de53ad6efc6a23fab002d",
+    "size": 160392,
+    "version": "66306:36061734:160392:1794644875386040749:1794644879580019756"
+  },
+  "readback": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-review-v1/objects.oids",
+    "sha256": "780ab6e86e2124105704c0f6dea3b81d88a2a241c09de53ad6efc6a23fab002d",
+    "size": 160392,
+    "version": "66306:36061734:160392:1794644875386040749:1794644879580019756"
+  },
+  "source_chunks": [
+    {
+      "chunk_sha256": "8b58eb07586c3fab01c7f0ce0798ddf29c7e558d545a8870fcef71c801bfcea5",
+      "eof": false,
+      "next_offset": 65535,
+      "offset": 0,
+      "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/fourteen-object-union-v1/objects.oids",
+      "size": 160392,
+      "version": "16777233:606723731:160392:1794644801188591859:1794644801188591859"
+    },
+    {
+      "chunk_sha256": "13047c99c01a9f0f08557991387962926ead56b88d0b0b6907068842d25ce9eb",
+      "eof": false,
+      "next_offset": 131070,
+      "offset": 65535,
+      "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/fourteen-object-union-v1/objects.oids",
+      "size": 160392,
+      "version": "16777233:606723731:160392:1794644801188591859:1794644801188591859"
+    },
+    {
+      "chunk_sha256": "609912cf88f72a29ecdb718732b76e20fda10668254971fd26287b974bccc2cc",
+      "eof": true,
+      "next_offset": 160392,
+      "offset": 131070,
+      "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/fourteen-object-union-v1/objects.oids",
+      "size": 160392,
+      "version": "16777233:606723731:160392:1794644801188591859:1794644801188591859"
+    }
+  ],
+  "uploads": [
+    {
+      "next_offset": 65535,
+      "upload_id": "d7613659-742f-4e8f-b413-65519af513b9",
+      "visible": false
+    },
+    {
+      "next_offset": 131070,
+      "upload_id": "d7613659-742f-4e8f-b413-65519af513b9",
+      "visible": false
+    },
+    {
+      "next_offset": 160392,
+      "upload_id": "d7613659-742f-4e8f-b413-65519af513b9",
+      "visible": false
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "all_terminal": true,
+  "host_or_resource_process_start_calls": 0,
+  "inspection_processes": [
+    {
+      "key": "0270",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 24165,
+        "bytes_stored": 24165,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657268134,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 20843,
+        "pid": 20844,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 24165,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0270-actual-PTY.terminal",
+        "sha256": "b08e1394dafc535b8bfce9f7b54fd3c43ebfe723c1454db157d7e036f378f9de"
+      }
+    },
+    {
+      "key": "0271",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 4333,
+        "bytes_stored": 4333,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657327698,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 21439,
+        "pid": 21440,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 4333,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0271-actual-PTY.terminal",
+        "sha256": "9c86c93c0271f1828c9a5102efb2552cd78b4a1158f7e8dd1fda1d5b97abd562"
+      }
+    },
+    {
+      "key": "0272",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 809,
+        "bytes_stored": 809,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657391219,
+        "exit_code": 1,
+        "output_complete": true,
+        "owner_pid": 22604,
+        "pid": 22605,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 809,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0272-actual-PTY.terminal",
+        "sha256": "177f26c51a1144d521a4b3c2f624f49c4184fa73b802fec6ac102c8a09cdae07"
+      }
+    },
+    {
+      "key": "0273",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 18765,
+        "bytes_stored": 18765,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657468615,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 23870,
+        "pid": 23871,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 18765,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0273-actual-PTY.terminal",
+        "sha256": "d26d033a6e98cb93a3e6337cebaa7977aa400de41a42633e43d5e64e7aad93c5"
+      }
+    },
+    {
+      "key": "0274",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 6556,
+        "bytes_stored": 6556,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657499830,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 24326,
+        "pid": 24327,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 6556,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0274-actual-PTY.terminal",
+        "sha256": "e44f59d1b03f33a7c6e50fa408b1dbd76b0a4ff90d6882f279c17a2344801987"
+      }
+    },
+    {
+      "key": "0275",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 4491,
+        "bytes_stored": 4491,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657533910,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 25085,
+        "pid": 25086,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 4491,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0275-actual-PTY.terminal",
+        "sha256": "66f08abb0d6e5feacd6a115619e66efdfbe4189fb8801d1ea037fc3ad02ec4b8"
+      }
+    },
+    {
+      "key": "0276",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 1248,
+        "bytes_stored": 1248,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657619185,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 26375,
+        "pid": 26382,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 1248,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0276-actual-PTY.terminal",
+        "sha256": "032f217898a1940edb2fd3efe6485454f99eedb86b1a780de59b5b5bc35a6325"
+      }
+    },
+    {
+      "key": "0277",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 14519,
+        "bytes_stored": 14519,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794657672113,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 28366,
+        "pid": 28367,
+        "state": "exited"
+      },
+      "terminal": {
+        "bytes": 14519,
+        "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/readonly-capture-provenance/0277-actual-PTY.terminal",
+        "sha256": "807507f3d72d9e62c83af817da3b842a5e5aea0b841adb67547edfc1e4de1fa8"
+      }
+    }
+  ],
+  "native_or_benchmark_runs": 0,
+  "retained_inspection_failure": "0272 FileNotFoundError for unextracted report; exact existing ZIP member subsequently read.",
+  "scope": "Only fixed immutable Git and retained evidence reads; external review files only.",
+  "source_git_refs_stage_network_writes": 0
+}

@@ -1,0 +1,149 @@
+3440:     Ok(final_metrics)
+3441: }
+3442: 
+3443: #[derive(Debug, Serialize)]
+3444: pub struct PublicReply {
+3445:     pub ok: bool,
+3446:     pub value: Value,
+3447:     pub solve_trials: u64,
+3448:     pub solve_elapsed_ns: u64,
+3449:     pub body_bytes_sent: usize,
+3450:     pub public_network_ready: bool,
+3451:     pub identity_authority: bool,
+3452: }
+3453: /// Client-local phase identity. Serialized observations retain their existing
+3454: /// string labels; a label is never parsed back into retry or accounting authority.
+3455: #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+3456: #[non_exhaustive]
+3457: pub enum PublicClientStage {
+3458:     Construction,
+3459:     Challenge,
+3460:     SolutionSearch,
+3461:     SolutionBodyResponse,
+3462:     Complete,
+3463:     /// Preserve an otherwise unknown diagnostic label without recognizing it as
+3464:     /// a native phase, even when its text resembles a registered phase name.
+3465:     Unknown(&'static str),
+3466: }
+3467: impl PublicClientStage {
+3468:     pub fn as_str(self) -> &'static str {
+3469:         match self {
+3470:             Self::Construction => "construction",
+3471:             Self::Challenge => "challenge",
+3472:             Self::SolutionSearch => "solution-search",
+3473:             Self::SolutionBodyResponse => "solution-body-response",
+3474:             Self::Complete => "complete",
+3475:             Self::Unknown(label) => label,
+3476:         }
+3477:     }
+3478: }
+3479: impl Serialize for PublicClientStage {
+3480:     fn serialize<S: serde::Serializer>(
+3481:         &self,
+3482:         serializer: S,
+3483:     ) -> std::result::Result<S::Ok, S::Error> {
+3484:         serializer.serialize_str(self.as_str())
+3485:     }
+3486: }
+3487: /// Every read is charged too. The caller must pin server/context/policy; no fallback.
+3488: /// Client-local observations, including failed calls; not admission or cost authority.
+3489: #[derive(Default, Debug, Serialize)]
+3490: pub struct PublicClientMetrics {
+3491:     pub construction_ns: u64,
+3492:     pub challenge_ns: u64,
+3493:     pub solution_search_ns: u64,
+3494:     /// Actual calling-thread CPU for Cookie identity and the complete local
+3495:     /// nonce search, including failed trials and the success/error tail.
+3496:     /// None means unavailable or not entered; it is never a zero estimate.
+3497:     /// This optional local diagnostic changes no signed policy or wire bytes.
+3498:     #[serde(skip_serializing_if = "Option::is_none")]
+3499:     pub solution_search_thread_cpu_ns: Option<u64>,
+3500:     pub solution_trials: u64,
+3501:     pub solution_found: bool,
+3502:     pub solution_body_response_ns: u64,
+3503:     pub total_elapsed_ns: u64,
+3504:     pub failed_stage: Option<PublicClientStage>,
+3505: }
+3506: impl PublicClientMetrics {
+3507:     fn measure_solution_search<T>(
+3508:         &mut self,
+3509:         search: impl FnOnce(&mut Self) -> Result<T>,
+3510:     ) -> Result<T> {
+3511:         let started = ThreadCpuStamp::start();
+3512:         let result = search(self);
+3513:         self.solution_search_thread_cpu_ns = started.and_then(ThreadCpuStamp::finish);
+3514:         result
+3515:     }
+3516: 
+3517:     fn record_failure(&mut self, stage: PublicClientStage, elapsed_ns: u64) {
+3518:         self.failed_stage = Some(stage);
+3519:         match stage {
+3520:             PublicClientStage::Construction => self.construction_ns = elapsed_ns,
+3521:             PublicClientStage::Challenge => self.challenge_ns = elapsed_ns,
+3522:             PublicClientStage::SolutionSearch => self.solution_search_ns = elapsed_ns,
+3523:             PublicClientStage::SolutionBodyResponse => self.solution_body_response_ns = elapsed_ns,
+3524:             PublicClientStage::Complete | PublicClientStage::Unknown(_) => {}
+3525:         }
+3526:     }
+3527: }
+3528: /// Read-only, client-thread CPU observation around an ORIGINAL signed V3
+3529: /// request. Unlike phase wall timings, this interval is actual calling-thread
+3530: /// CPU on the platform that provides ThreadCPUTime; missing/invalid clocks stay
+3531: /// None. The existing PublicClientMetrics JSON and signed Cookie bytes do NOT
+3532: /// change. This is not a GPU price, attack lower bound or server resource debit.
+3533: #[derive(Debug, Serialize)]
+3534: pub struct PublicClientCpuObservation {
+3535:     pub schema: &'static str,
+3536:     pub client_thread_cpu_ns: Option<u64>,
+3537:     pub client_wall_ns: u64,
+3538:     pub solution_trials: u64,
+3539:     pub solution_found: bool,
+3540:     pub solution_search_wall_ns: u64,
+3541:     pub solution_search_thread_cpu_ns: Option<u64>,
+3542:     pub failed_stage: Option<PublicClientStage>,
+3543:     pub native_server_cpu_known: bool,
+3544:     pub gpu_cpu_equivalence_assumed: bool,
+3545:     pub work_profile_qualified: bool,
+3546: }
+3547: 
+3548: /// Separate opt-in measurement entry: the exact original client performs
+3549: /// handshake, Cookie verification, nonce search, caller signing and response
+3550: /// verification. No new request nonce, cached success or resource allowance.
+3551: pub fn call_public_protected_v3_with_cpu_observation(
+3552:     address: SocketAddr,
+3553:     request: &Request,
+3554:     settings: &Settings,
+3555:     pinned_server: &str,
+3556:     caller: &DevelopmentIdentity,
+3557:     policy: PublicPolicy,
+3558: ) -> (
+3559:     Result<PublicReply>,
+3560:     PublicClientMetrics,
+3561:     PublicClientCpuObservation,
+3562: ) {
+3563:     let started = Instant::now();
+3564:     let cpu = ThreadCpuStamp::start();
+3565:     let (result, metrics) = call_public_protected_v3_with_metrics(
+3566:         address,
+3567:         request,
+3568:         settings,
+3569:         pinned_server,
+3570:         caller,
+3571:         policy,
+3572:     );
+3573:     let observation = PublicClientCpuObservation {
+3574:         schema: "public-v3-client-thread-cpu-observation-v1",
+3575:         client_thread_cpu_ns: cpu.and_then(ThreadCpuStamp::finish),
+3576:         client_wall_ns: elapsed_ns(started),
+3577:         solution_trials: metrics.solution_trials,
+3578:         solution_found: metrics.solution_found,
+3579:         solution_search_wall_ns: metrics.solution_search_ns,
+3580:         solution_search_thread_cpu_ns: metrics.solution_search_thread_cpu_ns,
+3581:         failed_stage: metrics.failed_stage,
+3582:         native_server_cpu_known: false,
+3583:         gpu_cpu_equivalence_assumed: false,
+3584:         work_profile_qualified: false,
+3585:     };
+3586:     (result, metrics, observation)
+3587: }
+3588: 

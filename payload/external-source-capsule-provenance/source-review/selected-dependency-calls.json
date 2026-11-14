@@ -1,0 +1,154 @@
+{
+  "schema": "trnm-external-lane-static-selected-dependencies-v1",
+  "source_head": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+  "requirements": "# Scientific/conformance environment only; not a runtime dependency or dynamic install hook.\nnumpy==1.26.4\ncryptography==50.0.2\n",
+  "nonstdlib_or_dynamic_module_imports": {
+    "scripts/ci/check_evaluation_bundle_evidence.py": [
+      "experiments"
+    ],
+    "scripts/ci/check_native_node_supplements.py": [
+      "experiments"
+    ],
+    "formal/pon-nakamoto-v1/ledger.py": [
+      "cryptography"
+    ],
+    "scripts/qualification_runtime.py": [
+      "ci"
+    ],
+    "scripts/run_public_readiness_qualification.py": [
+      "cryptography"
+    ],
+    "scripts/test_qualification_runtime.py": [
+      "ci"
+    ],
+    "formal/pon-nakamoto-v1/strict_signature.py": [
+      "cryptography"
+    ]
+  },
+  "selected_wrapped_calls": [
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 420,
+      "context": [],
+      "call": "validate_historical_cli(__file__, args.root, args.evidence or args.root / 'evidence/pon-client-confirmation-v1')"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 172,
+      "context": [],
+      "call": "validate_historical_cli(__file__,args.root,folder)"
+    },
+    {
+      "path": "scripts/ci/check_native_node_supplements.py",
+      "line": 231,
+      "context": [],
+      "call": "validate_historical_cli(__file__,args.root,args.evidence or args.root/'evidence/pon-native-node-v1')"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 1053,
+      "context": [],
+      "call": "measured_checkout(args.root,folder)"
+    },
+    {
+      "path": "scripts/ci/test_client_confirmation_evidence.py",
+      "line": 29,
+      "context": [
+        "ClientEvidenceTests",
+        "setUpClass"
+      ],
+      "call": "measured_checkout(ROOT, cls.original)"
+    },
+    {
+      "path": "scripts/ci/test_evaluation_bundle_evidence.py",
+      "line": 13,
+      "context": [
+        "CurrentEvaluationEvidenceTests",
+        "setUpClass"
+      ],
+      "call": "measured_checkout(ROOT,cls.folder)"
+    },
+    {
+      "path": "scripts/ci/test_native_node_supplements.py",
+      "line": 21,
+      "context": [
+        "NativeSupplementTests",
+        "test_historical_supplement_replays_its_measured_model_and_zero_settlement"
+      ],
+      "call": "validate_historical_cli(ROOT/'scripts/ci/check_native_node_supplements.py',ROOT,self.folder)"
+    },
+    {
+      "path": "scripts/ci/test_native_session_evidence.py",
+      "line": 19,
+      "context": [
+        "NativeSessionEvidenceTests",
+        "setUpClass"
+      ],
+      "call": "measured_checkout(ROOT,cls.original)"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 144,
+      "context": [
+        "collect"
+      ],
+      "call": "run_bounded(command, b'', timeout=900, stdout_limit=2*1024*1024, stderr_limit=2*1024*1024)"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 150,
+      "context": [
+        "collect"
+      ],
+      "call": "run_bounded([str(binary)], b'', timeout=120, stdout_limit=2*1024*1024, stderr_limit=65536)"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 443,
+      "context": [],
+      "call": "collect(args.out)"
+    },
+    {
+      "path": "scripts/ci/historical_evidence.py",
+      "line": 55,
+      "context": [
+        "validate_historical_cli"
+      ],
+      "call": "measured_checkout(root, folder)"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 75,
+      "context": [
+        "bind_gnu_time"
+      ],
+      "call": "run_bounded([str(executable), '--version'], b'', timeout=5,\n                        stdout_limit=GNU_TIME_PROBE_LIMIT, stderr_limit=GNU_TIME_PROBE_LIMIT)"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 120,
+      "context": [
+        "bind_python_runtime"
+      ],
+      "call": "run_bounded(command, b'', env=environment, timeout=30,\n                        stdout_limit=PYTHON_RUNTIME_PROBE_LIMIT,\n                        stderr_limit=PYTHON_RUNTIME_PROBE_LIMIT)"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "line": 19,
+      "context": [
+        "native"
+      ],
+      "call": "run_bounded([str(path),mode],data,stdout_limit=limit,stderr_limit=4096)"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "line": 18,
+      "context": [
+        "execute_native"
+      ],
+      "call": "run_bounded([str(path)],data)"
+    }
+  ],
+  "source_head_unchanged_by_review": true,
+  "note": "Static closure is conservative; imported collection functions are not thereby invoked by the original --verify historical lane."
+}

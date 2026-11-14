@@ -1,0 +1,8 @@
+{
+  "schema": "trnm-closed-original-sublogs-manifest-v1",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "receipt_directory": "/home/qian-qi/chain-final-consolidation-20261114-root/final-external-evidence-2a8646-v1",
+  "terminal_summary_sha256": "e261ab55ca4eb6104c3087d3e5d2a82fde3009d6cb848a782255cc1e35a83360",
+  "files": []
+}

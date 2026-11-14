@@ -1,0 +1,2 @@
+[fix/chain-owned-process-control-count-20261114 f0f6a4192] fix(ci): require all 16 owned collector controls
+ 3 files changed, 6 insertions(+), 4 deletions(-)

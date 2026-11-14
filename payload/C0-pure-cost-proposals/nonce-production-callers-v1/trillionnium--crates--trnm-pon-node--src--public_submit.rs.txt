@@ -1,0 +1,56 @@
+1: //! Bounded honest-client recovery. No new admission or confirmation authority.
+2: #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+3: pub mod pq;
+4: use crate::{digest, ensure, ingress, Error, ErrorCode, Node, Packet, Result};
+5: use ingress::public_v3::{
+6:     call_public_protected_v3_with_deadline, PublicClientMetrics, PublicClientStage, PublicPolicy,
+7:     PublicReply, Request,
+8: };
+9: use serde::{Deserialize, Serialize};
+10: use serde_json::Value;
+11: use std::{
+12:     collections::{BTreeMap, BTreeSet},
+13:     net::SocketAddr,
+14:     thread,
+15:     time::Duration,
+16:     time::Instant,
+17: };
+18: use trnm_protocol::pon_wire::{hash, Hash};
+19: 
+20: pub const MAX_SUBMIT_ATTEMPTS: u8 = 3;
+21: pub const MAX_RECOVERY_CALLS: u8 = 64;
+22: pub const MAX_PARENT_PACKETS: u8 = 16;
+23: pub const MAX_RECOVERY_MILLISECONDS: u64 = 60_000;
+24: 
+
+225:         ensure(
+226:             self.outcome.attempts.len() < self.plan.max_calls as usize,
+227:             "SUBMIT_RECOVERY_CALL_LIMIT",
+228:         )?;
+229:         let operation = match request {
+230:             Request::Submit { .. } => "submit",
+231:             Request::Head => "head",
+232:             Request::History { .. } => "history",
+233:             _ => return Err("SUBMIT_RECOVERY_OPERATION".into()),
+234:         };
+235:         let raw = serde_json::to_vec(request)?;
+236:         let remaining = self.plan.deadline.saturating_duration_since(Instant::now());
+237:         let (reply, metrics) = call_public_protected_v3_with_deadline(
+238:             self.client.address,
+239:             request,
+240:             self.node.settings(),
+241:             self.client.server_public,
+242:             self.client.identity,
+243:             self.client.policy,
+244:             Some(self.plan.deadline),
+245:         );
+246:         let record = SubmitRecoveryAttempt {
+247:             ordinal: self.outcome.attempts.len() as u64 + 1,
+248:             operation,
+249:             purpose,
+250:             packet: packet.map(hex::encode),
+251:             request_body_digest: hex::encode(hash(b"public-request-body-v3", &[&raw])),
+252:             request_body_bytes: raw.len(),
+253:             elapsed_since_epoch_ns: ns(self.plan.started.elapsed()),
+254:             remaining_before_call_ns: ns(remaining),
+255:             authenticated_reply: reply.as_ref().ok().map(serde_json::to_value).transpose()?,

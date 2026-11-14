@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--git-dir",
+    "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "grep",
+    "-n",
+    "-e",
+    "fn resource_profile",
+    "-e",
+    "policy.id()",
+    "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "--",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3"
+  ],
+  "exit_code": 0,
+  "read_only_no_lazy_fetch": true,
+  "scope": "Only the immutable PublicV3 module subtree; this is symbol location, not full callgraph coverage",
+  "stderr": "",
+  "stdout": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs:572:        assert_eq!(hex::encode(policy.id()), expected);\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs:573:        assert_ne!(hex::encode(policy.id()), previous);\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs:20:            Self::Legacy => policy.id(),\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs:37:    /// CPU, queue, response and kernel limits remain bound through policy.id().\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs:533:    assert_ne!(run.policy.id(), run.policy.growth_id());\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs:52:    pub fn resource_profile(&self) -> Hash {\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs:60:            self.policy.id()\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs:19:        hex::encode(policy.id()),\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs:108:        (&raw, &raw_cookie, &arithmetic_cookie, policy.id()),\ned0d35487f2a67239e4d646fd41c2c7acb5cc740:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs:147:    assert_eq!(raw.resource_profile(), policy.id());\n"
+}

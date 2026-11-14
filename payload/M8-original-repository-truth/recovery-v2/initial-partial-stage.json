@@ -1,0 +1,1330 @@
+{
+  "schema": "trnm-M8-full-owned-partial-stage-v1",
+  "previous_exit": 1,
+  "prior_stage_unchanged": true,
+  "existing_count": 110,
+  "existing_bytes": 1627130,
+  "existing_files": {
+    "M8-original-repository-truth/closed-roster/summary.json": {
+      "bytes": 1266,
+      "version": [
+        16777233,
+        606969256,
+        33152,
+        1,
+        1266,
+        1794653132564581151,
+        1794653132564581151
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/roster-observer-launch.json": {
+      "bytes": 553,
+      "version": [
+        16777233,
+        606969252,
+        33152,
+        1,
+        553,
+        1794653132563926695,
+        1794653132563926695
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/EVIDENCE_INDEX.json": {
+      "bytes": 1914,
+      "version": [
+        16777233,
+        606969247,
+        33152,
+        1,
+        1914,
+        1794653132563283198,
+        1794653132563283198
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/roster-observer.stdout": {
+      "bytes": 23832,
+      "version": [
+        16777233,
+        606969255,
+        33152,
+        1,
+        23832,
+        1794653132564452859,
+        1794653132564452859
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/roster-observer.py": {
+      "bytes": 4721,
+      "version": [
+        16777233,
+        606969254,
+        33152,
+        1,
+        4721,
+        1794653132564316318,
+        1794653132564316318
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/root-terminal-handoff.json": {
+      "bytes": 568,
+      "version": [
+        16777233,
+        606969251,
+        33152,
+        1,
+        568,
+        1794653132563790362,
+        1794653132563790362
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/README.md": {
+      "bytes": 535,
+      "version": [
+        16777233,
+        606969248,
+        33152,
+        1,
+        535,
+        1794653132563400572,
+        1794653132563400572
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/roster-observer-terminal-pages.json": {
+      "bytes": 2001,
+      "version": [
+        16777233,
+        606969253,
+        33152,
+        1,
+        2001,
+        1794653132564054569,
+        1794653132564054569
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/closed-roster-observation.json": {
+      "bytes": 31001,
+      "version": [
+        16777233,
+        606969250,
+        33152,
+        1,
+        31001,
+        1794653132563654196,
+        1794653132563654196
+      ]
+    },
+    "M8-original-repository-truth/closed-roster/closed-original-logs.json": {
+      "bytes": 2753,
+      "version": [
+        16777233,
+        606969249,
+        33152,
+        1,
+        2753,
+        1794653132563528072,
+        1794653132563528072
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-254ed96bef25b345ef52cf61": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969148,
+        33152,
+        1,
+        0,
+        1794653132547678761,
+        1794653132547678761
+      ]
+    },
+    "M8-original-repository-truth/original-copy/original-repository-truth-ed0d35-v1.zip": {
+      "bytes": 198063,
+      "version": [
+        16777233,
+        606969223,
+        33152,
+        1,
+        198063,
+        1794653132559793295,
+        1794653132559793295
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-619b65bb3fd8fabe4208bb56": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969151,
+        33152,
+        1,
+        0,
+        1794653132548053426,
+        1794653132548053426
+      ]
+    },
+    "M8-original-repository-truth/original-copy/verify_official_copy.py": {
+      "bytes": 6688,
+      "version": [
+        16777233,
+        606969230,
+        33152,
+        1,
+        6688,
+        1794653132560893874,
+        1794653132560893874
+      ]
+    },
+    "M8-original-repository-truth/original-copy/original-package-summary.json": {
+      "bytes": 3366,
+      "version": [
+        16777233,
+        606969222,
+        33152,
+        1,
+        3366,
+        1794653132559615837,
+        1794653132559615837
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-package.stdout": {
+      "bytes": 1157,
+      "version": [
+        16777233,
+        606969229,
+        33152,
+        1,
+        1157,
+        1794653132560766624,
+        1794653132560766624
+      ]
+    },
+    "M8-original-repository-truth/original-copy/EVIDENCE_INDEX.json": {
+      "bytes": 43163,
+      "version": [
+        16777233,
+        606969157,
+        33152,
+        1,
+        43163,
+        1794653132548845381,
+        1794653132548845381
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-launch-inputs.json": {
+      "bytes": 344,
+      "version": [
+        16777233,
+        606969224,
+        33152,
+        1,
+        344,
+        1794653132560157585,
+        1794653132560157585
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-b8d45ebed0f4ddabac23d1b3": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969154,
+        33152,
+        1,
+        0,
+        1794653132548360800,
+        1794653132548360800
+      ]
+    },
+    "M8-original-repository-truth/original-copy/official-copy-provenance.json": {
+      "bytes": 57045,
+      "version": [
+        16777233,
+        606969221,
+        33152,
+        1,
+        57045,
+        1794653132559436213,
+        1794653132559436213
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-package.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969228,
+        33152,
+        1,
+        0,
+        1794653132560646666,
+        1794653132560646666
+      ]
+    },
+    "M8-original-repository-truth/original-copy/copy-files.json": {
+      "bytes": 31492,
+      "version": [
+        16777233,
+        606969158,
+        33152,
+        1,
+        31492,
+        1794653132549240671,
+        1794653132549240671
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-package-launch-summary.json": {
+      "bytes": 2002,
+      "version": [
+        16777233,
+        606969226,
+        33152,
+        1,
+        2002,
+        1794653132560413209,
+        1794653132560413209
+      ]
+    },
+    "M8-original-repository-truth/original-copy/copy-verification.json": {
+      "bytes": 44677,
+      "version": [
+        16777233,
+        606969159,
+        33152,
+        1,
+        44677,
+        1794653132549577336,
+        1794653132549577336
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-upload-1d96a5a31898fe1e585584642ede3da88c762416235094021328a3a96fbee6f4.json": {
+      "bytes": 396,
+      "version": [
+        16777233,
+        606969156,
+        33152,
+        1,
+        396,
+        1794653132548594132,
+        1794653132548594132
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-package-launch.json": {
+      "bytes": 1247,
+      "version": [
+        16777233,
+        606969227,
+        33152,
+        1,
+        1247,
+        1794653132560536334,
+        1794653132560536334
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-f3784d4abba66c7c8a0c97a8": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969155,
+        33152,
+        1,
+        0,
+        1794653132548463299,
+        1794653132548463299
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-3be408d8b21485ea65902f15": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969149,
+        33152,
+        1,
+        0,
+        1794653132547812260,
+        1794653132547812260
+      ]
+    },
+    "M8-original-repository-truth/original-copy/rog-launch-producer.py": {
+      "bytes": 2605,
+      "version": [
+        16777233,
+        606969225,
+        33152,
+        1,
+        2605,
+        1794653132560291918,
+        1794653132560291918
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-a3fd7931a2e1262b2552c2bb": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969153,
+        33152,
+        1,
+        0,
+        1794653132548258550,
+        1794653132548258550
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-1eb8ae28a9c78eea28e48906": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969147,
+        33152,
+        1,
+        0,
+        1794653132547526345,
+        1794653132547526345
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-69874a7c11dfe3b1fc8f2e52": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969152,
+        33152,
+        1,
+        0,
+        1794653132548159134,
+        1794653132548159134
+      ]
+    },
+    "M8-original-repository-truth/original-copy/.hepta-lock-51deda1282d0dae70e74fb89": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969150,
+        33152,
+        1,
+        0,
+        1794653132547936843,
+        1794653132547936843
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/producer/package_original_repository_truth_ed0d35_v1.py": {
+      "bytes": 28914,
+      "version": [
+        16777233,
+        606969220,
+        33152,
+        1,
+        28914,
+        1794653132559233339,
+        1794653132559233339
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/pre-update-preflight.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969202,
+        33152,
+        1,
+        0,
+        1794653132555850561,
+        1794653132555850561
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/summary.json": {
+      "bytes": 21340,
+      "version": [
+        16777233,
+        606969214,
+        33152,
+        1,
+        21340,
+        1794653132558358634,
+        1794653132558358634
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fast-forward-ancestry.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969184,
+        33152,
+        1,
+        0,
+        1794653132553113197,
+        1794653132553113197
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetched-commit.stdout": {
+      "bytes": 41,
+      "version": [
+        16777233,
+        606969191,
+        33152,
+        1,
+        41,
+        1794653132554149651,
+        1794653132554149651
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetch-exact-local-bundle.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969188,
+        33152,
+        1,
+        0,
+        1794653132553713986,
+        1794653132553713986
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/verify-source-after.stdout": {
+      "bytes": 423,
+      "version": [
+        16777233,
+        606969216,
+        33152,
+        1,
+        423,
+        1794653132558688633,
+        1794653132558688633
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/runtime-environment.stdout": {
+      "bytes": 205,
+      "version": [
+        16777233,
+        606969209,
+        33152,
+        1,
+        205,
+        1794653132557684845,
+        1794653132557684845
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetched-tree.stdout": {
+      "bytes": 41,
+      "version": [
+        16777233,
+        606969193,
+        33152,
+        1,
+        41,
+        1794653132554457775,
+        1794653132554457775
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/source-before.json": {
+      "bytes": 423,
+      "version": [
+        16777233,
+        606969213,
+        33152,
+        1,
+        423,
+        1794653132558205343,
+        1794653132558205343
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/runtime-environment.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969208,
+        33152,
+        1,
+        0,
+        1794653132557540221,
+        1794653132557540221
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/source-after.json": {
+      "bytes": 423,
+      "version": [
+        16777233,
+        606969212,
+        33152,
+        1,
+        423,
+        1794653132558071927,
+        1794653132558071927
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetched-tree.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969192,
+        33152,
+        1,
+        0,
+        1794653132554303026,
+        1794653132554303026
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/verify-source-after.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969215,
+        33152,
+        1,
+        0,
+        1794653132558538467,
+        1794653132558538467
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fast-forward-ancestry.stdout": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969185,
+        33152,
+        1,
+        0,
+        1794653132553229863,
+        1794653132553229863
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetch-exact-local-bundle.stdout": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969189,
+        33152,
+        1,
+        0,
+        1794653132553857236,
+        1794653132553857236
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fetched-commit.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969190,
+        33152,
+        1,
+        0,
+        1794653132553977444,
+        1794653132553977444
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/pre-update-preflight.stdout": {
+      "bytes": 177,
+      "version": [
+        16777233,
+        606969203,
+        33152,
+        1,
+        177,
+        1794653132556044977,
+        1794653132556044977
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/verify-source-before.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969217,
+        33152,
+        1,
+        0,
+        1794653132558840507,
+        1794653132558840507
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/cargo-version.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969166,
+        33152,
+        1,
+        0,
+        1794653132550147834,
+        1794653132550147834
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fast-forward.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969186,
+        33152,
+        1,
+        0,
+        1794653132553401279,
+        1794653132553401279
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/rust-version.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969210,
+        33152,
+        1,
+        0,
+        1794653132557802928,
+        1794653132557802928
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/initial-status.stdout": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969197,
+        33152,
+        1,
+        0,
+        1794653132555057481,
+        1794653132555057481
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/local-bundle-verify.stdout": {
+      "bytes": 320,
+      "version": [
+        16777233,
+        606969201,
+        33152,
+        1,
+        320,
+        1794653132555684312,
+        1794653132555684312
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/local-bundle-list-heads.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969198,
+        33152,
+        1,
+        0,
+        1794653132555176064,
+        1794653132555176064
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/repository-truth.stderr": {
+      "bytes": 359825,
+      "version": [
+        16777233,
+        606969206,
+        33152,
+        1,
+        359825,
+        1794653132556574308,
+        1794653132556574308
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/initial-head.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969194,
+        33152,
+        1,
+        0,
+        1794653132554606316,
+        1794653132554606316
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/preflight-audit.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969204,
+        33152,
+        1,
+        0,
+        1794653132556201810,
+        1794653132556201810
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/conformance-environment.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969182,
+        33152,
+        1,
+        0,
+        1794653132552796740,
+        1794653132552796740
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/preflight-audit.stdout": {
+      "bytes": 177,
+      "version": [
+        16777233,
+        606969205,
+        33152,
+        1,
+        177,
+        1794653132556373809,
+        1794653132556373809
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/initial-head.stdout": {
+      "bytes": 41,
+      "version": [
+        16777233,
+        606969195,
+        33152,
+        1,
+        41,
+        1794653132554775440,
+        1794653132554775440
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/conformance-environment.stdout": {
+      "bytes": 223,
+      "version": [
+        16777233,
+        606969183,
+        33152,
+        1,
+        223,
+        1794653132552966656,
+        1794653132552966656
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/local-bundle-verify.stderr": {
+      "bytes": 130,
+      "version": [
+        16777233,
+        606969200,
+        33152,
+        1,
+        130,
+        1794653132555523271,
+        1794653132555523271
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/repository-truth.stdout": {
+      "bytes": 473284,
+      "version": [
+        16777233,
+        606969207,
+        33152,
+        1,
+        473284,
+        1794653132557032723,
+        1794653132557032723
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/local-bundle-list-heads.stdout": {
+      "bytes": 46,
+      "version": [
+        16777233,
+        606969199,
+        33152,
+        1,
+        46,
+        1794653132555336188,
+        1794653132555336188
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/rust-version.stdout": {
+      "bytes": 36,
+      "version": [
+        16777233,
+        606969211,
+        33152,
+        1,
+        36,
+        1794653132557936386,
+        1794653132557936386
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/fast-forward.stdout": {
+      "bytes": 3202,
+      "version": [
+        16777233,
+        606969187,
+        33152,
+        1,
+        3202,
+        1794653132553583404,
+        1794653132553583404
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/initial-status.stderr": {
+      "bytes": 0,
+      "version": [
+        16777233,
+        606969196,
+        33152,
+        1,
+        0,
+        1794653132554896607,
+        1794653132554896607
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/verify-source-before.stdout": {
+      "bytes": 423,
+      "version": [
+        16777233,
+        606969218,
+        33152,
+        1,
+        423,
+        1794653132559011382,
+        1794653132559011382
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/cargo-version.stdout": {
+      "bytes": 36,
+      "version": [
+        16777233,
+        606969167,
+        33152,
+        1,
+        36,
+        1794653132550351458,
+        1794653132550351458
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/winner-identity.log": {
+      "bytes": 854,
+      "version": [
+        16777233,
+        606969181,
+        33152,
+        1,
+        854,
+        1794653132552639574,
+        1794653132552639574
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/kaggle-worker-contract.log": {
+      "bytes": 2195,
+      "version": [
+        16777233,
+        606969175,
+        33152,
+        1,
+        2195,
+        1794653132551485704,
+        1794653132551485704
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/owned-runtime-reader.log": {
+      "bytes": 1555,
+      "version": [
+        16777233,
+        606969177,
+        33152,
+        1,
+        1555,
+        1794653132551802286,
+        1794653132551802286
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/provider-contract.log": {
+      "bytes": 2099,
+      "version": [
+        16777233,
+        606969179,
+        33152,
+        1,
+        2099,
+        1794653132552200951,
+        1794653132552200951
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/owned-process-collector.log": {
+      "bytes": 2851,
+      "version": [
+        16777233,
+        606969176,
+        33152,
+        1,
+        2851,
+        1794653132551642203,
+        1794653132551642203
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/owner-cancellation.log": {
+      "bytes": 1642,
+      "version": [
+        16777233,
+        606969178,
+        33152,
+        1,
+        1642,
+        1794653132551962035,
+        1794653132551962035
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/deployment-comparison-audit.log": {
+      "bytes": 3505,
+      "version": [
+        16777233,
+        606969172,
+        33152,
+        1,
+        3505,
+        1794653132550994331,
+        1794653132550994331
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/coordinator-contract.log": {
+      "bytes": 3833,
+      "version": [
+        16777233,
+        606969171,
+        33152,
+        1,
+        3833,
+        1794653132550825581,
+        1794653132550825581
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/source-builder.log": {
+      "bytes": 1662,
+      "version": [
+        16777233,
+        606969180,
+        33152,
+        1,
+        1662,
+        1794653132552406408,
+        1794653132552406408
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/generation-target.log": {
+      "bytes": 2457,
+      "version": [
+        16777233,
+        606969174,
+        33152,
+        1,
+        2457,
+        1794653132551321621,
+        1794653132551321621
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/cancellation-handoff.log": {
+      "bytes": 4352,
+      "version": [
+        16777233,
+        606969170,
+        33152,
+        1,
+        4352,
+        1794653132550650499,
+        1794653132550650499
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/original/ci-observations/w1-postwin-contracts/deployment-evidence-binding.log": {
+      "bytes": 2465,
+      "version": [
+        16777233,
+        606969173,
+        33152,
+        1,
+        2465,
+        1794653132551157955,
+        1794653132551157955
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/driver/run_final_rog_repository_truth_offline_v4.py": {
+      "bytes": 15187,
+      "version": [
+        16777233,
+        606969162,
+        33152,
+        1,
+        15187,
+        1794653132549817210,
+        1794653132549817210
+      ]
+    },
+    "M8-original-repository-truth/original-copy/flat/metadata/closed-original-logs.json": {
+      "bytes": 2753,
+      "version": [
+        16777233,
+        606969164,
+        33152,
+        1,
+        2753,
+        1794653132550001835,
+        1794653132550001835
+      ]
+    },
+    "M8-original-repository-truth/root-static-review/summary.json": {
+      "bytes": 1540,
+      "version": [
+        16777233,
+        606969259,
+        33152,
+        1,
+        1540,
+        1794653132564853274,
+        1794653132564853274
+      ]
+    },
+    "M8-original-repository-truth/root-static-review/producer.py": {
+      "bytes": 2794,
+      "version": [
+        16777233,
+        606969258,
+        33152,
+        1,
+        2794,
+        1794653132564732025,
+        1794653132564732025
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/package_original_external_evidence_ed0d35_v1.py": {
+      "bytes": 14207,
+      "version": [
+        16777233,
+        606969240,
+        33152,
+        1,
+        14207,
+        1794653132562330243,
+        1794653132562330243
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/summary.json": {
+      "bytes": 1878,
+      "version": [
+        16777233,
+        606969245,
+        33152,
+        1,
+        1878,
+        1794653132563143323,
+        1794653132563143323
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/external-M6-to-M8.patch": {
+      "bytes": 18388,
+      "version": [
+        16777233,
+        606969238,
+        33152,
+        1,
+        18388,
+        1794653132562043744,
+        1794653132562043744
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/EVIDENCE_INDEX.json": {
+      "bytes": 2980,
+      "version": [
+        16777233,
+        606969232,
+        33152,
+        1,
+        2980,
+        1794653132561052748,
+        1794653132561052748
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/package_original_repository_truth_ed0d35_v1.py": {
+      "bytes": 28914,
+      "version": [
+        16777233,
+        606969241,
+        33152,
+        1,
+        28914,
+        1794653132562463451,
+        1794653132562463451
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/closed-log-manifest-contract.json": {
+      "bytes": 3461,
+      "version": [
+        16777233,
+        606969237,
+        33152,
+        1,
+        3461,
+        1794653132561902911,
+        1794653132561902911
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/M6-external-packager.py.original": {
+      "bytes": 8897,
+      "version": [
+        16777233,
+        606969233,
+        33152,
+        1,
+        8897,
+        1794653132561292997,
+        1794653132561292997
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/preparation-inputs.json": {
+      "bytes": 26725,
+      "version": [
+        16777233,
+        606969242,
+        33152,
+        1,
+        26725,
+        1794653132562731825,
+        1794653132562731825
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/full-M6-to-M8.patch": {
+      "bytes": 19795,
+      "version": [
+        16777233,
+        606969239,
+        33152,
+        1,
+        19795,
+        1794653132562177285,
+        1794653132562177285
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/README.md": {
+      "bytes": 2268,
+      "version": [
+        16777233,
+        606969235,
+        33152,
+        1,
+        2268,
+        1794653132561559496,
+        1794653132561559496
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/preparation-producer.py": {
+      "bytes": 13397,
+      "version": [
+        16777233,
+        606969243,
+        33152,
+        1,
+        13397,
+        1794653132562895991,
+        1794653132562895991
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/M6-full-packager.py.original": {
+      "bytes": 25585,
+      "version": [
+        16777233,
+        606969234,
+        33152,
+        1,
+        25585,
+        1794653132561426747,
+        1794653132561426747
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/static-identity-proof.json": {
+      "bytes": 4038,
+      "version": [
+        16777233,
+        606969244,
+        33152,
+        1,
+        4038,
+        1794653132563025865,
+        1794653132563025865
+      ]
+    },
+    "M8-original-repository-truth/packager-preparation/both-packagers-precise.patch": {
+      "bytes": 38183,
+      "version": [
+        16777233,
+        606969236,
+        33152,
+        1,
+        38183,
+        1794653132561731287,
+        1794653132561731287
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/external-launcher.py": {
+      "bytes": 1916,
+      "version": [
+        16777233,
+        606969264,
+        33152,
+        1,
+        1916,
+        1794653132565358022,
+        1794653132565358022
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/EVIDENCE_INDEX.json": {
+      "bytes": 3594,
+      "version": [
+        16777233,
+        606969261,
+        33152,
+        1,
+        3594,
+        1794653132564994524,
+        1794653132564994524
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/full-terminal.json": {
+      "bytes": 4465,
+      "version": [
+        16777233,
+        606969267,
+        33152,
+        1,
+        4465,
+        1794653132565799271,
+        1794653132565799271
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/external-start-only.json": {
+      "bytes": 506,
+      "version": [
+        16777233,
+        606969265,
+        33152,
+        1,
+        506,
+        1794653132565488772,
+        1794653132565488772
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/external-invocation.json": {
+      "bytes": 4587,
+      "version": [
+        16777233,
+        606969263,
+        33152,
+        1,
+        4587,
+        1794653132565237815,
+        1794653132565237815
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/README.txt": {
+      "bytes": 261,
+      "version": [
+        16777233,
+        606969262,
+        33152,
+        1,
+        261,
+        1794653132565116107,
+        1794653132565116107
+      ]
+    },
+    "M8-original-repository-truth/root-lane-terminals/full-summary-pin.json": {
+      "bytes": 222,
+      "version": [
+        16777233,
+        606969266,
+        33152,
+        1,
+        222,
+        1794653132565624688,
+        1794653132565624688
+      ]
+    }
+  },
+  "rule": "existing exact targets are verified and retained; missing targets are create-only; no prior stage overwrite"
+}

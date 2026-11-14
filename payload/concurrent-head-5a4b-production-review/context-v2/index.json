@@ -1,0 +1,41 @@
+{
+  "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+  "captures": [
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/store-confirmation-readiness-excerpts.json",
+      "bytes": 18778,
+      "sha256": "aed3c585bfd45854439ee2cb4e4af8bcda97a80c0bdfce011a2ec907df6e87bc"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/trillionnium--crates--trnm-pon-node--src--error.rs.original",
+      "bytes": 37309,
+      "sha256": "0f7952a02aca0dfc9d6da3f38e6a1883b7943ad5b9ab94cfef9b4036dd1395fc"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/trillionnium--crates--trnm-pon-node--src--ingress.rs.original",
+      "bytes": 221433,
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/trillionnium--crates--trnm-pon-node--src--store--confirmation_chainwork_tests.rs.original",
+      "bytes": 7247,
+      "sha256": "d371c338aecd2f8b64fb0869f0f60cd78e08e144b4d0159b38e903dc74bb09a6"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/trillionnium--crates--trnm-pon-node--tests--native_node.rs.original",
+      "bytes": 62584,
+      "sha256": "733aa817d0aa25a915576ab85acd50acc21166afbff526e54895c3ca0ec6b05c"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/error-class-consumers.stdout",
+      "bytes": 315,
+      "sha256": "ac9149b6e91496f443cc0400a7ffa89d22d330dd746ebe109e1ddd138730f09c"
+    },
+    {
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/context-v2/active-rust-pin-references.stdout",
+      "bytes": 798,
+      "sha256": "6ee9cc7f3bc392cf2bbbefebd417372124fbe1f607f21ce1300437acdc20c716"
+    }
+  ],
+  "tests_run": false
+}

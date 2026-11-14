@@ -1,0 +1,22 @@
+--- v4-original-pre-push
++++ diagnostic-pre-push
+@@ -1,5 +1,6 @@
+ #!/opt/homebrew/bin/python3
+ import json,pathlib,subprocess,sys
++sys.stderr.write("hook-enter\n"); sys.stderr.flush()
+ if sys.flags.optimize != 0:
+  raise RuntimeError("optimized Python disables pre-push guards")
+ spec=json.loads(pathlib.Path(__file__).with_name("expected.json").read_text())
+@@ -11,6 +12,7 @@
+  assert remote_ref not in seen
+  seen[remote_ref]={"new":new,"old":old}
+ assert seen==spec["updates"],"unexpected push update"
++sys.stderr.write("advertised-input-pass\n"); sys.stderr.flush()
+ raw=subprocess.check_output(["git","ls-remote","--heads","origin"],timeout=90)
+ actual={}
+ for line in raw.decode().splitlines():
+@@ -18,3 +20,4 @@
+  assert ref.startswith("refs/heads/") and ref[11:] not in actual
+  actual[ref[11:]]=oid
+ assert actual==spec["remote_heads"],"remote set changed after review"
++sys.stderr.write("full-head-map-pass\n"); sys.stderr.flush()

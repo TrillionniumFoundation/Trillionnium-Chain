@@ -1,0 +1,547 @@
+{
+  "schema": "C0-head-protocol-bounded-cause-final-v1",
+  "sealed_at": "2026-11-14T09:08:41.558511+00:00",
+  "run_id": 43567821538,
+  "run_attempt": 1,
+  "job_id": 132376957411,
+  "artifact_id": 14107050061,
+  "source": {
+    "base": null,
+    "candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "tested_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3991880052,
+    "tracked_entries": 41372,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_equal": true,
+  "source_test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+  "snapshot_source": {
+    "path": "/private/tmp/chain-C0-required-ci-final-observation-20261114-v1/summary.json",
+    "bytes": 51365,
+    "sha256": "2634bb4d942018997cb62d542bf411c8083e9e6744d17ef52dfaabd9f2b29644"
+  },
+  "snapshot_observed_started_at": "2026-11-14T09:04:00.215476+00:00",
+  "snapshot_observed_finished_at": "2026-11-14T09:04:07.997130+00:00",
+  "snapshot_atomic": false,
+  "pr": {
+    "number": 847,
+    "state": "open",
+    "draft": true,
+    "title": "Converge fixed Chain/Hepta closure source and evidence contracts",
+    "updated_at": "2026-11-14T06:44:28Z",
+    "mergeable": null,
+    "mergeable_state": "unknown",
+    "auto_merge": null,
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "head": {
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "label": "TrillionniumFoundation:fix/chain-hepta-closure-candidate-20261109-481716"
+    },
+    "base": {
+      "ref": "main",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "label": "TrillionniumFoundation:main"
+    },
+    "head_repo": "TrillionniumFoundation/Trillionnium-Chain",
+    "base_repo": "TrillionniumFoundation/Trillionnium-Chain"
+  },
+  "run": {
+    "id": 43567821538,
+    "name": "trnm-required-baseline",
+    "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "run_attempt": 1,
+    "event": "pull_request",
+    "status": "in_progress",
+    "conclusion": null,
+    "created_at": "2026-11-14T06:44:40Z",
+    "run_started_at": "2026-11-14T06:44:40Z",
+    "updated_at": "2026-11-14T07:42:29Z",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538"
+  },
+  "job": {
+    "id": 132376957411,
+    "name": "protocol-contract",
+    "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "run_id": 43567821538,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-14T07:32:45Z",
+    "completed_at": "2026-11-14T08:39:09Z",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957411",
+    "in_progress_steps": [],
+    "failed_steps": [
+      {
+        "name": "Run actual protocol-contract checks",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-14T07:35:52Z",
+        "completed_at": "2026-11-14T08:39:00Z"
+      }
+    ],
+    "last_completed_steps": [
+      {
+        "name": "Post Checkout exact candidate",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-11-14T08:39:06Z",
+        "completed_at": "2026-11-14T08:39:07Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-11-14T08:39:07Z",
+        "completed_at": "2026-11-14T08:39:07Z"
+      }
+    ]
+  },
+  "snapshot_counts": {
+    "completed:failure": 8,
+    "in_progress:null": 4,
+    "completed:success": 7
+  },
+  "four_still_running": [
+    {
+      "id": 132376957303,
+      "name": "prospective Rust shard (quality)",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "run_id": 43567821538,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-14T07:32:45Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957303",
+      "in_progress_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-14T07:39:33Z",
+          "completed_at": null
+        }
+      ],
+      "failed_steps": [],
+      "last_completed_steps": [
+        {
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T07:37:35Z",
+          "completed_at": "2026-11-14T07:37:43Z"
+        },
+        {
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T07:37:43Z",
+          "completed_at": "2026-11-14T07:39:33Z"
+        }
+      ]
+    },
+    {
+      "id": 132376957370,
+      "name": "rust-baseline shard (quality)",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "run_id": 43567821538,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-14T07:32:45Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957370",
+      "in_progress_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-14T07:36:49Z",
+          "completed_at": null
+        }
+      ],
+      "failed_steps": [],
+      "last_completed_steps": [
+        {
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T07:35:36Z",
+          "completed_at": "2026-11-14T07:35:40Z"
+        },
+        {
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T07:35:40Z",
+          "completed_at": "2026-11-14T07:36:49Z"
+        }
+      ]
+    },
+    {
+      "id": 132376957371,
+      "name": "prospective Rust shard (runtime)",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "run_id": 43567821538,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-14T07:32:44Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957371",
+      "in_progress_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-14T07:37:59Z",
+          "completed_at": null
+        }
+      ],
+      "failed_steps": [],
+      "last_completed_steps": [
+        {
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T07:36:09Z",
+          "completed_at": "2026-11-14T07:36:15Z"
+        },
+        {
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T07:36:15Z",
+          "completed_at": "2026-11-14T07:37:59Z"
+        }
+      ]
+    },
+    {
+      "id": 132376957411,
+      "name": "protocol-contract",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "run_id": 43567821538,
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-14T07:32:45Z",
+      "completed_at": "2026-11-14T08:39:09Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957411",
+      "in_progress_steps": [],
+      "failed_steps": [
+        {
+          "name": "Run actual protocol-contract checks",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-14T07:35:52Z",
+          "completed_at": "2026-11-14T08:39:00Z"
+        }
+      ],
+      "last_completed_steps": [
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-14T08:39:06Z",
+          "completed_at": "2026-11-14T08:39:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-14T08:39:07Z",
+          "completed_at": "2026-11-14T08:39:07Z"
+        }
+      ]
+    },
+    {
+      "id": 132376957434,
+      "name": "rust-baseline shard (runtime)",
+      "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "run_id": 43567821538,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-14T07:32:46Z",
+      "completed_at": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957434",
+      "in_progress_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-14T07:39:11Z",
+          "completed_at": null
+        }
+      ],
+      "failed_steps": [],
+      "last_completed_steps": [
+        {
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T07:37:18Z",
+          "completed_at": "2026-11-14T07:37:25Z"
+        },
+        {
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T07:37:25Z",
+          "completed_at": "2026-11-14T07:39:11Z"
+        }
+      ]
+    }
+  ],
+  "whole_zip": {
+    "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/official-complete-artifact-v1/C0-head-protocol-14107050061.zip",
+    "bytes": 7047002,
+    "sha256": "0cca9baae976a39bf7e38bec8f942e75053e44e9637233c89d177ee249a6c0a9"
+  },
+  "member_count": 109,
+  "all_member_crc_sha_verified": true,
+  "failure_evidence": {
+    "systemd_member": "from-zero-native-host/systemd-run.log",
+    "systemd_line": 7,
+    "systemd_value": {
+      "passed": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ]
+    },
+    "manifest": {
+      "name": "from-zero-native/manifest.json",
+      "bytes": 73968,
+      "compressed_bytes": 11355,
+      "crc32": "77f572ef",
+      "sha256": "c30ad811fa3e7f6a4bf63585bd44e3607bba5ed71df90f6a451e419d2aadb7ba",
+      "directory": false
+    },
+    "confirmation_report": {
+      "name": "from-zero-native/confirmation/report.json",
+      "bytes": 12196577,
+      "compressed_bytes": 553248,
+      "crc32": "0ab53522",
+      "sha256": "bcd60bf212739cd58633d2c1db85192d1460666b90aa6f3e309a64551e6aba03",
+      "directory": false
+    }
+  },
+  "native_child_invocations": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "native_named_pass_count": 5,
+  "native_execution_completed": true,
+  "all_named_tests_passed": true,
+  "business_acceptance_passed": false,
+  "native_child_exit": 1,
+  "host_controller_failure": null,
+  "host_final_errors": [],
+  "original_parameters": {
+    "window_ns": 4000000000,
+    "pressure_workers": 16,
+    "signed_packets": 7,
+    "confirmation_depth": 6,
+    "same_packet_sequence": true
+  },
+  "phases": [
+    {
+      "mode": "attack-free-baseline",
+      "workers": 0,
+      "window_ns": 4000000000,
+      "signed_submit_ack_attempts": 7,
+      "signed_submit_ack_in_window": 7,
+      "history_responses_in_window": 7,
+      "replay_records": 7,
+      "replay_accepted": 7,
+      "confirmed_transactions": 1,
+      "confirmed_before_original_end": true,
+      "confirmation_ended_ns": 3200564462,
+      "finite_business_target_met": true,
+      "invariant_target_met": true,
+      "accounting_closed": true,
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "full_native_state_equal": true,
+      "verification_errors": [],
+      "replay_timeline": [
+        {
+          "history_call_index": 0,
+          "replay_started_ns": 216600833,
+          "replay_ended_ns": 903579927,
+          "replay_wall_ns": 686979094,
+          "replay_thread_cpu_ns": 85019141,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 1,
+          "replay_started_ns": 908129863,
+          "replay_ended_ns": 1210423616,
+          "replay_wall_ns": 302293753,
+          "replay_thread_cpu_ns": 73158314,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 2,
+          "replay_started_ns": 1290650457,
+          "replay_ended_ns": 1603567527,
+          "replay_wall_ns": 312917070,
+          "replay_thread_cpu_ns": 75842954,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 3,
+          "replay_started_ns": 1607900144,
+          "replay_ended_ns": 1994711093,
+          "replay_wall_ns": 386810949,
+          "replay_thread_cpu_ns": 75645878,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 4,
+          "replay_started_ns": 1999390773,
+          "replay_ended_ns": 2308687308,
+          "replay_wall_ns": 309296535,
+          "replay_thread_cpu_ns": 75356546,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 5,
+          "replay_started_ns": 2391102555,
+          "replay_ended_ns": 2704220316,
+          "replay_wall_ns": 313117761,
+          "replay_thread_cpu_ns": 78726774,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 6,
+          "replay_started_ns": 2708219777,
+          "replay_ended_ns": 3199458102,
+          "replay_wall_ns": 491238325,
+          "replay_thread_cpu_ns": 98402621,
+          "replay_accepted": true,
+          "replay_error": null
+        }
+      ]
+    },
+    {
+      "mode": "from-zero-pressure",
+      "workers": 16,
+      "window_ns": 4000000000,
+      "signed_submit_ack_attempts": 7,
+      "signed_submit_ack_in_window": 7,
+      "history_responses_in_window": 2,
+      "replay_records": 2,
+      "replay_accepted": 1,
+      "confirmed_transactions": 0,
+      "confirmed_before_original_end": false,
+      "confirmation_ended_ns": null,
+      "finite_business_target_met": false,
+      "invariant_target_met": true,
+      "accounting_closed": true,
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "full_native_state_equal": false,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "replay_timeline": [
+        {
+          "history_call_index": 0,
+          "replay_started_ns": 1895298265,
+          "replay_ended_ns": 3797524870,
+          "replay_wall_ns": 1902226605,
+          "replay_thread_cpu_ns": 89332169,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        {
+          "history_call_index": 1,
+          "replay_started_ns": 3896652901,
+          "replay_ended_ns": 4094626530,
+          "replay_wall_ns": 197973629,
+          "replay_thread_cpu_ns": 7936872,
+          "replay_accepted": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        }
+      ]
+    }
+  ],
+  "independent_sample": {
+    "not_prospective_job": 132376957499,
+    "not_prospective_artifact": 14106191819,
+    "prospective_commit_not_tested_by_this_job": "34fd3082d9d8862d39178e0a5334387841c05af1",
+    "not_cross_cost_jobs": [
+      132376957328,
+      132376957441
+    ]
+  },
+  "limits": [
+    "One observed finite hosted execution; no throughput, production activation or independent WAN qualification.",
+    "Caller-thread CPU and replay wall times do not establish a unique micro-level bottleneck.",
+    "No newer local M5 source was executed or qualified by this C0 job.",
+    "No local/native execution, dispatch, rerun, cancel, PR write or stage materialization occurred in this diagnostic."
+  ],
+  "new_native_executions": false,
+  "source_mutations": false,
+  "stage_writes": false
+}

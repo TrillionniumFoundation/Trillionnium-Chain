@@ -1,0 +1,1 @@
+Original full repository lane and separate worker component reached actual terminal exit 0; external is launch only in this group and is not a pass. These records establish no hosted/four-second qualification. All original failures remain separately preserved.

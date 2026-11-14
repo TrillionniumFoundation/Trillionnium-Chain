@@ -1,0 +1,14 @@
+{
+  "index": {
+    "bytes": 1824,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-R1-payload-scope-static-review-20261114-v1/EVIDENCE_INDEX.json"
+    },
+    "path": "EVIDENCE_INDEX.json",
+    "sha256": "888c0852ee4259c158d9861784446f63d21eb2e9a32087e9896c914bd6d6e12f"
+  },
+  "no_scans_tests_or_target_helpers_executed": true,
+  "source_pins_unchanged": true,
+  "status": "STATIC_ONLY_V1_REVIEW_CLOSED"
+}

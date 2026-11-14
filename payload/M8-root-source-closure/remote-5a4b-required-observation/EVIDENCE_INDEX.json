@@ -1,0 +1,91 @@
+{
+  "files": [
+    {
+      "bytes": 96613,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-check-runs-normalized.json",
+      "sha256": "ac434909e42b747e177f60f937a39def6b3cdeab6b4e77d99a618e70bb89b108"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-check-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 373638,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-check-runs-page-001.stdout",
+      "sha256": "86462724c72adff6db331d807d0e4a32d44f8212a696ec878833077ae270e208"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-check-runs-page-002.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 238070,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-check-runs-page-002.stdout",
+      "sha256": "8a365b5ccc3163d4ca00278074ba4b4875f92c398ac7842ff843a06ae509640e"
+    },
+    {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-required-runs-normalized.json",
+      "sha256": "262540316eb65efbf1e4e9e1b700e6328753a20f291a772a05c997925e851285"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-required-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15157,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/N-required-runs-page-001.stdout",
+      "sha256": "5a8fa87c751c3b3a4bcce39eda0376fc867deb9faccd2745c1d3c021cea9d18d"
+    },
+    {
+      "bytes": 94421,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/expected-heads-with-reviewed-N.json",
+      "sha256": "3181b23cdbec589abb215330ea16676914d40f5a1d639f74df5027523bde245b"
+    },
+    {
+      "bytes": 132555,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/frozen-0170-branches.json",
+      "sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734"
+    },
+    {
+      "bytes": 527,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/heads-summary.json",
+      "sha256": "610e48f7aed35f8f8724389b99953a3bbde9c722a1954e25e6b37ae498a810d3"
+    },
+    {
+      "bytes": 11717,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/observer.py",
+      "sha256": "309963ee018b3c36243bb014c414160e002b786e0b563ca2a56de31b35d41423"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/pr847.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38700,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/pr847.stdout",
+      "sha256": "7db19e6ecbd0b195816283a9a2dde54163182b633cda672c384b6e1572ac94f0"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/refs-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 87154,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/refs-heads.stdout",
+      "sha256": "4bb28d857e62ad05457ff6f58b3e6caa9a436b1d5d02f802e4abed0b1925487d"
+    },
+    {
+      "bytes": 10949,
+      "path": "/private/tmp/chain-prci-remote-5a4b-required-observation-20261114-v1/summary.json",
+      "sha256": "4718a50f81f9c98ec0f4b9be4225a852be416af900c6ecfca33ba92f463ae07f"
+    }
+  ],
+  "schema": "trnm-readonly-remote-observation-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

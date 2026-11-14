@@ -1,0 +1,39 @@
+{
+  "schema": "root-reviewed-external-evidence-driver-v2-preparation-v1",
+  "original": {
+    "path": "/private/tmp/chain-architecture-external-evidence-driver-preparation-20261114-v1/run_final_rog_external_evidence_existing_source_v1.py",
+    "bytes": 15634,
+    "sha256": "35fe325b732b7e7d35c257f03ebfb513b77fc45a9dc3e87b9ea4a9c278cc2944"
+  },
+  "driver": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/run_final_rog_external_evidence_existing_source_v2.py",
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "preserved_function_AST": [
+    "require",
+    "sha_file",
+    "run",
+    "git"
+  ],
+  "original_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "external-evidence-contract"
+  ],
+  "lane_timeout_seconds": 2700,
+  "selectors_unset": [
+    "TRNM_NATIVE_WORK",
+    "TRNM_NATIVE_EXECUTOR",
+    "TRNM_NATIVE_SESSION",
+    "TRNM_EXECUTION_WORKERS",
+    "TRNM_PON_EVALUATION_POLICY"
+  ],
+  "selector_current_source_review": {
+    "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/external-selector-current-v1/actual-environment-expressions.json",
+    "sha256": "b62e7780af67666aed4c60616e619e2e5b1e9948bbcb4c62fa9056cfef96d7ef"
+  },
+  "driver_executed": false,
+  "source_edited": false,
+  "reviewed_diff_sha256": "85859ecebddc2409ebf693bb9b002bfe0f331cbbfa2e9822780d2d379dd2efe5"
+}

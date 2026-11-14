@@ -1,0 +1,1278 @@
+{
+  "fixed_source": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "peer_source": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+  "scope": "57-file declared static dependency closure re-read from current Git; AST actual expressions, including tests and receipt dictionaries explicitly labelled",
+  "inputs": [
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "sha256": "91b719ddec7a3cb8f51ecb1db594f273b1fe2e7485a9a75ac91186b7cc28806b",
+      "git_blob": "b2916e9e53611df5869e76355dc69dbd6dcba152"
+    },
+    {
+      "path": "scripts/ci/check_completion_evidence.py",
+      "sha256": "b7ddf1d05b10611bf0810773e1cfd1a1b0d9f9258fd010326dac20621a736713",
+      "git_blob": "2d24dd0962956d5bf9f8271449961afd401d23ae"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "sha256": "4896fb542cc1ce12e1db748949163096a54d70343a7872f2601110703adb3d4f",
+      "git_blob": "bc5c7675a0564c2ea948ee82eef42b1adbd6d5fc"
+    },
+    {
+      "path": "scripts/ci/check_four_priority_evidence.py",
+      "sha256": "7421e526adda4a6d82a330968a88fdeb4866a9ddd16f0346efd89d28451f7c7f",
+      "git_blob": "1e28c4d73e249b09540f1078239232cc5a6cedb5"
+    },
+    {
+      "path": "scripts/ci/check_invariant_evidence.py",
+      "sha256": "1d21d001c3de0305e4718de76daf79c9f74a7cfc66522484b1db3e76c409a6ff",
+      "git_blob": "4d566e12bbc182adb6316fde3212874284161999"
+    },
+    {
+      "path": "scripts/ci/check_native_node_supplements.py",
+      "sha256": "2c89ce9f407303ada700eaaeaa74b8e495a7c83f1868836f73154f72239d324f",
+      "git_blob": "21a2bdfd06f62684c6fafdd9bd1d08ea967b7c53"
+    },
+    {
+      "path": "scripts/ci/check_pon_evidence.py",
+      "sha256": "285d6b9924a2cd0e708fb170f55629248216d9a85385159093718e2f8cfc9f83",
+      "git_blob": "550e12d05a335358ef58919c8ab1998a0d8538bc"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "sha256": "6cf838deac78ae2f185c74b0f5d5c3c1ad12ca1116a874210570bfe57bbfe86d",
+      "git_blob": "397bebcfffe47fe3747df625f053e1b7b7c4de53"
+    },
+    {
+      "path": "scripts/ci/check_repository.py",
+      "sha256": "776cb1a0cb604e9614b6f7d0e7833f95b84507354b2b9a9152e8302e0f732cde",
+      "git_blob": "7e7fd7d10d2063d490d8c8bea8e96e26a196ac21"
+    },
+    {
+      "path": "scripts/ci/prepare_evidence_sources.py",
+      "sha256": "6fe88742190e82e2045d26602b4375ed867602b148314554de7d8aa1b6a2f18c",
+      "git_blob": "da2067d899f2772654dddbd0eae67243cac9b3c4"
+    },
+    {
+      "path": "scripts/ci/report_module_evidence.py",
+      "sha256": "70941e508e48ef2f82553482b39b2b104bede82edfd9963e0d7e8f23343ff8bb",
+      "git_blob": "be7b893faeee8c537b95472976a5a9308eb0b0ca"
+    },
+    {
+      "path": "scripts/ci/test_client_confirmation_evidence.py",
+      "sha256": "ff9cde17b9426add416a8984e1ff951dd919ed9a9e4d61474bbbab66794542c5",
+      "git_blob": "24eca8bd3620e200dc2fe7b0be34e1fc346c1915"
+    },
+    {
+      "path": "scripts/ci/test_completion_evidence.py",
+      "sha256": "5403b9ba923da2f2b90cea45876305df525e557894def6f506e015d80f8a22d3",
+      "git_blob": "fb510dc7faaa30d2503515caebd9a25eca173875"
+    },
+    {
+      "path": "scripts/ci/test_evaluation_bundle_evidence.py",
+      "sha256": "e6565394f56796bea6a133448a6c923c7a0d59254aa93c1f3b6c028eb3a92bd0",
+      "git_blob": "99d64ff58792b6603416b70ac404636d7858db50"
+    },
+    {
+      "path": "scripts/ci/test_evidence_sources.py",
+      "sha256": "c04d980d6e9f7efe3a4aa188231df2d06828b003aae81aea9bb05fa914a6f093",
+      "git_blob": "10fcaa46cbe7a54f10b3d522cec709a39a823fae"
+    },
+    {
+      "path": "scripts/ci/test_four_priority_evidence.py",
+      "sha256": "4df81f556e0a9e93dea61074af2ae9cdc0a4bf29949cb13a9f17b71f11ac51a0",
+      "git_blob": "360642c88718353fe22076251b510fec5b068db2"
+    },
+    {
+      "path": "scripts/ci/test_invariant_evidence.py",
+      "sha256": "1886641ce98079569627f2e57141eea4b998b717410fbe27200c68a8c7155813",
+      "git_blob": "fffa06c639f309cecde9543cfed4da503b9f5aaa"
+    },
+    {
+      "path": "scripts/ci/test_native_node_supplements.py",
+      "sha256": "09c584f0cb79bdd238b4498452c701d77fe65abce1ba36c5183699bae6a84c74",
+      "git_blob": "35c73404df5a79a733e551ad714ed70c05dbc66e"
+    },
+    {
+      "path": "scripts/ci/test_native_session_evidence.py",
+      "sha256": "2b587695f81799209ebf616e3f5eba9fb3e043f7d9e8f1b56f8d0e7ec0f1eeb3",
+      "git_blob": "f6dd0ac0f049fd1e6fa0d234ac1337b28719c5a4"
+    },
+    {
+      "path": "scripts/ci/test_pon_evidence.py",
+      "sha256": "ab63d4f65b10d5737f6148f7bb06da829b91008fcb0c7845429e0124252eeb07",
+      "git_blob": "23abafd1bfe163de00f953ca96348452951df589"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "sha256": "e514e11f8835f58a281f9d35a2d31a3c890134a3742b8a6cec2e01038c51216e",
+      "git_blob": "7f2275d74692eb89c3b85b8048f5b514d490e8ec"
+    },
+    {
+      "path": "scripts/ci/test_repository.py",
+      "sha256": "ae1406e6724865f4af6d5e01f9edcc0187081fabd2976cc4a8d7fa7aefc669d5",
+      "git_blob": "e72cf3772c286f87320522d02916a8c19b19138e"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "sha256": "d770853146c8ef77bf704678361284084ea828ff38ff3bb4add09033aa33a8d0",
+      "git_blob": "4df15825e6483a1200eb2464f57abb6335883e1c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+      "git_blob": "ea90d7df31a6765302d59ae53a86ed5486dc7618"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+      "sha256": "a8c8af074104959eafdb1b077a541198beecfe402549cc43711cb2dbf84e0f22",
+      "git_blob": "421846ec0053d406ef6bac749ca105ea18641c84"
+    },
+    {
+      "path": "scripts/ci/historical_evidence.py",
+      "sha256": "3bf91d29a598fabc75c6b1b0f292795fd5c8a1d1917309f860f54bd28e54d401",
+      "git_blob": "ab2763d73d92170fff721f496cfcfd22c2e92ee9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+      "sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+      "git_blob": "c0d1447b6caec75a64736150e651c127d8385f08"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
+      "sha256": "f2d19f53db4545e2cf841fcac2d85a30e4ead38ca0b64b15f01b172028af9621",
+      "git_blob": "629236ee5da4a1c61b52b779fd6441c6d6b4b1d1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "git_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reference.py",
+      "sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "git_blob": "76f61ae20aa924ce2df2ebfa0029d8b9b3cce04c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/model_attribution.py",
+      "sha256": "7a8674186337a135d0f47d19349868a85fd827754469ee345379f063e36bb41e",
+      "git_blob": "27c3d4a872558a90084dab7cd1a7794a0e516b75"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2",
+      "git_blob": "e12e7839f406056bab9c05086baacb0059627835"
+    },
+    {
+      "path": "scripts/ci/check_detailed_contracts.py",
+      "sha256": "efc146dbab8ee62491a5b7ca587ab7614867107a284b5d33a5d1a4f6b35f7781",
+      "git_blob": "7dd0db9b9309ddf5a701d15dbe99819e065d700b"
+    },
+    {
+      "path": "scripts/ci/check_applicability.py",
+      "sha256": "1651c8adf3f86bb5302d84709192bee5d2703650be02e8d365c2a2f4142fa3f2",
+      "git_blob": "0f4f39f26befa3fc2dffc639e73ff474a8dfc977"
+    },
+    {
+      "path": "scripts/ci/check_invariants.py",
+      "sha256": "39bacd9521f80b89ab67dc7237c768cc56fce9a1f0834620b0f6cd5bb6625b15",
+      "git_blob": "46d8181d2049249ce7be086286e99acf69a0dd14"
+    },
+    {
+      "path": "scripts/ci/report_current_implementation.py",
+      "sha256": "07332fe871f501a0e0ba71ab0bc8474b89d4208244589dfb8d356afa38320c24",
+      "git_blob": "b36239c6e2205459e92f5193b77c36f8b4f802ac"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "sha256": "cff43eeccc06d7ca8e8cbc533bc04d599ac043af9835efcaff7e324d16f2d5b4",
+      "git_blob": "7865f55cb80523b04ae623c38f05fc7567ee71e8"
+    },
+    {
+      "path": "scripts/run_public_readiness_qualification.py",
+      "sha256": "a90ed462238959225628fee9447a706b16cf0e278df6d5e8324b15bfabe55bbd",
+      "git_blob": "e21bf151d9202392b1658d300e05960a913b6809"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "sha256": "7dfc0b3afd5c51472c4be7874379a26dbb76bbe5951822574bc258e859d5e8ca",
+      "git_blob": "04ee3ee811605a3db050bf77def6cba839237c66"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "git_blob": "b8579d1ea76e8c84214570f3f08d84595bfc77b6"
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "git_blob": "fe710e05048916145180cf1cf8870bc31a94dec8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+      "git_blob": "b0cedca3a0423f2563359a8645ba322f966804dc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+      "git_blob": "bc2f7ab213bd598c8028030da9907b40b2e20e1b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "sha256": "0af0fd022b3c75ec960dc27ca0c578d3852724936029bba092b23be6ff3d6e55",
+      "git_blob": "e9d6ad454ef13c6774a093ed903983f3a30d5988"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_session.py",
+      "sha256": "ff6aec3622e4301d9019528ed61a79e5ce37b79f2069871c8b44e6239ab50b72",
+      "git_blob": "5135866ddca5712f77730655f5c779209a41915a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation_round.py",
+      "sha256": "c36d68fccddc3911b226de0b519aca7607ada3dbfdc8b68f341db524d2fc2e9b",
+      "git_blob": "ba3a7c71ca0cb000b36b1384ea7b36584c32c30a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "git_blob": "eb5f30a1b4f67c9117d696da6233ff90655ae218"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+      "git_blob": "71fb186646c1e61672bf4cfdb56bbf46d5d3863a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/inference_receipt.py",
+      "sha256": "25eb9504d99f3e555c7d7adad8e7f6d5b2ad160b19b8576035d18b521c64bd76",
+      "git_blob": "e741f38056beb0b893ee30406fcb09fd14dbb953"
+    },
+    {
+      "path": "scripts/ci/check_cross_arch_cost.py",
+      "sha256": "f8f0f99c1f4a48d16d51f9257472645532626fc5202faa08c1453eaab9f4984f",
+      "git_blob": "5fbdbbf4c1ace9af059c3fbcb85ea9977e27f4ea"
+    },
+    {
+      "path": "scripts/ci/read_native_cache_observation.py",
+      "sha256": "66da3ae13ded590fbef939233a158a9ca9ad38567f70a89d9796f01bbdab1e3b",
+      "git_blob": "eb60b89a8e4f6bd29a6bc2405e538b3d610add75"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777"
+    },
+    {
+      "path": "scripts/ci/check_zero_locality_cost.py",
+      "sha256": "4c118e22783b7acd434c6853ed0110c8ce1ac6c9aa999980e2fc58dd1f24697f",
+      "git_blob": "af98787a3b13f76776c5a25fa2c967deb44ef56b"
+    },
+    {
+      "path": "scripts/ci/check_maintenance_cost.py",
+      "sha256": "373b83538fa1fbf50c4c203e7fb90b21eeb33c5b0c7df171a3e64783177e9f96",
+      "git_blob": "39ff4dd4e85d6a3bf6e4dc3ce61454999342809f"
+    },
+    {
+      "path": "scripts/ci/check_one_zero_locality_cost.py",
+      "sha256": "8285a801bc71703594cd375df8e90b07e55a22d443bee427d5eacfd5634b4eb1",
+      "git_blob": "376ebd12c524bb91aa545afbb9b2e95120b89d8f"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee"
+    }
+  ],
+  "expressions": [
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 370,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "os.environ.pop('TRNM_NATIVE_WORK', None)"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 164,
+      "context": [
+        "validate"
+      ],
+      "expression": "overrides.get('TRNM_EXECUTION_WORKERS')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 169,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['cargo_locked']"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 169,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['cargo_offline']"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 170,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['physical_power_loss']"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 273,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "pipeline_env.get('TRNM_NATIVE_EXECUTOR')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 165,
+      "context": [
+        "validate"
+      ],
+      "expression": "overrides.get('TRNM_NATIVE_WORK', '')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 166,
+      "context": [
+        "validate"
+      ],
+      "expression": "overrides.get('TRNM_NATIVE_EXECUTOR', '')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 248,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "env.get('TRNM_EXECUTION_WORKERS')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 251,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "env.get('TRNM_NATIVE_EXECUTOR')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 271,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "pipeline_env.get('TRNM_NATIVE_SESSION', '')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 272,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "pipeline_env.get('TRNM_NATIVE_WORK', '')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 249,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "env.get('TRNM_NATIVE_WORK', '')"
+    },
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "line": 250,
+      "context": [
+        "validate_session"
+      ],
+      "expression": "env.get('TRNM_NATIVE_SESSION', '')"
+    },
+    {
+      "path": "scripts/ci/check_completion_evidence.py",
+      "line": 120,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['temporary_filesystem']"
+    },
+    {
+      "path": "scripts/ci/check_completion_evidence.py",
+      "line": 120,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['test_threads']"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 93,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['cargo_locked']"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 93,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['cargo_offline']"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 93,
+      "context": [
+        "validate"
+      ],
+      "expression": "q['environment']['physical_power_loss']"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 92,
+      "context": [
+        "validate"
+      ],
+      "expression": "row['environment_overrides'].get('TRNM_NATIVE_EXECUTOR','').endswith('/release/examples/pon_execute')"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 92,
+      "context": [
+        "validate"
+      ],
+      "expression": "row['environment_overrides'].get('TRNM_EXECUTION_WORKERS')"
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "line": 92,
+      "context": [
+        "validate"
+      ],
+      "expression": "row['environment_overrides'].get('TRNM_NATIVE_EXECUTOR','')"
+    },
+    {
+      "path": "scripts/ci/check_native_node_supplements.py",
+      "line": 38,
+      "context": [
+        "replay_expectations"
+      ],
+      "expression": "os.environ.pop('TRNM_NATIVE_WORK',None)"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 192,
+      "context": [
+        "validate_environment"
+      ],
+      "expression": "environment.get('python')"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 886,
+      "context": [
+        "validate_pipeline_executable"
+      ],
+      "expression": "environment.get('resource_observer')"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 992,
+      "context": [
+        "validate"
+      ],
+      "expression": "validate_environment(root,report,load(safe(folder,'baseline/qualification.json')))"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 197,
+      "context": [
+        "validate_environment"
+      ],
+      "expression": "environment.get(package)"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 206,
+      "context": [
+        "validate_environment"
+      ],
+      "expression": "environment['child_python3']"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 191,
+      "context": [
+        "validate_environment"
+      ],
+      "expression": "environment.get(package)"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 1037,
+      "context": [
+        "validate"
+      ],
+      "expression": "report['environment']['cargo_jobs']"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 1037,
+      "context": [
+        "validate"
+      ],
+      "expression": "report['environment']['test_threads']"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 1037,
+      "context": [
+        "validate"
+      ],
+      "expression": "report['environment']['gpu_used']"
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "line": 1037,
+      "context": [
+        "validate"
+      ],
+      "expression": "report['environment']['vram_bytes']"
+    },
+    {
+      "path": "scripts/ci/test_client_confirmation_evidence.py",
+      "line": 118,
+      "context": [
+        "ClientEvidenceTests",
+        "test_native_backend_must_be_explicit"
+      ],
+      "expression": "self.row('native-client-confirmation')['environment_overrides'].pop('TRNM_NATIVE_EXECUTOR')"
+    },
+    {
+      "path": "scripts/ci/test_client_confirmation_evidence.py",
+      "line": 135,
+      "context": [
+        "ClientEvidenceTests",
+        "test_physical_power_loss_is_not_inferred"
+      ],
+      "expression": "self.qualification['environment']['physical_power_loss']"
+    },
+    {
+      "path": "scripts/ci/test_native_session_evidence.py",
+      "line": 85,
+      "context": [
+        "NativeSessionEvidenceTests",
+        "test_session_must_be_explicit_not_single_shot_or_reference"
+      ],
+      "expression": "self.row('session-client-confirmation')['environment_overrides'].pop('TRNM_NATIVE_SESSION')"
+    },
+    {
+      "path": "scripts/ci/test_native_session_evidence.py",
+      "line": 89,
+      "context": [
+        "NativeSessionEvidenceTests",
+        "test_pipeline_must_select_actual_native_components"
+      ],
+      "expression": "self.row('session-pipeline')['environment_overrides'].pop('TRNM_NATIVE_WORK')"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 364,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "report['environment']['child_python3']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 365,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "baseline['environment']['child_python3']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 366,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,report,baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 371,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "changed['environment'].pop('child_python3')"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 381,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "old_report['environment']['cryptography']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 381,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "old_baseline['environment']['cryptography']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 368,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "changed['environment']['child_python3'][field]"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 373,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,changed,baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 377,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "changed['environment'][field]"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 383,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,old_report,old_baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 386,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,report,baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 1647,
+      "context": [
+        "PipelineExecutableBindingTests",
+        "test_case_observer_cannot_differ_or_hide_a_recorded_failure"
+      ],
+      "expression": "report['environment']['resource_observer'][field]"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 368,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "changed['environment']['child_python3']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 370,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,changed,baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 379,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records"
+      ],
+      "expression": "check.validate_environment(self.root,changed,baseline)"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 1647,
+      "context": [
+        "PipelineExecutableBindingTests",
+        "test_case_observer_cannot_differ_or_hide_a_recorded_failure"
+      ],
+      "expression": "report['environment']['resource_observer']"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "line": 393,
+      "context": [
+        "SourceAndArtifactTests",
+        "test_qualification_subprocess_ignores_a_poisoned_python_search_path"
+      ],
+      "expression": "os.environ.get('PATH','')"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 142,
+      "context": [
+        "collect"
+      ],
+      "expression": "Path(os.environ.get('CARGO_TARGET_DIR', ROOT / 'trillionnium/target')).resolve()"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 170,
+      "context": [
+        "collect"
+      ],
+      "expression": "os.environ.get('RUST_TEST_THREADS')"
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "line": 142,
+      "context": [
+        "collect"
+      ],
+      "expression": "os.environ.get('CARGO_TARGET_DIR', ROOT / 'trillionnium/target')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "line": 60,
+      "context": [],
+      "expression": "os.environ.get('TRNM_PON_EVALUATION_POLICY', 'legacy-first-two-v3')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "line": 213,
+      "context": [
+        "execute"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_EXECUTOR')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "line": 327,
+      "context": [
+        "Ledger",
+        "execute_application"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_SESSION')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "line": 328,
+      "context": [
+        "Ledger",
+        "execute_application"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_EXECUTOR')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "line": 335,
+      "context": [
+        "Ledger",
+        "execute_application"
+      ],
+      "expression": "os.environ.get('TRNM_EXECUTION_WORKERS','1')"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 68,
+      "context": [
+        "bind_gnu_time"
+      ],
+      "expression": "environment.get('TRNM_GNU_TIME', '/usr/bin/time')"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 84,
+      "context": [
+        "bind_gnu_time"
+      ],
+      "expression": "environment['TRNM_GNU_TIME']"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 113,
+      "context": [
+        "bind_python_runtime"
+      ],
+      "expression": "environment['PATH']"
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "line": 113,
+      "context": [
+        "bind_python_runtime"
+      ],
+      "expression": "environment.get('PATH', '')"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "line": 35,
+      "context": [
+        "QualificationRuntimeTests",
+        "setUpClass"
+      ],
+      "expression": "os.environ.get('QUALIFICATION_RUNTIME_EVIDENCE_DIR')"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "line": 144,
+      "context": [
+        "QualificationRuntimeTests",
+        "test_actual_observer_identity"
+      ],
+      "expression": "environment['TRNM_GNU_TIME']"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "line": 408,
+      "context": [
+        "QualificationIoBoundaryTests",
+        "test_probe_keeps_environment_and_venv_path"
+      ],
+      "expression": "environment['PATH']"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "line": 172,
+      "context": [
+        "QualificationRuntimeTests",
+        "test_nested_runner_observer_sanitization"
+      ],
+      "expression": "environment['TRNM_UNRELATED_TEST_CONTROL']"
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "line": 175,
+      "context": [
+        "QualificationRuntimeTests",
+        "test_nested_runner_observer_sanitization"
+      ],
+      "expression": "environment['TRNM_GNU_TIME']"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "line": 17,
+      "context": [
+        "native"
+      ],
+      "expression": "os.environ['TRNM_NATIVE_WORK']"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "line": 24,
+      "context": [
+        "prove"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_WORK')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "line": 32,
+      "context": [
+        "verify"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_WORK')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "line": 9,
+      "context": [
+        "execute_native"
+      ],
+      "expression": "os.environ.get('TRNM_NATIVE_EXECUTOR','')"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "line": 13,
+      "context": [
+        "execute_native"
+      ],
+      "expression": "os.environ.get('TRNM_EXECUTION_WORKERS','1')"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "line": 30,
+      "context": [
+        "tool_root"
+      ],
+      "expression": "os.environ.get('TRNM_CI_TOOL_ROOT',\n                str(Path(os.environ.get('RUNNER_TEMP', '/tmp')) / 'trnm-ci-tools'))"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "line": 35,
+      "context": [
+        "receipt_root"
+      ],
+      "expression": "os.environ.get('TRNM_CI_RECEIPT_DIR',\n                str(Path(os.environ.get('RUNNER_TEMP', '/tmp')) / 'trnm-ci-evidence'))"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "line": 31,
+      "context": [
+        "tool_root"
+      ],
+      "expression": "os.environ.get('RUNNER_TEMP', '/tmp')"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "line": 36,
+      "context": [
+        "receipt_root"
+      ],
+      "expression": "os.environ.get('RUNNER_TEMP', '/tmp')"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "line": 29,
+      "context": [
+        "_canonical_merge_tree"
+      ],
+      "expression": "environment.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_SYSTEM=os.devnull,\n                       GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM='1',\n                       GIT_NO_REPLACE_OBJECTS='1', GIT_TERMINAL_PROMPT='0')"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "line": 44,
+      "context": [
+        "_canonical_merge_tree"
+      ],
+      "expression": "subprocess.check_output(\n        command(root, 'rev-parse', '--path-format=absolute', '--git-path', 'objects'),\n        env=environment, text=True).rstrip('\\n')"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "line": 40,
+      "context": [
+        "_canonical_merge_tree"
+      ],
+      "expression": "subprocess.check_output(command(root, 'rev-parse', candidate + '^{tree}'),\n                                       env=environment, text=True).strip()"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "line": 55,
+      "context": [
+        "_canonical_merge_tree"
+      ],
+      "expression": "subprocess.check_output(\n            command(isolated, '-c', 'core.attributesFile=' + os.devnull,\n                    'merge-tree', '--write-tree', '--no-messages', base, candidate),\n            env=environment, text=True, stderr=subprocess.PIPE).strip()"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "line": 27,
+      "context": [
+        "_canonical_merge_tree"
+      ],
+      "expression": "os.environ.items()"
+    }
+  ],
+  "commands": [
+    {
+      "line": 501,
+      "body": "    python3 scripts/ci/prepare_evidence_sources.py",
+      "argv": [
+        "python3",
+        "scripts/ci/prepare_evidence_sources.py"
+      ]
+    },
+    {
+      "line": 502,
+      "body": "    python3 scripts/ci/test_evidence_sources.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_evidence_sources.py"
+      ]
+    },
+    {
+      "line": 503,
+      "body": "    python3 scripts/ci/check_repository.py",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ]
+    },
+    {
+      "line": 504,
+      "body": "    python3 scripts/ci/test_repository.py EvidenceBoundaryTests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_repository.py",
+        "EvidenceBoundaryTests"
+      ]
+    },
+    {
+      "line": 505,
+      "body": "    python3 scripts/ci/check_pon_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pon_evidence.py"
+      ]
+    },
+    {
+      "line": 506,
+      "body": "    python3 scripts/ci/test_pon_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_evidence.py"
+      ]
+    },
+    {
+      "line": 507,
+      "body": "    python3 scripts/ci/check_invariant_evidence.py --historical",
+      "argv": [
+        "python3",
+        "scripts/ci/check_invariant_evidence.py",
+        "--historical"
+      ]
+    },
+    {
+      "line": 508,
+      "body": "    python3 scripts/ci/test_invariant_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_invariant_evidence.py"
+      ]
+    },
+    {
+      "line": 509,
+      "body": "    python3 scripts/ci/check_completion_evidence.py --historical",
+      "argv": [
+        "python3",
+        "scripts/ci/check_completion_evidence.py",
+        "--historical"
+      ]
+    },
+    {
+      "line": 510,
+      "body": "    python3 scripts/ci/test_completion_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_completion_evidence.py"
+      ]
+    },
+    {
+      "line": 511,
+      "body": "    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical",
+      "argv": [
+        "python3",
+        "scripts/ci/check_evaluation_bundle_evidence.py",
+        "--historical"
+      ]
+    },
+    {
+      "line": 512,
+      "body": "    python3 scripts/ci/check_client_confirmation_evidence.py --historical",
+      "argv": [
+        "python3",
+        "scripts/ci/check_client_confirmation_evidence.py",
+        "--historical"
+      ]
+    },
+    {
+      "line": 513,
+      "body": "    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1",
+      "argv": [
+        "python3",
+        "scripts/ci/check_client_confirmation_evidence.py",
+        "--historical",
+        "--evidence",
+        "evidence/pon-native-session-v1"
+      ]
+    },
+    {
+      "line": 514,
+      "body": "    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1",
+      "argv": [
+        "python3",
+        "scripts/ci/check_client_confirmation_evidence.py",
+        "--historical",
+        "--evidence",
+        "evidence/pon-native-node-v1"
+      ]
+    },
+    {
+      "line": 515,
+      "body": "    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1",
+      "argv": [
+        "python3",
+        "scripts/ci/check_client_confirmation_evidence.py",
+        "--historical",
+        "--evidence",
+        "evidence/pon-closed-round-v1"
+      ]
+    },
+    {
+      "line": 516,
+      "body": "    python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1",
+      "argv": [
+        "python3",
+        "scripts/ci/check_public_readiness_evidence.py",
+        "--historical",
+        "--evidence",
+        "evidence/pon-public-readiness-v1"
+      ]
+    },
+    {
+      "line": 517,
+      "body": "    python3 scripts/ci/test_public_readiness_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_public_readiness_evidence.py"
+      ]
+    },
+    {
+      "line": 518,
+      "body": "    python3 scripts/ci/check_native_node_supplements.py --historical",
+      "argv": [
+        "python3",
+        "scripts/ci/check_native_node_supplements.py",
+        "--historical"
+      ]
+    },
+    {
+      "line": 519,
+      "body": "    python3 scripts/ci/test_native_node_supplements.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_native_node_supplements.py"
+      ]
+    },
+    {
+      "line": 520,
+      "body": "    python3 scripts/ci/test_native_session_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_native_session_evidence.py"
+      ]
+    },
+    {
+      "line": 521,
+      "body": "    python3 scripts/ci/test_client_confirmation_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_client_confirmation_evidence.py"
+      ]
+    },
+    {
+      "line": 522,
+      "body": "    python3 scripts/ci/test_evaluation_bundle_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_evaluation_bundle_evidence.py"
+      ]
+    },
+    {
+      "line": 523,
+      "body": "    python3 scripts/ci/report_module_evidence.py --format markdown",
+      "argv": [
+        "python3",
+        "scripts/ci/report_module_evidence.py",
+        "--format",
+        "markdown"
+      ]
+    },
+    {
+      "line": 524,
+      "body": "    python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical",
+      "argv": [
+        "python3",
+        "scripts/pon_work_cost_report.py",
+        "--verify",
+        "evidence/pon-contract-authority-v1/work-cost",
+        "--historical"
+      ]
+    },
+    {
+      "line": 525,
+      "body": "    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical",
+      "argv": [
+        "python3",
+        "scripts/pon_work_cost_report.py",
+        "--verify",
+        "evidence/pon-native-session-v1/work-cost",
+        "--historical"
+      ]
+    },
+    {
+      "line": 526,
+      "body": "    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical",
+      "argv": [
+        "python3",
+        "scripts/pon_work_cost_report.py",
+        "--verify",
+        "evidence/pon-native-node-v1/work-cost",
+        "--historical"
+      ]
+    },
+    {
+      "line": 527,
+      "body": "    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical",
+      "argv": [
+        "python3",
+        "scripts/pon_work_cost_report.py",
+        "--verify",
+        "evidence/pon-closed-round-v1/work-cost",
+        "--historical"
+      ]
+    },
+    {
+      "line": 528,
+      "body": "    python3 scripts/ci/check_four_priority_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/check_four_priority_evidence.py"
+      ]
+    },
+    {
+      "line": 529,
+      "body": "    python3 scripts/ci/test_four_priority_evidence.py",
+      "argv": [
+        "python3",
+        "scripts/ci/test_four_priority_evidence.py"
+      ]
+    },
+    {
+      "line": 530,
+      "body": "    python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical",
+      "argv": [
+        "python3",
+        "scripts/pon_work_cost_report.py",
+        "--verify",
+        "evidence/pon-four-priority-audit-v1/work-cost",
+        "--historical"
+      ]
+    }
+  ]
+}

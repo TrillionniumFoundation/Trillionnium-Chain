@@ -1,0 +1,58 @@
+{
+  "all_new_blob_content_addresses_verified": true,
+  "all_new_blob_raw_bytes_scanned": true,
+  "all_secret_types_excluded": false,
+  "credential_values_disclosed": false,
+  "enumerated_objects": 5,
+  "excluded_base": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "finished_utc": "2026-11-14T11:23:14.347268+00:00",
+  "fsck_run": false,
+  "full_history_scanned": false,
+  "head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+  "hit_blob_count": 0,
+  "hits_require_context_review": false,
+  "limitations": [
+    "Five exact explicit patterns only; absence is not proof that every secret type is absent.",
+    "No recursive archive decompression.",
+    "Only fixed commit difference; no future object or outside-range claim."
+  ],
+  "match_counts": {
+    "aws_access_key_id": 0,
+    "github_classic_token": 0,
+    "github_fine_grained_token": 0,
+    "private_key_header": 0,
+    "slack_token": 0
+  },
+  "new_blob_raw_bytes": 57118,
+  "new_blobs": 1,
+  "no_git_object_ref_or_network_writes": true,
+  "object_types": {
+    "blob": 1,
+    "commit": 1,
+    "tree": 3
+  },
+  "only_external_evidence_written": true,
+  "prior_8gb_scanner_regex_equivalence_claimed": false,
+  "recursive_archive_decompression": false,
+  "same_five_regex_bytes_as_reviewed_prior_producer": true,
+  "schema": "bounded-new-blobs-1e54c4-after-6a8cd5-v1",
+  "source_after": {
+    "branch": "refs/heads/fix/chain-audit-final-20261114",
+    "clean": true,
+    "head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb"
+  },
+  "source_before": {
+    "branch": "refs/heads/fix/chain-audit-final-20261114",
+    "clean": true,
+    "head": "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb"
+  },
+  "source_head_tree_status_unchanged": true,
+  "started_utc": "2026-11-14T11:23:13.960558+00:00",
+  "status": "PASS_FOR_DECLARED_SCOPE",
+  "tests_run": false,
+  "tree": "2c0716f9165f7cbc31ce8eae17f17bf2643d30cb"
+}

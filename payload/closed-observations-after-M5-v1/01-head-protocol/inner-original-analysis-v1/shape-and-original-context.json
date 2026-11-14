@@ -1,0 +1,631 @@
+{
+  "source": {
+    "base": null,
+    "candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "tested_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3991880052,
+    "tracked_entries": 41372,
+    "tracked_worktree_verified": true
+  },
+  "manifest_outline": {
+    "schema": "trnm-from-zero-native-execution-v3",
+    "source_before": {
+      "commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+      "tracked_source_identity": {
+        "type": "object",
+        "keys": [
+          "schema",
+          "kind",
+          "tested_commit",
+          "tested_tree",
+          "candidate",
+          "base",
+          "prospective_merge",
+          "tracked_worktree_verified",
+          "tracked_entries",
+          "tracked_bytes",
+          "tests_executed_by_identity_check"
+        ]
+      },
+      "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    },
+    "source_after": {
+      "commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+      "tracked_source_identity": {
+        "type": "object",
+        "keys": [
+          "schema",
+          "kind",
+          "tested_commit",
+          "tested_tree",
+          "candidate",
+          "base",
+          "prospective_merge",
+          "tracked_worktree_verified",
+          "tracked_entries",
+          "tracked_bytes",
+          "tests_executed_by_identity_check"
+        ]
+      },
+      "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    },
+    "source_recompiled": true,
+    "all_named_tests_passed": true,
+    "format_passed": true,
+    "runs": {
+      "type": "array",
+      "length": 5,
+      "first_shape": {
+        "type": "object",
+        "keys": [
+          "name",
+          "process",
+          "passed",
+          "stdout_sha256",
+          "stderr_sha256",
+          "named_execution"
+        ]
+      }
+    },
+    "failures": {
+      "type": "array",
+      "length": 1,
+      "first_shape": "CONFIRMATION_TARGET"
+    },
+    "independent_wan_accepted": false,
+    "work_hardness_accepted": false,
+    "production_activation": false,
+    "passed": false,
+    "execution_finished": false,
+    "service_report": {
+      "sha256": "157b445f7395cb390ae7ad8cb7cb035e3c32ee84ffa997e2f7dc2d4c07261968",
+      "schema": "public-v3-local-from-zero-service-v2",
+      "phases": 2,
+      "scope": "retained finite native report consistency; no independent work or state oracle"
+    },
+    "sustained_report": {
+      "sha256": "7d1f2be92944389a918991c6a91a5db448b68409c05de4a7a56f234d5f86c0de",
+      "schema": "public-v3-sustained-local-from-zero-v1",
+      "phases": {
+        "type": "array",
+        "length": 2,
+        "first_shape": {
+          "type": "object",
+          "keys": [
+            "phase",
+            "attacks",
+            "late_rejections",
+            "honest_reads",
+            "honest_submissions",
+            "connections",
+            "mutation_cpu_refusals",
+            "minimum_sampled_stored_credit_ns"
+          ]
+        }
+      },
+      "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification"
+    },
+    "confirmation_report": null,
+    "confirmation_observation": {
+      "schema": "trnm-original-confirmation-observation-v2",
+      "sha256": "bcd60bf212739cd58633d2c1db85192d1460666b90aa6f3e309a64551e6aba03",
+      "original_gate_validated": false,
+      "original_gate_validation_error": "CONFIRMATION_TARGET",
+      "simulated_control": false,
+      "phases": {
+        "type": "array",
+        "length": 2,
+        "first_shape": {
+          "type": "object",
+          "keys": [
+            "mode",
+            "workers",
+            "window_ns",
+            "business",
+            "signed_submit_ack",
+            "history_response",
+            "independent_page_replay",
+            "head_response",
+            "verification_errors",
+            "service_totals",
+            "service_totals_scope",
+            "receiver_requests",
+            "resource_coverage",
+            "attacker_attempts",
+            "request_clock",
+            "product_metrics"
+          ]
+        }
+      },
+      "network_capacity_qualified": false,
+      "tail_latency_qualified": false,
+      "production_activation": false,
+      "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle"
+    },
+    "terminal": {
+      "schema": "trnm-from-zero-native-terminal-v1",
+      "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "native_execution_completed": true,
+      "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+      "native_invocations": {
+        "type": "array",
+        "length": 5,
+        "first_shape": {
+          "type": "object",
+          "keys": [
+            "name",
+            "status",
+            "exit_code",
+            "timed_out"
+          ]
+        }
+      },
+      "unexecuted_native_tests": {
+        "type": "array",
+        "length": 0,
+        "first_shape": null
+      },
+      "acceptance_stages": {
+        "type": "object",
+        "keys": [
+          "service_report",
+          "sustained_report",
+          "confirmation_report"
+        ]
+      },
+      "unexecuted_acceptance_stages": {
+        "type": "array",
+        "length": 0,
+        "first_shape": null
+      },
+      "acceptance_passed": false,
+      "finalization_completed": true,
+      "subsequent_ci_steps_observed": false
+    },
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "build_env": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-protocol-contract",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null
+    },
+    "format_copy": {
+      "command": {
+        "type": "array",
+        "length": 4,
+        "first_shape": "rustfmt"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_ns": 393227485,
+      "user_cpu_ns": 71132000,
+      "system_cpu_ns": 17783000,
+      "cpu_ns": 88915000,
+      "max_rss_kib": 103708,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "minor_faults": 7753,
+      "major_faults": 0,
+      "voluntary_switches": 3,
+      "involuntary_switches": 4,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "wait4_cpu_resolution_ns": 1000,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "format": {
+      "command": {
+        "type": "array",
+        "length": 7,
+        "first_shape": "cargo"
+      },
+      "cpu_ns": 16054251000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "exit_code": 0,
+      "involuntary_switches": 90,
+      "major_faults": 0,
+      "max_rss_kib": 274348,
+      "minor_faults": 55094,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "system_cpu_ns": 178468000,
+      "timed_out": false,
+      "user_cpu_ns": 15875783000,
+      "voluntary_switches": 38,
+      "wait4_cpu_resolution_ns": 1000,
+      "wall_ns": 16058610224
+    },
+    "format_preparation": {
+      "receipt_sha256": "082c72f0fc7607361b2a0c5e22a58b45801bdc8c7321393a5c23212a1c94b9c0",
+      "timeout_seconds": 60,
+      "scope": "exact-source-preparation-outside-service"
+    },
+    "build": {
+      "command": {
+        "type": "array",
+        "length": 12,
+        "first_shape": "cargo"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_ns": 501356116,
+      "user_cpu_ns": 76179000,
+      "system_cpu_ns": 45509000,
+      "cpu_ns": 121688000,
+      "max_rss_kib": 51964,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "minor_faults": 13005,
+      "major_faults": 0,
+      "voluntary_switches": 21,
+      "involuntary_switches": 6,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "wait4_cpu_resolution_ns": 1000,
+      "stdout_sha256": "8ecb8b9dbe0316f15b0514be5a6971739024298ee5ec5dfefd3568d700614eeb",
+      "stderr_sha256": "bc91a3ed6ff9b29145787c6d9882965f4f24899753f0d8be62d8adc772989545"
+    },
+    "binary_sha256_before": "57cc4e7feb981fd68b70b7d7ce94ca24bfe2fb37fe7e175bb77fdb7387a3f433",
+    "binary_sha256_after": "57cc4e7feb981fd68b70b7d7ce94ca24bfe2fb37fe7e175bb77fdb7387a3f433",
+    "files": {
+      "build/process.json": "9deb0b99d6182a18f3186f23da67d3ef990e8f0fa94c4e994c16717e733c358f",
+      "build/stderr": "bc91a3ed6ff9b29145787c6d9882965f4f24899753f0d8be62d8adc772989545",
+      "build/stdout": "8ecb8b9dbe0316f15b0514be5a6971739024298ee5ec5dfefd3568d700614eeb",
+      "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": "cac4e11ebfeb8528b579eacd842457e96db29dfc0680c3d3b3175d7977d8f4c3",
+      "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+      "confirmation/baseline/independent-client/native.sqlite": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654",
+      "confirmation/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmation/baseline/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+      "confirmation/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmation/pressure/independent-client/native.sqlite": "a846841d88f8bdacaada088fdd6be570f5da218a4ae8ae93822a4ddbb3ec42bb",
+      "confirmation/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmation/pressure/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+      "confirmation/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmation/producer/native.sqlite": "9a85c75d850bd8d8c400ddee48c8f9281c1ae14dd65c1ce7910b03f00800dcfa",
+      "confirmation/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmation/report.json": "bcd60bf212739cd58633d2c1db85192d1460666b90aa6f3e309a64551e6aba03",
+      "format-check/preparation.json": "082c72f0fc7607361b2a0c5e22a58b45801bdc8c7321393a5c23212a1c94b9c0",
+      "format-check/process.json": "8594bb9dfafb2f3d573aa4dc56c3c06afd8c0f7f0c31121eb7bab51190def751",
+      "format-check/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format-check/stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format-copy/process.json": "9f53ff35828ff5680d95fadae1406b21837b47f483bc376ab1ea09e00940f42f",
+      "format-copy/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format-copy/stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format-copy-source/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+      "format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9",
+      "format-copy-source/tests/public_v3_from_zero/sp27_receiver_campaign.rs": "402ae6e53d4cfaa78f5a6ce359c8bec556cbafcdd127614e54ff4f9f733c9ba9",
+      "format-copy-source/tests/public_v3_from_zero/sp27_receiver_controls.rs": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101",
+      "format-copy-source/tests/public_v3_from_zero/sp27_receiver_strata.rs": "747aa3ebe2d1714bef7c8f1eeb72ffc5ea3b35ab33f70c6266f1b879bc4ee473",
+      "format-copy-source/tests/public_v3_from_zero.rs": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "formatted.rs": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": "0adeb3f80091de596e67a99bf9c7ebb264064e57f5702c12ff31665cc228dc18",
+      "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout": "8078bc3c1e11a412c15cfddf7e7cc67f885d53004bb5398aa38ec9dbd0b18373",
+      "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": "3a4bb96626a4cdd3ad4e7fa9bdfacce0855dcd3a5f0abf9c0d41bb1f60a3b5ee",
+      "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+      "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": "b9ca3a57233a54fe9b3616b0bdf867feeacbc657466d678c59dc497ac2a96e03",
+      "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout": "38944e5a93682deafde02ac8b01603de14fe04b74b0610ab21abbe5d80026f82",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": "d4cdaffef45cc266990d1be9a4d5b58f8532faea7a51e7ee63e4f54ae1c038ff",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout": "6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689",
+      "native/producer/native.sqlite": "bfdd058775bd8be1ae79c2d7b9ebadcbc67b08181b1c2bb7b5d47d40a4a6d9ef",
+      "native/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native/receiver/native.sqlite": "4e12dd58f3161dbc047e0629bfdb03f4b544b9cb9637b67ceec89682b645a4a2",
+      "native/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native/report.json": "157b445f7395cb390ae7ad8cb7cb035e3c32ee84ffa997e2f7dc2d4c07261968",
+      "native/sustained/producer/native.sqlite": "e09b8bf06571921ab3c4d81070628386f237dc152c81d0129193bf2dc875b537",
+      "native/sustained/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native/sustained/receiver/native.sqlite": "e9b656db398d7c8fb36b1e9cca228596a7db68cdced350af945c9633c1a8de25",
+      "native/sustained/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native/sustained/report.json": "7d1f2be92944389a918991c6a91a5db448b68409c05de4a7a56f234d5f86c0de",
+      "public_v3_from_zero": "57cc4e7feb981fd68b70b7d7ce94ca24bfe2fb37fe7e175bb77fdb7387a3f433"
+    }
+  },
+  "confirmation_outline": {
+    "attacker_construction_cpu_ns": 9578070,
+    "attacker_construction_wall_ns": 83589395,
+    "finite_target_met": false,
+    "from_zero_construction": {
+      "type": "array",
+      "length": 16,
+      "first_shape": {
+        "type": "object",
+        "keys": [
+          "attacker_cpu_ns",
+          "attempt_budget",
+          "attempts",
+          "challenge",
+          "cpu_clock",
+          "header",
+          "packet",
+          "packet_encoding_cpu_ns",
+          "packet_encoding_ns",
+          "phase_intervals_nested_in_total",
+          "scope",
+          "search_cpu_ns",
+          "search_ns",
+          "setup_calls",
+          "setup_cpu_ns",
+          "setup_ns",
+          "status",
+          "total_wall_ns",
+          "winner_nonce"
+        ]
+      }
+    },
+    "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+    "honest_chain_acquisition_wall_ns": 116275032,
+    "honest_chain_aggregate_cpu_ns": null,
+    "honest_chain_process_cpu_ns": 39165028,
+    "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+    "invariant_target_met": true,
+    "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+    "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+    "phases": {
+      "type": "array",
+      "length": 2,
+      "first_shape": {
+        "type": "object",
+        "keys": [
+          "accounting_closed",
+          "attacker_workers_cpu_ns",
+          "attacker_workers_cpu_scope",
+          "attacks",
+          "business_receive_clock",
+          "business_started_ns",
+          "client_confirmation_latency_ns",
+          "client_confirmed_before_original_window_end",
+          "client_confirmed_transactions",
+          "completed_false_calls_at_confirmation",
+          "completed_false_calls_before_business",
+          "confirmation_ended_ns",
+          "final_meter",
+          "finite_business_target_met",
+          "full_native_state_equal",
+          "honest_head_successes_in_window",
+          "honest_heads",
+          "honest_history",
+          "honest_submissions",
+          "independent_client_confirmation",
+          "independent_final_confirmation_stage",
+          "independent_history_page_replay",
+          "independent_operator_accepted",
+          "independent_replay_and_confirmation_cpu_ns",
+          "independent_replay_and_confirmation_wall_ns",
+          "initial_meter",
+          "initial_state_root",
+          "initial_tip",
+          "invariant_target_met",
+          "maximum_honest_head_gap_ns",
+          "mode",
+          "no_attack_accepted",
+          "observations",
+          "overlap_demonstrated",
+          "overlapping_false_calls",
+          "production_activation",
+          "public_network_ready",
+          "reader_cpu_ns",
+          "receiver_matches_valid_honest_prefix",
+          "requested_window_ns",
+          "resource_fairness_qualified",
+          "scope",
+          "service",
+          "target",
+          "task",
+          "verification_errors",
+          "work_profile_qualified",
+          "workers"
+        ]
+      }
+    },
+    "policy_id": "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
+    "production_activation": false,
+    "public_network_ready": false,
+    "same_packet_sequence_in_both_runs": true,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+    "signed_honest_packets": {
+      "type": "array",
+      "length": 7,
+      "first_shape": {
+        "type": "string",
+        "length": 99418
+      }
+    },
+    "strongest_honest_producer_used": false,
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+    "work_profile_qualified": false
+  },
+  "child_result": {
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "consensus_or_model_authority": false,
+    "host_errors": [],
+    "host_readiness_only": true,
+    "native_child_exit": 1,
+    "schema": "trnm-ci-original-public-host-child-v1"
+  },
+  "controller_passed": false,
+  "controller_failure": null,
+  "controller_final_host_errors": [],
+  "systemd_log_tail": [
+    {
+      "line": 1,
+      "text": "Running as unit: trnm-from-zero-43567821538-1-protocol-contract-21668.service; invocation ID: 6609dcfac8f74115adc4f5a250e25b5c"
+    },
+    {
+      "line": 2,
+      "text": "{\"name\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 1714000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 53136, \"minor_faults\": 160, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e\", \"system_cpu_ns\": 857000, \"timed_out\": false, \"user_cpu_ns\": 857000, \"voluntary_switches\": 4, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5539397}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e\"}"
+    },
+    {
+      "line": 3,
+      "text": "{\"name\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 3778000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 53136, \"minor_faults\": 254, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda\", \"system_cpu_ns\": 944000, \"timed_out\": false, \"user_cpu_ns\": 2834000, \"voluntary_switches\": 3, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 79632884}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda\"}"
+    },
+    {
+      "line": 4,
+      "text": "{\"name\": \"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 22798000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 53136, \"minor_faults\": 544, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"8078bc3c1e11a412c15cfddf7e7cc67f885d53004bb5398aa38ec9dbd0b18373\", \"system_cpu_ns\": 6938000, \"timed_out\": false, \"user_cpu_ns\": 15860000, \"voluntary_switches\": 29, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 31004023}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"8078bc3c1e11a412c15cfddf7e7cc67f885d53004bb5398aa38ec9dbd0b18373\"}"
+    },
+    {
+      "line": 5,
+      "text": "{\"name\": \"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 2532118000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 1519, \"major_faults\": 0, \"max_rss_kib\": 166712, \"minor_faults\": 40541, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"38944e5a93682deafde02ac8b01603de14fe04b74b0610ab21abbe5d80026f82\", \"system_cpu_ns\": 734177000, \"timed_out\": false, \"user_cpu_ns\": 1797941000, \"voluntary_switches\": 10297, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 10378061133}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"38944e5a93682deafde02ac8b01603de14fe04b74b0610ab21abbe5d80026f82\"}"
+    },
+    {
+      "line": 6,
+      "text": "{\"name\": \"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 2084866000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 888, \"major_faults\": 0, \"max_rss_kib\": 97116, \"minor_faults\": 23666, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689\", \"system_cpu_ns\": 1015843000, \"timed_out\": false, \"user_cpu_ns\": 1069023000, \"voluntary_switches\": 13673, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 9109467236}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689\"}"
+    },
+    {
+      "line": 7,
+      "text": "{\"passed\": false, \"failures\": [\"CONFIRMATION_TARGET\"]}"
+    },
+    {
+      "line": 8,
+      "text": "Finished with result: exit-code"
+    },
+    {
+      "line": 9,
+      "text": "Main processes terminated with: code=exited/status=1"
+    },
+    {
+      "line": 10,
+      "text": "Service runtime: 1min 4.716s"
+    },
+    {
+      "line": 11,
+      "text": "CPU time consumed: 15.986s"
+    },
+    {
+      "line": 12,
+      "text": "Memory peak: 2.9M"
+    },
+    {
+      "line": 13,
+      "text": "Memory swap peak: 0B"
+    }
+  ],
+  "sources": [
+    {
+      "name": "source.json",
+      "bytes": 423,
+      "compressed_bytes": 238,
+      "crc32": "6c282320",
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native/manifest.json",
+      "bytes": 73968,
+      "compressed_bytes": 11355,
+      "crc32": "77f572ef",
+      "sha256": "c30ad811fa3e7f6a4bf63585bd44e3607bba5ed71df90f6a451e419d2aadb7ba",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native/confirmation/report.json",
+      "bytes": 12196577,
+      "compressed_bytes": 553248,
+      "crc32": "0ab53522",
+      "sha256": "bcd60bf212739cd58633d2c1db85192d1460666b90aa6f3e309a64551e6aba03",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native-host/systemd-run.log",
+      "bytes": 6972,
+      "compressed_bytes": 1435,
+      "crc32": "c3475442",
+      "sha256": "fd7732b253df333e72cd9165fad0108fc7a0b55044ec27e2a58a5a2a14472ba5",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native-host/controller-result.json",
+      "bytes": 9362,
+      "compressed_bytes": 2468,
+      "crc32": "7507d555",
+      "sha256": "40a7423a3e5b23867d31af491e0e11a310f97ba281585f28abbcfdb148299834",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "compressed_bytes": 217,
+      "crc32": "f5952b0c",
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native-host/inside-before.json",
+      "bytes": 1692,
+      "compressed_bytes": 807,
+      "crc32": "bf191f10",
+      "sha256": "da1476c85e24281e935c7c039b0ec27cac546af6db3fd75ba3c5b83c57d5b1db",
+      "directory": false
+    },
+    {
+      "name": "from-zero-native-host/inside-after.json",
+      "bytes": 1703,
+      "compressed_bytes": 816,
+      "crc32": "e5db390c",
+      "sha256": "a61b26b43a20f79e98522e5e5fe542943484a96f36696dd3770336ec3960d7a7",
+      "directory": false
+    }
+  ],
+  "extracted_small_originals": [
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/source.json",
+      "bytes": 423,
+      "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+      "zip_member": "source.json"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native/manifest.json",
+      "bytes": 73968,
+      "sha256": "c30ad811fa3e7f6a4bf63585bd44e3607bba5ed71df90f6a451e419d2aadb7ba",
+      "zip_member": "from-zero-native/manifest.json"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native-host/systemd-run.log",
+      "bytes": 6972,
+      "sha256": "fd7732b253df333e72cd9165fad0108fc7a0b55044ec27e2a58a5a2a14472ba5",
+      "zip_member": "from-zero-native-host/systemd-run.log"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native-host/controller-result.json",
+      "bytes": 9362,
+      "sha256": "40a7423a3e5b23867d31af491e0e11a310f97ba281585f28abbcfdb148299834",
+      "zip_member": "from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "zip_member": "from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native-host/inside-before.json",
+      "bytes": 1692,
+      "sha256": "da1476c85e24281e935c7c039b0ec27cac546af6db3fd75ba3c5b83c57d5b1db",
+      "zip_member": "from-zero-native-host/inside-before.json"
+    },
+    {
+      "path": "/private/tmp/chain-C0-head-protocol-job132376957411-original-20261114-v1/inner-original-analysis-v1/original-members/from-zero-native-host/inside-after.json",
+      "bytes": 1703,
+      "sha256": "a61b26b43a20f79e98522e5e5fe542943484a96f36696dd3770336ec3960d7a7",
+      "zip_member": "from-zero-native-host/inside-after.json"
+    }
+  ]
+}

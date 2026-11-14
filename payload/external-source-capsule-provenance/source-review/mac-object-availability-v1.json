@@ -1,0 +1,162 @@
+{
+  "command": {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "-c",
+      "protocol.allow=never",
+      "cat-file",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "5d59b9540268914794a62e8fa237caf999499314 commit 1601\n30ee65c0752693f4eecc90f924972279f00c0c73 tree 810\n160cc493ab4cfb7f3f8c26b2d1621691a0c49502 missing\n30b85c34d1be404dcccd9f415286bb43b00f64ea missing\n4ee1a9d265f09871b0f167d2a5be77ca4b9839c0 missing\n50e158640d8278ca94dbecb6539dab96c6a9fb84 missing\nd61a69d3433db127019924d269bf25ded3aecf60 missing\ndbb1c989342639c4c04366a0d12bc3ecb4760e04 commit 332\na38495fe234c4ae71aeae3c570d5d91acf847fee tree 810\ned4d95c3e558ad28b5f3132152704bdf77df5f49 commit 296\na19ecaa4745236753d89b7e6be8de4a9f2156954 tree 810\nfbe72b70f096d04290b8ef14ac95a4b32cdaf4fb commit 788\n31b4df1df65ef70d92936091271d21e1d90c1142 tree 810\nb34561d1ade376512a34fed3fd78938ed2431ecd commit 750\n5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8 tree 810\nfaf144086067f9b0a301a2b46760164d80fec04e commit 826\ncd3643aec9b12dab647f07b8c561e81eeae1493c tree 810\nc2b1ca2503aeca35873d20d1b188689369edc752 commit 290\n5df72527b22520b27f5ad858bbca98456c7ad9cf tree 810\n3c63c8368187de895e1dc0df8bbc105c6f39f842 commit 274\n54d2f12c0d783f827d43bc626489f58ab75d7c31 tree 810\n6cdbf9551aae1754e489773bac29bc0598e20a9b commit 1628\n521ea862cd063904aaf3acb949208ac87dc0d762 tree 810\n9fedf7ecbbe07177069c030592b4e03dcffebb81 commit 1753\naf52e79d69de2224fa709309704ba6a971453579 tree 810\n1a512c613951af5640dac06cc663392d08927e00 commit 664\nbe23902744141ca769d1b11b3a0f50d8b62a4ed3 tree 810\n"
+  },
+  "network_calls": 0,
+  "objects": {
+    "160cc493ab4cfb7f3f8c26b2d1621691a0c49502": {
+      "present": false,
+      "response": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502 missing"
+    },
+    "1a512c613951af5640dac06cc663392d08927e00": {
+      "present": true,
+      "response": "1a512c613951af5640dac06cc663392d08927e00 commit 664"
+    },
+    "242906bae4f281c738c60adbd2c053d2ded1eae5": {
+      "present": false,
+      "response": "known missing from first enumeration; not retried"
+    },
+    "30b85c34d1be404dcccd9f415286bb43b00f64ea": {
+      "present": false,
+      "response": "30b85c34d1be404dcccd9f415286bb43b00f64ea missing"
+    },
+    "30ee65c0752693f4eecc90f924972279f00c0c73": {
+      "present": true,
+      "response": "30ee65c0752693f4eecc90f924972279f00c0c73 tree 810"
+    },
+    "31b4df1df65ef70d92936091271d21e1d90c1142": {
+      "present": true,
+      "response": "31b4df1df65ef70d92936091271d21e1d90c1142 tree 810"
+    },
+    "3c63c8368187de895e1dc0df8bbc105c6f39f842": {
+      "present": true,
+      "response": "3c63c8368187de895e1dc0df8bbc105c6f39f842 commit 274"
+    },
+    "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0": {
+      "present": false,
+      "response": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0 missing"
+    },
+    "50e158640d8278ca94dbecb6539dab96c6a9fb84": {
+      "present": false,
+      "response": "50e158640d8278ca94dbecb6539dab96c6a9fb84 missing"
+    },
+    "521ea862cd063904aaf3acb949208ac87dc0d762": {
+      "present": true,
+      "response": "521ea862cd063904aaf3acb949208ac87dc0d762 tree 810"
+    },
+    "54d2f12c0d783f827d43bc626489f58ab75d7c31": {
+      "present": true,
+      "response": "54d2f12c0d783f827d43bc626489f58ab75d7c31 tree 810"
+    },
+    "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8": {
+      "present": true,
+      "response": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8 tree 810"
+    },
+    "5d59b9540268914794a62e8fa237caf999499314": {
+      "present": true,
+      "response": "5d59b9540268914794a62e8fa237caf999499314 commit 1601"
+    },
+    "5df72527b22520b27f5ad858bbca98456c7ad9cf": {
+      "present": true,
+      "response": "5df72527b22520b27f5ad858bbca98456c7ad9cf tree 810"
+    },
+    "6cdbf9551aae1754e489773bac29bc0598e20a9b": {
+      "present": true,
+      "response": "6cdbf9551aae1754e489773bac29bc0598e20a9b commit 1628"
+    },
+    "9fedf7ecbbe07177069c030592b4e03dcffebb81": {
+      "present": true,
+      "response": "9fedf7ecbbe07177069c030592b4e03dcffebb81 commit 1753"
+    },
+    "a19ecaa4745236753d89b7e6be8de4a9f2156954": {
+      "present": true,
+      "response": "a19ecaa4745236753d89b7e6be8de4a9f2156954 tree 810"
+    },
+    "a38495fe234c4ae71aeae3c570d5d91acf847fee": {
+      "present": true,
+      "response": "a38495fe234c4ae71aeae3c570d5d91acf847fee tree 810"
+    },
+    "af52e79d69de2224fa709309704ba6a971453579": {
+      "present": true,
+      "response": "af52e79d69de2224fa709309704ba6a971453579 tree 810"
+    },
+    "b34561d1ade376512a34fed3fd78938ed2431ecd": {
+      "present": true,
+      "response": "b34561d1ade376512a34fed3fd78938ed2431ecd commit 750"
+    },
+    "be23902744141ca769d1b11b3a0f50d8b62a4ed3": {
+      "present": true,
+      "response": "be23902744141ca769d1b11b3a0f50d8b62a4ed3 tree 810"
+    },
+    "c2b1ca2503aeca35873d20d1b188689369edc752": {
+      "present": true,
+      "response": "c2b1ca2503aeca35873d20d1b188689369edc752 commit 290"
+    },
+    "cd3643aec9b12dab647f07b8c561e81eeae1493c": {
+      "present": true,
+      "response": "cd3643aec9b12dab647f07b8c561e81eeae1493c tree 810"
+    },
+    "d61a69d3433db127019924d269bf25ded3aecf60": {
+      "present": false,
+      "response": "d61a69d3433db127019924d269bf25ded3aecf60 missing"
+    },
+    "dbb1c989342639c4c04366a0d12bc3ecb4760e04": {
+      "present": true,
+      "response": "dbb1c989342639c4c04366a0d12bc3ecb4760e04 commit 332"
+    },
+    "ed4d95c3e558ad28b5f3132152704bdf77df5f49": {
+      "present": true,
+      "response": "ed4d95c3e558ad28b5f3132152704bdf77df5f49 commit 296"
+    },
+    "faf144086067f9b0a301a2b46760164d80fec04e": {
+      "present": true,
+      "response": "faf144086067f9b0a301a2b46760164d80fec04e commit 826"
+    },
+    "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": {
+      "present": true,
+      "response": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb commit 788"
+    }
+  },
+  "pack_created": false,
+  "queried_git": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+  "root_worktree_common_git": {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "rev-parse",
+      "--path-format=absolute",
+      "--git-common-dir"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git\n"
+  },
+  "schema": "trnm-external-source-local-availability-v1",
+  "source_pairs": {
+    "1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3",
+    "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502",
+    "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0",
+    "3c63c8368187de895e1dc0df8bbc105c6f39f842": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+    "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60",
+    "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73",
+    "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762",
+    "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579",
+    "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+    "c2b1ca2503aeca35873d20d1b188689369edc752": "5df72527b22520b27f5ad858bbca98456c7ad9cf",
+    "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee",
+    "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954",
+    "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c",
+    "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"
+  }
+}

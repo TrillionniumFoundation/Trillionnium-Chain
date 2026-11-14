@@ -1,0 +1,284 @@
+diff --git a/scripts/ci/test_public_readiness_evidence.py b/scripts/ci/test_public_readiness_evidence.py
+index 0edd345df10647db46403f789c72df1967ff9897..30a4e2dd3f2a78faf196ca75b484df0e4b2bd062 100644
+--- a/scripts/ci/test_public_readiness_evidence.py
++++ b/scripts/ci/test_public_readiness_evidence.py
+@@ -5,10 +5,11 @@ import copy
+ import hashlib
+ import json
+ import os
+ import re
+ import sqlite3
++from contextlib import closing
+ import subprocess
+ import sys
+ import tempfile
+ import unittest
+ from pathlib import Path
+@@ -625,11 +626,11 @@ class DurableStoreTests(unittest.TestCase):
+             self.packets.append(packet); self.blocks.append((block,parent,height))
+             self.summary['records'].append({'block':block.hex()}); parent = block
+         self.summary['producer_final_state'] = {'tip':parent.hex()}
+         for owner in ('producer','validator'):
+             directory = self.folder/owner; directory.mkdir()
+-            with sqlite3.connect(directory/'native.sqlite') as database:
++            with closing(sqlite3.connect(directory/'native.sqlite')) as database, database:
+                 database.executescript(ddl)
+                 database.executemany('INSERT INTO metadata VALUES(?,?)',[
+                     ('schema',H(self.schema_domain,ddl.encode())),
+                     ('parameters',bytes.fromhex(self.summary['parameters'])),('genesis',bytes.fromhex(self.summary['genesis']))])
+                 database.execute('INSERT INTO active VALUES(1,?,3,0)',(parent,))
+@@ -663,22 +664,22 @@ class DurableStoreTests(unittest.TestCase):
+     def test_owned_sqlite_control_and_changed_packet_or_work_reject(self):
+         self.verify()
+         self.summary['ledger_disk_bytes'] += 1
+         with self.assertRaises(ValueError): self.verify()
+         self.summary['ledger_disk_bytes'] -= 1
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute('UPDATE blocks SET packet=? WHERE height=1',(b'forged bytes',))
+         with self.assertRaises(ValueError): self.verify()
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute('UPDATE blocks SET packet=?,chainwork=? WHERE height=1',(self.packets[0],bytes(64)))
+         with self.assertRaises(ValueError): self.verify()
+ 
+     def test_changed_published_state_and_injected_schema_reject(self):
+-        with sqlite3.connect(self.folder/'producer/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'producer/native.sqlite')) as database, database:
+             database.execute('UPDATE kv SET value=?',(self.canonical(2),))
+         with self.assertRaises(ValueError): self.verify()
+-        with sqlite3.connect(self.folder/'producer/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'producer/native.sqlite')) as database, database:
+             database.execute('UPDATE kv SET value=?',(self.canonical(1),))
+             database.execute('CREATE TRIGGER injected AFTER INSERT ON metadata BEGIN SELECT 1; END')
+         with self.assertRaises(ValueError): self.verify()
+ 
+     def assert_user_schema_object_rejected(self, kind, name, sql):
+@@ -686,11 +687,11 @@ class DurableStoreTests(unittest.TestCase):
+         # still has valid metadata, state, packets and ancestry, and disk bytes
+         # are remeasured so the schema boundary is the intended refusal.
+         for owner in ('producer', 'validator'):
+             path = self.folder/owner/'native.sqlite'
+             with self.subTest(owner=owner,kind=kind,name=name):
+-                with sqlite3.connect(path) as database:
++                with closing(sqlite3.connect(path)) as database, database:
+                     database.execute(sql)
+                     actual = database.execute(
+                         'SELECT type,name,sql FROM sqlite_master WHERE name=?', (name,)).fetchone()
+                     self.assertEqual(actual[:2], (kind,name))
+                     self.assertIsInstance(actual[2], str)
+@@ -698,11 +699,11 @@ class DurableStoreTests(unittest.TestCase):
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 try:
+                     with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'):
+                         self.verify()
+                 finally:
+-                    with sqlite3.connect(path) as database:
++                    with closing(sqlite3.connect(path)) as database, database:
+                         database.execute('DROP '+kind.upper()+' "'+name+'"')
+                     self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                     self.verify()
+ 
+     def test_sqlite_like_prefix_user_table_is_not_internal(self):
+@@ -721,11 +722,11 @@ class DurableStoreTests(unittest.TestCase):
+         self.assert_user_schema_object_rejected('view','sqlite7shadow',
+             'CREATE VIEW sqlite7shadow AS SELECT key FROM metadata')
+ 
+     def test_real_sqlite_internal_autoindexes_and_statistics_remain_supported(self):
+         for owner in ('producer', 'validator'):
+-            with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
++            with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
+                 autoindexes = database.execute(
+                     'SELECT name,sql FROM sqlite_master WHERE type="index"').fetchall()
+                 self.assertTrue(any(name.startswith('sqlite_autoindex_') and sql is None
+                                     for name,sql in autoindexes))
+                 # ANALYZE creates the genuine reserved statistics table; callers
+@@ -738,37 +739,37 @@ class DurableStoreTests(unittest.TestCase):
+         self.verify()
+ 
+     def test_current_v2_schema_and_complete_index_positive_control(self):
+         self.assertEqual(self.schema_domain,'native-branch-schema-v2')
+         self.verify()
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             self.assertEqual(database.execute('SELECT count(*) FROM ancestry_jump').fetchone()[0],5)
+ 
+     def test_v2_schema_metadata_cannot_use_legacy_hash_domain(self):
+         ddl,_ = check.native_durable_schema(check.ROOT)
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                              (self.H('native-branch-schema-v1',ddl.encode()),))
+         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+ 
+     def test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity(self):
+         old = bytes.fromhex('8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+         current = bytes.fromhex('9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658')
+         self.verify()
+         for owner in ('producer','validator'):
+             with self.subTest(owner=owner):
+-                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
+                     self.assertEqual(database.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()[0],current)
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(old,))
+                 with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+-                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(current,))
+                 self.verify()
+ 
+     def test_authenticated_domain_cannot_relabel_legacy_tables(self):
+         ddl,_ = check.native_durable_schema(check.ROOT)
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                              (self.H('native-authenticated-branch-schema-v1',ddl.encode()),))
+         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+ 
+     def test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata(self):
+@@ -777,18 +778,18 @@ class DurableStoreTests(unittest.TestCase):
+                      'CREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);\n')
+         original = self.H(domain,ddl.encode())
+         for schema in (original,self.H(domain,(ddl+extension).encode()),
+                        self.H('native-authenticated-branch-schema-v1',(ddl+extension).encode())):
+             with self.subTest(schema=schema.hex()):
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.executescript(extension)
+                     database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
+                     database.execute('INSERT INTO native_state_commitments VALUES(?,?)',(bytes(32),b'unverified commitment'))
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.execute('DROP TABLE archive_nodes')
+                     database.execute('DROP TABLE native_state_commitments')
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 self.verify()
+@@ -796,15 +797,15 @@ class DurableStoreTests(unittest.TestCase):
+     def test_growth_domains_cannot_relabel_legacy_tables(self):
+         ddl,domain = check.native_durable_schema(check.ROOT)
+         for foreign in ('native-growth-reference-branch-schema-v2',
+                         'native-permanent-account-growth-schema-v2'):
+             with self.subTest(domain=foreign):
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                                      (self.H(foreign,ddl.encode()),))
+                 with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                              (self.H(domain,ddl.encode()),))
+         self.verify()
+ 
+     def test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing(self):
+@@ -813,18 +814,18 @@ class DurableStoreTests(unittest.TestCase):
+                      'CREATE TABLE growth_states(block BLOB PRIMARY KEY,data BLOB NOT NULL);\n')
+         original = self.H(domain,ddl.encode())
+         for schema in (original,self.H(domain,(ddl+extension).encode()),
+                        self.H('native-permanent-account-growth-schema-v2',(ddl+extension).encode())):
+             with self.subTest(schema=schema.hex()):
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.executescript(extension)
+                     database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
+                     database.execute('INSERT INTO growth_states VALUES(?,?)',(bytes(32),b'unverified growth state'))
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.execute('DROP TABLE archive_nodes')
+                     database.execute('DROP TABLE growth_states')
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 self.verify()
+@@ -835,32 +836,32 @@ class DurableStoreTests(unittest.TestCase):
+                      'sequence INTEGER NOT NULL CHECK(sequence>0),root BLOB NOT NULL CHECK(length(root)=64));')
+         original = self.H(domain,ddl.encode())
+         foreign = 'native-pq-network-witness-schema-v4'
+         # Relabelling the ordinary database with the new domain cannot upgrade
+         # the dump to external-witness or whole-owner evidence.
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                              (self.H(foreign,ddl.encode()),))
+         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+         for schema in (original,self.H(domain,(ddl+extension).encode()),
+                        self.H(foreign,(ddl+extension).encode())):
+             with self.subTest(schema=schema.hex()):
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.executescript(extension)
+                     database.execute('INSERT INTO pq_witness_checkpoint_v1 VALUES(1,1,?)',(bytes(64),))
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+                     database.execute('DROP TABLE pq_witness_checkpoint_v1')
+                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                 self.verify()
+ 
+     def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
+         block,previous,height = self.blocks[1]
+-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
++        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
+             ancestor,ancestor_height,_,right,_ = database.execute(
+                 'SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=1',(block,)).fetchone()
+             left = bytes([9])*32
+             seal = self.H('native-derived-ancestry-row-v1',bytes.fromhex(self.summary['network']),
+                 bytes.fromhex(self.summary['parameters']),bytes.fromhex(self.summary['genesis']),
+@@ -1509,10 +1510,48 @@ class NativeDurableSchemaTests(unittest.TestCase):
+             ]
+             for source,index in sources:
+                 with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+                     self.extract(source,index)
+ 
++    def test_current_endpoint_witness_gate_cannot_be_removed_or_deferred(self):
++        self.extract(self.current)
++        gate = (
++            '        if let Some(policy) = owners.pq_network.as_deref() {\n'
++            '            ensure(\n'
++            '                !crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?\n'
++            '                    || (state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()),\n'
++            '                "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",\n'
++            '            )?;\n'
++            '        }\n'
++        )
++        mutations = [
++            # This exactly restores the formerly accepted current body. It
++            # must not be authorized through a predecessor-hash fallback.
++            ('old-body-fallback', ''),
++            ('commented-gate', ''.join('        // ' + line.lstrip()
++                                     for line in gate.splitlines(keepends=True))),
++            ('canonical-policy-bypass', gate.replace(
++                '!crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?',
++                'true')),
++            ('witness-backend-or-client', gate.replace(
++                'state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()',
++                'state_backend == StateBackend::PqWitnessV4 || owners.pq_witness.is_some()')),
++            ('ignored-refusal', gate.replace('            ensure(', '            let _ = ensure(')
++                                   .replace('            )?;', '            );')),
++        ]
++        for label, replacement in mutations:
++            with self.subTest(label=label), self.assertRaisesRegex(
++                    ValueError, 'durable backend selected implementation'):
++                self.extract(self.replace_once(self.current, gate, replacement))
++        late = self.replace_once(self.current, gate, '')
++        late = self.replace_once(late, '            fs::create_dir_all(path)?;',
++                                 '            fs::create_dir_all(path)?;\n' + gate)
++        with self.subTest(label='witness-check-after-namespace-effect'), self.assertRaisesRegex(
++                ValueError, 'durable backend selected implementation'):
++            self.extract(late)
++
++
+ 
+ class PipelineExecutableBindingTests(unittest.TestCase):
+     """Bounded local files and harmless child exits, never native qualification."""
+     def setUp(self):
+         self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pipeline-binding-')

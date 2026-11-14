@@ -1,0 +1,88 @@
+{
+  "schema": "trnm-C0-cost-complete-artifact-causal-overlay-v1",
+  "sealed_at": "2026-11-14T08:32:48.043027+00:00",
+  "supersedes_only_completeness_not_old_bytes": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/bounded-cause-review-v1/causal-summary.json",
+    "bytes": 111116,
+    "sha256": "07c9620aca942d46dfef631650508a6e985e8f28f1f947a099b5aef0d97d78c7"
+  },
+  "completion_receipt": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/official-connector-complete-artifacts-v1/completion-summary.json",
+    "bytes": 4073,
+    "sha256": "2201a627e0f88c94ccef191ebe204c895f59bc313c6f6576d4618a16dcb70eb6"
+  },
+  "both_whole_zip_verified": true,
+  "both_161_members_crc_sha_verified": true,
+  "critical_nine_original_members_and_first_partials_match": true,
+  "kernel_evidence": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/additional-host-counter-originals-v1/aggregate-kernel-counter-deltas.json",
+    "bytes": 9795,
+    "sha256": "7f4ce5f87084b2f1b9a839b7895273d4d0df5bfd9b70abd275e3ba198744ee66"
+  },
+  "kernel_scope": {
+    "producer_path": "scripts/ci/run_from_zero_host.py",
+    "source_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "source_sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb",
+    "producer_lines": [
+      305,
+      324
+    ],
+    "meaning": "inside() captures before, executes the whole original run_from_zero_native.py command, and captures after in finally. These span all original child work; not a single4s phase/checkpoint.",
+    "x64_interval_utc": [
+      "2026-11-14T07:41:06.815984+00:00",
+      "2026-11-14T07:42:10.235524+00:00"
+    ],
+    "arm64_interval_utc": [
+      "2026-11-14T07:40:10.765119+00:00",
+      "2026-11-14T07:41:05.066520+00:00"
+    ],
+    "genuine_aggregate_cpu_stat_present": true,
+    "per_work_or_per_phase_kernel_series_found": false,
+    "syscall_or_off_cpu_trace_found": false,
+    "single_replay_wall_gap_attributed_to_kernel": false
+  },
+  "read_only_refresh": {
+    "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/pr847-C0-final-refresh-v1/summary.json",
+    "bytes": 95361,
+    "sha256": "a8b21725cbdaa06e2ff629f6d3f68a67773c165c2e05d6a8ed3ee168c17aee22"
+  },
+  "request_failures_preserved": [
+    {
+      "arch": "x64",
+      "range": [
+        6716362,
+        7240650
+      ],
+      "returncode": 1,
+      "timed_out": false,
+      "response_bytes": 0,
+      "stderr_bytes": 151,
+      "receipt": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/x64/005-6716362-7240649.receipt.json",
+        "bytes": 1060,
+        "sha256": "372653341d79070a855ca9a3503b56d51a6a9ee3e44bd355c4f003f3e70e8922"
+      }
+    },
+    {
+      "arch": "arm64",
+      "range": [
+        3472328,
+        3996616
+      ],
+      "returncode": 1,
+      "timed_out": false,
+      "response_bytes": 0,
+      "stderr_bytes": 151,
+      "receipt": {
+        "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/artifact-range-continuation-v1/serial-missing-ranges-v5/arm64/000-3472328-3996615.receipt.json",
+        "bytes": 1066,
+        "sha256": "ea93f2e83116865389c66fc1d0d4a5cd9ab64b7a71acd4937d92bce111ac4147"
+      }
+    }
+  ],
+  "all_download_writers_terminal": true,
+  "no_native_rerun": true,
+  "source_or_remote_mutation": false,
+  "qualified_original_gate": false,
+  "finite_confirmation_failure_unresolved": true
+}

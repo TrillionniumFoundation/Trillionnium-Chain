@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-native-bridge-history-root-manifest-request-v1",
+  "base": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "worktree_manifest_unchanged": true,
+  "required_paths_add": [
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+  ],
+  "pinned_blobs_updates": {
+    "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py": "61731a92ddf7e5fd27f8712dc204c2d065b22eff",
+    "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py": "89bbe4a78c3d258e7799556257f4919cc280e17f",
+    "docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md": "bae4d5c9692e451bddb2e46e67facefeb649848b",
+    "scripts/ci/check_pq_research_integration.py": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+    "scripts/ci/test_pq_research_integration.py": "b43c38008095eff5ab7a5cac35c00beddd2803d0",
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw": "421b10241820580efcdabc692ccb1f6dd27b6586",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw": "cef4eb0a5aae12eb68cadaf54722b2847f3bef3d",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw": "da58f5e34d3c7f4e0c40505922ff717e0c71870c",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw": "caf466cfabbcfb763dceaa3b01fd19bbbeb219d4",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw": "d27a702527516a8c4b7e23bdc2ebe1d216685b1f",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json": "32964264b730cc8d97c5a58b254b0e25b79c0b74",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md": "dcd6a8bec4b2cac4e84cc087e70751ba10b5e1c1"
+  },
+  "runtime_required_new_data": [
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+  ],
+  "evidence_new_paths": [
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/historical-commit.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-0-016ebf3deeac88d6d7a782edf563f2291ebe17f5.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-1-bed92c9c2d2c71398a516ecbfea3ca272f703cec.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/tree-2-520f3d47f1625e7894a8ce981739304308b47b46.raw",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/provenance.json",
+    "evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md"
+  ],
+  "source_owned_by_root": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "note": "Only the new raw producer is a runtime dependency; provenance files are fixed review evidence. All listed pins identify the exact prepared bytes, not a committed final combined source."
+}

@@ -1,0 +1,1423 @@
+{
+  "actual_executed_ROG_programs_saved_separately": [
+    {
+      "bytes": 4507,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_prepare_isolated_validation.py",
+      "sha256": "a6f4a3b3a4b6963153b85e616da5dd4852d512bc2a12feaca22caba6fae461fe"
+    },
+    {
+      "bytes": 8832,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_serial_and_clippy_validation.py",
+      "sha256": "0c6dd517ac5bd62d439a676a736f9d013a70321f13498172e7dd3c8f2adfa40a"
+    },
+    {
+      "bytes": 5785,
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/executed-producers-v1/rog_default_harness_followup.py",
+      "sha256": "6cd720fcf83d0a0d04b37bac06d442373ccd15a8c60dccdcca6d224168c23d95"
+    }
+  ],
+  "all_member_crc_and_sha256_verified": true,
+  "archive": {
+    "bytes": 67929,
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/originals.zip",
+    "sha256": "81d65eae386eaa2ec2e5a53101508b02e610f515a690855ea15a0e26f53244b9"
+  },
+  "file_count": 115,
+  "files": [
+    {
+      "bytes": 304,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/cached-policy-three-controls.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/cached-policy-three-controls.stderr"
+      },
+      "path": "default/cached-policy-three-controls.stderr",
+      "sha256": "2f10f1b1a0102958db6e7d5f4912daa3842dad7e3f45b721b636a089871cc79a",
+      "source_version": "66306:36726088:304:1794654001434912801:1794654001434912801",
+      "zip_member": "originals/default/cached-policy-three-controls.stderr"
+    },
+    {
+      "bytes": 398,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/cached-policy-three-controls.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/cached-policy-three-controls.stdout"
+      },
+      "path": "default/cached-policy-three-controls.stdout",
+      "sha256": "dd1283e72db74665c8926af3a9e2f073667d15effd47a653a481471f948f1890",
+      "source_version": "66306:36726087:398:1794654001448912753:1794654001448912753",
+      "zip_member": "originals/default/cached-policy-three-controls.stdout"
+    },
+    {
+      "bytes": 304,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/original-profile-golden.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/original-profile-golden.stderr"
+      },
+      "path": "default/original-profile-golden.stderr",
+      "sha256": "678c21876f8f2c124c9887092a0fabd14429edb04f85a73274dd09db6f89dc3b",
+      "source_version": "66306:36726090:304:1794654001530912474:1794654001530912474",
+      "zip_member": "originals/default/original-profile-golden.stderr"
+    },
+    {
+      "bytes": 219,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/original-profile-golden.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/original-profile-golden.stdout"
+      },
+      "path": "default/original-profile-golden.stdout",
+      "sha256": "e04a0cef05eb9a93c83ed5fc5474c92e01f3d90c9f20b8dcad96e5136ebc1b39",
+      "source_version": "66306:36726089:219:1794654001533912464:1794654001533912464",
+      "zip_member": "originals/default/original-profile-golden.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/preflight.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/preflight.stderr"
+      },
+      "path": "default/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726084:0:1794654001142913796:1794654001142913796",
+      "zip_member": "originals/default/preflight.stderr"
+    },
+    {
+      "bytes": 169,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/preflight.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/preflight.stdout"
+      },
+      "path": "default/preflight.stdout",
+      "sha256": "1db8c8cac516dc3baf98529edaa41c1b44d2584b2b2604afb564f6e49f259a29",
+      "source_version": "66306:36726083:169:1794654001170913701:1794654001170913701",
+      "zip_member": "originals/default/preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-head.stderr"
+      },
+      "path": "default/proposal-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726100:0:1794654001653912055:1794654001653912055",
+      "zip_member": "originals/default/proposal-after-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-head.stdout"
+      },
+      "path": "default/proposal-after-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:36726099:41:1794654001654912051:1794654001654912051",
+      "zip_member": "originals/default/proposal-after-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-status.stderr"
+      },
+      "path": "default/proposal-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726106:0:1794654001656912045:1794654001656912045",
+      "zip_member": "originals/default/proposal-after-status.stderr"
+    },
+    {
+      "bytes": 62,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-status.stdout"
+      },
+      "path": "default/proposal-after-status.stdout",
+      "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91",
+      "source_version": "66306:36726103:62:1794654002125910446:1794654002125910446",
+      "zip_member": "originals/default/proposal-after-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-tree.stderr"
+      },
+      "path": "default/proposal-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726102:0:1794654001654912051:1794654001654912051",
+      "zip_member": "originals/default/proposal-after-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-after-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-after-tree.stdout"
+      },
+      "path": "default/proposal-after-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:36726101:41:1794654001655912048:1794654001655912048",
+      "zip_member": "originals/default/proposal-after-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-head.stderr"
+      },
+      "path": "default/proposal-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726076:0:1794653999716918655:1794653999716918655",
+      "zip_member": "originals/default/proposal-before-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-head.stdout"
+      },
+      "path": "default/proposal-before-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:36726075:41:1794653999719918645:1794653999719918645",
+      "zip_member": "originals/default/proposal-before-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-status.stderr"
+      },
+      "path": "default/proposal-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726082:0:1794653999724918628:1794653999724918628",
+      "zip_member": "originals/default/proposal-before-status.stderr"
+    },
+    {
+      "bytes": 62,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-status.stdout"
+      },
+      "path": "default/proposal-before-status.stdout",
+      "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91",
+      "source_version": "66306:36726079:62:1794654001096913953:1794654001096913953",
+      "zip_member": "originals/default/proposal-before-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-tree.stderr"
+      },
+      "path": "default/proposal-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726078:0:1794653999720918642:1794653999720918642",
+      "zip_member": "originals/default/proposal-before-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/proposal-before-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/proposal-before-tree.stdout"
+      },
+      "path": "default/proposal-before-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:36726077:41:1794653999722918635:1794653999722918635",
+      "zip_member": "originals/default/proposal-before-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-head.stderr"
+      },
+      "path": "default/root-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726094:0:1794654001586912283:1794654001586912283",
+      "zip_member": "originals/default/root-after-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-head.stdout"
+      },
+      "path": "default/root-after-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:36726091:41:1794654001587912280:1794654001587912280",
+      "zip_member": "originals/default/root-after-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-status.stderr"
+      },
+      "path": "default/root-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726098:0:1794654001589912273:1794654001589912273",
+      "zip_member": "originals/default/root-after-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-status.stdout"
+      },
+      "path": "default/root-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726097:0:1794654001589912273:1794654001589912273",
+      "zip_member": "originals/default/root-after-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-tree.stderr"
+      },
+      "path": "default/root-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726096:0:1794654001587912280:1794654001587912280",
+      "zip_member": "originals/default/root-after-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-after-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-after-tree.stdout"
+      },
+      "path": "default/root-after-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:36726095:41:1794654001588912276:1794654001588912276",
+      "zip_member": "originals/default/root-after-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-head.stderr"
+      },
+      "path": "default/root-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726070:0:1794653999594919071:1794653999594919071",
+      "zip_member": "originals/default/root-before-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-head.stdout"
+      },
+      "path": "default/root-before-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:36726067:41:1794653999596919064:1794653999596919064",
+      "zip_member": "originals/default/root-before-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-status.stderr"
+      },
+      "path": "default/root-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726074:0:1794653999602919044:1794653999602919044",
+      "zip_member": "originals/default/root-before-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-status.stdout"
+      },
+      "path": "default/root-before-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726073:0:1794653999602919044:1794653999602919044",
+      "zip_member": "originals/default/root-before-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-tree.stderr"
+      },
+      "path": "default/root-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726072:0:1794653999598919058:1794653999598919058",
+      "zip_member": "originals/default/root-before-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/root-before-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/root-before-tree.stdout"
+      },
+      "path": "default/root-before-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:36726071:41:1794653999600919051:1794653999600919051",
+      "zip_member": "originals/default/root-before-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/rustc-version.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/rustc-version.stderr"
+      },
+      "path": "default/rustc-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:36726086:0:1794654001175913683:1794654001175913683",
+      "zip_member": "originals/default/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/rustc-version.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/rustc-version.stdout"
+      },
+      "path": "default/rustc-version.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_version": "66306:36726085:196:1794654001187913643:1794654001187913643",
+      "zip_member": "originals/default/rustc-version.stdout"
+    },
+    {
+      "bytes": 18752,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/summary.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/summary.json"
+      },
+      "path": "default/summary.json",
+      "sha256": "0be788fea02aa1a59869c7610f42002c39954f52a63b4f4a76bfdf78f038780a",
+      "source_version": "66306:36726107:18752:1794654002172885608:1794654002172885608",
+      "zip_member": "originals/default/summary.json"
+    },
+    {
+      "bytes": 1416,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/AGENTS.original.md",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/AGENTS.original.md"
+      },
+      "path": "serial/AGENTS.original.md",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+      "source_version": "66306:35036001:1416:1794653462171853947:1794653462171853947",
+      "zip_member": "originals/serial/AGENTS.original.md"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/cargo-version.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/cargo-version.stderr"
+      },
+      "path": "serial/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036012:0:1794653462305718621:1794653462305718621",
+      "zip_member": "originals/serial/cargo-version.stderr"
+    },
+    {
+      "bytes": 36,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/cargo-version.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/cargo-version.stdout"
+      },
+      "path": "serial/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_version": "66306:35036011:36:1794653462305718621:1794653462305718621",
+      "zip_member": "originals/serial/cargo-version.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/apply-check.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-check.stderr"
+      },
+      "path": "serial/execution-v1/apply-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037673:0:1794653551560221155:1794653551560221155",
+      "zip_member": "originals/serial/execution-v1/apply-check.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/apply-check.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-check.stdout"
+      },
+      "path": "serial/execution-v1/apply-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037660:0:1794653551560221155:1794653551560221155",
+      "zip_member": "originals/serial/execution-v1/apply-check.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/apply-reviewed.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-reviewed.stderr"
+      },
+      "path": "serial/execution-v1/apply-reviewed.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037676:0:1794653551564004470:1794653551564004470",
+      "zip_member": "originals/serial/execution-v1/apply-reviewed.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/apply-reviewed.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-reviewed.stdout"
+      },
+      "path": "serial/execution-v1/apply-reviewed.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037671:0:1794653551564004470:1794653551564004470",
+      "zip_member": "originals/serial/execution-v1/apply-reviewed.stdout"
+    },
+    {
+      "bytes": 4910,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cached-policy-three-controls.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stderr"
+      },
+      "path": "serial/execution-v1/cached-policy-three-controls.stderr",
+      "sha256": "e4a50bb5700de995fedb6dbf8c34c36ddbfb5706e7351f3020727746704bf5dc",
+      "source_version": "66306:35037705:4910:1794653825186491132:1794653825186491132",
+      "zip_member": "originals/serial/execution-v1/cached-policy-three-controls.stderr"
+    },
+    {
+      "bytes": 398,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cached-policy-three-controls.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stdout"
+      },
+      "path": "serial/execution-v1/cached-policy-three-controls.stdout",
+      "sha256": "51e31a9d94fc4b58a9e7c981d8f6e9b43d333b0fd700c23578ac0ed266e8c636",
+      "source_version": "66306:35037700:398:1794653825191491116:1794653825191491116",
+      "zip_member": "originals/serial/execution-v1/cached-policy-three-controls.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-head.stderr"
+      },
+      "path": "serial/execution-v1/candidate-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038293:0:1794653869643352550:1794653869643352550",
+      "zip_member": "originals/serial/execution-v1/candidate-after-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-head.stdout"
+      },
+      "path": "serial/execution-v1/candidate-after-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:35038288:41:1794653869645352544:1794653869645352544",
+      "zip_member": "originals/serial/execution-v1/candidate-after-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-status.stderr"
+      },
+      "path": "serial/execution-v1/candidate-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038297:0:1794653869653143970:1794653869653143970",
+      "zip_member": "originals/serial/execution-v1/candidate-after-status.stderr"
+    },
+    {
+      "bytes": 62,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-status.stdout"
+      },
+      "path": "serial/execution-v1/candidate-after-status.stdout",
+      "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91",
+      "source_version": "66306:35038294:62:1794653870684349301:1794653870684349301",
+      "zip_member": "originals/serial/execution-v1/candidate-after-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-tree.stderr"
+      },
+      "path": "serial/execution-v1/candidate-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038295:0:1794653869648879504:1794653869648879504",
+      "zip_member": "originals/serial/execution-v1/candidate-after-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-after-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-tree.stdout"
+      },
+      "path": "serial/execution-v1/candidate-after-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:35038292:41:1794653869649352532:1794653869649352532",
+      "zip_member": "originals/serial/execution-v1/candidate-after-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-head.stderr"
+      },
+      "path": "serial/execution-v1/candidate-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037678:0:1794653551567586147:1794653551567586147",
+      "zip_member": "originals/serial/execution-v1/candidate-before-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-head.stdout"
+      },
+      "path": "serial/execution-v1/candidate-before-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:35037675:41:1794653551569139656:1794653551569139656",
+      "zip_member": "originals/serial/execution-v1/candidate-before-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-status.stderr"
+      },
+      "path": "serial/execution-v1/candidate-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037682:0:1794653551571486661:1794653551571486661",
+      "zip_member": "originals/serial/execution-v1/candidate-before-status.stderr"
+    },
+    {
+      "bytes": 62,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-status.stdout"
+      },
+      "path": "serial/execution-v1/candidate-before-status.stdout",
+      "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91",
+      "source_version": "66306:35037679:62:1794653552054332216:1794653552054332216",
+      "zip_member": "originals/serial/execution-v1/candidate-before-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-tree.stderr"
+      },
+      "path": "serial/execution-v1/candidate-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037680:0:1794653551569952819:1794653551569952819",
+      "zip_member": "originals/serial/execution-v1/candidate-before-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-before-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-tree.stdout"
+      },
+      "path": "serial/execution-v1/candidate-before-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:35037677:41:1794653551571008245:1794653551571008245",
+      "zip_member": "originals/serial/execution-v1/candidate-before-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-changed-paths.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-changed-paths.stderr"
+      },
+      "path": "serial/execution-v1/candidate-changed-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037684:0:1794653552086332119:1794653552086332119",
+      "zip_member": "originals/serial/execution-v1/candidate-changed-paths.stderr"
+    },
+    {
+      "bytes": 59,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-changed-paths.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-changed-paths.stdout"
+      },
+      "path": "serial/execution-v1/candidate-changed-paths.stdout",
+      "sha256": "0d4d2196966310c3371fd3ac1b263aef6ac17e150642ebfc47fc69065848fad2",
+      "source_version": "66306:35037681:59:1794653552533330760:1794653552533330760",
+      "zip_member": "originals/serial/execution-v1/candidate-changed-paths.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-diff-check.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff-check.stderr"
+      },
+      "path": "serial/execution-v1/candidate-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037688:0:1794653552570688469:1794653552570688469",
+      "zip_member": "originals/serial/execution-v1/candidate-diff-check.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-diff-check.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff-check.stdout"
+      },
+      "path": "serial/execution-v1/candidate-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037685:0:1794653552570688469:1794653552570688469",
+      "zip_member": "originals/serial/execution-v1/candidate-diff-check.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-diff.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff.stderr"
+      },
+      "path": "serial/execution-v1/candidate-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037686:0:1794653552552330702:1794653552552330702",
+      "zip_member": "originals/serial/execution-v1/candidate-diff.stderr"
+    },
+    {
+      "bytes": 16943,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-diff.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff.stdout"
+      },
+      "path": "serial/execution-v1/candidate-diff.stdout",
+      "sha256": "e6a961b6d2e2ea687193c801dc417425e6faa296bd427b5bedfbe46551612be2",
+      "source_version": "66306:35037683:16943:1794653552563330669:1794653552563330669",
+      "zip_member": "originals/serial/execution-v1/candidate-diff.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-preflight.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-preflight.stderr"
+      },
+      "path": "serial/execution-v1/candidate-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037691:0:1794653553035904829:1794653553035904829",
+      "zip_member": "originals/serial/execution-v1/candidate-preflight.stderr"
+    },
+    {
+      "bytes": 169,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/candidate-preflight.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-preflight.stdout"
+      },
+      "path": "serial/execution-v1/candidate-preflight.stdout",
+      "sha256": "1db8c8cac516dc3baf98529edaa41c1b44d2584b2b2604afb564f6e49f259a29",
+      "source_version": "66306:35037687:169:1794653553065329143:1794653553065329143",
+      "zip_member": "originals/serial/execution-v1/candidate-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cargo-version.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cargo-version.stderr"
+      },
+      "path": "serial/execution-v1/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037699:0:1794653553217105611:1794653553217105611",
+      "zip_member": "originals/serial/execution-v1/cargo-version.stderr"
+    },
+    {
+      "bytes": 36,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cargo-version.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cargo-version.stdout"
+      },
+      "path": "serial/execution-v1/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_version": "66306:35037692:36:1794653553247328590:1794653553247328590",
+      "zip_member": "originals/serial/execution-v1/cargo-version.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/locked-offline-graph.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/locked-offline-graph.stderr"
+      },
+      "path": "serial/execution-v1/locked-offline-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037703:0:1794653553249328584:1794653553249328584",
+      "zip_member": "originals/serial/execution-v1/locked-offline-graph.stderr"
+    },
+    {
+      "bytes": 211373,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/locked-offline-graph.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/locked-offline-graph.stdout"
+      },
+      "path": "serial/execution-v1/locked-offline-graph.stdout",
+      "sha256": "40188ed3e4a8549ba210f2d14099f2b64fe099ff5bf1b8411ea9de2588efa78e",
+      "source_version": "66306:35037696:211373:1794653553277328498:1794653553277328498",
+      "zip_member": "originals/serial/execution-v1/locked-offline-graph.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/new-branch-absent.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/new-branch-absent.stderr"
+      },
+      "path": "serial/execution-v1/new-branch-absent.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036040:0:1794653540765862051:1794653540765862051",
+      "zip_member": "originals/serial/execution-v1/new-branch-absent.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/new-branch-absent.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/new-branch-absent.stdout"
+      },
+      "path": "serial/execution-v1/new-branch-absent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036033:0:1794653540765862051:1794653540765862051",
+      "zip_member": "originals/serial/execution-v1/new-branch-absent.stdout"
+    },
+    {
+      "bytes": 304,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/original-profile-golden.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stderr"
+      },
+      "path": "serial/execution-v1/original-profile-golden.stderr",
+      "sha256": "398bc153fd67b3c23ac9141ed028c87603b6bb872b67de4f1e718f06cd75a4ed",
+      "source_version": "66306:35037708:304:1794653825500490154:1794653825500490154",
+      "zip_member": "originals/serial/execution-v1/original-profile-golden.stderr"
+    },
+    {
+      "bytes": 219,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/original-profile-golden.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stdout"
+      },
+      "path": "serial/execution-v1/original-profile-golden.stdout",
+      "sha256": "e04a0cef05eb9a93c83ed5fc5474c92e01f3d90c9f20b8dcad96e5136ebc1b39",
+      "source_version": "66306:35037704:219:1794653825502490148:1794653825502490148",
+      "zip_member": "originals/serial/execution-v1/original-profile-golden.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-head.stderr"
+      },
+      "path": "serial/execution-v1/root-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037729:0:1794653869514352953:1794653869514352953",
+      "zip_member": "originals/serial/execution-v1/root-after-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-head.stdout"
+      },
+      "path": "serial/execution-v1/root-after-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:35037709:41:1794653869519352938:1794653869519352938",
+      "zip_member": "originals/serial/execution-v1/root-after-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-status.stderr"
+      },
+      "path": "serial/execution-v1/root-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038290:0:1794653869526352916:1794653869526352916",
+      "zip_member": "originals/serial/execution-v1/root-after-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-status.stdout"
+      },
+      "path": "serial/execution-v1/root-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038279:0:1794653869526352916:1794653869526352916",
+      "zip_member": "originals/serial/execution-v1/root-after-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-tree.stderr"
+      },
+      "path": "serial/execution-v1/root-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35038286:0:1794653869521352932:1794653869521352932",
+      "zip_member": "originals/serial/execution-v1/root-after-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-after-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-tree.stdout"
+      },
+      "path": "serial/execution-v1/root-after-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:35037728:41:1794653869524352922:1794653869524352922",
+      "zip_member": "originals/serial/execution-v1/root-after-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-head.stderr"
+      },
+      "path": "serial/execution-v1/root-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036026:0:1794653540628366922:1794653540628366922",
+      "zip_member": "originals/serial/execution-v1/root-before-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-head.stdout"
+      },
+      "path": "serial/execution-v1/root-before-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:35036025:41:1794653540630366916:1794653540630366916",
+      "zip_member": "originals/serial/execution-v1/root-before-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-status.stderr"
+      },
+      "path": "serial/execution-v1/root-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036032:0:1794653540636147132:1794653540636147132",
+      "zip_member": "originals/serial/execution-v1/root-before-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-status.stdout"
+      },
+      "path": "serial/execution-v1/root-before-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036027:0:1794653540636147132:1794653540636147132",
+      "zip_member": "originals/serial/execution-v1/root-before-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-tree.stderr"
+      },
+      "path": "serial/execution-v1/root-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036029:0:1794653540634569237:1794653540634569237",
+      "zip_member": "originals/serial/execution-v1/root-before-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-before-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-tree.stdout"
+      },
+      "path": "serial/execution-v1/root-before-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:35036028:41:1794653540635811444:1794653540635811444",
+      "zip_member": "originals/serial/execution-v1/root-before-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-preflight.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-preflight.stderr"
+      },
+      "path": "serial/execution-v1/root-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036038:0:1794653540700634363:1794653540700634363",
+      "zip_member": "originals/serial/execution-v1/root-preflight.stderr"
+    },
+    {
+      "bytes": 175,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/root-preflight.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-preflight.stdout"
+      },
+      "path": "serial/execution-v1/root-preflight.stdout",
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_version": "66306:35036031:175:1794653540731366610:1794653540731366610",
+      "zip_member": "originals/serial/execution-v1/root-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/rustc-version.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/rustc-version.stderr"
+      },
+      "path": "serial/execution-v1/rustc-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037695:0:1794653553101222635:1794653553101222635",
+      "zip_member": "originals/serial/execution-v1/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/rustc-version.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/rustc-version.stdout"
+      },
+      "path": "serial/execution-v1/rustc-version.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_version": "66306:35037689:196:1794653553161328851:1794653553161328851",
+      "zip_member": "originals/serial/execution-v1/rustc-version.stdout"
+    },
+    {
+      "bytes": 29972,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/steps.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/steps.json"
+      },
+      "path": "serial/execution-v1/steps.json",
+      "sha256": "a6d879e1b8c0a96a9a85a54481b90f7606f6b1984a640e4b3cd56f66e90a3e4a",
+      "source_version": "66306:35038298:29972:1794653870718349195:1794653870719349192",
+      "zip_member": "originals/serial/execution-v1/steps.json"
+    },
+    {
+      "bytes": 4061,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/strict-all-target-all-feature-clippy.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/strict-all-target-all-feature-clippy.stderr"
+      },
+      "path": "serial/execution-v1/strict-all-target-all-feature-clippy.stderr",
+      "sha256": "06282c056335aba0f428dac6a11f380cf11f40ab049c03e0c744eb96a7ddf342",
+      "source_version": "66306:35037723:4061:1794653869360353434:1794653869360353434",
+      "zip_member": "originals/serial/execution-v1/strict-all-target-all-feature-clippy.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/strict-all-target-all-feature-clippy.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/strict-all-target-all-feature-clippy.stdout"
+      },
+      "path": "serial/execution-v1/strict-all-target-all-feature-clippy.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037707:0:1794653825520490092:1794653825520490092",
+      "zip_member": "originals/serial/execution-v1/strict-all-target-all-feature-clippy.stdout"
+    },
+    {
+      "bytes": 35585,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/summary.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/summary.json"
+      },
+      "path": "serial/execution-v1/summary.json",
+      "sha256": "bf16496bd43d61e935e84748177d8add0ef5cc661be35f77ddb2ec11f94448f4",
+      "source_version": "66306:35038296:35585:1794653870722008153:1794653870722008153",
+      "zip_member": "originals/serial/execution-v1/summary.json"
+    },
+    {
+      "bytes": 3192,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-add.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-add.stderr"
+      },
+      "path": "serial/execution-v1/worktree-add.stderr",
+      "sha256": "fa4785029168bdd8c748a05601af36b3e7ff9a0aa6875ecd2f71806c3f74ecef",
+      "source_version": "66306:35036044:3192:1794653550917987727:1794653550917987727",
+      "zip_member": "originals/serial/execution-v1/worktree-add.stderr"
+    },
+    {
+      "bytes": 89,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-add.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-add.stdout"
+      },
+      "path": "serial/execution-v1/worktree-add.stdout",
+      "sha256": "e4e54047fecbd3875d4b8d2e2a6c09566f2da1d2094ebee4bb99a5192230092f",
+      "source_version": "66306:35036039:89:1794653550939527343:1794653550939527343",
+      "zip_member": "originals/serial/execution-v1/worktree-add.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-head.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-head.stderr"
+      },
+      "path": "serial/execution-v1/worktree-original-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037589:0:1794653551001252903:1794653551001252903",
+      "zip_member": "originals/serial/execution-v1/worktree-original-head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-head.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-head.stdout"
+      },
+      "path": "serial/execution-v1/worktree-original-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f",
+      "source_version": "66306:35036041:41:1794653551002335413:1794653551002335413",
+      "zip_member": "originals/serial/execution-v1/worktree-original-head.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-status.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-status.stderr"
+      },
+      "path": "serial/execution-v1/worktree-original-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037658:0:1794653551010793328:1794653551010793328",
+      "zip_member": "originals/serial/execution-v1/worktree-original-status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-status.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-status.stdout"
+      },
+      "path": "serial/execution-v1/worktree-original-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037655:0:1794653551010793328:1794653551010793328",
+      "zip_member": "originals/serial/execution-v1/worktree-original-status.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-tree.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-tree.stderr"
+      },
+      "path": "serial/execution-v1/worktree-original-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037656:0:1794653551005335404:1794653551005335404",
+      "zip_member": "originals/serial/execution-v1/worktree-original-tree.stderr"
+    },
+    {
+      "bytes": 41,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-original-tree.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-tree.stdout"
+      },
+      "path": "serial/execution-v1/worktree-original-tree.stdout",
+      "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b",
+      "source_version": "66306:35036048:41:1794653551007335398:1794653551007335398",
+      "zip_member": "originals/serial/execution-v1/worktree-original-tree.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-preflight.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-preflight.stderr"
+      },
+      "path": "serial/execution-v1/worktree-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35037668:0:1794653551526333821:1794653551526333821",
+      "zip_member": "originals/serial/execution-v1/worktree-preflight.stderr"
+    },
+    {
+      "bytes": 169,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/worktree-preflight.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-preflight.stdout"
+      },
+      "path": "serial/execution-v1/worktree-preflight.stdout",
+      "sha256": "1db8c8cac516dc3baf98529edaa41c1b44d2584b2b2604afb564f6e49f259a29",
+      "source_version": "66306:35037657:169:1794653551554333736:1794653551554333736",
+      "zip_member": "originals/serial/execution-v1/worktree-preflight.stdout"
+    },
+    {
+      "bytes": 4646,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/preparation.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/preparation.json"
+      },
+      "path": "serial/preparation.json",
+      "sha256": "48e41c65c270031ec1f806e1995f0d4e5d22b1b6c2b03403c6e863ffaf344df1",
+      "source_version": "66306:35036020:4646:1794653462325024184:1794653462325024184",
+      "zip_member": "originals/serial/preparation.json"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/process-comm-snapshot.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/process-comm-snapshot.stderr"
+      },
+      "path": "serial/process-comm-snapshot.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036016:0:1794653462323644410:1794653462323644410",
+      "zip_member": "originals/serial/process-comm-snapshot.stderr"
+    },
+    {
+      "bytes": 33516,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/process-comm-snapshot.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/process-comm-snapshot.stdout"
+      },
+      "path": "serial/process-comm-snapshot.stdout",
+      "sha256": "a44d02fccdad42b1be7f0678fdb407960c0cba56545af1ce2ebad6ac0748f8b6",
+      "source_version": "66306:35036015:33516:1794653462323644410:1794653462323644410",
+      "zip_member": "originals/serial/process-comm-snapshot.stdout"
+    },
+    {
+      "bytes": 16945,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/reviewed-policy-prefix.patch",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/reviewed-policy-prefix.patch"
+      },
+      "path": "serial/reviewed-policy-prefix.patch",
+      "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37",
+      "source_version": "66306:35036023:16945:1794653477878070318:1794653482875541616",
+      "zip_member": "originals/serial/reviewed-policy-prefix.patch"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/root-preflight.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/root-preflight.stderr"
+      },
+      "path": "serial/root-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036005:0:1794653462207728328:1794653462207728328",
+      "zip_member": "originals/serial/root-preflight.stderr"
+    },
+    {
+      "bytes": 175,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/root-preflight.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/root-preflight.stdout"
+      },
+      "path": "serial/root-preflight.stdout",
+      "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+      "source_version": "66306:35036002:175:1794653462207728328:1794653462207728328",
+      "zip_member": "originals/serial/root-preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/rustc-version.stderr",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/rustc-version.stderr"
+      },
+      "path": "serial/rustc-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_version": "66306:35036009:0:1794653462276733912:1794653462276733912",
+      "zip_member": "originals/serial/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/rustc-version.stdout",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/rustc-version.stdout"
+      },
+      "path": "serial/rustc-version.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_version": "66306:35036007:196:1794653462276733912:1794653462276733912",
+      "zip_member": "originals/serial/rustc-version.stdout"
+    },
+    {
+      "bytes": 735,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/steps-1.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/steps-1.json"
+      },
+      "path": "serial/steps-1.json",
+      "sha256": "e74ea069c1ba8728d9b810a1a4fd6d002c1ada06a4d222d6537b9114d04ab8de",
+      "source_version": "66306:35036006:735:1794653462207916781:1794653462207916781",
+      "zip_member": "originals/serial/steps-1.json"
+    },
+    {
+      "bytes": 732,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/steps-2.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/steps-2.json"
+      },
+      "path": "serial/steps-2.json",
+      "sha256": "0a19db9f12ffbf5b918f92523063cb96a623d78a008f3d21c1cd6f425de25284",
+      "source_version": "66306:35036010:732:1794653462276866761:1794653462276866761",
+      "zip_member": "originals/serial/steps-2.json"
+    },
+    {
+      "bytes": 714,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/steps-3.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/steps-3.json"
+      },
+      "path": "serial/steps-3.json",
+      "sha256": "2e483b4eaee13b1641c2b68b8a27e661bbb9fb746493e1b368e817a0d8debda1",
+      "source_version": "66306:35036014:714:1794653462305827445:1794653462305827445",
+      "zip_member": "originals/serial/steps-3.json"
+    },
+    {
+      "bytes": 764,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/steps-4.json",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/steps-4.json"
+      },
+      "path": "serial/steps-4.json",
+      "sha256": "7efcb99ee52edc8861670b81a1b1144e9f265e065c792c2e6fbd13867f63721e",
+      "source_version": "66306:35036018:764:1794653462323845917:1794653462323845917",
+      "zip_member": "originals/serial/steps-4.json"
+    },
+    {
+      "bytes": 6785,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/terminals/dpty-c303476984a28fbe487e6269f4dd1ab80041148ec62393f247c823d13fd15367.log",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-c303476984a28fbe487e6269f4dd1ab80041148ec62393f247c823d13fd15367/output.log"
+      },
+      "path": "terminals/dpty-c303476984a28fbe487e6269f4dd1ab80041148ec62393f247c823d13fd15367.log",
+      "sha256": "d50d6876ffa315296d59af2efaa4402723d9c4dea2cc70dcaa886fa67ddec15a",
+      "source_version": "66306:48660354:6785:1794653870722008153:1794653870722008153",
+      "zip_member": "originals/terminals/dpty-c303476984a28fbe487e6269f4dd1ab80041148ec62393f247c823d13fd15367.log"
+    },
+    {
+      "bytes": 725,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/terminals/dpty-d791d385cc81a1a7d8636b10476eee1d4c2942464e1d293d6f4c56b1e73235dc.log",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-d791d385cc81a1a7d8636b10476eee1d4c2942464e1d293d6f4c56b1e73235dc/output.log"
+      },
+      "path": "terminals/dpty-d791d385cc81a1a7d8636b10476eee1d4c2942464e1d293d6f4c56b1e73235dc.log",
+      "sha256": "71fffa713751d46cbeff5b91acb719c1bd3b56afdcef107ccf5032bbcd28cef3",
+      "source_version": "66306:48660340:725:1794653462325024184:1794653462325024184",
+      "zip_member": "originals/terminals/dpty-d791d385cc81a1a7d8636b10476eee1d4c2942464e1d293d6f4c56b1e73235dc.log"
+    },
+    {
+      "bytes": 2315,
+      "mac_source_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/terminals/dpty-da61427691a1481537db3019ac3a78a0654d0395b20f3a5d198570c08ea73139.log",
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-da61427691a1481537db3019ac3a78a0654d0395b20f3a5d198570c08ea73139/output.log"
+      },
+      "path": "terminals/dpty-da61427691a1481537db3019ac3a78a0654d0395b20f3a5d198570c08ea73139.log",
+      "sha256": "8acce383526c3b1430ab5d2be8d8423e1974e49bf0b0924405e9f7b376ea5498",
+      "source_version": "66306:48660480:2315:1794654002172885608:1794654002172885608",
+      "zip_member": "originals/terminals/dpty-da61427691a1481537db3019ac3a78a0654d0395b20f3a5d198570c08ea73139.log"
+    }
+  ],
+  "official_transfer_provenance": {
+    "bytes": 82983,
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/official-transfer-provenance.json",
+    "sha256": "20def8c02ba0ba6d7c602684c645630bea66848aa2b749635acfaaa48291bcbb"
+  },
+  "original_ROG_source_checks_are_historical": true,
+  "schema": "trnm-policy-prefix-closed-originals-zip-index-v1",
+  "source_files_stable_before_after": true,
+  "source_roster": {
+    "bytes": 52547,
+    "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/source-roster.json",
+    "sha256": "95e28583c48af77ac3785402c204e54c5bc4ba1d64090eea463d2a0a9150e674"
+  },
+  "stage_or_source_or_git_written": false,
+  "total_uncompressed_bytes": 398878
+}

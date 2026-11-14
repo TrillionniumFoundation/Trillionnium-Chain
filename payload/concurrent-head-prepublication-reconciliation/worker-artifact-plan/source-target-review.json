@@ -1,0 +1,149 @@
+{
+  "artifact_source_sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc",
+  "artifact_test_roster": [
+    "exact_stream_bound_includes_eof_and_limits_a_growing_reader",
+    "pretty_index_and_jsonl_keep_original_format_and_missing_file_errors",
+    "sparse_oversize_invalid_utf8_and_oversize_record_fail_closed",
+    "path_aliases_nonregular_inputs_and_untrusted_permissions_are_refused",
+    "replacement_growth_and_same_length_metadata_change_after_open_are_refused",
+    "a_live_writer_lock_is_not_reported_as_an_empty_artifact",
+    "query_bounds_both_export_and_pretty_index_before_reporting_records",
+    "fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check",
+    "validation_to_lock_permission_change_is_refused",
+    "validation_to_lock_hardlink_change_is_refused"
+  ],
+  "cargo_metadata_or_tests_run": false,
+  "prepare_only": true,
+  "source_captures": [
+    {
+      "bytes": 2204,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--Cargo.toml.original",
+      "label": "N",
+      "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "path": "trillionnium/Cargo.toml",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 577,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "label": "N",
+      "oid": "c76b97daaafc824a4c1339e1ebf771bf2123656a",
+      "path": "trillionnium/crates/trnm-worker-agent/Cargo.toml",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "e1b14fd7b321e47f46e61ce1ac229a62720370b1b022d8017a1f16d88629105f"
+    },
+    {
+      "bytes": 21031,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "label": "N",
+      "oid": "7d31d1fcd37df1480ca973f23e7110702a0c4770",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit.rs",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "9cd6d9b7d1c6484e218398ab5b2450b5e95f8433a3532536a907eacb4075bcc9"
+    },
+    {
+      "bytes": 70688,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "label": "N",
+      "oid": "1480b708459ee1f194103e81f72c306b6d3ff0d9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "revision": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "sha256": "e698e5ab7dde37a52689025a6524e4fc8960640d887a7b74be36c9c2d6232a17"
+    },
+    {
+      "bytes": 2204,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--Cargo.toml.original",
+      "label": "M6",
+      "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "path": "trillionnium/Cargo.toml",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 577,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "label": "M6",
+      "oid": "c76b97daaafc824a4c1339e1ebf771bf2123656a",
+      "path": "trillionnium/crates/trnm-worker-agent/Cargo.toml",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "e1b14fd7b321e47f46e61ce1ac229a62720370b1b022d8017a1f16d88629105f"
+    },
+    {
+      "bytes": 21031,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "label": "M6",
+      "oid": "7d31d1fcd37df1480ca973f23e7110702a0c4770",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit.rs",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "9cd6d9b7d1c6484e218398ab5b2450b5e95f8433a3532536a907eacb4075bcc9"
+    },
+    {
+      "bytes": 70688,
+      "capture": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "label": "M6",
+      "oid": "1480b708459ee1f194103e81f72c306b6d3ff0d9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "revision": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "sha256": "e698e5ab7dde37a52689025a6524e4fc8960640d887a7b74be36c9c2d6232a17"
+    }
+  ],
+  "target_context": {
+    "trillionnium/Cargo.toml": "[workspace]\nresolver = \"2\"\nmembers = [\n  \"crates/trnm-audit-events\",\n  \"crates/trnm-governance-guard\",\n  \"crates/trnm-escrow-vault\",\n  \"crates/trnm-types\",\n  \"crates/trnm-executor\",\n  \"crates/trnm-bench\",\n  \"crates/trnm-mempool\",\n  \"crates/trnm-worker-agent\",\n  \"crates/trnm-oracle\",\n  \"crates/trnm-research-protocol\",\n  \"crates/trnm-protocol\",\n  \"crates/trnm-peer-lease\",\n  \"crates/trnm-data-availability\",\n  \"crates/trnm-task-kernel\",\n  \"crates/trnm-mvcc-fee\",\n  \"crates/trnm-service-settlement\",\n  \"crates/trnm-control-plane\",\n  \"crates/trnm-state-import\",\n  \"crates/trnm-release-bundle\",\n  \"crates/trnm-checkpoint-store\",\n  \"crates/trnm-checkpoint-types\",\n  \"crates/trnm-crypto-primitives\",\n  \"crates/trnm-verification-profiles\",\n  \"crates/trnm-transport\",\n  \"crates/trnm-pon-node\",\n  \"crates/trnm-sqlite-io-boundary\",\n]\n\n[workspace.package]\nedition = \"2021\"\nlicense = \"MIT\"\nauthors = [\"Trillionnium Contributors\"]\n\n[workspace.metadata.trnm]\nlane = \"chain-protocol\"\ndevelopment_target = \"pon-nakamoto-v1\"\nimplementation_status = \"native-development-profiles-not-publicly-qualified\"\nproduction_consensus_activation = false\n\n[profile.test.package.curve25519-dalek]\nopt-level = 3\n\n[profile.test.package.ed25519-dalek]\nopt-level = 3\n\n[profile.test.package.sha2]\nopt-level = 3\ndebug-assertions = true\noverflow-checks = true\n\n# Preserve test checks while compiling repeated full-state traversal efficiently.\n# These overrides do not change development or release build profiles.\n[profile.test.package.trnm-protocol]\nopt-level = 3\ndebug-assertions = true\noverflow-checks = true\n\n[profile.test.package.trnm-mvcc-fee]\nopt-level = 1\ndebug-assertions = true\noverflow-checks = true\n\n# Keep the full debug/test inventory and all checks, but compile the costly\n# public-work primitive with the same optimizing compiler used for native work.\n# This is a test-build choice, not a resource-policy or security qualification.\n[profile.test.package.trnm-crypto-primitives]\nopt-level = 3\ndebug-assertions = true\noverflow-checks = true\n\n# LOCAL DEBUG EXPERIMENT ONLY: do not merge this artifact without independent full CI.\n[profile.test.package.trnm-pon-node]\nopt-level = 3\ndebug-assertions = true\noverflow-checks = true\n",
+    "trillionnium/crates/trnm-worker-agent/Cargo.toml": "[package]\npublish = false\nname = \"trnm-worker-agent\"\nversion = \"0.1.0\"\nedition.workspace = true\nlicense.workspace = true\nauthors.workspace = true\n\n[dependencies]\nanyhow = \"1\"\nclap = { version = \"4\", features = [\"derive\"] }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nsha2 = \"0.10\"\ngetrandom = \"0.4\"\nhex = \"0.4\"\nshlex = \"1\"\nshell-escape = \"0.1\"\ntrnm-types = { version = \"0.1.0\", path = \"../trnm-types\" }\nwait-timeout = \"0.2\"\n\n[target.'cfg(unix)'.dependencies]\nrustix = { version = \"1.1.6\", features = [\"fs\", \"process\"] }\n\n[dev-dependencies]\ntempfile = \"3\"\n",
+    "trillionnium/crates/trnm-worker-agent/src/audit.rs": [
+      {
+        "end": 6,
+        "start": 1,
+        "text": "1: #[cfg(unix)]\n2: mod artifact;\n3: #[cfg(not(unix))]\n4: mod artifact {\n5:     pub(super) fn read(_path: &std::path::Path) -> anyhow::Result<String> {\n6:         anyhow::bail!(\"safe worker audit artifact reads are unavailable on this platform\")"
+      },
+      {
+        "end": 7,
+        "start": 1,
+        "text": "1: #[cfg(unix)]\n2: mod artifact;\n3: #[cfg(not(unix))]\n4: mod artifact {\n5:     pub(super) fn read(_path: &std::path::Path) -> anyhow::Result<String> {\n6:         anyhow::bail!(\"safe worker audit artifact reads are unavailable on this platform\")\n7:     }"
+      },
+      {
+        "end": 8,
+        "start": 1,
+        "text": "1: #[cfg(unix)]\n2: mod artifact;\n3: #[cfg(not(unix))]\n4: mod artifact {\n5:     pub(super) fn read(_path: &std::path::Path) -> anyhow::Result<String> {\n6:         anyhow::bail!(\"safe worker audit artifact reads are unavailable on this platform\")\n7:     }\n8: }"
+      },
+      {
+        "end": 9,
+        "start": 1,
+        "text": "1: #[cfg(unix)]\n2: mod artifact;\n3: #[cfg(not(unix))]\n4: mod artifact {\n5:     pub(super) fn read(_path: &std::path::Path) -> anyhow::Result<String> {\n6:         anyhow::bail!(\"safe worker audit artifact reads are unavailable on this platform\")\n7:     }\n8: }\n9: "
+      },
+      {
+        "end": 549,
+        "start": 540,
+        "text": "540:         ));\n541:     }\n542: \n543:     let mut exports = Vec::new();\n544:     for line in artifact::read(&output_file)?.lines() {\n545:         if line.trim().is_empty() {\n546:             continue;\n547:         }\n548:         exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);\n549:     }"
+      },
+      {
+        "end": 555,
+        "start": 546,
+        "text": "546:             continue;\n547:         }\n548:         exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);\n549:     }\n550:     let index: AuditExportIndex = serde_json::from_str(&artifact::read(&index_file)?)?;\n551:     validate_audit_export_index(&index, exports.len())?;\n552: \n553:     let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {\n554:         let key = task_id.to_string();\n555:         let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();"
+      }
+    ],
+    "trillionnium/crates/trnm-worker-agent/src/main.rs": [
+      {
+        "end": 10,
+        "start": 1,
+        "text": "1: use anyhow::{anyhow, Result};\n2: use clap::Parser;\n3: use serde::{Deserialize, Serialize};\n4: use sha2::{Digest, Sha256};\n5: #[cfg(test)]\n6: use std::collections::BTreeMap;\n7: use std::{\n8:     collections::HashSet,\n9:     env, fs,\n10:     path::{Path, PathBuf},"
+      },
+      {
+        "end": 21,
+        "start": 12,
+        "text": "12:     thread,\n13:     time::{Duration, SystemTime, UNIX_EPOCH},\n14: };\n15: mod assigned;\n16: mod audit;\n17: mod cli;\n18: #[cfg(unix)]\n19: mod commit_salt;\n20: mod dispatch;\n21: mod flush;"
+      },
+      {
+        "end": 23,
+        "start": 14,
+        "text": "14: };\n15: mod assigned;\n16: mod audit;\n17: mod cli;\n18: #[cfg(unix)]\n19: mod commit_salt;\n20: mod dispatch;\n21: mod flush;\n22: mod flush_submission;\n23: mod proof_adapter;"
+      },
+      {
+        "end": 32,
+        "start": 23,
+        "text": "23: mod proof_adapter;\n24: mod worker_journal;\n25: mod workflow;\n26: mod workflow_ops;\n27: #[cfg(not(unix))]\n28: mod commit_salt {\n29:     use anyhow::{bail, Result};\n30:     use std::path::Path;\n31:     pub(crate) fn journal_automatic_submission(\n32:         _: &Path,"
+      }
+    ]
+  }
+}

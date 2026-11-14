@@ -1,0 +1,157 @@
+{
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/private/tmp/chain-public-policy-prefix-cache-target-20261114",
+    "PATH": "/Users/qianqi/.rustup/toolchains/1.95.0-aarch64-apple-darwin/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUST_TEST_THREADS": "1"
+  },
+  "errors": [
+    "ValueError: cached-policy-three-controls failed; original streams retained"
+  ],
+  "finished_ns": 1794653148448882000,
+  "hosted_performance_proved": false,
+  "modified_source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "modified_source_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+  "native_hosted_campaign_run": false,
+  "owned_target": "/private/tmp/chain-public-policy-prefix-cache-target-20261114",
+  "schema": "trnm-public-policy-prefix-validation-v1",
+  "source_after_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+  "source_head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "source_unchanged_during_validation": true,
+  "status": "HOLD",
+  "steps": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "label": "preflight",
+      "pid": 39074,
+      "seconds": 0.08976507186889648,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 176,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/preflight.stdout",
+        "sha256": "2e2cc8c651ed80aea9b31e2484dd67b974fce0253bfd36b004f670dcee642dfc"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "rustc",
+        "-Vv"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "label": "rustc-version",
+      "pid": 39088,
+      "seconds": 0.048819780349731445,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/rustc-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 192,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/rustc-version.stdout",
+        "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "-V"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "label": "cargo-version",
+      "pid": 39089,
+      "seconds": 0.04825711250305176,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cargo-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 36,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cargo-version.stdout",
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--no-deps",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exit": 0,
+      "label": "locked-offline-graph",
+      "pid": 39090,
+      "seconds": 0.048864126205444336,
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/locked-offline-graph.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 194178,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/locked-offline-graph.stdout",
+        "sha256": "0bbe7af606913c95a465334f9ba366926195a9623e8338e275a1b1e12dff91fe"
+      },
+      "timed_out": false
+    },
+    {
+      "actual_summaries": [],
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "exact_test_count": false,
+      "exit": 101,
+      "expected_tests": 3,
+      "label": "cached-policy-three-controls",
+      "pid": 39098,
+      "seconds": 66.4043083190918,
+      "stderr": {
+        "bytes": 11727,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cached-policy-three-controls.stderr",
+        "sha256": "0641c62dec082a6ed2e926ad4415366940c600f47f025c376f8879a2f8b843b8"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cached-policy-three-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    }
+  ]
+}

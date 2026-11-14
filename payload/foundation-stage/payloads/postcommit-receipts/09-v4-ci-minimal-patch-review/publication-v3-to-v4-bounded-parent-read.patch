@@ -1,0 +1,55 @@
+--- publish_candidate_and_archive_v3.py
++++ publish_candidate_and_archive_v4.py
+@@ -182,7 +182,7 @@
+ 
+ def main():
+     require_unoptimized()
+-    publisher_path = ROOT / "publish_candidate_and_archive_v3.py"
++    publisher_path = ROOT / "publish_candidate_and_archive_v4.py"
+     require(pathlib.Path(__file__).resolve(strict=True) == publisher_path, "unexpected publisher path")
+     publisher_source = regular_bytes(publisher_path)
+     parser = argparse.ArgumentParser()
+@@ -215,7 +215,7 @@
+             assert q.returncode == 0, (label, "see retained stdout/stderr")
+         return q
+     def git(*argv):
+-        return subprocess.check_output(["git", *argv], cwd=SOURCE, env=env).decode().strip()
++        return subprocess.check_output(["git", *argv], cwd=SOURCE, env=env, timeout=60).decode().strip()
+     def heads(raw):
+         result = {}
+         for line in raw.decode().splitlines():
+@@ -261,7 +261,7 @@
+     live = heads(run("refs-before", ["git", "ls-remote", "--heads", "origin"]).stdout)
+     assert live == expected, "remote changes require a fresh review before publication"
+     tag = spec["archive_tag"]
+-    assert tag == "archive/branches-before-consolidation-20261114-" + head[:12]
++    assert tag == "archive/branches-before-consolidation-20261114-" + head[:12] + "-v2"
+     tagref = "refs/tags/" + tag
+     run("archive-ref-format", ["git", "check-ref-format", tagref])
+     assert run("archive-remote-absence", ["git", "ls-remote", "origin", tagref, tagref + "^{}"]).stdout == b""
+@@ -340,7 +340,24 @@
+         ". Original manifest SHA256 " + sha(frozen_raw) + ". No main merge or protocol qualification granted."])
+     tag_oid = git("rev-parse", tagref)
+     assert git("rev-parse", tagref + "^{}") == archive_commit
+-    recorded_parents = git("show", "-s", "--format=%P", archive_commit).split()
++    archive_size = git("cat-file", "-s", archive_commit)
++    require(re.fullmatch(r"[1-9][0-9]*", archive_size) is not None
++            and int(archive_size) <= 128 * 1024, "archive commit object size exceeds its fixed bound")
++    archive_object = run("archive-commit-object", ["git", "cat-file", "commit", archive_commit],
++                         timeout=60).stdout
++    require(len(archive_object) == int(archive_size), "archive commit object length differs")
++    require(hashlib.sha1(b"commit " + str(len(archive_object)).encode("ascii") + b"\0"
++                        + archive_object).hexdigest() == archive_commit,
++            "archive commit raw object hash differs")
++    archive_header, separator, _ = archive_object.partition(b"\n\n")
++    require(separator == b"\n\n", "archive commit header terminator missing")
++    header_lines = archive_header.split(b"\n")
++    require(header_lines[0] == b"tree " + archive_tree.encode("ascii"),
++            "archive commit tree header differs")
++    parent_lines = [line for line in header_lines if line.startswith(b"parent ")]
++    require(header_lines[1:1 + len(parents)] == parent_lines,
++            "archive parent headers are not contiguous after its tree")
++    recorded_parents = [line[7:].decode("ascii") for line in parent_lines]
+     assert recorded_parents == parents and set(expected.values()) <= set(recorded_parents)
+     reachable = set(run("archive-reachability", ["git", "rev-list", archive_commit]).stdout.decode().splitlines())
+     assert set(expected.values()) | {head} <= reachable

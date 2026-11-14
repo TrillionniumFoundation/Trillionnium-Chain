@@ -1,0 +1,7 @@
+{
+  "schema": "fixed-incremental-scan-preparation-v1",
+  "only_changes": "fixed HEAD/tree/base/parent/output scope; exact five regex definitions/caps/scanner logic retained",
+  "previous_producer_sha256": "de1ceb1bad7ca18e7b7a5dba7c577667187f6695c55ffb3457adc055a06e26c0",
+  "producer_sha256": "d8710481ecffa1df42002bc3ccd3648293c0144563829b64c302d7cbf45421f8",
+  "new_source_or_ref_mutation": false
+}

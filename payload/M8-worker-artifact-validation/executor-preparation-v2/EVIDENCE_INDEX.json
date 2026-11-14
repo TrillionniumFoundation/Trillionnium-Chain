@@ -1,0 +1,89 @@
+{
+  "file_count": 9,
+  "files": [
+    {
+      "bytes": 17704,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/worker-v1.py.original"
+      },
+      "path": "worker-v1.py.original",
+      "sha256": "eb4953bd3c95a49f520030ddb657c495c801b827a53495008cfdfee4a02912e8"
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/M8-source-receipt.json.original"
+      },
+      "path": "M8-source-receipt.json.original",
+      "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+    },
+    {
+      "bytes": 11231,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/M8-verify_ci_source.py.original"
+      },
+      "path": "M8-verify_ci_source.py.original",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/M8-verify-source.stderr"
+      },
+      "path": "M8-verify-source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2427,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/fixed-source-read.json"
+      },
+      "path": "fixed-source-read.json",
+      "sha256": "3c2aca0c1f38cb7af795270e3c8852c3bff49476f43d3f36beca49dd3b382fdb"
+    },
+    {
+      "bytes": 19501,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/producer.py"
+      },
+      "path": "producer.py",
+      "sha256": "491ce4a207e722f47ef2174690de83678cfc39b59b82db048f22fb95db17c95f"
+    },
+    {
+      "bytes": 5848,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/worker-v1-to-v2.patch.original"
+      },
+      "path": "worker-v1-to-v2.patch.original",
+      "sha256": "0736127f656d7063e2d2106a9a23f8e5a77feda38c911884414073a3b468a583"
+    },
+    {
+      "bytes": 4495,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/static-review.json"
+      },
+      "path": "static-review.json",
+      "sha256": "215612fa230907e416e5b265159610ef93cf097eeb43477a0ed2dbdcb17dda84"
+    },
+    {
+      "bytes": 3051,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/README.md"
+      },
+      "path": "README.md",
+      "sha256": "58e25b14d388731cc8e845facbaf7d4023d935dd72036ad7d43d84eefca55e00"
+    }
+  ],
+  "prepared_only": true,
+  "schema": "trnm-worker-artifact-executor-v2-preparation-index-v1",
+  "total_bytes": 64680
+}

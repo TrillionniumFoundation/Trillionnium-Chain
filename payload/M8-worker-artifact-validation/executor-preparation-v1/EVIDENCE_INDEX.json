@@ -1,0 +1,53 @@
+{
+  "file_count": 5,
+  "files": [
+    {
+      "bytes": 17704,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v1/producer.py"
+      },
+      "path": "producer.py",
+      "sha256": "eb4953bd3c95a49f520030ddb657c495c801b827a53495008cfdfee4a02912e8"
+    },
+    {
+      "bytes": 16404,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v1/parent-external-existing-source-v2.py.original"
+      },
+      "path": "parent-external-existing-source-v2.py.original",
+      "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+    },
+    {
+      "bytes": 29727,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v1/external-v2-to-worker-v1.patch.original"
+      },
+      "path": "external-v2-to-worker-v1.patch.original",
+      "sha256": "f18e6c2984b2fe2c7532ac10d12efe56f955d0a1a7fefa96545f2ba44112c5f6"
+    },
+    {
+      "bytes": 4897,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v1/static-review.json"
+      },
+      "path": "static-review.json",
+      "sha256": "c2db1b27b28d190274791b4abe1a0873a7fce59c95e207e1414aefda53d32801"
+    },
+    {
+      "bytes": 4663,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "41a9be0517b171bd732e88ff062053ae7e2b6de0bc7acad5337fa0a087adf598"
+    }
+  ],
+  "prepared_only": true,
+  "schema": "trnm-worker-artifact-executor-preparation-index-v1",
+  "total_bytes": 73395
+}

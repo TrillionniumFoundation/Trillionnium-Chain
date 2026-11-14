@@ -1,0 +1,34 @@
+[
+  {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "saved_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/trillionnium--crates--trnm-pon-node--src--ingress.rs.raw",
+    "bytes": 221433,
+    "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+    "git_blob": "a9aef9689af378bd115a54c25a076941ef2cbb96"
+  },
+  {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "saved_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs.raw",
+    "bytes": 27612,
+    "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884",
+    "git_blob": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943"
+  },
+  {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "saved_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs.raw",
+    "bytes": 67363,
+    "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836",
+    "git_blob": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6"
+  },
+  {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+    "saved_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import--observation.rs.raw",
+    "bytes": 32240,
+    "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed",
+    "git_blob": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b"
+  }
+]

@@ -1,0 +1,1886 @@
+{
+  "fragments": [
+    {
+      "end": 218,
+      "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+      "path": "scripts/ci/run_from_zero_native.py",
+      "source_lines": [
+        {
+          "line": 180,
+          "text": "        shutil.copyfile(test_source.parent / relative, copied)"
+        },
+        {
+          "line": 181,
+          "text": "    return staged"
+        },
+        {
+          "line": 182,
+          "text": ""
+        },
+        {
+          "line": 183,
+          "text": ""
+        },
+        {
+          "line": 184,
+          "text": "# Bounded report consistency, not a second W1/state oracle or public qualification."
+        },
+        {
+          "line": 185,
+          "text": "# The native source fixes two phases with eight constructions and eight probes."
+        },
+        {
+          "line": 186,
+          "text": "REPORT_LIMIT = 32 * 1024 * 1024"
+        },
+        {
+          "line": 187,
+          "text": ""
+        },
+        {
+          "line": 188,
+          "text": ""
+        },
+        {
+          "line": 189,
+          "text": "def observer_cpu_scope(captured: dict) -> None:"
+        },
+        {
+          "line": 190,
+          "text": "    \"\"\"Keep historical dispatch scope distinct from the r11/r12 paid envelope."
+        },
+        {
+          "line": 191,
+          "text": ""
+        },
+        {
+          "line": 192,
+          "text": "    The v3 observer scope alone does not identify a signed resource revision."
+        },
+        {
+          "line": 193,
+          "text": "    \"\"\""
+        },
+        {
+          "line": 194,
+          "text": "    if captured.get('schema') in ('public-v3-local-request-resource-observation-v3',"
+        },
+        {
+          "line": 195,
+          "text": "                                 'public-v3-local-request-resource-observation-v4'):"
+        },
+        {
+          "line": 196,
+          "text": "        require(captured.get('cpu_includes_reactor_authentication_or_response_signing') is True"
+        },
+        {
+          "line": 197,
+          "text": "                and captured.get('cpu_includes_reactor_authentication') is False"
+        },
+        {
+          "line": 198,
+          "text": "                and captured.get('dispatch_cpu_includes_paid_body_decode') is True"
+        },
+        {
+          "line": 199,
+          "text": "                and captured.get('dispatch_cpu_includes_response_signing') is True,"
+        },
+        {
+          "line": 200,
+          "text": "                'OBSERVER_PAID_ENVELOPE_SCOPE')"
+        },
+        {
+          "line": 201,
+          "text": "        if captured['schema'].endswith('-v4'):"
+        },
+        {
+          "line": 202,
+          "text": "            require(all(captured.get(key) is True for key in ("
+        },
+        {
+          "line": 203,
+          "text": "                'phase_parent_links_are_inclusive', 'cpu_wait_is_outside_dispatch',"
+        },
+        {
+          "line": 204,
+          "text": "                'monotonic_epoch_is_observer_local')), 'OBSERVER_V4_INCLUSIVE_SCOPE')"
+        },
+        {
+          "line": 205,
+          "text": "            records = captured.get('records')"
+        },
+        {
+          "line": 206,
+          "text": "            require(isinstance(records, list) and len(records) <= 16384, 'OBSERVER_V4_RECORD_BOUND')"
+        },
+        {
+          "line": 207,
+          "text": "            for record in records:"
+        },
+        {
+          "line": 208,
+          "text": "                validate_v4_record(record)"
+        },
+        {
+          "line": 209,
+          "text": "    else:"
+        },
+        {
+          "line": 210,
+          "text": "        require(captured.get('schema') in ('public-v3-local-request-resource-observation-v1',"
+        },
+        {
+          "line": 211,
+          "text": "                                          'public-v3-local-request-resource-observation-v2')"
+        },
+        {
+          "line": 212,
+          "text": "                and captured.get('cpu_includes_reactor_authentication_or_response_signing') is False,"
+        },
+        {
+          "line": 213,
+          "text": "                'OBSERVER_HISTORICAL_CPU_SCOPE')"
+        },
+        {
+          "line": 214,
+          "text": ""
+        },
+        {
+          "line": 215,
+          "text": ""
+        },
+        {
+          "line": 216,
+          "text": "def validate_service_report(path: Path) -> dict:"
+        },
+        {
+          "line": 217,
+          "text": "    require(path.is_file() and not path.is_symlink(), 'NATIVE_SERVICE_REPORT_REQUIRED')"
+        },
+        {
+          "line": 218,
+          "text": "    with path.open('rb') as stream:"
+        }
+      ],
+      "start": 180
+    },
+    {
+      "end": 1462,
+      "git_blob": "4bb2f24c599f4a4fc64248f24fc2066753ddb966",
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "source_lines": [
+        {
+          "line": 1430,
+          "text": "                       'public-v3-local-request-resource-observation-v3',"
+        },
+        {
+          "line": 1431,
+          "text": "                       'public-v3-local-request-resource-observation-v4'), 'unknown observer schema')"
+        },
+        {
+          "line": 1432,
+          "text": "    instrumented = schema.endswith(('-v2', '-v3', '-v4'))"
+        },
+        {
+          "line": 1433,
+          "text": "    observer_v4 = schema.endswith('-v4')"
+        },
+        {
+          "line": 1434,
+          "text": "    if observer_v4:"
+        },
+        {
+          "line": 1435,
+          "text": "        require(all(observer.get(key) is True for key in ("
+        },
+        {
+          "line": 1436,
+          "text": "            'phase_parent_links_are_inclusive', 'cpu_wait_is_outside_dispatch',"
+        },
+        {
+          "line": 1437,
+          "text": "            'monotonic_epoch_is_observer_local')), 'v4 inclusive/local-clock scope required')"
+        },
+        {
+          "line": 1438,
+          "text": "    if policy is not None:"
+        },
+        {
+          "line": 1439,
+          "text": "        require(schema.endswith(('-v3', '-v4')) is (policy.get('base_resource_revision', policy['resource_revision'])"
+        },
+        {
+          "line": 1440,
+          "text": "                                         in ('r11', 'r12', 'r13', 'r14', 'r15')),"
+        },
+        {
+          "line": 1441,
+          "text": "                'public policy and observed CPU scope disagree')"
+        },
+        {
+          "line": 1442,
+          "text": "    if schema.endswith(('-v3', '-v4')):"
+        },
+        {
+          "line": 1443,
+          "text": "        require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True"
+        },
+        {
+          "line": 1444,
+          "text": "                and observer.get('cpu_includes_reactor_authentication') is False"
+        },
+        {
+          "line": 1445,
+          "text": "                and observer.get('dispatch_cpu_includes_paid_body_decode') is True"
+        },
+        {
+          "line": 1446,
+          "text": "                and observer.get('dispatch_cpu_includes_response_signing') is True,"
+        },
+        {
+          "line": 1447,
+          "text": "                'v3 paid body/response CPU scope required')"
+        },
+        {
+          "line": 1448,
+          "text": "    require(observer['cpu_intervals_are_nested_not_additive'] is True,"
+        },
+        {
+          "line": 1449,
+          "text": "            'nested CPU observation scope required')"
+        },
+        {
+          "line": 1450,
+          "text": "    if instrumented:"
+        },
+        {
+          "line": 1451,
+          "text": "        require(observer['submit_phase_cpu_excludes_scoped_workers'] is True,"
+        },
+        {
+          "line": 1452,
+          "text": "                'dispatcher-only phase CPU scope required')"
+        },
+        {
+          "line": 1453,
+          "text": "    roles = defaultdict(set)"
+        },
+        {
+          "line": 1454,
+          "text": "    for role, calls in (('honest_submit', submissions), ('client_history', history), ('attack_submit', attacks)):"
+        },
+        {
+          "line": 1455,
+          "text": "        for row in calls:"
+        },
+        {
+          "line": 1456,
+          "text": "            body = digest(row['public_request_body_digest'])"
+        },
+        {
+          "line": 1457,
+          "text": "            # Unknown observations do not share an identity with one another."
+        },
+        {
+          "line": 1458,
+          "text": "            if body is not None:"
+        },
+        {
+          "line": 1459,
+          "text": "                roles[body].add(role)"
+        },
+        {
+          "line": 1460,
+          "text": "    grouped = defaultdict(list)"
+        },
+        {
+          "line": 1461,
+          "text": "    for row in observer['records']:"
+        },
+        {
+          "line": 1462,
+          "text": "        if arithmetic_profile and 'work_arithmetic' in row:"
+        }
+      ],
+      "start": 1430
+    },
+    {
+      "end": 1756,
+      "git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "source_lines": [
+        {
+          "line": 1715,
+          "text": "    bytes: &mut Vec<u8>,"
+        },
+        {
+          "line": 1716,
+          "text": "    expected: usize,"
+        },
+        {
+          "line": 1717,
+          "text": "    observation: Option<&ConnectionObservation>,"
+        },
+        {
+          "line": 1718,
+          "text": "    phase: usize,"
+        },
+        {
+          "line": 1719,
+          "text": ") -> Result<bool> {"
+        },
+        {
+          "line": 1720,
+          "text": "    let before = bytes.len();"
+        },
+        {
+          "line": 1721,
+          "text": "    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));"
+        },
+        {
+          "line": 1722,
+          "text": "    let result = read_available(socket, bytes, expected);"
+        },
+        {
+          "line": 1723,
+          "text": "    if let Some((record, stamp)) = attempt {"
+        },
+        {
+          "line": 1724,
+          "text": "        let sample = stamp.finish(result.is_err());"
+        },
+        {
+          "line": 1725,
+          "text": "        record.frame_attempt("
+        },
+        {
+          "line": 1726,
+          "text": "            phase,"
+        },
+        {
+          "line": 1727,
+          "text": "            bytes.len() - before,"
+        },
+        {
+          "line": 1728,
+          "text": "            0,"
+        },
+        {
+          "line": 1729,
+          "text": "            matches!(&result, Ok(true)),"
+        },
+        {
+          "line": 1730,
+          "text": "            sample,"
+        },
+        {
+          "line": 1731,
+          "text": "        );"
+        },
+        {
+          "line": 1732,
+          "text": "    }"
+        },
+        {
+          "line": 1733,
+          "text": "    result"
+        },
+        {
+          "line": 1734,
+          "text": "}"
+        },
+        {
+          "line": 1735,
+          "text": "fn write_available_observed("
+        },
+        {
+          "line": 1736,
+          "text": "    socket: &mut TcpStream,"
+        },
+        {
+          "line": 1737,
+          "text": "    bytes: &[u8],"
+        },
+        {
+          "line": 1738,
+          "text": "    cursor: &mut usize,"
+        },
+        {
+          "line": 1739,
+          "text": "    observation: Option<&ConnectionObservation>,"
+        },
+        {
+          "line": 1740,
+          "text": "    phase: usize,"
+        },
+        {
+          "line": 1741,
+          "text": ") -> Result<bool> {"
+        },
+        {
+          "line": 1742,
+          "text": "    let before = *cursor;"
+        },
+        {
+          "line": 1743,
+          "text": "    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));"
+        },
+        {
+          "line": 1744,
+          "text": "    let result = write_available(socket, bytes, cursor);"
+        },
+        {
+          "line": 1745,
+          "text": "    if let Some((record, stamp)) = attempt {"
+        },
+        {
+          "line": 1746,
+          "text": "        let sample = stamp.finish(result.is_err());"
+        },
+        {
+          "line": 1747,
+          "text": "        record.frame_attempt("
+        },
+        {
+          "line": 1748,
+          "text": "            phase,"
+        },
+        {
+          "line": 1749,
+          "text": "            0,"
+        },
+        {
+          "line": 1750,
+          "text": "            *cursor - before,"
+        },
+        {
+          "line": 1751,
+          "text": "            matches!(&result, Ok(true)),"
+        },
+        {
+          "line": 1752,
+          "text": "            sample,"
+        },
+        {
+          "line": 1753,
+          "text": "        );"
+        },
+        {
+          "line": 1754,
+          "text": "    }"
+        },
+        {
+          "line": 1755,
+          "text": "    result"
+        },
+        {
+          "line": 1756,
+          "text": "}"
+        }
+      ],
+      "start": 1715
+    },
+    {
+      "end": 3587,
+      "git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "source_lines": [
+        {
+          "line": 3528,
+          "text": "/// Read-only, client-thread CPU observation around an ORIGINAL signed V3"
+        },
+        {
+          "line": 3529,
+          "text": "/// request. Unlike phase wall timings, this interval is actual calling-thread"
+        },
+        {
+          "line": 3530,
+          "text": "/// CPU on the platform that provides ThreadCPUTime; missing/invalid clocks stay"
+        },
+        {
+          "line": 3531,
+          "text": "/// None. The existing PublicClientMetrics JSON and signed Cookie bytes do NOT"
+        },
+        {
+          "line": 3532,
+          "text": "/// change. This is not a GPU price, attack lower bound or server resource debit."
+        },
+        {
+          "line": 3533,
+          "text": "#[derive(Debug, Serialize)]"
+        },
+        {
+          "line": 3534,
+          "text": "pub struct PublicClientCpuObservation {"
+        },
+        {
+          "line": 3535,
+          "text": "    pub schema: &'static str,"
+        },
+        {
+          "line": 3536,
+          "text": "    pub client_thread_cpu_ns: Option<u64>,"
+        },
+        {
+          "line": 3537,
+          "text": "    pub client_wall_ns: u64,"
+        },
+        {
+          "line": 3538,
+          "text": "    pub solution_trials: u64,"
+        },
+        {
+          "line": 3539,
+          "text": "    pub solution_found: bool,"
+        },
+        {
+          "line": 3540,
+          "text": "    pub solution_search_wall_ns: u64,"
+        },
+        {
+          "line": 3541,
+          "text": "    pub solution_search_thread_cpu_ns: Option<u64>,"
+        },
+        {
+          "line": 3542,
+          "text": "    pub failed_stage: Option<PublicClientStage>,"
+        },
+        {
+          "line": 3543,
+          "text": "    pub native_server_cpu_known: bool,"
+        },
+        {
+          "line": 3544,
+          "text": "    pub gpu_cpu_equivalence_assumed: bool,"
+        },
+        {
+          "line": 3545,
+          "text": "    pub work_profile_qualified: bool,"
+        },
+        {
+          "line": 3546,
+          "text": "}"
+        },
+        {
+          "line": 3547,
+          "text": ""
+        },
+        {
+          "line": 3548,
+          "text": "/// Separate opt-in measurement entry: the exact original client performs"
+        },
+        {
+          "line": 3549,
+          "text": "/// handshake, Cookie verification, nonce search, caller signing and response"
+        },
+        {
+          "line": 3550,
+          "text": "/// verification. No new request nonce, cached success or resource allowance."
+        },
+        {
+          "line": 3551,
+          "text": "pub fn call_public_protected_v3_with_cpu_observation("
+        },
+        {
+          "line": 3552,
+          "text": "    address: SocketAddr,"
+        },
+        {
+          "line": 3553,
+          "text": "    request: &Request,"
+        },
+        {
+          "line": 3554,
+          "text": "    settings: &Settings,"
+        },
+        {
+          "line": 3555,
+          "text": "    pinned_server: &str,"
+        },
+        {
+          "line": 3556,
+          "text": "    caller: &DevelopmentIdentity,"
+        },
+        {
+          "line": 3557,
+          "text": "    policy: PublicPolicy,"
+        },
+        {
+          "line": 3558,
+          "text": ") -> ("
+        },
+        {
+          "line": 3559,
+          "text": "    Result<PublicReply>,"
+        },
+        {
+          "line": 3560,
+          "text": "    PublicClientMetrics,"
+        },
+        {
+          "line": 3561,
+          "text": "    PublicClientCpuObservation,"
+        },
+        {
+          "line": 3562,
+          "text": ") {"
+        },
+        {
+          "line": 3563,
+          "text": "    let started = Instant::now();"
+        },
+        {
+          "line": 3564,
+          "text": "    let cpu = ThreadCpuStamp::start();"
+        },
+        {
+          "line": 3565,
+          "text": "    let (result, metrics) = call_public_protected_v3_with_metrics("
+        },
+        {
+          "line": 3566,
+          "text": "        address,"
+        },
+        {
+          "line": 3567,
+          "text": "        request,"
+        },
+        {
+          "line": 3568,
+          "text": "        settings,"
+        },
+        {
+          "line": 3569,
+          "text": "        pinned_server,"
+        },
+        {
+          "line": 3570,
+          "text": "        caller,"
+        },
+        {
+          "line": 3571,
+          "text": "        policy,"
+        },
+        {
+          "line": 3572,
+          "text": "    );"
+        },
+        {
+          "line": 3573,
+          "text": "    let observation = PublicClientCpuObservation {"
+        },
+        {
+          "line": 3574,
+          "text": "        schema: \"public-v3-client-thread-cpu-observation-v1\","
+        },
+        {
+          "line": 3575,
+          "text": "        client_thread_cpu_ns: cpu.and_then(ThreadCpuStamp::finish),"
+        },
+        {
+          "line": 3576,
+          "text": "        client_wall_ns: elapsed_ns(started),"
+        },
+        {
+          "line": 3577,
+          "text": "        solution_trials: metrics.solution_trials,"
+        },
+        {
+          "line": 3578,
+          "text": "        solution_found: metrics.solution_found,"
+        },
+        {
+          "line": 3579,
+          "text": "        solution_search_wall_ns: metrics.solution_search_ns,"
+        },
+        {
+          "line": 3580,
+          "text": "        solution_search_thread_cpu_ns: metrics.solution_search_thread_cpu_ns,"
+        },
+        {
+          "line": 3581,
+          "text": "        failed_stage: metrics.failed_stage,"
+        },
+        {
+          "line": 3582,
+          "text": "        native_server_cpu_known: false,"
+        },
+        {
+          "line": 3583,
+          "text": "        gpu_cpu_equivalence_assumed: false,"
+        },
+        {
+          "line": 3584,
+          "text": "        work_profile_qualified: false,"
+        },
+        {
+          "line": 3585,
+          "text": "    };"
+        },
+        {
+          "line": 3586,
+          "text": "    (result, metrics, observation)"
+        },
+        {
+          "line": 3587,
+          "text": "}"
+        }
+      ],
+      "start": 3528
+    },
+    {
+      "end": 218,
+      "git_blob": "1c2c7aad3754cd54e3a05182fede5f6357ef9df6",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "source_lines": [
+        {
+          "line": 164,
+          "text": "impl AuthenticationBudget {"
+        },
+        {
+          "line": 165,
+          "text": "    pub(super) fn perform<T>("
+        },
+        {
+          "line": 166,
+          "text": "        &self,"
+        },
+        {
+          "line": 167,
+          "text": "        bytes: usize,"
+        },
+        {
+          "line": 168,
+          "text": "        operation: impl FnOnce() -> Result<T>,"
+        },
+        {
+          "line": 169,
+          "text": "    ) -> Result<T> {"
+        },
+        {
+          "line": 170,
+          "text": "        {"
+        },
+        {
+          "line": 171,
+          "text": "            let mut state = self"
+        },
+        {
+          "line": 172,
+          "text": "                .usage"
+        },
+        {
+          "line": 173,
+          "text": "                .lock()"
+        },
+        {
+          "line": 174,
+          "text": "                .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;"
+        },
+        {
+          "line": 175,
+          "text": "            ensure("
+        },
+        {
+          "line": 176,
+          "text": "                !state.unavailable"
+        },
+        {
+          "line": 177,
+          "text": "                    && state.attempts < MAX_AUTHENTICATIONS"
+        },
+        {
+          "line": 178,
+          "text": "                    && state.actual_thread_cpu_ns < MAX_AUTHENTICATION_CPU_NS,"
+        },
+        {
+          "line": 179,
+          "text": "                \"PUBLIC_MUTATION_CPU_BUDGET\","
+        },
+        {
+          "line": 180,
+          "text": "            )?;"
+        },
+        {
+          "line": 181,
+          "text": "            let total = state"
+        },
+        {
+          "line": 182,
+          "text": "                .bytes"
+        },
+        {
+          "line": 183,
+          "text": "                .checked_add(bytes as u64)"
+        },
+        {
+          "line": 184,
+          "text": "                .ok_or(\"PUBLIC_BUFFER_CAPACITY\")?;"
+        },
+        {
+          "line": 185,
+          "text": "            ensure(total <= MAX_AUTHENTICATED_BYTES, \"PUBLIC_BUFFER_CAPACITY\")?;"
+        },
+        {
+          "line": 186,
+          "text": "            state.attempts += 1;"
+        },
+        {
+          "line": 187,
+          "text": "            state.bytes = total;"
+        },
+        {
+          "line": 188,
+          "text": "        }"
+        },
+        {
+          "line": 189,
+          "text": "        let stamp = ThreadCpuStamp::start();"
+        },
+        {
+          "line": 190,
+          "text": "        if stamp.is_none() {"
+        },
+        {
+          "line": 191,
+          "text": "            self.usage"
+        },
+        {
+          "line": 192,
+          "text": "                .lock()"
+        },
+        {
+          "line": 193,
+          "text": "                .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?"
+        },
+        {
+          "line": 194,
+          "text": "                .unavailable = true;"
+        },
+        {
+          "line": 195,
+          "text": "            return Err(\"PUBLIC_MUTATION_CPU_UNAVAILABLE\".into());"
+        },
+        {
+          "line": 196,
+          "text": "        }"
+        },
+        {
+          "line": 197,
+          "text": "        let mut interval = AuthenticationInterval {"
+        },
+        {
+          "line": 198,
+          "text": "            budget: self,"
+        },
+        {
+          "line": 199,
+          "text": "            settled: false,"
+        },
+        {
+          "line": 200,
+          "text": "        };"
+        },
+        {
+          "line": 201,
+          "text": "        let result = operation();"
+        },
+        {
+          "line": 202,
+          "text": "        let elapsed = stamp.and_then(ThreadCpuStamp::finish);"
+        },
+        {
+          "line": 203,
+          "text": "        let mut state = self"
+        },
+        {
+          "line": 204,
+          "text": "            .usage"
+        },
+        {
+          "line": 205,
+          "text": "            .lock()"
+        },
+        {
+          "line": 206,
+          "text": "            .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;"
+        },
+        {
+          "line": 207,
+          "text": "        match elapsed.and_then(|n| state.actual_thread_cpu_ns.checked_add(n)) {"
+        },
+        {
+          "line": 208,
+          "text": "            Some(total) => {"
+        },
+        {
+          "line": 209,
+          "text": "                state.actual_thread_cpu_ns = total;"
+        },
+        {
+          "line": 210,
+          "text": "            }"
+        },
+        {
+          "line": 211,
+          "text": "            None => {"
+        },
+        {
+          "line": 212,
+          "text": "                state.unavailable = true;"
+        },
+        {
+          "line": 213,
+          "text": "                return Err(\"PUBLIC_MUTATION_CPU_UNAVAILABLE\".into());"
+        },
+        {
+          "line": 214,
+          "text": "            }"
+        },
+        {
+          "line": 215,
+          "text": "        }"
+        },
+        {
+          "line": 216,
+          "text": "        interval.settled = true;"
+        },
+        {
+          "line": 217,
+          "text": "        result"
+        },
+        {
+          "line": 218,
+          "text": "    }"
+        }
+      ],
+      "start": 164
+    },
+    {
+      "end": 278,
+      "git_blob": "1c2c7aad3754cd54e3a05182fede5f6357ef9df6",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "source_lines": [
+        {
+          "line": 249,
+          "text": "    pub(super) fn sign_authentication(&self, message: &[u8]) -> Result<String> {"
+        },
+        {
+          "line": 250,
+          "text": "        if self.identity.is_pq() {"
+        },
+        {
+          "line": 251,
+          "text": "            self.listener_intake()?"
+        },
+        {
+          "line": 252,
+          "text": "                .pq_authentication"
+        },
+        {
+          "line": 253,
+          "text": "                .perform(message.len(), || self.identity.sign(message))"
+        },
+        {
+          "line": 254,
+          "text": "        } else {"
+        },
+        {
+          "line": 255,
+          "text": "            self.identity.sign(message)"
+        },
+        {
+          "line": 256,
+          "text": "        }"
+        },
+        {
+          "line": 257,
+          "text": "    }"
+        },
+        {
+          "line": 258,
+          "text": "    pub(super) fn verify_caller(&self, cookie: &Cookie, nonce: u64, bytes: &[u8]) -> Result<()> {"
+        },
+        {
+          "line": 259,
+          "text": "        let message = caller_message(cookie, nonce, self.identity.is_pq())?;"
+        },
+        {
+          "line": 260,
+          "text": "        if self.identity.is_pq() {"
+        },
+        {
+          "line": 261,
+          "text": "            let intake = self.listener_intake()?;"
+        },
+        {
+          "line": 262,
+          "text": "            intake"
+        },
+        {
+          "line": 263,
+          "text": "                .pq_authentication"
+        },
+        {
+          "line": 264,
+          "text": "                .perform(bytes.len() + message.len(), || {"
+        },
+        {
+          "line": 265,
+          "text": "                    ensure(bytes.len() == PQ_SOLUTION_BYTES, \"PUBLIC_SOLUTION\")?;"
+        },
+        {
+          "line": 266,
+          "text": "                    let spki = &bytes[44..44 + ML_DSA_65_SPKI_BYTES];"
+        },
+        {
+          "line": 267,
+          "text": "                    intake.pq_authentication.verifiers.verify("
+        },
+        {
+          "line": 268,
+          "text": "                        spki,"
+        },
+        {
+          "line": 269,
+          "text": "                        digest(&cookie.caller)?,"
+        },
+        {
+          "line": 270,
+          "text": "                        &message,"
+        },
+        {
+          "line": 271,
+          "text": "                        &bytes[44 + ML_DSA_65_SPKI_BYTES..],"
+        },
+        {
+          "line": 272,
+          "text": "                    )"
+        },
+        {
+          "line": 273,
+          "text": "                })"
+        },
+        {
+          "line": 274,
+          "text": "        } else {"
+        },
+        {
+          "line": 275,
+          "text": "            verify_hex_strict(&cookie.caller, &message, &hex::encode(&bytes[44..108]))"
+        },
+        {
+          "line": 276,
+          "text": "                .map_err(|_| \"PUBLIC_CALLER_SIGNATURE\".into())"
+        },
+        {
+          "line": 277,
+          "text": "        }"
+        },
+        {
+          "line": 278,
+          "text": "    }"
+        }
+      ],
+      "start": 249
+    },
+    {
+      "end": 790,
+      "git_blob": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "source_lines": [
+        {
+          "line": 765,
+          "text": "impl PublicRequestObserver {"
+        },
+        {
+          "line": 766,
+          "text": "    pub fn new(capacity: usize) -> super::Result<Self> {"
+        },
+        {
+          "line": 767,
+          "text": "        Self::with_caller_mode(capacity, false)"
+        },
+        {
+          "line": 768,
+          "text": "    }"
+        },
+        {
+          "line": 769,
+          "text": ""
+        },
+        {
+          "line": 770,
+          "text": "    /// Explicit local v5 observation. This grants no admission or consensus right."
+        },
+        {
+          "line": 771,
+          "text": "    pub fn new_with_authenticated_callers(capacity: usize) -> super::Result<Self> {"
+        },
+        {
+          "line": 772,
+          "text": "        Self::with_caller_mode(capacity, true)"
+        },
+        {
+          "line": 773,
+          "text": "    }"
+        },
+        {
+          "line": 774,
+          "text": ""
+        },
+        {
+          "line": 775,
+          "text": "    fn with_caller_mode(capacity: usize, authenticated_callers: bool) -> super::Result<Self> {"
+        },
+        {
+          "line": 776,
+          "text": "        super::ensure("
+        },
+        {
+          "line": 777,
+          "text": "            (1..=MAX_REQUEST_OBSERVATION_RECORDS).contains(&capacity),"
+        },
+        {
+          "line": 778,
+          "text": "            \"PUBLIC_OBSERVATION_CAPACITY\","
+        },
+        {
+          "line": 779,
+          "text": "        )?;"
+        },
+        {
+          "line": 780,
+          "text": "        Ok(Self(Arc::new(Inner {"
+        },
+        {
+          "line": 781,
+          "text": "            epoch: Instant::now(),"
+        },
+        {
+          "line": 782,
+          "text": "            capacity,"
+        },
+        {
+          "line": 783,
+          "text": "            authenticated_callers,"
+        },
+        {
+          "line": 784,
+          "text": "            rows: (0..capacity).map(|_| OnceLock::new()).collect(),"
+        },
+        {
+          "line": 785,
+          "text": "            seen: AtomicU64::new(0),"
+        },
+        {
+          "line": 786,
+          "text": "            omitted: AtomicU64::new(0),"
+        },
+        {
+          "line": 787,
+          "text": "            failures: AtomicU64::new(0),"
+        },
+        {
+          "line": 788,
+          "text": "            counter_overflow: AtomicBool::new(false),"
+        },
+        {
+          "line": 789,
+          "text": "        })))"
+        },
+        {
+          "line": 790,
+          "text": "    }"
+        }
+      ],
+      "start": 765
+    },
+    {
+      "end": 928,
+      "git_blob": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "source_lines": [
+        {
+          "line": 898,
+          "text": "        PublicRequestObservationSnapshot {"
+        },
+        {
+          "line": 899,
+          "text": "            schema: if self.0.authenticated_callers {"
+        },
+        {
+          "line": 900,
+          "text": "                \"public-v3-local-request-resource-observation-v5\""
+        },
+        {
+          "line": 901,
+          "text": "            } else {"
+        },
+        {
+          "line": 902,
+          "text": "                \"public-v3-local-request-resource-observation-v4\""
+        },
+        {
+          "line": 903,
+          "text": "            },"
+        },
+        {
+          "line": 904,
+          "text": "            capacity: self.0.capacity,"
+        },
+        {
+          "line": 905,
+          "text": "            accepted_connections_seen: self.0.seen.load(Ordering::Acquire),"
+        },
+        {
+          "line": 906,
+          "text": "            records_not_retained: self.0.omitted.load(Ordering::Acquire),"
+        },
+        {
+          "line": 907,
+          "text": "            measurement_failures: self"
+        },
+        {
+          "line": 908,
+          "text": "                .0"
+        },
+        {
+          "line": 909,
+          "text": "                .rows"
+        },
+        {
+          "line": 910,
+          "text": "                .iter()"
+        },
+        {
+          "line": 911,
+          "text": "                .filter_map(OnceLock::get)"
+        },
+        {
+          "line": 912,
+          "text": "                .fold(self.0.failures.load(Ordering::Acquire), |total, cell| {"
+        },
+        {
+          "line": 913,
+          "text": "                    total.saturating_add(cell.phases.failures())"
+        },
+        {
+          "line": 914,
+          "text": "                }),"
+        },
+        {
+          "line": 915,
+          "text": "            counter_overflow: self.0.counter_overflow.load(Ordering::Acquire),"
+        },
+        {
+          "line": 916,
+          "text": "            records,"
+        },
+        {
+          "line": 917,
+          "text": "            observation_has_consensus_authority: false,"
+        },
+        {
+          "line": 918,
+          "text": "            cpu_intervals_are_nested_not_additive: true,"
+        },
+        {
+          "line": 919,
+          "text": "            cpu_includes_reactor_authentication_or_response_signing: true,"
+        },
+        {
+          "line": 920,
+          "text": "            cpu_includes_reactor_authentication: false,"
+        },
+        {
+          "line": 921,
+          "text": "            dispatch_cpu_includes_paid_body_decode: true,"
+        },
+        {
+          "line": 922,
+          "text": "            dispatch_cpu_includes_response_signing: true,"
+        },
+        {
+          "line": 923,
+          "text": "            submit_phase_cpu_excludes_scoped_workers: true,"
+        },
+        {
+          "line": 924,
+          "text": "            phase_parent_links_are_inclusive: true,"
+        },
+        {
+          "line": 925,
+          "text": "            cpu_wait_is_outside_dispatch: true,"
+        },
+        {
+          "line": 926,
+          "text": "            monotonic_epoch_is_observer_local: true,"
+        },
+        {
+          "line": 927,
+          "text": "            stream_bytes_are_physical_network_bytes: false,"
+        },
+        {
+          "line": 928,
+          "text": "        }"
+        }
+      ],
+      "start": 898
+    },
+    {
+      "end": 40,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_lines": [
+        {
+          "line": 31,
+          "text": "const SEARCH_BUDGET: u64 = 4096;"
+        },
+        {
+          "line": 32,
+          "text": "const ATTACKS: usize = 8;"
+        },
+        {
+          "line": 33,
+          "text": "const PROBES: usize = 8;"
+        },
+        {
+          "line": 34,
+          "text": "const CALL_MS: u64 = 2000;"
+        },
+        {
+          "line": 35,
+          "text": ""
+        },
+        {
+          "line": 36,
+          "text": "fn identity(n: u8) -> DevelopmentIdentity {"
+        },
+        {
+          "line": 37,
+          "text": "    DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap()"
+        },
+        {
+          "line": 38,
+          "text": "}"
+        },
+        {
+          "line": 39,
+          "text": "fn ns(start: Instant) -> u64 {"
+        },
+        {
+          "line": 40,
+          "text": "    start.elapsed().as_nanos().try_into().unwrap()"
+        }
+      ],
+      "start": 31
+    },
+    {
+      "end": 225,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_lines": [
+        {
+          "line": 204,
+          "text": "        request: Request,"
+        },
+        {
+          "line": 205,
+          "text": "        window_end: Option<Instant>,"
+        },
+        {
+          "line": 206,
+          "text": "    ) -> Value {"
+        },
+        {
+          "line": 207,
+          "text": "        let start = Instant::now();"
+        },
+        {
+          "line": 208,
+          "text": "        let client_cpu = ThreadCpuStamp::start();"
+        },
+        {
+          "line": 209,
+          "text": "        let started_ns = ns(self.epoch);"
+        },
+        {
+          "line": 210,
+          "text": "        let (reply, metrics) = public_v3::call_public_protected_v3_with_deadline("
+        },
+        {
+          "line": 211,
+          "text": "            self.address,"
+        },
+        {
+          "line": 212,
+          "text": "            &request,"
+        },
+        {
+          "line": 213,
+          "text": "            &self.settings,"
+        },
+        {
+          "line": 214,
+          "text": "            identity(71).public_key(),"
+        },
+        {
+          "line": 215,
+          "text": "            &identity(who),"
+        },
+        {
+          "line": 216,
+          "text": "            policy(),"
+        },
+        {
+          "line": 217,
+          "text": "            Some("
+        },
+        {
+          "line": 218,
+          "text": "                window_end.map_or(start + Duration::from_millis(CALL_MS), |end| {"
+        },
+        {
+          "line": 219,
+          "text": "                    end.min(start + Duration::from_millis(CALL_MS))"
+        },
+        {
+          "line": 220,
+          "text": "                }),"
+        },
+        {
+          "line": 221,
+          "text": "            ),"
+        },
+        {
+          "line": 222,
+          "text": "        );"
+        },
+        {
+          "line": 223,
+          "text": "        let client_thread_cpu_ns = cpu_elapsed(client_cpu);"
+        },
+        {
+          "line": 224,
+          "text": "        let ended_ns = ns(self.epoch);"
+        },
+        {
+          "line": 225,
+          "text": "        let elapsed_ns = ns(start);"
+        }
+      ],
+      "start": 204
+    },
+    {
+      "end": 1312,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_lines": [
+        {
+          "line": 1280,
+          "text": "    packets: &[Packet],"
+        },
+        {
+          "line": 1281,
+          "text": "    prepare: ConfirmationAttackBuilder,"
+        },
+        {
+          "line": 1282,
+          "text": "    pressured: bool,"
+        },
+        {
+          "line": 1283,
+          "text": ") -> Value {"
+        },
+        {
+          "line": 1284,
+          "text": "    fs::create_dir(path).unwrap();"
+        },
+        {
+          "line": 1285,
+          "text": "    let mut verifier = Node::open(&path.join(\"independent-client\"), settings.clone(), 1).unwrap();"
+        },
+        {
+          "line": 1286,
+          "text": "    let mut receiver = Node::open(&path.join(\"receiver\"), settings.clone(), 1).unwrap();"
+        },
+        {
+          "line": 1287,
+          "text": "    receiver"
+        },
+        {
+          "line": 1288,
+          "text": "        .enable_local_mempool(PoolLimits {"
+        },
+        {
+          "line": 1289,
+          "text": "            max_records: 16,"
+        },
+        {
+          "line": 1290,
+          "text": "            max_bytes: 32768,"
+        },
+        {
+          "line": 1291,
+          "text": "            max_group_members: 4,"
+        },
+        {
+          "line": 1292,
+          "text": "            critical_reserve: 0,"
+        },
+        {
+          "line": 1293,
+          "text": "            max_removals: 64,"
+        },
+        {
+          "line": 1294,
+          "text": "            preview_miner: development_public(0).unwrap(),"
+        },
+        {
+          "line": 1295,
+          "text": "        })"
+        },
+        {
+          "line": 1296,
+          "text": "        .unwrap();"
+        },
+        {
+          "line": 1297,
+          "text": "    let initial = receiver.read_active().unwrap();"
+        },
+        {
+          "line": 1298,
+          "text": "    let target = receiver.expected_target(settings.genesis()).unwrap();"
+        },
+        {
+          "line": 1299,
+          "text": "    let owner = Arc::new(Mutex::new(receiver));"
+        },
+        {
+          "line": 1300,
+          "text": "    let listener = TcpListener::bind(\"127.0.0.1:0\").unwrap();"
+        },
+        {
+          "line": 1301,
+          "text": "    let address = listener.local_addr().unwrap();"
+        },
+        {
+          "line": 1302,
+          "text": "    let stop = Arc::new(AtomicBool::new(false));"
+        },
+        {
+          "line": 1303,
+          "text": "    let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));"
+        },
+        {
+          "line": 1304,
+          "text": "    let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();"
+        },
+        {
+          "line": 1305,
+          "text": "    let server = PublicServer::new(identity(71), policy()).unwrap();"
+        },
+        {
+          "line": 1306,
+          "text": "    let domain = server.mutation_cpu_domain();"
+        },
+        {
+          "line": 1307,
+          "text": "    let initial_meter = domain.observe().unwrap();"
+        },
+        {
+          "line": 1308,
+          "text": "    let (shared, signal, measurement, capture) ="
+        },
+        {
+          "line": 1309,
+          "text": "        (owner.clone(), stop.clone(), metrics, observer.clone());"
+        },
+        {
+          "line": 1310,
+          "text": "    let service = RunningService {"
+        },
+        {
+          "line": 1311,
+          "text": "        stop,"
+        },
+        {
+          "line": 1312,
+          "text": "        worker: Some(thread::spawn(move || {"
+        }
+      ],
+      "start": 1280
+    },
+    {
+      "end": 1379,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_lines": [
+        {
+          "line": 1333,
+          "text": "    let workers = if pressured { PRESSURE_WORKERS } else { 0 };"
+        },
+        {
+          "line": 1334,
+          "text": "    let barrier = Arc::new(Barrier::new(workers + 2));"
+        },
+        {
+          "line": 1335,
+          "text": "    let completed = Arc::new(AtomicU64::new(0));"
+        },
+        {
+          "line": 1336,
+          "text": "    let end = epoch + Duration::from_millis(PRESSURE_MS);"
+        },
+        {
+          "line": 1337,
+          "text": "    let mut attacks = Vec::new();"
+        },
+        {
+          "line": 1338,
+          "text": "    for worker in 0..workers {"
+        },
+        {
+          "line": 1339,
+          "text": "        let (client, barrier, prepare, completed) = ("
+        },
+        {
+          "line": 1340,
+          "text": "            client.clone(),"
+        },
+        {
+          "line": 1341,
+          "text": "            barrier.clone(),"
+        },
+        {
+          "line": 1342,
+          "text": "            prepare.clone(),"
+        },
+        {
+          "line": 1343,
+          "text": "            completed.clone(),"
+        },
+        {
+          "line": 1344,
+          "text": "        );"
+        },
+        {
+          "line": 1345,
+          "text": "        attacks.push(thread::spawn(move || {"
+        },
+        {
+          "line": 1346,
+          "text": "            barrier.wait();"
+        },
+        {
+          "line": 1347,
+          "text": "            let cpu = ThreadCpuStamp::start();"
+        },
+        {
+          "line": 1348,
+          "text": "            let mut rows = Vec::new();"
+        },
+        {
+          "line": 1349,
+          "text": "            for attempt in 0..PRESSURE_CALLS_PER_WORKER {"
+        },
+        {
+          "line": 1350,
+          "text": "                if Instant::now() >= end {"
+        },
+        {
+          "line": 1351,
+          "text": "                    break;"
+        },
+        {
+          "line": 1352,
+          "text": "                }"
+        },
+        {
+          "line": 1353,
+          "text": "                let (index, packet, construction) = prepare(worker, attempt);"
+        },
+        {
+          "line": 1354,
+          "text": "                let mut row = if let Some(packet) = packet {"
+        },
+        {
+          "line": 1355,
+          "text": "                    let row = compact_pressure_call("
+        },
+        {
+          "line": 1356,
+          "text": "                        client.call_before("
+        },
+        {
+          "line": 1357,
+          "text": "                            \"confirmation_from_zero\","
+        },
+        {
+          "line": 1358,
+          "text": "                            80 + ((attempt + worker * 37) % 150) as u8,"
+        },
+        {
+          "line": 1359,
+          "text": "                            Request::Submit { packet },"
+        },
+        {
+          "line": 1360,
+          "text": "                            Some(end),"
+        },
+        {
+          "line": 1361,
+          "text": "                        ),"
+        },
+        {
+          "line": 1362,
+          "text": "                        Some(index),"
+        },
+        {
+          "line": 1363,
+          "text": "                    );"
+        },
+        {
+          "line": 1364,
+          "text": "                    completed.fetch_add(1, Ordering::AcqRel);"
+        },
+        {
+          "line": 1365,
+          "text": "                    row"
+        },
+        {
+          "line": 1366,
+          "text": "                } else {"
+        },
+        {
+          "line": 1367,
+          "text": "                    json!({\"status\": \"not_submitted_exhausted\", \"packet_index\": index})"
+        },
+        {
+          "line": 1368,
+          "text": "                };"
+        },
+        {
+          "line": 1369,
+          "text": "                if let Some(construction) = construction {"
+        },
+        {
+          "line": 1370,
+          "text": "                    row[\"from_zero_construction\"] = construction;"
+        },
+        {
+          "line": 1371,
+          "text": "                }"
+        },
+        {
+          "line": 1372,
+          "text": "                rows.push(row);"
+        },
+        {
+          "line": 1373,
+          "text": "            }"
+        },
+        {
+          "line": 1374,
+          "text": "            json!({\"worker\": worker, \"calling_thread_cpu_ns\": cpu_elapsed(cpu),"
+        },
+        {
+          "line": 1375,
+          "text": "                \"attempt_cap_reached\": rows.len() == PRESSURE_CALLS_PER_WORKER, \"calls\": rows})"
+        },
+        {
+          "line": 1376,
+          "text": "        }));"
+        },
+        {
+          "line": 1377,
+          "text": "    }"
+        },
+        {
+          "line": 1378,
+          "text": "    let (reader, read_barrier) = (client.clone(), barrier.clone());"
+        },
+        {
+          "line": 1379,
+          "text": "    let reads = thread::spawn(move || {"
+        }
+      ],
+      "start": 1333
+    },
+    {
+      "end": 1465,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "source_lines": [
+        {
+          "line": 1450,
+          "text": "                    .map_err(|error| error.to_string())"
+        },
+        {
+          "line": 1451,
+          "text": "                    .and_then(|page| {"
+        },
+        {
+          "line": 1452,
+          "text": "                        ingress::receive_public_page_from_before_observed("
+        },
+        {
+          "line": 1453,
+          "text": "                            &mut verifier,"
+        },
+        {
+          "line": 1454,
+          "text": "                            client.address,"
+        },
+        {
+          "line": 1455,
+          "text": "                            page,"
+        },
+        {
+          "line": 1456,
+          "text": "                            tip,"
+        },
+        {
+          "line": 1457,
+          "text": "                            after,"
+        },
+        {
+          "line": 1458,
+          "text": "                            ingress::now().unwrap(),"
+        },
+        {
+          "line": 1459,
+          "text": "                            end,"
+        },
+        {
+          "line": 1460,
+          "text": "                            Some(&import_observer),"
+        },
+        {
+          "line": 1461,
+          "text": "                        )"
+        },
+        {
+          "line": 1462,
+          "text": "                        .map_err(|error| error.to_string())"
+        },
+        {
+          "line": 1463,
+          "text": "                    });"
+        },
+        {
+          "line": 1464,
+          "text": "            let replay_ended_ns = ns(epoch);"
+        },
+        {
+          "line": 1465,
+          "text": "            // Capture the actual calling-thread CPU once. Wall intervals may"
+        }
+      ],
+      "start": 1450
+    }
+  ],
+  "schema": "trnm-fixed-source-fragments-v1",
+  "source_checkpoint": "1a7afcdb820b051d1e4bfde3d436f96fc050c487"
+}

@@ -1,0 +1,26 @@
+{
+  "ast_compile_only": true,
+  "bytes": 27249,
+  "caps": {
+    "file": 16777216,
+    "total": 67108864
+  },
+  "imports": [
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "stat",
+    "time",
+    "zipfile"
+  ],
+  "producer_not_executed": true,
+  "producer_path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/pack_architecture_P1_closed_sparse_receipts_v1.py",
+  "review": "Descriptor-relative NOFOLLOW traversal, NONBLOCK single-link regular reads, exact old inventory and summary SHA guards, before/after file and directory identities, second full source hash read, safe unique zip roster and all-member CRC/size/SHA validation. Writes limited to unique external package directory.",
+  "schema": "trnm-P1-closed-sparse-packager-static-v1",
+  "scope": "Capture only four closed evidence directories; no source, Git, tests, original producer execution, active full-v2, or stage writes.",
+  "sha256": "0b222893eba3379a7a24f85d86b2b28f3845fc99a1732f106e31725261a0c2b8",
+  "source_bytes": 12624662,
+  "source_files": 95,
+  "source_roots": 4
+}

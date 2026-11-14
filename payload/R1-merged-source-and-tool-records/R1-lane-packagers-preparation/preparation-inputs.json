@@ -1,0 +1,171 @@
+{
+  "schema": "trnm-R1-original-lane-packagers-preparation-inputs-v1",
+  "output": "/private/tmp/chain-prci-R1-original-lane-packagers-preparation-20261114-v1",
+  "source_of_pins": "explicit root handoff after actual R1 Mac seven gates; no R1 Linux terminal observed",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "source_bytes": 423,
+  "source_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+  "source_entries": 41677,
+  "source_tracked_bytes": 3994964901,
+  "bundle_bytes": 11223,
+  "bundle_sha256": "40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4",
+  "bundle_filename": "concurrent-ci-2a86462a-after-6a8cd555.bundle",
+  "bundle_prerequisites": [
+    "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "6a8cd55573065ceb50cdb65a7834615f79b521ae"
+  ],
+  "original_full_driver": {
+    "bytes": 15187,
+    "sha256": "bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
+  },
+  "original_external_driver": {
+    "bytes": 16404,
+    "sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a"
+  },
+  "bases": [
+    {
+      "kind": "full",
+      "path": "/private/tmp/chain-prci-P1-original-full-v2-packager-preparation-20261114-v1/package_original_repository_truth_6a8cd5_v2.py",
+      "bytes": 28912,
+      "sha256": "4ebe16cf283c670b066893d1359b4a4e17abe205eb03c358e83fdb9dd1bf9967",
+      "copy_name": "P1-full-v2-packager.py.original",
+      "output_name": "package_original_repository_truth_2a8646_v1.py",
+      "patch_name": "full-P1-v2-to-R1.patch",
+      "replacements": [
+        {
+          "old": "closed P1 repository-truth execution",
+          "new": "closed R1 repository-truth execution",
+          "count": 1
+        },
+        {
+          "old": "\"final-repository-truth-offline-6a8cd5-v2\"",
+          "new": "\"final-repository-truth-offline-2a8646-v1\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-repository-truth-6a8cd5-v2-prci\"",
+          "new": "\"package-original-repository-truth-2a8646-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "\nHEAD = \"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "\nHEAD = \"2a86462a1ab20c68151719ba4635e3c294391e64\"",
+          "count": 1
+        },
+        {
+          "old": "\nTREE = \"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "\nTREE = \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"",
+          "count": 1
+        },
+        {
+          "old": "SOURCE_SHA256 = \"cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5\"",
+          "new": "SOURCE_SHA256 = \"1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03\"",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_BYTES = 8575",
+          "new": "BUNDLE_BYTES = 11223",
+          "count": 1
+        },
+        {
+          "old": "BUNDLE_SHA256 = \"cdd1ea4dd38a77c52fe7977ab2a8d7c8bea7f47d11f478b72887cd05afa96389\"",
+          "new": "BUNDLE_SHA256 = \"40de169595b8c51d0d549a277e24b76abad8fb6c0c58c4d8c555442d210101e4\"",
+          "count": 1
+        },
+        {
+          "old": "recorded P1 bundle differs",
+          "new": "recorded R1 bundle differs",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994964901",
+          "count": 2
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-index-v1",
+          "new": "trnm-R1-original-repository-truth-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-repository-truth-package-completion-v1",
+          "new": "trnm-R1-original-repository-truth-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-repository-truth-6a8cd5-v2.zip\"",
+          "new": "\"original-repository-truth-2a8646-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "expected_constant_changes": 14
+    },
+    {
+      "kind": "external",
+      "path": "/private/tmp/chain-prci-P1-original-external-packager-preparation-20261114-v1/package_original_external_evidence_6a8cd5_v1.py",
+      "bytes": 14207,
+      "sha256": "fd64736fa3450a7baad12e538556a163a394dd5420e58a2eaecd737250da9811",
+      "copy_name": "P1-external-packager.py.original",
+      "output_name": "package_original_external_evidence_2a8646_v1.py",
+      "patch_name": "external-P1-to-R1.patch",
+      "replacements": [
+        {
+          "old": "\"final-external-evidence-existing-source-6a8cd5-v2\"",
+          "new": "\"final-external-evidence-2a8646-v1\"",
+          "count": 1
+        },
+        {
+          "old": "\"package-original-external-evidence-6a8cd5-v1-prci\"",
+          "new": "\"package-original-external-evidence-2a8646-v1-prci\"",
+          "count": 1
+        },
+        {
+          "old": "HEAD=\"6a8cd55573065ceb50cdb65a7834615f79b521ae\"",
+          "new": "HEAD=\"2a86462a1ab20c68151719ba4635e3c294391e64\"",
+          "count": 1
+        },
+        {
+          "old": "TREE=\"cbd6b4552c87af27c72c0189806baeb33ecb8bf5\"",
+          "new": "TREE=\"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"",
+          "count": 1
+        },
+        {
+          "old": "operator-pinned P1 external lane",
+          "new": "operator-pinned R1 external lane",
+          "count": 1
+        },
+        {
+          "old": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5",
+          "new": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+          "count": 1
+        },
+        {
+          "old": "3994959368",
+          "new": "3994964901",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-index-v1",
+          "new": "trnm-R1-original-external-evidence-package-index-v1",
+          "count": 1
+        },
+        {
+          "old": "trnm-P1-original-external-evidence-package-completion-v1",
+          "new": "trnm-R1-original-external-evidence-package-completion-v1",
+          "count": 1
+        },
+        {
+          "old": "\"original-external-evidence-6a8cd5-v1.zip\"",
+          "new": "\"original-external-evidence-2a8646-v1.zip\"",
+          "count": 1
+        }
+      ],
+      "expected_constant_changes": 10
+    }
+  ],
+  "actual_R1_terminal_summary_sha256": null,
+  "packagers_executed": false,
+  "stage_source_git_network_test_actions": false
+}

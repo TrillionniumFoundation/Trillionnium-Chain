@@ -1,0 +1,6 @@
+tree 4ee1a9d265f09871b0f167d2a5be77ca4b9839c0
+parent 209f742279044327ad8c763012b6fdda54e5e61e
+author Tomasrgbsf <tomasbraynt@gmail.com> 1790660753 +0800
+committer Tomasrgbsf <tomasbraynt@gmail.com> 1790660753 +0800
+
+perf(M06): bind block-scoped workers and one-time signature preparation

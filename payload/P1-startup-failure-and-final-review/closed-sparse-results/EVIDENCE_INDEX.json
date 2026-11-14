@@ -1,0 +1,1499 @@
+{
+  "directories": [
+    ".",
+    "copy-validation-v1",
+    "official-transfer-v1",
+    "official-transfer-v1/parts",
+    "package",
+    "payloads",
+    "payloads/originals",
+    "payloads/originals/P1-index-flag-diagnostic-v1",
+    "payloads/originals/P1-sparse-checkout-correction-v1",
+    "payloads/originals/P1-sparse-checkout-precorrection-v1",
+    "payloads/originals/final-repository-truth-offline-6a8cd5-v1",
+    "payloads/originals/final-repository-truth-offline-6a8cd5-v1/ci-observations",
+    "payloads/originals/final-repository-truth-offline-6a8cd5-v1/tmp",
+    "payloads/package",
+    "preparation-v1",
+    "root-closed-tool-records-v1"
+  ],
+  "evidence_root": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1",
+  "file_count": 163,
+  "files": [
+    {
+      "bytes": 3080,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "f52d59f296eba465df8fe46e02e6eea0a8ed6b7258d438af4ff325b33f7a6c4b"
+    },
+    {
+      "bytes": 47029,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/copy-validation-v1/member-verification.json"
+      },
+      "path": "copy-validation-v1/member-verification.json",
+      "sha256": "eef62a80e2f10477ac63d6b3dec30119764b87af38da36f7737f3d09375cd026"
+    },
+    {
+      "bytes": 36561,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/copy-validation-v1/payload-origins.json"
+      },
+      "path": "copy-validation-v1/payload-origins.json",
+      "sha256": "cc529ab82279090b619dd4a097b47bdbcfcd280dc58fc16073ab6d3b76d3b65a"
+    },
+    {
+      "bytes": 4868,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/copied-source-origins.json"
+      },
+      "path": "official-transfer-v1/copied-source-origins.json",
+      "sha256": "fc83cd935f1c4a42d95f96a135346d60aba149a1581862730e7dba564aa422e1"
+    },
+    {
+      "bytes": 1697,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-metadata.json"
+      },
+      "path": "official-transfer-v1/official-part-metadata.json",
+      "sha256": "6981e1e9ae8ee54877c0c493d8bd5cdbeafbae5a363b65aa4253075c755dfb73"
+    },
+    {
+      "bytes": 334,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-write-0000000000.json"
+      },
+      "path": "official-transfer-v1/official-part-write-0000000000.json",
+      "sha256": "ce88ecda31c63c0a8622cb7919628778f872246c73162459315f640aa19529bb"
+    },
+    {
+      "bytes": 334,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-write-0000262144.json"
+      },
+      "path": "official-transfer-v1/official-part-write-0000262144.json",
+      "sha256": "6ca5b6f6566fbdf933854d648e8d7dcc568bfa10593b143d9c8e9a21d3c0c189"
+    },
+    {
+      "bytes": 334,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-write-0000524288.json"
+      },
+      "path": "official-transfer-v1/official-part-write-0000524288.json",
+      "sha256": "2a5bb4b7c8ebac5b07ee0ae68fd9c2450d527ac58be182828dd8f8f133f19977"
+    },
+    {
+      "bytes": 334,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-write-0000786432.json"
+      },
+      "path": "official-transfer-v1/official-part-write-0000786432.json",
+      "sha256": "cbf0d10ba24f2930dd15e9a5b8f4d85fc89a0f8c42f434062dcc63213103cb93"
+    },
+    {
+      "bytes": 331,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/official-part-write-0001048576.json"
+      },
+      "path": "official-transfer-v1/official-part-write-0001048576.json",
+      "sha256": "9544b6bda87d727d34d1b3d19ced5f8d198a64eef3050d1996a6ea1d41fd9f0f"
+    },
+    {
+      "bytes": 666,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/package-inventory-mac-start.json"
+      },
+      "path": "official-transfer-v1/package-inventory-mac-start.json",
+      "sha256": "c81355c66a83bb2cd4387058ceed024123dbbdf025d990dc49550e475243e3a1"
+    },
+    {
+      "bytes": 21730,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/package-inventory-mac-terminal.json"
+      },
+      "path": "official-transfer-v1/package-inventory-mac-terminal.json",
+      "sha256": "c9f2aec4ec1df7fe1ad33ec91ca3be0f7e9892f063b0fc538d30c3dc3e32286e"
+    },
+    {
+      "bytes": 640,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/package-inventory-rog-start.json"
+      },
+      "path": "official-transfer-v1/package-inventory-rog-start.json",
+      "sha256": "f39c4c2ad9bc0e18db14baad046e27c3fdc4a6e57ae2960a22e25d1e8a66e581"
+    },
+    {
+      "bytes": 34666,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/package-inventory-rog-terminal.json"
+      },
+      "path": "official-transfer-v1/package-inventory-rog-terminal.json",
+      "sha256": "54890c31a7955697cc78b10ae8f5ab521e46c7c80632e66b328e33f488bf3e30"
+    },
+    {
+      "bytes": 76854,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/package-sidecars-official-read.json"
+      },
+      "path": "official-transfer-v1/package-sidecars-official-read.json",
+      "sha256": "42ae1fb9d93d59a0104494cfbee49744f2c4bb94199befef2892936cd716db98"
+    },
+    {
+      "bytes": 379,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/packager-execution-request.json"
+      },
+      "path": "official-transfer-v1/packager-execution-request.json",
+      "sha256": "0a82ff5ba43d98d71ff0c2c5a42afbf98f9c73286375a2b83c2ac07be84ae1b2"
+    },
+    {
+      "bytes": 582,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/packager-execution-start.json"
+      },
+      "path": "official-transfer-v1/packager-execution-start.json",
+      "sha256": "a4710b89ac513173e78346accf18c1881a56df9007d2adb89fef03933ffbacd0"
+    },
+    {
+      "bytes": 6400,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/packager-execution-terminal.json"
+      },
+      "path": "official-transfer-v1/packager-execution-terminal.json",
+      "sha256": "7475fb1581ab5fa7fdc3c09a1d8546a31764a8d74394ae5fbc8ad38d08451b21"
+    },
+    {
+      "bytes": 4251,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/packager-preparation-terminal.json"
+      },
+      "path": "official-transfer-v1/packager-preparation-terminal.json",
+      "sha256": "035eff72b2d5b4469ba63013da5af3738fb0a50f73a9eb5dc794e7b2b63c626c"
+    },
+    {
+      "bytes": 327,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/packager-producer-official-write.json"
+      },
+      "path": "official-transfer-v1/packager-producer-official-write.json",
+      "sha256": "367f6e4cf41c2dc0d155e3fa4aa9ee987d4f4564cd293f46f2902b0e5512bbcf"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/.hepta-lock-031d55a4b43bcb7ccea965f0"
+      },
+      "path": "official-transfer-v1/parts/.hepta-lock-031d55a4b43bcb7ccea965f0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/.hepta-lock-35322850972f6c569a0bc0e9"
+      },
+      "path": "official-transfer-v1/parts/.hepta-lock-35322850972f6c569a0bc0e9",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/.hepta-lock-5b6658307c4ce8ef79154b79"
+      },
+      "path": "official-transfer-v1/parts/.hepta-lock-5b6658307c4ce8ef79154b79",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/.hepta-lock-e3cd13dd0b3236ed0c8ef9e9"
+      },
+      "path": "official-transfer-v1/parts/.hepta-lock-e3cd13dd0b3236ed0c8ef9e9",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/.hepta-lock-fde593488fe0128c38f0fffe"
+      },
+      "path": "official-transfer-v1/parts/.hepta-lock-fde593488fe0128c38f0fffe",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 262144,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000000000.part"
+      },
+      "path": "official-transfer-v1/parts/0000000000.part",
+      "sha256": "fcee69bf2a482e9c7e1f5552f22269a701375151204c945606daecfb3a2a6161"
+    },
+    {
+      "bytes": 262144,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000262144.part"
+      },
+      "path": "official-transfer-v1/parts/0000262144.part",
+      "sha256": "b4338601d6116ab1ba05f08638705305dfbaaabf1ae2a13ac39de9f79a9cb9d8"
+    },
+    {
+      "bytes": 262144,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000524288.part"
+      },
+      "path": "official-transfer-v1/parts/0000524288.part",
+      "sha256": "fd3fa8feec683056fb38e408b4742e544d8780adf63824faf1b29864b0379e02"
+    },
+    {
+      "bytes": 262144,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0000786432.part"
+      },
+      "path": "official-transfer-v1/parts/0000786432.part",
+      "sha256": "527badc69342f57ebfadc4ade639140f842edd10a17d79dbf6f998938b4a771b"
+    },
+    {
+      "bytes": 47140,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/parts/0001048576.part"
+      },
+      "path": "official-transfer-v1/parts/0001048576.part",
+      "sha256": "991652798d2d80a05edb375f65f93203b85c06e3722566e0c179b4afd54a72e2"
+    },
+    {
+      "bytes": 4251,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/preparation-static-terminal.json"
+      },
+      "path": "official-transfer-v1/preparation-static-terminal.json",
+      "sha256": "035eff72b2d5b4469ba63013da5af3738fb0a50f73a9eb5dc794e7b2b63c626c"
+    },
+    {
+      "bytes": 7573,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/read-chunk-metadata.json"
+      },
+      "path": "official-transfer-v1/read-chunk-metadata.json",
+      "sha256": "72e9a63fc6557f2c27eca0d1865fe65909fa201ee517fd419a9d44b8654d1257"
+    },
+    {
+      "bytes": 374,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/receiver-execution-request.json"
+      },
+      "path": "official-transfer-v1/receiver-execution-request.json",
+      "sha256": "b8a857d875e17d4ef23f9aef40c22b6b1be026c57cea6e286410f07058bcd3c0"
+    },
+    {
+      "bytes": 600,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/receiver-execution-start.json"
+      },
+      "path": "official-transfer-v1/receiver-execution-start.json",
+      "sha256": "812dac665da339425cf435e26d98341e9f4c6a8c7f57107b30d71fa7fb80ec98"
+    },
+    {
+      "bytes": 5023,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/receiver-execution-terminal.json"
+      },
+      "path": "official-transfer-v1/receiver-execution-terminal.json",
+      "sha256": "e6fb5d5bba2379e88834e3561d9381041947778f7b9d35f1d4a85f9388809738"
+    },
+    {
+      "bytes": 604,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/receiver-preparation-start.json"
+      },
+      "path": "official-transfer-v1/receiver-preparation-start.json",
+      "sha256": "c414b63f47839c4fe3065b325371f56b9ec4f598b1287fb16c449bb341150edb"
+    },
+    {
+      "bytes": 2781,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/receiver-preparation-terminal.json"
+      },
+      "path": "official-transfer-v1/receiver-preparation-terminal.json",
+      "sha256": "287a79eec1b54897d01b6329f3e0d50b0f0a2e23a84c4990863f66871c7e2365"
+    },
+    {
+      "bytes": 45159,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/root-terminal-sources-official-read.json"
+      },
+      "path": "official-transfer-v1/root-terminal-sources-official-read.json",
+      "sha256": "4e187ea7b1a5826dac34ce9a08775b20ac870f6c57e2161a0cbcf1bede4b535a"
+    },
+    {
+      "bytes": 1404,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/save-transport-terminal.json"
+      },
+      "path": "official-transfer-v1/save-transport-terminal.json",
+      "sha256": "00146f247a99a47421314a74d41480ea3b2f8cb7966b85ae19bdd25e287856ba"
+    },
+    {
+      "bytes": 637,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/official-transfer-v1/small-copy-start.json"
+      },
+      "path": "official-transfer-v1/small-copy-start.json",
+      "sha256": "9da7bf4d6deb5c972fba7d3086c13b86de7571f49f16a1b606efccfe44c47550"
+    },
+    {
+      "bytes": 59488,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/EVIDENCE_INDEX.json"
+      },
+      "path": "package/EVIDENCE_INDEX.json",
+      "sha256": "06c02ce72e1632f4b0004edd24c1383c3af016525ea90988978aaeec71b1c39c"
+    },
+    {
+      "bytes": 1095716,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/original-closed-P1-sparse-receipts-v1.zip"
+      },
+      "path": "package/original-closed-P1-sparse-receipts-v1.zip",
+      "sha256": "a6057f107f220d146be4fbe70d6ef60b369bf29eaa40f65a640556fd4840b844"
+    },
+    {
+      "bytes": 1912,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/summary.json"
+      },
+      "path": "package/summary.json",
+      "sha256": "f8335bdcc74f7e2b095fe8582fa32e78252c04ca55fa82284363bea072e1b96a"
+    },
+    {
+      "bytes": 59488,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/EVIDENCE_INDEX.json"
+      },
+      "path": "payloads/EVIDENCE_INDEX.json",
+      "sha256": "06c02ce72e1632f4b0004edd24c1383c3af016525ea90988978aaeec71b1c39c"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.fsmonitor.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.ignorestat.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.ignorestat.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.ignorestat.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.ignorestat.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.preloadindex.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.preloadindex.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.preloadindex.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.preloadindex.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 31,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.sparsecheckout.stdout",
+      "sha256": "f4a2c44c37d369d22852039cbf45bfec64891df2825e95eaf1322f00e5213de5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/config-core.untrackedcache.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/head.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/head.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/head.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/index-path.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/index-path.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/index-path.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/index-path.stdout",
+      "sha256": "742e1586a644af64934a892663d03c75415bfb01edafdfdd924a8627573bfb9c"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/ls-files-v.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/ls-files-v.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/ls-files-v.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/ls-files-v.stdout",
+      "sha256": "a86673ec02d1535ae2f034c603bf863c512d5830c798c3c1236de1dd71a5d82a"
+    },
+    {
+      "bytes": 2445,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/producer.py"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/producer.py",
+      "sha256": "fe2d1434894847ccfc7bc17df40573389fe70675b3a6edbe0e60e841bd097c3b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/status.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/status.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4788,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/summary.json"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/summary.json",
+      "sha256": "a81f116ef48cb1fa1a50d9d17b343be473c6c8102d47119bfbae1d0381443ea1"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/tree.stderr"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-index-flag-diagnostic-v1/tree.stdout"
+      },
+      "path": "payloads/originals/P1-index-flag-diagnostic-v1/tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    },
+    {
+      "bytes": 58,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/config.worktree.before"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/config.worktree.before",
+      "sha256": "97997ba84fd1c44263deb6f412fc3bef4b05e0103d00c5a97a97ca928299aa13"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/disable-sparse-checkout.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-after.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/flags-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-after.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/flags-after.stdout",
+      "sha256": "2164d13c3e81a1cb84a969e83385ae134005ff954fcfc9eaed46e5375eb42f52"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-before.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/flags-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4191866,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/flags-before.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/flags-before.stdout",
+      "sha256": "a86673ec02d1535ae2f034c603bf863c512d5830c798c3c1236de1dd71a5d82a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-after.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-after.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/head-after.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-before.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/head-before.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/head-before.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    },
+    {
+      "bytes": 241,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/info--sparse-checkout.before"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/info--sparse-checkout.before",
+      "sha256": "07c0bfe8afef62cdd40b8ff208965346a0096ebe8afb5dce077b7cd020827a54"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-0.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/object-present-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-0.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/object-present-0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-1.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/object-present-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/object-present-1.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/object-present-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/original-verify-source.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/original-verify-source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/original-verify-source.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/original-verify-source.stdout",
+      "sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/preflight-audit.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/preflight-audit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/preflight-audit.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/preflight-audit.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f"
+    },
+    {
+      "bytes": 4191,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/producer.py"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/producer.py",
+      "sha256": "49ba802cf6ad90aca6653b70e13499ed9df9bb9c2634f872b4b5e97d891c9936"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/sparse-config-after.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/sparse-config-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/sparse-config-after.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/sparse-config-after.stdout",
+      "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-after.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-after.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-before.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/status-before.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7489,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/summary.json"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/summary.json",
+      "sha256": "ecb2bdae4daa5d9a4d38a1734ab9bc8f63acc9fdd89053c44019e5ce8845a7a3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-after.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/tree-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-after.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/tree-after.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-before.stderr"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/tree-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/tree-before.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/tree-before.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-correction-v1/verified-source.json"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-correction-v1/verified-source.json",
+      "sha256": "cca39d3cb68ec4f56128201fcad953c875c60c6117c5dbf7604e359f7faf1fa5"
+    },
+    {
+      "bytes": 58,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/config.worktree.original"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-precorrection-v1/config.worktree.original",
+      "sha256": "97997ba84fd1c44263deb6f412fc3bef4b05e0103d00c5a97a97ca928299aa13"
+    },
+    {
+      "bytes": 2249,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/producer.py"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-precorrection-v1/producer.py",
+      "sha256": "0882e6e42809c90d82a160842ade10cd67ba5268ac62c25cbfda19fd5573a52c"
+    },
+    {
+      "bytes": 241,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/sparse-checkout.original"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-precorrection-v1/sparse-checkout.original",
+      "sha256": "07c0bfe8afef62cdd40b8ff208965346a0096ebe8afb5dce077b7cd020827a54"
+    },
+    {
+      "bytes": 1227,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/summary.json"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-precorrection-v1/summary.json",
+      "sha256": "c52c88e84a3141ad3f3d0f391fbd07043ba1067f187cd34c8b907e93cce23fb8"
+    },
+    {
+      "bytes": 358,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/P1-sparse-checkout-precorrection-v1/two-tree-entries.stdout"
+      },
+      "path": "payloads/originals/P1-sparse-checkout-precorrection-v1/two-tree-entries.stdout",
+      "sha256": "f95f12bd6b670c30c71b68d1489ddf60b6e06f587d122769fbdc2081dd06c22d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/cargo-version.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/cargo-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/cargo-version.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/cargo-version.stdout",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 223,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/conformance-environment.stdout",
+      "sha256": "6acc4552f9c18025e8dae33743614781bda4d62bd6c81454277d68177c05de79"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fast-forward-ancestry.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fast-forward.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 738,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fast-forward.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fast-forward.stdout",
+      "sha256": "53c2e224443711cee558ed16ae313eae74925814562396dad0205b7d5e861cb3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetch-exact-local-bundle.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetched-commit.stdout",
+      "sha256": "3e20d41f70864f7583bfdb2b464cf230b3d5e9b88ccc3e5e51d0ef404e7ea050"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/fetched-tree.stdout",
+      "sha256": "a6fb43dee9387ed87eaf3d20f4eb375435b71d7f67ed8913032ea1a8eb3eed9a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-head.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/initial-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-head.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/initial-head.stdout",
+      "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-status.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/initial-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/initial-status.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/initial-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 46,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-list-heads.stdout",
+      "sha256": "efe872d31e928b2b2636fa968ca7a883130fc276b3673ae698b6108710b2d789"
+    },
+    {
+      "bytes": 133,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stderr",
+      "sha256": "6e60986e870984343b84c515856e7981a5534291c5c5ec6f4bb6dd57675e4f37"
+    },
+    {
+      "bytes": 190,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/local-bundle-verify.stdout",
+      "sha256": "38141c1fbd856140293f15d0768b94401aad0549002f21666eba8561cf8d4db2"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/pre-update-preflight.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/preflight-audit.stdout",
+      "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 205,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/runtime-environment.stdout",
+      "sha256": "aed21f6057d4117e9083c2595e2697e64697c143756e1bd2e6393dec00a56519"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/rust-version.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/rust-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/rust-version.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/rust-version.stdout",
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "bytes": 20640,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/summary.json"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/summary.json",
+      "sha256": "de19c39a28328ac3f53b849b37e75962b0005cbf6b1980670857c583bfedfbc9"
+    },
+    {
+      "bytes": 839,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stderr",
+      "sha256": "768f405f7ef8615c2ff89388d9b42145c237ef2b6db69bd0fab502bcbfca2d3c"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/verify-source-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 839,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stderr"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stderr",
+      "sha256": "768f405f7ef8615c2ff89388d9b42145c237ef2b6db69bd0fab502bcbfca2d3c"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stdout"
+      },
+      "path": "payloads/originals/final-repository-truth-offline-6a8cd5-v1/verify-source-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 71570,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/capture-closure.json"
+      },
+      "path": "payloads/package/capture-closure.json",
+      "sha256": "939e842d9cde3e6dce0e31b7736a93e89c5696de73ebca888df0aee9a9dfcf18"
+    },
+    {
+      "bytes": 9530,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/closed-P1-sparse-checkout-results-package-v1/inventory-input.json"
+      },
+      "path": "payloads/package/inventory-input.json",
+      "sha256": "0611bf8f7db43c5dbac3427dba1b0a7d3fa2a60344d5a13e3bf1b3c536b24fe1"
+    },
+    {
+      "bytes": 27249,
+      "origin": {
+        "host": "rog",
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/pack_architecture_P1_closed_sparse_receipts_v1.py"
+      },
+      "path": "payloads/package/producer.py",
+      "sha256": "0b222893eba3379a7a24f85d86b2b28f3845fc99a1732f106e31725261a0c2b8"
+    },
+    {
+      "bytes": 10160,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/finalize_archive_v1.py"
+      },
+      "path": "preparation-v1/finalize_archive_v1.py",
+      "sha256": "e599191a2b64c4e420f37215420e2df66184611d4d27841a165ffc5aa2254c6a"
+    },
+    {
+      "bytes": 9530,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/inventory-input.json"
+      },
+      "path": "preparation-v1/inventory-input.json",
+      "sha256": "767f3f93cb42124edb46eebcb4c4ef60c986a16eaed8c7c2240f4bf2c7838244"
+    },
+    {
+      "bytes": 493,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/inventory_mac_producer.py"
+      },
+      "path": "preparation-v1/inventory_mac_producer.py",
+      "sha256": "c5b64d61bf4f1338a3d6383fddfa9ab8463aaeba689756286689017d231a3f02"
+    },
+    {
+      "bytes": 1225,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/inventory_rog_producer.py"
+      },
+      "path": "preparation-v1/inventory_rog_producer.py",
+      "sha256": "cb6919a199f75bb98917df9582c8fd595897ca95046da7d7de8635df4f9ea3e1"
+    },
+    {
+      "bytes": 27249,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/pack_architecture_P1_closed_sparse_receipts_v1.py"
+      },
+      "path": "preparation-v1/pack_architecture_P1_closed_sparse_receipts_v1.py",
+      "sha256": "0b222893eba3379a7a24f85d86b2b28f3845fc99a1732f106e31725261a0c2b8"
+    },
+    {
+      "bytes": 571,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/receiver-static-review.json"
+      },
+      "path": "preparation-v1/receiver-static-review.json",
+      "sha256": "dcfd8b68d4c111703dfbfae416c60bc4e17652e37a1f6f76ceca5fafdad48101"
+    },
+    {
+      "bytes": 157297,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/small_copy_producer.py"
+      },
+      "path": "preparation-v1/small_copy_producer.py",
+      "sha256": "2ec95e0f983f5372f41a1da0681a2e4bbb5cca1c12bb752a7c7eca4035196d67"
+    },
+    {
+      "bytes": 1083,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/static-review.json"
+      },
+      "path": "preparation-v1/static-review.json",
+      "sha256": "3ff7a8bc7c4a8c88bb1ade23c21aedaf9611a438016dcf71db27dd304e0943f9"
+    },
+    {
+      "bytes": 18876,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-P1-sparse-checkout-closed-results-20261114-v1/preparation-v1/verify_and_materialize_official_copy_v1.py"
+      },
+      "path": "preparation-v1/verify_and_materialize_official_copy_v1.py",
+      "sha256": "5af5b914ced19914c0ede45d614f6f061b307a26a429ed1e88b6affdc93fe5b2"
+    },
+    {
+      "bytes": 506,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/index-diagnostic-start.json"
+      },
+      "path": "root-closed-tool-records-v1/index-diagnostic-start.json",
+      "sha256": "427e2725e3635ed6dc0bf3f6aec073c43325398b5e5f81ea811503a54f5b7896"
+    },
+    {
+      "bytes": 12900,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/index-diagnostic-terminal.json"
+      },
+      "path": "root-closed-tool-records-v1/index-diagnostic-terminal.json",
+      "sha256": "4e3e5b8167852b27aef162545a9dd76e4c034ed49245e16f7d977478f2070c7b"
+    },
+    {
+      "bytes": 3867,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/index-diagnostic-terminal.log"
+      },
+      "path": "root-closed-tool-records-v1/index-diagnostic-terminal.log",
+      "sha256": "7928f528478700894a795bea9bfc56bdd95e2d295b333444d9b67a3759ace868"
+    },
+    {
+      "bytes": 4331,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/linux-first-failed-terminal.json"
+      },
+      "path": "root-closed-tool-records-v1/linux-first-failed-terminal.json",
+      "sha256": "77436b794c3d5bf9599410eba8a1855ac72ba1e1834bddd30907a6e537f2f1ff"
+    },
+    {
+      "bytes": 1068,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/linux-first-failed-terminal.log"
+      },
+      "path": "root-closed-tool-records-v1/linux-first-failed-terminal.log",
+      "sha256": "9103f5ad0c9c7d093a21dc045448c5a803f036a073a6f3ab352cb92fa94d08dd"
+    },
+    {
+      "bytes": 506,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/linux-first-start.json"
+      },
+      "path": "root-closed-tool-records-v1/linux-first-start.json",
+      "sha256": "051674ba58328f27be46587834c8d54546d0a7e9b66e06d5d7fbb9fa06273954"
+    },
+    {
+      "bytes": 506,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-correction-start.json"
+      },
+      "path": "root-closed-tool-records-v1/sparse-correction-start.json",
+      "sha256": "7763cea889d31ea96293bfcf1a79a99f06c8df65e67679c3b351f97a8eb29294"
+    },
+    {
+      "bytes": 3687,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-correction-terminal.json"
+      },
+      "path": "root-closed-tool-records-v1/sparse-correction-terminal.json",
+      "sha256": "c00abe24be8b70f62f2799f128c4698d2cab6ba425935ffac552b6994236fbd2"
+    },
+    {
+      "bytes": 890,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-correction-terminal.log"
+      },
+      "path": "root-closed-tool-records-v1/sparse-correction-terminal.log",
+      "sha256": "d521b79adb9234a7564ddc1fd97d6920cdca29736e9170133ff910aee278a29d"
+    },
+    {
+      "bytes": 506,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-precorrection-start.json"
+      },
+      "path": "root-closed-tool-records-v1/sparse-precorrection-start.json",
+      "sha256": "692baf33d4a7fca5fdb052f550b109f4c7bc84947ed4243265ac7a8a15a43e58"
+    },
+    {
+      "bytes": 4159,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-precorrection-terminal.json"
+      },
+      "path": "root-closed-tool-records-v1/sparse-precorrection-terminal.json",
+      "sha256": "d4b15f7d324296cb727103eb44ed78b9fd0e31883e64310822de596b1a44dd59"
+    },
+    {
+      "bytes": 1040,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-consolidation-20261114-root/P1-root-source-tool-records-v1/sparse-precorrection-terminal.log"
+      },
+      "path": "root-closed-tool-records-v1/sparse-precorrection-terminal.log",
+      "sha256": "d2bf3b810fdd7dbc4834c66ab2b931b50913d9e4c717002adcc6016e24421da7"
+    }
+  ],
+  "first_failed_lane_status": "failed",
+  "first_test_lane_started": false,
+  "original_file_count": 95,
+  "original_total_bytes": 12624662,
+  "root_original_tool_records": 12,
+  "schema": "trnm-P1-closed-sparse-complete-archive-index-v1",
+  "scope": "Four closed ROG directories and complete bounded package/copy proof; no live source/Git/tests.",
+  "total_bytes": 15615584
+}

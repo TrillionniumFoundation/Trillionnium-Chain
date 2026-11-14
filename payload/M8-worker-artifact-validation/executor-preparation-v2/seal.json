@@ -1,0 +1,17 @@
+{
+  "driver": {
+    "bytes": 19501,
+    "path": "/private/tmp/chain-consolidation-20261114-root/run_final_rog_worker_artifact_existing_source_v2.py",
+    "sha256": "491ce4a207e722f47ef2174690de83678cfc39b59b82db048f22fb95db17c95f"
+  },
+  "external_v2_unchanged_sha256": "d01f296cbc509727d99e0f10d90e804c3bff3bdf2ba2aa78e4fa12595a71c57a",
+  "index": {
+    "bytes": 2996,
+    "path": "/private/tmp/chain-worker-artifact-executor-preparation-20261114-v2/EVIDENCE_INDEX.json",
+    "sha256": "165483488139c793106ea3142e5566c18f0a5340691345d4b7b23e2415767568"
+  },
+  "no_execution_transfer_source_git_stage_network_mutation": true,
+  "schema": "trnm-worker-artifact-executor-v2-preparation-seal-v1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "v1_unchanged_sha256": "eb4953bd3c95a49f520030ddb657c495c801b827a53495008cfdfee4a02912e8"
+}

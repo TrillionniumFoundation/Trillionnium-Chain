@@ -1,0 +1,180 @@
+2266: pub fn serve_public_protected_v3(
+2267:     listener: TcpListener,
+2268:     node: Arc<Mutex<Node>>,
+2269:     lifetime: Duration,
+2270:     stop: Arc<AtomicBool>,
+2271:     server: PublicServer,
+2272: ) -> Result<PublicMetrics> {
+2273:     serve_public_protected_v3_with_metrics(
+2274:         listener,
+2275:         node,
+2276:         lifetime,
+2277:         stop,
+2278:         server,
+2279:         Arc::new(Mutex::new(PublicMetrics::default())),
+2280:     )
+2281: }
+2282: 
+2283: /// Trusted local observer only. Holding or modifying its mutex can affect this
+2284: /// process; these counters never authorize a guest or prove an economic bound.
+2285: pub fn serve_public_protected_v3_with_metrics(
+2286:     listener: TcpListener,
+2287:     node: Arc<Mutex<Node>>,
+2288:     lifetime: Duration,
+2289:     stop: Arc<AtomicBool>,
+2290:     server: PublicServer,
+2291:     metrics: Arc<Mutex<PublicMetrics>>,
+2292: ) -> Result<PublicMetrics> {
+2293:     serve_public_protected_v3_inner(listener, node, lifetime, stop, server, (metrics, None))
+2294: }
+2295: 
+2296: /// Optional trusted local measurements, bounded by observer capacity. Never guest
+2297: /// authority. Default service paths do not allocate optional records. R5 mutation
+2298: /// admission uses mandatory checked thread clocks independently of capture.
+2299: pub fn serve_public_protected_v3_with_request_observer(
+2300:     listener: TcpListener,
+2301:     node: Arc<Mutex<Node>>,
+2302:     lifetime: Duration,
+2303:     stop: Arc<AtomicBool>,
+2304:     server: PublicServer,
+2305:     metrics: Arc<Mutex<PublicMetrics>>,
+2306:     observer: PublicRequestObserver,
+2307: ) -> Result<PublicMetrics> {
+2308:     serve_public_protected_v3_inner(
+2309:         listener,
+2310:         node,
+2311:         lifetime,
+2312:         stop,
+2313:         server,
+2314:         (metrics, Some(observer)),
+2315:     )
+2316: }
+2317: 
+2318: // One ordinary Node's existing durable SQLite metadata owns the crash
+2319: // fence. Unlike a service result, Drop also runs on a local error/unwind.
+2320: // The already-active row is never cleared unless *all* original workers
+2321: // joined, settlement is complete and the last listener closes normally.
+2322: // Continuous mode retains its original authenticated owner/journal instead.
+2323: struct OrdinaryPublicServiceCrashFence {
+2324:     node: Arc<Mutex<Node>>,
+2325:     ordinary: bool,
+2326:     finished: bool,
+2327: }
+2328: impl OrdinaryPublicServiceCrashFence {
+2329:     fn begin(node: Arc<Mutex<Node>>, startup_deadline: Instant, stop: &AtomicBool) -> Result<Self> {
+2330:         // This is the same original startup attempt as profile validation.
+2331:         // Contention after that first owner scope must not become an unbounded
+2332:         // mutex wait or publish a new durable epoch after cancellation.
+2333:         let mut progress = |_: u64| public_startup_alive(startup_deadline, stop);
+2334:         let mut owner = lock_owner(&node, &mut progress)?;
+2335:         let ordinary = owner.begin_ordinary_public_service_epoch()?;
+2336:         drop(owner);
+2337:         Ok(Self {
+2338:             node,
+2339:             ordinary,
+2340:             finished: false,
+2341:         })
+2342:     }
+2343: 
+2344:     fn complete(&mut self, clean: bool) -> Result<()> {
+2345:         if self.ordinary {
+2346:             self.node
+2347:                 .lock()
+2348:                 .map_err(|_| "PUBLIC_OWNER")?
+2349:                 .finish_ordinary_public_service_epoch(clean)?;
+2350:         }
+2351:         self.finished = true;
+2352:         Ok(())
+2353:     }
+2354: }
+2355: impl Drop for OrdinaryPublicServiceCrashFence {
+2356:     fn drop(&mut self) {
+2357:         if self.ordinary && !self.finished {
+2358:             // A poisoned owner cannot silently revoke an unknown active
+2359:             // service. The durable active marker was committed BEFORE workers.
+2360:             let mut owner = self
+2361:                 .node
+2362:                 .lock()
+2363:                 .unwrap_or_else(std::sync::PoisonError::into_inner);
+2364:             owner.mark_ordinary_public_service_epoch_unknown();
+2365:         }
+2366:     }
+2367: }
+2368: 
+2369: fn public_startup_alive(deadline: Instant, stop: &AtomicBool) -> Result<()> {
+2370:     ensure(
+2371:         !stop.load(Ordering::Acquire) && Instant::now() < deadline,
+2372:         "PUBLIC_STARTUP_DEADLINE",
+2373:     )
+2374: }
+2375: 
+2376: fn serve_public_protected_v3_inner(
+2377:     listener: TcpListener,
+2378:     node: Arc<Mutex<Node>>,
+2379:     lifetime: Duration,
+2380:     stop: Arc<AtomicBool>,
+2381:     mut server: PublicServer,
+2382:     observations: (Arc<Mutex<PublicMetrics>>, Option<PublicRequestObserver>),
+2383: ) -> Result<PublicMetrics> {
+2384:     let (metrics, observer) = observations;
+2385:     ensure(
+2386:         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
+2387:         "PUBLIC_LIFETIME",
+2388:     )?;
+2389:     // This guard must be in the exported library service itself, not only the
+2390:     // CLI. Direct embedders with a wildcard/nonloopback listener cannot bypass
+2391:     // the one fixed kernel parent by avoiding binary argument parsing.
+2392:     let host_kernel = crate::host_kernel_parent::require_for_listener(listener.local_addr()?)?;
+2393:     listener.set_nonblocking(true)?;
+2394:     let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
+2395:     let intake = server.listener_intake()?;
+2396:     // Reserve the existing whole-service slot before waiting for the Node or
+2397:     // allocating its queues. A fifth listener cannot contend with an admitted
+2398:     // service's profile/State work before discovering that its domain is full.
+2399:     // RAII returns this slot on every pre-worker error; no new budget is made.
+2400:     let _listener_permit =
+2401:         BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
+2402:             .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
+2403:     let settings = {
+2404:         let mut progress = |_: u64| public_startup_alive(startup_deadline, &stop);
+2405:         let mut owner = lock_owner(&node, &mut progress)?;
+2406:         owner.require_continuous_public_authentication(server.identity.is_pq())?;
+2407:         if server.identity.is_pq() {
+2408:             owner.require_pq_history_transport()?;
+2409:         } else {
+2410:             owner.require_classical_network_profile()?;
+2411:         }
+2412:         if server.native_growth {
+2413:             owner.growth_head_observation_with_progress(&|_| {
+2414:                 public_startup_alive(startup_deadline, &stop)
+2415:             })?;
+2416:             ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
+2417:         } else if !owner.is_continuous() && !server.identity.is_pq() {
+2418:             owner.pool_status_snapshot()?;
+2419:         } // Never enable a pool from the guest listener.
+2420:         progress(0)?;
+2421:         // The first trusted service binds this actual Node owner. A second
+2422:         // independent PublicServer cannot mint new CPU or intake budgets.
+2423:         owner.bind_public_service_cpu_domain(&server.mutation_cpu_domain())?;
+2424:         owner.settings().clone()
+2425:     };
+2426:     server.install_default_w1_rejection_cache()?;
+2427:     let end = Instant::now() + lifetime;
+2428:     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
+2429:     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
+2430:     let proof_rx = Arc::new(Mutex::new(proof_rx));
+2431:     let read_rx = Arc::new(Mutex::new(read_rx));
+2432:     let (finished_tx, finished_rx) = mpsc::sync_channel::<Finished>(8);
+2433:     let mut connections = BTreeMap::<u64, Connection>::new();
+2434:     let mut next_id = 0u64;
+2435:     let mut spent = Spent::new();
+2436:     let body_pool = intake.body_pool.clone();
+2437:     let output_pool = intake.output_pool.clone();
+2438:     let mutating_grants = intake.mutating_grants.clone();
+2439:     let read_grants = intake.read_grants.clone();
+2440:     // Persistent local crash fence before the first V3 worker starts. This
+2441:     // is a single metadata row in the original Node store, not a parallel
+2442:     // per-request or reward journal. A previously unclean plain-Node process
+2443:     // cannot reset CPU debt by opening a new PublicServer/process.
+2444:     let mut epoch_fence =
+2445:         OrdinaryPublicServiceCrashFence::begin(node.clone(), startup_deadline, &stop)?;

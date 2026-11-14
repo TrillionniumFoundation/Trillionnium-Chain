@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-ed0d35-v1-prci/package_original_external_evidence_ed0d35_v1.py",
+    "--terminal-summary-sha256",
+    "2773983d4ab2839412bb6b8edc4c8954b9be2e085455e16d0ec6b6b094f94cd8",
+    "--terminal-exit-code",
+    "0",
+    "--closed-log-manifest-sha256",
+    "f05c1ff309275692dcec94a865883cf0dd0283accc2a6a368074d6755d623bf7"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-ed0d35-v1-prci",
+  "timeout_seconds": 180,
+  "producer": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-ed0d35-v1-prci/package_original_external_evidence_ed0d35_v1.py",
+    "bytes": 14207,
+    "sha256": "0461689e3f7d576250d26faddb3efd61716cb984469154782088a9fe58d0f10f"
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-ed0d35-v1-prci/closed-original-logs.json",
+    "bytes": 409,
+    "sha256": "f05c1ff309275692dcec94a865883cf0dd0283accc2a6a368074d6755d623bf7"
+  },
+  "started_at": "2026-11-14T10:49:03.463480+00:00",
+  "kind": "package_closed_receipts_only"
+}

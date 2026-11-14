@@ -1,0 +1,103 @@
+{
+  "schema": "trnm-policy-prefix-current-consumer-validation-v1",
+  "status": "HOLD",
+  "steps": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.0522458553314209,
+      "exit": 0,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/preflight.stdout",
+        "bytes": 176,
+        "sha256": "2e2cc8c651ed80aea9b31e2484dd67b974fce0253bfd36b004f670dcee642dfc"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "original-frozen-budget-58-original",
+      "argv": [
+        "git",
+        "show",
+        "HEAD:scripts/ci/test_pq_lifetime_budget.py"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.007356882095336914,
+      "exit": 0,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58-original.stdout",
+        "bytes": 35557,
+        "sha256": "0353cc145d7d8a4c6b0bf093b96556fdf1b6597d94bedf916e311fb5844aadbc"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58-original.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "original-frozen-budget-58",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_budget.py",
+        "-v"
+      ],
+      "cwd": "/private/tmp/chain-public-policy-prefix-cache-20261114",
+      "timeout_seconds": 180,
+      "elapsed_seconds": 0.12965011596679688,
+      "exit": 1,
+      "stdout": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58.stderr",
+        "bytes": 16485,
+        "sha256": "6fc70d6c1b733db71a2a70514f2f07f09daec6e86c7410d6cb337abde2b4b523"
+      }
+    }
+  ],
+  "suites": [],
+  "errors": [
+    {
+      "type": "AssertionError",
+      "message": "('original-frozen-budget-58', 1, '-----------------------\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_lifetime_budget.py\", line 364, in inspect\\n    raw = read_regular(root, relative_path(manifest_path, \\'manifest\\'), MAX_BYTES)\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_source_reader.py\", line 53, in read_regular\\n    raise SourceReadError(\"symlink source refused: \" + relative)\\npq_source_reader.SourceReadError: symlink source refused: config/pon/pq128-lifetime-budget-v1.json\\n\\nThe above exception was the direct cause of the following exception:\\n\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/test_pq_lifetime_budget.py\", line 599, in test_inspection_hashes_actual_input_without_certifying_it\\n    report = budget.inspect(self.root)\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_lifetime_budget.py\", line 393, in inspect\\n    raise BudgetError(str(error)) from error\\npq_lifetime_budget.BudgetError: symlink source refused: config/pon/pq128-lifetime-budget-v1.json\\n\\n======================================================================\\nFAIL: test_valid_cli_returns_hold_not_pq_success (__main__.SourceAndCliTests.test_valid_cli_returns_hold_not_pq_success)\\n----------------------------------------------------------------------\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/test_pq_lifetime_budget.py\", line 617, in test_valid_cli_returns_hold_not_pq_success\\n    self.assertEqual(result.returncode, 0, result.stderr)\\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nAssertionError: 2 != 0 : {\"reason\": \"symlink source refused: config/pon/pq128-lifetime-budget-v1.json\", \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"status\": \"REFUSE\"}\\n\\n\\n----------------------------------------------------------------------\\nRan 58 tests in 0.089s\\n\\nFAILED (failures=1, errors=4)\\n')",
+      "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 21, in <module>\n    r=run(label,['/opt/homebrew/bin/python3','-B',path,'-v'])\n  File \"<string>\", line 12, in run\n    assert r.returncode==0,(n,r.returncode,r.stderr.decode(errors='replace')[-2000:])\n           ^^^^^^^^^^^^^^^\nAssertionError: ('original-frozen-budget-58', 1, '-----------------------\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_lifetime_budget.py\", line 364, in inspect\\n    raw = read_regular(root, relative_path(manifest_path, \\'manifest\\'), MAX_BYTES)\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_source_reader.py\", line 53, in read_regular\\n    raise SourceReadError(\"symlink source refused: \" + relative)\\npq_source_reader.SourceReadError: symlink source refused: config/pon/pq128-lifetime-budget-v1.json\\n\\nThe above exception was the direct cause of the following exception:\\n\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/test_pq_lifetime_budget.py\", line 599, in test_inspection_hashes_actual_input_without_certifying_it\\n    report = budget.inspect(self.root)\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/pq_lifetime_budget.py\", line 393, in inspect\\n    raise BudgetError(str(error)) from error\\npq_lifetime_budget.BudgetError: symlink source refused: config/pon/pq128-lifetime-budget-v1.json\\n\\n======================================================================\\nFAIL: test_valid_cli_returns_hold_not_pq_success (__main__.SourceAndCliTests.test_valid_cli_returns_hold_not_pq_success)\\n----------------------------------------------------------------------\\nTraceback (most recent call last):\\n  File \"/private/tmp/chain-public-policy-prefix-cache-20261114/scripts/ci/test_pq_lifetime_budget.py\", line 617, in test_valid_cli_returns_hold_not_pq_success\\n    self.assertEqual(result.returncode, 0, result.stderr)\\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nAssertionError: 2 != 0 : {\"reason\": \"symlink source refused: config/pon/pq128-lifetime-budget-v1.json\", \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"status\": \"REFUSE\"}\\n\\n\\n----------------------------------------------------------------------\\nRan 58 tests in 0.089s\\n\\nFAILED (failures=1, errors=4)\\n')\n"
+    }
+  ],
+  "hosted_qualification": false,
+  "source_before": {
+    "config/pon/pq128-source-correspondence-current-v2.json": {
+      "bytes": 3782,
+      "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0"
+    },
+    "scripts/ci/pq_lifetime_current_v2.py": {
+      "bytes": 10522,
+      "sha256": "f8871844501054caf62de14a33330817a517ccefa60d538c0618364761c17401"
+    },
+    "config/pon/pq128-lifetime-composition-current-v3.json": {
+      "bytes": 13647,
+      "sha256": "217266780480623cfec459eb61b533f437690c1234cd0b78e49902a78321eab5"
+    },
+    "scripts/ci/pq_lifetime_composition.py": {
+      "bytes": 28724,
+      "sha256": "a61b604e699e91171102490e12b576c8693b64cec96b26eac9c90e6976d54e23"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 438782,
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    }
+  }
+}

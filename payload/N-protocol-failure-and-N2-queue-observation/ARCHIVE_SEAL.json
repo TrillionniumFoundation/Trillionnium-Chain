@@ -1,0 +1,17 @@
+{
+  "manifest": {
+    "bytes": 77637,
+    "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/ARCHIVE_MANIFEST.json",
+    "sha256": "2dff080de08596f3ee2ebef113b51e713e87a8de0562679205198bbd50350197"
+  },
+  "native_tests_or_artifact_code_executed": false,
+  "payload_bytes_excluding_manifest_and_seal": 18415905,
+  "payload_files_excluding_manifest_and_seal": 190,
+  "qualification_upgrade": false,
+  "schema": "trnm-N-protocol-failure-source-archive-seal-v1",
+  "source_ref_stage_network_mutations_during_seal": false,
+  "stage_destination_prefix": "N-protocol-failure-and-N2-queue-observation",
+  "staging_requires_manifest_and_seal_in_addition": true,
+  "status": "CLOSED_ORIGINALS_AND_FINAL_READONLY_REVIEW",
+  "unresolved_acceptance": "No R1 hosted 4-second / 16-worker acceptance supplied."
+}

@@ -1,0 +1,29 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-da20015ba98e8c396965e5d16e049e91d9540a3dfb815c9c5323d7af4a363a56/output.log",
+  "available_end": 402,
+  "chunk_sha256": "643b0712691bcc699062cecaf822e60f22b3aba9cb8d334971a32f026e4753b7",
+  "host": "mac",
+  "next_offset": 402,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-da20015ba98e8c396965e5d16e049e91d9540a3dfb815c9c5323d7af4a363a56",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 402,
+    "bytes_stored": 402,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794652937640,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 23098,
+    "pid": 23099,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"baseline\": {\"path\": \"/private/tmp/chain-prci-M8-original-repository-truth-materialization-20261114-v1/stage-before.json\", \"bytes\": 936796, \"sha256\": \"a8eb882dc0392613103fcc0a3d8ed18ce5b67a05b3d460cde8fed9e0fc67dc22\"}, \"count\": 3276, \"total_bytes\": 180978142, \"copy_destination\": \"/private/tmp/chain-consolidation-20261114-root/original-repository-truth-ed0d35-copy-v1-prci\", \"stage_mutated\": false}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

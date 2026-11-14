@@ -1,0 +1,1052 @@
+{
+  "actual_command_seconds": {
+    "worker-artifact-tests": 9.433,
+    "worker-strict-clippy": 9.08,
+    "workspace-format": 7.778
+  },
+  "actual_harness": {
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 10,
+    "unrelated_filtered": 373
+  },
+  "actual_test_names": [
+    "audit::artifact::tests::exact_stream_bound_includes_eof_and_limits_a_growing_reader",
+    "audit::artifact::tests::pretty_index_and_jsonl_keep_original_format_and_missing_file_errors",
+    "audit::artifact::tests::sparse_oversize_invalid_utf8_and_oversize_record_fail_closed",
+    "audit::artifact::tests::path_aliases_nonregular_inputs_and_untrusted_permissions_are_refused",
+    "audit::artifact::tests::replacement_growth_and_same_length_metadata_change_after_open_are_refused",
+    "audit::artifact::tests::a_live_writer_lock_is_not_reported_as_an_empty_artifact",
+    "audit::artifact::tests::query_bounds_both_export_and_pretty_index_before_reporting_records",
+    "audit::artifact::tests::fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check",
+    "audit::artifact::tests::validation_to_lock_permission_change_is_refused",
+    "audit::artifact::tests::validation_to_lock_hardlink_change_is_refused"
+  ],
+  "all_named_directory_identities_equal": true,
+  "all_original_content_and_identity_equal": true,
+  "all_original_files_included": true,
+  "all_original_step_exits_zero": true,
+  "capture_scope": "All regular single-link files in the exact closed directory, its exact actual driver, complete packaging producer and original terminal receipt; no exclusions.",
+  "extra_original_paths": [],
+  "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "hosted_or_four_second_qualification_claimed": false,
+  "original_bytes": 31045,
+  "original_file_count": 30,
+  "original_step_count": 12,
+  "original_terminal": {
+    "acquisition": "official h_pty_read complete original output",
+    "bytes": 1382,
+    "exit_code": 0,
+    "offset": 0,
+    "output_complete": true,
+    "session_id": "dpty-3c1b53e95254c2cfd8f432884ac2bc42ee824162d66a7217e6fe2a27fbb35f23",
+    "sha256": "b9b1e420c96b6b92c5f659a331d3dee00fbdee7525b803d05425e7944c9af234"
+  },
+  "schema": "trnm-closed-worker-artifact-component-closure-v1",
+  "selected_artifact": {
+    "bytes": 12283,
+    "git_blob": "f021a33e2969305241099998f703172d29b15251",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+    "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+  },
+  "source_directory": "/home/qian-qi/chain-final-consolidation-20261114-root/final-worker-artifact-existing-source-ed0d35-v2",
+  "source_directory_snapshot_after": {
+    "directories": {
+      "": [
+        66306,
+        35035840,
+        16832,
+        4,
+        1000,
+        1000,
+        4096,
+        1794652829900100234,
+        1794652829900100234
+      ],
+      "ci-observations": [
+        66306,
+        35035846,
+        16832,
+        2,
+        1000,
+        1000,
+        4096,
+        1794652774552509351,
+        1794652774552509351
+      ],
+      "tmp": [
+        66306,
+        35035841,
+        16832,
+        2,
+        1000,
+        1000,
+        4096,
+        1794652817092405593,
+        1794652817092405593
+      ]
+    },
+    "file_count": 30,
+    "files": {
+      "artifact-source-after.json": {
+        "bytes": 232,
+        "identity": [
+          66306,
+          35035901,
+          33152,
+          1,
+          1000,
+          1000,
+          232,
+          1794652829900806287,
+          1794652829900806287
+        ],
+        "sha256": "4fa774f302f08e0161a3f772b0d7f9821d4e907a79ef92d52794ecada59fa0c3"
+      },
+      "artifact-source-before.json": {
+        "bytes": 232,
+        "identity": [
+          66306,
+          35035887,
+          33152,
+          1,
+          1000,
+          1000,
+          232,
+          1794652790818732731,
+          1794652790818732731
+        ],
+        "sha256": "4fa774f302f08e0161a3f772b0d7f9821d4e907a79ef92d52794ecada59fa0c3"
+      },
+      "cargo-version.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035881,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774806331488,
+          1794652774806331488
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cargo-version.stdout": {
+        "bytes": 36,
+        "identity": [
+          66306,
+          35035863,
+          33152,
+          1,
+          1000,
+          1000,
+          36,
+          1794652774837508665,
+          1794652774837508665
+        ],
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "initial-head.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035849,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774554287994,
+          1794652774554287994
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-head.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035848,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652774554509346,
+          1794652774554509346
+        ],
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "initial-status.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035853,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774561937864,
+          1794652774561937864
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-status.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035852,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774561937864,
+          1794652774561937864
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-tree.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035851,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774558110425,
+          1794652774558110425
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-tree.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035850,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652774558509336,
+          1794652774558509336
+        ],
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "preflight-audit.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035856,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774626148949,
+          1794652774626148949
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preflight-audit.stdout": {
+        "bytes": 177,
+        "identity": [
+          66306,
+          35035854,
+          33152,
+          1,
+          1000,
+          1000,
+          177,
+          1794652774658509095,
+          1794652774658509095
+        ],
+        "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f"
+      },
+      "rust-version.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035861,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774691459653,
+          1794652774691459653
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "rust-version.stdout": {
+        "bytes": 36,
+        "identity": [
+          66306,
+          35035857,
+          33152,
+          1,
+          1000,
+          1000,
+          36,
+          1794652774756508860,
+          1794652774756508860
+        ],
+        "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+      },
+      "source-after.json": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035900,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652829887373859,
+          1794652829887373859
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "source-before.json": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035884,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652790758118576,
+          1794652790758118576
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "summary.json": {
+        "bytes": 20498,
+        "identity": [
+          66306,
+          35035847,
+          33152,
+          1,
+          1000,
+          1000,
+          20498,
+          1794652829901061365,
+          1794652829901061365
+        ],
+        "sha256": "b8e6e86e08e40df85b2bdf6e7cc40ede94256075d1d7bd56047a2310b779c026"
+      },
+      "test-outcomes.json": {
+        "bytes": 2650,
+        "identity": [
+          66306,
+          35035897,
+          33152,
+          1,
+          1000,
+          1000,
+          2650,
+          1794652817112703026,
+          1794652817112703026
+        ],
+        "sha256": "73b8207addc525502bd49a23431d07d0203c9d260b44b78c82207a67fbe83c02"
+      },
+      "verify-source-after.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035899,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652817112703026,
+          1794652817112703026
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "verify-source-after.stdout": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035898,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652829887373859,
+          1794652829887373859
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "verify-source-before.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035883,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774871695122,
+          1794652774871695122
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "verify-source-before.stdout": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035882,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652790758118576,
+          1794652790758118576
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "worker-artifact-git-blob.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035886,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790814071309,
+          1794652790814071309
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "worker-artifact-git-blob.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035885,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652790815470010,
+          1794652790815470010
+        ],
+        "sha256": "34f01fb8d753428645320442afb3f3b16c3518dfa23e0aa0d1a543dd12f56f7f"
+      },
+      "worker-artifact-tests.stderr": {
+        "bytes": 2001,
+        "identity": [
+          66306,
+          35035896,
+          33152,
+          1,
+          1000,
+          1000,
+          2001,
+          1794652817087405605,
+          1794652817087405605
+        ],
+        "sha256": "9eaf11ea7dd2ceab845b09116688e83d53c6f55c35a7c2b9e6502e0cd56f39f2"
+      },
+      "worker-artifact-tests.stdout": {
+        "bytes": 1134,
+        "identity": [
+          66306,
+          35035895,
+          33152,
+          1,
+          1000,
+          1000,
+          1134,
+          1794652817092405593,
+          1794652817092405593
+        ],
+        "sha256": "57393aca2e2b7215a7a17b60ad5e9311ab9909cd6edfe760822bb4e081e8de02"
+      },
+      "worker-strict-clippy.stderr": {
+        "bytes": 2234,
+        "identity": [
+          66306,
+          35035891,
+          33152,
+          1,
+          1000,
+          1000,
+          2234,
+          1794652807652428853,
+          1794652807652428853
+        ],
+        "sha256": "7d7e3254ea947b93b10e935578f9b58f5bffb4c28e598d5b4175d9b9007a2b4d"
+      },
+      "worker-strict-clippy.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035890,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652798597543451,
+          1794652798597543451
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "workspace-format.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035889,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790818838639,
+          1794652790818838639
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "workspace-format.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035888,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790818838639,
+          1794652790818838639
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "total_bytes": 31045
+  },
+  "source_directory_snapshot_before": {
+    "directories": {
+      "": [
+        66306,
+        35035840,
+        16832,
+        4,
+        1000,
+        1000,
+        4096,
+        1794652829900100234,
+        1794652829900100234
+      ],
+      "ci-observations": [
+        66306,
+        35035846,
+        16832,
+        2,
+        1000,
+        1000,
+        4096,
+        1794652774552509351,
+        1794652774552509351
+      ],
+      "tmp": [
+        66306,
+        35035841,
+        16832,
+        2,
+        1000,
+        1000,
+        4096,
+        1794652817092405593,
+        1794652817092405593
+      ]
+    },
+    "file_count": 30,
+    "files": {
+      "artifact-source-after.json": {
+        "bytes": 232,
+        "identity": [
+          66306,
+          35035901,
+          33152,
+          1,
+          1000,
+          1000,
+          232,
+          1794652829900806287,
+          1794652829900806287
+        ],
+        "sha256": "4fa774f302f08e0161a3f772b0d7f9821d4e907a79ef92d52794ecada59fa0c3"
+      },
+      "artifact-source-before.json": {
+        "bytes": 232,
+        "identity": [
+          66306,
+          35035887,
+          33152,
+          1,
+          1000,
+          1000,
+          232,
+          1794652790818732731,
+          1794652790818732731
+        ],
+        "sha256": "4fa774f302f08e0161a3f772b0d7f9821d4e907a79ef92d52794ecada59fa0c3"
+      },
+      "cargo-version.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035881,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774806331488,
+          1794652774806331488
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cargo-version.stdout": {
+        "bytes": 36,
+        "identity": [
+          66306,
+          35035863,
+          33152,
+          1,
+          1000,
+          1000,
+          36,
+          1794652774837508665,
+          1794652774837508665
+        ],
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "initial-head.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035849,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774554287994,
+          1794652774554287994
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-head.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035848,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652774554509346,
+          1794652774554509346
+        ],
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "initial-status.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035853,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774561937864,
+          1794652774561937864
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-status.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035852,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774561937864,
+          1794652774561937864
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-tree.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035851,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774558110425,
+          1794652774558110425
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "initial-tree.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035850,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652774558509336,
+          1794652774558509336
+        ],
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "preflight-audit.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035856,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774626148949,
+          1794652774626148949
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preflight-audit.stdout": {
+        "bytes": 177,
+        "identity": [
+          66306,
+          35035854,
+          33152,
+          1,
+          1000,
+          1000,
+          177,
+          1794652774658509095,
+          1794652774658509095
+        ],
+        "sha256": "d6d4973cde8460c44eb7fe51384e8c536d35c410cee075dcd3019551d6bf369f"
+      },
+      "rust-version.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035861,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774691459653,
+          1794652774691459653
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "rust-version.stdout": {
+        "bytes": 36,
+        "identity": [
+          66306,
+          35035857,
+          33152,
+          1,
+          1000,
+          1000,
+          36,
+          1794652774756508860,
+          1794652774756508860
+        ],
+        "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+      },
+      "source-after.json": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035900,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652829887373859,
+          1794652829887373859
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "source-before.json": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035884,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652790758118576,
+          1794652790758118576
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "summary.json": {
+        "bytes": 20498,
+        "identity": [
+          66306,
+          35035847,
+          33152,
+          1,
+          1000,
+          1000,
+          20498,
+          1794652829901061365,
+          1794652829901061365
+        ],
+        "sha256": "b8e6e86e08e40df85b2bdf6e7cc40ede94256075d1d7bd56047a2310b779c026"
+      },
+      "test-outcomes.json": {
+        "bytes": 2650,
+        "identity": [
+          66306,
+          35035897,
+          33152,
+          1,
+          1000,
+          1000,
+          2650,
+          1794652817112703026,
+          1794652817112703026
+        ],
+        "sha256": "73b8207addc525502bd49a23431d07d0203c9d260b44b78c82207a67fbe83c02"
+      },
+      "verify-source-after.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035899,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652817112703026,
+          1794652817112703026
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "verify-source-after.stdout": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035898,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652829887373859,
+          1794652829887373859
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "verify-source-before.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035883,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652774871695122,
+          1794652774871695122
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "verify-source-before.stdout": {
+        "bytes": 423,
+        "identity": [
+          66306,
+          35035882,
+          33152,
+          1,
+          1000,
+          1000,
+          423,
+          1794652790758118576,
+          1794652790758118576
+        ],
+        "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+      },
+      "worker-artifact-git-blob.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035886,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790814071309,
+          1794652790814071309
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "worker-artifact-git-blob.stdout": {
+        "bytes": 41,
+        "identity": [
+          66306,
+          35035885,
+          33152,
+          1,
+          1000,
+          1000,
+          41,
+          1794652790815470010,
+          1794652790815470010
+        ],
+        "sha256": "34f01fb8d753428645320442afb3f3b16c3518dfa23e0aa0d1a543dd12f56f7f"
+      },
+      "worker-artifact-tests.stderr": {
+        "bytes": 2001,
+        "identity": [
+          66306,
+          35035896,
+          33152,
+          1,
+          1000,
+          1000,
+          2001,
+          1794652817087405605,
+          1794652817087405605
+        ],
+        "sha256": "9eaf11ea7dd2ceab845b09116688e83d53c6f55c35a7c2b9e6502e0cd56f39f2"
+      },
+      "worker-artifact-tests.stdout": {
+        "bytes": 1134,
+        "identity": [
+          66306,
+          35035895,
+          33152,
+          1,
+          1000,
+          1000,
+          1134,
+          1794652817092405593,
+          1794652817092405593
+        ],
+        "sha256": "57393aca2e2b7215a7a17b60ad5e9311ab9909cd6edfe760822bb4e081e8de02"
+      },
+      "worker-strict-clippy.stderr": {
+        "bytes": 2234,
+        "identity": [
+          66306,
+          35035891,
+          33152,
+          1,
+          1000,
+          1000,
+          2234,
+          1794652807652428853,
+          1794652807652428853
+        ],
+        "sha256": "7d7e3254ea947b93b10e935578f9b58f5bffb4c28e598d5b4175d9b9007a2b4d"
+      },
+      "worker-strict-clippy.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035890,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652798597543451,
+          1794652798597543451
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "workspace-format.stderr": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035889,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790818838639,
+          1794652790818838639
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "workspace-format.stdout": {
+        "bytes": 0,
+        "identity": [
+          66306,
+          35035888,
+          33152,
+          1,
+          1000,
+          1000,
+          0,
+          1794652790818838639,
+          1794652790818838639
+        ],
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "total_bytes": 31045
+  },
+  "source_identity": {
+    "base": null,
+    "candidate": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "tested_tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3994947385,
+    "tracked_entries": 41677,
+    "tracked_worktree_verified": true
+  },
+  "source_or_git_or_stage_or_configuration_mutated": false,
+  "tests_driver_or_helpers_rerun": false,
+  "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354"
+}

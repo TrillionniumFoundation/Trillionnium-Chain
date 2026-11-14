@@ -1,0 +1,643 @@
+{
+  "schema": "dependabot-default-to-candidate-readonly-review-v1",
+  "sealed_at": "2026-11-14T06:52:24.988451+00:00",
+  "candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "candidate_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "default_branch": "main",
+  "default_head": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "authenticated_login": "ProfHepta",
+  "observed_at": "2026-11-14T06:49:19.641029+00:00",
+  "pagination": {
+    "command": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "--paginate",
+      "--slurp",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/dependabot/alerts?state=open&per_page=100"
+    ],
+    "page_counts": [
+      7
+    ],
+    "number_unique": 7,
+    "raw_path": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/open-dependabot-alert-pages.stdout",
+    "raw_bytes": 22150,
+    "raw_sha256": "ee9ca2d6bc590138f7e5c75fa4fcc9c0d2c7416cfb0b529aa2802693e0e3b6b7",
+    "non_atomic_note": "Repository/default-head reads and the alerts endpoint are sequential observations, not a repository transaction."
+  },
+  "counts": {
+    "total_open": 7,
+    "high": 4,
+    "medium": 2,
+    "low": 1,
+    "candidate_manifest_outside_all_returned_ranges": 7,
+    "historical_only_classification": 0,
+    "candidate_active_manifests_requiring_remediation_for_these_alerts": 0
+  },
+  "alerts": [
+    {
+      "alert_number": 21,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/21",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-537c-gmf6-5ccf",
+      "advisory_url": "https://github.com/advisories/GHSA-537c-gmf6-5ccf",
+      "cve": null,
+      "severity": "high",
+      "vulnerable_range": ">= 0.5.0, < 48.0.1",
+      "first_patched": "48.0.1",
+      "summary": "Vulnerable OpenSSL included in cryptography wheels",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 20,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/20",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-m959-cc7f-wv43",
+      "advisory_url": "https://github.com/advisories/GHSA-m959-cc7f-wv43",
+      "cve": "CVE-2026-34073",
+      "severity": "low",
+      "vulnerable_range": "< 46.0.6",
+      "first_patched": "46.0.6",
+      "summary": "cryptography has incomplete DNS name constraint enforcement on peer names",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 19,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/19",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-r6ph-v2qm-q3c2",
+      "advisory_url": "https://github.com/advisories/GHSA-r6ph-v2qm-q3c2",
+      "cve": "CVE-2026-26007",
+      "severity": "high",
+      "vulnerable_range": "<= 46.0.4",
+      "first_patched": "46.0.5",
+      "summary": "cryptography Vulnerable to a Subgroup Attack Due to Missing Subgroup Validation for SECT Curves",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 18,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/18",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-h4gh-qq45-vh27",
+      "advisory_url": "https://github.com/advisories/GHSA-h4gh-qq45-vh27",
+      "cve": null,
+      "severity": "medium",
+      "vulnerable_range": ">= 37.0.0, < 43.0.1",
+      "first_patched": "43.0.1",
+      "summary": "pyca/cryptography has a vulnerable OpenSSL included in cryptography wheels",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 17,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/17",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-6vqw-3v5j-54x4",
+      "advisory_url": "https://github.com/advisories/GHSA-6vqw-3v5j-54x4",
+      "cve": "CVE-2024-26130",
+      "severity": "high",
+      "vulnerable_range": ">= 38.0.0, < 42.0.4",
+      "first_patched": "42.0.4",
+      "summary": "cryptography NULL pointer dereference with pkcs12.serialize_key_and_certificates when called with a non-matching certificate and private key and an hmac_hash override",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 16,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/16",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-9v9h-cgj8-h64p",
+      "advisory_url": "https://github.com/advisories/GHSA-9v9h-cgj8-h64p",
+      "cve": "CVE-2024-0727",
+      "severity": "medium",
+      "vulnerable_range": "< 42.0.2",
+      "first_patched": "42.0.2",
+      "summary": "Null pointer dereference in PKCS12 parsing",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    },
+    {
+      "alert_number": 15,
+      "alert_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot/15",
+      "state_observed": "open",
+      "ecosystem": "pip",
+      "package": "cryptography",
+      "manifest_path": "formal/pon-nakamoto-v1/requirements.txt",
+      "default_version": "41.0.7",
+      "candidate_version": "50.0.2",
+      "ghsa": "GHSA-3ww4-gg4f-jr7f",
+      "advisory_url": "https://github.com/advisories/GHSA-3ww4-gg4f-jr7f",
+      "cve": "CVE-2023-50782",
+      "severity": "high",
+      "vulnerable_range": "< 42.0.0",
+      "first_patched": "42.0.0",
+      "summary": "Python Cryptography package vulnerable to Bleichenbacher timing oracle attack",
+      "default_source": {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "candidate_source": {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      "default_version_affected": true,
+      "candidate_version_affected": false,
+      "disposition": "remediated-in-current-candidate-manifest; alert-remains-open-on-default-main; no-alert-mutation",
+      "exploitability_claim": "No installed-environment or vulnerable-API reachability test was performed; the judgment is exact manifest version versus the returned advisory range."
+    }
+  ],
+  "ownership_scope": {
+    "inventory": {
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "path": "config/portability-inventory-v1.json",
+      "oid": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
+      "bytes": 30218,
+      "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390",
+      "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--config--portability-inventory-v1.json"
+    },
+    "selected_target": "pon-nakamoto-v1",
+    "retained_package_paths": [
+      "trillionnium/crates/trnm-types",
+      "trillionnium/crates/trnm-executor",
+      "trillionnium/crates/trnm-bench",
+      "trillionnium/crates/trnm-mempool",
+      "trillionnium/crates/trnm-worker-agent",
+      "trillionnium/crates/trnm-oracle",
+      "trillionnium/crates/trnm-research-protocol",
+      "trillionnium/crates/trnm-protocol",
+      "trillionnium/crates/trnm-peer-lease",
+      "trillionnium/crates/trnm-data-availability",
+      "trillionnium/crates/trnm-task-kernel",
+      "trillionnium/crates/trnm-mvcc-fee",
+      "trillionnium/crates/trnm-service-settlement",
+      "trillionnium/crates/trnm-control-plane",
+      "trillionnium/crates/trnm-state-import",
+      "trillionnium/crates/trnm-release-bundle",
+      "trillionnium/crates/trnm-checkpoint-store",
+      "trillionnium/crates/trnm-checkpoint-types",
+      "trillionnium/crates/trnm-crypto-primitives",
+      "trillionnium/crates/trnm-verification-profiles",
+      "trillionnium/crates/trnm-transport",
+      "trillionnium/crates/trnm-audit-events",
+      "trillionnium/crates/trnm-governance-guard",
+      "trillionnium/crates/trnm-escrow-vault",
+      "trillionnium/crates/trnm-pon-node",
+      "trillionnium/crates/trnm-sqlite-io-boundary"
+    ],
+    "formal_requirements_not_a_retired_copy": true,
+    "source_of_formal_environment_scope": {
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "path": "formal/pon-nakamoto-v1/README.md",
+      "oid": "559c666fb1a94396344e3ff506efce188f51bc43",
+      "bytes": 22334,
+      "sha256": "6f2f815594ab6b3ef4a1ddd9245048bac91231f641a778583ae9357d1ab4aad4",
+      "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--README.md"
+    },
+    "evidence": "requirements line 1 and formal README reproduction section declare isolated scientific/conformance environment, not public-node dynamic runtime installation. Current required workflow consumes the file in five installation steps. The portability inventory retains native owners for pon-nakamoto-v1; it does not classify this formal requirements file as a retired Rust package.",
+    "runtime_activation_or_consensus_qualification_granted": false
+  },
+  "current_consumers": {
+    "required_workflow": {
+      "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "oid": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "bytes": 35462,
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+      "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--trnm-required-baseline.yml"
+    },
+    "install_lines": [
+      {
+        "line": 271,
+        "text": "          \"$RUNNER_TEMP/pon-contract-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt"
+      },
+      {
+        "line": 359,
+        "text": "          \"$RUNNER_TEMP/pon-state-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt"
+      },
+      {
+        "line": 461,
+        "text": "          \"$RUNNER_TEMP/pon-state-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt"
+      },
+      {
+        "line": 552,
+        "text": "          \"$RUNNER_TEMP/pon-evidence-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt"
+      },
+      {
+        "line": 603,
+        "text": "          \"$RUNNER_TEMP/pon-merge-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt"
+      }
+    ],
+    "additional_ci_and_model_lock_records": [
+      {
+        "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "8529cb0ae36c10d37424b4573641f8cb4a5d4592",
+        "bytes": 128,
+        "sha256": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/main--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/requirements.txt",
+        "oid": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+        "bytes": 128,
+        "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--requirements.txt"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "config/portability-inventory-v1.json",
+        "oid": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
+        "bytes": 30218,
+        "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--config--portability-inventory-v1.json"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "formal/pon-nakamoto-v1/README.md",
+        "oid": "559c666fb1a94396344e3ff506efce188f51bc43",
+        "bytes": 22334,
+        "sha256": "6f2f815594ab6b3ef4a1ddd9245048bac91231f641a778583ae9357d1ab4aad4",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--formal--pon-nakamoto-v1--README.md"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "trillionnium/Cargo.toml",
+        "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--trillionnium--Cargo.toml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": ".github/workflows/pon-model-parent-acceptance.yml",
+        "oid": "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c",
+        "bytes": 3948,
+        "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--pon-model-parent-acceptance.yml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": ".github/workflows/pon-pq-system-continuation.yml",
+        "oid": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
+        "bytes": 53627,
+        "sha256": "80fe3c87a0018e3df86236c1c2f997861b3a6a4c26bb6c7816fd114a8b2e0c32",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--pon-pq-system-continuation.yml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": ".github/workflows/pon-priority-acceptance.yml",
+        "oid": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+        "bytes": 24989,
+        "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--pon-priority-acceptance.yml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": ".github/workflows/release-finality-reference.yml",
+        "oid": "53be8e4d1ee721831662e64d483a1a958d5de041",
+        "bytes": 9375,
+        "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--release-finality-reference.yml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": ".github/workflows/trnm-required-baseline.yml",
+        "oid": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+        "bytes": 35462,
+        "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--.github--workflows--trnm-required-baseline.yml"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/analyze_zero_paired_cost.py",
+        "oid": "7c50f417909b1581a7ee45eb4181c1e15ed6fe42",
+        "bytes": 15843,
+        "sha256": "62cb2d0de50fb0524e30c9fe2218928d072460ddc32831a25cd4ae6fafea7a14",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--analyze_zero_paired_cost.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/check_ci_contract.py",
+        "oid": "e12e7839f406056bab9c05086baacb0059627835",
+        "bytes": 199207,
+        "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--check_ci_contract.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "oid": "d31e7d8b992f23164e9dc6825d45277303d1d355",
+        "bytes": 113403,
+        "sha256": "558e77a040d1f89e0771227cd46b32289f575112b5b63f6d7983d1c9ae6964e3",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--check_pq_research_integration.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/check_public_readiness_evidence.py",
+        "oid": "d5919849d69b0d4adc89615b1005c1279140f79d",
+        "bytes": 72270,
+        "sha256": "602abf4e1ef39772fb1434efe9ca8957ca567f6b0c7ac3fa5f43e43c893ed3bd",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--check_public_readiness_evidence.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/hash_use_contract.py",
+        "oid": "0c8e2ac894a8a36a70ba69d10e8146c930541010",
+        "bytes": 18003,
+        "sha256": "5b5b63fd827bfbf38662e5b77b6dda0253306287878161c37b091c2ccc84e159",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--hash_use_contract.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/pq_authority_surface_scan.py",
+        "oid": "6df25bea817bbb491d5549364bbe7a7c486f7b9a",
+        "bytes": 9848,
+        "sha256": "440ac658941fbe117109f06501e219b8756c39d82f8a5323b96926b44e57be49",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--pq_authority_surface_scan.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/run_account_execution_conformance.py",
+        "oid": "c28ca7bfc0fb7f74429044d59df5e0bc85b1912e",
+        "bytes": 31222,
+        "sha256": "26a875d62d832b02b2700d5a0530b073f1a63d77081069fb108a71c6ae6dedc8",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--run_account_execution_conformance.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/test_ci_contract.py",
+        "oid": "8683f6b319cb6104bf7dc201e3b363c648901468",
+        "bytes": 247302,
+        "sha256": "75c1c7345288916d99d3646fc44ac8c3bacc778e1839b1dda70d20a1e2ec1910",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--test_ci_contract.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/test_public_readiness_evidence.py",
+        "oid": "0edd345df10647db46403f789c72df1967ff9897",
+        "bytes": 125434,
+        "sha256": "92c9aa15bb8dadbafaf5c4a96e8f077d971b56647b18e49f3b22a35a61ba546b",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--test_public_readiness_evidence.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/test_sp27_receiver_controls.py",
+        "oid": "e7c658baf937963336bc76f2ff59919698270961",
+        "bytes": 16016,
+        "sha256": "9373bda092c0ef615488221925723019c02bc18eff4826467f6f3ff5cb2f71c7",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--test_sp27_receiver_controls.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/qualification_runtime.py",
+        "oid": "7865f55cb80523b04ae623c38f05fc7567ee71e8",
+        "bytes": 6121,
+        "sha256": "cff43eeccc06d7ca8e8cbc533bc04d599ac043af9835efcaff7e324d16f2d5b4",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--qualification_runtime.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/run_evaluation_qualification.py",
+        "oid": "5da29fe0f932d55d28f1f4fc74623ff3b19f0e76",
+        "bytes": 14758,
+        "sha256": "8bd737b14b63b3db39c68eb69c38e98e181ec071f748a84343deebe432c3062d",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--run_evaluation_qualification.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/run_public_readiness_qualification.py",
+        "oid": "e21bf151d9202392b1658d300e05960a913b6809",
+        "bytes": 19002,
+        "sha256": "a90ed462238959225628fee9447a706b16cf0e278df6d5e8324b15bfabe55bbd",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--run_public_readiness_qualification.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/test_qualification_runtime.py",
+        "oid": "04ee3ee811605a3db050bf77def6cba839237c66",
+        "bytes": 25326,
+        "sha256": "7dfc0b3afd5c51472c4be7874379a26dbb76bbe5951822574bc258e859d5e8ca",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--test_qualification_runtime.py"
+      },
+      {
+        "revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "path": "scripts/ci/model-runtime-cpu-requirements.txt",
+        "oid": "6796d0737af36e1521d89f6937df288fe67167a1",
+        "bytes": 4678,
+        "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+        "local_copy": "/private/tmp/chain-architecture-dependabot-dc42-20261114-v1/source-mapping-v1/candidate--scripts--ci--model-runtime-cpu-requirements.txt"
+      }
+    ],
+    "bounded_manifest_search": {
+      "argv": [
+        "/opt/homebrew/bin/rg",
+        "--files",
+        "--hidden",
+        "-g",
+        "*requirements*.txt",
+        "-g",
+        "pyproject.toml",
+        "-g",
+        "Pipfile*",
+        "-g",
+        "poetry.lock",
+        "-g",
+        "uv.lock",
+        ".github",
+        "scripts",
+        "formal",
+        "config",
+        "trillionnium"
+      ],
+      "paths": [
+        "scripts/ci/runtime-release-requirements.txt",
+        "scripts/ci/model-runtime-cpu-requirements.txt",
+        "formal/pon-nakamoto-v1/requirements.txt"
+      ],
+      "cryptography_manifests": [
+        {
+          "path": "scripts/ci/model-runtime-cpu-requirements.txt",
+          "matches": [
+            {
+              "line": 2,
+              "text": "# Full default dependency closure, including original formal numpy/cryptography."
+            },
+            {
+              "line": 14,
+              "text": "cryptography==50.0.2 \\"
+            }
+          ]
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/requirements.txt",
+          "matches": [
+            {
+              "line": 3,
+              "text": "cryptography==50.0.2"
+            }
+          ]
+        }
+      ]
+    },
+    "old_41_version_strings_in_active_code_search": "The exact current search found 41.0.7 in check_public_readiness_evidence negative-control fixtures, not in the selected active requirement manifests."
+  },
+  "limits": [
+    "These seven are pip alerts for one formal manifest, not Cargo/RustSec findings; the earlier selected RustSec result does not erase them.",
+    "The default main snapshot remains affected. The current candidate manifest is already upgraded. No alert was closed/dismissed and no protected branch was changed.",
+    "Manifest/range correspondence does not prove which version is installed in an existing environment or prove exploitability/non-exploitability of any call site.",
+    "The bounded manifest search covers .github, scripts, formal, config and trillionnium using recorded requirement/pyproject/Pipfile/Poetry/uv globs. It is not a new all-history dependency audit.",
+    "Historical copied evidence or original requirements retain their source identity; they are not asserted to be current runtime dependencies. The seven actual alert paths are current formal inputs on main, not historical-only exceptions.",
+    "No source edits, dependency installation, tests, Host execution, Git object/ref writes, remote mutations or repeat 36-lock registry audit were performed."
+  ]
+}

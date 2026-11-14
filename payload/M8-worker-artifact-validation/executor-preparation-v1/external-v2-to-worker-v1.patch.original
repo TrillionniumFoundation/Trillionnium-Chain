@@ -1,0 +1,428 @@
+--- /private/tmp/chain-consolidation-20261114-root/run_final_rog_external_evidence_existing_source_v2.py
++++ /private/tmp/chain-consolidation-20261114-root/run_final_rog_worker_artifact_existing_source_v1.py
+@@ -1,46 +1,44 @@
+ #!/usr/bin/python3
+-"""Run the unchanged external-evidence-contract lane on an exact existing checkout.
+-
+-Preparation does not execute this driver or any lane. Invoke only after the
+-operator supplies and approves the exact HEAD/tree. This driver performs no
+-source fetch, bundle import, checkout or environment installation. Its result
+-is local Linux evidence, not hosted CI qualification or publication proof.
++"""Run one worker artifact component validation on an exact existing Linux checkout.
++
++Preparation is static only. No fetch, import, checkout, dependency installation,
++Host workload, benchmark or CI-budget change is performed by this driver.
+ """
+-import argparse, datetime, hashlib, json, os, pathlib, re, signal, subprocess, sys, time
++import argparse, collections, datetime, hashlib, json, os, pathlib, re, signal, stat, subprocess, sys, time
+ 
+ BASE = pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root")
+ SOURCE = BASE / "source"
+-CONFORMANCE = BASE / "final-python312-env/bin/python"
+-RUNTIME = BASE / "final-runtime-release-env/bin/python"
++PYTHON = BASE / "final-python312-env/bin/python"
+ TOOLCHAIN = pathlib.Path("/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin")
+-WORKFLOW_PATH = ".github/workflows/trnm-required-baseline.yml"
+-WORKFLOW_SHA256 = "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+-WORKFLOW_JOB_TIMEOUT_MINUTES = 45
+-LANE_ARGV = ["bash", "scripts/ci/ci_job.sh", "external-evidence-contract"]
+-REFERENCE_SELECTORS_TO_UNSET = (
+-    "TRNM_NATIVE_WORK", "TRNM_NATIVE_EXECUTOR", "TRNM_NATIVE_SESSION",
+-    "TRNM_EXECUTION_WORKERS", "TRNM_PON_EVALUATION_POLICY",
++ARTIFACT_PATH = "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs"
++ARTIFACT_BLOB = "f021a33e2969305241099998f703172d29b15251"
++ARTIFACT_BYTES = 12283
++ARTIFACT_SHA256 = "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
++EXPECTED_TESTS = (
++    "audit::artifact::tests::exact_stream_bound_includes_eof_and_limits_a_growing_reader",
++    "audit::artifact::tests::pretty_index_and_jsonl_keep_original_format_and_missing_file_errors",
++    "audit::artifact::tests::sparse_oversize_invalid_utf8_and_oversize_record_fail_closed",
++    "audit::artifact::tests::path_aliases_nonregular_inputs_and_untrusted_permissions_are_refused",
++    "audit::artifact::tests::replacement_growth_and_same_length_metadata_change_after_open_are_refused",
++    "audit::artifact::tests::a_live_writer_lock_is_not_reported_as_an_empty_artifact",
++    "audit::artifact::tests::query_bounds_both_export_and_pretty_index_before_reporting_records",
++    "audit::artifact::tests::fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check",
++    "audit::artifact::tests::validation_to_lock_permission_change_is_refused",
++    "audit::artifact::tests::validation_to_lock_hardlink_change_is_refused",
+ )
+-DECLARED_SOURCE_TREES = {
+-    "1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3",
+-    "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502",
+-    "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0",
+-    "3c63c8368187de895e1dc0df8bbc105c6f39f842": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+-    "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60",
+-    "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73",
+-    "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762",
+-    "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579",
+-    "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+-    "c2b1ca2503aeca35873d20d1b188689369edc752": "5df72527b22520b27f5ad858bbca98456c7ad9cf",
+-    "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee",
+-    "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954",
+-    "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c",
+-    "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"
+-}
+-REQUIREMENTS = {
+-    "formal/pon-nakamoto-v1/requirements.txt": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+-    "scripts/ci/runtime-release-requirements.txt": "2acf07322b544b1d2318642b59877dd035bc7808590619f3cf23e75eedd0bbe7",
+-}
++FMT_ARGV = [str(TOOLCHAIN / "cargo"), "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"]
++CLIPPY_ARGV = [str(TOOLCHAIN / "cargo"), "clippy", "--locked", "--offline", "--manifest-path",
++               "trillionnium/Cargo.toml", "-p", "trnm-worker-agent", "--all-targets", "--all-features", "--", "-D", "warnings"]
++TEST_ARGV = [str(TOOLCHAIN / "cargo"), "test", "--locked", "--offline", "--manifest-path",
++             "trillionnium/Cargo.toml", "-p", "trnm-worker-agent", "--bin", "trnm-worker-agent",
++             "audit::artifact::tests::", "--", "--nocapture"]
++BUDGETS = {"workspace-format": 180, "worker-strict-clippy": 1200, "worker-artifact-tests": 1200}
++REFERENCE_SELECTORS = ("TRNM_NATIVE_WORK", "TRNM_NATIVE_EXECUTOR", "TRNM_NATIVE_SESSION",
++                       "TRNM_EXECUTION_WORKERS", "TRNM_PON_EVALUATION_POLICY")
++BUILD_OVERRIDE_NAMES = ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS",
++                        "RUSTC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTC_BOOTSTRAP", "RUSTFMT",
++                        "CARGO_BUILD_TARGET", "CARGO_BUILD_RUSTFLAGS", "CARGO_BUILD_RUSTC", "CARGO_BUILD_RUSTC_WRAPPER",
++                        "CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER")
+ 
+ def require(condition, message):
+     if not condition:
+@@ -52,6 +50,43 @@
+         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+             value.update(chunk)
+     return value.hexdigest()
++
++def artifact_identity():
++    path = SOURCE / ARTIFACT_PATH
++    before = path.lstat()
++    require(path.resolve(strict=True) == path and stat.S_ISREG(before.st_mode) and before.st_nlink == 1,
++            "selected worker artifact must be a canonical single-link regular file")
++    require(before.st_size == ARTIFACT_BYTES, "selected worker artifact size differs")
++    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW), "rb") as stream:
++        opened = os.fstat(stream.fileno())
++        raw = stream.read(ARTIFACT_BYTES + 1)
++        closed = os.fstat(stream.fileno())
++    identity = lambda value: (value.st_dev, value.st_ino, value.st_mode, value.st_nlink,
++                              value.st_size, value.st_mtime_ns, value.st_ctime_ns)
++    require(identity(before) == identity(opened) == identity(closed) == identity(path.lstat()),
++            "selected artifact changed while being read")
++    digest = hashlib.sha256(raw).hexdigest()
++    blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
++    require(len(raw) == ARTIFACT_BYTES and digest == ARTIFACT_SHA256 and blob == ARTIFACT_BLOB,
++            "selected worker artifact bytes differ from reviewed source")
++    return {"path": ARTIFACT_PATH, "bytes": len(raw), "sha256": digest, "git_blob": blob}
++
++def reconcile_tests(raw):
++    text = raw.decode("utf-8", errors="strict")
++    events = re.findall(r"^test ([A-Za-z0-9_:]+) \.\.\. (ok|FAILED|ignored(?:, [^\r\n]*)?)\s*$", text, re.MULTILINE)
++    counts = collections.Counter(name for name, outcome in events)
++    require(set(counts) == set(EXPECTED_TESTS) and all(count == 1 for count in counts.values()),
++            "actual test names differ, duplicate, are missing or were not fully captured")
++    require(all(outcome == "ok" for name, outcome in events), "required worker test did not pass")
++    require(re.findall(r"^running (\d+) tests?\s*$", text, re.MULTILINE) == ["10"], "actual harness count is not exactly ten")
++    summaries = re.findall(
++        r"^test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored; (\d+) measured; "
++        r"(\d+) filtered out; finished in ([^\r\n]+)\s*$", text, re.MULTILINE)
++    require(len(summaries) == 1 and summaries[0][:5] == ("ok", "10", "0", "0", "0"),
++            "actual harness summary is not ten passed, zero failed/ignored/measured")
++    return {"expected_names": list(EXPECTED_TESTS), "actual_outcomes": [{"name": name, "outcome": outcome} for name, outcome in events],
++            "passed": 10, "failed": 0, "ignored": 0, "measured": 0,
++            "unrelated_tests_filtered_out": int(summaries[0][5]), "new_controls_executed": list(EXPECTED_TESTS[-2:])}
+ 
+ def main():
+     if sys.flags.optimize:
+@@ -63,80 +98,63 @@
+     args = parser.parse_args()
+     for value in (args.head, args.tree):
+         require(re.fullmatch(r"[0-9a-f]{40}", value) is not None, "exact SHA required")
+-    require(sys.platform == "linux", "this driver is for the prepared local Linux environment")
+-    require(os.getuid() != 0, "do not run as root")
+-    require(os.environ.get("GITHUB_ACTIONS", "").lower() not in ("true", "1"),
+-            "this is a local Linux run, not a hosted runner")
+-    require(SOURCE.resolve(strict=True) == SOURCE, "canonical source directory required")
++    require(sys.platform == "linux" and os.getuid() != 0, "prepared non-root Linux environment required")
++    require(os.environ.get("GITHUB_ACTIONS", "").lower() not in ("true", "1"), "this is a local component run")
++    require(BASE.resolve(strict=True) == BASE and SOURCE.resolve(strict=True) == SOURCE, "canonical source/root required")
+     evidence = pathlib.Path(args.evidence_dir)
+     require(evidence.is_absolute() and evidence.parent == BASE
+             and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", evidence.name),
+             "evidence must be a new direct child of the authorized root")
+     evidence.mkdir(mode=0o700, exist_ok=False)
++    temporary = evidence / "tmp"
+     receipts = evidence / "ci-observations"
+-    temporary = evidence / "tmp"
++    temporary.mkdir(mode=0o700)
+     receipts.mkdir(mode=0o700)
+-    temporary.mkdir(mode=0o700)
+     env = os.environ.copy()
+-    inherited_reference_selector_names = sorted(name for name in REFERENCE_SELECTORS_TO_UNSET if name in env)
+-    for name in REFERENCE_SELECTORS_TO_UNSET:
++    cleared = sorted(name for name in env if name.startswith("GIT_") or name.startswith("RUST_TEST_") or name in REFERENCE_SELECTORS)
++    for name in cleared:
+         env.pop(name, None)
+-    require(not any(name in env for name in REFERENCE_SELECTORS_TO_UNSET), "reference selectors must be unset")
++    overrides = sorted(name for name, value in env.items() if value and (
++        name in BUILD_OVERRIDE_NAMES or name.startswith("CARGO_PROFILE_")
++        or (name.startswith("CARGO_TARGET_") and name.endswith(("_RUSTFLAGS", "_RUNNER", "_LINKER")))))
+     env.update(
+-        PATH=str(CONFORMANCE.parent) + ":" + str(TOOLCHAIN)
+-             + ":/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+-        CI="true", TRNM_EXPECTED_SOURCE_SHA=args.head,
+-        TRNM_RUNTIME_RELEASE_PYTHON=str(RUNTIME),
+-        TRNM_CI_RECEIPT_DIR=str(receipts), TMPDIR=str(temporary),
+-        CARGO_TARGET_DIR=str(BASE / "target"), CARGO_BUILD_JOBS="2",
+-        CARGO_INCREMENTAL="0", RUST_TEST_THREADS="1", CARGO_TERM_COLOR="never",
+-        PYTHONDONTWRITEBYTECODE="1", PYTHONOPTIMIZE="0",
+-        GIT_NO_REPLACE_OBJECTS="1", GIT_NO_LAZY_FETCH="1", GIT_TERMINAL_PROMPT="0",
++        PATH=str(PYTHON.parent) + ":" + str(TOOLCHAIN) + ":/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
++        CI="true", TRNM_EXPECTED_SOURCE_SHA=args.head, TRNM_CI_RECEIPT_DIR=str(receipts), TMPDIR=str(temporary),
++        CARGO_TARGET_DIR=str(BASE / "target"), CARGO_BUILD_JOBS="2", CARGO_INCREMENTAL="0", CARGO_TERM_COLOR="never",
++        PYTHONDONTWRITEBYTECODE="1", PYTHONOPTIMIZE="0", GIT_NO_REPLACE_OBJECTS="1", GIT_NO_LAZY_FETCH="1",
++        GIT_OPTIONAL_LOCKS="0", GIT_TERMINAL_PROMPT="0", GIT_TRACE="0", GIT_TRACE2="0", GIT_TRACE2_EVENT="0", GIT_TRACE2_PERF="0",
+     )
+     steps, errors = [], []
+     result = {
+-        "schema": "trnm-final-linux-external-evidence-existing-source-v2",
+-        "head": args.head, "tree": args.tree, "expected_start_head": args.head,
+-        "lane": "external-evidence-contract", "lane_argv": LANE_ARGV,
+-        "budget": {"workflow_path": WORKFLOW_PATH, "workflow_sha256": WORKFLOW_SHA256,
+-                   "workflow_job_timeout_minutes": WORKFLOW_JOB_TIMEOUT_MINUTES,
+-                   "workflow_step_timeout_seconds": None,
+-                   "local_lane_timeout_seconds": WORKFLOW_JOB_TIMEOUT_MINUTES * 60,
+-                   "basis": "current external job has a 45-minute job limit; this local command uses the same numerical ceiling",
+-                   "hosted_job_walltime_equivalence_claimed": False},
+-        "driver": {"path": str(pathlib.Path(__file__).resolve(strict=True)),
+-                   "sha256": sha_file(pathlib.Path(__file__).resolve(strict=True))},
+-        "invocation": {"argv": list(sys.argv), "executable": sys.executable,
+-                       "optimize": sys.flags.optimize},
+-        "source": str(SOURCE), "status": "running", "steps": steps, "errors": errors,
++        "schema": "trnm-final-linux-worker-artifact-existing-source-v1", "status": "running",
++        "head": args.head, "tree": args.tree, "expected_start_head": args.head, "source": str(SOURCE),
++        "driver": {"path": str(pathlib.Path(__file__).resolve(strict=True)), "sha256": sha_file(__file__)},
++        "invocation": {"argv": list(sys.argv), "executable": sys.executable, "optimize": sys.flags.optimize},
++        "component": "worker-artifact", "component_budgets_seconds": BUDGETS,
++        "budget_basis": "separately approved extra component limits; no hosted/workflow/confirmation budget is changed",
++        "steps": steps, "errors": errors, "expected_test_names": list(EXPECTED_TESTS),
+         "environment": {name: env[name] for name in (
+-            "PATH", "CI", "TRNM_EXPECTED_SOURCE_SHA", "TRNM_RUNTIME_RELEASE_PYTHON", "TRNM_CI_RECEIPT_DIR", "TMPDIR",
+-            "CARGO_TARGET_DIR", "CARGO_BUILD_JOBS", "CARGO_INCREMENTAL", "RUST_TEST_THREADS",
+-            "CARGO_TERM_COLOR", "PYTHONDONTWRITEBYTECODE", "PYTHONOPTIMIZE",
+-            "GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH", "GIT_TERMINAL_PROMPT")},
+-        "hosted_ci_qualification": False, "host_provisioning_performed": False,
+-        "remote_mutations_performed": False,
+-        "local_bundle_source": False, "remote_publication_verified": False,
++            "PATH", "CI", "TRNM_EXPECTED_SOURCE_SHA", "TRNM_CI_RECEIPT_DIR", "TMPDIR", "CARGO_TARGET_DIR",
++            "CARGO_BUILD_JOBS", "CARGO_INCREMENTAL", "CARGO_TERM_COLOR", "PYTHONDONTWRITEBYTECODE",
++            "PYTHONOPTIMIZE", "GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH", "GIT_OPTIONAL_LOCKS",
++            "GIT_TERMINAL_PROMPT", "GIT_TRACE", "GIT_TRACE2", "GIT_TRACE2_EVENT", "GIT_TRACE2_PERF")},
++        "inherited_selector_names_cleared": cleared, "inherited_selector_values_retained": False,
++        "inherited_build_override_names_refused": overrides,
++        "rust_test_threads": "default harness; no RUST_TEST_* variables or command-line thread override",
+         "source_acquisition": "preexisting-exact-checkout",
+-        "source_fetch_or_installation_performed_by_driver": False,
+-        "environment_installation_performed": False,
+-        "reference_environment": {
+-            "selectors_unset": list(REFERENCE_SELECTORS_TO_UNSET),
+-            "inherited_selector_names_cleared": inherited_reference_selector_names,
+-            "inherited_selector_values_retained": False,
+-            "original_test_commands_unchanged": True,
+-        },
+-        "repository_truth_executed_by_this_driver": False,
+-        "historical_objects_prechecked": False,
+-        "lane_prepare_fetched_nothing_verified": False,
++        "source_fetch_import_checkout_or_installation_performed": False, "environment_installation_performed": False,
++        "host_workload_or_benchmark_executed": False, "hosted_ci_qualification": False,
++        "four_second_confirmation_qualification": False, "remote_publication_verified": False,
+         "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+     }
+     def save():
+         (evidence / "summary.json").write_text(json.dumps(result, indent=2) + "\n")
+     save()
++    unconfirmed_child = False
+     def run(label, argv, timeout=300, required=True):
++        nonlocal unconfirmed_child
+         paths = {channel: evidence / (label + "." + channel) for channel in ("stdout", "stderr")}
+-        start = time.monotonic()
++        start, process, timed_out, terminated = time.monotonic(), None, False, True
+         with paths["stdout"].open("xb") as stdout, paths["stderr"].open("xb") as stderr:
+             try:
+                 process = subprocess.Popen(argv, cwd=SOURCE, env=env, stdin=subprocess.DEVNULL,
+@@ -144,6 +162,7 @@
+                 try:
+                     code = process.wait(timeout=timeout)
+                 except subprocess.TimeoutExpired:
++                    timed_out = True
+                     try:
+                         os.killpg(process.pid, signal.SIGKILL)
+                     except ProcessLookupError:
+@@ -151,119 +170,99 @@
+                     try:
+                         process.wait(timeout=10)
+                     except subprocess.TimeoutExpired:
+-                        stderr.write(b"Owned command did not terminate after timeout.\n")
++                        terminated = False
++                        unconfirmed_child = True
++                        stderr.write(b"Owned command termination remains unconfirmed.\n")
+                     code = 124
+             except OSError as error:
+                 stderr.write((repr(error) + "\n").encode())
+                 code = 127
+         row = {"label": label, "argv": argv, "cwd": str(SOURCE), "exit": code,
+-               "timeout_seconds": timeout, "elapsed_seconds": round(time.monotonic() - start, 3)}
++               "timeout_seconds": timeout, "elapsed_seconds": round(time.monotonic() - start, 3),
++               "timed_out": timed_out, "owned_process_terminated": terminated,
++               "pid": process.pid if process is not None else None,
++               "observed_returncode": process.returncode if process is not None else None}
+         for channel, path in paths.items():
+             row[channel + "_path"] = str(path)
+             row[channel + "_bytes"] = path.stat().st_size
+             row[channel + "_sha256"] = sha_file(path)
+         steps.append(row)
+         save()
+-        print(json.dumps({"label": label, "exit": code}), flush=True)
++        print(json.dumps({"label": label, "exit": code, "owned_process_terminated": terminated}), flush=True)
+         if required:
+-            require(code == 0, "failed stage: " + label)
+-        return row, paths["stdout"].read_bytes()
+-    def git(label, *arguments, required=True):
+-        return run(label, ["git", "--no-replace-objects", *arguments], required=required)
+-    before_verified = False
+-    lane_exit = None
++            require(code == 0 and terminated, "failed stage: " + label)
++        return row, paths["stdout"]
++    def read_output(path):
++        require(path.stat().st_size <= 8 * 1024 * 1024, "unexpectedly large control output; raw file retained")
++        return path.read_bytes()
++    def git(label, *arguments):
++        return run(label, ["git", "--no-replace-objects", *arguments])
++    before_verified, component_passed = False, False
++    test_exit = None
+     try:
+-        for relative, expected in REQUIREMENTS.items():
+-            require(sha_file(SOURCE / relative) == expected, "prepared Python requirements changed: " + relative)
+-        _, raw = git("initial-head", "rev-parse", "HEAD")
+-        require(raw.decode().strip() == args.head, "source HEAD must already equal the explicit candidate")
+-        _, raw = git("initial-tree", "rev-parse", "HEAD^{tree}")
+-        require(raw.decode().strip() == args.tree, "source tree must already equal the explicit tree")
+-        _, raw = git("initial-status", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none")
+-        require(not raw.strip(), "source must be clean before this local lane")
+-        require(sha_file(SOURCE / WORKFLOW_PATH) == WORKFLOW_SHA256,
+-                "workflow changed; review the actual external-job budget again")
++        require(not overrides, "unreviewed inherited build overrides: " + ", ".join(overrides))
++        _, path = git("initial-head", "rev-parse", "HEAD")
++        require(read_output(path).decode().strip() == args.head, "source HEAD differs")
++        _, path = git("initial-tree", "rev-parse", "HEAD^{tree}")
++        require(read_output(path).decode().strip() == args.tree, "source tree differs")
++        _, path = git("initial-status", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none")
++        require(not read_output(path).strip(), "source must be clean")
+         run("preflight-audit", ["bash", "scripts/project-preflight.sh", "--audit"])
+-        for relative, expected in REQUIREMENTS.items():
+-            require(sha_file(SOURCE / relative) == expected, "final requirements need a separately reviewed environment")
+-        _, raw = run("rust-version", [str(TOOLCHAIN / "rustc"), "--version"])
+-        require(raw.decode().startswith("rustc 1.95.0 "), "Rust version differs")
+-        _, raw = run("cargo-version", [str(TOOLCHAIN / "cargo"), "--version"])
+-        require(raw.decode().startswith("cargo 1.95.0 "), "Cargo version differs")
+-        for label, python, wanted in (
+-            ("conformance", CONFORMANCE, {"numpy": "1.26.4", "cryptography": "50.0.2"}),
+-            ("runtime", RUNTIME, {"packaging": "26.3"}),
+-        ):
+-            program = ("import importlib.metadata as m,json,sys; expected=" + repr(wanted)
+-                       + "; actual={k:m.version(k) for k in expected}; "
+-                       + "assert actual==expected and sys.version_info[:2]==(3,12); "
+-                       + "print(json.dumps({'actual':actual,'python':sys.version,'executable':sys.executable}))")
+-            run(label + "-environment", [str(python), "-B", "-c", program])
+-        _, raw = run("verify-source-before", [str(CONFORMANCE), "-B", "scripts/ci/verify_ci_source.py",
++        for label, binary, prefix in (("rust-version", "rustc", "rustc 1.95.0 "), ("cargo-version", "cargo", "cargo 1.95.0 ")):
++            _, path = run(label, [str(TOOLCHAIN / binary), "--version"], timeout=60)
++            require(read_output(path).decode().startswith(prefix), "pinned Rust toolchain differs")
++        _, path = run("verify-source-before", [str(PYTHON), "-B", "scripts/ci/verify_ci_source.py",
+             "--kind", "head", "--expected-head", args.head, "--output", str(evidence / "source-before.json")])
+-        identity = json.loads(raw)
++        identity = json.loads(read_output(path))
+         require(identity["tested_commit"] == args.head and identity["tested_tree"] == args.tree
+                 and identity["tracked_worktree_verified"] is True, "source identity differs")
+         before_verified = True
+-        object_program = (
+-            "import json,pathlib,subprocess,sys; "
+-            "sys.path.insert(0,str(pathlib.Path('scripts/ci').resolve())); "
+-            "from prepare_evidence_sources import declarations; "
+-            "root=pathlib.Path.cwd(); expected=json.loads(sys.argv[2]); "
+-            "values=declarations(root,source=sys.argv[1]); "
+-            "assert values==expected and declarations(root)==expected; "
+-            "\nfor commit,tree in sorted(values.items()):\n"
+-            " subprocess.run(['git','--no-replace-objects','cat-file','-e',commit+'^{commit}'],cwd=root,check=True)\n"
+-            " actual=subprocess.check_output(['git','--no-replace-objects','rev-parse',commit+'^{tree}'],cwd=root,text=True).strip()\n"
+-            " assert actual==tree\n"
+-            " subprocess.run(['git','--no-replace-objects','cat-file','-e',tree+'^{tree}'],cwd=root,check=True)\n"
+-            "print(json.dumps({'verified_object_trees':values,'fetch_attempted':False},sort_keys=True))"
+-        )
+-        _, raw = run("verify-required-evidence-objects",
+-                     [str(CONFORMANCE), "-B", "-c", object_program, args.head,
+-                      json.dumps(DECLARED_SOURCE_TREES, sort_keys=True)])
+-        object_check = json.loads(raw)
+-        require(object_check == {"verified_object_trees": DECLARED_SOURCE_TREES,
+-                                 "fetch_attempted": False}, "historical object precheck differs")
+-        result["historical_objects_prechecked"] = True
++        _, path = git("worker-artifact-git-blob", "rev-parse", args.head + ":" + ARTIFACT_PATH)
++        require(read_output(path).decode().strip() == ARTIFACT_BLOB, "selected artifact Git blob differs")
++        selected = artifact_identity()
++        (evidence / "artifact-source-before.json").write_text(json.dumps(selected, indent=2) + "\n")
++        result["selected_artifact"] = selected
+         save()
+-        lane, raw = run("external-evidence-contract", LANE_ARGV,
+-                       timeout=WORKFLOW_JOB_TIMEOUT_MINUTES * 60, required=False)
+-        lane_exit = lane["exit"]
+-        # The unchanged first lane command emits its complete prepare() receipt.
+-        # Missing objects were refused above; record its actual fetch result too.
+-        preparation = json.loads(raw.splitlines()[0]) if raw.splitlines() else None
+-        require(preparation == {"verified_object_trees": DECLARED_SOURCE_TREES, "fetched": [],
+-                                "branch_refs_changed": False, "acceptance_granted": False},
+-                "original lane did not confirm the pre-existing declared objects")
+-        result["lane_prepare_fetched_nothing_verified"] = True
+-        require(lane_exit == 0, "external-evidence-contract failed or timed out")
++        run("workspace-format", FMT_ARGV, timeout=BUDGETS["workspace-format"])
++        run("worker-strict-clippy", CLIPPY_ARGV, timeout=BUDGETS["worker-strict-clippy"])
++        row, path = run("worker-artifact-tests", TEST_ARGV, timeout=BUDGETS["worker-artifact-tests"], required=False)
++        test_exit = row["exit"]
++        require(test_exit == 0 and row["owned_process_terminated"], "worker module failed or timed out")
++        outcomes = reconcile_tests(read_output(path))
++        (evidence / "test-outcomes.json").write_text(json.dumps(outcomes, indent=2) + "\n")
++        result["actual_test_results"] = outcomes
++        component_passed = True
+     except Exception as error:
+         errors.append(type(error).__name__ + ": " + str(error))
+     finally:
+         after_valid = False
+         try:
+-            row, raw = run("verify-source-after", [str(CONFORMANCE), "-B", "scripts/ci/verify_ci_source.py",
++            row, path = run("verify-source-after", [str(PYTHON), "-B", "scripts/ci/verify_ci_source.py",
+                 "--kind", "head", "--expected-head", args.head, "--output", str(evidence / "source-after.json")],
+                 required=False)
+-            if row["exit"] == 0 and before_verified:
+-                after = json.loads(raw)
++            if row["exit"] == 0 and row["owned_process_terminated"] and before_verified:
++                after = json.loads(read_output(path))
+                 before = json.loads((evidence / "source-before.json").read_bytes())
+                 require(after == before, "full source before/after differs")
+-                after_valid = True
++                if "selected_artifact" in result:
++                    selected_after = artifact_identity()
++                    (evidence / "artifact-source-after.json").write_text(json.dumps(selected_after, indent=2) + "\n")
++                    require(selected_after == result["selected_artifact"], "selected worker artifact changed")
++                after_valid = not unconfirmed_child
+             else:
+                 errors.append("final source verification did not confirm the tested source")
+         except Exception as error:
+             errors.append("post-run verification: " + repr(error))
+-        result["lane_exit"] = lane_exit
++        result["worker_test_exit"] = test_exit
+         result["source_before_after_verified"] = after_valid
+-        result["status"] = "passed" if not errors and lane_exit == 0 and after_valid else "failed"
++        result["owned_process_termination_unknown"] = unconfirmed_child
++        result["status"] = ("unknown" if unconfirmed_child else
++                            "passed" if not errors and component_passed and after_valid else "failed")
+         result["finished_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+         save()
+     print(json.dumps({"status": result["status"], "head": args.head, "tree": args.tree,
+-                      "summary": str(evidence / "summary.json"),
+-                      "summary_sha256": sha_file(evidence / "summary.json")}), flush=True)
+-    return 0 if result["status"] == "passed" else 1
++                      "summary": str(evidence / "summary.json"), "summary_sha256": sha_file(evidence / "summary.json")}), flush=True)
++    return 0 if result["status"] == "passed" else 2 if result["status"] == "unknown" else 1
+ 
+ if __name__ == "__main__":
+     sys.exit(main())

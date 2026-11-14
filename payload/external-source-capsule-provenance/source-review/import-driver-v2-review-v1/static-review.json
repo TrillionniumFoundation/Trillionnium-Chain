@@ -1,0 +1,39 @@
+{
+  "ROG_accessed": false,
+  "all_prior_bytes_otherwise_unchanged": true,
+  "artifacts": [
+    {
+      "bytes": 28961,
+      "path": "/private/tmp/chain-consolidation-20261114-root/import_external_evidence_source_capsule_v2.py",
+      "sha256": "b691bdc0542b2a335283e59bb75954d6d7b996e42b86d4aa8db6b0af9c2c3faa"
+    },
+    {
+      "bytes": 1709,
+      "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/import-driver-v2-review-v1/v1-to-v2.patch",
+      "sha256": "93c6d5528d61b91aee6d2cd11b0d0bf254348925e5eeb0a6de511dc45cf037c1"
+    },
+    {
+      "bytes": 1629,
+      "path": "/private/tmp/chain-external-lane-readonly-review-20261114-v1/import-driver-v2-review-v1/README.md",
+      "sha256": "accb0f19cbb392b7d8426c47cb6a2f78a97ff9016fcd09e3e123d9adaecd9d9a"
+    }
+  ],
+  "ast_compile_only": true,
+  "exact_source_edits": [
+    "receipt schema v1 to v2",
+    "snapshot pack directory lstat/canonical/BASE checks and device/inode identity"
+  ],
+  "git_argv_policy_and_timeouts_unchanged": true,
+  "helper_functions_executed": false,
+  "importer_executed": false,
+  "network_requests": 0,
+  "original": {
+    "bytes": 28580,
+    "path": "/private/tmp/chain-consolidation-20261114-root/import_external_evidence_source_capsule_v1.py",
+    "sha256": "36b3b01bcba2ee13e6a1a3ca3c933f354397d99a8ee192fa136da6e083d768f2"
+  },
+  "schema": "trnm-external-source-capsule-import-v2-static-review-v1",
+  "source_lines": 515,
+  "source_or_Git_mutation": false,
+  "status": "STATIC_COMPILE_AND_EXACT_MINIMAL_DELTA_PASS"
+}

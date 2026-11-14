@@ -1,0 +1,71 @@
+{
+  "active_owned_process": null,
+  "automatic_retry": false,
+  "custom_capsule_created": false,
+  "errors": [
+    {
+      "message": "isolated directory has an unaccounted open process or incomplete observation",
+      "type": "ValueError"
+    }
+  ],
+  "finished_at": "2026-11-14T08:17:41.771134+00:00",
+  "lane_run": false,
+  "observed": {},
+  "open_process_ids_before": [
+    16140,
+    16141
+  ],
+  "pack_files_before": [
+    {
+      "bytes": 966655,
+      "mode": 33024,
+      "mtime_ns": 1794644069108993363,
+      "path": "/private/tmp/chain-external-evidence-three-sources-20261114-v1/repository.git/objects/pack/tmp_pack_4R7v53",
+      "regular": true
+    }
+  ],
+  "parent_history_complete": false,
+  "prior_summary": {
+    "path": "/private/tmp/chain-external-evidence-three-sources-20261114-v1/receipts/summary.json",
+    "sha256": "4afa80e4d9435cf1d87605a77f1196ebe672d2e4855a5ce240a0e9cac4bb7f52"
+  },
+  "refs_requested": false,
+  "remote_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "remote_writes": false,
+  "repository": "/private/tmp/chain-external-evidence-three-sources-20261114-v1/repository.git",
+  "requested": {
+    "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502",
+    "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0",
+    "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60"
+  },
+  "schema": "trnm-three-historical-source-filtered-read-v2",
+  "shared_object_db_written": false,
+  "started_at": "2026-11-14T08:17:41.651433+00:00",
+  "status": "HOLD",
+  "steps": [
+    {
+      "argv": [
+        "/usr/sbin/lsof",
+        "-nP",
+        "-Fpcn",
+        "+D",
+        "/private/tmp/chain-external-evidence-three-sources-20261114-v1"
+      ],
+      "cwd": "/private/tmp/chain-external-evidence-three-sources-20261114-v1",
+      "elapsed_seconds": 0.11878362500283401,
+      "exit": 1,
+      "finished_at": "2026-11-14T08:17:41.770746+00:00",
+      "label": "open-processes-before",
+      "owned_pgid": 16140,
+      "owned_pid": 16140,
+      "started_at": "2026-11-14T08:17:41.651983+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-external-evidence-three-sources-20261114-v1/filtered-fetch-v2/open-processes-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 164,
+      "stdout_path": "/private/tmp/chain-external-evidence-three-sources-20261114-v1/filtered-fetch-v2/open-processes-before.stdout",
+      "stdout_sha256": "67a9ee66bb84da9b71b52f5748e01c2ee1e26f850719b0d9d34552f6df0bc764",
+      "timeout_seconds": 30
+    }
+  ]
+}

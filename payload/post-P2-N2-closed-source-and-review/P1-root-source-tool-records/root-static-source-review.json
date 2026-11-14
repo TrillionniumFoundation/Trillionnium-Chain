@@ -1,0 +1,7 @@
+{
+  "head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+  "parent": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "patch_sha256": "1a4dcea6c65abaa8ecfffec5cebba1e1dd7327608f90f0095527de0b9c4b1356",
+  "review": "All ten final diffs reviewed; Rust implementation identical by final file SHA to prior reviewed and actual-tested proposal; current map one source identity, immutable frozen records, qualification flags, original tests and resource limits retained.",
+  "tree": "cbd6b4552c87af27c72c0189806baeb33ecb8bf5"
+}

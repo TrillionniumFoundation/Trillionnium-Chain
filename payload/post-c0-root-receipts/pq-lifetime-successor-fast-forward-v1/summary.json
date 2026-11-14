@@ -1,0 +1,27 @@
+{
+  "schema": "root-pq-lifetime-successor-fast-forward-v1",
+  "old_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "new_head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "tree": "47b283f20c7b2afdb668316c26d098e378b4b849",
+  "commit_receipt_sha256": "f04cde71edcedbf69896ed54d2671e635253e0cfaa2f01331ab2abfc53245624",
+  "identity": {
+    "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "tree": "47b283f20c7b2afdb668316c26d098e378b4b849",
+    "status": ""
+  },
+  "steps": [
+    {
+      "label": "preflight-before",
+      "exit": 0,
+      "seconds": 0.051,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "label": "fast-forward",
+      "exit": 0,
+      "seconds": 0.094,
+      "sha256": "6eb19c766d386a66800d6fea507e3e36c785a7dbc114478d095987ae3805a815"
+    }
+  ],
+  "remote_mutations": false
+}

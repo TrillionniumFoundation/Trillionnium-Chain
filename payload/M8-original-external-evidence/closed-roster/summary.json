@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-M8-closed-external-roster-completion-v1",
+  "status": "readonly_manifest_prepared",
+  "original_status": "passed",
+  "original_count": 27,
+  "original_bytes": 112500,
+  "nested_count": 0,
+  "manifest": {
+    "path": "/private/tmp/chain-prci-M8-closed-external-roster-observation-20261114-v1/closed-original-logs.json",
+    "bytes": 409,
+    "sha256": "f05c1ff309275692dcec94a865883cf0dd0283accc2a6a368074d6755d623bf7"
+  },
+  "index": {
+    "path": "/private/tmp/chain-prci-M8-closed-external-roster-observation-20261114-v1/EVIDENCE_INDEX.json",
+    "bytes": 2408,
+    "sha256": "15db51162250a9b373d676953717e8ea52ce2960bd9326dff95fc30dc0a759af"
+  },
+  "original_summary": {
+    "bytes": 17803,
+    "sha256": "2773983d4ab2839412bb6b8edc4c8954b9be2e085455e16d0ec6b6b094f94cd8"
+  },
+  "source_identity": {
+    "bytes": 423,
+    "sha256": "a74be5eb0131658ed16c8e1988806ffa8886a3a6580a6cca2c5a41a1ee88538d"
+  },
+  "stage_changed": false,
+  "hosted_qualification": false,
+  "finished_at": "2026-11-14T10:49:22.705246+00:00"
+}

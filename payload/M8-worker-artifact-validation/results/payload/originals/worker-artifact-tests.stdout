@@ -1,0 +1,19 @@
+
+running 10 tests
+test audit::artifact::tests::a_live_writer_lock_is_not_reported_as_an_empty_artifact ... ok
+test audit::artifact::tests::exact_stream_bound_includes_eof_and_limits_a_growing_reader ... ok
+{
+  "hit_indexes": [],
+  "records": []
+}
+test audit::artifact::tests::validation_to_lock_permission_change_is_refused ... ok
+test audit::artifact::tests::validation_to_lock_hardlink_change_is_refused ... ok
+test audit::artifact::tests::fifo_without_a_writer_is_refused_by_nonblocking_regular_file_check ... ok
+test audit::artifact::tests::query_bounds_both_export_and_pretty_index_before_reporting_records ... ok
+test audit::artifact::tests::pretty_index_and_jsonl_keep_original_format_and_missing_file_errors ... ok
+test audit::artifact::tests::replacement_growth_and_same_length_metadata_change_after_open_are_refused ... ok
+test audit::artifact::tests::path_aliases_nonregular_inputs_and_untrusted_permissions_are_refused ... ok
+test audit::artifact::tests::sparse_oversize_invalid_utf8_and_oversize_record_fail_closed ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 373 filtered out; finished in 0.00s
+

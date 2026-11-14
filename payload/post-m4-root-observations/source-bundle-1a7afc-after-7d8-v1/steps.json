@@ -1,0 +1,20 @@
+[
+  {
+    "label": "preflight",
+    "exit": 0,
+    "seconds": 0.059,
+    "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+  },
+  {
+    "label": "create-bounded-bundle",
+    "exit": 0,
+    "seconds": 0.091,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "verify-bundle",
+    "exit": 0,
+    "seconds": 0.031,
+    "sha256": "636a74817303200d06e5ec484312e1808ad2b07a5d39a54358d6075f95d5c661"
+  }
+]

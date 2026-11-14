@@ -1,0 +1,19 @@
+diff --git a/scripts/ci/hash_use_contract.py b/scripts/ci/hash_use_contract.py
+index 0c8e2ac894a8a36a70ba69d10e8146c930541010..f58609ec7ea88ec9eadfdf92b3e09ab843b884c6 100644
+--- a/scripts/ci/hash_use_contract.py
++++ b/scripts/ci/hash_use_contract.py
+@@ -29,11 +29,13 @@ MAX_DEPTH = 64
+ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
+ # Preserve the 31-path/19-use semantics. At 975ab093, five selected source
+ # identities and the proof descriptor's 140-input W1 map were separately reviewed.
+ # New exported APIs outside these declared uses are not a complete callgraph
+ # review or current-use approval. The selected upstream profile remains withdrawn.
+-REVIEWED_SOURCE_MAP_SHA256 = "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf"
++# At 933d2d13, rebind only the proof descriptor after its separately reviewed
++# standalone verifier-lock map update; all 19 use semantics remain unchanged.
++REVIEWED_SOURCE_MAP_SHA256 = "1c79bdfe03c3303346f10ead1a91e31a583bbd6e7381b0dc2dffa80960c7aaa8"
+ 
+ USES = {
+     "model-legacy-root": "model",
+     "model-full-payload": "model",
+     "model-direct-dependencies": "model",

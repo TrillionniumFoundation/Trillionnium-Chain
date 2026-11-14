@@ -1,0 +1,946 @@
+[
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD"
+    ],
+    "end_ns": 1794650942781373000,
+    "exit": 0,
+    "label": "head-before",
+    "start_ns": 1794650942773929000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/head-before.stdout",
+      "sha256": "0f658df88f34aa1bfd818ade5fda4e6a1dc55ef5b27d2a462d6d666da95d3858"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "end_ns": 1794650943138393000,
+    "exit": 0,
+    "label": "status-before",
+    "start_ns": 1794650942781611000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/pq_root_dependency_register.py"
+    ],
+    "end_ns": 1794650943148708000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_dependency_register.py-oid",
+    "start_ns": 1794650943141557000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_dependency_register.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_dependency_register.py-oid.stdout",
+      "sha256": "2c02bfa1b47313985dc0c5a666a6dc219fd0a1f5f9f7f423e475e1f45218c9eb"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "34b793d911762e9564dfd58e417fc47de1f97f31"
+    ],
+    "end_ns": 1794650943156062000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_dependency_register.py",
+    "start_ns": 1794650943149351000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_dependency_register.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 25957,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_dependency_register.py.stdout",
+      "sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_root_dependency_register.py"
+    ],
+    "end_ns": 1794650943166794000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_dependency_register.py-oid",
+    "start_ns": 1794650943160350000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_dependency_register.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_dependency_register.py-oid.stdout",
+      "sha256": "2c02bfa1b47313985dc0c5a666a6dc219fd0a1f5f9f7f423e475e1f45218c9eb"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "34b793d911762e9564dfd58e417fc47de1f97f31"
+    ],
+    "end_ns": 1794650943173457000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_dependency_register.py",
+    "start_ns": 1794650943167241000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_dependency_register.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 25957,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_dependency_register.py.stdout",
+      "sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/pq_root_custody_review_v1.py"
+    ],
+    "end_ns": 1794650943180444000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_custody_review_v1.py-oid",
+    "start_ns": 1794650943174403000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v1.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v1.py-oid.stdout",
+      "sha256": "e7a23db728b79dac96d242e3aaa1a4f504cc90fc998e6b757e6deeb5faf3d392"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "aceabcdcf2dfa9eba2fb284fc6c7b3a0ce33eea3"
+    ],
+    "end_ns": 1794650943188905000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_custody_review_v1.py",
+    "start_ns": 1794650943181510000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v1.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 10551,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v1.py.stdout",
+      "sha256": "dc3ad5ae247cd5e0d3c7c0ad26cee2b5935fd9049822bc48ee94abd37028727d"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_root_custody_review_v1.py"
+    ],
+    "end_ns": 1794650943197824000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_custody_review_v1.py-oid",
+    "start_ns": 1794650943191556000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v1.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v1.py-oid.stdout",
+      "sha256": "e7a23db728b79dac96d242e3aaa1a4f504cc90fc998e6b757e6deeb5faf3d392"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "aceabcdcf2dfa9eba2fb284fc6c7b3a0ce33eea3"
+    ],
+    "end_ns": 1794650943205856000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_custody_review_v1.py",
+    "start_ns": 1794650943198366000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v1.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 10551,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v1.py.stdout",
+      "sha256": "dc3ad5ae247cd5e0d3c7c0ad26cee2b5935fd9049822bc48ee94abd37028727d"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/pq_root_custody_review_v2.py"
+    ],
+    "end_ns": 1794650943215531000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_custody_review_v2.py-oid",
+    "start_ns": 1794650943208690000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v2.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v2.py-oid.stdout",
+      "sha256": "352b377ef87db89ce673f1b02d300442c7da8e9e7af4092c6493c90034d717f1"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "4e75f1d2998cc2bd41cece38346ee47634e21567"
+    ],
+    "end_ns": 1794650943226833000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_custody_review_v2.py",
+    "start_ns": 1794650943218301000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v2.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 12017,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_custody_review_v2.py.stdout",
+      "sha256": "5285ac1c88670cd9866ca15dc93f5ad312ec34a99eca04b0d2f79e4831b131ee"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_root_custody_review_v2.py"
+    ],
+    "end_ns": 1794650943237201000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_custody_review_v2.py-oid",
+    "start_ns": 1794650943230425000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v2.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v2.py-oid.stdout",
+      "sha256": "352b377ef87db89ce673f1b02d300442c7da8e9e7af4092c6493c90034d717f1"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "4e75f1d2998cc2bd41cece38346ee47634e21567"
+    ],
+    "end_ns": 1794650943250002000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_custody_review_v2.py",
+    "start_ns": 1794650943241184000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v2.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 12017,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_custody_review_v2.py.stdout",
+      "sha256": "5285ac1c88670cd9866ca15dc93f5ad312ec34a99eca04b0d2f79e4831b131ee"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/pq_root_migration_review_v1.py"
+    ],
+    "end_ns": 1794650943257614000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_migration_review_v1.py-oid",
+    "start_ns": 1794650943250582000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_migration_review_v1.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_migration_review_v1.py-oid.stdout",
+      "sha256": "10aff4c40e78915a3e7fd091d191f69d1c73b12569ef6698c6b40e8404266329"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "71c2fff2f3c0dd9b7974efaf162e97c54f3bcb6e"
+    ],
+    "end_ns": 1794650943266549000,
+    "exit": 0,
+    "label": "N-scripts--ci--pq_root_migration_review_v1.py",
+    "start_ns": 1794650943257907000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_migration_review_v1.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 20362,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--pq_root_migration_review_v1.py.stdout",
+      "sha256": "95f357d38f39ffec8e75675f7f5b50af592a7270960db028d38d4f2b53bad7b8"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/pq_root_migration_review_v1.py"
+    ],
+    "end_ns": 1794650943274670000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_migration_review_v1.py-oid",
+    "start_ns": 1794650943267405000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_migration_review_v1.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_migration_review_v1.py-oid.stdout",
+      "sha256": "10aff4c40e78915a3e7fd091d191f69d1c73b12569ef6698c6b40e8404266329"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "71c2fff2f3c0dd9b7974efaf162e97c54f3bcb6e"
+    ],
+    "end_ns": 1794650943283660000,
+    "exit": 0,
+    "label": "M6-scripts--ci--pq_root_migration_review_v1.py",
+    "start_ns": 1794650943275308000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_migration_review_v1.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 20362,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--pq_root_migration_review_v1.py.stdout",
+      "sha256": "95f357d38f39ffec8e75675f7f5b50af592a7270960db028d38d4f2b53bad7b8"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/w1_upstream_security.py"
+    ],
+    "end_ns": 1794650943290765000,
+    "exit": 0,
+    "label": "N-scripts--ci--w1_upstream_security.py-oid",
+    "start_ns": 1794650943284056000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--w1_upstream_security.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--w1_upstream_security.py-oid.stdout",
+      "sha256": "b700056721cb18b1d018067f36596e2f778e57513f7da5b7559c34159e491a24"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "a28bc572dcf6af3d01af12b57f088784cd085509"
+    ],
+    "end_ns": 1794650943299293000,
+    "exit": 0,
+    "label": "N-scripts--ci--w1_upstream_security.py",
+    "start_ns": 1794650943291527000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--w1_upstream_security.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16500,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--w1_upstream_security.py.stdout",
+      "sha256": "7d270d96446eceb4b974f2e671e601b401d2a0f8f7249712b8511105257beb31"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/w1_upstream_security.py"
+    ],
+    "end_ns": 1794650943310553000,
+    "exit": 0,
+    "label": "M6-scripts--ci--w1_upstream_security.py-oid",
+    "start_ns": 1794650943303572000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--w1_upstream_security.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--w1_upstream_security.py-oid.stdout",
+      "sha256": "b700056721cb18b1d018067f36596e2f778e57513f7da5b7559c34159e491a24"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "a28bc572dcf6af3d01af12b57f088784cd085509"
+    ],
+    "end_ns": 1794650943318764000,
+    "exit": 0,
+    "label": "M6-scripts--ci--w1_upstream_security.py",
+    "start_ns": 1794650943311030000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--w1_upstream_security.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16500,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--w1_upstream_security.py.stdout",
+      "sha256": "7d270d96446eceb4b974f2e671e601b401d2a0f8f7249712b8511105257beb31"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/test_pq_root_dependency_register.py"
+    ],
+    "end_ns": 1794650943327813000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_pq_root_dependency_register.py-oid",
+    "start_ns": 1794650943321504000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_root_dependency_register.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_root_dependency_register.py-oid.stdout",
+      "sha256": "100b371bac51db6b6a68946081a0e4778b3a6c5b3ed033b40aec19b0b5f0ef39"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "928d33061719e3545a95f63d0bba3dddc2ce941d"
+    ],
+    "end_ns": 1794650943337613000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_pq_root_dependency_register.py",
+    "start_ns": 1794650943331402000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_root_dependency_register.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 40427,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_root_dependency_register.py.stdout",
+      "sha256": "74e5a644f0b52d7045f23a249d9da92de0a0326a374ecc2f5cd3fb47661fccf2"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_pq_root_dependency_register.py"
+    ],
+    "end_ns": 1794650943344359000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_pq_root_dependency_register.py-oid",
+    "start_ns": 1794650943338092000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_root_dependency_register.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_root_dependency_register.py-oid.stdout",
+      "sha256": "100b371bac51db6b6a68946081a0e4778b3a6c5b3ed033b40aec19b0b5f0ef39"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "928d33061719e3545a95f63d0bba3dddc2ce941d"
+    ],
+    "end_ns": 1794650943350734000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_pq_root_dependency_register.py",
+    "start_ns": 1794650943344566000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_root_dependency_register.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 40427,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_root_dependency_register.py.stdout",
+      "sha256": "74e5a644f0b52d7045f23a249d9da92de0a0326a374ecc2f5cd3fb47661fccf2"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/test_pq_proof_profile_binding.py"
+    ],
+    "end_ns": 1794650943357152000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_pq_proof_profile_binding.py-oid",
+    "start_ns": 1794650943351033000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_proof_profile_binding.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_proof_profile_binding.py-oid.stdout",
+      "sha256": "5cc2e1d060ddb99803e0dbb9ee2f04ef12c4ecf9f373e6c2b908e9e6e5cbb07a"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "5e7550720e94e80005612137b4270cf85ec71eb7"
+    ],
+    "end_ns": 1794650943363530000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_pq_proof_profile_binding.py",
+    "start_ns": 1794650943357381000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_proof_profile_binding.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 22261,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_pq_proof_profile_binding.py.stdout",
+      "sha256": "cd0f00ab19244f36cc112282fa0743a60eac5cefa8e81156188ed0d6455d5e84"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_pq_proof_profile_binding.py"
+    ],
+    "end_ns": 1794650943369802000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_pq_proof_profile_binding.py-oid",
+    "start_ns": 1794650943363789000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_proof_profile_binding.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_proof_profile_binding.py-oid.stdout",
+      "sha256": "5cc2e1d060ddb99803e0dbb9ee2f04ef12c4ecf9f373e6c2b908e9e6e5cbb07a"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "5e7550720e94e80005612137b4270cf85ec71eb7"
+    ],
+    "end_ns": 1794650943376041000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_pq_proof_profile_binding.py",
+    "start_ns": 1794650943370088000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_proof_profile_binding.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 22261,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_pq_proof_profile_binding.py.stdout",
+      "sha256": "cd0f00ab19244f36cc112282fa0743a60eac5cefa8e81156188ed0d6455d5e84"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:scripts/ci/test_w1_upstream_security.py"
+    ],
+    "end_ns": 1794650943382239000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_w1_upstream_security.py-oid",
+    "start_ns": 1794650943376407000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_w1_upstream_security.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_w1_upstream_security.py-oid.stdout",
+      "sha256": "bba0673023c9132e9cb7c5034ca905c7094365b8f52a9971ac3ea0b7ebdf628d"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "1f986e06950b2c501d0babd6ea4f4233ed549c4e"
+    ],
+    "end_ns": 1794650943389823000,
+    "exit": 0,
+    "label": "N-scripts--ci--test_w1_upstream_security.py",
+    "start_ns": 1794650943382478000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_w1_upstream_security.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 13129,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-scripts--ci--test_w1_upstream_security.py.stdout",
+      "sha256": "fd7a988edb82c8c9df6d7c07843bef129c8d75936c193f9e07ded8c1c4d6c0ee"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:scripts/ci/test_w1_upstream_security.py"
+    ],
+    "end_ns": 1794650943396102000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_w1_upstream_security.py-oid",
+    "start_ns": 1794650943390083000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_w1_upstream_security.py-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_w1_upstream_security.py-oid.stdout",
+      "sha256": "bba0673023c9132e9cb7c5034ca905c7094365b8f52a9971ac3ea0b7ebdf628d"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "1f986e06950b2c501d0babd6ea4f4233ed549c4e"
+    ],
+    "end_ns": 1794650943403142000,
+    "exit": 0,
+    "label": "M6-scripts--ci--test_w1_upstream_security.py",
+    "start_ns": 1794650943396356000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_w1_upstream_security.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 13129,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-scripts--ci--test_w1_upstream_security.py.stdout",
+      "sha256": "fd7a988edb82c8c9df6d7c07843bef129c8d75936c193f9e07ded8c1c4d6c0ee"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c:.github/workflows/chain-hepta-closure-candidate.yml"
+    ],
+    "end_ns": 1794650943409386000,
+    "exit": 0,
+    "label": "N-.github--workflows--chain-hepta-closure-candidate.yml-oid",
+    "start_ns": 1794650943403413000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-.github--workflows--chain-hepta-closure-candidate.yml-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-.github--workflows--chain-hepta-closure-candidate.yml-oid.stdout",
+      "sha256": "6e9b4d4b4aa3bc2432a0786c92c4a62b9cdfa4df36529fc720998a46febd5743"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "15454b5322f118b52458adebf54cf00652107240"
+    ],
+    "end_ns": 1794650943415498000,
+    "exit": 0,
+    "label": "N-.github--workflows--chain-hepta-closure-candidate.yml",
+    "start_ns": 1794650943409612000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-.github--workflows--chain-hepta-closure-candidate.yml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3683,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/N-.github--workflows--chain-hepta-closure-candidate.yml.stdout",
+      "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "rev-parse",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1:.github/workflows/chain-hepta-closure-candidate.yml"
+    ],
+    "end_ns": 1794650943421591000,
+    "exit": 0,
+    "label": "M6-.github--workflows--chain-hepta-closure-candidate.yml-oid",
+    "start_ns": 1794650943415712000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-.github--workflows--chain-hepta-closure-candidate.yml-oid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-.github--workflows--chain-hepta-closure-candidate.yml-oid.stdout",
+      "sha256": "6e9b4d4b4aa3bc2432a0786c92c4a62b9cdfa4df36529fc720998a46febd5743"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "15454b5322f118b52458adebf54cf00652107240"
+    ],
+    "end_ns": 1794650943427647000,
+    "exit": 0,
+    "label": "M6-.github--workflows--chain-hepta-closure-candidate.yml",
+    "start_ns": 1794650943421838000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-.github--workflows--chain-hepta-closure-candidate.yml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3683,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/M6-.github--workflows--chain-hepta-closure-candidate.yml.stdout",
+      "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "rev-parse",
+      "HEAD"
+    ],
+    "end_ns": 1794650943460132000,
+    "exit": 0,
+    "label": "head-after",
+    "start_ns": 1794650943453848000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/head-after.stdout",
+      "sha256": "0f658df88f34aa1bfd818ade5fda4e6a1dc55ef5b27d2a462d6d666da95d3858"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-pager",
+      "-C",
+      "/private/tmp/chain-consolidation-20261114-mainline",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "end_ns": 1794650943596584000,
+    "exit": 0,
+    "label": "status-after",
+    "start_ns": 1794650943460380000,
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-ci-new-candidate-5a4b7fe8-review-20261114-v1/consumer-closure-v2/raw/status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

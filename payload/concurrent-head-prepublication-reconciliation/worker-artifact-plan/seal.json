@@ -1,0 +1,14 @@
+{
+  "index": {
+    "bytes": 5438,
+    "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "6d8223473cc967cbd3246b940ddc2eef7380681618a6b7141ceba10bb8f31680"
+  },
+  "indexed_file_count": 14,
+  "indexed_total_bytes": 234556,
+  "schema": "trnm-worker-artifact-validation-plan-seal-v1",
+  "source_or_git_or_stage_mutation": false,
+  "source_review_sha256": "6645f2a6815ef6c76d583e8274e04745434853d503381d7fedef1049823615cd",
+  "status": "PREPARE_ONLY_NOT_EXECUTED",
+  "tests_run": false
+}

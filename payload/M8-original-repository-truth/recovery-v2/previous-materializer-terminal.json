@@ -1,0 +1,30 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-185caa7d104a9eb31393ae65f3510950b42f83af611cc8ec701b61a29dc02f1a/output.log",
+  "available_end": 552,
+  "bytes_hex": "54726163656261636b20286d6f737420726563656e742063616c6c206c617374293a0d0a202046696c65201b5b33356d223c737472696e673e221b5b306d2c206c696e65201b5b33356d38371b5b306d2c20696e201b5b33356d3c6d6f64756c653e1b5b306d0d0a202020206f75743d7361766528532f726f775b2270617468225d2c63616368655b726f775b2270617468225d5d293b617373657274206f75745b226279746573225d3d3d726f775b226279746573225d20616e64206f75745b22736861323536225d3d3d726f775b22736861323536225d0d0a202046696c65201b5b33356d223c737472696e673e221b5b306d2c206c696e65201b5b33356d32331b5b306d2c20696e201b5b33356d736176651b5b306d0d0a20202020723d726561642870293b61737365727420723d3d7261770d0a202046696c65201b5b33356d223c737472696e673e221b5b306d2c206c696e65201b5b33356d31321b5b306d2c20696e201b5b33356d726561641b5b306d0d0a202020206e78743d6f732e6f70656e286e2c6f732e4f5f52444f4e4c597c6f732e4f5f4449524543544f52597c6f732e4f5f4e4f464f4c4c4f577c6f732e4f5f434c4f455845432c6469725f66643d6472293b6f732e636c6f7365286472293b64723d6e78740d0a1b5b313b33356d4f534572726f721b5b306d3a201b5b33356d5b4572726e6f2032345d20546f6f206d616e79206f70656e2066696c65733a202770726976617465271b5b306d0d0a",
+  "chunk_sha256": "6c1c73f16c16208a6d9e2eebbc3097f08ec21d143337532e7524f202fab1abc5",
+  "host": "mac",
+  "next_offset": 552,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-185caa7d104a9eb31393ae65f3510950b42f83af611cc8ec701b61a29dc02f1a",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 120098 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 552,
+    "bytes_stored": 552,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794653132389,
+    "exit_code": 1,
+    "output_complete": true,
+    "owner_pid": 43558,
+    "pid": 43559,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "Traceback (most recent call last):\r\n  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m87\u001b[0m, in \u001b[35m<module>\u001b[0m\r\n    out=save(S/row[\"path\"],cache[row[\"path\"]]);assert out[\"bytes\"]==row[\"bytes\"] and out[\"sha256\"]==row[\"sha256\"]\r\n  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m23\u001b[0m, in \u001b[35msave\u001b[0m\r\n    r=read(p);assert r==raw\r\n  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m12\u001b[0m, in \u001b[35mread\u001b[0m\r\n    nxt=os.open(n,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=dr);os.close(dr);dr=nxt\r\n\u001b[1;35mOSError\u001b[0m: \u001b[35m[Errno 24] Too many open files: 'private'\u001b[0m\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

@@ -1,0 +1,66 @@
+{
+  "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/id-callsite-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.original",
+  "original_sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
+  "hits": [
+    {
+      "line": 855,
+      "text": "            profile: hex::encode(self.resource_profile()),"
+    },
+    {
+      "line": 893,
+      "text": "                && c.profile == hex::encode(self.resource_profile())"
+    },
+    {
+      "line": 985,
+      "text": "fn response("
+    },
+    {
+      "line": 1007,
+      "text": "        profile: hex::encode(server.resource_profile()),"
+    },
+    {
+      "line": 1874,
+      "text": "        server.validate(&task.cookie, settings, false)?;"
+    },
+    {
+      "line": 2685,
+      "text": "                                        let bytes = response("
+    },
+    {
+      "line": 2935,
+      "text": "                                let cookie = server.cookie(&settings, hello, conn.peer)?;"
+    },
+    {
+      "line": 3020,
+      "text": "                                server.validate(&cookie, &settings, true)?;"
+    },
+    {
+      "line": 3724,
+      "text": "    let expected_profile = client_profile.id(policy);"
+    },
+    {
+      "line": 3806,
+      "text": "            expected_profile,"
+    },
+    {
+      "line": 3883,
+      "text": "                && r.profile == hex::encode(expected_profile)"
+    },
+    {
+      "line": 3925,
+      "text": "    expected_profile: Hash,"
+    },
+    {
+      "line": 3934,
+      "text": "        expected_profile,"
+    },
+    {
+      "line": 3945,
+      "text": "    expected_profile: Hash,"
+    },
+    {
+      "line": 3955,
+      "text": "            && cookie.profile == hex::encode(expected_profile)"
+    }
+  ]
+}

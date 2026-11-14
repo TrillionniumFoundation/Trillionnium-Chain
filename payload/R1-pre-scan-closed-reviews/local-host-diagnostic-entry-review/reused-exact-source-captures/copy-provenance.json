@@ -1,0 +1,38 @@
+[
+  {
+    "bytes": 115087,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw"
+    },
+    "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw",
+    "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+  },
+  {
+    "bytes": 28366,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw"
+    },
+    "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw",
+    "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+  },
+  {
+    "bytes": 46605,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--ci_job.sh.bbe1c63b258cb59042d1b389f598d54290cd5d9f.raw"
+    },
+    "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/scripts--ci--ci_job.sh.bbe1c63b258cb59042d1b389f598d54290cd5d9f.raw",
+    "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+  },
+  {
+    "bytes": 8058,
+    "origin": {
+      "host": "mac",
+      "path": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/summary.json"
+    },
+    "path": "/private/tmp/chain-R1-local-host-diagnostic-entry-review-20261114-v1/reused-exact-source-captures/summary.json",
+    "sha256": "763be7d2f5c5dfe41889e181e767db9f81dc0d822964dd248f8642dad73667a3"
+  }
+]

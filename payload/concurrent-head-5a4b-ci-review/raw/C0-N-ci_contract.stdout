@@ -1,0 +1,209 @@
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+index e12e7839f406056bab9c05086baacb0059627835..0c45b3c88437c8903faa3f6f1fb998cd5220fef8 100644
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -423,11 +423,12 @@ ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/tes
+     # Explicit synthetic WAN accounting retains all external qualification flags false.
+     python3 scripts/ci/test_pon_wan_evidence.py -v
+     python3 scripts/ci/test_pon_decentralization_audit.py -v
+     python3 scripts/ci/test_pon_wan_control_domains.py -v
+     python3 scripts/ci/test_pq_lifetime_budget.py
+-    python3 scripts/ci/pq_lifetime_budget.py
++    python3 scripts/ci/test_pq_lifetime_current_v2.py
++    python3 scripts/ci/pq_lifetime_current_v2.py
+     python3 scripts/ci/test_pq_authority_effect_register.py
+     python3 scripts/ci/pq_authority_effect_register.py
+ ''' + ROOT_RECOVERY_STRUCTURE_BLOCK
+ # Direct file execution makes a missing suite a hard failure.
+ # These entries have no skip or backend fallback.
+@@ -803,11 +804,12 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
+     python3 scripts/ci/test_pon_wan_evidence.py -v
+     python3 scripts/ci/test_pon_decentralization_audit.py -v
+     python3 scripts/ci/test_pon_wan_control_domains.py -v
+     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+     python3 scripts/ci/test_pq_lifetime_budget.py
+-    python3 scripts/ci/pq_lifetime_budget.py
++    python3 scripts/ci/test_pq_lifetime_current_v2.py
++    python3 scripts/ci/pq_lifetime_current_v2.py
+     python3 scripts/ci/test_pq_authority_effect_register.py
+     python3 scripts/ci/pq_authority_effect_register.py
+     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
+     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
+     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+@@ -1267,10 +1269,35 @@ W1_POSTWIN_CRITICAL_STEPS = {
+           if (sorted(rows) != required
+                   or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['31']
+                   or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
+               raise SystemExit('all 31 named v2 report controls must execute exactly once without skips')
+           PY
++          python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v 2>&1 | tee "$W1_PROFILE_OUT/v3-gate-tests.log"
++          python3 - "$W1_PROFILE_OUT/v3-gate-tests.log" <<'PY'
++          from pathlib import Path
++          import re, sys
++          text = Path(sys.argv[1]).read_text()
++          expected = {
++              'test_current_cli_selects_current_schema_without_a_downgrade_option',
++              'test_current_contract_accepts_actual_clean_expected_rejection',
++              'test_current_contract_accepts_actual_clean_process_observation',
++              'test_current_contract_refuses_deadline_exhaustion',
++              'test_current_contract_refuses_legacy_and_unknown_observations',
++              'test_current_contract_refuses_snapshot_cancellation',
++              'test_current_contract_requires_every_new_snapshot_field',
++              'test_current_contract_retains_unqualified_resource_and_proof_scope',
++              'test_current_snapshot_fields_cannot_coerce_types',
++              'test_version_selector_is_explicit_and_unknown_versions_are_refused',
++          }
++          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
++          required = sorted((name, f'test_w1_v2_current_stage_gate.CurrentStageV3ControlsGateTests.{name}', 'ok')
++                            for name in expected)
++          if (sorted(rows) != required
++                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['10']
++                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
++              raise SystemExit('all 10 current stage-v3 controls must execute exactly once without skips')
++          PY
+ ''',
+     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
+         if: always() && steps.source.outcome == 'success'
+         id: staged_tests
+         shell: bash
+@@ -1503,10 +1530,11 @@ def check_w1_postwin_workflow(text: str) -> None:
+             'W1 post-win final readback requires all stages, both receiver suites and retained failures')
+     for command in ('python3 scripts/ci/test_w1_receiver_real.py',
+                     'python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v',
+                     'python3 -m unittest discover -s scripts/ci -p test_w1_profile_source_map.py -v',
+                     'python3 -m unittest discover -s scripts/ci -p test_w1_v2_controls_gate.py -v',
++                    'python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v',
+                     'python3 scripts/w1_v2_receipt_controls.py',
+                     'python3 scripts/ci/w1_v2_controls_gate.py'):
+         require(text.count(command) == 1,
+                 'W1 post-win saved-receipt and retained staged controls execute once')
+     for name in W1_POSTWIN_REQUIRED_TEST_FILES:
+@@ -2623,11 +2651,12 @@ def validate(root: Path = ROOT) -> dict:
+             'locked dependency checks missing')
+     require('    python3 scripts/ci/test_cross_arch_cost.py\n' in script,
+             'cross-architecture evidence negative checks missing')
+     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
+     for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+-                           '    python3 scripts/ci/pq_lifetime_budget.py\n',
++                           '    python3 scripts/ci/test_pq_lifetime_current_v2.py\n',
++                           '    python3 scripts/ci/pq_lifetime_current_v2.py\n',
+                            '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                            '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
+         require(budget_command in dict(lane_pairs)['repository-truth'] and
+                 script.count(budget_command) == 1,
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index d31e7d8b992f23164e9dc6825d45277303d1d355..a4200bf6db7e26864c1cd2e5c2e58758abd1f743 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -668,10 +668,12 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
+     "scripts/w1_qrom_semantics_audit.py",
+     "scripts/ci/test_w1_qrom_semantics_audit.py",
+     "evidence/pon-w1-qrom-semantics-20261107/report.json",
+     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
++    "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
++    "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+ ))
+ # Historical fixture controls must retain the original exact source contract.
+ # Their success does not accept the current worktree as that historical source.
+ CONVERGENCE_REQUIRED_PATHS |= frozenset((
+     "scripts/w1_qrom_implementation_audit.py",
+@@ -1134,10 +1136,14 @@ ECONOMICS_INTEGRATION_REQUIRED_PATHS = frozenset((
+ NATIVE_REQUIRED_PATHS |= ECONOMICS_INTEGRATION_REQUIRED_PATHS
+ 
+ 
+ # Preserve complete inputs of the independently retained research components.
+ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.json',
++ 'config/pon/pq128-lifetime-composition-current-v3.json',
++ 'config/pon/pq128-source-correspondence-current-v2.json',
++ 'scripts/ci/pq_lifetime_current_v2.py',
++ 'scripts/ci/test_pq_lifetime_current_v2.py',
+  'docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md',
+  'docs/security/PQ128_LIFETIME_COMPOSITION_V2.md',
+  'docs/security/PQ_CONTENT_CHAIN_REVIEW_V1.md',
+  'docs/security/RETAINED_RESEARCH_COMPONENTS_20261113.md',
+  'docs/security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md',
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+index ba703105bcbec8a368c08309abd0e8705ddd4a40..bfbec4fd0d5565424b83ff70ae508126c5efd956 100644
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -17,11 +17,12 @@ case "${1:?required job}" in
+     python3 scripts/ci/test_pon_wan_evidence.py -v
+     python3 scripts/ci/test_pon_decentralization_audit.py -v
+     python3 scripts/ci/test_pon_wan_control_domains.py -v
+     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+     python3 scripts/ci/test_pq_lifetime_budget.py
+-    python3 scripts/ci/pq_lifetime_budget.py
++    python3 scripts/ci/test_pq_lifetime_current_v2.py
++    python3 scripts/ci/pq_lifetime_current_v2.py
+     python3 scripts/ci/test_pq_authority_effect_register.py
+     python3 scripts/ci/pq_authority_effect_register.py
+     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
+     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
+     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+index 8683f6b319cb6104bf7dc201e3b363c648901468..5ed407bb9590217423e5642cf0ceb45433c796db 100644
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -2072,11 +2072,12 @@ class CiContractTests(unittest.TestCase):
+ 
+ 
+     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
+         path = 'scripts/ci/ci_job.sh'
+         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+-                        '    python3 scripts/ci/pq_lifetime_budget.py\n',
++                        '    python3 scripts/ci/test_pq_lifetime_current_v2.py\n',
++                        '    python3 scripts/ci/pq_lifetime_current_v2.py\n',
+                         '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                         '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                         "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
+             for replacement in ('', '    true # omitted lifetime budget check\n', command * 2):
+                 with self.subTest(command=command, replacement=replacement):
+@@ -3015,10 +3016,33 @@ class W1PostwinLaneTests(unittest.TestCase):
+             for replacement in ('', block + block):
+                 with self.subTest(step=name, replacement=replacement[:40]), self.assertRaises(ValueError):
+                     self.workflow_check(self.workflow.replace(block, replacement, 1))
+             self.assertIn(command, block)
+ 
++        # The original ten controls are independent of the expanded 31-control
++        # suite. Mutate their own executable tail, not an earlier shared gate.
++        block = self.step('v2_gate_tests')
++        marker = ('          python3 -m unittest discover -s scripts/ci '
++                  '-p test_w1_v2_current_stage_gate.py -v')
++        self.assertEqual(block.count(marker), 1)
++        retained = block[block.index(marker):]
++        for before, after in (
++                (marker, marker.replace('python3', 'true # python3', 1)),
++                ("!= ['10']", "!= ['0']"),
++                ('sorted(rows) != required', 'False'),
++                ("!= ['OK']", "!= ['OK (skipped=1)']"),
++                ("              'test_current_cli_selects_current_schema_without_a_downgrade_option',\n", '')):
++            with self.subTest(retained_current_control=before):
++                self.assertIn(before, retained)
++                changed = block.replace(retained, retained.replace(before, after, 1), 1)
++                with self.assertRaises(ValueError):
++                    self.workflow_check(self.workflow.replace(block, changed, 1))
++        for replacement in ('', retained + retained):
++            with self.subTest(retained_tail=replacement[:40]), self.assertRaises(ValueError):
++                self.workflow_check(self.workflow.replace(
++                    block, block.replace(retained, replacement, 1), 1))
++
+     def test_verifier_keeps_all_three_exact_tests_and_independent_build(self):
+         block = self.step('verifier_v2')
+         mutations = (
+             ('tests::expected_artifacts_are_exact_and_never_derived_from_receipt', 'tests::unreviewed_artifacts'),
+             ('tests::historical_full_receipt_cannot_satisfy_v2_statement', 'tests::unreviewed_historical'),
+@@ -3137,11 +3161,11 @@ class MergedQualificationLaneTests(unittest.TestCase):
+     GROUPS = {
+         'credit': ('repository-truth', '    bash scripts/project-preflight.sh --audit\n', (
+             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n",
+             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n",
+         ), '    python3 scripts/ci/test_project_boundary.py\n'),
+-        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_budget.py\n', (
++        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_current_v2.py\n', (
+             '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+             '    python3 scripts/ci/pq_authority_effect_register.py\n',
+             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",
+             '    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v\n',
+             '    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v\n',

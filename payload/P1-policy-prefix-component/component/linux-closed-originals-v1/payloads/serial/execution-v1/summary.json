@@ -1,0 +1,908 @@
+{
+  "schema": "trnm-public-policy-prefix-linux-validation-v1",
+  "status": "COMPONENT_VALIDATION_PASSED",
+  "base_head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "base_tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+  "root_source": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+  "worktree": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+  "branch": "fix/chain-policy-prefix-linux-20261114",
+  "source_description": "M8 plus exactly one uncommitted reviewed Rust proposal",
+  "modified_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "proposal_source_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+  "reviewed_patch": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/reviewed-policy-prefix.patch",
+    "bytes": 16945,
+    "sha256": "519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37"
+  },
+  "environment": {
+    "PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-final-consolidation-20261114-root/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_NET_OFFLINE": "true",
+    "RUST_TEST_THREADS": "1"
+  },
+  "steps": [
+    {
+      "label": "root-before-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653540.6302705,
+      "timed_out": false,
+      "pid": 2634194,
+      "returncode": 0,
+      "ended_unix": 1794653540.6342182,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-head.stdout",
+        "bytes": 41,
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "root-before-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653540.6347275,
+      "timed_out": false,
+      "pid": 2634195,
+      "returncode": 0,
+      "ended_unix": 1794653540.636067,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-tree.stdout",
+        "bytes": 41,
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-tree.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "root-before-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653540.636269,
+      "timed_out": false,
+      "pid": 2634196,
+      "returncode": 0,
+      "ended_unix": 1794653540.7001734,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-status.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-before-status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "root-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 120,
+      "started_unix": 1794653540.701642,
+      "timed_out": false,
+      "pid": 2634218,
+      "returncode": 0,
+      "ended_unix": 1794653540.7655427,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-preflight.stdout",
+        "bytes": 175,
+        "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "new-branch-absent",
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)",
+        "refs/heads/fix/chain-policy-prefix-linux-20261114"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653540.7660398,
+      "timed_out": false,
+      "pid": 2634223,
+      "returncode": 0,
+      "ended_unix": 1794653540.7674408,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/new-branch-absent.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/new-branch-absent.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "worktree-add",
+      "argv": [
+        "git",
+        "-c",
+        "protocol.allow=never",
+        "worktree",
+        "add",
+        "-b",
+        "fix/chain-policy-prefix-linux-20261114",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+        "ed0d35487f2a67239e4d646fd41c2c7acb5cc740"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 240,
+      "started_unix": 1794653540.7676299,
+      "timed_out": false,
+      "pid": 2634224,
+      "returncode": 0,
+      "ended_unix": 1794653551.0006914,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-add.stdout",
+        "bytes": 89,
+        "sha256": "e4e54047fecbd3875d4b8d2e2a6c09566f2da1d2094ebee4bb99a5192230092f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-add.stderr",
+        "bytes": 3192,
+        "sha256": "fa4785029168bdd8c748a05601af36b3e7ff9a0aa6875ecd2f71806c3f74ecef"
+      }
+    },
+    {
+      "label": "worktree-original-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.0016415,
+      "timed_out": false,
+      "pid": 2634488,
+      "returncode": 0,
+      "ended_unix": 1794653551.0060925,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-head.stdout",
+        "bytes": 41,
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "worktree-original-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.0067039,
+      "timed_out": false,
+      "pid": 2634489,
+      "returncode": 0,
+      "ended_unix": 1794653551.0106692,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-tree.stdout",
+        "bytes": 41,
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-tree.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "worktree-original-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.0108666,
+      "timed_out": false,
+      "pid": 2634490,
+      "returncode": 0,
+      "ended_unix": 1794653551.5253751,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-status.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-original-status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "worktree-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 120,
+      "started_unix": 1794653551.5277991,
+      "timed_out": false,
+      "pid": 2634516,
+      "returncode": 0,
+      "ended_unix": 1794653551.5599954,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-preflight.stdout",
+        "bytes": 169,
+        "sha256": "1db8c8cac516dc3baf98529edaa41c1b44d2584b2b2604afb564f6e49f259a29"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/worktree-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "apply-check",
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/reviewed-policy-prefix.patch"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.5603695,
+      "timed_out": false,
+      "pid": 2634521,
+      "returncode": 0,
+      "ended_unix": 1794653551.5638158,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-check.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "apply-reviewed",
+      "argv": [
+        "git",
+        "apply",
+        "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/reviewed-policy-prefix.patch"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.5640972,
+      "timed_out": false,
+      "pid": 2634522,
+      "returncode": 0,
+      "ended_unix": 1794653551.5674272,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-reviewed.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/apply-reviewed.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-before-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.568282,
+      "timed_out": false,
+      "pid": 2634523,
+      "returncode": 0,
+      "ended_unix": 1794653551.5697486,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-head.stdout",
+        "bytes": 41,
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-before-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.5700705,
+      "timed_out": false,
+      "pid": 2634524,
+      "returncode": 0,
+      "ended_unix": 1794653551.5713089,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-tree.stdout",
+        "bytes": 41,
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-tree.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-before-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653551.5715654,
+      "timed_out": false,
+      "pid": 2634525,
+      "returncode": 0,
+      "ended_unix": 1794653552.0859158,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-status.stdout",
+        "bytes": 62,
+        "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-before-status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-changed-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653552.087896,
+      "timed_out": false,
+      "pid": 2634546,
+      "returncode": 0,
+      "ended_unix": 1794653552.5527842,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-changed-paths.stdout",
+        "bytes": 59,
+        "sha256": "0d4d2196966310c3371fd3ac1b263aef6ac17e150642ebfc47fc69065848fad2"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-changed-paths.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-diff",
+      "argv": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653552.5540082,
+      "timed_out": false,
+      "pid": 2634569,
+      "returncode": 0,
+      "ended_unix": 1794653552.5704443,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff.stdout",
+        "bytes": 16943,
+        "sha256": "e6a961b6d2e2ea687193c801dc417425e6faa296bd427b5bedfbe46551612be2"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653552.570792,
+      "timed_out": false,
+      "pid": 2634590,
+      "returncode": 0,
+      "ended_unix": 1794653553.0350018,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff-check.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-diff-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 120,
+      "started_unix": 1794653553.0362718,
+      "timed_out": false,
+      "pid": 2634613,
+      "returncode": 0,
+      "ended_unix": 1794653553.100936,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-preflight.stdout",
+        "bytes": 169,
+        "sha256": "1db8c8cac516dc3baf98529edaa41c1b44d2584b2b2604afb564f6e49f259a29"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "rustc-version",
+      "argv": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653553.1014717,
+      "timed_out": false,
+      "pid": 2634618,
+      "returncode": 0,
+      "ended_unix": 1794653553.2161822,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/rustc-version.stdout",
+        "bytes": 196,
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/rustc-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "cargo-version",
+      "argv": [
+        "cargo",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653553.2173781,
+      "timed_out": false,
+      "pid": 2634620,
+      "returncode": 0,
+      "ended_unix": 1794653553.2499208,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cargo-version.stdout",
+        "bytes": 36,
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cargo-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "locked-offline-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--no-deps",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 120,
+      "started_unix": 1794653553.2507615,
+      "timed_out": false,
+      "pid": 2634623,
+      "returncode": 0,
+      "ended_unix": 1794653553.2826135,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/locked-offline-graph.stdout",
+        "bytes": 211373,
+        "sha256": "40188ed3e4a8549ba210f2d14099f2b64fe099ff5bf1b8411ea9de2588efa78e"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/locked-offline-graph.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "cached-policy-three-controls",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 1200,
+      "started_unix": 1794653553.2834554,
+      "timed_out": false,
+      "pid": 2634624,
+      "returncode": 0,
+      "ended_unix": 1794653825.204728,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stdout",
+        "bytes": 398,
+        "sha256": "51e31a9d94fc4b58a9e7c981d8f6e9b43d333b0fd700c23578ac0ed266e8c636"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stderr",
+        "bytes": 4910,
+        "sha256": "e4a50bb5700de995fedb6dbf8c34c36ddbfb5706e7351f3020727746704bf5dc"
+      }
+    },
+    {
+      "label": "original-profile-golden",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--",
+        "--exact"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 1200,
+      "started_unix": 1794653825.2067833,
+      "timed_out": false,
+      "pid": 2642840,
+      "returncode": 0,
+      "ended_unix": 1794653825.5209737,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stdout",
+        "bytes": 219,
+        "sha256": "e04a0cef05eb9a93c83ed5fc5474c92e01f3d90c9f20b8dcad96e5136ebc1b39"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stderr",
+        "bytes": 304,
+        "sha256": "398bc153fd67b3c23ac9141ed028c87603b6bb872b67de4f1e718f06cd75a4ed"
+      }
+    },
+    {
+      "label": "strict-all-target-all-feature-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 1200,
+      "started_unix": 1794653825.5221994,
+      "timed_out": false,
+      "pid": 2642844,
+      "returncode": 0,
+      "ended_unix": 1794653869.5147655,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/strict-all-target-all-feature-clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/strict-all-target-all-feature-clippy.stderr",
+        "bytes": 4061,
+        "sha256": "06282c056335aba0f428dac6a11f380cf11f40ab049c03e0c744eb96a7ddf342"
+      }
+    },
+    {
+      "label": "root-after-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.5161345,
+      "timed_out": false,
+      "pid": 2645459,
+      "returncode": 0,
+      "ended_unix": 1794653869.5212295,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-head.stdout",
+        "bytes": 41,
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "root-after-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.5232325,
+      "timed_out": false,
+      "pid": 2645460,
+      "returncode": 0,
+      "ended_unix": 1794653869.5269895,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-tree.stdout",
+        "bytes": 41,
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-tree.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "root-after-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/source",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.5277658,
+      "timed_out": false,
+      "pid": 2645461,
+      "returncode": 0,
+      "ended_unix": 1794653869.6414137,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-status.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/root-after-status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-after-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.6444132,
+      "timed_out": false,
+      "pid": 2645482,
+      "returncode": 0,
+      "ended_unix": 1794653869.6485527,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-head.stdout",
+        "bytes": 41,
+        "sha256": "dfa1bd7c617b7e5c1a3b94348d4f3cae37d9b22645c6542b45ad997080487d1f"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-after-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.6489677,
+      "timed_out": false,
+      "pid": 2645483,
+      "returncode": 0,
+      "ended_unix": 1794653869.652792,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-tree.stdout",
+        "bytes": 41,
+        "sha256": "2932e46fb2ba7e5eaaffb0324974c09e83a09e187e9716c18c4e762d023bdd6b"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-tree.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "candidate-after-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1",
+      "timeout_seconds": 60,
+      "started_unix": 1794653869.6532238,
+      "timed_out": false,
+      "pid": 2645484,
+      "returncode": 0,
+      "ended_unix": 1794653870.7188475,
+      "stdout": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-status.stdout",
+        "bytes": 62,
+        "sha256": "791f702272fd8d973b2b798c735d177d6c910be63645f8de38a11d3119382c91"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/candidate-after-status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "errors": [],
+  "hosted_campaign_run": false,
+  "hosted_performance_proved": false,
+  "source_before_after_equal": true,
+  "root_source_unchanged": true,
+  "root_before": {
+    "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "status": "",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "source_bytes": 433736,
+    "source_sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
+    "source_git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64"
+  },
+  "candidate_before": {
+    "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "status": " M trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\n",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "source_bytes": 438782,
+    "source_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "source_git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8"
+  },
+  "cached_policy_controls": {
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0,
+    "methods": [
+      "ingress::public_v3::tests::cached_policy_id_clones_are_independent_across_callers",
+      "ingress::public_v3::tests::cached_policy_id_matches_original_hash_for_public_fields",
+      "ingress::public_v3::tests::cached_policy_id_retains_all_six_framed_suffix_parts"
+    ]
+  },
+  "original_golden": {
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0,
+    "method": "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+  },
+  "strict_clippy_passed": true,
+  "root_after": {
+    "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "status": "",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "source_bytes": 433736,
+    "source_sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70",
+    "source_git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64"
+  },
+  "candidate_after": {
+    "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+    "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+    "status": " M trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\n",
+    "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "source_bytes": 438782,
+    "source_sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "source_git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8"
+  },
+  "completed_unix": 1794653870.7218752
+}

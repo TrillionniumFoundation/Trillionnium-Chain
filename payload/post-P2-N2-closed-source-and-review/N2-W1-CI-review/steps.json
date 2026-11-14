@@ -1,0 +1,467 @@
+[
+  {
+    "label": "N-commit",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "commit",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+    ],
+    "started_at": "2026-11-14T11:28:27.541505+00:00",
+    "elapsed_seconds": 0.009345,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-commit.stdout",
+      "bytes": 273,
+      "sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-tree",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "ls-tree",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.551021+00:00",
+    "elapsed_seconds": 0.011609,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-tree.stdout",
+      "bytes": 275,
+      "sha256": "93dcf8d784216e36367fbe7307745de6babe30c3072550a60180d0593e1c5bdf"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-source-0",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "f1ea17ef43bf7a3067da95adc4b30d0f071d2530"
+    ],
+    "started_at": "2026-11-14T11:28:27.562670+00:00",
+    "elapsed_seconds": 0.010429,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-0.stdout",
+      "bytes": 40213,
+      "sha256": "d65b3f79c286458f3cf2b254e96e9aaa1f8b0e86a92eeee22ba1c248cca12729"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-source-1",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470"
+    ],
+    "started_at": "2026-11-14T11:28:27.573434+00:00",
+    "elapsed_seconds": 0.007645,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-1.stdout",
+      "bytes": 21301,
+      "sha256": "9585292a6c85fe79942ab36a8d3bb3bd05afa52b829afde2ba89ec7f0168c0fe"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-source-2",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38"
+    ],
+    "started_at": "2026-11-14T11:28:27.581353+00:00",
+    "elapsed_seconds": 0.006204,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-2.stdout",
+      "bytes": 12837,
+      "sha256": "1d6e835f9ec135f4600b1dae4687daa29e06ef02834a00370cdf43ca3ef94f0d"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-source-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N2-commit",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "commit",
+      "096c6b5f9b952c49389fd975515744074ba61317"
+    ],
+    "started_at": "2026-11-14T11:28:27.587684+00:00",
+    "elapsed_seconds": 0.006068,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-commit.stdout",
+      "bytes": 912,
+      "sha256": "9123d667955f86fd121c81ea8e26e406af06d1ba36ef7c9b7244ecc8d0989551"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N2-tree",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "ls-tree",
+      "096c6b5f9b952c49389fd975515744074ba61317",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.593790+00:00",
+    "elapsed_seconds": 0.006171,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-tree.stdout",
+      "bytes": 275,
+      "sha256": "e4f922034d64f6d03e975b04c2d66cb80cf6e6742a969f7e4f7edb9de199e095"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N2-source-0",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "ce94e0a5423d91840849d91579ec541081117274"
+    ],
+    "started_at": "2026-11-14T11:28:27.599987+00:00",
+    "elapsed_seconds": 0.005739,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-0.stdout",
+      "bytes": 40413,
+      "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N2-source-1",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "23873e2ad578b6c5337b6954f2882c6480a4a893"
+    ],
+    "started_at": "2026-11-14T11:28:27.605896+00:00",
+    "elapsed_seconds": 0.005808,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-1.stdout",
+      "bytes": 22400,
+      "sha256": "04bcbc29337ec51d52f3cde04f6e4816faaa779a043bef0634435e06d8159e15"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N2-source-2",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "458b9c804efb962ded3871d231368aec163161eb"
+    ],
+    "started_at": "2026-11-14T11:28:27.611829+00:00",
+    "elapsed_seconds": 0.005759,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-2.stdout",
+      "bytes": 13036,
+      "sha256": "32f4eb1310ea855b8eba2edd610b0ede52b4b438f66b42266080973889bf6209"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N2-source-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-commit",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "commit",
+      "1e54c4ff66a92827c83bea8715f59f6b299e98cf"
+    ],
+    "started_at": "2026-11-14T11:28:27.617718+00:00",
+    "elapsed_seconds": 0.006322,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-commit.stdout",
+      "bytes": 309,
+      "sha256": "2e63c9f93d782ad5f5066e868f393f10c9c5707ff78b2f3abe31a9640e49546a"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-tree",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "ls-tree",
+      "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.624068+00:00",
+    "elapsed_seconds": 0.006704,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-tree.stdout",
+      "bytes": 275,
+      "sha256": "93dcf8d784216e36367fbe7307745de6babe30c3072550a60180d0593e1c5bdf"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-source-0",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "f1ea17ef43bf7a3067da95adc4b30d0f071d2530"
+    ],
+    "started_at": "2026-11-14T11:28:27.630799+00:00",
+    "elapsed_seconds": 0.005908,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-0.stdout",
+      "bytes": 40213,
+      "sha256": "d65b3f79c286458f3cf2b254e96e9aaa1f8b0e86a92eeee22ba1c248cca12729"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-source-1",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470"
+    ],
+    "started_at": "2026-11-14T11:28:27.636879+00:00",
+    "elapsed_seconds": 0.005698,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-1.stdout",
+      "bytes": 21301,
+      "sha256": "9585292a6c85fe79942ab36a8d3bb3bd05afa52b829afde2ba89ec7f0168c0fe"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-source-2",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "cat-file",
+      "blob",
+      "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38"
+    ],
+    "started_at": "2026-11-14T11:28:27.642693+00:00",
+    "elapsed_seconds": 0.005703,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-2.stdout",
+      "bytes": 12837,
+      "sha256": "1d6e835f9ec135f4600b1dae4687daa29e06ef02834a00370cdf43ca3ef94f0d"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-source-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-to-N2-diff",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "--no-pager",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--full-index",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "096c6b5f9b952c49389fd975515744074ba61317",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.648521+00:00",
+    "elapsed_seconds": 0.00635,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-to-N2-diff.stdout",
+      "bytes": 4368,
+      "sha256": "def2a1f43788458cc9715d96cec1f6a70046061d280066742c5d900446a1fde1"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-to-N2-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "N-to-P2-diff",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "--no-pager",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--full-index",
+      "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.654968+00:00",
+    "elapsed_seconds": 0.006443,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-to-P2-diff.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/N-to-P2-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "P2-to-N2-diff",
+    "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+      "--no-pager",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--full-index",
+      "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+      "096c6b5f9b952c49389fd975515744074ba61317",
+      "--",
+      ".github/workflows/pon-w1-work-security.yml",
+      "scripts/ci/test_w1_v2_controls_gate.py",
+      "scripts/ci/w1_v2_controls_gate.py"
+    ],
+    "started_at": "2026-11-14T11:28:27.661478+00:00",
+    "elapsed_seconds": 0.006864,
+    "exit": 0,
+    "stdout": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-to-N2-diff.stdout",
+      "bytes": 4368,
+      "sha256": "def2a1f43788458cc9715d96cec1f6a70046061d280066742c5d900446a1fde1"
+    },
+    "stderr": {
+      "path": "/private/tmp/chain-prci-N2-w1-ci-review-20261114-v1/raw/P2-to-N2-diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

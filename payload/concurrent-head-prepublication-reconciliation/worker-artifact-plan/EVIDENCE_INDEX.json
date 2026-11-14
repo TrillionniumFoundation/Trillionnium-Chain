@@ -1,0 +1,142 @@
+{
+  "external_source_references": [
+    {
+      "bytes": 12283,
+      "git_blob": "f021a33e2969305241099998f703172d29b15251",
+      "path": "/private/tmp/chain-new-candidate-5a4b7fe8-production-review-20261114-v1/source-capture-v1/N--trillionnium--crates--trnm-worker-agent--src--audit--artifact.rs.stdout",
+      "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+    }
+  ],
+  "file_count": 14,
+  "files": [
+    {
+      "bytes": 2204,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--Cargo.toml.original"
+      },
+      "path": "M6--trillionnium--Cargo.toml.original",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 577,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--Cargo.toml.original"
+      },
+      "path": "M6--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "sha256": "e1b14fd7b321e47f46e61ce1ac229a62720370b1b022d8017a1f16d88629105f"
+    },
+    {
+      "bytes": 21031,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--audit.rs.original"
+      },
+      "path": "M6--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "sha256": "9cd6d9b7d1c6484e218398ab5b2450b5e95f8433a3532536a907eacb4075bcc9"
+    },
+    {
+      "bytes": 70688,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6--trillionnium--crates--trnm-worker-agent--src--main.rs.original"
+      },
+      "path": "M6--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "sha256": "e698e5ab7dde37a52689025a6524e4fc8960640d887a7b74be36c9c2d6232a17"
+    },
+    {
+      "bytes": 386,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/M6-tree.original"
+      },
+      "path": "M6-tree.original",
+      "sha256": "446f0f1d5fb397e51c7b75179bc7d151239155d47bdb7980925ee585b70ebe30"
+    },
+    {
+      "bytes": 2204,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--Cargo.toml.original"
+      },
+      "path": "N--trillionnium--Cargo.toml.original",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 577,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--Cargo.toml.original"
+      },
+      "path": "N--trillionnium--crates--trnm-worker-agent--Cargo.toml.original",
+      "sha256": "e1b14fd7b321e47f46e61ce1ac229a62720370b1b022d8017a1f16d88629105f"
+    },
+    {
+      "bytes": 21031,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--audit.rs.original"
+      },
+      "path": "N--trillionnium--crates--trnm-worker-agent--src--audit.rs.original",
+      "sha256": "9cd6d9b7d1c6484e218398ab5b2450b5e95f8433a3532536a907eacb4075bcc9"
+    },
+    {
+      "bytes": 70688,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N--trillionnium--crates--trnm-worker-agent--src--main.rs.original"
+      },
+      "path": "N--trillionnium--crates--trnm-worker-agent--src--main.rs.original",
+      "sha256": "e698e5ab7dde37a52689025a6524e4fc8960640d887a7b74be36c9c2d6232a17"
+    },
+    {
+      "bytes": 386,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/N-tree.original"
+      },
+      "path": "N-tree.original",
+      "sha256": "446f0f1d5fb397e51c7b75179bc7d151239155d47bdb7980925ee585b70ebe30"
+    },
+    {
+      "bytes": 4326,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "0394e1149e3ef0595f60be71c7dc77fb34b6c95613085ae163c7a0f1e05bc43d"
+    },
+    {
+      "bytes": 23159,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/source-read-terminal.json"
+      },
+      "path": "source-read-terminal.json",
+      "sha256": "c9cffebe580a0bd72df49a924f8cd6ee96c2f75d6620ed3c12f264252ec02bad"
+    },
+    {
+      "bytes": 11405,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/source-target-review.json"
+      },
+      "path": "source-target-review.json",
+      "sha256": "6645f2a6815ef6c76d583e8274e04745434853d503381d7fedef1049823615cd"
+    },
+    {
+      "bytes": 5894,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-worker-artifact-validation-plan-20261114-v1/validation-plan.json"
+      },
+      "path": "validation-plan.json",
+      "sha256": "c20bc44dd82c230f4f3f3bd69f381147e289882661844f7f311c62700e68c117"
+    }
+  ],
+  "prepare_only": true,
+  "schema": "trnm-worker-artifact-validation-plan-index-v1",
+  "total_bytes": 234556
+}

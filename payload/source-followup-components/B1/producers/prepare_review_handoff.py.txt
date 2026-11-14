@@ -1,0 +1,52 @@
+import ast,datetime,hashlib,json,os,pathlib,subprocess,zipfile
+W=pathlib.Path("/private/tmp/chain-native-bridge-history-binding-port-20261114");R=pathlib.Path("/private/tmp/chain-native-bridge-history-binding-review-20261114")
+O=R/"review-handoff-v1";O.mkdir(exist_ok=False)
+E=dict(os.environ,GIT_NO_LAZY_FETCH="1",GIT_NO_REPLACE_OBJECTS="1",GIT_OPTIONAL_LOCKS="0",GIT_TERMINAL_PROMPT="0")
+B="7d8d4c59fcd01480a12e1c64835b202079091800"
+def sha(b):return hashlib.sha256(b).hexdigest()
+def gi(*a):return subprocess.check_output(["/usr/bin/git",*a],cwd=W,env=E,timeout=60)
+prep=json.loads((R/"patch-prepare-v1/summary.json").read_bytes()); rows=prep["modified_or_added"]
+for row in rows:
+ b=(W/row["path"]).read_bytes();assert len(b)==row["bytes"] and sha(b)==row["sha256"]
+tracked=[r["path"] for r in rows if r["base_sha256"] is not None]
+code=gi("diff","--binary","--full-index",B,"--",*tracked)
+(O/"runtime-controls-doc-guard.patch").write_bytes(code)
+parts=[code]
+for row in rows:
+ if row["base_sha256"] is None:
+  p=subprocess.run(["/usr/bin/git","diff","--no-index","--binary","--full-index","--","/dev/null",row["path"]],cwd=W,env=E,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=60)
+  assert p.returncode==1 and not p.stderr
+  parts.append(p.stdout)
+full=b"".join(parts);(O/"complete.patch").write_bytes(full)
+# Archive original failure member bytes; only these selected members are extracted.
+D=pathlib.Path("/private/tmp/chain-consolidation-20261114-root/remaining-repository-truth-diagnostics-7d8d4c-copy-v1")
+zbytes=(D/"original-diagnostics-7d8d4c-v1.zip").read_bytes();assert sha(zbytes)=="038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a"
+indexbytes=(D/"EVIDENCE_INDEX.json").read_bytes();assert sha(indexbytes)=="4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1"
+with zipfile.ZipFile(D/"original-diagnostics-7d8d4c-v1.zip") as z:
+ assert z.read("EVIDENCE_INDEX.json")==indexbytes
+ idx=json.loads(indexbytes)
+ print(json.dumps({"index_shape":{k:type(v).__name__ for k,v in idx.items()},"index_selected":[r for v in idx.values() if isinstance(v,list) for r in v if isinstance(r,dict) and "unit-107-" in json.dumps(r)]}),flush=True)
+ selected=["unit-107-lines-222-222.stdout","unit-107-lines-222-222.stderr"]
+ candidates=[r for v in idx.values() if isinstance(v,list) for r in v if isinstance(r,dict)]
+ original=[]
+ for name in selected:
+  r=[r for r in candidates if name in (r.get("path"),r.get("name"),r.get("member"))]
+  assert len(r)==1,(name,r)
+  row=r[0]; raw=z.read(name)
+  assert row.get("sha256")==sha(raw) and row.get("bytes",row.get("size"))==len(raw),(name,row)
+  (O/("original-"+name)).write_bytes(raw);original.append({"member":name,"bytes":len(raw),"sha256":sha(raw)})
+# Confirm all retained evidence files under the original cohort directory are unchanged.
+oldnames=gi("ls-tree","-r","--name-only",B,"--","evidence/pon-w1-oracle-scope-20261110").decode().splitlines()
+oldverified=[]
+for path in oldnames:
+ old=gi("show",B+":"+path);cur=(W/path).read_bytes();assert old==cur,path
+ oldverified.append({"path":path,"bytes":len(cur),"sha256":sha(cur)})
+rawpath="formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+pinrequest={"schema":"trnm-native-bridge-history-root-manifest-request-v1","base":B,"worktree_manifest_unchanged":True,"required_paths_add":[rawpath],"pinned_blobs_updates":{r["path"]:r["git_blob_sha1"] for r in rows},"runtime_required_new_data":[rawpath],"evidence_new_paths":[r["path"] for r in rows if r["path"].startswith("evidence/")],"source_owned_by_root":["config/pon/pq-cross-branch-corpus-v1.json","docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"],"note":"Only the new raw producer is a runtime dependency; provenance files are fixed review evidence. All listed pins identify the exact prepared bytes, not a committed final combined source."}
+(O/"root-manifest-request.json").write_text(json.dumps(pinrequest,indent=2)+"\n")
+scope={"schema":"trnm-native-bridge-history-consumer-review-v1","active_consumers":["formal/pon-nakamoto-v1/w1_quantum_native_bridge.py CLI","formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py","scripts/ci/ci_job.sh:222","scripts/ci/check_ci_contract.py","scripts/ci/test_retained_research_ci.py","scripts/ci/check_pq_research_integration.py","config/pon/pq-cross-branch-corpus-v1.json"],"active_fixed_25_count_found":False,"test_methods_before":25,"test_methods_after":31,"retained_native_processes_in_original_artifact":9,"new_native_processes_executed":0,"current_collector_unchanged":prep["preserved_sha256"]["formal/pon-native-fullpath-v1/collect_native.py"],"old_evidence_files_verified_unchanged":oldverified,"original_failure_members":original,"diagnostic_archive_sha256":sha(zbytes),"diagnostic_index_sha256":sha(indexbytes),"runtime_general_git_parser":False,"historical_source_exec_import_compile":False,"historical_branch_tree_required":True,"remaining_other_source_behavior":"Existing current collector digest comparison retained.","qualification_promoted":False}
+(O/"consumer-and-preservation-review.json").write_text(json.dumps(scope,indent=2)+"\n")
+info=lambda p:{"path":str(p),"bytes":p.stat().st_size,"sha256":sha(p.read_bytes())}
+summary={"schema":"trnm-native-bridge-history-review-ready-v1","prepared_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"base":B,"worktree":str(W),"committed":False,"paths":len(rows),"patch":info(O/"complete.patch"),"focused_patch":info(O/"runtime-controls-doc-guard.patch"),"original_25_source_ast_preserved":True,"bridge_result":{"count":31,"failures":0,"errors":0,"skips":0,"stderr":info(R/"validation-v1/01-original-and-added-bridge-31.stderr")},"corpus_new_control":{"count":1,"returncode":0,"stderr":info(R/"validation-canonical-tmp-v2/corpus.stderr"),"initial_mac_noncanonical_tmp_failure_preserved":True},"root_manifest_request":info(O/"root-manifest-request.json"),"current_collector_and_original_evidence_unchanged":True,"full_repository_lane_pass_claimed":False,"native_execution_claimed":False,"remote_mutation":False}
+(O/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+print(json.dumps(summary),flush=True)

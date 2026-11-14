@@ -1,0 +1,55 @@
+{
+  "source": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "comparison": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/formal--pon-nakamoto-v1--work_backend.py.raw",
+      "bytes": 1841,
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+      "git_blob": "bc2f7ab213bd598c8028030da9907b40b2e20e1b",
+      "same_as_dc42": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/formal--pon-nakamoto-v1--native_execution.py.raw",
+      "bytes": 1679,
+      "sha256": "0af0fd022b3c75ec960dc27ca0c578d3852724936029bba092b23be6ff3d6e55",
+      "git_blob": "e9d6ad454ef13c6774a093ed903983f3a30d5988",
+      "same_as_dc42": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/formal--pon-nakamoto-v1--ledger.py.raw",
+      "bytes": 37985,
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+      "git_blob": "ea90d7df31a6765302d59ae53a86ed5486dc7618",
+      "same_as_dc42": true
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/scripts--ci--ci_observation.py.raw",
+      "bytes": 8837,
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+      "same_as_dc42": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/trillionnium--crates--trnm-pon-node--src--store--operator_continuous_owner.rs.raw",
+      "bytes": 120278,
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a",
+      "git_blob": "d94f27a764a2788e90352881b52fc9017a32ab67",
+      "same_as_dc42": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/additional-fixed-source-v1/trillionnium--crates--trnm-crypto-primitives--src--pon_work--maintenance_limb.rs.raw",
+      "bytes": 20390,
+      "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+      "git_blob": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "same_as_dc42": true
+    }
+  ],
+  "prior_export_failure": "first five files written, maintenance_limb.rs was wrong path; original exit128 preserved; no source/test run"
+}

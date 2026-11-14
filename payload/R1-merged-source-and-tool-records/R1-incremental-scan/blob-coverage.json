@@ -1,0 +1,191 @@
+[
+  {
+    "bytes": 40413,
+    "changed_paths": [
+      {
+        "new_blob": "ce94e0a5423d91840849d91579ec541081117274",
+        "new_mode": "100644",
+        "old_blob": "f1ea17ef43bf7a3067da95adc4b30d0f071d2530",
+        "old_mode": "100644",
+        "path": ".github/workflows/pon-w1-work-security.yml",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "ce94e0a5423d91840849d91579ec541081117274",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 40413,
+    "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+  },
+  {
+    "bytes": 523769,
+    "changed_paths": [
+      {
+        "new_blob": "5227f7f98f27297d98f0ee076dd2f339b4b53df3",
+        "new_mode": "100644",
+        "old_blob": "3f4c9edc80103c78474203caaf5f2f3c781289d2",
+        "old_mode": "100644",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "5227f7f98f27297d98f0ee076dd2f339b4b53df3",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523769,
+    "sha256": "f3c4ed6c5022211effabde2b2554b70835a2abedc141d3a7fa530c5ff6262aca"
+  },
+  {
+    "bytes": 60143,
+    "changed_paths": [
+      {
+        "new_blob": "4ac37208f2a3d5a976686a9db51180281f5f3b35",
+        "new_mode": "100644",
+        "old_blob": "98c68130d5d010e5ff2aa9521d11b0daaefe6784",
+        "old_mode": "100644",
+        "path": "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "4ac37208f2a3d5a976686a9db51180281f5f3b35",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 60143,
+    "sha256": "564aa2d64619b335006451ef95646080ef97542db77f44ac6aadc5dfe4f0a74a"
+  },
+  {
+    "bytes": 1154067,
+    "changed_paths": [
+      {
+        "new_blob": "7256658cf6dcf7b0aedc87764db4f4321fcf1358",
+        "new_mode": "100644",
+        "old_blob": "d91790c0b53fa11908d2026ad23bcb58520677a5",
+        "old_mode": "100644",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "7256658cf6dcf7b0aedc87764db4f4321fcf1358",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1154067,
+    "sha256": "05b96d09e899f2463826f17e19ff41b7c7783c58a56c1543e4ff7135deee3f3d"
+  },
+  {
+    "bytes": 22400,
+    "changed_paths": [
+      {
+        "new_blob": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+        "new_mode": "100644",
+        "old_blob": "e72d16f7b2a2a7f0f8c259d74dbe2caa23479470",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_w1_v2_controls_gate.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "23873e2ad578b6c5337b6954f2882c6480a4a893",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 22400,
+    "sha256": "04bcbc29337ec51d52f3cde04f6e4816faaa779a043bef0634435e06d8159e15"
+  },
+  {
+    "bytes": 13036,
+    "changed_paths": [
+      {
+        "new_blob": "458b9c804efb962ded3871d231368aec163161eb",
+        "new_mode": "100644",
+        "old_blob": "c4fe91c7cbae9fa6fffce3cd608ce8d0ab906f38",
+        "old_mode": "100644",
+        "path": "scripts/ci/w1_v2_controls_gate.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "458b9c804efb962ded3871d231368aec163161eb",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 13036,
+    "sha256": "32f4eb1310ea855b8eba2edd610b0ede52b4b438f66b42266080973889bf6209"
+  },
+  {
+    "bytes": 72224,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "096a83efdb9d15ecb3ebbc97c62df4b9ae3a92c6",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 72224,
+    "sha256": "a6786682171e9a87c43630ad6ff85d0de188d9c2bd018545b76bfff6902f1713"
+  },
+  {
+    "bytes": 523581,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "eba89fdbc4359b9f598dbc0f9590c8b6b25e1a22",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523581,
+    "sha256": "cad94c5c098a6eac01cdd06c89237a74227e08a3cacc65df0d5b622d2fcc3fd7"
+  },
+  {
+    "bytes": 18388,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "c1ca2e16a76f067736b76158d382eb96e78b08b5",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 18388,
+    "sha256": "fc8683a3c784c0023919c7b44f782ebe5ec159d4db4d187690e83272a11ee3e7"
+  }
+]

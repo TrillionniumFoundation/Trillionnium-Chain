@@ -1,0 +1,246 @@
+1235: fn confirmation_transfer(settings: &Settings, account_sequence: u64) -> Vec<u8> {
+1236:     let mut payload = development_public(1).unwrap().to_vec();
+1237:     payload.extend(1u64.to_le_bytes());
+1238:     let mut tx = Envelope {
+1239:         network: settings.network(),
+1240:         sender: development_public(0).unwrap(),
+1241:         nonce: account_sequence,
+1242:         expiry: 1000,
+1243:         fee_limit: 1_000_000,
+1244:         tag: 1,
+1245:         payload,
+1246:         signature: [0; 64],
+1247:     };
+1248:     let key =
+1249:         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()]))).unwrap();
+1250:     tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+1251:         .unwrap()
+1252:         .try_into()
+1253:         .unwrap();
+1254:     tx.encode().unwrap()
+1255: }
+1256: 
+1257: fn signed_confirmation_phase(
+1258:     path: &std::path::Path,
+1259:     settings: &Settings,
+1260:     packets: &[Packet],
+1261:     false_wires: Arc<Vec<Option<String>>>,
+1262:     pressured: bool,
+1263: ) -> Value {
+1264:     // The original observation retains its exact sixteen-packet replay stream.
+1265:     // A separately named diagnostic can supply fresh challenges without
+1266:     // changing this test's packets, budgets, deadlines or acceptance criteria.
+1267:     let prepare: ConfirmationAttackBuilder = Arc::new(move |worker, attempt| {
+1268:         let index = (attempt * PRESSURE_WORKERS + worker) % false_wires.len();
+1269:         (index, false_wires[index].clone(), None)
+1270:     });
+1271:     signed_confirmation_phase_with_builder(path, settings, packets, prepare, pressured)
+1272: }
+1273: 
+1274: type ConfirmationAttackBuilder =
+1275:     Arc<dyn Fn(usize, usize) -> (usize, Option<String>, Option<Value>) + Send + Sync>;
+1276: 
+1277: fn signed_confirmation_phase_with_builder(
+1278:     path: &std::path::Path,
+1279:     settings: &Settings,
+1280:     packets: &[Packet],
+1281:     prepare: ConfirmationAttackBuilder,
+1282:     pressured: bool,
+1283: ) -> Value {
+1284:     fs::create_dir(path).unwrap();
+1285:     let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
+1286:     let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
+1287:     receiver
+1288:         .enable_local_mempool(PoolLimits {
+1289:             max_records: 16,
+1290:             max_bytes: 32768,
+1291:             max_group_members: 4,
+1292:             critical_reserve: 0,
+1293:             max_removals: 64,
+1294:             preview_miner: development_public(0).unwrap(),
+1295:         })
+1296:         .unwrap();
+1297:     let initial = receiver.read_active().unwrap();
+1298:     let target = receiver.expected_target(settings.genesis()).unwrap();
+1299:     let owner = Arc::new(Mutex::new(receiver));
+1300:     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+1301:     let address = listener.local_addr().unwrap();
+1302:     let stop = Arc::new(AtomicBool::new(false));
+1303:     let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+1304:     let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
+1305:     let server = PublicServer::new(identity(71), policy()).unwrap();
+1306:     let domain = server.mutation_cpu_domain();
+1307:     let initial_meter = domain.observe().unwrap();
+1308:     let (shared, signal, measurement, capture) =
+1309:         (owner.clone(), stop.clone(), metrics, observer.clone());
+1310:     let service = RunningService {
+1311:         stop,
+1312:         worker: Some(thread::spawn(move || {
+1313:             match public_v3::serve_public_protected_v3_with_request_observer(
+1314:                 listener,
+1315:                 shared,
+1316:                 Duration::from_secs(30),
+1317:                 signal,
+1318:                 server,
+1319:                 measurement,
+1320:                 capture,
+1321:             ) {
+1322:                 Ok(metrics) => json!({"metrics": metrics, "error": null}),
+1323:                 Err(error) => json!({"metrics": null, "error": error.to_string()}),
+1324:             }
+1325:         })),
+1326:     };
+1327:     let epoch = Instant::now();
+1328:     let client = Client {
+1329:         address,
+1330:         settings: settings.clone(),
+1331:         epoch,
+1332:     };
+1333:     let workers = if pressured { PRESSURE_WORKERS } else { 0 };
+1334:     let barrier = Arc::new(Barrier::new(workers + 2));
+1335:     let completed = Arc::new(AtomicU64::new(0));
+1336:     let end = epoch + Duration::from_millis(PRESSURE_MS);
+1337:     let mut attacks = Vec::new();
+1338:     for worker in 0..workers {
+1339:         let (client, barrier, prepare, completed) = (
+1340:             client.clone(),
+1341:             barrier.clone(),
+1342:             prepare.clone(),
+1343:             completed.clone(),
+1344:         );
+1345:         attacks.push(thread::spawn(move || {
+1346:             barrier.wait();
+1347:             let cpu = ThreadCpuStamp::start();
+1348:             let mut rows = Vec::new();
+1349:             for attempt in 0..PRESSURE_CALLS_PER_WORKER {
+1350:                 if Instant::now() >= end {
+1351:                     break;
+1352:                 }
+1353:                 let (index, packet, construction) = prepare(worker, attempt);
+1354:                 let mut row = if let Some(packet) = packet {
+1355:                     let row = compact_pressure_call(
+1356:                         client.call_before(
+1357:                             "confirmation_from_zero",
+1358:                             80 + ((attempt + worker * 37) % 150) as u8,
+1359:                             Request::Submit { packet },
+1360:                             Some(end),
+1361:                         ),
+1362:                         Some(index),
+1363:                     );
+1364:                     completed.fetch_add(1, Ordering::AcqRel);
+1365:                     row
+1366:                 } else {
+1367:                     json!({"status": "not_submitted_exhausted", "packet_index": index})
+1368:                 };
+1369:                 if let Some(construction) = construction {
+1370:                     row["from_zero_construction"] = construction;
+1371:                 }
+1372:                 rows.push(row);
+1373:             }
+1374:             json!({"worker": worker, "calling_thread_cpu_ns": cpu_elapsed(cpu),
+1375:                 "attempt_cap_reached": rows.len() == PRESSURE_CALLS_PER_WORKER, "calls": rows})
+1376:         }));
+1377:     }
+1378:     let (reader, read_barrier) = (client.clone(), barrier.clone());
+1379:     let reads = thread::spawn(move || {
+1380:         read_barrier.wait();
+1381:         let cpu = ThreadCpuStamp::start();
+1382:         let mut rows = Vec::new();
+1383:         while Instant::now() < end && rows.len() < 256 {
+1384:             rows.push(compact_pressure_call(
+1385:                 reader.call_before("confirmation_honest_head", 72, Request::Head, Some(end)),
+1386:                 None,
+1387:             ));
+1388:             thread::sleep(
+1389:                 Duration::from_millis(40).min(end.saturating_duration_since(Instant::now())),
+1390:             );
+1391:         }
+1392:         (rows, cpu_elapsed(cpu))
+1393:     });
+1394:     barrier.wait();
+1395:     while pressured && completed.load(Ordering::Acquire) == 0 && Instant::now() < end {
+1396:         thread::sleep(Duration::from_millis(1));
+1397:     }
+1398:     let completed_before_business = completed.load(Ordering::Acquire);
+1399:     let business_started_ns = ns(epoch);
+1400:     let mut submissions = Vec::new();
+1401:     let mut next_packet = 0;
+1402:     while next_packet < packets.len() && Instant::now() < end && submissions.len() < 64 {
+1403:         let mut row = compact_pressure_call(
+1404:             client.call_before(
+1405:                 "confirmation_honest_submit",
+1406:                 73,
+1407:                 Request::Submit {
+1408:                     packet: hex::encode(packets[next_packet].encode().unwrap()),
+1409:                 },
+1410:                 Some(end),
+1411:             ),
+1412:             Some(next_packet),
+1413:         );
+1414:         row["height"] = json!(packets[next_packet].header.height);
+1415:         if row["status"] == "ok" && row["returned_after_window"] == false {
+1416:             next_packet += 1;
+1417:         }
+1418:         submissions.push(row);
+1419:     }
+1420:     let tip = packets.last().unwrap().id().unwrap();
+1421:     let included = packets[0].id().unwrap();
+1422:     let transaction = hash(b"tx-id", &[&packets[0].transactions[0]]);
+1423:     let mut history_calls = Vec::new();
+1424:     // One actual independent-client replay interval for each successful
+1425:     // on-time History response. Failed network calls remain in history_calls.
+1426:     let mut independent_history_page_replay = Vec::new();
+1427:     let mut independent_final_confirmation_stage = None;
+1428:     let mut confirmation = None;
+1429:     let mut verification_errors = Vec::new();
+1430:     let replay_started = Instant::now();
+1431:     let replay_cpu = ThreadCpuStamp::start();
+1432:     let mut after = settings.genesis();
+1433:     let mut confirmation_ended_ns = None;
+1434:     while next_packet == packets.len() && Instant::now() < end && history_calls.len() < 16 {
+1435:         let row = client.call_before(
+1436:             "confirmation_honest_history",
+1437:             74,
+1438:             Request::History {
+1439:                 tip: hex::encode(tip),
+1440:                 after: hex::encode(after),
+1441:             },
+1442:             Some(end),
+1443:         );
+1444:         if row["status"] == "ok" && row["returned_after_window"] == false {
+1445:             let replay_started_ns = ns(epoch);
+1446:             let page_cpu = ThreadCpuStamp::start();
+1447:             let import_observer = ingress::HistoryImportObserver::new();
+1448:             let imported =
+1449:                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
+1450:                     .map_err(|error| error.to_string())
+1451:                     .and_then(|page| {
+1452:                         ingress::receive_public_page_from_before_observed(
+1453:                             &mut verifier,
+1454:                             client.address,
+1455:                             page,
+1456:                             tip,
+1457:                             after,
+1458:                             ingress::now().unwrap(),
+1459:                             end,
+1460:                             Some(&import_observer),
+1461:                         )
+1462:                         .map_err(|error| error.to_string())
+1463:                     });
+1464:             let replay_ended_ns = ns(epoch);
+1465:             // Capture the actual calling-thread CPU once. Wall intervals may
+1466:             // overlap other threads; these two totals must not be summed.
+1467:             let replay_thread_cpu_ns = cpu_elapsed(page_cpu);
+1468:             independent_history_page_replay.push(json!({
+1469:                 "history_call_index": history_calls.len(),
+1470:                 "history_request_ended_ns": row["ended_ns"].clone(),
+1471:                 "replay_started_ns": replay_started_ns,
+1472:                 "replay_ended_ns": replay_ended_ns,
+1473:                 "replay_wall_ns": replay_ended_ns - replay_started_ns,
+1474:                 "replay_thread_cpu_ns": replay_thread_cpu_ns,
+1475:                 "prior_after": hex::encode(after),
+1476:                 "next_after": imported.as_ref().ok().map(hex::encode),
+1477:                 "replay_accepted": imported.is_ok(),
+1478:                 "replay_error": imported.as_ref().err(),
+1479:                 "native_import_observation": import_observer.snapshot(),
+1480:                 "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",

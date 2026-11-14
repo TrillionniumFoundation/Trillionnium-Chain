@@ -1,0 +1,938 @@
+{
+  "current_required_observation": {
+    "all_check_pages_complete": true,
+    "check_pages": 2,
+    "checks_observed": 146,
+    "head": "096c6b5f9b952c49389fd975515744074ba61317",
+    "required": [
+      {
+        "context": "repository-truth",
+        "observed_checks": [],
+        "observed_state": "ABSENT_FOR_CURRENT_HEAD",
+        "required_app_id": 15368
+      },
+      {
+        "context": "protocol-contract",
+        "observed_checks": [],
+        "observed_state": "ABSENT_FOR_CURRENT_HEAD",
+        "required_app_id": 15368
+      },
+      {
+        "context": "fuzz-smoke",
+        "observed_checks": [],
+        "observed_state": "ABSENT_FOR_CURRENT_HEAD",
+        "required_app_id": 15368
+      },
+      {
+        "context": "external-evidence-contract",
+        "observed_checks": [],
+        "observed_state": "ABSENT_FOR_CURRENT_HEAD",
+        "required_app_id": 15368
+      },
+      {
+        "context": "rust-baseline",
+        "observed_checks": [],
+        "observed_state": "ABSENT_FOR_CURRENT_HEAD",
+        "required_app_id": 15368
+      }
+    ],
+    "required_job_count": 0,
+    "required_strict": true,
+    "scope": "Timestamped closed GET receipts only; no claim of later state. Old N results are not assigned to N2.",
+    "workflow": {
+      "conclusion": null,
+      "created_at": "2026-11-14T11:10:50Z",
+      "event": "pull_request",
+      "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43588788281",
+      "id": 43588788281,
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "run_attempt": 1,
+      "status": "pending",
+      "updated_at": "2026-11-14T11:10:50Z"
+    }
+  },
+  "heads": {
+    "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+    "N_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+    "R1": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "R1_parents": [
+      "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+      "096c6b5f9b952c49389fd975515744074ba61317"
+    ],
+    "R1_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "limitations": [
+    "Full original ZIP integrity proves retained bytes, not all repository semantic correctness.",
+    "No new native or hosted tests, no workload/deadline/worker/Host-check changes, no source/ref/network write.",
+    "Calling-thread CPU and wall timings have different scopes; no additive CPU accounting or unique CFS/root-cause attribution is inferred.",
+    "The two N samples are independent of earlier C0/e40d observations; those older counts are not substituted.",
+    "Five named Rust PASS records and seven honest ACKs do not satisfy confirmation_report acceptance.",
+    "Four original pressure target flags are false, including overlap_demonstrated and full_native_state_equal; the exact guard is not reduced to a single flag.",
+    "Current-head pending / absent required contexts are not a pass, and are not a later freshness guarantee.",
+    "Temporary official-download URL queries and credential headers are excluded; safe file references and public artifact metadata remain."
+  ],
+  "original_GET_observation_intervals": [
+    {
+      "finished_at": "2026-11-14T11:39:35.432266+00:00",
+      "path": "initial-GET-v1/N-run43582713392.receipt.json",
+      "started_at": "2026-11-14T11:39:33.740841+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:49.504798+00:00",
+      "path": "initial-GET-v1/job132415017391-original-log.receipt.json",
+      "started_at": "2026-11-14T11:39:35.433517+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:37.000008+00:00",
+      "path": "initial-GET-v1/job132415017391.receipt.json",
+      "started_at": "2026-11-14T11:39:33.740933+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:53.136889+00:00",
+      "path": "initial-GET-v1/job132415017476-original-log.receipt.json",
+      "started_at": "2026-11-14T11:39:36.738708+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:35.251081+00:00",
+      "path": "initial-GET-v1/job132415017476.receipt.json",
+      "started_at": "2026-11-14T11:39:33.741042+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:36.737706+00:00",
+      "path": "initial-GET-v1/main-required-status-checks.receipt.json",
+      "started_at": "2026-11-14T11:39:35.252477+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:39:37.708213+00:00",
+      "path": "initial-GET-v1/pr847.receipt.json",
+      "started_at": "2026-11-14T11:39:33.740703+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:41:39.416533+00:00",
+      "path": "current-head-and-artifacts-GET-v1/N-run-original-artifacts.receipt.json",
+      "started_at": "2026-11-14T11:41:37.673044+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:41:42.458863+00:00",
+      "path": "current-head-and-artifacts-GET-v1/current-head-check-runs.receipt.json",
+      "started_at": "2026-11-14T11:41:37.672743+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:41:40.107501+00:00",
+      "path": "current-head-and-artifacts-GET-v1/current-head-legacy-status.receipt.json",
+      "started_at": "2026-11-14T11:41:37.672896+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:41:43.577429+00:00",
+      "path": "current-head-and-artifacts-GET-v1/current-head-workflow-runs.receipt.json",
+      "started_at": "2026-11-14T11:41:37.672977+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:41:42.278024+00:00",
+      "path": "current-head-and-artifacts-GET-v1/pr847-readback.receipt.json",
+      "started_at": "2026-11-14T11:41:39.418190+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:44:17.894911+00:00",
+      "path": "required-pagination-GET-v1/N-required-workflow-jobs.receipt.json",
+      "started_at": "2026-11-14T11:44:14.979103+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:44:17.093010+00:00",
+      "path": "required-pagination-GET-v1/N2-check-runs-page2.receipt.json",
+      "started_at": "2026-11-14T11:44:14.978800+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:44:16.470588+00:00",
+      "path": "required-pagination-GET-v1/N2-required-workflow-jobs.receipt.json",
+      "started_at": "2026-11-14T11:44:14.979047+00:00"
+    },
+    {
+      "finished_at": "2026-11-14T11:44:18.545155+00:00",
+      "path": "required-pagination-GET-v1/N2-required-workflow-run.receipt.json",
+      "started_at": "2026-11-14T11:44:14.978966+00:00"
+    }
+  ],
+  "r1_disposition": {
+    "N_to_N2_selected_protocol_files_identical": true,
+    "R1_public_policy_change": "Reviewed P1 immutable-prefix hash-state cache. No hosted 4-second acceptance result is supplied by this review.",
+    "R1_store_change": "Selected restoration to C0/M6 blob d596dc6bab16698cd18bcc15bcbbe1fafedf603e; not a measured 4-second performance remedy.",
+    "actual_R1_hosted_result_in_scope": false,
+    "ci_job_change": "Only owned-process collector exact count 14 to 16 in this six-path comparison; unrelated to protocol failure.",
+    "claimed_R1_failure": false,
+    "claimed_fixed": false,
+    "same_host_controller": true,
+    "same_native_guard": true,
+    "same_original_fixture": true
+  },
+  "samples": [
+    {
+      "actual_source_after": {
+        "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3992055587,
+          "tracked_entries": 41378,
+          "tracked_worktree_verified": true
+        },
+        "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+      },
+      "actual_source_before": {
+        "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+          "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3992055587,
+          "tracked_entries": 41378,
+          "tracked_worktree_verified": true
+        },
+        "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+      },
+      "artifact_id": 14111407094,
+      "confirmation_report": {
+        "bytes": 12179136,
+        "member": "from-zero-native/confirmation/report.json",
+        "sha256": "6ca59b1b4d4b0af4f3cd615a9ec1860e722fc1721bf5a36e8e071ae80e455748"
+      },
+      "host_result": {
+        "failure": null,
+        "final_host_errors": [],
+        "preparation_completed": true,
+        "systemd_run_exit": 1
+      },
+      "job_id": 132415017391,
+      "kind": "head",
+      "native_runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+          },
+          "passed": true,
+          "timed_out": false
+        }
+      ],
+      "phases": [
+        {
+          "ack_before_window_count": 7,
+          "client_confirmation_latency_ns": 3191524607,
+          "client_confirmed_transactions": 1,
+          "history_count": 7,
+          "honest_ack_count": 7,
+          "index": 0,
+          "mode": "attack-free-baseline",
+          "original_required_flags": {
+            "accounting_closed": true,
+            "client_confirmed_before_original_window_end": true,
+            "finite_business_target_met": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "no_attack_accepted": true,
+            "overlap_demonstrated": true,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "qualification_flags": {
+            "independent_operator_accepted": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "resource_fairness_qualified": false,
+            "work_profile_qualified": false
+          },
+          "replay_accepted_count": 7,
+          "replay_count": 7,
+          "requested_window_ns": 4000000000,
+          "submission_returned_after_deadline_count": 0,
+          "workers": 0
+        },
+        {
+          "ack_before_window_count": 7,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "history_count": 1,
+          "honest_ack_count": 7,
+          "index": 1,
+          "mode": "from-zero-pressure",
+          "original_required_flags": {
+            "accounting_closed": true,
+            "client_confirmed_before_original_window_end": false,
+            "finite_business_target_met": false,
+            "full_native_state_equal": false,
+            "invariant_target_met": true,
+            "no_attack_accepted": true,
+            "overlap_demonstrated": false,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "pressure_replays": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1793237335,
+              "next_after": null,
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": false,
+              "replay_ended_ns": 4090965490,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 1793263152,
+              "replay_thread_cpu_ns": 89051928,
+              "replay_wall_ns": 2297702338
+            }
+          ],
+          "qualification_flags": {
+            "independent_operator_accepted": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "resource_fairness_qualified": false,
+            "work_profile_qualified": false
+          },
+          "replay_accepted_count": 0,
+          "replay_count": 1,
+          "requested_window_ns": 4000000000,
+          "submission_returned_after_deadline_count": 0,
+          "workers": 16
+        }
+      ],
+      "terminal": {
+        "acceptance_passed": false,
+        "acceptance_stages": {
+          "confirmation_report": {
+            "before_validation": {
+              "bytes": 12179136,
+              "sha256": "6ca59b1b4d4b0af4f3cd615a9ec1860e722fc1721bf5a36e8e071ae80e455748",
+              "state": "present"
+            },
+            "error": "CONFIRMATION_TARGET",
+            "path": "confirmation/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 12179136,
+              "sha256": "6ca59b1b4d4b0af4f3cd615a9ec1860e722fc1721bf5a36e8e071ae80e455748",
+              "state": "present"
+            },
+            "status": "failed"
+          },
+          "service_report": {
+            "before_validation": {
+              "bytes": 3476593,
+              "sha256": "fa0178e36f48073a45d61b769d95d94342fc56a51a54323ef0a3e2ad83dc719f",
+              "state": "present"
+            },
+            "error": null,
+            "path": "native/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 3476593,
+              "sha256": "fa0178e36f48073a45d61b769d95d94342fc56a51a54323ef0a3e2ad83dc719f",
+              "state": "present"
+            },
+            "status": "passed"
+          },
+          "sustained_report": {
+            "before_validation": {
+              "bytes": 20876911,
+              "sha256": "3c20af8c96f6efdc79966066bf5aa4333febbd872443c5c5d6f2f75b0771ddaf",
+              "state": "present"
+            },
+            "error": null,
+            "path": "native/sustained/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 20876911,
+              "sha256": "3c20af8c96f6efdc79966066bf5aa4333febbd872443c5c5d6f2f75b0771ddaf",
+              "state": "present"
+            },
+            "status": "passed"
+          }
+        },
+        "finalization_completed": true,
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "exit_code": 0,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "timed_out": false
+          }
+        ],
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_acceptance_stages": [],
+        "unexecuted_native_tests": []
+      }
+    },
+    {
+      "actual_source_after": {
+        "commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3992055587,
+          "tracked_entries": 41378,
+          "tracked_worktree_verified": true
+        },
+        "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+      },
+      "actual_source_before": {
+        "commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "6936874e73bef2b6629c132e1a214f281f49ef3d",
+          "tested_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3992055587,
+          "tracked_entries": 41378,
+          "tracked_worktree_verified": true
+        },
+        "tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd"
+      },
+      "artifact_id": 14111816359,
+      "confirmation_report": {
+        "bytes": 13889043,
+        "member": "from-zero-native/confirmation/report.json",
+        "sha256": "1814ade47a1c616c96cdb95b5e510ff3ec07c922a43549f53a6f6e26ec4de68f"
+      },
+      "host_result": {
+        "failure": null,
+        "final_host_errors": [],
+        "preparation_completed": true,
+        "systemd_run_exit": 1
+      },
+      "job_id": 132415017476,
+      "kind": "prospective-merge",
+      "native_runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+          },
+          "passed": true,
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "named_execution": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+          },
+          "passed": true,
+          "timed_out": false
+        }
+      ],
+      "phases": [
+        {
+          "ack_before_window_count": 7,
+          "client_confirmation_latency_ns": 2877186997,
+          "client_confirmed_transactions": 1,
+          "history_count": 7,
+          "honest_ack_count": 7,
+          "index": 0,
+          "mode": "attack-free-baseline",
+          "original_required_flags": {
+            "accounting_closed": true,
+            "client_confirmed_before_original_window_end": true,
+            "finite_business_target_met": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "no_attack_accepted": true,
+            "overlap_demonstrated": true,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "qualification_flags": {
+            "independent_operator_accepted": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "resource_fairness_qualified": false,
+            "work_profile_qualified": false
+          },
+          "replay_accepted_count": 7,
+          "replay_count": 7,
+          "requested_window_ns": 4000000000,
+          "submission_returned_after_deadline_count": 0,
+          "workers": 0
+        },
+        {
+          "ack_before_window_count": 7,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "history_count": 2,
+          "honest_ack_count": 7,
+          "index": 1,
+          "mode": "from-zero-pressure",
+          "original_required_flags": {
+            "accounting_closed": true,
+            "client_confirmed_before_original_window_end": false,
+            "finite_business_target_met": false,
+            "full_native_state_equal": false,
+            "invariant_target_met": true,
+            "no_attack_accepted": true,
+            "overlap_demonstrated": false,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "pressure_replays": [
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 0,
+              "history_request_ended_ns": 1664592085,
+              "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "replay_accepted": true,
+              "replay_ended_ns": 3365724546,
+              "replay_error": null,
+              "replay_started_ns": 1664609731,
+              "replay_thread_cpu_ns": 72802894,
+              "replay_wall_ns": 1701114815
+            },
+            {
+              "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+              "history_call_index": 1,
+              "history_request_ended_ns": 3465165139,
+              "next_after": null,
+              "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "replay_accepted": false,
+              "replay_ended_ns": 4061195689,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE",
+              "replay_started_ns": 3465184758,
+              "replay_thread_cpu_ns": 36714448,
+              "replay_wall_ns": 596010931
+            }
+          ],
+          "qualification_flags": {
+            "independent_operator_accepted": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "resource_fairness_qualified": false,
+            "work_profile_qualified": false
+          },
+          "replay_accepted_count": 1,
+          "replay_count": 2,
+          "requested_window_ns": 4000000000,
+          "submission_returned_after_deadline_count": 0,
+          "workers": 16
+        }
+      ],
+      "terminal": {
+        "acceptance_passed": false,
+        "acceptance_stages": {
+          "confirmation_report": {
+            "before_validation": {
+              "bytes": 13889043,
+              "sha256": "1814ade47a1c616c96cdb95b5e510ff3ec07c922a43549f53a6f6e26ec4de68f",
+              "state": "present"
+            },
+            "error": "CONFIRMATION_TARGET",
+            "path": "confirmation/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 13889043,
+              "sha256": "1814ade47a1c616c96cdb95b5e510ff3ec07c922a43549f53a6f6e26ec4de68f",
+              "state": "present"
+            },
+            "status": "failed"
+          },
+          "service_report": {
+            "before_validation": {
+              "bytes": 3476276,
+              "sha256": "4cfe12a0d25355d8e544587b0be02ebea6bd36abc40a0c7f7ed5573969eec88c",
+              "state": "present"
+            },
+            "error": null,
+            "path": "native/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 3476276,
+              "sha256": "4cfe12a0d25355d8e544587b0be02ebea6bd36abc40a0c7f7ed5573969eec88c",
+              "state": "present"
+            },
+            "status": "passed"
+          },
+          "sustained_report": {
+            "before_validation": {
+              "bytes": 24333844,
+              "sha256": "c6b7b8ecbbcee06c8fe403794afbbcdb3303fd6d80926a8ace870ae3e614410b",
+              "state": "present"
+            },
+            "error": null,
+            "path": "native/sustained/report.json",
+            "retained_matches_before_validation": true,
+            "retained_report": {
+              "bytes": 24333844,
+              "sha256": "c6b7b8ecbbcee06c8fe403794afbbcdb3303fd6d80926a8ace870ae3e614410b",
+              "state": "present"
+            },
+            "status": "passed"
+          }
+        },
+        "finalization_completed": true,
+        "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "native_invocations": [
+          {
+            "exit_code": 0,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "status": "returned",
+            "timed_out": false
+          },
+          {
+            "exit_code": 0,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "status": "returned",
+            "timed_out": false
+          }
+        ],
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_acceptance_stages": [],
+        "unexecuted_native_tests": []
+      }
+    }
+  ],
+  "schema": "trnm-N-two-protocol-failures-and-current-N2-review-v1",
+  "scope": "Read-only completed-original acquisition, bounded original report analysis, and immutable N/N2/R1 selected-source comparison; no tests or artifact code executed.",
+  "sealed_at_utc": "2026-11-14T12:00:28.908478+00:00",
+  "source_comparison": {
+    "files": [
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": true,
+        "path": "scripts/ci/run_from_zero_native.py",
+        "revisions": {
+          "N": {
+            "bytes": 115087,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw",
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+            "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+          },
+          "N2": {
+            "bytes": 115087,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw",
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+            "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+          },
+          "R1": {
+            "bytes": 115087,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_native.py.2aba481576bc5a09a2d546e467e1b19d6e9de7bd.raw",
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+            "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+          }
+        }
+      },
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": true,
+        "path": "scripts/ci/run_from_zero_host.py",
+        "revisions": {
+          "N": {
+            "bytes": 28366,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw",
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+            "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+          },
+          "N2": {
+            "bytes": 28366,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw",
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+            "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+          },
+          "R1": {
+            "bytes": 28366,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--run_from_zero_host.py.df0643a36ab7110d0b5af9d13cd9e291bbf022f0.raw",
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+            "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+          }
+        }
+      },
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": false,
+        "path": "scripts/ci/ci_job.sh",
+        "revisions": {
+          "N": {
+            "bytes": 46605,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--ci_job.sh.bfbec4fd0d5565424b83ff70ae508126c5efd956.raw",
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+            "sha256": "fd01401165e843100a375caccc3122bc97e97459f59c723287eece53350f20bc"
+          },
+          "N2": {
+            "bytes": 46605,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--ci_job.sh.bfbec4fd0d5565424b83ff70ae508126c5efd956.raw",
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+            "sha256": "fd01401165e843100a375caccc3122bc97e97459f59c723287eece53350f20bc"
+          },
+          "R1": {
+            "bytes": 46605,
+            "captured_source": "/private/tmp/chain-N-protocol-43582713392-readonly-20261114-v1/protocol-source-comparison-v1/scripts--ci--ci_job.sh.bbe1c63b258cb59042d1b389f598d54290cd5d9f.raw",
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+            "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+          }
+        }
+      },
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": true,
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "revisions": {
+          "N": {
+            "bytes": 79324,
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+            "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+          },
+          "N2": {
+            "bytes": 79324,
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+            "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+          },
+          "R1": {
+            "bytes": 79324,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+            "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+          }
+        }
+      },
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "revisions": {
+          "N": {
+            "bytes": 433736,
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+            "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+          },
+          "N2": {
+            "bytes": 433736,
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+            "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+          },
+          "R1": {
+            "bytes": 438782,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+            "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+          }
+        }
+      },
+      {
+        "N_equals_N2": true,
+        "N_equals_R1": false,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "revisions": {
+          "N": {
+            "bytes": 391556,
+            "commit": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+            "git_blob": "3bce39ce1aef265a18f304085bc08c0240547065",
+            "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+          },
+          "N2": {
+            "bytes": 391556,
+            "commit": "096c6b5f9b952c49389fd975515744074ba61317",
+            "git_blob": "3bce39ce1aef265a18f304085bc08c0240547065",
+            "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+          },
+          "R1": {
+            "bytes": 391470,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "git_blob": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+            "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+          }
+        }
+      }
+    ],
+    "no_lazy_fetch": true,
+    "no_source_ref_mutation": true,
+    "patch": {
+      "bytes": 19930,
+      "sha256": "606ec20f734aa44d5e978b23ab2974611a2a48f02f20c12fabb0e2ba5358051f"
+    },
+    "revisions": {
+      "N": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "N2": "096c6b5f9b952c49389fd975515744074ba61317",
+      "R1": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "schema": "trnm-N-N2-R1-selected-protocol-source-comparison-v1"
+  },
+  "status": "CLOSED_ORIGINAL_FAILURES_CONFIRMED_R1_HOSTED_ACCEPTANCE_UNPROVEN"
+}

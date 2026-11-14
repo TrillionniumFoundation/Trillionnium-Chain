@@ -1,0 +1,1155 @@
+{
+  "at_utc": "2026-11-14T11:20:34.071825+00:00",
+  "bytes_read": 145824,
+  "count": 23,
+  "files": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_budget.py",
+        "-v"
+      ],
+      "bytes": 9494,
+      "expected_count": 58,
+      "kind": "python_pass",
+      "label": "original-frozen-budget-58",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-frozen-budget-58.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 58,
+        "skipped": 0,
+        "tail": "ion_and_custodian_risks_get_no_probability) ... ok\n\n----------------------------------------------------------------------\nRan 58 tests in 0.094s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-frozen-budget-58.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "037fa79f9f7e4babe3962267836287f602af9adbf647dbbd599f2b1265ded624",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_current_v2.py",
+        "-v"
+      ],
+      "bytes": 3708,
+      "expected_count": 25,
+      "kind": "python_pass",
+      "label": "original-current-correspondence-25",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-current-correspondence-25.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 25,
+        "skipped": 0,
+        "tail": "s_and_qualification_promotions_are_refused) ... ok\n\n----------------------------------------------------------------------\nRan 25 tests in 0.203s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-current-correspondence-25.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "53d7ceea14eefc58233c833ced1505b7cd231516969af92a7ed0a7bbeaf4f675",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_composition.py",
+        "-v"
+      ],
+      "bytes": 9997,
+      "expected_count": 60,
+      "kind": "python_pass",
+      "label": "original-current-composition-60",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-current-composition-60.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 60,
+        "skipped": 0,
+        "tail": "6_current_declared_sources_and_four_scopes) ... ok\n\n----------------------------------------------------------------------\nRan 60 tests in 0.535s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-current-composition-60.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "46846ce395f1a0b4a539695f54dcf479cd190014799b705cb526ce85fa58beeb",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "bytes": 7366,
+      "expected_count": 57,
+      "kind": "python_pass",
+      "label": "original-direct-chain-claim-guard",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-direct-chain-claim-guard.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 57,
+        "skipped": 0,
+        "tail": "_unbounded_or_unaccepted_candidate_refused) ... ok\n\n----------------------------------------------------------------------\nRan 57 tests in 0.940s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/original-direct-chain-claim-guard.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "783914a4dd363cd71603c307d451f52cecf4f774c7bdb9c90e8f9c0643ddf10f",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/pq_lifetime_current_v2.py"
+      ],
+      "bytes": 16148,
+      "expected_count": null,
+      "kind": "inspector_hold",
+      "label": "actual-current-correspondence",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-current-correspondence.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/frozen_model/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/frozen_model/assumptions/0/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/1/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/2/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/3/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/4/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/5/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/6/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/7/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/assumptions/8/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/frozen_model/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/frozen_model/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/frozen_model/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/frozen_model/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/frozen_model/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/frozen_model/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-current-correspondence.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "97841f289aeaff5760e91155394dc1a5b3c0c890534f2c00695e340e48e43bff",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/pq_lifetime_composition.py"
+      ],
+      "bytes": 25699,
+      "expected_count": null,
+      "kind": "inspector_hold",
+      "label": "actual-current-composition",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-current-composition.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_query_tail_arithmetic/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_root_arithmetic/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/conditional_root_arithmetic/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/conditional_root_arithmetic/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/conditional_root_arithmetic/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/resource_instances/common/status",
+            "type": "str",
+            "value": "uninstantiated"
+          },
+          {
+            "pointer": "/resource_instances/ml/status",
+            "type": "str",
+            "value": "uninstantiated"
+          },
+          {
+            "pointer": "/resource_instances/shared/status",
+            "type": "str",
+            "value": "uninstantiated"
+          },
+          {
+            "pointer": "/resource_instances/slh/status",
+            "type": "str",
+            "value": "uninstantiated"
+          },
+          {
+            "pointer": "/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-current-composition.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "91164bfd075ff2a66d4c1075f1929899eff3b1efe63e120740ab5088d5d70188",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "bytes": 20198,
+      "expected_count": null,
+      "kind": "inspector_hold",
+      "label": "actual-chain-claim-guard",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-chain-claim-guard.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/gates/authorization/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/capacity_and_invalid_input/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/independent_end_to_end/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/lifetime_budget/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/migration_and_rollback/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/proof_pq128/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/gates/quantum_mining_fork_choice/status",
+            "type": "str",
+            "value": "UNQUALIFIED"
+          },
+          {
+            "pointer": "/lifetime_budget/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/lifetime_budget/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/0/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/1/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/2/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/3/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/4/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/5/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/6/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/7/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/assumptions/8/status",
+            "type": "str",
+            "value": "unmet"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/frozen_model/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/lifetime_budget/theorem_applicability_verified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/lifetime_budget/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/pq_128_qualified",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/status",
+            "type": "str",
+            "value": "HOLD"
+          },
+          {
+            "pointer": "/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v2/actual-chain-claim-guard.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "de56e922c3ef856868b4b377f994f5799e4e936af36124f120ff10ffae837a57",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_",
+        "--",
+        "--nocapture"
+      ],
+      "bytes": 11727,
+      "expected_count": null,
+      "kind": "mac_compile_hold",
+      "label": "cached-policy-three-controls",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cached-policy-three-controls.stderr",
+      "parsed": {
+        "compile_error_count": 11,
+        "errors": [
+          "error[E0432]: unresolved import `crate::operator_continuous_test_support`",
+          "error[E0433]: cannot find `operator_continuous_test_support` in `crate`",
+          "error[E0433]: cannot find `operator_continuous_test_support` in `crate`",
+          "error[E0425]: cannot find function `mkfifoat` in module `rustix::fs`",
+          "error[E0425]: cannot find function `mknodat` in module `rustix::fs`",
+          "error[E0425]: cannot find function `mknodat` in module `rustix::fs`",
+          "error[E0425]: cannot find function `mknodat` in module `rustix::fs`",
+          "error[E0308]: mismatched types",
+          "error[E0277]: can't compare `u64` with `i32`",
+          "error[E0308]: mismatched types",
+          "error[E0277]: can't compare `u32` with `u16`"
+        ],
+        "tail": " invocation\n     = note: this error originates in the macro `partial_eq_impl` which comes from the expansion of the macro `partialeq_numeric` (in Nightly builds, run with -Z macro-backtrace for more info)\n\nSome errors have detailed explanations: E0277, E0308, E0425, E0432, E0433.\nFor more information about an error, try `rustc --explain E0277`.\nwarning: `trnm-pon-node` (lib test) generated 1 warning\nerror: could not compile `trnm-pon-node` (lib test) due to 11 previous errors; 1 warning emitted\n",
+        "tests_executed": false
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/validation-v1/cached-policy-three-controls.stderr",
+      "producer_exit": 101,
+      "raw_verified": true,
+      "sha256": "0641c62dec082a6ed2e926ad4415366940c600f47f025c376f8879a2f8b843b8",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_"
+      ],
+      "bytes": 398,
+      "expected_count": 3,
+      "kind": "rust_serial",
+      "label": "cached-policy-three-controls",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stdout",
+      "parsed": {
+        "failed": 0,
+        "ignored": 0,
+        "methods": [
+          "ingress::public_v3::tests::cached_policy_id_clones_are_independent_across_callers",
+          "ingress::public_v3::tests::cached_policy_id_matches_original_hash_for_public_fields",
+          "ingress::public_v3::tests::cached_policy_id_retains_all_six_framed_suffix_parts"
+        ],
+        "passed": 3,
+        "summary": "test result: ok. 3 passed; 0 failed; 0 ignored;"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cached-policy-three-controls.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "51e31a9d94fc4b58a9e7c981d8f6e9b43d333b0fd700c23578ac0ed266e8c636",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_"
+      ],
+      "bytes": 4910,
+      "expected_count": null,
+      "kind": "rust_warning",
+      "label": "cached-policy-three-controls",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/cached-policy-three-controls.stderr",
+      "parsed": {
+        "last_lines": [
+          "   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-transport)",
+          "   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-mempool)",
+          "   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-pon-node)",
+          "    Finished `release` profile [optimized] target(s) in 4m 31s",
+          "     Running unittests src/lib.rs (/home/qian-qi/chain-final-consolidation-20261114-root/target/release/deps/trnm_pon_node-7e72ecc7d68abf1a)"
+        ],
+        "producer_returncode": 0,
+        "sqlite_unqualified_warning_retained": true
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/cached-policy-three-controls.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "e4a50bb5700de995fedb6dbf8c34c36ddbfb5706e7351f3020727746704bf5dc",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--",
+        "--exact"
+      ],
+      "bytes": 219,
+      "expected_count": 1,
+      "kind": "rust_serial",
+      "label": "original-profile-golden",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stdout",
+      "parsed": {
+        "failed": 0,
+        "ignored": 0,
+        "methods": [
+          "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+        ],
+        "passed": 1,
+        "summary": "test result: ok. 1 passed; 0 failed; 0 ignored;"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/original-profile-golden.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "e04a0cef05eb9a93c83ed5fc5474c92e01f3d90c9f20b8dcad96e5136ebc1b39",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--",
+        "--exact"
+      ],
+      "bytes": 304,
+      "expected_count": null,
+      "kind": "rust_warning",
+      "label": "original-profile-golden",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/original-profile-golden.stderr",
+      "parsed": {
+        "last_lines": [
+          "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute",
+          "    Finished `release` profile [optimized] target(s) in 0.28s",
+          "     Running unittests src/lib.rs (/home/qian-qi/chain-final-consolidation-20261114-root/target/release/deps/trnm_pon_node-7e72ecc7d68abf1a)"
+        ],
+        "producer_returncode": 0,
+        "sqlite_unqualified_warning_retained": true
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/original-profile-golden.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "398bc153fd67b3c23ac9141ed028c87603b6bb872b67de4f1e718f06cd75a4ed",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "bytes": 4061,
+      "expected_count": null,
+      "kind": "clippy",
+      "label": "strict-all-target-all-feature-clippy",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-validation-v1/execution-v1/strict-all-target-all-feature-clippy.stderr",
+      "parsed": {
+        "last_lines": [
+          "    Checking trnm-release-bundle v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-release-bundle)",
+          "    Checking trnm-transport v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-transport)",
+          "    Checking trnm-mempool v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-mempool)",
+          "    Checking trnm-pon-node v0.1.0 (/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-source-v1/trillionnium/crates/trnm-pon-node)",
+          "    Finished `release` profile [optimized] target(s) in 43.82s"
+        ],
+        "producer_returncode": 0,
+        "sqlite_unqualified_warning_retained": true
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/serial/execution-v1/strict-all-target-all-feature-clippy.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "06282c056335aba0f428dac6a11f380cf11f40ab049c03e0c744eb96a7ddf342",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_"
+      ],
+      "bytes": 398,
+      "expected_count": 3,
+      "kind": "rust_default",
+      "label": "cached-policy-three-controls",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/cached-policy-three-controls.stdout",
+      "parsed": {
+        "failed": 0,
+        "ignored": 0,
+        "methods": [
+          "ingress::public_v3::tests::cached_policy_id_retains_all_six_framed_suffix_parts",
+          "ingress::public_v3::tests::cached_policy_id_matches_original_hash_for_public_fields",
+          "ingress::public_v3::tests::cached_policy_id_clones_are_independent_across_callers"
+        ],
+        "passed": 3,
+        "summary": "test result: ok. 3 passed; 0 failed; 0 ignored;"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/cached-policy-three-controls.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "dd1283e72db74665c8926af3a9e2f073667d15effd47a653a481471f948f1890",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::cached_policy_id_"
+      ],
+      "bytes": 304,
+      "expected_count": null,
+      "kind": "rust_warning",
+      "label": "cached-policy-three-controls",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/cached-policy-three-controls.stderr",
+      "parsed": {
+        "last_lines": [
+          "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute",
+          "    Finished `release` profile [optimized] target(s) in 0.20s",
+          "     Running unittests src/lib.rs (/home/qian-qi/chain-final-consolidation-20261114-root/target/release/deps/trnm_pon_node-7e72ecc7d68abf1a)"
+        ],
+        "producer_returncode": 0,
+        "sqlite_unqualified_warning_retained": true
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/cached-policy-three-controls.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "2f10f1b1a0102958db6e7d5f4912daa3842dad7e3f45b721b636a089871cc79a",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--",
+        "--exact"
+      ],
+      "bytes": 219,
+      "expected_count": 1,
+      "kind": "rust_default",
+      "label": "original-profile-golden",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/original-profile-golden.stdout",
+      "parsed": {
+        "failed": 0,
+        "ignored": 0,
+        "methods": [
+          "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+        ],
+        "passed": 1,
+        "summary": "test result: ok. 1 passed; 0 failed; 0 ignored;"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/original-profile-golden.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "e04a0cef05eb9a93c83ed5fc5474c92e01f3d90c9f20b8dcad96e5136ebc1b39",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--",
+        "--exact"
+      ],
+      "bytes": 304,
+      "expected_count": null,
+      "kind": "rust_warning",
+      "label": "original-profile-golden",
+      "original_path": "/home/qian-qi/chain-final-consolidation-20261114-root/policy-prefix-linux-default-harness-v1/original-profile-golden.stderr",
+      "parsed": {
+        "last_lines": [
+          "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute",
+          "    Finished `release` profile [optimized] target(s) in 0.05s",
+          "     Running unittests src/lib.rs (/home/qian-qi/chain-final-consolidation-20261114-root/target/release/deps/trnm_pon_node-7e72ecc7d68abf1a)"
+        ],
+        "producer_returncode": 0,
+        "sqlite_unqualified_warning_retained": true
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/linux-closed-originals-v1/payloads/default/original-profile-golden.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "678c21876f8f2c124c9887092a0fabd14429edb04f85a73274dd09db6f89dc3b",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_policy_read.py",
+        "-v"
+      ],
+      "bytes": 1222,
+      "expected_count": 7,
+      "kind": "python_pass",
+      "label": "original-policy-controls",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/original-policy-controls.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 7,
+        "skipped": 0,
+        "tail": "_unknown_digest_and_claimed_revision_refuse) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.025s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/original-policy-controls.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "58895853631aef371cbfba19b4ca6a159a81e9be71b942868cfa633d5cb80df3",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_hash_use_contract.py",
+        "-v"
+      ],
+      "bytes": 5406,
+      "expected_count": 33,
+      "kind": "python_pass",
+      "label": "original-hash-use-controls",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/original-hash-use-controls.stderr",
+      "parsed": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 33,
+        "skipped": 0,
+        "tail": "m_original_content_or_recovered_provenance) ... ok\n\n----------------------------------------------------------------------\nRan 33 tests in 0.094s\n\nOK\n"
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/original-hash-use-controls.stderr",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "85d6d5954e159c6f1f10356bd7b4602856feec1c4a8b614944f1a63a2d1f4357",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/hash_use_contract.py"
+      ],
+      "bytes": 6392,
+      "expected_count": null,
+      "kind": "hash_use_scope",
+      "label": "actual-hash-use-inspect",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/actual-hash-use-inspect.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/actual_lifetime_failure_bound",
+            "type": "NoneType",
+            "value": null
+          },
+          {
+            "pointer": "/complete_callgraph_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/composition_coverage_proved",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/status",
+            "type": "str",
+            "value": "HOLD_NO_GO"
+          },
+          {
+            "pointer": "/whole_chain_pq_qualified",
+            "type": "bool",
+            "value": false
+          }
+        ],
+        "top_keys": [
+          "actual_lifetime_failure_bound",
+          "complete_callgraph_coverage_proved",
+          "composition_coverage_proved",
+          "contract_satisfied",
+          "declared_source_count",
+          "declared_use_count",
+          "manifest_sha256",
+          "per_use_migration_review",
+          "production_activation",
+          "proof_parameter_labels_establish_qrom_soundness",
+          "query_exponents_are_failure_probabilities",
+          "review_base_revision",
+          "reviewed_semantics_sha256",
+          "reviewed_source_map_sha256",
+          "schema",
+          "security_bits",
+          "source_files_checked",
+          "source_hashes_supply_security_bits",
+          "source_revision_authenticated",
+          "source_semantics_refinement_proved",
+          "status",
+          "whole_chain_hash_query_scope_closed",
+          "whole_chain_pq_qualified"
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/static-and-python-validation-v1/actual-hash-use-inspect.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "824d39f5fa137b255e843deba228338e0330810a2667cd1af0910c6812d4b999",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_budget.py",
+        "-v"
+      ],
+      "bytes": 16485,
+      "expected_count": null,
+      "kind": "prior_tmpdir_hold",
+      "label": "original-frozen-budget-58",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58.stderr",
+      "parsed": {
+        "error_events": 4,
+        "error_events_include_two_subtests_under_one_method": true,
+        "failure_events": 1,
+        "symlink_source_refusal_present": true,
+        "tail": "~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 2 != 0 : {\"reason\": \"symlink source refused: config/pon/pq128-lifetime-budget-v1.json\", \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"status\": \"REFUSE\"}\n\n\n----------------------------------------------------------------------\nRan 58 tests in 0.089s\n\nFAILED (failures=1, errors=4)\n",
+        "test_methods_run": 58,
+        "top_level_ok_methods": 54
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/current-consumer-validation-v1/original-frozen-budget-58.stderr",
+      "producer_exit": 1,
+      "raw_verified": true,
+      "sha256": "6fc70d6c1b733db71a2a70514f2f07f09daec6e86c7410d6cb337abde2b4b523",
+      "stream": "stderr"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "bytes": 558,
+      "expected_count": null,
+      "kind": "contract_output",
+      "label": "actual-corpus",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-corpus.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/cryptographic_acceptance",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/node_activated",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/status",
+            "type": "str",
+            "value": "HOLD_NO_GO"
+          }
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-corpus.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "4900497da1e909d890edcce4f18af42a7385257351fdc971d1453e9945ede60e",
+      "stream": "stdout"
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "bytes": 307,
+      "expected_count": null,
+      "kind": "contract_output",
+      "label": "actual-repository-including-ci-contract",
+      "original_path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-repository-including-ci-contract.stdout",
+      "parsed": {
+        "selected_flags": [
+          {
+            "pointer": "/activation",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "pointer": "/runtime_implemented",
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      "path": "/private/tmp/chain-public-policy-prefix-cache-evidence-20261114-v1/final-contract-validation-v1/actual-repository-including-ci-contract.stdout",
+      "producer_exit": 0,
+      "raw_verified": true,
+      "sha256": "6c792923559b5e03ab060ceb02dbe59d877a7f08709aa560ed57ffca9b960699",
+      "stream": "stdout"
+    }
+  ],
+  "no_originals_modified": true,
+  "schema": "trnm-P1-independent-closed-log-documentation-review-v1",
+  "scope": "Pinned closed raw streams supporting documented separate failures/serial/default passes and inspector scope; not a new run or hosted acceptance",
+  "status": "READ_ONLY_RECEIPT_CHECKS_PASS",
+  "tests_or_helpers_executed": false
+}

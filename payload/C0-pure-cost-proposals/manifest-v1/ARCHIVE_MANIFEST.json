@@ -1,0 +1,848 @@
+{
+  "archive_prefix": "C0-pure-cost-proposals",
+  "byte_cap": 10485760,
+  "file_count": 90,
+  "files": [
+    {
+      "bytes": 2146,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/candidate-impact-final-v1/EVIDENCE_INDEX.json"
+      },
+      "path": "C0-pure-cost-proposals/candidate-impact-final-v1/EVIDENCE_INDEX.json",
+      "sha256": "d973b8b33d8766f977af75010e88bd18e47aaddbcb792116f43e6a9ed7e2fff7"
+    },
+    {
+      "bytes": 6379,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/candidate-impact-final-v1/README.md"
+      },
+      "path": "C0-pure-cost-proposals/candidate-impact-final-v1/README.md",
+      "sha256": "c8149106c8b61fc492b2c096c92ec2dc6042d3f4b46737d769cccac3a469199c"
+    },
+    {
+      "bytes": 4142,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/candidate-impact-final-v1/review.json"
+      },
+      "path": "C0-pure-cost-proposals/candidate-impact-final-v1/review.json",
+      "sha256": "9a3b668adc6cc2faaa9b7669209d5e9eb8168e41f169d9699b9476a2e8f2f79c"
+    },
+    {
+      "bytes": 2794,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-candidate-final-v1/EVIDENCE_INDEX.json"
+      },
+      "path": "C0-pure-cost-proposals/nonce-candidate-final-v1/EVIDENCE_INDEX.json",
+      "sha256": "74b24023e823013769213a1196e914b1747ca9aa88b816726f28744d95542203"
+    },
+    {
+      "bytes": 7751,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-candidate-final-v1/README.md"
+      },
+      "path": "C0-pure-cost-proposals/nonce-candidate-final-v1/README.md",
+      "sha256": "f8ade0d4bf430924ad2b337298b690cc78aa5267fee09af47ad7d5dfd8b5a46a"
+    },
+    {
+      "bytes": 6343,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-candidate-final-v1/review.json"
+      },
+      "path": "C0-pure-cost-proposals/nonce-candidate-final-v1/review.json",
+      "sha256": "0458f0a9506d6f382fa7cb7a06c30acc644ac17756b9a8476eb077f02c2f7deb"
+    },
+    {
+      "bytes": 48967,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-contract-selected-v1/profile-vectors.json.original"
+      },
+      "path": "C0-pure-cost-proposals/nonce-contract-selected-v1/profile-vectors.json.original",
+      "sha256": "944b06c216cdf40c1c8c0ac44960ef21bd4341119298585d407267b2e8d5863e"
+    },
+    {
+      "bytes": 8820,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-contract-selected-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/nonce-contract-selected-v1/summary.json",
+      "sha256": "e20e607b46236dafe48381c4683e22f051a069b8b64896b7e6278cb34987e0c7"
+    },
+    {
+      "bytes": 17793,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-production-callers-v1/exact-callers-search.stdout"
+      },
+      "path": "C0-pure-cost-proposals/nonce-production-callers-v1/exact-callers-search.stdout",
+      "sha256": "316386fa4ef2a4d309bcf8e14263011b4b602766d673ea7298ddb053b6c69cf0"
+    },
+    {
+      "bytes": 22636,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-production-callers-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/nonce-production-callers-v1/summary.json",
+      "sha256": "95c1d74553a756f8fa9e28fe673b279f128d0cf59752ba6976a9d575bd21c2e0"
+    },
+    {
+      "bytes": 1433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--main.rs.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--main.rs.txt",
+      "sha256": "25eefe482060f7d82c3889d6dd143e2bd31876e34c24c09bc1b4151dbbd296b6"
+    },
+    {
+      "bytes": 1303,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--peer_polling.rs.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--peer_polling.rs.txt",
+      "sha256": "ad6de6ccd90ec5f81fa0ca01c391d7a1c3b46cad068e0d7dbd6e4e8372e9c771"
+    },
+    {
+      "bytes": 2409,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--public_submit.rs.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-production-callers-v1/trillionnium--crates--trnm-pon-node--src--public_submit.rs.txt",
+      "sha256": "c0fe609fe7c0e1545717de46b4ef1f84f1641fd7a157add1a1a3d79c1c56a551"
+    },
+    {
+      "bytes": 37108,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/normative-exact-search.stdout"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/normative-exact-search.stdout",
+      "sha256": "87fe9bde3bd3ba62c5bca979d95c5a30cd36005fe4fdae69a5449ab9026abce7"
+    },
+    {
+      "bytes": 14972,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/summary.json",
+      "sha256": "ea51c112facfd32d8ca3f6c803e3e14af4d613142aff4eec9beea60475cf45fe"
+    },
+    {
+      "bytes": 631,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.0.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.0.txt",
+      "sha256": "b5526dba2510ad9018acb219f8c1478beed85ea6e74fab33b5ffc1a2e91fb0c2"
+    },
+    {
+      "bytes": 6547,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.1.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.1.txt",
+      "sha256": "ddcc85597048b61fe147d334164d68079cbbf2549a24409809fd301e9fb39c56"
+    },
+    {
+      "bytes": 1936,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.2.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.2.txt",
+      "sha256": "4d6c6221643b06dbc0ab4844dee7133e50aa4e2ed6f324252314f21a5f0e6f4e"
+    },
+    {
+      "bytes": 969,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.3.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.3.txt",
+      "sha256": "92958859b5b2eba361708c9538f65f9303cbc2ef4f6be389c035d7f11d0a0185"
+    },
+    {
+      "bytes": 10456,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.4.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.4.txt",
+      "sha256": "5d2481797a36530d6230c494ad3f410542f9050ac871965d6f02141b4ba23437"
+    },
+    {
+      "bytes": 9388,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.5.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.5.txt",
+      "sha256": "96d871e8c279bff25111630f0199df66d93e70d1686855bcfb23a25a27d583f7"
+    },
+    {
+      "bytes": 4260,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.0.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.0.txt",
+      "sha256": "6b9b0621064831720ebb511f875f1d45af327ada99aea450f67482af733b5131"
+    },
+    {
+      "bytes": 4472,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.1.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.1.txt",
+      "sha256": "93aa14996123e9e7a2cf7b99c3a0c5400231c6ec03f6f613b6ac41ce91d5774d"
+    },
+    {
+      "bytes": 4640,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.2.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs.2.txt",
+      "sha256": "e7e71a87748f85c09c68c900cdab85d926078f4fb875a267c07a835e851a55a8"
+    },
+    {
+      "bytes": 685,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/nonce-proposal-inputs-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs.0.txt"
+      },
+      "path": "C0-pure-cost-proposals/nonce-proposal-inputs-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs.0.txt",
+      "sha256": "d0bec014b4022c3994d7a7185dd73425d69ddb8fd1ef92dac4e791bb800c5da9"
+    },
+    {
+      "bytes": 54959,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq-root-dependency-register-v3.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--pq-root-dependency-register-v3.json.original",
+      "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+    },
+    {
+      "bytes": 18358,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-budget-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--pq128-lifetime-budget-v1.json.original",
+      "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc"
+    },
+    {
+      "bytes": 13166,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-composition-v2.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--pq128-lifetime-composition-v2.json.original",
+      "sha256": "035053b5e938801ff15fc091898519d47ffb4fc8065502cf989f45535f893b26"
+    },
+    {
+      "bytes": 22575,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-lifetime-example-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--pq128-lifetime-example-v1.json.original",
+      "sha256": "1445acf89060118c4afd64e881fa3fc77f3daca6ab30ca5b0ca675817080ec57"
+    },
+    {
+      "bytes": 3017,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--pq128-source-lock-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--pq128-source-lock-v1.json.original",
+      "sha256": "59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb"
+    },
+    {
+      "bytes": 6997,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-lifetime-current-source-v2.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-lifetime-current-source-v2.json.original",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    {
+      "bytes": 15482,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-current-required-tests-v2.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-current-required-tests-v2.json.original",
+      "sha256": "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed"
+    },
+    {
+      "bytes": 13952,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-required-tests-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-closure-required-tests-v1.json.original",
+      "sha256": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f"
+    },
+    {
+      "bytes": 10175,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-current-required-tests-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-current-required-tests-v1.json.original",
+      "sha256": "88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363"
+    },
+    {
+      "bytes": 9971,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-current-source-observation-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-current-source-observation-v1.json.original",
+      "sha256": "7eac13d310d91177dfbdbfd1adc70af4ccfe5eddb64821558e3fa4a109b43353"
+    },
+    {
+      "bytes": 50313,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-current-v2.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-current-v2.json.original",
+      "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+    },
+    {
+      "bytes": 6875,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-implementation-v1.json.original",
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "bytes": 10677,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-required-tests-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-required-tests-v1.json.original",
+      "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+    },
+    {
+      "bytes": 3970,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--config--pon--w1-qrom-supplemental-tests-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--config--pon--w1-qrom-supplemental-tests-v1.json.original",
+      "sha256": "fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307"
+    },
+    {
+      "bytes": 34109,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_BUDGET_V1.md.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_BUDGET_V1.md.original",
+      "sha256": "085784f77f915f990496ea64f029dbce452642646c3b717a151f02fa7e9895c0"
+    },
+    {
+      "bytes": 22739,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--docs--security--PQ128_LIFETIME_COMPOSITION_V2.md.original",
+      "sha256": "69973d73b1278a3573724baeddc7c9ccf93b1632eab773f7bba1d8d755ffef59"
+    },
+    {
+      "bytes": 113472,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--check_pq_research_integration.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--check_pq_research_integration.py.original",
+      "sha256": "a84324de473404cdb6c78f39e7e15ba4c448ac7aa994dbe5917ca0eab17bf03d"
+    },
+    {
+      "bytes": 9848,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_authority_surface_scan.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--pq_authority_surface_scan.py.original",
+      "sha256": "440ac658941fbe117109f06501e219b8756c39d82f8a5323b96926b44e57be49"
+    },
+    {
+      "bytes": 14584,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_chain_claim_guard.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--pq_chain_claim_guard.py.original",
+      "sha256": "9336e2030200d70664152bd3259de0d31c6512090e5dfdd7c64017767feaf744"
+    },
+    {
+      "bytes": 20543,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_budget.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_budget.py.original",
+      "sha256": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e"
+    },
+    {
+      "bytes": 26814,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_composition.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--pq_lifetime_composition.py.original",
+      "sha256": "83170b4a37571e53af2b2d0bbae914a111dfafe0f5324dbc25b3f695212bbc8a"
+    },
+    {
+      "bytes": 25957,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--pq_root_dependency_register.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--pq_root_dependency_register.py.original",
+      "sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c"
+    },
+    {
+      "bytes": 13674,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--test_pon_public_v3_policy_read.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--test_pon_public_v3_policy_read.py.original",
+      "sha256": "f423a03fa0757b21927dbcb5e5ed977d729aecefee131d725a5f7be56a2c706f"
+    },
+    {
+      "bytes": 9498,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_controls.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_controls.py.original",
+      "sha256": "71b68fe4cf9486d9d6b6fd6b370a34f3749800a09f7c9dd093767f4b52e1e487"
+    },
+    {
+      "bytes": 14367,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_current_controls.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--w1_qrom_closure_current_controls.py.original",
+      "sha256": "92994b799069282b9aa0b1531e91bd8105650c1a61aed72260377b9125478148"
+    },
+    {
+      "bytes": 24631,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_current_ci.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--w1_qrom_current_ci.py.original",
+      "sha256": "b171ff84df6472e29738425c038e5830dab17e09dc276c3a4c59bd2e08d833d8"
+    },
+    {
+      "bytes": 8484,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_proof_chain_controls.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--w1_qrom_proof_chain_controls.py.original",
+      "sha256": "a75fcd1414eb9c83dbfefd80a39d4fac24524977fe5068c6d0079b70371a04bb"
+    },
+    {
+      "bytes": 10275,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--ci--w1_qrom_supplemental_controls.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--ci--w1_qrom_supplemental_controls.py.original",
+      "sha256": "e9edfd3d9cbf8b854f43317523c6c22e1dfd68dd6b037ae27820fbf0581598e1"
+    },
+    {
+      "bytes": 9216,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_lifetime_current_observation.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_lifetime_current_observation.py.original",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    {
+      "bytes": 11977,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_bcs_budget.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_bcs_budget.py.original",
+      "sha256": "391d8e0eaf9c5417bd79bf2c222bdd2d2bb3ca2df1da8bad8e623a524b63600a"
+    },
+    {
+      "bytes": 21292,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_composition_budget.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_composition_budget.py.original",
+      "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+    },
+    {
+      "bytes": 14985,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_conditional_budget.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_conditional_budget.py.original",
+      "sha256": "7a70aed728c174009d63db7d3269531de0c67964558a680e548d89bcd847efca"
+    },
+    {
+      "bytes": 17150,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_current_implementation_audit.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_current_implementation_audit.py.original",
+      "sha256": "55d3e0da144675614004b4dcd93617dccdf02a92f8468bf17ff42052d65c74a1"
+    },
+    {
+      "bytes": 9762,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_historical_fixture.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_historical_fixture.py.original",
+      "sha256": "ecd8a99a207082a37548a6e38068d02156316e96da6da8af807a7787d73ab20e"
+    },
+    {
+      "bytes": 21678,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_implementation_audit.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_implementation_audit.py.original",
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    {
+      "bytes": 9863,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_joint_oracle_diagnostic.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_joint_oracle_diagnostic.py.original",
+      "sha256": "ce6dd894f949cced697ecdcb9f8960b3e4280eefa3815f02ad708e06842b4658"
+    },
+    {
+      "bytes": 35649,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/src--scripts--w1_qrom_semantics_audit.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/src--scripts--w1_qrom_semantics_audit.py.original",
+      "sha256": "91b8bc2bac87d24a84df1c4c7345d5cd6765433da01c4a79f6367e36bc72e9b4"
+    },
+    {
+      "bytes": 43593,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-closure-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-closure-v1/summary.json",
+      "sha256": "fdf91739562b1327e8cac41cb922f7bc8b8308a5c6dedd7004e88a0dc67eb753"
+    },
+    {
+      "bytes": 869,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/downstream-exact-hash-search.stdout"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/downstream-exact-hash-search.stdout",
+      "sha256": "61daf5c83d3a8f736f634a8ce0e02bef47a1db0d88729b81ae7864904551fb3d"
+    },
+    {
+      "bytes": 11127,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/src--scripts--ci--pq_authority_effect_register.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/src--scripts--ci--pq_authority_effect_register.py.original",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    {
+      "bytes": 16302,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_authority_effect_register.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_authority_effect_register.py.original",
+      "sha256": "fedf6595bdb51b188e65a1c8a7c3b1f4942ddcbd170d4cdfee189d5ccfb7efbb"
+    },
+    {
+      "bytes": 34544,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_budget.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_budget.py.original",
+      "sha256": "721ed07762d84cde999c16cdc519b4b796e407d8d3a224aa96956fd2c2d2115f"
+    },
+    {
+      "bytes": 41465,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_composition.py.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/src--scripts--ci--test_pq_lifetime_composition.py.original",
+      "sha256": "181ec0081311ec85102d9d152c76e36f0566069e22f69f6896f4976d363bde45"
+    },
+    {
+      "bytes": 11152,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-final-inputs-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-final-inputs-v1/summary.json",
+      "sha256": "d50f2c14cc892989b6cc56c7ebfda682be80af9497a493d4f54efc7357656b5e"
+    },
+    {
+      "bytes": 9524,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/exact-path-and-pin-search.stdout"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/exact-path-and-pin-search.stdout",
+      "sha256": "ed25527cdaa6cb93ddd6931657c65839e6986c3c9ffa6c9bf1679b55962b205c"
+    },
+    {
+      "bytes": 64941,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--applicability-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--applicability-v1.json.original",
+      "sha256": "50117a45c52fb2f140ba945d5d2e43298629f4e33dcf33517ef620ae18af009e"
+    },
+    {
+      "bytes": 73351,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--module-contracts-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--module-contracts-v1.json.original",
+      "sha256": "fb8195c3893cd26bd9708eefe47ee5b315a45197437279be5326a122ceb36dcb"
+    },
+    {
+      "bytes": 215980,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--module-maturity-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--module-maturity-v1.json.original",
+      "sha256": "86da7e012c3b25e6753b2a87104ab193bd4d915eb81a1e691824c5a7cb3e104f"
+    },
+    {
+      "bytes": 522809,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq-cross-branch-corpus-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--pq-cross-branch-corpus-v1.json.original",
+      "sha256": "6ceb8570edf00c29bcb142ef1f0ffd74f52a1235c5f41f32fa5d6d6b5c7c3367"
+    },
+    {
+      "bytes": 18358,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq128-lifetime-budget-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--pq128-lifetime-budget-v1.json.original",
+      "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc"
+    },
+    {
+      "bytes": 3017,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--config--pon--pq128-source-lock-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--config--pon--pq128-source-lock-v1.json.original",
+      "sha256": "59db43efd6a04054c04d97d38cc58df1325c7efc5910dbe7975cb6a63dc487cb"
+    },
+    {
+      "bytes": 507048,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--contracts--work-cost-contract-v1.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--formal--pon-nakamoto-v1--contracts--work-cost-contract-v1.json.original",
+      "sha256": "3c21ea1823c6193ad41039034693799bc7673777305a103f425df65fe8891c34"
+    },
+    {
+      "bytes": 196363,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--campaign-01--result.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--campaign-01--result.json.original",
+      "sha256": "7fb6f1d64f9fe0448ee6f2f590e3aacbc1b463241b54c4df4a5000f1a6e63dcb"
+    },
+    {
+      "bytes": 233135,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--final-evidence-files.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--final-evidence-files.json.original",
+      "sha256": "d334be78d7b7d030759213fa20d3c1dbdbb569ee6037e0019ca10589abf9e238"
+    },
+    {
+      "bytes": 320566,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--independent_cleanup.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--independent_cleanup.json.original",
+      "sha256": "4ca5d9a79a7e35e9bfc0870425b895dc0b26fd57bbb0d2bb4e48c9fc211ca070"
+    },
+    {
+      "bytes": 792215,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--inputs--manifest.json.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/json--formal--pon-nakamoto-v1--w1_node_adapter_research--resource_pressure--inputs--manifest.json.original",
+      "sha256": "709b96f59289e0352329653b0b821634f7b702e593b4f5655a697b658fba0550"
+    },
+    {
+      "bytes": 2357,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/node-Cargo.toml.original"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/node-Cargo.toml.original",
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    {
+      "bytes": 17637,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/pin-impact-v1/search-summary.json"
+      },
+      "path": "C0-pure-cost-proposals/pin-impact-v1/search-summary.json",
+      "sha256": "971842bed396dcba06c1cbc02c6b7087cc688607f1d5501147212e7f862e1316"
+    },
+    {
+      "bytes": 3147,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/profile-prefix-preimage-proof.json"
+      },
+      "path": "C0-pure-cost-proposals/profile-prefix-preimage-proof.json",
+      "sha256": "95b931d675d9c565aba57c6be6bcb7527fb4b002e6253eaf2292bd4d411784ac"
+    },
+    {
+      "bytes": 2466,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/source-index.json"
+      },
+      "path": "C0-pure-cost-proposals/source-index.json",
+      "sha256": "5a9326f2b4522dcd021ddba9e34aff357ed933c648d70f47bf2ef470b8fc1cf0"
+    },
+    {
+      "bytes": 393876,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/ticket-loop-original-trace-v1/arm64-selected-original-leaves.json"
+      },
+      "path": "C0-pure-cost-proposals/ticket-loop-original-trace-v1/arm64-selected-original-leaves.json",
+      "sha256": "e76afcbb2b8d23bae255d2e41049e7b968c51d0106b326c3feaffc748e00dc3d"
+    },
+    {
+      "bytes": 17710,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/ticket-loop-original-trace-v1/summary.json"
+      },
+      "path": "C0-pure-cost-proposals/ticket-loop-original-trace-v1/summary.json",
+      "sha256": "0a35df3b779d4cda0a3e6d0a79a61d89a77e03d7146d0ee44495f4ad851b4327"
+    },
+    {
+      "bytes": 281350,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/ticket-loop-original-trace-v1/x64-selected-original-leaves.json"
+      },
+      "path": "C0-pure-cost-proposals/ticket-loop-original-trace-v1/x64-selected-original-leaves.json",
+      "sha256": "3c30fb97a82c98d22c2745bf1bb2159c39f75fe35230bdda0840f8d155b3d1e5"
+    },
+    {
+      "bytes": 7198,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.raw"
+      },
+      "path": "C0-pure-cost-proposals/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.raw",
+      "sha256": "c1fc7c88249daff102c2cdb045bb1b38e5fd115e15dc4c608a2f1a5725171724"
+    },
+    {
+      "bytes": 32654,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs.raw"
+      },
+      "path": "C0-pure-cost-proposals/trillionnium--crates--trnm-protocol--src--pon_wire.rs.raw",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    }
+  ],
+  "reference_only_original_reports": [
+    {
+      "bytes": 12119117,
+      "copied": false,
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+      "reason": "complete original already archived; selected leaves retain origin pointers",
+      "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0"
+    },
+    {
+      "bytes": 16002976,
+      "copied": false,
+      "host": "mac",
+      "path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+      "reason": "complete original already archived; selected leaves retain origin pointers",
+      "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333"
+    }
+  ],
+  "schema": "trnm-readonly-pure-cost-proposal-archive-roster-v1",
+  "scope": {
+    "candidate_source_checkpoint": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+    "code_commit_created": false,
+    "four_second_remedy_supported": false,
+    "implementation_performed": false,
+    "pending_implementation_claimed": false,
+    "performance_benchmark_or_native_run_performed": false,
+    "rust_matches_C0": true,
+    "status": "closed read-only proposals; unsupported as a four-second remedy"
+  },
+  "source_root": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1",
+  "total_bytes": 4844788
+}

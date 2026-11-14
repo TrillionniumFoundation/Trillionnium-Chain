@@ -1,0 +1,3099 @@
+{
+  "schema": "trnm-C0-cross-cost-original-causal-review-v1",
+  "sealed_at": "2026-11-14T08:24:48.289134+00:00",
+  "run": 43567821538,
+  "attempt": 1,
+  "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "cases": [
+    {
+      "arch": "x64",
+      "job": 132376957328,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957328",
+      "artifact": 14105076236,
+      "source_before": {
+        "commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+          "tested_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+          "candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 41372,
+          "tracked_bytes": 3991880052,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+      },
+      "source_after_equal": true,
+      "all_named_tests_passed": true,
+      "native_runs": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_confirmation_process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 9102716733,
+        "user_cpu_ns": 1077359000,
+        "system_cpu_ns": 968366000,
+        "cpu_ns": 2045725000,
+        "max_rss_kib": 96416,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 23616,
+        "major_faults": 0,
+        "voluntary_switches": 13553,
+        "involuntary_switches": 937,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "0c566be63287acc8d9525acca242678adfe4928c8cf833be1b8535991db64b94",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "binary_sha256": "829c90397cf05c1b6440752b41a5922d73632e9354e734d049e51fbf2ccdea77",
+      "binary_before_after_equal": true,
+      "runner_passed": false,
+      "runner_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "execution_finished": false,
+      "host_controller": {
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "systemd_run_exit": 1
+      },
+      "host_child": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "confirmation_overall": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "signed_honest_packets": 7,
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero"
+      },
+      "original_members": [
+        {
+          "path": "from-zero-native/manifest.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/manifest.json",
+          "bytes": 73896,
+          "sha256": "ebd3669a5ad237a195963f8a2137f03460a261f3e8ba7550669efc0dadb883de",
+          "crc32": "be52b496",
+          "complete_compressed_span": [
+            2174007,
+            2185349
+          ]
+        },
+        {
+          "path": "from-zero-native/confirmation/report.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/confirmation/report.json",
+          "bytes": 12119117,
+          "sha256": "1feec4c23449c6f9741fb40fb70637a4198495e98303605c7b47d3ce832d5ab0",
+          "crc32": "b61e2246",
+          "complete_compressed_span": [
+            1556999,
+            2101580
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "bytes": 949,
+          "sha256": "54439e9099d8376e720a7781f804e75088445eb46685ac77226def81d7f4becd",
+          "crc32": "2619891a",
+          "complete_compressed_span": [
+            2172654,
+            2173380
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crc32": "00000000",
+          "complete_compressed_span": [
+            2173396,
+            2173555
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "bytes": 408,
+          "sha256": "0c566be63287acc8d9525acca242678adfe4928c8cf833be1b8535991db64b94",
+          "crc32": "7dbdec06",
+          "complete_compressed_span": [
+            2173571,
+            2173991
+          ]
+        },
+        {
+          "path": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+          "bytes": 79324,
+          "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "crc32": "16b248fc",
+          "complete_compressed_span": [
+            2131095,
+            2149512
+          ]
+        },
+        {
+          "path": "from-zero-native-host/controller-result.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native-host/controller-result.json",
+          "bytes": 9055,
+          "sha256": "0f6e644a3d7953a6cc44c41bdd9e23c7558579d3d851f32c1cbf91c60f331ed6",
+          "crc32": "5acc4039",
+          "complete_compressed_span": [
+            8365397,
+            8367827
+          ]
+        },
+        {
+          "path": "from-zero-native-host/child-result.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/from-zero-native-host/child-result.json",
+          "bytes": 333,
+          "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+          "crc32": "f5952b0c",
+          "complete_compressed_span": [
+            8365095,
+            8365381
+          ]
+        },
+        {
+          "path": "source.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/x64/members/source.json",
+          "bytes": 423,
+          "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+          "crc32": "6c282320",
+          "complete_compressed_span": [
+            8386923,
+            8387202
+          ]
+        }
+      ],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "workers": 0,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3103046559,
+          "finite_business_target_met": true,
+          "honest_submission_records": 7,
+          "honest_submission_ok": 7,
+          "last_honest_submission_ended_ns": 208954072,
+          "history_records": 7,
+          "history_ok": 7,
+          "replay_records": 7,
+          "replay_accepted": 7,
+          "replay_errors": [],
+          "replay_started_ns": 213954888,
+          "replay_last_ended_ns": 3102143290,
+          "replay_wall_sum_ns": 2785653556,
+          "replay_calling_thread_cpu_sum_ns": 548879562,
+          "supplied_packets_per_replay": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "replay_prior_after": [
+            "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+          ],
+          "replay_next_after": [
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          ],
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "full_native_state_equal": true,
+          "verification_errors": [],
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 31378431,
+          "stage_details": [
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 0,
+              "accepted": true,
+              "wall_ns": 681803713,
+              "cpu_ns": 83554296,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 292811,
+                  "thread_cpu_ns": 292687,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 68328,
+                  "thread_cpu_ns": 68448,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 399980193,
+                  "thread_cpu_ns": 13049939,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 569251,
+                  "thread_cpu_ns": 223969,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 388510,
+                  "thread_cpu_ns": 93144,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 681494160,
+                  "thread_cpu_ns": 83244808,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 3236,
+                  "thread_cpu_ns": 3226,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 328658,
+                      "thread_cpu_ns": 328724,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 192573581,
+                      "thread_cpu_ns": 62774979,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 84893344,
+                      "thread_cpu_ns": 6072324,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4189460,
+                      "thread_cpu_ns": 3683154,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 2192003,
+                      "thread_cpu_ns": 133389,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 170,
+                  "reserve_budget_refusals": 169,
+                  "requested_sleep_ns": 338000000,
+                  "actual_sleep_wall_ns": 349324853,
+                  "original_deadline_remaining_at_entry_ns": 3785163914,
+                  "original_deadline_remaining_at_exit_ns": 3385185905
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 60073037,
+                  "wall_ns": 60022895
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 1,
+              "accepted": true,
+              "wall_ns": 305196465,
+              "cpu_ns": 71594623,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 261712,
+                  "thread_cpu_ns": 261718,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 63990,
+                  "thread_cpu_ns": 64069,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 70562,
+                  "thread_cpu_ns": 70522,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 459344,
+                  "thread_cpu_ns": 205252,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 381467,
+                  "thread_cpu_ns": 101760,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 304933470,
+                  "thread_cpu_ns": 71331743,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2855,
+                  "thread_cpu_ns": 2835,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 645734,
+                      "thread_cpu_ns": 645295,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 296073214,
+                      "thread_cpu_ns": 63489524,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 6711605,
+                      "thread_cpu_ns": 6227844,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4813584,
+                      "thread_cpu_ns": 4330452,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 56446,
+                      "thread_cpu_ns": 56466,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 3099174108,
+                  "original_deadline_remaining_at_exit_ns": 3099105468
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 60819169,
+                  "wall_ns": 60740014
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 2,
+              "accepted": true,
+              "wall_ns": 386409037,
+              "cpu_ns": 74182151,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 259548,
+                  "thread_cpu_ns": 259505,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 61916,
+                  "thread_cpu_ns": 61956,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 81714,
+                  "thread_cpu_ns": 81683,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 529005,
+                  "thread_cpu_ns": 179044,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 401545,
+                  "thread_cpu_ns": 105768,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 386126435,
+                  "thread_cpu_ns": 73899654,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2775,
+                  "thread_cpu_ns": 2775,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 702412,
+                      "thread_cpu_ns": 702541,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 297202257,
+                      "thread_cpu_ns": 64466628,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 86626356,
+                      "thread_cpu_ns": 7781203,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 84088141,
+                      "thread_cpu_ns": 5243826,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 56145,
+                      "thread_cpu_ns": 56155,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2789265590,
+                  "original_deadline_remaining_at_exit_ns": 2789185800
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 61707418,
+                  "wall_ns": 61618838
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 3,
+              "accepted": true,
+              "wall_ns": 304817611,
+              "cpu_ns": 72661481,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 292381,
+                  "thread_cpu_ns": 292406,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 66375,
+                  "thread_cpu_ns": 66484,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 70542,
+                  "thread_cpu_ns": 70502,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 590481,
+                  "thread_cpu_ns": 175488,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 451670,
+                  "thread_cpu_ns": 123430,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 304517797,
+                  "thread_cpu_ns": 72361741,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2845,
+                  "thread_cpu_ns": 2835,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 710757,
+                      "thread_cpu_ns": 710896,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 293523668,
+                      "thread_cpu_ns": 62617062,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 8552567,
+                      "thread_cpu_ns": 8046740,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 5687308,
+                      "thread_cpu_ns": 5182082,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 56316,
+                      "thread_cpu_ns": 56345,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2397753535,
+                  "original_deadline_remaining_at_exit_ns": 2397684795
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 59992727,
+                  "wall_ns": 59946646
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 4,
+              "accepted": true,
+              "wall_ns": 387070812,
+              "cpu_ns": 74977576,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 260700,
+                  "thread_cpu_ns": 260676,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 65073,
+                  "thread_cpu_ns": 65201,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 71305,
+                  "thread_cpu_ns": 71263,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 507645,
+                  "thread_cpu_ns": 181248,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 434417,
+                  "thread_cpu_ns": 101460,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 386776347,
+                  "thread_cpu_ns": 74683126,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2815,
+                  "thread_cpu_ns": 2825,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 802289,
+                      "thread_cpu_ns": 802217,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 296465582,
+                      "thread_cpu_ns": 63804842,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 87876486,
+                      "thread_cpu_ns": 9103802,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 6132515,
+                      "thread_cpu_ns": 5606013,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 56256,
+                      "thread_cpu_ns": 56255,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2088444355,
+                  "original_deadline_remaining_at_exit_ns": 2088374874
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 61114779,
+                  "wall_ns": 61011754
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 5,
+              "accepted": true,
+              "wall_ns": 308454001,
+              "cpu_ns": 75858862,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 276349,
+                  "thread_cpu_ns": 276326,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 62578,
+                  "thread_cpu_ns": 62677,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 72847,
+                  "thread_cpu_ns": 72836,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 526781,
+                  "thread_cpu_ns": 212266,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 390445,
+                  "thread_cpu_ns": 101399,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 308148085,
+                  "thread_cpu_ns": 75552982,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2835,
+                  "thread_cpu_ns": 2835,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 868955,
+                      "thread_cpu_ns": 869062,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 295590675,
+                      "thread_cpu_ns": 64076932,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 10103765,
+                      "thread_cpu_ns": 9626387,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 6396822,
+                      "thread_cpu_ns": 5920059,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 55805,
+                      "thread_cpu_ns": 55834,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 1697121195,
+                  "original_deadline_remaining_at_exit_ns": 1697050131
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 61341943,
+                  "wall_ns": 61266993
+                }
+              ]
+            },
+            {
+              "arch": "x64",
+              "mode": "attack-free-baseline",
+              "index": 6,
+              "accepted": true,
+              "wall_ns": 411901917,
+              "cpu_ns": 96050573,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 299813,
+                  "thread_cpu_ns": 299830,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 107131,
+                  "thread_cpu_ns": 107250,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 72807,
+                  "thread_cpu_ns": 72776,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 659490,
+                  "thread_cpu_ns": 233445,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 473982,
+                  "thread_cpu_ns": 103411,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 411629685,
+                  "thread_cpu_ns": 95778806,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 3737,
+                  "thread_cpu_ns": 3717,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 925641,
+                      "thread_cpu_ns": 925748,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 298921862,
+                      "thread_cpu_ns": 64347083,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 11125336,
+                      "thread_cpu_ns": 10667891,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 6969259,
+                      "thread_cpu_ns": 6512456,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 57649,
+                      "thread_cpu_ns": 57647,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 1308785857,
+                  "original_deadline_remaining_at_exit_ns": 1308714884
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 61696315,
+                  "wall_ns": 61623083
+                }
+              ]
+            }
+          ],
+          "report_pointer": "/phases/0"
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "workers": 16,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "honest_submission_records": 7,
+          "honest_submission_ok": 7,
+          "last_honest_submission_ended_ns": 1501944824,
+          "history_records": 1,
+          "history_ok": 1,
+          "replay_records": 1,
+          "replay_accepted": 0,
+          "replay_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "replay_started_ns": 1695999260,
+          "replay_last_ended_ns": 4000666550,
+          "replay_wall_sum_ns": 2304667290,
+          "replay_calling_thread_cpu_sum_ns": 95006035,
+          "supplied_packets_per_replay": [
+            1
+          ],
+          "replay_prior_after": [
+            "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516"
+          ],
+          "replay_next_after": [
+            null
+          ],
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "full_native_state_equal": false,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_workers_cpu_ns": 354481431,
+          "reader_cpu_ns": 18565070,
+          "stage_details": [
+            {
+              "arch": "x64",
+              "mode": "from-zero-pressure",
+              "index": 0,
+              "accepted": false,
+              "wall_ns": 2304667290,
+              "cpu_ns": 95006035,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 424909,
+                  "thread_cpu_ns": 424873,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 115617,
+                  "thread_cpu_ns": 115957,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 304825847,
+                  "thread_cpu_ns": 4572995,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 95787466,
+                  "thread_cpu_ns": 331479,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 505391,
+                  "thread_cpu_ns": 134662,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 2304224697,
+                  "thread_cpu_ns": 94563619,
+                  "accepted": false,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE"
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 3747,
+                  "thread_cpu_ns": 3667,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 367842,
+                      "thread_cpu_ns": 367877,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 1796920567,
+                      "thread_cpu_ns": 82609255,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 5701364,
+                      "thread_cpu_ns": 5645417,
+                      "accepted": false,
+                      "error_code": "PUBLIC_REQUEST_DEADLINE"
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 3127172,
+                      "thread_cpu_ns": 3127327,
+                      "accepted": false,
+                      "error_code": "PUBLIC_REQUEST_DEADLINE"
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 2251314,
+                      "thread_cpu_ns": 185867,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 56,
+                  "reserve_budget_refusals": 55,
+                  "requested_sleep_ns": 110000000,
+                  "actual_sleep_wall_ns": 300844881,
+                  "original_deadline_remaining_at_entry_ns": 2207740704,
+                  "original_deadline_remaining_at_exit_ns": 1902917502
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 78779013,
+                  "wall_ns": 379990588
+                }
+              ]
+            }
+          ],
+          "report_pointer": "/phases/1"
+        }
+      ]
+    },
+    {
+      "arch": "arm64",
+      "job": 132376957441,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43567821538/job/132376957441",
+      "artifact": 14104567861,
+      "source_before": {
+        "commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+        "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+          "tested_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+          "candidate": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 41372,
+          "tracked_bytes": 3991880052,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+      },
+      "source_after_equal": true,
+      "all_named_tests_passed": true,
+      "native_runs": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_confirmation_process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 8909679089,
+        "user_cpu_ns": 951706000,
+        "system_cpu_ns": 756150000,
+        "cpu_ns": 1707856000,
+        "max_rss_kib": 118580,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 30046,
+        "major_faults": 0,
+        "voluntary_switches": 20252,
+        "involuntary_switches": 865,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "4a4a4634e83306d90f7fa8a05837c3fc40780adefccc727af324f8dca4a2438d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "binary_sha256": "37c0f6a9c345145bdf7f2f2205a15437bf0cc329a0cd2ff8f715df514d848c0a",
+      "binary_before_after_equal": true,
+      "runner_passed": false,
+      "runner_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "execution_finished": false,
+      "host_controller": {
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "systemd_run_exit": 1
+      },
+      "host_child": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "confirmation_overall": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "signed_honest_packets": 7,
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero"
+      },
+      "original_members": [
+        {
+          "path": "from-zero-native/manifest.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/manifest.json",
+          "bytes": 74015,
+          "sha256": "f6e32cbf1462b319ec4a419b25b5c6c76bc92962bc0f3368d3531efd5178f41c",
+          "crc32": "742bbe11",
+          "complete_compressed_span": [
+            2342725,
+            2354165
+          ]
+        },
+        {
+          "path": "from-zero-native/confirmation/report.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/confirmation/report.json",
+          "bytes": 16002976,
+          "sha256": "99f3b7bb894ff4bc8a9d18a94aa608e093171e69b8ab2798f4a263bcc3e40333",
+          "crc32": "9c57a45d",
+          "complete_compressed_span": [
+            1548129,
+            2270282
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "bytes": 949,
+          "sha256": "12b0903034d1cfe5755b6bc37684e6d9647f41044d6c9b2a7c73c5ce546d0b85",
+          "crc32": "10c40e92",
+          "complete_compressed_span": [
+            2341369,
+            2342097
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crc32": "00000000",
+          "complete_compressed_span": [
+            2342113,
+            2342272
+          ]
+        },
+        {
+          "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "bytes": 408,
+          "sha256": "4a4a4634e83306d90f7fa8a05837c3fc40780adefccc727af324f8dca4a2438d",
+          "crc32": "abd2ca49",
+          "complete_compressed_span": [
+            2342288,
+            2342709
+          ]
+        },
+        {
+          "path": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+          "bytes": 79324,
+          "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "crc32": "16b248fc",
+          "complete_compressed_span": [
+            2299794,
+            2318211
+          ]
+        },
+        {
+          "path": "from-zero-native-host/controller-result.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native-host/controller-result.json",
+          "bytes": 9054,
+          "sha256": "27037602c77e14c1996931f753c54356b3d65b889be3e5a072a891e0e9d69bec",
+          "crc32": "ef5196fb",
+          "complete_compressed_span": [
+            8378110,
+            8380541
+          ]
+        },
+        {
+          "path": "from-zero-native-host/child-result.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/from-zero-native-host/child-result.json",
+          "bytes": 333,
+          "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+          "crc32": "f5952b0c",
+          "complete_compressed_span": [
+            8377808,
+            8378094
+          ]
+        },
+        {
+          "path": "source.json",
+          "local_path": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/critical-members-v3/arm64/members/source.json",
+          "bytes": 423,
+          "sha256": "c4891be8e0dc6ac1d45fffd793b0a08a90fa806f2863d132e27c6f578836babd",
+          "crc32": "6c282320",
+          "complete_compressed_span": [
+            8399690,
+            8399969
+          ]
+        }
+      ],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "workers": 0,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1806702733,
+          "finite_business_target_met": true,
+          "honest_submission_records": 7,
+          "honest_submission_ok": 7,
+          "last_honest_submission_ended_ns": 197164552,
+          "history_records": 7,
+          "history_ok": 7,
+          "replay_records": 7,
+          "replay_accepted": 7,
+          "replay_errors": [],
+          "replay_started_ns": 201816482,
+          "replay_last_ended_ns": 1805979456,
+          "replay_wall_sum_ns": 1578476416,
+          "replay_calling_thread_cpu_sum_ns": 284053960,
+          "supplied_packets_per_replay": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "replay_prior_after": [
+            "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d"
+          ],
+          "replay_next_after": [
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          ],
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "full_native_state_equal": true,
+          "verification_errors": [],
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 42800584,
+          "stage_details": [
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 0,
+              "accepted": true,
+              "wall_ns": 550104341,
+              "cpu_ns": 46515600,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 212750,
+                  "thread_cpu_ns": 212600,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 51274,
+                  "thread_cpu_ns": 51288,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 400871498,
+                  "thread_cpu_ns": 8883720,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 605618,
+                  "thread_cpu_ns": 222792,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 723870,
+                  "thread_cpu_ns": 233168,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 549805876,
+                  "thread_cpu_ns": 46217312,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 3328,
+                  "thread_cpu_ns": 3184,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 311225,
+                      "thread_cpu_ns": 311128,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 91229297,
+                      "thread_cpu_ns": 31588728,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 4259487,
+                      "thread_cpu_ns": 3725416,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 2927488,
+                      "thread_cpu_ns": 2394384,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 32849,
+                      "thread_cpu_ns": 32624,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 192,
+                  "reserve_budget_refusals": 191,
+                  "requested_sleep_ns": 382000000,
+                  "actual_sleep_wall_ns": 392585116,
+                  "original_deadline_remaining_at_entry_ns": 3797286459,
+                  "original_deadline_remaining_at_exit_ns": 3396417377
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29824088,
+                  "wall_ns": 29799129
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 1,
+              "accepted": true,
+              "wall_ns": 139148661,
+              "cpu_ns": 36639824,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 170789,
+                  "thread_cpu_ns": 170800,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 46633,
+                  "thread_cpu_ns": 46640,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 65594,
+                  "thread_cpu_ns": 65424,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 488127,
+                  "thread_cpu_ns": 199288,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 355411,
+                  "thread_cpu_ns": 122000,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 138945999,
+                  "thread_cpu_ns": 36437304,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2944,
+                  "thread_cpu_ns": 2952,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 469886,
+                      "thread_cpu_ns": 469968,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 132365587,
+                      "thread_cpu_ns": 30912744,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 4801791,
+                      "thread_cpu_ns": 4268760,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 3547098,
+                      "thread_cpu_ns": 3015184,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 31113,
+                      "thread_cpu_ns": 31064,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 3242982801,
+                  "original_deadline_remaining_at_exit_ns": 3242918759
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29211968,
+                  "wall_ns": 29201752
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 2,
+              "accepted": true,
+              "wall_ns": 188394610,
+              "cpu_ns": 36681632,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 200422,
+                  "thread_cpu_ns": 200400,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 39713,
+                  "thread_cpu_ns": 39744,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 59218,
+                  "thread_cpu_ns": 59136,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 529840,
+                  "thread_cpu_ns": 199848,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 471471,
+                  "thread_cpu_ns": 156112,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 188189252,
+                  "thread_cpu_ns": 36476488,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2664,
+                  "thread_cpu_ns": 2632,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 450757,
+                      "thread_cpu_ns": 450728,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 103728093,
+                      "thread_cpu_ns": 30222104,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 82518293,
+                      "thread_cpu_ns": 4957792,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 80988711,
+                      "thread_cpu_ns": 3428976,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 31369,
+                      "thread_cpu_ns": 31336,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 3099249779,
+                  "original_deadline_remaining_at_exit_ns": 3099192105
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28607144,
+                  "wall_ns": 28585433
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 3,
+              "accepted": true,
+              "wall_ns": 112292165,
+              "cpu_ns": 37097664,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 177166,
+                  "thread_cpu_ns": 176952,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 44697,
+                  "thread_cpu_ns": 44712,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 59746,
+                  "thread_cpu_ns": 59632,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 540432,
+                  "thread_cpu_ns": 198472,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 392396,
+                  "thread_cpu_ns": 127384,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 112082990,
+                  "thread_cpu_ns": 36888648,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2944,
+                  "thread_cpu_ns": 2920,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 587906,
+                      "thread_cpu_ns": 587944,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 104274950,
+                      "thread_cpu_ns": 30260856,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 5825526,
+                      "thread_cpu_ns": 5252752,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4023464,
+                      "thread_cpu_ns": 3451960,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 30633,
+                      "thread_cpu_ns": 30608,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2906784216,
+                  "original_deadline_remaining_at_exit_ns": 2906725966
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28621560,
+                  "wall_ns": 28593939
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 4,
+              "accepted": true,
+              "wall_ns": 191922043,
+              "cpu_ns": 37910800,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 172886,
+                  "thread_cpu_ns": 172880,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 40858,
+                  "thread_cpu_ns": 40896,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 63994,
+                  "thread_cpu_ns": 63944,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 561920,
+                  "thread_cpu_ns": 203776,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 415644,
+                  "thread_cpu_ns": 106656,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 191715918,
+                  "thread_cpu_ns": 37705104,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2896,
+                  "thread_cpu_ns": 2888,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 552689,
+                      "thread_cpu_ns": 552736,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 183529057,
+                      "thread_cpu_ns": 30742208,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 6204481,
+                      "thread_cpu_ns": 5647712,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4242871,
+                      "thread_cpu_ns": 3687032,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 30529,
+                      "thread_cpu_ns": 30488,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2790621231,
+                  "original_deadline_remaining_at_exit_ns": 2790558606
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29066008,
+                  "wall_ns": 29034260
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 5,
+              "accepted": true,
+              "wall_ns": 189540124,
+              "cpu_ns": 38005808,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 169829,
+                  "thread_cpu_ns": 169832,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 40929,
+                  "thread_cpu_ns": 40936,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 64986,
+                  "thread_cpu_ns": 64904,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 579121,
+                  "thread_cpu_ns": 185920,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 348834,
+                  "thread_cpu_ns": 117504,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 189333693,
+                  "thread_cpu_ns": 37799624,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2608,
+                  "thread_cpu_ns": 2608,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 538104,
+                      "thread_cpu_ns": 538152,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 180635683,
+                      "thread_cpu_ns": 30382464,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 6777362,
+                      "thread_cpu_ns": 6121248,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4572433,
+                      "thread_cpu_ns": 3917080,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 29825,
+                      "thread_cpu_ns": 29776,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2594061770,
+                  "original_deadline_remaining_at_exit_ns": 2593998304
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28747184,
+                  "wall_ns": 28728099
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "attack-free-baseline",
+              "index": 6,
+              "accepted": true,
+              "wall_ns": 207074472,
+              "cpu_ns": 51202632,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 170565,
+                  "thread_cpu_ns": 170536,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 40914,
+                  "thread_cpu_ns": 41000,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 58954,
+                  "thread_cpu_ns": 58896,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 556432,
+                  "thread_cpu_ns": 176672,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 416908,
+                  "thread_cpu_ns": 118144,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 206817680,
+                  "thread_cpu_ns": 50946016,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2776,
+                  "thread_cpu_ns": 2696,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 587914,
+                      "thread_cpu_ns": 587928,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 104393009,
+                      "thread_cpu_ns": 30622672,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 85701260,
+                      "thread_cpu_ns": 7057664,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 83257339,
+                      "thread_cpu_ns": 4614744,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 30465,
+                      "thread_cpu_ns": 30408,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 2400330161,
+                  "original_deadline_remaining_at_exit_ns": 2400272519
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28971160,
+                  "wall_ns": 28943820
+                }
+              ]
+            }
+          ],
+          "report_pointer": "/phases/0"
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "workers": 16,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "finite_business_target_met": false,
+          "honest_submission_records": 7,
+          "honest_submission_ok": 7,
+          "last_honest_submission_ended_ns": 1059318882,
+          "history_records": 5,
+          "history_ok": 5,
+          "replay_records": 5,
+          "replay_accepted": 4,
+          "replay_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "replay_started_ns": 1150211919,
+          "replay_last_ended_ns": 4049014763,
+          "replay_wall_sum_ns": 2604330909,
+          "replay_calling_thread_cpu_sum_ns": 168266040,
+          "supplied_packets_per_replay": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "replay_prior_after": [
+            "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76"
+          ],
+          "replay_next_after": [
+            "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            null
+          ],
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "receiver_matches_valid_honest_prefix": true,
+          "full_native_state_equal": false,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_workers_cpu_ns": 337787584,
+          "reader_cpu_ns": 20363088,
+          "stage_details": [
+            {
+              "arch": "arm64",
+              "mode": "from-zero-pressure",
+              "index": 0,
+              "accepted": true,
+              "wall_ns": 803110104,
+              "cpu_ns": 41941520,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 185429,
+                  "thread_cpu_ns": 185368,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 50233,
+                  "thread_cpu_ns": 50344,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 400825225,
+                  "thread_cpu_ns": 5016504,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 679981,
+                  "thread_cpu_ns": 276800,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 379131,
+                  "thread_cpu_ns": 142536,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 802847463,
+                  "thread_cpu_ns": 41678984,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2704,
+                  "thread_cpu_ns": 2608,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 205470,
+                      "thread_cpu_ns": 205424,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 299208391,
+                      "thread_cpu_ns": 31938504,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 101124709,
+                      "thread_cpu_ns": 3675272,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 99852135,
+                      "thread_cpu_ns": 2403160,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 32681,
+                      "thread_cpu_ns": 32480,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 83,
+                  "reserve_budget_refusals": 82,
+                  "requested_sleep_ns": 164000000,
+                  "actual_sleep_wall_ns": 331161503,
+                  "original_deadline_remaining_at_entry_ns": 2848866597,
+                  "original_deadline_remaining_at_exit_ns": 2448043332
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30237048,
+                  "wall_ns": 120608632
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "from-zero-pressure",
+              "index": 1,
+              "accepted": true,
+              "wall_ns": 504960691,
+              "cpu_ns": 37463728,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 198846,
+                  "thread_cpu_ns": 198840,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 50210,
+                  "thread_cpu_ns": 50256,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 78922,
+                  "thread_cpu_ns": 78840,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 2253924,
+                  "thread_cpu_ns": 261864,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 321410,
+                  "thread_cpu_ns": 116192,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 504710868,
+                  "thread_cpu_ns": 37214104,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2888,
+                  "thread_cpu_ns": 2840,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 465854,
+                      "thread_cpu_ns": 465856,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 496565023,
+                      "thread_cpu_ns": 31668840,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 4585450,
+                      "thread_cpu_ns": 4182464,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 3299507,
+                      "thread_cpu_ns": 2897400,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 32673,
+                      "thread_cpu_ns": 32496,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 1948375408,
+                  "original_deadline_remaining_at_exit_ns": 1948297926
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29950488,
+                  "wall_ns": 210837142
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "from-zero-pressure",
+              "index": 2,
+              "accepted": true,
+              "wall_ns": 502793666,
+              "cpu_ns": 38533960,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 178774,
+                  "thread_cpu_ns": 178792,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 51922,
+                  "thread_cpu_ns": 52144,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 66346,
+                  "thread_cpu_ns": 66272,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 588705,
+                  "thread_cpu_ns": 267488,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 660804,
+                  "thread_cpu_ns": 142432,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 502511698,
+                  "thread_cpu_ns": 38252480,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2488,
+                  "thread_cpu_ns": 2488,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 475311,
+                      "thread_cpu_ns": 475408,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 398573047,
+                      "thread_cpu_ns": 31960808,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 101711808,
+                      "thread_cpu_ns": 4904872,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 4440789,
+                      "thread_cpu_ns": 3380480,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 35089,
+                      "thread_cpu_ns": 34880,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 1348376038,
+                  "original_deadline_remaining_at_exit_ns": 1348311356
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30207168,
+                  "wall_ns": 32805046
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "from-zero-pressure",
+              "index": 3,
+              "accepted": true,
+              "wall_ns": 496840257,
+              "cpu_ns": 38767432,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 181646,
+                  "thread_cpu_ns": 181616,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 49458,
+                  "thread_cpu_ns": 49536,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 80074,
+                  "thread_cpu_ns": 79920,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 622787,
+                  "thread_cpu_ns": 242648,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 90570746,
+                  "thread_cpu_ns": 166296,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 496491639,
+                  "thread_cpu_ns": 38418872,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2408,
+                  "thread_cpu_ns": 2344,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 512399,
+                      "thread_cpu_ns": 512424,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 398818998,
+                      "thread_cpu_ns": 31902520,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "admission",
+                      "wall_ns": 5468437,
+                      "thread_cpu_ns": 5098504,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "commit",
+                      "wall_ns": 3771474,
+                      "thread_cpu_ns": 3402576,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 32689,
+                      "thread_cpu_ns": 32528,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 748058905,
+                  "original_deadline_remaining_at_exit_ns": 747980583
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30136008,
+                  "wall_ns": 32532845
+                }
+              ]
+            },
+            {
+              "arch": "arm64",
+              "mode": "from-zero-pressure",
+              "index": 4,
+              "accepted": false,
+              "wall_ns": 296626191,
+              "cpu_ns": 11559400,
+              "page": [
+                {
+                  "phase": "decode",
+                  "wall_ns": 209607,
+                  "thread_cpu_ns": 209584,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "context",
+                  "wall_ns": 49593,
+                  "thread_cpu_ns": 49608,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "cpu_wait",
+                  "wall_ns": 116403,
+                  "thread_cpu_ns": 116008,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_open",
+                  "wall_ns": 96046862,
+                  "thread_cpu_ns": 259448,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_epoch_close",
+                  "wall_ns": 863618,
+                  "thread_cpu_ns": 240208,
+                  "accepted": true,
+                  "error_code": null
+                },
+                {
+                  "phase": "history_import",
+                  "wall_ns": 296362487,
+                  "thread_cpu_ns": 11295848,
+                  "accepted": false,
+                  "error_code": "PUBLIC_REQUEST_DEADLINE"
+                },
+                {
+                  "phase": "cpu_settle",
+                  "wall_ns": 2744,
+                  "thread_cpu_ns": 2656,
+                  "accepted": true,
+                  "error_code": null
+                }
+              ],
+              "packets": [
+                {
+                  "index": 0,
+                  "phases": [
+                    {
+                      "phase": "context",
+                      "wall_ns": 858417,
+                      "thread_cpu_ns": 633360,
+                      "accepted": true,
+                      "error_code": null
+                    },
+                    {
+                      "phase": "work",
+                      "wall_ns": 198122240,
+                      "thread_cpu_ns": 9692928,
+                      "accepted": false,
+                      "error_code": "PUBLIC_REQUEST_DEADLINE"
+                    },
+                    {
+                      "phase": "cpu_wait",
+                      "wall_ns": 32609,
+                      "thread_cpu_ns": 32320,
+                      "accepted": true,
+                      "error_code": null
+                    }
+                  ]
+                }
+              ],
+              "page_waits": [
+                {
+                  "reserve_attempts": 1,
+                  "reserve_budget_refusals": 0,
+                  "requested_sleep_ns": null,
+                  "actual_sleep_wall_ns": null,
+                  "original_deadline_remaining_at_entry_ns": 151349984,
+                  "original_deadline_remaining_at_exit_ns": 151235565
+                }
+              ],
+              "host_work": [
+                {
+                  "phase": "work",
+                  "calls_started": 337,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 9204048,
+                  "wall_ns": 105300086
+                }
+              ]
+            }
+          ],
+          "report_pointer": "/phases/1"
+        }
+      ]
+    }
+  ],
+  "actual_failure": "Original strict runner rejects finite confirmation target after the independent verifier fails within the original 4s phase; five Rust invariant tests exit0 and are not business acceptance.",
+  "fixed_original_conditions": {
+    "window_ns": 4000000000,
+    "pressure_workers": 16,
+    "honest_packets": 7,
+    "required_depth": 6,
+    "host_cpu_max": "25000 100000",
+    "host_cpu_burst": "0",
+    "memory_max": "2147483648",
+    "memory_swap_max": "0",
+    "pids_max": "256"
+  },
+  "immutable_test_source": {
+    "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+    "bytes": 79324,
+    "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+    "same_as_both_original_format_copies": true
+  },
+  "proven_findings": [
+    "Both wrappers report no Host controller/final fence failure; native child exits1 from CONFIRMATION_TARGET.",
+    "Both phases use exactly one page packet per replay. x64 pressure has1 replay record and0 accepted; arm64 has5 records and4 accepted.",
+    "The observed History owner is exclusive; no shared Node mutex owner-wait phase starts in these replay traces.",
+    "Completed packet work has1099 Host checkpoint calls in both baseline and pressure; x64 performs one such work pass before late commit refusal. arm64 fifth pass stops at337 checks.",
+    "The independent native importer preserves absolute deadline, cold100ms CPU start reserve earned at0.25CPU/s, durable epoch, full W1 verification and final Host checks.",
+    "Host calls are measured nested intervals, not additional elapsed time. Calling-thread CPU is not automatically full worker CPU.",
+    "No per-checkpoint kernel cpu.stat/strace/off-CPU trace is present in the original confirmation report."
+  ],
+  "not_proven": [
+    "No particular scheduler, filesystem operation, lock or kernel throttle can be isolated solely by subtracting calling-thread CPU from wall time.",
+    "No new candidate, future run, fix or 4s success is established by this read-only review.",
+    "No claim that a stronger Host guard is redundant, that old duplicate Host reads remain, or that shared Node mutex waiting caused these exclusive-owner traces."
+  ],
+  "source_analysis_handoff": {
+    "immutable_source_root": "/private/tmp/chain-c0-cross-cost-diagnosis-20261114-v1/immutable-dc42-hotpath-source-v1",
+    "independent_algorithm_reviewer": "/root/architecture_audit",
+    "scope": "Algorithm/continuation review is separate; no implementation change is part of this receipt."
+  },
+  "whole_artifact_status_at_seal": {
+    "whole_zip_verified": false,
+    "selected_original_members_complete_and_crc_sha_verified": true,
+    "range_recovery_in_progress": true,
+    "no_complete_zip_claim": true
+  },
+  "actions": {
+    "native_executed_by_review": false,
+    "ci_dispatched": false,
+    "ci_cancelled": false,
+    "source_or_git_refs_modified": false,
+    "remote_mutations": false
+  },
+  "scope": "Read-only original C0 artifacts, exact original job logs, immutable dc42 source. No changed budgets or test semantics."
+}

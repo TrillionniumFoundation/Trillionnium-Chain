@@ -1,0 +1,12 @@
+{
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/publish-candidate-and-archive-dc42ce-v1",
+  "candidate_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "candidate_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "expected_remote_manifest": "/private/tmp/chain-consolidation-20261114-root/remote-ref-and-open-pr-inventory-0208-v1/branches-before.json",
+  "expected_remote_sha256": "35b9f97cf2019347ddaf025eb9b5b58da4c66a4689a65b12dfba2c127a8dac94",
+  "frozen_remote_manifest": "/private/tmp/chain-consolidation-20261114-root/remote-readonly-refresh-0170-v1/branches.json",
+  "frozen_remote_sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+  "local_gate_receipt": "/private/tmp/chain-consolidation-20261114-root/final-prepublication-source-gates-dc42ce-v1/receipt.json",
+  "local_gate_receipt_sha256": "602cb049eabab6e5ce92639b69123caa55e6d0fab5bd7a69f8e6eaa1cb2639dc",
+  "archive_tag": "archive/branches-before-consolidation-20261114-dc42ce4df5cf"
+}

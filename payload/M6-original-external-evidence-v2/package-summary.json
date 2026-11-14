@@ -1,0 +1,81 @@
+{
+  "schema": "trnm-M6-original-external-evidence-package-completion-v2",
+  "started_at": "2026-11-14T09:46:08.204415+00:00",
+  "finished_at": "2026-11-14T09:46:08.211324+00:00",
+  "original_head": "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+  "original_tree": "f8d170ff75990e879e93888a95e5408f36b36f6c",
+  "original_result": "passed",
+  "original_lane_argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "external-evidence-contract"
+  ],
+  "original_driver_invocation": {
+    "argv": [
+      "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_external_evidence_existing_source_v2.py",
+      "--head",
+      "2a62061177852dc3ebd200fa8d7c66c661a119a1",
+      "--tree",
+      "f8d170ff75990e879e93888a95e5408f36b36f6c",
+      "--evidence-dir",
+      "/home/qian-qi/chain-final-consolidation-20261114-root/final-external-evidence-existing-source-2a6206-v2"
+    ],
+    "executable": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+    "optimize": 0
+  },
+  "original_all_12_steps_exit0": true,
+  "original_lane_elapsed_seconds": 221.499,
+  "original_file_count": 27,
+  "original_bytes": 112326,
+  "payload_file_count": 29,
+  "zip_member_count": 30,
+  "zip": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/original-external-evidence-2a6206-v2.zip",
+    "bytes": 38337,
+    "sha256": "5f79d5a1dbf83ea5fda6c6b21612cfdccb0e4104b9fba9b51ed137e4fbdeb7f5"
+  },
+  "index": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/EVIDENCE_INDEX.json",
+    "bytes": 26704,
+    "sha256": "d0b2c797aa71f6058229520fe60cf05af9a3e19c7ab67778ae22304afe386fbc"
+  },
+  "producer": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-external-evidence-2a6206-v2-prci/package_original_external_evidence_2a6206_v2.py",
+    "bytes": 8897,
+    "sha256": "62f177ea0964b01a87c862fa38bb0ff2d4814e6443963e9ae79f7629e02a895f"
+  },
+  "all_member_crc_size_sha_verified": true,
+  "original_source_file_versions_unchanged": true,
+  "source_before_after_equal": true,
+  "verified_object_trees": {
+    "1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3",
+    "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502",
+    "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0",
+    "3c63c8368187de895e1dc0df8bbc105c6f39f842": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+    "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60",
+    "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73",
+    "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762",
+    "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579",
+    "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+    "c2b1ca2503aeca35873d20d1b188689369edc752": "5df72527b22520b27f5ad858bbca98456c7ad9cf",
+    "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee",
+    "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954",
+    "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c",
+    "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"
+  },
+  "fetched": [],
+  "original_readiness_suite": {
+    "tests": 77,
+    "elapsed_seconds": 35.305,
+    "result": "OK",
+    "stderr_member": "original/external-evidence-contract.stderr",
+    "scope": "original readiness suite within the completed external lane; not all lane test methods"
+  },
+  "hosted_ci_qualification": false,
+  "future_revision_qualification": false,
+  "repository_truth_pass_claimed": false,
+  "tests_rerun": false,
+  "source_or_git_objects_modified": false,
+  "network_actions_by_packager": false,
+  "unexpected_nested_files_excluded": []
+}

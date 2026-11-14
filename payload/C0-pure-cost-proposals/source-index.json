@@ -1,0 +1,54 @@
+{
+  "schema": "trnm-bounded-pure-cost-source-review-v1",
+  "observed_at_utc": "2026-11-14T09:07:19.934375+00:00",
+  "fixed_source": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "root_head_observed": "08c9becab740ab2c375b970f376a7638f44c9e8e",
+  "root_tree": "036868dfcc953b6f5574c627e0027c3d4e2d3523",
+  "root_head_after_same": true,
+  "sources": [
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "fixed_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+      "current_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+      "bytes": 32654,
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs.raw"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "fixed_blob": "e7d0d9f5401eb9e33599c3c9b6f849bcf26808fe",
+      "current_blob": "e7d0d9f5401eb9e33599c3c9b6f849bcf26808fe",
+      "bytes": 7198,
+      "sha256": "c1fc7c88249daff102c2cdb045bb1b38e5fd115e15dc4c608a2f1a5725171724",
+      "output": "/private/tmp/chain-architecture-W1-progress-scheduling-review-20261114-v1/production-pure-cost-review-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--work_arithmetic.rs.raw"
+    }
+  ],
+  "existing_runtime_anchors": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "fixed_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+      "current_blob": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+      "same": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "fixed_blob": "1c2c7aad3754cd54e3a05182fede5f6357ef9df6",
+      "current_blob": "1c2c7aad3754cd54e3a05182fede5f6357ef9df6",
+      "same": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "fixed_blob": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+      "current_blob": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+      "same": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "fixed_blob": "dcfe1aa548438a836743bc60b4375a922a87ff33",
+      "current_blob": "dcfe1aa548438a836743bc60b4375a922a87ff33",
+      "same": true
+    }
+  ],
+  "source_or_git_writes": false,
+  "native_or_test_execution": false
+}

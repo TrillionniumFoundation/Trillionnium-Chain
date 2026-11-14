@@ -1,0 +1,6 @@
+tree 9fda17fed2542b2baccaa34585bb00afd699e12b
+parent 318527b4b2a07b5037d755547acd92e46ae3aded
+author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794635207 +0800
+committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794635207 +0800
+
+docs: preserve empty network receipt as raw evidence

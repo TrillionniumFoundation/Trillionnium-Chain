@@ -1,0 +1,54 @@
+{
+  "schema": "prepared-pr847-audit-update-v3",
+  "remote_writes": false,
+  "publication_receipt_path": "/private/tmp/chain-consolidation-20261114-root/resume-candidate-archive-publish-dc42ce-v2/summary.json",
+  "publication_receipt_sha256": "3d5ca352bac97ea542620e6026006e2c8949f944854a3a4bfc73ed44c65c8a4d",
+  "publication_status": "confirmed",
+  "remote_observation_phase": "after",
+  "archive_metadata_path": "/private/tmp/chain-consolidation-20261114-root/publish-candidate-and-archive-dc42ce-v2/archive-local.json",
+  "archive_metadata_sha256": "7a5ead74ce076c3e8fd56cac61c22a380b660b7da4875a9259018e37e4c21aa6",
+  "expected_head_map_input_path": "/private/tmp/chain-consolidation-20261114-root/publish-candidate-and-archive-dc42ce-v2/hooks/expected.json",
+  "expected_head_map_input_sha256": "ee1e1fca066b62525016cd60803cadb3a2183cb8f9a5f367872341bd0ec2ca1a",
+  "before_raw_sha256": "14fb8d72a54f43e15e3e5f9829dd8107f051a6039ff6a5023c2482827cb0a31d",
+  "before_title": "Converge fixed Chain/Hepta closure source and evidence contracts",
+  "before_draft": true,
+  "before_body_bytes": 19624,
+  "desired_title": "Consolidate audited branch history and current runtime",
+  "desired_body_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v3/pr-body.md",
+  "desired_body_bytes": 3565,
+  "desired_body_sha256": "a0ba1d006eb975ec5fe35702b2099b3d22e94e1c869c2db87ce3049f08b2d683",
+  "desired_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v3/desired.json",
+  "desired_sha256": "fd02bdd66d4d0775ac1b11afbef646b20344ef4b4752a5081df50930fb89cca0",
+  "head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "archive_tag": "archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2",
+  "archive_commit": "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+  "steps": [
+    {
+      "label": "actor",
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "exit": 0,
+      "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pr-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+      ],
+      "exit": 0,
+      "stdout_sha256": "14fb8d72a54f43e15e3e5f9829dd8107f051a6039ff6a5023c2482827cb0a31d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-57c3218d3a48e3f25d4da203c11bc263408d8bdecccc44fe7059b30fbd7bb358/output.log",
+  "available_end": 1147,
+  "chunk_sha256": "7121bc12e6902ac51fa84912291826e903501b51e80d8901035cc6c248830be1",
+  "host": "mac",
+  "next_offset": 1147,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-57c3218d3a48e3f25d4da203c11bc263408d8bdecccc44fe7059b30fbd7bb358",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 31127 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 1147,
+    "bytes_stored": 1147,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794645623381,
+    "exit_code": 1,
+    "output_complete": true,
+    "owner_pid": 63102,
+    "pid": 63109,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"schema\": \"trnm-M4-project-preflight-before-edit-v1\", \"argv\": [\"bash\", \"scripts/project-preflight.sh\"], \"returncode\": 1, \"worktree\": \"/private/tmp/chain-M4-owned-process-collector-20261114\", \"head\": \"1a7afcdb820b051d1e4bfde3d436f96fc050c487\", \"nested_agents\": [], \"files\": [{\"path\": \"/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1/stdout\", \"bytes\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}, {\"path\": \"/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/project-preflight-before-edit-v1/stderr\", \"bytes\": 253, \"sha256\": \"7aba2ef6719a8e581c9042bb0116e857656e02a73790192ddd4fc0d3f96bf2b9\"}], \"finished_at\": \"2026-11-14T08:40:23.457099+00:00\"}\r\nTraceback (most recent call last):\r\n  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m13\u001b[0m, in \u001b[35m<module>\u001b[0m\r\n    b=(json.dumps(s,indent=2)+\"\\n\").encode();(O/\"summary.json\").write_bytes(b);print(json.dumps(s));assert \u001b[1;31mp.returncode==0\u001b[0m\r\n                                                                                                           \u001b[1;31m^^^^^^^^^^^^^^^\u001b[0m\r\n\u001b[1;35mAssertionError\u001b[0m\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

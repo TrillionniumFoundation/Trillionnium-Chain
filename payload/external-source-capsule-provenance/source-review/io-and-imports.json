@@ -1,0 +1,2258 @@
+{
+  "head": "e1bf4299a0c57ba797baf2cc50192321e8843b6b",
+  "worktree_head": "308878245be0a8ece89447c78caf606a413e5434",
+  "requirements": "# Scientific/conformance environment only; not a runtime dependency or dynamic install hook.\nnumpy==1.26.4\ncryptography==50.0.2\n",
+  "workflow_head": "  external-evidence-contract:\n    name: external-evidence-contract\n    runs-on: ubuntu-24.04\n    timeout-minutes: 45\n    steps:\n      - name: Checkout exact candidate\n        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n        with:\n          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}\n          fetch-depth: 0\n          persist-credentials: false\n      - name: Verify immutable source identity\n        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\" --output \"$RUNNER_TEMP/ci-observations/source.json\"\n      - name: Set isolated Cargo paths after runner allocation\n        shell: bash\n        run: |\n          set -euo pipefail\n          printf 'CARGO_HOME=%s/cargo-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'CARGO_TARGET_DIR=%s/target-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\n      - name: Install isolated evidence-replay Python environment\n        run: |\n          python3 -m venv \"$RUNNER_TEMP/pon-evidence-env\"\n          \"$RUNNER_TEMP/pon-evidence-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt\n          echo \"$RUNNER_TEMP/pon-evidence-env/bin\" >> \"$GITHUB_PATH\"\n      - name: Run actual external-evidence-contract checks\n        run: bash scripts/ci/ci_job.sh external-evidence-contract\n      - name: Verify source remained unchanged\n        if: always()\n        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\"\n      - name: Retain source and execution observations\n        if: always()\n        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n        with:\n          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}\n          path: ${{ runner.temp }}/ci-observations/\n          if-no-files-found: error\n          retention-days: 30",
+  "files": [
+    {
+      "path": "scripts/ci/check_client_confirmation_evidence.py",
+      "bytes": 31880,
+      "sha256": "91b719ddec7a3cb8f51ecb1db594f273b1fe2e7485a9a75ac91186b7cc28806b",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_invariant_evidence",
+        "client_confirmation",
+        "contract_wire",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "ledger",
+        "os",
+        "pathlib",
+        "re",
+        "report_module_evidence",
+        "statistics",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "unittest.mock"
+      ],
+      "selected_calls": [
+        {
+          "line": 91,
+          "callee": "subprocess.check_output(['git', 'rev-parse', q['source_commit'] + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', q['source_commit'] + '^{tree}'], cwd=root, text=True).strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 99,
+          "callee": "subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', q['source_commit']], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', q['source_commit']], cwd=root, text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 56,
+          "callee": "subprocess.check_output(['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root).decode().split",
+          "call": "subprocess.check_output(\n        ['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root\n    ).decode().split('\\0')",
+          "context": [
+            "require_tracked_evidence"
+          ]
+        },
+        {
+          "line": 106,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 107,
+          "callee": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 290,
+          "callee": "requests.read_bytes",
+          "call": "requests.read_bytes()",
+          "context": [
+            "validate_session"
+          ]
+        },
+        {
+          "line": 91,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', q['source_commit'] + '^{tree}'], cwd=root, text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 99,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', q['source_commit']], cwd=root, text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 289,
+          "callee": "hashlib.sha256(requests.read_bytes()).hexdigest",
+          "call": "hashlib.sha256(requests.read_bytes()).hexdigest()",
+          "context": [
+            "validate_session"
+          ]
+        },
+        {
+          "line": 56,
+          "callee": "subprocess.check_output(['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root).decode",
+          "call": "subprocess.check_output(\n        ['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root\n    ).decode()",
+          "context": [
+            "require_tracked_evidence"
+          ]
+        },
+        {
+          "line": 106,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 107,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 56,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(\n        ['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root\n    )",
+          "context": [
+            "require_tracked_evidence"
+          ]
+        },
+        {
+          "line": 289,
+          "callee": "requests.read_bytes",
+          "call": "requests.read_bytes()",
+          "context": [
+            "validate_session"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_completion_evidence.py",
+      "bytes": 12260,
+      "sha256": "b7ddf1d05b10611bf0810773e1cfd1a1b0d9f9258fd010326dac20621a736713",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_invariant_evidence",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "statistics",
+        "subprocess"
+      ],
+      "selected_calls": [
+        {
+          "line": 37,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 134,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=ROOT, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines()",
+          "context": []
+        },
+        {
+          "line": 30,
+          "callee": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True).strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 37,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 134,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True)",
+          "context": []
+        },
+        {
+          "line": 30,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+      "bytes": 15008,
+      "sha256": "4896fb542cc1ce12e1db748949163096a54d70343a7872f2601110703adb3d4f",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_invariant_evidence",
+        "evaluation_bundle",
+        "experiments.settle_model",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "pathlib",
+        "re",
+        "subprocess",
+        "sys"
+      ],
+      "selected_calls": [
+        {
+          "line": 44,
+          "callee": "subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=root,text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 51,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 52,
+          "callee": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=root,text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 37,
+          "callee": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True).strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 44,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 59,
+          "callee": "subprocess.check_output(['git', 'rev-parse', q['input_source_commit'] + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse',q['input_source_commit']+'^{tree}'],cwd=root,text=True).strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 176,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=args.root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=args.root,text=True).splitlines()",
+          "context": []
+        },
+        {
+          "line": 51,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 52,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 37,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 59,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse',q['input_source_commit']+'^{tree}'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 176,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=args.root,text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_four_priority_evidence.py",
+      "bytes": 12607,
+      "sha256": "7421e526adda4a6d82a330968a88fdeb4866a9ddd16f0346efd89d28451f7c7f",
+      "imports": [
+        "check_invariant_evidence",
+        "hashlib",
+        "json",
+        "pathlib",
+        "pon_work_cost_report",
+        "re",
+        "statistics",
+        "subprocess",
+        "sys"
+      ],
+      "selected_calls": [
+        {
+          "line": 52,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-files', '--stage', '-z', '--', prefix], cwd=root)",
+          "context": [
+            "tracked_package"
+          ]
+        },
+        {
+          "line": 63,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'cat-file', 'blob', oid], cwd=root)",
+          "context": [
+            "tracked_package"
+          ]
+        },
+        {
+          "line": 191,
+          "callee": "subprocess.check_output(['git', 'rev-parse', COMMIT + '^{tree}'], cwd=root).decode().strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', COMMIT + '^{tree}'], cwd=root).decode().strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 191,
+          "callee": "subprocess.check_output(['git', 'rev-parse', COMMIT + '^{tree}'], cwd=root).decode",
+          "call": "subprocess.check_output(['git', 'rev-parse', COMMIT + '^{tree}'], cwd=root).decode()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 191,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', COMMIT + '^{tree}'], cwd=root)",
+          "context": [
+            "validate"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_invariant_evidence.py",
+      "bytes": 12331,
+      "sha256": "1d21d001c3de0305e4718de76daf79c9f74a7cfc66522484b1db3e76c409a6ff",
+      "imports": [
+        "__future__",
+        "argparse",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "subprocess"
+      ],
+      "selected_calls": [
+        {
+          "line": 30,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git','cat-file','--batch'],cwd=root,input=queries,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True)",
+          "context": [
+            "source_bytes"
+          ]
+        },
+        {
+          "line": 49,
+          "callee": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True).strip()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 63,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines()",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 148,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=ROOT, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines()",
+          "context": []
+        },
+        {
+          "line": 49,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse',commit+'^{tree}'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 63,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 148,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_native_node_supplements.py",
+      "bytes": 18419,
+      "sha256": "2c89ce9f407303ada700eaaeaa74b8e495a7c83f1868836f73154f72239d324f",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_invariant_evidence",
+        "client_confirmation",
+        "contract_wire",
+        "experiments.settle_model",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "ledger",
+        "os",
+        "pathlib",
+        "re",
+        "shlex",
+        "sys",
+        "tempfile",
+        "unittest.mock"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_pon_evidence.py",
+      "bytes": 6557,
+      "sha256": "285d6b9924a2cd0e708fb170f55629248216d9a85385159093718e2f8cfc9f83",
+      "imports": [
+        "hashlib",
+        "json",
+        "pathlib",
+        "struct",
+        "subprocess"
+      ],
+      "selected_calls": [
+        {
+          "line": 57,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines()",
+          "context": []
+        },
+        {
+          "line": 25,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','show',archive+':'+relative],cwd=root,stderr=subprocess.DEVNULL)",
+          "context": [
+            "validate"
+          ]
+        },
+        {
+          "line": 57,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-files'],cwd=root,text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "bytes": 72270,
+      "sha256": "602abf4e1ef39772fb1434efe9ca8957ca567f6b0c7ac3fa5f43e43c893ed3bd",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_client_confirmation_evidence",
+        "contract_wire",
+        "copy",
+        "evaluation_bundle",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "ledger",
+        "math",
+        "model_attribution",
+        "os",
+        "pathlib",
+        "prepare_evidence_sources",
+        "re",
+        "reference",
+        "report_module_evidence",
+        "sqlite3",
+        "stat",
+        "subprocess",
+        "sys",
+        "unittest.mock",
+        "work_oracle"
+      ],
+      "selected_calls": [
+        {
+          "line": 118,
+          "callee": "subprocess.check_output(['git', *args], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', *args], cwd=root, text=True).strip()",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 842,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','show',commit+':'+(inputs.relative_to(root)/name).as_posix()],cwd=root)",
+          "context": [
+            "validate_attribution"
+          ]
+        },
+        {
+          "line": 118,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', *args], cwd=root, text=True)",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 133,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'cat-file', 'blob', oid], cwd=root)",
+          "context": [
+            "source_inventory"
+          ]
+        },
+        {
+          "line": 1054,
+          "callee": "subprocess.run",
+          "call": "subprocess.run([sys.executable,'-B',str(source/'scripts/ci/check_public_readiness_evidence.py'),\n                                    '--root',str(source),'--evidence',str(folder.absolute())],\n                                   cwd=source,check=True,capture_output=True,text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_repository.py",
+      "bytes": 14135,
+      "sha256": "776cb1a0cb604e9614b6f7d0e7833f95b84507354b2b9a9152e8302e0f732cde",
+      "imports": [
+        "__future__",
+        "check_applicability",
+        "check_ci_contract",
+        "check_detailed_contracts",
+        "check_invariants",
+        "decimal",
+        "hashlib",
+        "json",
+        "math",
+        "pathlib",
+        "re",
+        "report_current_implementation",
+        "subprocess",
+        "sys",
+        "tomllib",
+        "urllib.parse"
+      ],
+      "selected_calls": [
+        {
+          "line": 202,
+          "callee": "subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()",
+          "context": []
+        },
+        {
+          "line": 203,
+          "callee": "subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=ROOT,text=True).strip()",
+          "context": []
+        },
+        {
+          "line": 204,
+          "callee": "subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip()",
+          "context": []
+        },
+        {
+          "line": 202,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True)",
+          "context": []
+        },
+        {
+          "line": 203,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=ROOT,text=True)",
+          "context": []
+        },
+        {
+          "line": 204,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/prepare_evidence_sources.py",
+      "bytes": 7223,
+      "sha256": "6fe88742190e82e2045d26602b4375ed867602b148314554de7d8aa1b6a2f18c",
+      "imports": [
+        "json",
+        "pathlib",
+        "re",
+        "subprocess"
+      ],
+      "selected_calls": [
+        {
+          "line": 36,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git','cat-file','-t',source],cwd=root,capture_output=True,text=True)",
+          "context": [
+            "declarations"
+          ]
+        },
+        {
+          "line": 39,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','ls-tree','-r',source,'--',*paths],cwd=root,text=True)",
+          "context": [
+            "declarations"
+          ]
+        },
+        {
+          "line": 52,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git','cat-file','blob',objects[relative]],cwd=root)",
+          "context": [
+            "declarations",
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/report_module_evidence.py",
+      "bytes": 24277,
+      "sha256": "70941e508e48ef2f82553482b39b2b104bede82edfd9963e0d7e8f23343ff8bb",
+      "imports": [
+        "__future__",
+        "argparse",
+        "ast",
+        "check_invariant_evidence",
+        "functools",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "subprocess",
+        "typing"
+      ],
+      "selected_calls": [
+        {
+          "line": 397,
+          "callee": "subprocess.check_output(['git', 'rev-parse', binding_commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', binding_commit + '^{tree}'],\n                                                cwd=root, text=True).strip()",
+          "context": [
+            "package_snapshot"
+          ]
+        },
+        {
+          "line": 404,
+          "callee": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip()",
+          "context": [
+            "package_snapshot"
+          ]
+        },
+        {
+          "line": 416,
+          "callee": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines()",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 418,
+          "callee": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True).splitlines",
+          "call": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'],\n                                           cwd=root, text=True).splitlines()",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 456,
+          "callee": "subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 457,
+          "callee": "subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=root, text=True).strip()",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 458,
+          "callee": "subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 397,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', binding_commit + '^{tree}'],\n                                                cwd=root, text=True)",
+          "context": [
+            "package_snapshot"
+          ]
+        },
+        {
+          "line": 404,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True)",
+          "context": [
+            "package_snapshot"
+          ]
+        },
+        {
+          "line": 416,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-files'], cwd=root, text=True)",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 418,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'],\n                                           cwd=root, text=True)",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 456,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True)",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 457,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=root, text=True)",
+          "context": [
+            "report"
+          ]
+        },
+        {
+          "line": 458,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True)",
+          "context": [
+            "report"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_client_confirmation_evidence.py",
+      "bytes": 7690,
+      "sha256": "ff9cde17b9426add416a8984e1ff951dd919ed9a9e4d61474bbbab66794542c5",
+      "imports": [
+        "__future__",
+        "check_client_confirmation_evidence",
+        "copy",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "pathlib",
+        "report_module_evidence",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_completion_evidence.py",
+      "bytes": 5184,
+      "sha256": "5403b9ba923da2f2b90cea45876305df525e557894def6f506e015d80f8a22d3",
+      "imports": [
+        "check_completion_evidence",
+        "hashlib",
+        "json",
+        "pathlib",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_evaluation_bundle_evidence.py",
+      "bytes": 5085,
+      "sha256": "e6565394f56796bea6a133448a6c923c7a0d59254aa93c1f3b6c028eb3a92bd0",
+      "imports": [
+        "check_evaluation_bundle_evidence",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "pathlib",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_evidence_sources.py",
+      "bytes": 28860,
+      "sha256": "c04d980d6e9f7efe3a4aa188231df2d06828b003aae81aea9bb05fa914a6f093",
+      "imports": [
+        "json",
+        "pathlib",
+        "prepare_evidence_sources",
+        "subprocess",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": [
+        {
+          "line": 352,
+          "callee": "subprocess.check_output(['git', *args], cwd=self.root, text=True).strip",
+          "call": "subprocess.check_output(['git',*args],cwd=self.root,text=True).strip()",
+          "context": [
+            "MeasuredDeclarationSnapshotTests",
+            "git"
+          ]
+        },
+        {
+          "line": 30,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]] if args[1]=='rev-parse'else '', '')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_existing_objects_do_not_fetch",
+            "run"
+          ]
+        },
+        {
+          "line": 40,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_missing_sources_fetch_only_exact_repo_and_commit",
+            "run"
+          ]
+        },
+        {
+          "line": 47,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'0'*40,'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_tree_mismatch_is_not_evidence",
+            "run"
+          ]
+        },
+        {
+          "line": 50,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','unavailable')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_failed_fetch_does_not_succeed",
+            "run"
+          ]
+        },
+        {
+          "line": 65,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_new_cost_package_retains_exact_original_source",
+            "run"
+          ]
+        },
+        {
+          "line": 89,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_client_receipt_retains_exact_source_after_squash",
+            "run"
+          ]
+        },
+        {
+          "line": 113,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args, 0, '', '')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_nested_cost_collection_has_its_own_exact_source",
+            "run"
+          ]
+        },
+        {
+          "line": 144,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_four_priority_audit_fetches_only_its_exact_historical_object_once",
+            "run"
+          ]
+        },
+        {
+          "line": 224,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_uses_only_declared_exact_object_and_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 236,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,\n                self.trees[args[2].split('^')[0]] if args[1]=='rev-parse' else '','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_existing_corpus_is_checked_without_fetch",
+            "run"
+          ]
+        },
+        {
+          "line": 277,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_matching_implementation_pair_deduplicates",
+            "run"
+          ]
+        },
+        {
+          "line": 289,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_does_not_accept_mismatched_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 303,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,\n                self.trees[args[2].split('^')[0]] if args[1]=='rev-parse' else '','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_no_pair_or_nested_failure_does_not_invent_source",
+            "run"
+          ]
+        },
+        {
+          "line": 320,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_public_root_source_is_fetched_but_nested_observations_are_ignored",
+            "run"
+          ]
+        },
+        {
+          "line": 38,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_missing_sources_fetch_only_exact_repo_and_commit",
+            "run"
+          ]
+        },
+        {
+          "line": 39,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_missing_sources_fetch_only_exact_repo_and_commit",
+            "run"
+          ]
+        },
+        {
+          "line": 63,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_new_cost_package_retains_exact_original_source",
+            "run"
+          ]
+        },
+        {
+          "line": 64,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_new_cost_package_retains_exact_original_source",
+            "run"
+          ]
+        },
+        {
+          "line": 87,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_client_receipt_retains_exact_source_after_squash",
+            "run"
+          ]
+        },
+        {
+          "line": 88,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_client_receipt_retains_exact_source_after_squash",
+            "run"
+          ]
+        },
+        {
+          "line": 111,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args, 1, '', 'missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_nested_cost_collection_has_its_own_exact_source",
+            "run"
+          ]
+        },
+        {
+          "line": 112,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args, 0, self.trees[args[2].split('^')[0]], '')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_nested_cost_collection_has_its_own_exact_source",
+            "run"
+          ]
+        },
+        {
+          "line": 142,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1 if args[3]==AUDIT_COMMIT+'^{commit}' else 0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_four_priority_audit_fetches_only_its_exact_historical_object_once",
+            "run"
+          ]
+        },
+        {
+          "line": 143,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_four_priority_audit_fetches_only_its_exact_historical_object_once",
+            "run"
+          ]
+        },
+        {
+          "line": 221,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1 if args[3].startswith('7'*40) else 0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_uses_only_declared_exact_object_and_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 223,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_uses_only_declared_exact_object_and_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 274,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_matching_implementation_pair_deduplicates",
+            "run"
+          ]
+        },
+        {
+          "line": 276,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_matching_implementation_pair_deduplicates",
+            "run"
+          ]
+        },
+        {
+          "line": 285,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1,'','missing')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_does_not_accept_mismatched_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 288,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,'9'*40 if commit=='7'*40 else self.trees[commit],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_corpus_fetch_does_not_accept_mismatched_tree",
+            "run"
+          ]
+        },
+        {
+          "line": 318,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,1 if args[3].startswith('7'*40) else 0,'','')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_public_root_source_is_fetched_but_nested_observations_are_ignored",
+            "run"
+          ]
+        },
+        {
+          "line": 319,
+          "callee": "subprocess.CompletedProcess",
+          "call": "subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')",
+          "context": [
+            "EvidenceSourceTests",
+            "test_public_root_source_is_fetched_but_nested_observations_are_ignored",
+            "run"
+          ]
+        },
+        {
+          "line": 352,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git',*args],cwd=self.root,text=True)",
+          "context": [
+            "MeasuredDeclarationSnapshotTests",
+            "git"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_four_priority_evidence.py",
+      "bytes": 8582,
+      "sha256": "4df81f556e0a9e93dea61074af2ae9cdc0a4bf29949cb13a9f17b71f11ac51a0",
+      "imports": [
+        "check_four_priority_evidence",
+        "json",
+        "pathlib",
+        "shutil",
+        "subprocess",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": [
+        {
+          "line": 41,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', *args], cwd=self.root, stderr=subprocess.STDOUT)",
+          "context": [
+            "FourPriorityEvidenceTests",
+            "git"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_invariant_evidence.py",
+      "bytes": 4849,
+      "sha256": "1886641ce98079569627f2e57141eea4b998b717410fbe27200c68a8c7155813",
+      "imports": [
+        "check_invariant_evidence",
+        "copy",
+        "hashlib",
+        "json",
+        "pathlib",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_native_node_supplements.py",
+      "bytes": 6073,
+      "sha256": "09c584f0cb79bdd238b4498452c701d77fe65abce1ba36c5183699bae6a84c74",
+      "imports": [
+        "check_native_node_supplements",
+        "copy",
+        "historical_evidence",
+        "json",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_native_session_evidence.py",
+      "bytes": 9636,
+      "sha256": "2b587695f81799209ebf616e3f5eba9fb3e043f7d9e8f1b56f8d0e7ec0f1eeb3",
+      "imports": [
+        "check_client_confirmation_evidence",
+        "copy",
+        "hashlib",
+        "historical_evidence",
+        "json",
+        "pathlib",
+        "shutil",
+        "subprocess",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": [
+        {
+          "line": 165,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git', '-C', str(self.root), *args], check=True,\n                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)",
+          "context": [
+            "RepositoryEvidenceTrackingTests",
+            "git"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_pon_evidence.py",
+      "bytes": 2231,
+      "sha256": "ab63d4f65b10d5737f6148f7bb06da829b91008fcb0c7845429e0124252eeb07",
+      "imports": [
+        "check_pon_evidence",
+        "hashlib",
+        "json",
+        "pathlib",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "bytes": 125434,
+      "sha256": "92c9aa15bb8dadbafaf5c4a96e8f077d971b56647b18e49f3b22a35a61ba546b",
+      "imports": [
+        "__future__",
+        "check_public_readiness_evidence",
+        "contextlib",
+        "contract_wire",
+        "copy",
+        "hashlib",
+        "io",
+        "json",
+        "os",
+        "pathlib",
+        "prepare_evidence_sources",
+        "qualification_runtime",
+        "re",
+        "run_public_readiness_qualification",
+        "shutil",
+        "signal",
+        "sqlite3",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "test_qualification_runtime",
+        "unittest",
+        "unittest.mock",
+        "work_oracle"
+      ],
+      "selected_calls": [
+        {
+          "line": 302,
+          "callee": "subprocess.check_output(['git', *args], cwd=self.root, text=True).strip",
+          "call": "subprocess.check_output(['git',*args],cwd=self.root,text=True).strip()",
+          "context": [
+            "SourceAndArtifactTests",
+            "git"
+          ]
+        },
+        {
+          "line": 396,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['python3','-c',\n            'import sys,platform,json,numpy,cryptography; print(json.dumps(dict('\n            'executable=sys.executable,python=platform.python_version(),numpy=numpy.__version__,'\n            'cryptography=cryptography.__version__)))'],env=bound,text=True)",
+          "context": [
+            "SourceAndArtifactTests",
+            "test_qualification_subprocess_ignores_a_poisoned_python_search_path"
+          ]
+        },
+        {
+          "line": 302,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git',*args],cwd=self.root,text=True)",
+          "context": [
+            "SourceAndArtifactTests",
+            "git"
+          ]
+        },
+        {
+          "line": 394,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['python3','-c','pass'],env=poisoned)",
+          "context": [
+            "SourceAndArtifactTests",
+            "test_qualification_subprocess_ignores_a_poisoned_python_search_path"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_repository.py",
+      "bytes": 14671,
+      "sha256": "ae1406e6724865f4af6d5e01f9edcc0187081fabd2976cc4a8d7fa7aefc669d5",
+      "imports": [
+        "__future__",
+        "check_repository",
+        "copy",
+        "json",
+        "pathlib",
+        "re",
+        "shutil",
+        "tempfile",
+        "unittest"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/pon_work_cost_report.py",
+      "bytes": 29111,
+      "sha256": "d770853146c8ef77bf704678361284084ea828ff38ff3bb4add09033aa33a8d0",
+      "imports": [
+        "__future__",
+        "argparse",
+        "bounded_process",
+        "check_invariant_evidence",
+        "datetime",
+        "fractions",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "platform",
+        "pon_w1_cost_matrix_reader",
+        "re",
+        "statistics",
+        "subprocess",
+        "sys",
+        "time",
+        "typing"
+      ],
+      "selected_calls": [
+        {
+          "line": 110,
+          "callee": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 169,
+          "callee": "subprocess.check_output(['rustc', '--version'], text=True).strip",
+          "call": "subprocess.check_output(['rustc', '--version'], text=True).strip()",
+          "context": [
+            "collect"
+          ]
+        },
+        {
+          "line": 110,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True)",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 169,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['rustc', '--version'], text=True)",
+          "context": [
+            "collect"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "bytes": 8924,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "imports": [
+        "__future__",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "struct"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "bytes": 37985,
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "copy",
+        "cryptography.exceptions",
+        "cryptography.hazmat.primitives.asymmetric.ed25519",
+        "cryptography.hazmat.primitives.serialization",
+        "evaluation_round",
+        "fcntl",
+        "json",
+        "native_execution",
+        "native_session",
+        "os",
+        "pathlib",
+        "reference",
+        "sqlite3",
+        "strict_signature",
+        "struct",
+        "tempfile",
+        "urllib.parse",
+        "work_backend"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+      "bytes": 16936,
+      "sha256": "a8c8af074104959eafdb1b077a541198beecfe402549cc43711cb2dbf84e0f22",
+      "imports": [
+        "__future__",
+        "argparse",
+        "base64",
+        "collections.abc",
+        "contract_wire",
+        "json",
+        "ledger",
+        "re",
+        "struct",
+        "sys",
+        "tempfile",
+        "time",
+        "typing"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/historical_evidence.py",
+      "bytes": 2959,
+      "sha256": "3bf91d29a598fabc75c6b1b0f292795fd5c8a1d1917309f860f54bd28e54d401",
+      "imports": [
+        "__future__",
+        "contextlib",
+        "json",
+        "os",
+        "pathlib",
+        "re",
+        "subprocess",
+        "sys",
+        "tempfile"
+      ],
+      "selected_calls": [
+        {
+          "line": 31,
+          "callee": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip",
+          "call": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True).strip()",
+          "context": [
+            "measured_checkout"
+          ]
+        },
+        {
+          "line": 57,
+          "callee": "subprocess.run",
+          "call": "subprocess.run([sys.executable, str(Path(script).resolve()), '--root', str(source),\n                                 '--evidence', str(folder)], cwd=root, env=env, check=True,\n                                capture_output=True, text=True, timeout=300)",
+          "context": [
+            "validate_historical_cli"
+          ]
+        },
+        {
+          "line": 31,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', 'rev-parse', commit + '^{tree}'], cwd=root, text=True)",
+          "context": [
+            "measured_checkout"
+          ]
+        },
+        {
+          "line": 39,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git', 'worktree', 'add', '--detach', str(source), commit],\n                           cwd=root, check=True, capture_output=True, text=True, timeout=90)",
+          "context": [
+            "measured_checkout"
+          ]
+        },
+        {
+          "line": 48,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git', 'worktree', 'remove', '--force', str(source)],\n                               cwd=root, check=True, capture_output=True, text=True, timeout=90)",
+          "context": [
+            "measured_checkout"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+      "bytes": 15573,
+      "sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "copy",
+        "evaluation",
+        "fractions",
+        "json",
+        "model_contract",
+        "os",
+        "pathlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
+      "bytes": 10617,
+      "sha256": "f2d19f53db4545e2cf841fcac2d85a30e4ead38ca0b64b15f01b172028af9621",
+      "imports": [
+        "argparse",
+        "evaluation_bundle",
+        "inference_receipt",
+        "json",
+        "ledger",
+        "pathlib",
+        "shutil",
+        "subprocess",
+        "sys",
+        "time"
+      ],
+      "selected_calls": [
+        {
+          "line": 92,
+          "callee": "subprocess.run",
+          "call": "subprocess.run([sys.executable,str(Path(__file__).with_name('model_loop.py')),'--mode','infer','--tasks',str(directory/'consumer.json'),'--model',str(out/'custodian-a/model.json'),'--out',str(out/'consumer-service.json')],check=True)",
+          "context": [
+            "run"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "bytes": 2944,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "hashlib",
+        "struct"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reference.py",
+      "bytes": 4753,
+      "sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "imports": [
+        "__future__",
+        "copy",
+        "dataclasses",
+        "typing"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/model_attribution.py",
+      "bytes": 19318,
+      "sha256": "7a8674186337a135d0f47d19349868a85fd827754469ee345379f063e36bb41e",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "copy",
+        "evaluation",
+        "evaluation_bundle",
+        "fractions",
+        "json",
+        "math",
+        "model_contract"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "bytes": 199207,
+      "sha256": "134891ef8fe761de10c9282a35c5b94422a0541b93139e3ab44d8c205c5b15a2",
+      "imports": [
+        "__future__",
+        "ast",
+        "check_cross_arch_cost",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "tomllib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_detailed_contracts.py",
+      "bytes": 6581,
+      "sha256": "efc146dbab8ee62491a5b7ca587ab7614867107a284b5d33a5d1a4f6b35f7781",
+      "imports": [
+        "ast",
+        "json",
+        "pathlib",
+        "re",
+        "report_module_evidence"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_applicability.py",
+      "bytes": 21284,
+      "sha256": "1651c8adf3f86bb5302d84709192bee5d2703650be02e8d365c2a2f4142fa3f2",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_invariant_evidence",
+        "json",
+        "pathlib",
+        "report_module_evidence",
+        "subprocess",
+        "tomllib"
+      ],
+      "selected_calls": [
+        {
+          "line": 338,
+          "callee": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()",
+          "context": []
+        },
+        {
+          "line": 338,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True)",
+          "context": []
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_invariants.py",
+      "bytes": 3936,
+      "sha256": "39bacd9521f80b89ab67dc7237c768cc56fce9a1f0834620b0f6cd5bb6625b15",
+      "imports": [
+        "ast",
+        "json",
+        "pathlib",
+        "report_module_evidence"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/report_current_implementation.py",
+      "bytes": 6556,
+      "sha256": "07332fe871f501a0e0ba71ab0bc8474b89d4208244589dfb8d356afa38320c24",
+      "imports": [
+        "__future__",
+        "argparse",
+        "collections",
+        "json",
+        "pathlib",
+        "tomllib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/qualification_runtime.py",
+      "bytes": 6121,
+      "sha256": "cff43eeccc06d7ca8e8cbc533bc04d599ac043af9835efcaff7e324d16f2d5b4",
+      "imports": [
+        "bounded_process",
+        "ci.read_native_cache_observation",
+        "hashlib",
+        "os",
+        "pathlib",
+        "re",
+        "stat",
+        "subprocess",
+        "sys"
+      ],
+      "selected_calls": [
+        {
+          "line": 124,
+          "callee": "subprocess.CalledProcessError",
+          "call": "subprocess.CalledProcessError(probe.returncode, command,\n                                            output=probe.stdout, stderr=probe.stderr)",
+          "context": [
+            "bind_python_runtime"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/run_public_readiness_qualification.py",
+      "bytes": 19002,
+      "sha256": "a90ed462238959225628fee9447a706b16cf0e278df6d5e8324b15bfabe55bbd",
+      "imports": [
+        "__future__",
+        "argparse",
+        "contract_wire",
+        "cryptography.hazmat.backends.openssl.backend",
+        "hashlib",
+        "importlib.metadata",
+        "json",
+        "os",
+        "pathlib",
+        "platform",
+        "qualification_runtime",
+        "signal",
+        "stat",
+        "subprocess",
+        "sys",
+        "time"
+      ],
+      "selected_calls": [
+        {
+          "line": 34,
+          "callee": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 34,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', *args], cwd=ROOT, text=True)",
+          "context": [
+            "git"
+          ]
+        },
+        {
+          "line": 198,
+          "callee": "subprocess.Popen",
+          "call": "subprocess.Popen(launched,\n                    cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)",
+          "context": [
+            "run",
+            "execute"
+          ]
+        },
+        {
+          "line": 163,
+          "callee": "subprocess.check_output(['rustc', '--version'], text=True).strip",
+          "call": "subprocess.check_output(['rustc','--version'],text=True).strip()",
+          "context": [
+            "run"
+          ]
+        },
+        {
+          "line": 164,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['lscpu'],text=True)",
+          "context": [
+            "run"
+          ]
+        },
+        {
+          "line": 165,
+          "callee": "subprocess.check_output(['findmnt', '-T', str(out), '-n', '-o', 'FSTYPE,TARGET'], text=True).strip",
+          "call": "subprocess.check_output(['findmnt','-T',str(out),'-n','-o','FSTYPE,TARGET'],text=True).strip()",
+          "context": [
+            "run"
+          ]
+        },
+        {
+          "line": 163,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['rustc','--version'],text=True)",
+          "context": [
+            "run"
+          ]
+        },
+        {
+          "line": 165,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['findmnt','-T',str(out),'-n','-o','FSTYPE,TARGET'],text=True)",
+          "context": [
+            "run"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/test_qualification_runtime.py",
+      "bytes": 25326,
+      "sha256": "7dfc0b3afd5c51472c4be7874379a26dbb76bbe5951822574bc258e859d5e8ca",
+      "imports": [
+        "ast",
+        "ci",
+        "contextlib",
+        "io",
+        "json",
+        "os",
+        "pathlib",
+        "qualification_runtime",
+        "re",
+        "shutil",
+        "signal",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "time",
+        "unittest"
+      ],
+      "selected_calls": [
+        {
+          "line": 321,
+          "callee": "subprocess.run",
+          "call": "subprocess.run([self.interpreter, '-c', code], capture_output=True, timeout=2)",
+          "context": [
+            "QualificationIoBoundaryTests",
+            "test_usage_fifo_without_writer_never_blocks"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "bytes": 8627,
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "imports": [
+        "__future__",
+        "ctypes",
+        "dataclasses",
+        "math",
+        "os",
+        "selectors",
+        "signal",
+        "subprocess",
+        "sys",
+        "time"
+      ],
+      "selected_calls": [
+        {
+          "line": 99,
+          "callee": "subprocess.Popen",
+          "call": "subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,\n                               stderr=subprocess.PIPE,start_new_session=True,cwd=cwd,env=env)",
+          "context": [
+            "run_bounded"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "bytes": 35800,
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "imports": [
+        "argparse",
+        "collections",
+        "fractions",
+        "functools",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "struct",
+        "sys"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "bytes": 2151,
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+      "imports": [
+        "cryptography.exceptions",
+        "cryptography.hazmat.primitives.asymmetric.ed25519",
+        "functools"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "bytes": 1841,
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+      "imports": [
+        "bounded_process",
+        "contract_wire",
+        "os",
+        "pathlib",
+        "struct",
+        "work_oracle"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution.py",
+      "bytes": 1679,
+      "sha256": "0af0fd022b3c75ec960dc27ca0c578d3852724936029bba092b23be6ff3d6e55",
+      "imports": [
+        "__future__",
+        "bounded_process",
+        "contract_wire",
+        "json",
+        "os",
+        "pathlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_session.py",
+      "bytes": 15370,
+      "sha256": "ff6aec3622e4301d9019528ed61a79e5ce37b79f2069871c8b44e6239ab50b72",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "copy",
+        "json",
+        "math",
+        "os",
+        "pathlib",
+        "re",
+        "selectors",
+        "signal",
+        "struct",
+        "subprocess",
+        "time"
+      ],
+      "selected_calls": [
+        {
+          "line": 57,
+          "callee": "subprocess.Popen",
+          "call": "subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,\n                                          stderr=subprocess.PIPE, start_new_session=True)",
+          "context": [
+            "FramedProcess",
+            "__init__"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation_round.py",
+      "bytes": 649,
+      "sha256": "c36d68fccddc3911b226de0b519aca7607ada3dbfdc8b68f341db524d2fc2e9b",
+      "imports": [],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "bytes": 2416,
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "json",
+        "ledger",
+        "pathlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "bytes": 5485,
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+      "imports": [
+        "__future__",
+        "contract_wire",
+        "fractions",
+        "math"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/inference_receipt.py",
+      "bytes": 1362,
+      "sha256": "25eb9504d99f3e555c7d7adad8e7f6d5b2ad160b19b8576035d18b521c64bd76",
+      "imports": [
+        "contract_wire",
+        "json"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_cross_arch_cost.py",
+      "bytes": 41098,
+      "sha256": "f8f0f99c1f4a48d16d51f9257472645532626fc5202faa08c1453eaab9f4984f",
+      "imports": [
+        "__future__",
+        "argparse",
+        "check_maintenance_cost",
+        "check_one_zero_locality_cost",
+        "check_zero_locality_cost",
+        "ci_observation",
+        "collections",
+        "hashlib",
+        "json",
+        "pathlib",
+        "re",
+        "sys"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/read_native_cache_observation.py",
+      "bytes": 9219,
+      "sha256": "66da3ae13ded590fbef939233a158a9ca9ad38567f70a89d9796f01bbdab1e3b",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "re",
+        "stat"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "bytes": 8837,
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "imports": [
+        "__future__",
+        "bounded_process",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "signal",
+        "subprocess",
+        "sys",
+        "time",
+        "verify_ci_source"
+      ],
+      "selected_calls": [
+        {
+          "line": 149,
+          "callee": "subprocess.check_output(['git', '--no-replace-objects', *args], cwd=ROOT, text=True).strip",
+          "call": "subprocess.check_output(\n        ['git', '--no-replace-objects', *args], cwd=ROOT, text=True).strip()",
+          "context": [
+            "source"
+          ]
+        },
+        {
+          "line": 75,
+          "callee": "subprocess.Popen",
+          "call": "subprocess.Popen(command, cwd=cwd, env=env, stdout=stream,\n                                       stderr=subprocess.STDOUT, start_new_session=True)",
+          "context": [
+            "run"
+          ]
+        },
+        {
+          "line": 149,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(\n        ['git', '--no-replace-objects', *args], cwd=ROOT, text=True)",
+          "context": [
+            "source"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/check_zero_locality_cost.py",
+      "bytes": 10831,
+      "sha256": "4c118e22783b7acd434c6853ed0110c8ce1ac6c9aa999980e2fc58dd1f24697f",
+      "imports": [
+        "__future__",
+        "check_cross_arch_cost",
+        "collections",
+        "hashlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_maintenance_cost.py",
+      "bytes": 12489,
+      "sha256": "373b83538fa1fbf50c4c203e7fb90b21eeb33c5b0c7df171a3e64783177e9f96",
+      "imports": [
+        "__future__",
+        "check_cross_arch_cost",
+        "collections",
+        "hashlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/check_one_zero_locality_cost.py",
+      "bytes": 10321,
+      "sha256": "8285a801bc71703594cd375df8e90b07e55a22d443bee427d5eacfd5634b4eb1",
+      "imports": [
+        "__future__",
+        "check_cross_arch_cost",
+        "collections",
+        "hashlib"
+      ],
+      "selected_calls": []
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "bytes": 11231,
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "imports": [
+        "__future__",
+        "argparse",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "re",
+        "stat",
+        "subprocess",
+        "tempfile"
+      ],
+      "selected_calls": [
+        {
+          "line": 36,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(command(root, 'merge-base', '--is-ancestor', base, candidate),\n                              env=environment, stdout=subprocess.DEVNULL,\n                              stderr=subprocess.PIPE, check=False)",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 44,
+          "callee": "subprocess.check_output(command(root, 'rev-parse', '--path-format=absolute', '--git-path', 'objects'), env=environment, text=True).rstrip",
+          "call": "subprocess.check_output(\n        command(root, 'rev-parse', '--path-format=absolute', '--git-path', 'objects'),\n        env=environment, text=True).rstrip('\\n')",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 40,
+          "callee": "subprocess.check_output(command(root, 'rev-parse', candidate + '^{tree}'), env=environment, text=True).strip",
+          "call": "subprocess.check_output(command(root, 'rev-parse', candidate + '^{tree}'),\n                                       env=environment, text=True).strip()",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 51,
+          "callee": "subprocess.run",
+          "call": "subprocess.run(['git', 'init', '--bare', '--quiet', '--object-format=sha1',\n                        '--template=', str(isolated)], env=environment, check=True,\n                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 55,
+          "callee": "subprocess.check_output(command(isolated, '-c', 'core.attributesFile=' + os.devnull, 'merge-tree', '--write-tree', '--no-messages', base, candidate), env=environment, text=True, stderr=subprocess.PIPE).strip",
+          "call": "subprocess.check_output(\n            command(isolated, '-c', 'core.attributesFile=' + os.devnull,\n                    'merge-tree', '--write-tree', '--no-messages', base, candidate),\n            env=environment, text=True, stderr=subprocess.PIPE).strip()",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 123,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(['git', '--no-replace-objects', *args], cwd=root)",
+          "context": [
+            "verify",
+            "git_bytes"
+          ]
+        },
+        {
+          "line": 44,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(\n        command(root, 'rev-parse', '--path-format=absolute', '--git-path', 'objects'),\n        env=environment, text=True)",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 40,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(command(root, 'rev-parse', candidate + '^{tree}'),\n                                       env=environment, text=True)",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        },
+        {
+          "line": 55,
+          "callee": "subprocess.check_output",
+          "call": "subprocess.check_output(\n            command(isolated, '-c', 'core.attributesFile=' + os.devnull,\n                    'merge-tree', '--write-tree', '--no-messages', base, candidate),\n            env=environment, text=True, stderr=subprocess.PIPE)",
+          "context": [
+            "_canonical_merge_tree"
+          ]
+        }
+      ]
+    }
+  ]
+}

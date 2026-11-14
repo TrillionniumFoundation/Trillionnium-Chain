@@ -1,0 +1,56 @@
+--- /private/tmp/chain-consolidation-20261114-root/resume_candidate_archive_publish_v1.py
++++ /private/tmp/chain-consolidation-20261114-root/resume_candidate_archive_publish_v2.py
+@@ -10,7 +10,7 @@
+ 
+ ROOT = pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+ SOURCE = pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
+-SELF = ROOT / "resume_candidate_archive_publish_v1.py"
++SELF = ROOT / "resume_candidate_archive_publish_v2.py"
+ PUBLISHER = ROOT / "publish_candidate_and_archive_v4.py"
+ PUBLISHER_SHA = "4105cd1db2e5219deda83a881872c51ac5cf671f5caa367bc2ea8ae4d4495038"
+ ORIGINAL = ROOT / "publish-candidate-and-archive-dc42ce-v2"
+@@ -140,7 +140,7 @@
+     thread.start()
+     try:
+         try:
+-            stdout, stderr = process.communicate(timeout=300)
++            stdout, stderr = process.communicate(timeout=1800)
+             result = subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
+         except subprocess.TimeoutExpired as expired:
+             try:
+@@ -175,7 +175,7 @@
+     args = parser.parse_args()
+     ev = pathlib.Path(args.evidence_dir)
+     require(ev.parent == ROOT and ROOT.resolve(strict=True) == ROOT
+-            and re.fullmatch(r"resume-candidate-archive-publish-[a-z0-9-]+", ev.name),
++            and re.fullmatch(r"resume-candidate-archive-publish-[a-z0-9-]+-v2", ev.name),
+             "unexpected evidence directory")
+     os.umask(0o077)
+     ev.mkdir(mode=0o700, exist_ok=False)
+@@ -187,7 +187,7 @@
+     env.update(GIT_OPTIONAL_LOCKS="0", GIT_TRACE2="0",
+                GIT_TRACE2_EVENT="0", GIT_TRACE2_PERF="0")
+     steps, errors = [], []
+-    state = {"schema": "trnm-candidate-archive-publication-resume-v1", "status": "HOLD",
++    state = {"schema": "trnm-candidate-archive-publication-resume-v2", "status": "HOLD",
+              "started_at": now(), "head": HEAD, "tree": TREE,
+              "archive_tag": TAG, "archive_tag_oid": TAG_OID,
+              "archive_commit": ARCHIVE_COMMIT, "push_started": False,
+@@ -210,7 +210,7 @@
+             q = capture(argv, env, timeout=timeout)
+         row = {"label": label, "cwd": str(SOURCE), "argv": argv, "exit": q.returncode,
+                "started_at": started, "finished_at": now(),
+-               "timeout_seconds": 300 if sampled else timeout}
++               "timeout_seconds": 1800 if sampled else timeout}
+         for suffix, raw in (("stdout", q.stdout), ("stderr", q.stderr)):
+             path = ev / (label + "." + suffix)
+             with path.open("xb") as stream:
+@@ -402,7 +402,7 @@
+                 "git", "-c", "core.hooksPath=" + str(hooks), "push", "--verify", "--atomic",
+                 "--porcelain", "--verbose", "--progress", "origin",
+                 HEAD + ":" + CANDIDATE_REF, TAGREF + ":" + TAGREF],
+-                timeout=300, require_zero=False, sampled=True)
++                timeout=1800, require_zero=False, sampled=True)
+             state["push_exit"] = q.returncode
+             after = observe("after")
+             state["remote_after_classification"] = classify(after)

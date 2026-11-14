@@ -1,0 +1,28 @@
+test_retained_native_collector_data_cannot_omit_or_mutate (scripts.ci.test_pq_research_integration.CorpusGateTests.test_retained_native_collector_data_cannot_omit_or_mutate) ... FAIL
+
+======================================================================
+FAIL: test_retained_native_collector_data_cannot_omit_or_mutate (scripts.ci.test_pq_research_integration.CorpusGateTests.test_retained_native_collector_data_cannot_omit_or_mutate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/chain-native-bridge-history-binding-port-20261114/scripts/ci/check_pq_research_integration.py", line 1712, in _safe_regular
+    return read_regular(root, relative, ceiling)
+  File "/private/tmp/chain-native-bridge-history-binding-port-20261114/scripts/ci/pq_source_reader.py", line 53, in read_regular
+    raise SourceReadError("symlink source refused: " + relative)
+pq_source_reader.SourceReadError: symlink source refused: config/pon/pq-cross-branch-corpus-v1.json
+
+The above exception was the direct cause of the following exception:
+
+check_pq_research_integration.IntegrityError: symlink source refused: config/pon/pq-cross-branch-corpus-v1.json
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/private/tmp/chain-native-bridge-history-binding-port-20261114/scripts/ci/test_pq_research_integration.py", line 2714, in test_retained_native_collector_data_cannot_omit_or_mutate
+    with self.assertRaisesRegex(IntegrityError, "changed source"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "changed source" does not match "symlink source refused: config/pon/pq-cross-branch-corpus-v1.json"
+
+----------------------------------------------------------------------
+Ran 1 test in 0.238s
+
+FAILED (failures=1)

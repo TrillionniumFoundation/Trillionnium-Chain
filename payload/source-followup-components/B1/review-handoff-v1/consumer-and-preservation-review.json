@@ -1,0 +1,144 @@
+{
+  "schema": "trnm-native-bridge-history-consumer-review-v1",
+  "active_consumers": [
+    "formal/pon-nakamoto-v1/w1_quantum_native_bridge.py CLI",
+    "formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py",
+    "scripts/ci/ci_job.sh:222",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/test_retained_research_ci.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "active_fixed_25_count_found": false,
+  "test_methods_before": 25,
+  "test_methods_after": 31,
+  "retained_native_processes_in_original_artifact": 9,
+  "new_native_processes_executed": 0,
+  "current_collector_unchanged": "83a458452ed58c7df8ed8671031bcd37506583cfda211ad581fd4ec9381c20b9",
+  "old_evidence_files_verified_unchanged": [
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/README.md",
+      "bytes": 18412,
+      "sha256": "8d22d5090c8ee5cce64f0a59715170664fbf5ec281eed38f6a4d63a31d557547"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/desktop-records-manifest.json",
+      "bytes": 11061,
+      "sha256": "26bb7b0d0dad35c3860da7ae08395e14b335c9f242ef02f2585955e31b2faf7c"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/desktop-records.tar.gz",
+      "bytes": 211590,
+      "sha256": "5dd560fc76bc667160a7dd32cc7a7fc3625a46b6a5d68eb40804794f0658091a"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/desktop-validation.json",
+      "bytes": 9347,
+      "sha256": "2b17347eb71e45e36467eea4d35893a07a20b6f61e2c3f4c676941c9c47c233f"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/execution-records-manifest.json",
+      "bytes": 49262,
+      "sha256": "e87230eb03a235fe2f37c371f0155f4af699dda3dc4e82d4bc2e2b099b3a38d0"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/execution-records.tar.gz",
+      "bytes": 875081,
+      "sha256": "fc53c26cab3f1577b0a343fe37b8f339220788bb7879a97febda0690c914a553"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/member-manifest.json",
+      "bytes": 3432,
+      "sha256": "0a4d7036cc9b22676c8eaf8f1b402c52e138228ccdb783fa850e6bd37c0e5c23"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/native-artifact.json",
+      "bytes": 1362,
+      "sha256": "23a2bd4b428c99a7ad1f3cf83b9c2abd305784d80a26ea1b11b3fd400b177c7f"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/native-fullpath-e4abb172.zip",
+      "bytes": 129999,
+      "sha256": "d9ce3ead97f87759707829220525f50420126fa0347cbd64ec46aeb69bbd57c9"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/recovery-records-manifest.json",
+      "bytes": 9241,
+      "sha256": "f4dd4c5eacabdba3a55df74d6285ccf963b8808cc5bcedf51f020548198c63fe"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/recovery-records.tar.gz",
+      "bytes": 36786,
+      "sha256": "6c0cd064284daecac50090b2fdd432241625093675f5b589d71e9c59955d5d7e"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/bridge-rebuilt.json",
+      "bytes": 30141,
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/bridge-result.json",
+      "bytes": 30141,
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/full-native-scope.json",
+      "bytes": 46612,
+      "sha256": "bcb7543280624c231560ba9144e43f7afc17b5391fe7b90f2776a5fb6ca7d0ea"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/generic-accounting-scope.json",
+      "bytes": 5940,
+      "sha256": "2cb8dc4ab819a88d9d5159aa0760505c5c1136292d7f0b51d3c24fb14b637ebf"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/illustrative-resource-request.json",
+      "bytes": 1597,
+      "sha256": "35c2fdb4b0500494b7710c694b94dd6e7e5bda4ed74f7ed573119af2fdab9934"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/native-oracle-spec.json",
+      "bytes": 30161,
+      "sha256": "9aa43edb932965635753920008880233429b2777c91ac379d393bea63057b2fe"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/restricted-native-scope.json",
+      "bytes": 46738,
+      "sha256": "3a80a6d3a264efc3dca446089d3ef74594409bb6549a97846a1c79ec134b214f"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/reports/scope-replay.json",
+      "bytes": 1347,
+      "sha256": "67dadca4520692c2216fc6c8ac1985aad6083e5033b0e3fef97936aa99e4aa0a"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/source-change-review.json",
+      "bytes": 2697,
+      "sha256": "ced0c3ed1f08a8b26d1bd9c87092a8a8a0413991b659bb9cc7b767eaa9ddac0a"
+    },
+    {
+      "path": "evidence/pon-w1-oracle-scope-20261110/summary.json",
+      "bytes": 9484,
+      "sha256": "82b67deeadb0a962ae041297a94e4eeff5f1f693a6bb14193e22ddf0130209b4"
+    }
+  ],
+  "original_failure_members": [
+    {
+      "member": "unit-107-lines-222-222.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "unit-107-lines-222-222.stderr",
+      "bytes": 7476,
+      "sha256": "10c5cc6db1f5ead98fb66889990791d42e7bc172b2079eb30c38dc05484d1ec4"
+    }
+  ],
+  "diagnostic_archive_sha256": "038fb138c75fef1eca35422e08f7d5e2c784bec70fcc739695c4ca71b5637c5a",
+  "diagnostic_index_sha256": "4711b610ad6cf1f9711947caece9bc562002a8857d0ce454bc295806ad608ac1",
+  "runtime_general_git_parser": false,
+  "historical_source_exec_import_compile": false,
+  "historical_branch_tree_required": true,
+  "remaining_other_source_behavior": "Existing current collector digest comparison retained.",
+  "qualification_promoted": false
+}

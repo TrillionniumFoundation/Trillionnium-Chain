@@ -1,0 +1,1667 @@
+[
+  {
+    "bytes": 36890,
+    "changed_paths": [
+      {
+        "new_blob": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+        "new_mode": "100644",
+        "old_blob": "c347199fa7022743f4b25247dc1c194603bdab4e",
+        "old_mode": "100644",
+        "path": ".github/workflows/pon-w1-transparent-profile.yml",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 36890,
+    "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581"
+  },
+  {
+    "bytes": 523769,
+    "changed_paths": [
+      {
+        "new_blob": "ed6cf6a0c273f7bd4978c45becafb903a022d531",
+        "new_mode": "100644",
+        "old_blob": "fa4b1825d78ca25f25780fb43f73bee148bf5f66",
+        "old_mode": "100644",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "ed6cf6a0c273f7bd4978c45becafb903a022d531",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523769,
+    "sha256": "b1e535553bb029139fc66f4cc480ce3b0a7e79ef9405701e4c1e3b0f4c8b0487"
+  },
+  {
+    "bytes": 13647,
+    "changed_paths": [
+      {
+        "new_blob": "48fd25bd32da1cb2900afb2f43e7105ecc3248c1",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "config/pon/pq128-lifetime-composition-current-v3.json",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "48fd25bd32da1cb2900afb2f43e7105ecc3248c1",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 13647,
+    "sha256": "3ce2905d79ac787f5a97174bf9ad1f60fe117d46f8b27f69e756ee5d07af06d1"
+  },
+  {
+    "bytes": 3782,
+    "changed_paths": [
+      {
+        "new_blob": "cac5ec525f34f10e966826561ef1e9fa918f82af",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "config/pon/pq128-source-correspondence-current-v2.json",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "cac5ec525f34f10e966826561ef1e9fa918f82af",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 3782,
+    "sha256": "b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a"
+  },
+  {
+    "bytes": 52193,
+    "changed_paths": [
+      {
+        "new_blob": "58739e0ae81a9210e0c647e662b632e2ba1cdfd8",
+        "new_mode": "100644",
+        "old_blob": "0abb715d5055eca6d5427598d145375470ca0e7e",
+        "old_mode": "100644",
+        "path": "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "58739e0ae81a9210e0c647e662b632e2ba1cdfd8",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 52193,
+    "sha256": "cec7d2b9180e177f4e75df58c5443acc7c8ef9436464156944404132035cfc30"
+  },
+  {
+    "bytes": 1151045,
+    "changed_paths": [
+      {
+        "new_blob": "8051933ab30db78d0344d1b417e45d7bd986a90e",
+        "new_mode": "100644",
+        "old_blob": "ffc58007ca67dedc3aa3808c1b1e2d6ff957cac8",
+        "old_mode": "100644",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "8051933ab30db78d0344d1b417e45d7bd986a90e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1151045,
+    "sha256": "24d7a4a9733911b0caf5d7ec86efe2de34d662799f1dc130f6a66afed3559261"
+  },
+  {
+    "bytes": 36093,
+    "changed_paths": [
+      {
+        "new_blob": "ca27d838f08a7bb78f7074aac5ceaf8bc6e1c91b",
+        "new_mode": "100644",
+        "old_blob": "c9b43d27d1408969017c2b8d3afd19080c216278",
+        "old_mode": "100644",
+        "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "ca27d838f08a7bb78f7074aac5ceaf8bc6e1c91b",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 36093,
+    "sha256": "e293e68546b8727675ede127fff6e2ef40c928b101c5af4d4a3f83448b3d9f1b"
+  },
+  {
+    "bytes": 25102,
+    "changed_paths": [
+      {
+        "new_blob": "b47c30622f0f2175351d1940618852d44a72b55c",
+        "new_mode": "100644",
+        "old_blob": "01569efdd43a4d9adee2b9585845e8250067cdc2",
+        "old_mode": "100644",
+        "path": "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "b47c30622f0f2175351d1940618852d44a72b55c",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 25102,
+    "sha256": "920c39bea1615f5f219fb0ffb7fd66a0bdaa5198fa575e4025b6dd2ef616995d"
+  },
+  {
+    "bytes": 10341,
+    "changed_paths": [
+      {
+        "new_blob": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+        "new_mode": "100644",
+        "old_blob": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+        "old_mode": "100644",
+        "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "5e075d1d697c70b70db263fdd5e68de2d4d9c622",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 10341,
+    "sha256": "8d36ac0ca38119072b6ec5fe15b945bed7e02ae29d7d38120293524d10856d0f"
+  },
+  {
+    "bytes": 15988,
+    "changed_paths": [
+      {
+        "new_blob": "60124687f605c8727c26bfbdd168ef45c50839a3",
+        "new_mode": "100644",
+        "old_blob": "d8641eb1cdc0edf01e6b155460de9173245432db",
+        "old_mode": "100644",
+        "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "60124687f605c8727c26bfbdd168ef45c50839a3",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 15988,
+    "sha256": "613deca4f8af04f92cd7ff6c0c313669cc2eeea5b2d9e6d41c384ee5a0a38dbe"
+  },
+  {
+    "bytes": 2964,
+    "changed_paths": [
+      {
+        "new_blob": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 2964,
+    "sha256": "90dce7223a1cd955312f15695e0840ca544d126bab5ba17933da6a5c006458c8"
+  },
+  {
+    "bytes": 76729,
+    "changed_paths": [
+      {
+        "new_blob": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 76729,
+    "sha256": "5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f"
+  },
+  {
+    "bytes": 37850,
+    "changed_paths": [
+      {
+        "new_blob": "19d0ff0825bc93b9e140cb3ee0e5d34894e126fc",
+        "new_mode": "100644",
+        "old_blob": "d3f2dc52acfd9ee5d9451c5ac4a732747019561b",
+        "old_mode": "100644",
+        "path": "formal/throughput-v1/test_execution_report.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "19d0ff0825bc93b9e140cb3ee0e5d34894e126fc",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 37850,
+    "sha256": "86d659a55c4aa12325fabedb9685a4abed7fbdbb3dda25e1f5dc25acea815d44"
+  },
+  {
+    "bytes": 201190,
+    "changed_paths": [
+      {
+        "new_blob": "aa3971a204b45b00908b8798b75c3c3cb3462372",
+        "new_mode": "100644",
+        "old_blob": "0634074cefc7eee3ed1e7edbb99c830931dfbe5e",
+        "old_mode": "100644",
+        "path": "scripts/ci/check_ci_contract.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "aa3971a204b45b00908b8798b75c3c3cb3462372",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 201190,
+    "sha256": "6792d59146bf89b1aa5eb0438025254388585b7ba885d18d541f2b289342f7f8"
+  },
+  {
+    "bytes": 113808,
+    "changed_paths": [
+      {
+        "new_blob": "88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d",
+        "new_mode": "100644",
+        "old_blob": "17d6cfd501ce311f3239dc0c9eb53753c255f3be",
+        "old_mode": "100644",
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "88cc9f84b7c587c98c2746d4f9cfb6fd9092eb1d",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 113808,
+    "sha256": "d571d62e9ce201854253e634340b8e656db747f0b531b02fde13baed1c1539cb"
+  },
+  {
+    "bytes": 72478,
+    "changed_paths": [
+      {
+        "new_blob": "7684557b73d8cf7884133fbe55c8b35a9481a0a6",
+        "new_mode": "100644",
+        "old_blob": "397bebcfffe47fe3747df625f053e1b7b7c4de53",
+        "old_mode": "100644",
+        "path": "scripts/ci/check_public_readiness_evidence.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "7684557b73d8cf7884133fbe55c8b35a9481a0a6",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 72478,
+    "sha256": "fa543d232dd89c90d3be42931be6834d736a46cbcaaf90dd702bd01e3d6d92be"
+  },
+  {
+    "bytes": 46605,
+    "changed_paths": [
+      {
+        "new_blob": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+        "new_mode": "100644",
+        "old_blob": "fef70851f7fb3348f30148ab390a76fc523dde0e",
+        "old_mode": "100644",
+        "path": "scripts/ci/ci_job.sh",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 46605,
+    "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+  },
+  {
+    "bytes": 14458,
+    "changed_paths": [
+      {
+        "new_blob": "d29b8569a900473baf8281586394f12ba98d71df",
+        "new_mode": "100644",
+        "old_blob": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+        "old_mode": "100644",
+        "path": "scripts/ci/pq_chain_claim_guard.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "d29b8569a900473baf8281586394f12ba98d71df",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 14458,
+    "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+  },
+  {
+    "bytes": 28724,
+    "changed_paths": [
+      {
+        "new_blob": "a99eb8b5915c5eb300ae7233dc5f4d797b3fa1f7",
+        "new_mode": "100644",
+        "old_blob": "4a63635251bbe36e729d0f9ad6928c532cce6183",
+        "old_mode": "100644",
+        "path": "scripts/ci/pq_lifetime_composition.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "a99eb8b5915c5eb300ae7233dc5f4d797b3fa1f7",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 28724,
+    "sha256": "6c03ef4544ddd1bfc0da7c9e74b358bad21560c05ade0a2866e55eea13837a5c"
+  },
+  {
+    "bytes": 10522,
+    "changed_paths": [
+      {
+        "new_blob": "cc805ba9cc83e9e1160e037725af8a968a2ece12",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "scripts/ci/pq_lifetime_current_v2.py",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "cc805ba9cc83e9e1160e037725af8a968a2ece12",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 10522,
+    "sha256": "3fc874ccfca2e65849bbef70205cce423d094cfc523613b115cd706f9604b93a"
+  },
+  {
+    "bytes": 14617,
+    "changed_paths": [
+      {
+        "new_blob": "0ae22bec4563858aa9735c4334593459f1b9b236",
+        "new_mode": "100644",
+        "old_blob": "1d3d7547524bab86db38a69a935e801066ba9e25",
+        "old_mode": "100644",
+        "path": "scripts/ci/run_cell_learning_business_readback.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "0ae22bec4563858aa9735c4334593459f1b9b236",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 14617,
+    "sha256": "0a4c9a361d428e7a603ec956d926b03923da3fd3b781fb031db5dcef2b581d88"
+  },
+  {
+    "bytes": 47276,
+    "changed_paths": [
+      {
+        "new_blob": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "new_mode": "100644",
+        "old_blob": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+        "old_mode": "100644",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 47276,
+    "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+  },
+  {
+    "bytes": 18547,
+    "changed_paths": [
+      {
+        "new_blob": "fb440145ded4a7b4fcc9e8216c7fd6d0780f6286",
+        "new_mode": "100644",
+        "old_blob": "9c80ee11fa6b6d2dc5461f7a4a2cdbe8f51eff93",
+        "old_mode": "100644",
+        "path": "scripts/ci/run_sp27_receiver_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "fb440145ded4a7b4fcc9e8216c7fd6d0780f6286",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 18547,
+    "sha256": "d16701eb61c7949912d45694520b24e395436d1e1492680d6ce6228085a85476"
+  },
+  {
+    "bytes": 38322,
+    "changed_paths": [
+      {
+        "new_blob": "45ca070ace5981fc481061fc2c1d979046eec4b6",
+        "new_mode": "100644",
+        "old_blob": "7202f000438a06f017c5e00416431900dc919b83",
+        "old_mode": "100644",
+        "path": "scripts/ci/run_sp27_strata_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "45ca070ace5981fc481061fc2c1d979046eec4b6",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 38322,
+    "sha256": "459dafde601c9fdad23cb36f9f8931fd0a7a7967439a6b7cc933464eb9f7a907"
+  },
+  {
+    "bytes": 248978,
+    "changed_paths": [
+      {
+        "new_blob": "0593d7870b0675d7e642085b1771ace2cce84656",
+        "new_mode": "100644",
+        "old_blob": "9710a402113cee366b869d00071ff90d5868f015",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_ci_contract.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "0593d7870b0675d7e642085b1771ace2cce84656",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 248978,
+    "sha256": "7c8c56de795c4c609b6eafbc15aa3974599bfdd3eb099153e2259d24d5e2ed1f"
+  },
+  {
+    "bytes": 59699,
+    "changed_paths": [
+      {
+        "new_blob": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+        "new_mode": "100644",
+        "old_blob": "7e23896549563972f7e5951610c6b54c20bb896a",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_pon_budget_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 59699,
+    "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+  },
+  {
+    "bytes": 30140,
+    "changed_paths": [
+      {
+        "new_blob": "624c16369129f3b8fbc44d4507fb22bc859bff39",
+        "new_mode": "100644",
+        "old_blob": "72682391155dd65d0f54606324ec5a01465bb653",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_pq_chain_claim_guard.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "624c16369129f3b8fbc44d4507fb22bc859bff39",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 30140,
+    "sha256": "d7d5b4a1982de7151384567e509f0a96ac20945592e6be9f45491e4a63ab42e9"
+  },
+  {
+    "bytes": 35557,
+    "changed_paths": [
+      {
+        "new_blob": "5b785871fb42396b6ce7ae1c79761a10cace9d30",
+        "new_mode": "100644",
+        "old_blob": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_pq_lifetime_budget.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "5b785871fb42396b6ce7ae1c79761a10cace9d30",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 35557,
+    "sha256": "0353cc145d7d8a4c6b0bf093b96556fdf1b6597d94bedf916e311fb5844aadbc"
+  },
+  {
+    "bytes": 42830,
+    "changed_paths": [
+      {
+        "new_blob": "dfc384a37ec3da774ab77936cfe474858869cc0e",
+        "new_mode": "100644",
+        "old_blob": "35e1ba409aaaaae951dc1f85c8c1a45667ffb223",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_pq_lifetime_composition.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "dfc384a37ec3da774ab77936cfe474858869cc0e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 42830,
+    "sha256": "9070208a62c0152bd52e651e164711945abe1ab7d887403e55ff568ed5b5ed08"
+  },
+  {
+    "bytes": 13912,
+    "changed_paths": [
+      {
+        "new_blob": "9137a72b6871346959fc6b6243d58f42f5c9fffb",
+        "new_mode": "100644",
+        "old_blob": "0000000000000000000000000000000000000000",
+        "old_mode": "000000",
+        "path": "scripts/ci/test_pq_lifetime_current_v2.py",
+        "status": "A"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "9137a72b6871346959fc6b6243d58f42f5c9fffb",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 13912,
+    "sha256": "4236ef17e9245989853637ce64d46c52701744e974ba0718e7d9331f43ab82b3"
+  },
+  {
+    "bytes": 129879,
+    "changed_paths": [
+      {
+        "new_blob": "f09640852443d301f206b0f9143720b9cdda1328",
+        "new_mode": "100644",
+        "old_blob": "7f2275d74692eb89c3b85b8048f5b514d490e8ec",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_public_readiness_evidence.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "f09640852443d301f206b0f9143720b9cdda1328",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 129879,
+    "sha256": "323944dbc7fc4a6f7d8a712942a2a8fe32901897ba6d67c8187ffddaf46afbb7"
+  },
+  {
+    "bytes": 20152,
+    "changed_paths": [
+      {
+        "new_blob": "9764950c120b1e7636685100cef8c473c2d96ddf",
+        "new_mode": "100644",
+        "old_blob": "e7c658baf937963336bc76f2ff59919698270961",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_sp27_receiver_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "9764950c120b1e7636685100cef8c473c2d96ddf",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 20152,
+    "sha256": "6e97054b0fd10abe5afa4d2f29e76137a5ca7d3c2a07e7de436a1ebea23d4e58"
+  },
+  {
+    "bytes": 29891,
+    "changed_paths": [
+      {
+        "new_blob": "69c8289f41253cddbf0ec57eebf1a074cbda5697",
+        "new_mode": "100644",
+        "old_blob": "948f9964aeb88aeccebc9b7b01448c1b4a6f3b4d",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_sp27_strata_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "69c8289f41253cddbf0ec57eebf1a074cbda5697",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 29891,
+    "sha256": "0899b9e7de96352f4045a2aa2f159985878c3a911ae5725e2a45519a8202dc29"
+  },
+  {
+    "bytes": 33523,
+    "changed_paths": [
+      {
+        "new_blob": "79214af83feab98f32a73c18280fa539df0eb16f",
+        "new_mode": "100644",
+        "old_blob": "748c21550dda37f69ddc5f9208e9dc07fc384b69",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_throughput_cost_coverage.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "79214af83feab98f32a73c18280fa539df0eb16f",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 33523,
+    "sha256": "a8ee40e47830be80f2d0582eaf8fa04701b2d468d1120377f422242c0a6e4723"
+  },
+  {
+    "bytes": 32644,
+    "changed_paths": [
+      {
+        "new_blob": "20722e2f119014791f1c87b3c666a4eb03606b32",
+        "new_mode": "100644",
+        "old_blob": "79898f0dd2e44a433f6bd4e4a039893bab7cb819",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "20722e2f119014791f1c87b3c666a4eb03606b32",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 32644,
+    "sha256": "da6ef8fe424bda44ea9d9707387d26e2810eabcf13725998c887b061890c87f7"
+  },
+  {
+    "bytes": 21400,
+    "changed_paths": [
+      {
+        "new_blob": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+        "new_mode": "100644",
+        "old_blob": "ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_w1_qrom_current_ci.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 21400,
+    "sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26"
+  },
+  {
+    "bytes": 21038,
+    "changed_paths": [
+      {
+        "new_blob": "4d7f18b7146aad5459b967eab10dc41010e979e6",
+        "new_mode": "100644",
+        "old_blob": "5339b28b50fae5c58f0d1de8f1111c6b8ad02af7",
+        "old_mode": "100644",
+        "path": "scripts/ci/test_w1_qrom_semantics_audit.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "4d7f18b7146aad5459b967eab10dc41010e979e6",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 21038,
+    "sha256": "d8de82b10efa2b21eac503a451578f675e6e79bb27710747b4551e6f0c41ddd7"
+  },
+  {
+    "bytes": 32485,
+    "changed_paths": [
+      {
+        "new_blob": "8d5e8a370df1fee8d84e493f55f2a9417f3b8e99",
+        "new_mode": "100644",
+        "old_blob": "4aa91a62595b5771a09cfe017395af652f93a0aa",
+        "old_mode": "100644",
+        "path": "scripts/ci/throughput_cost_coverage.py",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "8d5e8a370df1fee8d84e493f55f2a9417f3b8e99",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 32485,
+    "sha256": "1d11e8d815cd5c9f912f7ccf2bf6882684782086d53bb1fbaeab5a7540b805e6"
+  },
+  {
+    "bytes": 483933,
+    "changed_paths": [
+      {
+        "new_blob": "a13590cbefab86636e12a83f4eaf58b8d69aaf8e",
+        "new_mode": "100644",
+        "old_blob": "914fd5ffe2f7c9f9bd1416de539950ccae4ded22",
+        "old_mode": "100644",
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "a13590cbefab86636e12a83f4eaf58b8d69aaf8e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 483933,
+    "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+  },
+  {
+    "bytes": 12283,
+    "changed_paths": [
+      {
+        "new_blob": "f021a33e2969305241099998f703172d29b15251",
+        "new_mode": "100644",
+        "old_blob": "06add57cd798a627630a6f5467d7891ab58c323d",
+        "old_mode": "100644",
+        "path": "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        "status": "M"
+      }
+    ],
+    "content_address_verified": true,
+    "oid": "f021a33e2969305241099998f703172d29b15251",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 12283,
+    "sha256": "12396ec45e2b059d588f7d00feb9f19cc557389e37be0053d9ff5f344825f3cc"
+  },
+  {
+    "bytes": 523769,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "9f5a383c00a9e1453d3e84cd8d1fe61006421a86",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523769,
+    "sha256": "67bc15d03a1e43eac946b060666bf9b2176fc90555cb2a80014cc881f280dc45"
+  },
+  {
+    "bytes": 51465,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3df8d1e63778e6a83c9fcf4ef4eb827750d12f14",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 51465,
+    "sha256": "b97e8833ebae6b76ec53661ba078557a97fb64bfa588c13a81d847cdebbd1d7e"
+  },
+  {
+    "bytes": 1150529,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "50c6364f200df1e69ad039f277499d3b6620836b",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1150529,
+    "sha256": "386d4646fd6ca4f74b582485c300f81fd4340d6c78d3ac8f9f545f6b9c80fc5a"
+  },
+  {
+    "bytes": 36165,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "10370fb69e7398d976b2e5516ff5e139bf298455",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 36165,
+    "sha256": "0abf32e534d30bfe2287516c1767f05ae9bb0cc17248fcc6cb6d7ab01f1a21a3"
+  },
+  {
+    "bytes": 72224,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "2a45fdfefc70881853dc6045491943d819f1a209",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 72224,
+    "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+  },
+  {
+    "bytes": 14196,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "1c6dc60f31c13a00e3eaf0d01c85042ece00408f",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 14196,
+    "sha256": "89ca3f7736f08003aad69da03151f1bbf487e3648917aaad88f1a53f7e93e88f"
+  },
+  {
+    "bytes": 523581,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "bb95d44c93af114719a26e39da95c4626be76d79",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523581,
+    "sha256": "128954354019f6311e4ab71adb70f6c178874a0b8278d4a6c6477a6197b2d546"
+  },
+  {
+    "bytes": 13647,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "5d85b9337ff09d3dffd0b52404115c8c9996e039",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 13647,
+    "sha256": "1f29c93399d387abe2a676793a7f9de94bfb88406eeac6ff2bdc93125f31ec99"
+  },
+  {
+    "bytes": 3782,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "434d1cb328a3072ba08c174285eda3f0b31b51dd",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 3782,
+    "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93"
+  },
+  {
+    "bytes": 6997,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "96aa4ba7a8f4634e4d82778b87eae7791eaca716",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 6997,
+    "sha256": "ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63"
+  },
+  {
+    "bytes": 1142496,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "2a83106b73a65c78f826bcb2b4fd4794c6df12d2",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1142496,
+    "sha256": "df48870ab7c0f1beba890cd3e375087784a0b73bd9e5c004caf237a8e4264386"
+  },
+  {
+    "bytes": 21527,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "75f881e987ecb0d7ee7d63ea04c5b5ebc37dd9b7",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 21527,
+    "sha256": "4fbe2d7b880b445d04bba9eb66f81c4e3dcdc375ecec869b7ed3eecb24488117"
+  },
+  {
+    "bytes": 40485,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "f4230d0b39b32cf59d294272bac2f5049ba70aba",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 40485,
+    "sha256": "402b1fd2bcb3be75762e38d372142152cc16188379ac35c5d03cfa13b5892cec"
+  },
+  {
+    "bytes": 8531,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "42967be8d2e492d9d294f36271fec9758df20203",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 8531,
+    "sha256": "22d0ec8240b1420f2d104f7394e425feb287e4a413aa407fe10928748c882409"
+  },
+  {
+    "bytes": 201190,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "0c45b3c88437c8903faa3f6f1fb998cd5220fef8",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 201190,
+    "sha256": "a29ca3515c7d70f6d0691523af6de525f8a2a175a4d7d8a515ed9ea59a6c97e1"
+  },
+  {
+    "bytes": 113739,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "a4200bf6db7e26864c1cd2e5c2e58758abd1f743",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 113739,
+    "sha256": "c394b32d8350a37a9f00f71c4d04f4b93b08993df37023a9f2ec2e9f20ccc5d0"
+  },
+  {
+    "bytes": 72496,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "cba090808890320880b58036096e91604a4807a0",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 72496,
+    "sha256": "c0cc9f9671616169aad369fec6e24d3d9b741e9551a2f7d2da2ed444d5c96ed3"
+  },
+  {
+    "bytes": 46605,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "bfbec4fd0d5565424b83ff70ae508126c5efd956",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 46605,
+    "sha256": "fd01401165e843100a375caccc3122bc97e97459f59c723287eece53350f20bc"
+  },
+  {
+    "bytes": 18159,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "f58609ec7ea88ec9eadfdf92b3e09ab843b884c6",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 18159,
+    "sha256": "d16a951434a098809d65d2ebd23b0032dc7cd4c5394e1ec16eb69976171f392c"
+  },
+  {
+    "bytes": 11127,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "e2d05b7332635e787137b513ed86186c0341054f",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 11127,
+    "sha256": "4faf1ba7badb0186c7d89a1ae1132a8bd2a32a5d6316ab75a9a85c479b24dc0d"
+  },
+  {
+    "bytes": 28724,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "32ba61ab1119e6e3c6697b69bce0eb722644d764",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 28724,
+    "sha256": "26381e93a96132c139458e9d3c1c9b0f6f7485013695207913f5d38c2e7659b5"
+  },
+  {
+    "bytes": 10522,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "1fd17c3cfece564a80ee8f3c6f49ebf9747ef1cc",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 10522,
+    "sha256": "251123229e5abf417f2c07ed023368091e11aa7200ff017338209e83a6d684ad"
+  },
+  {
+    "bytes": 248810,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "5ed407bb9590217423e5642cf0ceb45433c796db",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 248810,
+    "sha256": "6092ddfc9ef8137c3e4b795c4d496f93be6acb8dc0afb79b1a096e6028166af5"
+  },
+  {
+    "bytes": 16396,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "9851b6a9bddc8b695fb6142c471a766977cb9ede",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 16396,
+    "sha256": "0fb7e418d27b80a4de9c03a9536ed3bd273eb633594f69f6ed62c0589a6e2348"
+  },
+  {
+    "bytes": 128178,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "30a4e2dd3f2a78faf196ca75b484df0e4b2bd062",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 128178,
+    "sha256": "0da6ad73ab38297c88870795f8ee02ed197024b6fa13196eb7518a532409268a"
+  },
+  {
+    "bytes": 10621,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "7cedb1e646aae60bcd0104d82ae969706a497802",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 10621,
+    "sha256": "2b90c4b1494f94af1dcb91d72c38d25751ab363204cdd28c816f5b65993ef95b"
+  },
+  {
+    "bytes": 9216,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "901634884d201df615370811f46a02ae88647631",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 9216,
+    "sha256": "2cb8cc34baa59ef559d8abc1058414ae3c0bd848deacf0166c1f817bca5b248c"
+  },
+  {
+    "bytes": 391556,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3bce39ce1aef265a18f304085bc08c0240547065",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 391556,
+    "sha256": "ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5"
+  },
+  {
+    "bytes": 523581,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "557bd514aeb960e5d4467b0f82701254f51ad7be",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 523581,
+    "sha256": "51422ead92bea345ae4c3bf68460997a77fb7fda887aa636dda2c74f96ff4dd5"
+  },
+  {
+    "bytes": 522973,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "320167dfb41923a29f95a57980f1a1f9b632a04d",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 522973,
+    "sha256": "f7ba992d6a43ec161774e98f6022b80f7b92da47b9e12f7e8133a5fb5355c459"
+  },
+  {
+    "bytes": 1138122,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "50a44030a1f3d88dac5906cf5523403cd82bbb41",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1138122,
+    "sha256": "dad87af664fc654061b2bb3c075bcec279f3be9dcfe5fdcf487b30b972f4ab49"
+  },
+  {
+    "bytes": 35218,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3fe258b3cc45c6bd86ed343773576dec4a525c89",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 35218,
+    "sha256": "c5819c7f9f9ccf6214af289e55833d4f9cab432abe81f52015c690c3c6e4b378"
+  },
+  {
+    "bytes": 72446,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3b070bcf3e2290de1590d6bc33aa6132ef194df4",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 72446,
+    "sha256": "53019a2826331c29641cbda731703fa8d52b72146910552f5e0b1ca785e541b9"
+  },
+  {
+    "bytes": 127710,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "455a6f7baf2d41ef1b6d69dd1807dede8186cce0",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 127710,
+    "sha256": "b1f80b17e6d9601dfb6825621a98bb68f4dd3c84d383372772025698278aeeb6"
+  },
+  {
+    "bytes": 200984,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "6d932a64b871eb7f5b7266342ed121d040e785dc",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 200984,
+    "sha256": "262051fd2524f168a31443688c6c5c4b259582a034b4cf4d77ab40f6414d67a9"
+  },
+  {
+    "bytes": 113535,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "c3c7bc82e2b8a7833b0abeb0779adedb9a7b1908",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 113535,
+    "sha256": "272a6f386c04271bb78e1358a813d98991b45304a5ff58d25a136117326ea4df"
+  },
+  {
+    "bytes": 248719,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "228434b4f9a11fcb8f449721a76652da5a456d30",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 248719,
+    "sha256": "c0aeff0a1ef6d17c3b19b49b89e35009483cda0b4449c09d9afd8296e941636b"
+  },
+  {
+    "bytes": 498529,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "30f18c8e4398abed5c528d94666a2d9494f79703",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 498529,
+    "sha256": "70bfab994f3cb01acedef60781f56ea654474dbdc5c453e1cbda388c19944c1c"
+  },
+  {
+    "bytes": 1057537,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3936395408ff83ac73d0865f5dd05c2167ec66a8",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 1057537,
+    "sha256": "958730f0eb38b703f8d6cbe1218fd37866f6e346aa43a27f4048365d383a9436"
+  },
+  {
+    "bytes": 87611,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "b168ab091e68137a15d737b6ff015ad514af220e",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 87611,
+    "sha256": "1486598ed078964a443ccea17be3595517dfacf317c483d93e06ecab34830049"
+  },
+  {
+    "bytes": 32201,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "78fe8a95312fb7be6c13df517e799693039a2045",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 32201,
+    "sha256": "5add5aa9ea74234b42ee60f94202658093eae3f0b56916ea75000173c426c0a9"
+  },
+  {
+    "bytes": 18116,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "3575c59d6224dedf9da0d3f8ede32fbbba4e0eab",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 18116,
+    "sha256": "df906d37cf600f53c98405eba6500e8a615cd16a047ac939e8c7b9100f588fa3"
+  },
+  {
+    "bytes": 20668,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "5898fabbe0a40b2c59e420aa84269a1a7116c1fc",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 20668,
+    "sha256": "9af1ccf253fe09d2f4d16cb4ba9de8a314e00aaa86d79dc658319cf2197e7c2f"
+  },
+  {
+    "bytes": 14443,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "2ebebcbb3847113f03fc0916722b870568c6799b",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 14443,
+    "sha256": "fc40308a2b3904712725eb0d9abce34b9aa1687c24a9b3883d87e437f55a2b46"
+  },
+  {
+    "bytes": 24472,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "efe885ee30149880f7d2833de095c8434ce42324",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 24472,
+    "sha256": "daa35a34d58919427aac5a2f739151a73839760100072f52d57bf4b3a4bf03c6"
+  },
+  {
+    "bytes": 498529,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "b1cae466170415d0440a0274aa2feae780f6630c",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 498529,
+    "sha256": "4c864fda9131717dc72e0f4c994560ab3fbd8ee0dfdbf9ccac7184644d5a9871"
+  },
+  {
+    "bytes": 498529,
+    "changed_paths": [],
+    "content_address_verified": true,
+    "oid": "4884c964523020010e167c1038548fa634c8c752",
+    "pattern_categories_checked": [
+      "github_classic_token",
+      "github_fine_grained_token",
+      "aws_access_key_id",
+      "slack_token",
+      "private_key_header"
+    ],
+    "raw_bytes_scanned": 498529,
+    "sha256": "14913e56d5afc96db51e42e03972bead19082f2b8d3159d97953b085ee4aa0ab"
+  }
+]

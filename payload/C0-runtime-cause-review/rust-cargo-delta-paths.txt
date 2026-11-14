@@ -1,0 +1,4 @@
+evidence/hash-use-current-source-review-20261114/diagnostics/function-precheck_proof_statement.rs
+evidence/hash-use-current-source-review-20261114/diagnostics/function-sequence_root.rs
+evidence/hash-use-current-source-review-20261114/diagnostics/function-task_id.rs
+evidence/hash-use-current-source-review-20261114/diagnostics/function-verify.rs

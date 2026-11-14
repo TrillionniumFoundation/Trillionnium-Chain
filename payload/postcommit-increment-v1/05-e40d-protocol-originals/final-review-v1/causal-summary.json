@@ -1,0 +1,494 @@
+{
+  "schema": "trnm-e40d-two-protocol-failure-causal-review-v1",
+  "sealed_at": "2026-11-14T06:54:55.713578+00:00",
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 43551533528,
+  "attempt": 1,
+  "candidate": "e40d7071c4724e6600deef8a2820bf35c1982289",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "rows": [
+    {
+      "job_id": 132340218588,
+      "artifact_id": 14101871015,
+      "job": {
+        "name": "protocol-contract",
+        "head_sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+        "started_at": "2026-11-14T05:03:28Z",
+        "completed_at": "2026-11-14T05:59:15Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340218588",
+        "runner_name": "GitHub Actions 1000141332",
+        "labels": [
+          "ubuntu-24.04"
+        ]
+      },
+      "tested_commit": "e40d7071c4724e6600deef8a2820bf35c1982289",
+      "tested_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6",
+      "failed_steps": [
+        {
+          "number": 8,
+          "name": "Run actual protocol-contract checks",
+          "started_at": "2026-11-14T05:06:05Z",
+          "completed_at": "2026-11-14T05:59:06Z",
+          "conclusion": "failure"
+        }
+      ],
+      "outer_log": {
+        "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/132340218588.log",
+        "bytes": 218176,
+        "sha256": "73ffa01cdcbf3f574db9b1731730fcf1348913b593602e4ffc7357b6d3ccf8cf"
+      },
+      "outer_controller_line": 1405,
+      "outer_exit_error_line": 1406,
+      "host_controller": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": []
+      },
+      "artifact": {
+        "zip": {
+          "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/artifacts-completed-v2/14101871015.zip",
+          "bytes": 7086592,
+          "sha256": "a9376da2bb9b73bcd1e0778b437bd44a7a264a8f791ed3e285658a844bd9092b"
+        },
+        "index": {
+          "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/artifacts-completed-v2/14101871015.index.json",
+          "bytes": 29526,
+          "sha256": "f382edeb435fbd2c908aa2438a5dd66e742e4b89e47967efa52b7c3c12bfbe3b"
+        },
+        "member_count": 105,
+        "uncompressed_bytes": 60515924,
+        "complete_digest_verified": true
+      },
+      "manifest_member": {
+        "name": "from-zero-native/manifest.json",
+        "bytes": 73404,
+        "compressed_bytes": 11168,
+        "crc32": 250092669,
+        "sha256": "08a6204fa064c9ab4a8ead2507a7bfb470b27d5ef7875b12714cb3fa96e082c3"
+      },
+      "confirmation_member": {
+        "name": "from-zero-native/confirmation/report.json",
+        "bytes": 14954503,
+        "compressed_bytes": 681273,
+        "crc32": 1273034199,
+        "sha256": "cf7c3616f19606f98a760420ab7d72d4a3bf208822a1a8ffbdafa78840208aa3"
+      },
+      "manifest_failures_line": 230,
+      "confirmation_root_finite_target_false_line": 4,
+      "native_named_tests": {
+        "passed": 5,
+        "failed": 0,
+        "timed_out": 0,
+        "scope": "Actual original named native executions, not business-window acceptance."
+      },
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET"
+        }
+      },
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "window_ns": 4000000000,
+          "business": {
+            "required_signed_transactions": 1,
+            "business_start_delay_ns": 112556,
+            "business_started_before_original_window_end": true,
+            "original_window_remaining_at_business_start_ns": 3999887444,
+            "pre_business_window_overrun_ns": 0,
+            "reported_independently_confirmed_in_window": 1,
+            "unconfirmed": 0,
+            "unknown": 0,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "observed_success_latency_ns": 1481603063,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "lower_bound_reaches_original_window_end": null,
+            "reported_finite_business_target_met": true
+          },
+          "signed_submit_ack": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "history_response": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "independent_page_replay": {
+            "attempts": 7,
+            "accepted_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "head_response": {
+            "attempts": 73,
+            "successful_in_original_window": 73,
+            "failed_or_late": 0
+          },
+          "verification_errors": [],
+          "original_report": {
+            "business_started_ns": 112556,
+            "confirmation_ended_ns": 1481715619,
+            "finite_business_target_met": true,
+            "invariant_target_met": true,
+            "client_confirmed_transactions": 1,
+            "client_confirmed_before_original_window_end": true,
+            "full_native_state_equal": true,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "required_depth": 6
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "window_ns": 4000000000,
+          "business": {
+            "required_signed_transactions": 1,
+            "business_start_delay_ns": 15997154,
+            "business_started_before_original_window_end": true,
+            "original_window_remaining_at_business_start_ns": 3984002846,
+            "pre_business_window_overrun_ns": 0,
+            "reported_independently_confirmed_in_window": 0,
+            "unconfirmed": 1,
+            "unknown": 0,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "observed_success_latency_ns": null,
+            "unconfirmed_latency_lower_bound_ns": 3984002846,
+            "lower_bound_reaches_original_window_end": true,
+            "reported_finite_business_target_met": false
+          },
+          "signed_submit_ack": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "history_response": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "independent_page_replay": {
+            "attempts": 7,
+            "accepted_in_original_window": 6,
+            "failed_or_late": 1
+          },
+          "head_response": {
+            "attempts": 30,
+            "successful_in_original_window": 29,
+            "failed_or_late": 1
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "original_report": {
+            "business_started_ns": 15997154,
+            "confirmation_ended_ns": null,
+            "finite_business_target_met": false,
+            "invariant_target_met": true,
+            "client_confirmed_transactions": 0,
+            "client_confirmed_before_original_window_end": false,
+            "full_native_state_equal": false,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "required_depth": 6
+        }
+      ],
+      "confirmation_report_validation_completed": false,
+      "source_before_after_equal": true
+    },
+    {
+      "job_id": 132340218496,
+      "artifact_id": 14102052271,
+      "job": {
+        "name": "prospective-merge (protocol-contract)",
+        "head_sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+        "started_at": "2026-11-14T05:03:28Z",
+        "completed_at": "2026-11-14T06:10:46Z",
+        "conclusion": "failure",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43551533528/job/132340218496",
+        "runner_name": "GitHub Actions 1000141326",
+        "labels": [
+          "ubuntu-24.04"
+        ]
+      },
+      "tested_commit": "7b8c580981d6fed6323ec968df660831759030bf",
+      "tested_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute the same lane on the prospective merge",
+          "started_at": "2026-11-14T05:06:42Z",
+          "completed_at": "2026-11-14T06:10:37Z",
+          "conclusion": "failure"
+        }
+      ],
+      "outer_log": {
+        "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/132340218496.log",
+        "bytes": 220750,
+        "sha256": "7e3c860e281ede19d438abbb20b2150204954fc46aa40a5096e922279ed759e6"
+      },
+      "outer_controller_line": 1419,
+      "outer_exit_error_line": 1420,
+      "host_controller": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": []
+      },
+      "artifact": {
+        "zip": {
+          "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/artifacts-completed-v2/14102052271.zip",
+          "bytes": 6791534,
+          "sha256": "5ed2193a574cb45206e0ac8b541f9c9d980fad5896c3ae85ea6e6fcb005babe0"
+        },
+        "index": {
+          "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/artifacts-completed-v2/14102052271.index.json",
+          "bytes": 29531,
+          "sha256": "3a0cce91f20df4cea8bda0731415902ea9e7f039af486a8d773689a8a55be1a8"
+        },
+        "member_count": 105,
+        "uncompressed_bytes": 54997564,
+        "complete_digest_verified": true
+      },
+      "manifest_member": {
+        "name": "from-zero-native/manifest.json",
+        "bytes": 73403,
+        "compressed_bytes": 11152,
+        "crc32": 706641037,
+        "sha256": "2e52dc6d6afc0c14d9c96e27dcf61d521c98d7f38775faf34016b7def5d5da88"
+      },
+      "confirmation_member": {
+        "name": "from-zero-native/confirmation/report.json",
+        "bytes": 11989203,
+        "compressed_bytes": 537515,
+        "crc32": 2490775097,
+        "sha256": "76a6aa13b86a4a38f6d6a10209a40911e03d1276c8c5cbd8e7f23e2a3ee46966"
+      },
+      "manifest_failures_line": 230,
+      "confirmation_root_finite_target_false_line": 4,
+      "native_named_tests": {
+        "passed": 5,
+        "failed": 0,
+        "timed_out": 0,
+        "scope": "Actual original named native executions, not business-window acceptance."
+      },
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET"
+        }
+      },
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "window_ns": 4000000000,
+          "business": {
+            "required_signed_transactions": 1,
+            "business_start_delay_ns": 172341,
+            "business_started_before_original_window_end": true,
+            "original_window_remaining_at_business_start_ns": 3999827659,
+            "pre_business_window_overrun_ns": 0,
+            "reported_independently_confirmed_in_window": 1,
+            "unconfirmed": 0,
+            "unknown": 0,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "observed_success_latency_ns": 3088432160,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "lower_bound_reaches_original_window_end": null,
+            "reported_finite_business_target_met": true
+          },
+          "signed_submit_ack": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "history_response": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "independent_page_replay": {
+            "attempts": 7,
+            "accepted_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "head_response": {
+            "attempts": 53,
+            "successful_in_original_window": 53,
+            "failed_or_late": 0
+          },
+          "verification_errors": [],
+          "original_report": {
+            "business_started_ns": 172341,
+            "confirmation_ended_ns": 3088604501,
+            "finite_business_target_met": true,
+            "invariant_target_met": true,
+            "client_confirmed_transactions": 1,
+            "client_confirmed_before_original_window_end": true,
+            "full_native_state_equal": true,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "required_depth": 6
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "window_ns": 4000000000,
+          "business": {
+            "required_signed_transactions": 1,
+            "business_start_delay_ns": 96066340,
+            "business_started_before_original_window_end": true,
+            "original_window_remaining_at_business_start_ns": 3903933660,
+            "pre_business_window_overrun_ns": 0,
+            "reported_independently_confirmed_in_window": 0,
+            "unconfirmed": 1,
+            "unknown": 0,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "observed_success_latency_ns": null,
+            "unconfirmed_latency_lower_bound_ns": 3903933660,
+            "lower_bound_reaches_original_window_end": true,
+            "reported_finite_business_target_met": false
+          },
+          "signed_submit_ack": {
+            "attempts": 7,
+            "successful_in_original_window": 7,
+            "failed_or_late": 0
+          },
+          "history_response": {
+            "attempts": 3,
+            "successful_in_original_window": 3,
+            "failed_or_late": 0
+          },
+          "independent_page_replay": {
+            "attempts": 3,
+            "accepted_in_original_window": 2,
+            "failed_or_late": 1
+          },
+          "head_response": {
+            "attempts": 23,
+            "successful_in_original_window": 22,
+            "failed_or_late": 1
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "original_report": {
+            "business_started_ns": 96066340,
+            "confirmation_ended_ns": null,
+            "finite_business_target_met": false,
+            "invariant_target_met": true,
+            "client_confirmed_transactions": 0,
+            "client_confirmed_before_original_window_end": false,
+            "full_native_state_equal": false,
+            "receiver_matches_valid_honest_prefix": true
+          },
+          "required_depth": 6
+        }
+      ],
+      "confirmation_report_validation_completed": false,
+      "source_before_after_equal": true
+    }
+  ],
+  "failure_chain": {
+    "controller": "run_from_zero_host.py executes the original run_from_zero_native.py as the bounded hosted child",
+    "native_execution": "All five original named child tests return zero without timeout",
+    "report_validation": "service and sustained pass; confirmation root finite_target_met is false",
+    "exact_predicate": {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "old_call_line": 833,
+      "old_raise_line": 499,
+      "current_call_line": 836,
+      "current_raise_line": 502,
+      "required_field": "/finite_target_met",
+      "error": "CONFIRMATION_TARGET"
+    },
+    "native_test_scope": {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "old_report_scope_line": 1770,
+      "old_assert_line": 1782,
+      "current_assert_line": 1791,
+      "asserts": "invariants_passed; finite business result retained separately"
+    },
+    "reported_pressure_result": "Both original pressure phases miss one signed transaction's independent depth-six confirmation inside original 4-second window; exact phase counts retained above.",
+    "unproven": "No new experiment attributes the elapsed-time miss to a single runtime subsystem."
+  },
+  "current_dc42_comparison": {
+    "commit": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+    "proof": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/outer-source-comparison-v1/predicate-identity-and-original-lines.json",
+      "bytes": 6235,
+      "sha256": "9930dfaf2f7df9cd4b4680f23b7a64665e670b32cb8b6883bee89dfe236c9391"
+    },
+    "all_23_runner_function_class_ast_equal": true,
+    "exact_validator_and_run_definition_bytes_equal": true,
+    "native_test_complete_original_bytes_preserved_except_nine_added_SP27_module_declaration_lines": true,
+    "production_runtime_changed_elsewhere": true,
+    "already_fixed_demonstrated": false,
+    "current_will_fail_demonstrated": false,
+    "required_validation": "Actual current candidate and prospective merge required CI under unchanged original limits."
+  },
+  "evidence_completion": {
+    "original_full_downloads": "Two 300-second transport timeouts retained unchanged.",
+    "range_completion": "Missing byte ranges plus 65536-byte overlap, exact full size and original upload/API SHA256 verified.",
+    "both_archives_complete": true,
+    "member_count_each": 105,
+    "prefix_complete_members_reconciled_each": 51,
+    "completion_receipt": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/e40d-two-protocol-original-failures-v1/artifacts-completed-v2/completion-summary.json",
+      "bytes": 4872,
+      "sha256": "8d4085e5715b1be72068d82d667d445b36eb9aba1e325408ccdbd148f0147b54"
+    }
+  },
+  "scope": {
+    "remote_methods": [
+      "GET"
+    ],
+    "native_or_ci_reruns": false,
+    "ci_cancellations": false,
+    "dispatches": false,
+    "git_or_source_writes": false,
+    "no_current_acceptance_or_security_qualification": true,
+    "old_cost_artifact_observations_not_substituted_for_these_protocol_artifacts": true,
+    "confirmation_phase_values": "Actual original raw reports/retained diagnostic summary; the live confirmation validator stops at the false root target before completing subsequent report predicates."
+  }
+}

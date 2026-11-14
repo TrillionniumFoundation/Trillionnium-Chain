@@ -1,0 +1,3210 @@
+{
+  "schema": "trnm-N-native-failure-closed-selection-v1",
+  "prepared_at": "2026-11-14T11:10:01.124791+00:00",
+  "stage": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1",
+  "prefix": "N-native-failure-followup",
+  "baseline": {
+    "files": 3594,
+    "bytes": 187247568
+  },
+  "files": [
+    {
+      "path": "N-native-failure-followup/remote-observation/EVIDENCE_INDEX.json",
+      "bytes": 5261,
+      "sha256": "0dd06f2262e2a9bb2daeb8272d7506e6ff4d881480be7d987cb69a5f5a8d4873",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/EVIDENCE_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/EVIDENCE_INDEX.json",
+      "source_version": [
+        16777233,
+        606974505,
+        33152,
+        1,
+        5261,
+        1794653637486108079,
+        1794653637486108079
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-check-runs-normalized.json",
+      "bytes": 97589,
+      "sha256": "0dc2721579f138584d3c0032f242d1fde886a619d2f2670e77ce112e19b3d561",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-normalized.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-normalized.json",
+      "source_version": [
+        16777233,
+        606974501,
+        33152,
+        1,
+        97589,
+        1794653637478543068,
+        1794653637478543068
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-check-runs-page-001.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stderr",
+      "source_version": [
+        16777233,
+        606973983,
+        33152,
+        1,
+        0,
+        1794653625501204813,
+        1794653625501204813
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-check-runs-page-001.stdout",
+      "bytes": 373969,
+      "sha256": "ed2889e9bc916ba9d68736ad578af2f6d3a5e3d5f313e0450190eea8175f2f1d",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-001.stdout",
+      "source_version": [
+        16777233,
+        606973979,
+        33152,
+        1,
+        373969,
+        1794653629472655677,
+        1794653629472655677
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-check-runs-page-002.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stderr",
+      "source_version": [
+        16777233,
+        606974065,
+        33152,
+        1,
+        0,
+        1794653634564438502,
+        1794653634564438502
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-check-runs-page-002.stdout",
+      "bytes": 241870,
+      "sha256": "453d10a204df7efcd85e1a8bcf99dcb5e4bf23d0a395db055e509a0680a8ac93",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-check-runs-page-002.stdout",
+      "source_version": [
+        16777233,
+        606974064,
+        33152,
+        1,
+        241870,
+        1794653637463171964,
+        1794653637463171964
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-jobs-normalized.json",
+      "bytes": 81699,
+      "sha256": "f65ae59b89f7df3651893b98ee48beec99d75b29267a71467602e2504031e93d",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-normalized.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-normalized.json",
+      "source_version": [
+        16777233,
+        606974503,
+        33152,
+        1,
+        81699,
+        1794653637481366390,
+        1794653637481366390
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-jobs-page-001.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stderr",
+      "source_version": [
+        16777233,
+        606974000,
+        33152,
+        1,
+        0,
+        1794653629520175818,
+        1794653629520175818
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-jobs-page-001.stdout",
+      "bytes": 63939,
+      "sha256": "30cec0ea13ce54f2e09bc3a2d3b3f4e45ef048099715d7aa78023a25376c8bc1",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-jobs-page-001.stdout",
+      "source_version": [
+        16777233,
+        606973999,
+        33152,
+        1,
+        63939,
+        1794653632403692800,
+        1794653632403692800
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-run43582713392.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stderr",
+      "source_version": [
+        16777233,
+        606973998,
+        33152,
+        1,
+        0,
+        1794653629110139021,
+        1794653629110139021
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-run43582713392.stdout",
+      "bytes": 15121,
+      "sha256": "dcca93ab3084a6c7b1f3021fb36bd9f54f0b3cf7c249c82755cd0a609bc2b4d8",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-run43582713392.stdout",
+      "source_version": [
+        16777233,
+        606973997,
+        33152,
+        1,
+        15121,
+        1794653630680869740,
+        1794653630680869740
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-runs-normalized.json",
+      "bytes": 1499,
+      "sha256": "59993657d136a3f63c2f0934c24e0ef68aba37fe0aaeee3e00af0b844c7e8c93",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-normalized.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-normalized.json",
+      "source_version": [
+        16777233,
+        606974502,
+        33152,
+        1,
+        1499,
+        1794653637479187065,
+        1794653637479187065
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-runs-page-001.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stderr",
+      "source_version": [
+        16777233,
+        606973984,
+        33152,
+        1,
+        0,
+        1794653625501953976,
+        1794653625501953976
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/N-required-runs-page-001.stdout",
+      "bytes": 15157,
+      "sha256": "9a2da73fc07a4b2d0ee175f82893af42022efa62c32d708fa77ecd8fe93b4513",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/N-required-runs-page-001.stdout",
+      "source_version": [
+        16777233,
+        606973981,
+        33152,
+        1,
+        15157,
+        1794653629069123354,
+        1794653629069123354
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/expected-heads-with-reviewed-N.json",
+      "bytes": 94421,
+      "sha256": "3181b23cdbec589abb215330ea16676914d40f5a1d639f74df5027523bde245b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/expected-heads-with-reviewed-N.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/expected-heads-with-reviewed-N.json",
+      "source_version": [
+        16777233,
+        606973976,
+        33152,
+        1,
+        94421,
+        1794653625499551778,
+        1794653625499551778
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/frozen-0170-branches.json",
+      "bytes": 132555,
+      "sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/frozen-0170-branches.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/frozen-0170-branches.json",
+      "source_version": [
+        16777233,
+        606973975,
+        33152,
+        1,
+        132555,
+        1794653625499208321,
+        1794653625499208321
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/heads-summary.json",
+      "bytes": 532,
+      "sha256": "f6c99290845bda211ed8490eefec91a7075aa5dfe0ce21a6ff7dccb6ddec7882",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/heads-summary.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/heads-summary.json",
+      "source_version": [
+        16777233,
+        606974063,
+        33152,
+        1,
+        532,
+        1794653634564005671,
+        1794653634564005671
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/observer.py",
+      "bytes": 14131,
+      "sha256": "62c68d1438bc8596c31e54b0f6ca49392252dc04b03c57cfe127fde568d5d16e",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/observer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/observer.py",
+      "source_version": [
+        16777233,
+        606973974,
+        33152,
+        1,
+        14131,
+        1794653625497646035,
+        1794653625497646035
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/pr847.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stderr",
+      "source_version": [
+        16777233,
+        606973980,
+        33152,
+        1,
+        0,
+        1794653625500951022,
+        1794653625500951022
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/pr847.stdout",
+      "bytes": 38700,
+      "sha256": "7db19e6ecbd0b195816283a9a2dde54163182b633cda672c384b6e1572ac94f0",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/pr847.stdout",
+      "source_version": [
+        16777233,
+        606973978,
+        33152,
+        1,
+        38700,
+        1794653629697517724,
+        1794653629697517724
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/refs-heads.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stderr",
+      "source_version": [
+        16777233,
+        606973982,
+        33152,
+        1,
+        0,
+        1794653625501156563,
+        1794653625501156563
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/refs-heads.stdout",
+      "bytes": 87154,
+      "sha256": "4bb28d857e62ad05457ff6f58b3e6caa9a436b1d5d02f802e4abed0b1925487d",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/refs-heads.stdout",
+      "source_version": [
+        16777233,
+        606973977,
+        33152,
+        1,
+        87154,
+        1794653634559231648,
+        1794653634559231648
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/remote-observation/summary.json",
+      "bytes": 107925,
+      "sha256": "511582eb74e1a0c01cdcf6e1f04a0e600169b34de314ff0e0fdde920badc61b3",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/summary.json"
+      },
+      "source_path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/summary.json",
+      "source_version": [
+        16777233,
+        606974504,
+        33152,
+        1,
+        107925,
+        1794653637482938175,
+        1794653637482938175
+      ],
+      "role": "fresh complete refs, PR and exact N checks/jobs at the actual observation time"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/EVIDENCE_INDEX.json",
+      "bytes": 1869,
+      "sha256": "26f0503151e4b23768f2dc502effbb7e75b91080b5ea53d527a12f8648d7d84b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/EVIDENCE_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/EVIDENCE_INDEX.json",
+      "source_version": [
+        16777233,
+        606977032,
+        33152,
+        1,
+        1869,
+        1794653837355354225,
+        1794653837355354225
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/existing-two-cost-job-metadata.json",
+      "bytes": 10963,
+      "sha256": "59d0ea537554bde044e289c61a3e4c5fe78c161791c1b669aa5df1f6ae1f52a9",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/existing-two-cost-job-metadata.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/existing-two-cost-job-metadata.json",
+      "source_version": [
+        16777233,
+        606976888,
+        33152,
+        1,
+        10963,
+        1794653820519373241,
+        1794653820519373241
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/EVIDENCE_INDEX.json",
+      "bytes": 2961,
+      "sha256": "0f7016f6aa9536e61896f503c2829cd8df80e601f39a5885f62ed57b7625045a",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/EVIDENCE_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/EVIDENCE_INDEX.json",
+      "source_version": [
+        16777233,
+        606978203,
+        33152,
+        1,
+        2961,
+        1794653982149933218,
+        1794653982149933218
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/actual-download-terminal-pages.json",
+      "bytes": 20879,
+      "sha256": "2be0780edfca766e928e471082f1511ffc3301de649f8ce86028245b5ffd9f09",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/actual-download-terminal-pages.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/actual-download-terminal-pages.json",
+      "source_version": [
+        16777233,
+        606978196,
+        33152,
+        1,
+        20879,
+        1794653982149081763,
+        1794653982149081763
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/actual-download-terminal.log",
+      "bytes": 6110,
+      "sha256": "a2bccc8d24f7514520d9e82b1ba47cab196481a45ab419964f7ce7cc5a7c6ca3",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/actual-download-terminal.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/actual-download-terminal.log",
+      "source_version": [
+        16777233,
+        606978197,
+        33152,
+        1,
+        6110,
+        1794653982149201721,
+        1794653982149201721
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/controller-extraction-identity.json",
+      "bytes": 286,
+      "sha256": "05ee1f9738c92b06f23f5455dbd379475f699d2c06e9209a5ed9490094e3a60e",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-extraction-identity.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-extraction-identity.json",
+      "source_version": [
+        16777233,
+        606978194,
+        33152,
+        1,
+        286,
+        1794653982148696389,
+        1794653982148696389
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/controller-original-line1355.log",
+      "bytes": 7525,
+      "sha256": "feca19ec84c8cf7f4834dfb4d6ba52d7c3bc04a4c92ff55dc9f154994fd36632",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-original-line1355.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-original-line1355.log",
+      "source_version": [
+        16777233,
+        606978193,
+        33152,
+        1,
+        7525,
+        1794653982148497724,
+        1794653982148497724
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/controller-parsed.json",
+      "bytes": 9054,
+      "sha256": "1424fb5785bf3133308f0807773453048c2a19748797b92680d39f00bb937bde",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-parsed.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/controller-parsed.json",
+      "source_version": [
+        16777233,
+        606978195,
+        33152,
+        1,
+        9054,
+        1794653982148893597,
+        1794653982148893597
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/findings.json",
+      "bytes": 2702,
+      "sha256": "47b471396b87a83a579fd54a922986a1d233143b4abc0f735cb71097da9e75c3",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/findings.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/findings.json",
+      "source_version": [
+        16777233,
+        606978192,
+        33152,
+        1,
+        2702,
+        1794653982148169100,
+        1794653982148169100
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/readonly-inspection-producer.py",
+      "bytes": 1697,
+      "sha256": "1eb71358b2a8da9ecb0e7e69d2584d07fb264244412dc5a8774cb69de42fca2b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-producer.py",
+      "source_version": [
+        16777233,
+        606978198,
+        33152,
+        1,
+        1697,
+        1794653982149339804,
+        1794653982149339804
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/readonly-inspection-terminal.json",
+      "bytes": 16380,
+      "sha256": "99fb08a08c7a9f7b45bf15fdf102c2fcafb848c8d0bd098c227e57d11f8fa661",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-terminal.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-terminal.json",
+      "source_version": [
+        16777233,
+        606978199,
+        33152,
+        1,
+        16380,
+        1794653982149475761,
+        1794653982149475761
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/readonly-inspection-terminal.log",
+      "bytes": 4915,
+      "sha256": "c1efb54a016c2ed12da59bb49ce4a997080a02c6c0534674e28915d7ff16ff17",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-terminal.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/readonly-inspection-terminal.log",
+      "source_version": [
+        16777233,
+        606978200,
+        33152,
+        1,
+        4915,
+        1794653982149593386,
+        1794653982149593386
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/review.md",
+      "bytes": 1598,
+      "sha256": "585c8273f17aa03875412a0bad1e9290ca33caa7444f78db994caa47de1b4aa2",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/review.md"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/review.md",
+      "source_version": [
+        16777233,
+        606978202,
+        33152,
+        1,
+        1598,
+        1794653982149829427,
+        1794653982149829427
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/outer-analysis-v1/seal-producer.py",
+      "bytes": 7422,
+      "sha256": "d88b59cc16b12d05105364054895e756df8db18b85a16dc24be0b097da8004f7",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/seal-producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/outer-analysis-v1/seal-producer.py",
+      "source_version": [
+        16777233,
+        606978201,
+        33152,
+        1,
+        7422,
+        1794653982149710344,
+        1794653982149710344
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/producer.py",
+      "bytes": 8270,
+      "sha256": "73cfbcd08f4e0ad9e910ec5e6d4d98359e38956c76042f6c144c5ba8843dfd4f",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/producer.py",
+      "source_version": [
+        16777233,
+        606976885,
+        33152,
+        1,
+        8270,
+        1794653820518186205,
+        1794653820518186205
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/request.json",
+      "bytes": 1066,
+      "sha256": "2dea34ea5d8fef2d7a475afd59d9bab58d4b8c2123ff6abd9f97bf262ce5fbdd",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/request.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/request.json",
+      "source_version": [
+        16777233,
+        606976889,
+        33152,
+        1,
+        1066,
+        1794653820519667657,
+        1794653820519667657
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/source-jobs-page-001.json",
+      "bytes": 63939,
+      "sha256": "30cec0ea13ce54f2e09bc3a2d3b3f4e45ef048099715d7aa78023a25376c8bc1",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/source-jobs-page-001.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/source-jobs-page-001.json",
+      "source_version": [
+        16777233,
+        606976886,
+        33152,
+        1,
+        63939,
+        1794653820519014368,
+        1794653820519014368
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/source-required-run.json",
+      "bytes": 15121,
+      "sha256": "dcca93ab3084a6c7b1f3021fb36bd9f54f0b3cf7c249c82755cd0a609bc2b4d8",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/source-required-run.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/source-required-run.json",
+      "source_version": [
+        16777233,
+        606976887,
+        33152,
+        1,
+        15121,
+        1794653820519191117,
+        1794653820519191117
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/summary.json",
+      "bytes": 6815,
+      "sha256": "06f3dac604148a1ce22e460aa128b76b00618353865a0104e32f69597576b52f",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/summary.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/summary.json",
+      "source_version": [
+        16777233,
+        606977031,
+        33152,
+        1,
+        6815,
+        1794653837353350274,
+        1794653837353350274
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/x64-job132415017426.log",
+      "bytes": 184799,
+      "sha256": "154555d87f24fbaed2609d14b18837c228256c65af29633eb42f611b9e291c81",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.log",
+      "source_version": [
+        16777233,
+        606976890,
+        33152,
+        1,
+        184799,
+        1794653837341753238,
+        1794653837342661318
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings",
+      "upstream_original": {
+        "provider": "github-actions",
+        "job_logs_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132415017426/logs",
+        "one_official_gh_GET": true
+      }
+    },
+    {
+      "path": "N-native-failure-followup/outer-job-and-initial-unknown/x64-job132415017426.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1/x64-job132415017426.stderr",
+      "source_version": [
+        16777233,
+        606976891,
+        33152,
+        1,
+        0,
+        1794653820519804656,
+        1794653820519804656
+      ],
+      "role": "single original x64 job log and unchanged original outer-only UNKNOWN findings"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/.hepta-lock-329aad723d14703df1023bd0",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/.hepta-lock-329aad723d14703df1023bd0"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/.hepta-lock-329aad723d14703df1023bd0",
+      "source_version": [
+        16777233,
+        606990032,
+        33152,
+        1,
+        0,
+        1794654436858788936,
+        1794654436858788936
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/N-cost-x64-14109658844.zip",
+      "bytes": 9884207,
+      "sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/N-cost-x64-14109658844.zip",
+      "source_version": [
+        16777233,
+        606979397,
+        33152,
+        1,
+        9884207,
+        1794654138470437412,
+        1794654138471856899
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "artifact_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14109658844",
+        "artifact_id": 14109658844,
+        "run_id": 43582713392,
+        "head": "5a4b7fe8de1adce803184f262fd9f704ead1930c"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/ZIP_MEMBER_INDEX.json",
+      "bytes": 47816,
+      "sha256": "989f6ec25dc46aae82ce6a418693a0bca1b69a50b25ccb77d7ddddc3ef3b9199",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/ZIP_MEMBER_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/ZIP_MEMBER_INDEX.json",
+      "source_version": [
+        16777233,
+        606979858,
+        33152,
+        1,
+        47816,
+        1794654138575630885,
+        1794654138575630885
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/EVIDENCE_INDEX.json",
+      "bytes": 23424,
+      "sha256": "fe8b3a5ed21db1a322684f984346bb5d01cdf7f119c81ad60949578359117455",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/EVIDENCE_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/EVIDENCE_INDEX.json",
+      "source_version": [
+        16777233,
+        606993096,
+        33152,
+        1,
+        23424,
+        1794654514260911049,
+        1794654514260911049
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/findings.json",
+      "bytes": 36198,
+      "sha256": "8f8f519b23b33d598548f6602ae56fd4d41d7bdde5b55d41dd9a3b713e2787eb",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/findings.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/findings.json",
+      "source_version": [
+        16777233,
+        606993094,
+        33152,
+        1,
+        36198,
+        1794654514253134588,
+        1794654514253134588
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/artifact-whole-zip.json",
+      "bytes": 70459,
+      "sha256": "8918737e3194da3f0382f525734010c9191792386b331a8dddeaaa052822a157",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.json",
+      "source_version": [
+        16777233,
+        606993088,
+        33152,
+        1,
+        70459,
+        1794654514246369123,
+        1794654514246369123
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/artifact-whole-zip.log",
+      "bytes": 21940,
+      "sha256": "8ef6a811a5e061933948d2e5e14f8da9a05cde0df5a9dbb6d0a3db21c4af9982",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/artifact-whole-zip.log",
+      "source_version": [
+        16777233,
+        606993089,
+        33152,
+        1,
+        21940,
+        1794654514246526372,
+        1794654514246526372
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/fresh-remote-observation.json",
+      "bytes": 36751,
+      "sha256": "e36efb61c491b15a8e4b3f1dc48d3ab0e5e0ea73c67081dcd303054f780ac0bc",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.json",
+      "source_version": [
+        16777233,
+        606993084,
+        33152,
+        1,
+        36751,
+        1794654514245581419,
+        1794654514245581419
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/fresh-remote-observation.log",
+      "bytes": 11300,
+      "sha256": "d6d9fd09d647aa5806614e6a0f477f5a330e3b3f61c4f75659ea7a32fb9ea9f1",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/fresh-remote-observation.log",
+      "source_version": [
+        16777233,
+        606993085,
+        33152,
+        1,
+        11300,
+        1794654514245797710,
+        1794654514245797710
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/manifest-observation-read.json",
+      "bytes": 114793,
+      "sha256": "74de1e695b7b2609c18a51dd370a649d20314bc5073d0bf6e2b523f07b746cb2",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.json",
+      "source_version": [
+        16777233,
+        606993092,
+        33152,
+        1,
+        114793,
+        1794654514247351826,
+        1794654514247351826
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/manifest-observation-read.log",
+      "bytes": 36151,
+      "sha256": "afb26b9925be54bb79f018303a61a8ea7048960a7d0616dc705415be7ec88177",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/manifest-observation-read.log",
+      "source_version": [
+        16777233,
+        606993093,
+        33152,
+        1,
+        36151,
+        1794654514247526951,
+        1794654514247526951
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/outer-single-job-log.json",
+      "bytes": 21625,
+      "sha256": "d9783e2d09acce9e97bd85e1a1be5c8ef047648426b873c114526e085c51a597",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.json",
+      "source_version": [
+        16777233,
+        606993086,
+        33152,
+        1,
+        21625,
+        1794654514245981750,
+        1794654514245981750
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/outer-single-job-log.log",
+      "bytes": 6110,
+      "sha256": "a2bccc8d24f7514520d9e82b1ba47cab196481a45ab419964f7ce7cc5a7c6ca3",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/outer-single-job-log.log",
+      "source_version": [
+        16777233,
+        606993087,
+        33152,
+        1,
+        6110,
+        1794654514246131458,
+        1794654514246131458
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/selected-17-member-read.json",
+      "bytes": 83270,
+      "sha256": "43c68be4a49df681558e046b8ad7b252e58ff0de8865a70439b0b93489398fe0",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.json",
+      "source_version": [
+        16777233,
+        606993090,
+        33152,
+        1,
+        83270,
+        1794654514246889162,
+        1794654514246889162
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/operation-terminals/selected-17-member-read.log",
+      "bytes": 26079,
+      "sha256": "36bcc0751c24da8b5dd69a4e549c5eb93e093b6f75e4b942a815b58c83d1ca77",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.log"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/operation-terminals/selected-17-member-read.log",
+      "source_version": [
+        16777233,
+        606993091,
+        33152,
+        1,
+        26079,
+        1794654514247045453,
+        1794654514247045453
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/review.md",
+      "bytes": 3298,
+      "sha256": "a41ac93f3b9cac399896be2cbeb434386f0ef58c174224438f874a8f05d1621f",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/review.md"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/review.md",
+      "source_version": [
+        16777233,
+        606993095,
+        33152,
+        1,
+        3298,
+        1794654514253292171,
+        1794654514253292171
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/seal-producer.py",
+      "bytes": 13294,
+      "sha256": "429d8ff518c99f764ed2c8e7c4992d25cd534d749eb34216d36cabe1ab074479",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-producer.py",
+      "source_version": [
+        16777233,
+        606993082,
+        33152,
+        1,
+        13294,
+        1794654514245322170,
+        1794654514245322170
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-review-v1/seal-summary.json",
+      "bytes": 1090,
+      "sha256": "8756e9f81f023df2cac84a111373ad0b1b9b92ca99a918d8276bff9de1a62909",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-summary.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-review-v1/seal-summary.json",
+      "source_version": [
+        16777233,
+        606993097,
+        33152,
+        1,
+        1090,
+        1794654514261088923,
+        1794654514261088923
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/completion-seal-inputs-v1.json",
+      "bytes": 333887,
+      "sha256": "c12c465e4fdf9300efa9e3424cb7afd53146ab67bb20c511e664eab9d2cd7ec7",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-seal-inputs-v1.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/completion-seal-inputs-v1.json",
+      "source_version": [
+        16777233,
+        606990033,
+        33152,
+        1,
+        333887,
+        1794654436859961389,
+        1794654436860615052
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/fixed-inputs-and-official-tool-provenance.json",
+      "bytes": 2593,
+      "sha256": "84449d33663c3f1e27700ff9e76967ed665fc976cd5a5a87e10cf74c63252537",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/fixed-inputs-and-official-tool-provenance.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/fixed-inputs-and-official-tool-provenance.json",
+      "source_version": [
+        16777233,
+        606979329,
+        33152,
+        1,
+        2593,
+        1794654101669409848,
+        1794654101669409848
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/manifest-observation-v1/confirmation-observation.json",
+      "bytes": 49818,
+      "sha256": "1167d4a4efb55ae3dfb97243267a16f3abe8e69c5850f1ddbde9cf1eb9aedd05",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/confirmation-observation.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/confirmation-observation.json",
+      "source_version": [
+        16777233,
+        606989193,
+        33152,
+        1,
+        49818,
+        1794654338033556557,
+        1794654338033556557
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/manifest-observation-v1/producer.py",
+      "bytes": 1668,
+      "sha256": "6c982ecdef7878ddf87cc3a33c2cbce3f17e810e51ed816750c2a9f3ed2f7a75",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/manifest-observation-v1/producer.py",
+      "source_version": [
+        16777233,
+        606989194,
+        33152,
+        1,
+        1668,
+        1794654338033699473,
+        1794654338033699473
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/producer.py",
+      "bytes": 6713,
+      "sha256": "4fcb375664f00bace84647fe09c57210cf8b64453f44d12d7a5601780deb067b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/producer.py",
+      "source_version": [
+        16777233,
+        606979328,
+        33152,
+        1,
+        6713,
+        1794654101669256854,
+        1794654101669256854
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/SELECTED_MEMBER_INDEX.json",
+      "bytes": 10233,
+      "sha256": "f680572726ebd7508fa2c735e499fe561f1b225bb5ef57c754edb5afeb3ef6b3",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/SELECTED_MEMBER_INDEX.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/SELECTED_MEMBER_INDEX.json",
+      "source_version": [
+        16777233,
+        606980718,
+        33152,
+        1,
+        10233,
+        1794654219684472417,
+        1794654219684472417
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/initial-reading.json",
+      "bytes": 31739,
+      "sha256": "6ff5aa40df91416681b4f998897caa551ee16077608e19bbee1841b89eaab371",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/initial-reading.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/initial-reading.json",
+      "source_version": [
+        16777233,
+        606980717,
+        33152,
+        1,
+        31739,
+        1794654219684191418,
+        1794654219684191418
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "e94264bd742576ad425065b1058657f66503efcc22b894da605d0985f78c5e60",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "source_version": [
+        16777233,
+        606980697,
+        33152,
+        1,
+        885,
+        1794654219682407094,
+        1794654219682407094
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "source_version": [
+        16777233,
+        606980699,
+        33152,
+        1,
+        0,
+        1794654219682574510,
+        1794654219682574510
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 190,
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "source_version": [
+        16777233,
+        606980698,
+        33152,
+        1,
+        190,
+        1794654219682506427,
+        1794654219682506427
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "a7466a090d5605170c3fa8888d1cf13150df88d3a7607354948ce2f6e4024022",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "source_version": [
+        16777233,
+        606980701,
+        33152,
+        1,
+        897,
+        1794654219682679176,
+        1794654219682679176
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "source_version": [
+        16777233,
+        606980703,
+        33152,
+        1,
+        0,
+        1794654219682842717,
+        1794654219682842717
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3364,
+      "sha256": "d10fdc5f7f5d66eb48ccbc76416d519c7f9b8eacf80873b67bc613b17177339b",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "source_version": [
+        16777233,
+        606980702,
+        33152,
+        1,
+        3364,
+        1794654219682774967,
+        1794654219682774967
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 896,
+      "sha256": "ea1988546502f82874b8655ad3445d11eb5fbbe50edf55195614497eb40d9d0f",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "source_version": [
+        16777233,
+        606980705,
+        33152,
+        1,
+        896,
+        1794654219682945508,
+        1794654219682945508
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "source_version": [
+        16777233,
+        606980707,
+        33152,
+        1,
+        0,
+        1794654219683090715,
+        1794654219683090715
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 196,
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "source_version": [
+        16777233,
+        606980706,
+        33152,
+        1,
+        196,
+        1794654219683029674,
+        1794654219683029674
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 913,
+      "sha256": "c96147b7bf4f77adf60454a3b534b9301dcef56da669e7f551670864c9b37dbd",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "source_version": [
+        16777233,
+        606980709,
+        33152,
+        1,
+        913,
+        1794654219683188257,
+        1794654219683188257
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "source_version": [
+        16777233,
+        606980711,
+        33152,
+        1,
+        0,
+        1794654219683329173,
+        1794654219683329173
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 917,
+      "sha256": "aa89d933dee695fc6c67279c7569350df8cd69fb44caa199743af0eb24e8634d",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "source_version": [
+        16777233,
+        606980710,
+        33152,
+        1,
+        917,
+        1794654219683269715,
+        1794654219683269715
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 950,
+      "sha256": "c23c84d441d77594f151342587ded6917ec6519ec899318263f49ff0999aaecc",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "source_version": [
+        16777233,
+        606980713,
+        33152,
+        1,
+        950,
+        1794654219683429964,
+        1794654219683429964
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "source_version": [
+        16777233,
+        606980715,
+        33152,
+        1,
+        0,
+        1794654219683586255,
+        1794654219683586255
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 408,
+      "sha256": "5e9aa06087cd95837d20a29c4e279777949304a56ec1cc7b47e7ecdaa182dab0",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "source_version": [
+        16777233,
+        606980714,
+        33152,
+        1,
+        408,
+        1794654219683519797,
+        1794654219683519797
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/from-zero-native/manifest.json",
+      "bytes": 74003,
+      "sha256": "3362e60289fbf2268b0c9886f97a1b4958cbb095fbdf02c7349a986880ce0bf7",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/manifest.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/from-zero-native/manifest.json",
+      "source_version": [
+        16777233,
+        606980695,
+        33152,
+        1,
+        74003,
+        1794654219682228053,
+        1794654219682228053
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "from-zero-native/manifest.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/originals/source.json",
+      "bytes": 423,
+      "sha256": "fc1b6e0213fbdd6e1f93ec879c138ec233cc3a4cf6aa08330df81041ef4304b6",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/source.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/originals/source.json",
+      "source_version": [
+        16777233,
+        606980693,
+        33152,
+        1,
+        423,
+        1794654219681982763,
+        1794654219681982763
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay",
+      "upstream_original": {
+        "provider": "github-actions",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "run_id": 43582713392,
+        "job_id": 132415017426,
+        "artifact_id": 14109658844,
+        "member": "source.json",
+        "zip_sha256": "10447497968910ffe69e51bd541f6dfe988293a86a2ab583120f3a25788c40b4"
+      }
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/selected-read-v1/read-producer.py",
+      "bytes": 2420,
+      "sha256": "7354208e49a616318a8e9793e4321888683d8bb311b0f27cc53857158d080fff",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/read-producer.py"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/selected-read-v1/read-producer.py",
+      "source_version": [
+        16777233,
+        606980716,
+        33152,
+        1,
+        2420,
+        1794654219684042836,
+        1794654219684042836
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/summary.json",
+      "bytes": 1913,
+      "sha256": "a3faacfc1c0bfa327d6cf9b2364c6ff3a52c1e3429dec89763e0678a9b0b07b2",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/summary.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/summary.json",
+      "source_version": [
+        16777233,
+        606979859,
+        33152,
+        1,
+        1913,
+        1794654138579200229,
+        1794654138579200229
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    },
+    {
+      "path": "N-native-failure-followup/x64-artifact-and-completion/transport.json",
+      "bytes": 1421,
+      "sha256": "bc18a9a09c106bc6f65e8e9f5c93da9f28518a63c836e859f15cf1074bff4583",
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/transport.json"
+      },
+      "source_path": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1/transport.json",
+      "source_version": [
+        16777233,
+        606979855,
+        33152,
+        1,
+        1421,
+        1794654138472482644,
+        1794654138472482644
+      ],
+      "role": "whole fixed artifact, full index, API/transport, approved 17 small originals and bounded completion overlay"
+    }
+  ],
+  "source_rosters": {
+    "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2": {
+      "files": {
+        "EVIDENCE_INDEX.json": {
+          "bytes": 5261,
+          "version": [
+            16777233,
+            606974505,
+            33152,
+            1,
+            5261,
+            1794653637486108079,
+            1794653637486108079
+          ]
+        },
+        "N-check-runs-normalized.json": {
+          "bytes": 97589,
+          "version": [
+            16777233,
+            606974501,
+            33152,
+            1,
+            97589,
+            1794653637478543068,
+            1794653637478543068
+          ]
+        },
+        "N-check-runs-page-001.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606973983,
+            33152,
+            1,
+            0,
+            1794653625501204813,
+            1794653625501204813
+          ]
+        },
+        "N-check-runs-page-001.stdout": {
+          "bytes": 373969,
+          "version": [
+            16777233,
+            606973979,
+            33152,
+            1,
+            373969,
+            1794653629472655677,
+            1794653629472655677
+          ]
+        },
+        "N-check-runs-page-002.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606974065,
+            33152,
+            1,
+            0,
+            1794653634564438502,
+            1794653634564438502
+          ]
+        },
+        "N-check-runs-page-002.stdout": {
+          "bytes": 241870,
+          "version": [
+            16777233,
+            606974064,
+            33152,
+            1,
+            241870,
+            1794653637463171964,
+            1794653637463171964
+          ]
+        },
+        "N-required-jobs-normalized.json": {
+          "bytes": 81699,
+          "version": [
+            16777233,
+            606974503,
+            33152,
+            1,
+            81699,
+            1794653637481366390,
+            1794653637481366390
+          ]
+        },
+        "N-required-jobs-page-001.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606974000,
+            33152,
+            1,
+            0,
+            1794653629520175818,
+            1794653629520175818
+          ]
+        },
+        "N-required-jobs-page-001.stdout": {
+          "bytes": 63939,
+          "version": [
+            16777233,
+            606973999,
+            33152,
+            1,
+            63939,
+            1794653632403692800,
+            1794653632403692800
+          ]
+        },
+        "N-required-run43582713392.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606973998,
+            33152,
+            1,
+            0,
+            1794653629110139021,
+            1794653629110139021
+          ]
+        },
+        "N-required-run43582713392.stdout": {
+          "bytes": 15121,
+          "version": [
+            16777233,
+            606973997,
+            33152,
+            1,
+            15121,
+            1794653630680869740,
+            1794653630680869740
+          ]
+        },
+        "N-required-runs-normalized.json": {
+          "bytes": 1499,
+          "version": [
+            16777233,
+            606974502,
+            33152,
+            1,
+            1499,
+            1794653637479187065,
+            1794653637479187065
+          ]
+        },
+        "N-required-runs-page-001.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606973984,
+            33152,
+            1,
+            0,
+            1794653625501953976,
+            1794653625501953976
+          ]
+        },
+        "N-required-runs-page-001.stdout": {
+          "bytes": 15157,
+          "version": [
+            16777233,
+            606973981,
+            33152,
+            1,
+            15157,
+            1794653629069123354,
+            1794653629069123354
+          ]
+        },
+        "expected-heads-with-reviewed-N.json": {
+          "bytes": 94421,
+          "version": [
+            16777233,
+            606973976,
+            33152,
+            1,
+            94421,
+            1794653625499551778,
+            1794653625499551778
+          ]
+        },
+        "frozen-0170-branches.json": {
+          "bytes": 132555,
+          "version": [
+            16777233,
+            606973975,
+            33152,
+            1,
+            132555,
+            1794653625499208321,
+            1794653625499208321
+          ]
+        },
+        "heads-summary.json": {
+          "bytes": 532,
+          "version": [
+            16777233,
+            606974063,
+            33152,
+            1,
+            532,
+            1794653634564005671,
+            1794653634564005671
+          ]
+        },
+        "observer.py": {
+          "bytes": 14131,
+          "version": [
+            16777233,
+            606973974,
+            33152,
+            1,
+            14131,
+            1794653625497646035,
+            1794653625497646035
+          ]
+        },
+        "pr847.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606973980,
+            33152,
+            1,
+            0,
+            1794653625500951022,
+            1794653625500951022
+          ]
+        },
+        "pr847.stdout": {
+          "bytes": 38700,
+          "version": [
+            16777233,
+            606973978,
+            33152,
+            1,
+            38700,
+            1794653629697517724,
+            1794653629697517724
+          ]
+        },
+        "refs-heads.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606973982,
+            33152,
+            1,
+            0,
+            1794653625501156563,
+            1794653625501156563
+          ]
+        },
+        "refs-heads.stdout": {
+          "bytes": 87154,
+          "version": [
+            16777233,
+            606973977,
+            33152,
+            1,
+            87154,
+            1794653634559231648,
+            1794653634559231648
+          ]
+        },
+        "summary.json": {
+          "bytes": 107925,
+          "version": [
+            16777233,
+            606974504,
+            33152,
+            1,
+            107925,
+            1794653637482938175,
+            1794653637482938175
+          ]
+        }
+      },
+      "directories": {
+        ".": [
+          16777233,
+          606973973,
+          16832,
+          25,
+          800,
+          1794653637485966955,
+          1794653637485966955
+        ]
+      }
+    },
+    "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1": {
+      "files": {
+        "EVIDENCE_INDEX.json": {
+          "bytes": 1869,
+          "version": [
+            16777233,
+            606977032,
+            33152,
+            1,
+            1869,
+            1794653837355354225,
+            1794653837355354225
+          ]
+        },
+        "existing-two-cost-job-metadata.json": {
+          "bytes": 10963,
+          "version": [
+            16777233,
+            606976888,
+            33152,
+            1,
+            10963,
+            1794653820519373241,
+            1794653820519373241
+          ]
+        },
+        "producer.py": {
+          "bytes": 8270,
+          "version": [
+            16777233,
+            606976885,
+            33152,
+            1,
+            8270,
+            1794653820518186205,
+            1794653820518186205
+          ]
+        },
+        "request.json": {
+          "bytes": 1066,
+          "version": [
+            16777233,
+            606976889,
+            33152,
+            1,
+            1066,
+            1794653820519667657,
+            1794653820519667657
+          ]
+        },
+        "source-jobs-page-001.json": {
+          "bytes": 63939,
+          "version": [
+            16777233,
+            606976886,
+            33152,
+            1,
+            63939,
+            1794653820519014368,
+            1794653820519014368
+          ]
+        },
+        "source-required-run.json": {
+          "bytes": 15121,
+          "version": [
+            16777233,
+            606976887,
+            33152,
+            1,
+            15121,
+            1794653820519191117,
+            1794653820519191117
+          ]
+        },
+        "summary.json": {
+          "bytes": 6815,
+          "version": [
+            16777233,
+            606977031,
+            33152,
+            1,
+            6815,
+            1794653837353350274,
+            1794653837353350274
+          ]
+        },
+        "x64-job132415017426.log": {
+          "bytes": 184799,
+          "version": [
+            16777233,
+            606976890,
+            33152,
+            1,
+            184799,
+            1794653837341753238,
+            1794653837342661318
+          ]
+        },
+        "x64-job132415017426.stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606976891,
+            33152,
+            1,
+            0,
+            1794653820519804656,
+            1794653820519804656
+          ]
+        },
+        "outer-analysis-v1/EVIDENCE_INDEX.json": {
+          "bytes": 2961,
+          "version": [
+            16777233,
+            606978203,
+            33152,
+            1,
+            2961,
+            1794653982149933218,
+            1794653982149933218
+          ]
+        },
+        "outer-analysis-v1/actual-download-terminal-pages.json": {
+          "bytes": 20879,
+          "version": [
+            16777233,
+            606978196,
+            33152,
+            1,
+            20879,
+            1794653982149081763,
+            1794653982149081763
+          ]
+        },
+        "outer-analysis-v1/actual-download-terminal.log": {
+          "bytes": 6110,
+          "version": [
+            16777233,
+            606978197,
+            33152,
+            1,
+            6110,
+            1794653982149201721,
+            1794653982149201721
+          ]
+        },
+        "outer-analysis-v1/controller-extraction-identity.json": {
+          "bytes": 286,
+          "version": [
+            16777233,
+            606978194,
+            33152,
+            1,
+            286,
+            1794653982148696389,
+            1794653982148696389
+          ]
+        },
+        "outer-analysis-v1/controller-original-line1355.log": {
+          "bytes": 7525,
+          "version": [
+            16777233,
+            606978193,
+            33152,
+            1,
+            7525,
+            1794653982148497724,
+            1794653982148497724
+          ]
+        },
+        "outer-analysis-v1/controller-parsed.json": {
+          "bytes": 9054,
+          "version": [
+            16777233,
+            606978195,
+            33152,
+            1,
+            9054,
+            1794653982148893597,
+            1794653982148893597
+          ]
+        },
+        "outer-analysis-v1/findings.json": {
+          "bytes": 2702,
+          "version": [
+            16777233,
+            606978192,
+            33152,
+            1,
+            2702,
+            1794653982148169100,
+            1794653982148169100
+          ]
+        },
+        "outer-analysis-v1/readonly-inspection-producer.py": {
+          "bytes": 1697,
+          "version": [
+            16777233,
+            606978198,
+            33152,
+            1,
+            1697,
+            1794653982149339804,
+            1794653982149339804
+          ]
+        },
+        "outer-analysis-v1/readonly-inspection-terminal.json": {
+          "bytes": 16380,
+          "version": [
+            16777233,
+            606978199,
+            33152,
+            1,
+            16380,
+            1794653982149475761,
+            1794653982149475761
+          ]
+        },
+        "outer-analysis-v1/readonly-inspection-terminal.log": {
+          "bytes": 4915,
+          "version": [
+            16777233,
+            606978200,
+            33152,
+            1,
+            4915,
+            1794653982149593386,
+            1794653982149593386
+          ]
+        },
+        "outer-analysis-v1/review.md": {
+          "bytes": 1598,
+          "version": [
+            16777233,
+            606978202,
+            33152,
+            1,
+            1598,
+            1794653982149829427,
+            1794653982149829427
+          ]
+        },
+        "outer-analysis-v1/seal-producer.py": {
+          "bytes": 7422,
+          "version": [
+            16777233,
+            606978201,
+            33152,
+            1,
+            7422,
+            1794653982149710344,
+            1794653982149710344
+          ]
+        }
+      },
+      "directories": {
+        ".": [
+          16777233,
+          606976884,
+          16832,
+          12,
+          384,
+          1794653982147326854,
+          1794653982147326854
+        ],
+        "outer-analysis-v1": [
+          16777233,
+          606978191,
+          16832,
+          14,
+          448,
+          1794653982149914968,
+          1794653982149914968
+        ]
+      }
+    },
+    "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1": {
+      "files": {
+        ".hepta-lock-329aad723d14703df1023bd0": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606990032,
+            33152,
+            1,
+            0,
+            1794654436858788936,
+            1794654436858788936
+          ]
+        },
+        "N-cost-x64-14109658844.zip": {
+          "bytes": 9884207,
+          "version": [
+            16777233,
+            606979397,
+            33152,
+            1,
+            9884207,
+            1794654138470437412,
+            1794654138471856899
+          ]
+        },
+        "ZIP_MEMBER_INDEX.json": {
+          "bytes": 47816,
+          "version": [
+            16777233,
+            606979858,
+            33152,
+            1,
+            47816,
+            1794654138575630885,
+            1794654138575630885
+          ]
+        },
+        "completion-seal-inputs-v1.json": {
+          "bytes": 333887,
+          "version": [
+            16777233,
+            606990033,
+            33152,
+            1,
+            333887,
+            1794654436859961389,
+            1794654436860615052
+          ]
+        },
+        "fixed-inputs-and-official-tool-provenance.json": {
+          "bytes": 2593,
+          "version": [
+            16777233,
+            606979329,
+            33152,
+            1,
+            2593,
+            1794654101669409848,
+            1794654101669409848
+          ]
+        },
+        "producer.py": {
+          "bytes": 6713,
+          "version": [
+            16777233,
+            606979328,
+            33152,
+            1,
+            6713,
+            1794654101669256854,
+            1794654101669256854
+          ]
+        },
+        "summary.json": {
+          "bytes": 1913,
+          "version": [
+            16777233,
+            606979859,
+            33152,
+            1,
+            1913,
+            1794654138579200229,
+            1794654138579200229
+          ]
+        },
+        "transport.json": {
+          "bytes": 1421,
+          "version": [
+            16777233,
+            606979855,
+            33152,
+            1,
+            1421,
+            1794654138472482644,
+            1794654138472482644
+          ]
+        },
+        "completion-review-v1/EVIDENCE_INDEX.json": {
+          "bytes": 23424,
+          "version": [
+            16777233,
+            606993096,
+            33152,
+            1,
+            23424,
+            1794654514260911049,
+            1794654514260911049
+          ]
+        },
+        "completion-review-v1/findings.json": {
+          "bytes": 36198,
+          "version": [
+            16777233,
+            606993094,
+            33152,
+            1,
+            36198,
+            1794654514253134588,
+            1794654514253134588
+          ]
+        },
+        "completion-review-v1/review.md": {
+          "bytes": 3298,
+          "version": [
+            16777233,
+            606993095,
+            33152,
+            1,
+            3298,
+            1794654514253292171,
+            1794654514253292171
+          ]
+        },
+        "completion-review-v1/seal-producer.py": {
+          "bytes": 13294,
+          "version": [
+            16777233,
+            606993082,
+            33152,
+            1,
+            13294,
+            1794654514245322170,
+            1794654514245322170
+          ]
+        },
+        "completion-review-v1/seal-summary.json": {
+          "bytes": 1090,
+          "version": [
+            16777233,
+            606993097,
+            33152,
+            1,
+            1090,
+            1794654514261088923,
+            1794654514261088923
+          ]
+        },
+        "completion-review-v1/operation-terminals/artifact-whole-zip.json": {
+          "bytes": 70459,
+          "version": [
+            16777233,
+            606993088,
+            33152,
+            1,
+            70459,
+            1794654514246369123,
+            1794654514246369123
+          ]
+        },
+        "completion-review-v1/operation-terminals/artifact-whole-zip.log": {
+          "bytes": 21940,
+          "version": [
+            16777233,
+            606993089,
+            33152,
+            1,
+            21940,
+            1794654514246526372,
+            1794654514246526372
+          ]
+        },
+        "completion-review-v1/operation-terminals/fresh-remote-observation.json": {
+          "bytes": 36751,
+          "version": [
+            16777233,
+            606993084,
+            33152,
+            1,
+            36751,
+            1794654514245581419,
+            1794654514245581419
+          ]
+        },
+        "completion-review-v1/operation-terminals/fresh-remote-observation.log": {
+          "bytes": 11300,
+          "version": [
+            16777233,
+            606993085,
+            33152,
+            1,
+            11300,
+            1794654514245797710,
+            1794654514245797710
+          ]
+        },
+        "completion-review-v1/operation-terminals/manifest-observation-read.json": {
+          "bytes": 114793,
+          "version": [
+            16777233,
+            606993092,
+            33152,
+            1,
+            114793,
+            1794654514247351826,
+            1794654514247351826
+          ]
+        },
+        "completion-review-v1/operation-terminals/manifest-observation-read.log": {
+          "bytes": 36151,
+          "version": [
+            16777233,
+            606993093,
+            33152,
+            1,
+            36151,
+            1794654514247526951,
+            1794654514247526951
+          ]
+        },
+        "completion-review-v1/operation-terminals/outer-single-job-log.json": {
+          "bytes": 21625,
+          "version": [
+            16777233,
+            606993086,
+            33152,
+            1,
+            21625,
+            1794654514245981750,
+            1794654514245981750
+          ]
+        },
+        "completion-review-v1/operation-terminals/outer-single-job-log.log": {
+          "bytes": 6110,
+          "version": [
+            16777233,
+            606993087,
+            33152,
+            1,
+            6110,
+            1794654514246131458,
+            1794654514246131458
+          ]
+        },
+        "completion-review-v1/operation-terminals/selected-17-member-read.json": {
+          "bytes": 83270,
+          "version": [
+            16777233,
+            606993090,
+            33152,
+            1,
+            83270,
+            1794654514246889162,
+            1794654514246889162
+          ]
+        },
+        "completion-review-v1/operation-terminals/selected-17-member-read.log": {
+          "bytes": 26079,
+          "version": [
+            16777233,
+            606993091,
+            33152,
+            1,
+            26079,
+            1794654514247045453,
+            1794654514247045453
+          ]
+        },
+        "manifest-observation-v1/confirmation-observation.json": {
+          "bytes": 49818,
+          "version": [
+            16777233,
+            606989193,
+            33152,
+            1,
+            49818,
+            1794654338033556557,
+            1794654338033556557
+          ]
+        },
+        "manifest-observation-v1/producer.py": {
+          "bytes": 1668,
+          "version": [
+            16777233,
+            606989194,
+            33152,
+            1,
+            1668,
+            1794654338033699473,
+            1794654338033699473
+          ]
+        },
+        "selected-read-v1/SELECTED_MEMBER_INDEX.json": {
+          "bytes": 10233,
+          "version": [
+            16777233,
+            606980718,
+            33152,
+            1,
+            10233,
+            1794654219684472417,
+            1794654219684472417
+          ]
+        },
+        "selected-read-v1/initial-reading.json": {
+          "bytes": 31739,
+          "version": [
+            16777233,
+            606980717,
+            33152,
+            1,
+            31739,
+            1794654219684191418,
+            1794654219684191418
+          ]
+        },
+        "selected-read-v1/read-producer.py": {
+          "bytes": 2420,
+          "version": [
+            16777233,
+            606980716,
+            33152,
+            1,
+            2420,
+            1794654219684042836,
+            1794654219684042836
+          ]
+        },
+        "selected-read-v1/originals/source.json": {
+          "bytes": 423,
+          "version": [
+            16777233,
+            606980693,
+            33152,
+            1,
+            423,
+            1794654219681982763,
+            1794654219681982763
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/manifest.json": {
+          "bytes": 74003,
+          "version": [
+            16777233,
+            606980695,
+            33152,
+            1,
+            74003,
+            1794654219682228053,
+            1794654219682228053
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": {
+          "bytes": 885,
+          "version": [
+            16777233,
+            606980697,
+            33152,
+            1,
+            885,
+            1794654219682407094,
+            1794654219682407094
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606980699,
+            33152,
+            1,
+            0,
+            1794654219682574510,
+            1794654219682574510
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout": {
+          "bytes": 190,
+          "version": [
+            16777233,
+            606980698,
+            33152,
+            1,
+            190,
+            1794654219682506427,
+            1794654219682506427
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": {
+          "bytes": 897,
+          "version": [
+            16777233,
+            606980701,
+            33152,
+            1,
+            897,
+            1794654219682679176,
+            1794654219682679176
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606980703,
+            33152,
+            1,
+            0,
+            1794654219682842717,
+            1794654219682842717
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout": {
+          "bytes": 3364,
+          "version": [
+            16777233,
+            606980702,
+            33152,
+            1,
+            3364,
+            1794654219682774967,
+            1794654219682774967
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": {
+          "bytes": 896,
+          "version": [
+            16777233,
+            606980705,
+            33152,
+            1,
+            896,
+            1794654219682945508,
+            1794654219682945508
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606980707,
+            33152,
+            1,
+            0,
+            1794654219683090715,
+            1794654219683090715
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout": {
+          "bytes": 196,
+          "version": [
+            16777233,
+            606980706,
+            33152,
+            1,
+            196,
+            1794654219683029674,
+            1794654219683029674
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": {
+          "bytes": 913,
+          "version": [
+            16777233,
+            606980709,
+            33152,
+            1,
+            913,
+            1794654219683188257,
+            1794654219683188257
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606980711,
+            33152,
+            1,
+            0,
+            1794654219683329173,
+            1794654219683329173
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout": {
+          "bytes": 917,
+          "version": [
+            16777233,
+            606980710,
+            33152,
+            1,
+            917,
+            1794654219683269715,
+            1794654219683269715
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": {
+          "bytes": 950,
+          "version": [
+            16777233,
+            606980713,
+            33152,
+            1,
+            950,
+            1794654219683429964,
+            1794654219683429964
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr": {
+          "bytes": 0,
+          "version": [
+            16777233,
+            606980715,
+            33152,
+            1,
+            0,
+            1794654219683586255,
+            1794654219683586255
+          ]
+        },
+        "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout": {
+          "bytes": 408,
+          "version": [
+            16777233,
+            606980714,
+            33152,
+            1,
+            408,
+            1794654219683519797,
+            1794654219683519797
+          ]
+        }
+      },
+      "directories": {
+        ".": [
+          16777233,
+          606979327,
+          16832,
+          13,
+          416,
+          1794654514244702132,
+          1794654514244702132
+        ],
+        "completion-review-v1": [
+          16777233,
+          606993081,
+          16832,
+          8,
+          256,
+          1794654514261062590,
+          1794654514261062590
+        ],
+        "manifest-observation-v1": [
+          16777233,
+          606989192,
+          16832,
+          4,
+          128,
+          1794654338033676348,
+          1794654338033676348
+        ],
+        "selected-read-v1": [
+          16777233,
+          606980691,
+          16832,
+          6,
+          192,
+          1794654219684297876,
+          1794654219684297876
+        ],
+        "completion-review-v1/operation-terminals": [
+          16777233,
+          606993083,
+          16832,
+          12,
+          384,
+          1794654514247506742,
+          1794654514247506742
+        ],
+        "selected-read-v1/originals": [
+          16777233,
+          606980692,
+          16832,
+          4,
+          128,
+          1794654219682151137,
+          1794654219682151137
+        ],
+        "selected-read-v1/originals/from-zero-native": [
+          16777233,
+          606980694,
+          16832,
+          8,
+          256,
+          1794654219683383964,
+          1794654219683383964
+        ],
+        "selected-read-v1/originals/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct": [
+          16777233,
+          606980696,
+          16832,
+          5,
+          160,
+          1794654219682575552,
+          1794654219682575552
+        ],
+        "selected-read-v1/originals/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged": [
+          16777233,
+          606980700,
+          16832,
+          5,
+          160,
+          1794654219682843758,
+          1794654219682843758
+        ],
+        "selected-read-v1/originals/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection": [
+          16777233,
+          606980704,
+          16832,
+          5,
+          160,
+          1794654219683094382,
+          1794654219683094382
+        ],
+        "selected-read-v1/originals/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner": [
+          16777233,
+          606980708,
+          16832,
+          5,
+          160,
+          1794654219683330214,
+          1794654219683330214
+        ],
+        "selected-read-v1/originals/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline": [
+          16777233,
+          606980712,
+          16832,
+          5,
+          160,
+          1794654219683587338,
+          1794654219683587338
+        ]
+      }
+    }
+  },
+  "groups": [
+    {
+      "source_root": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2",
+      "target": "remote-observation",
+      "files": 23,
+      "bytes": 1371522
+    },
+    {
+      "source_root": "/private/tmp/chain-prci-N-cross-cost-job-log-review-20261114-v1",
+      "target": "outer-job-and-initial-unknown",
+      "files": 21,
+      "bytes": 374371
+    },
+    {
+      "source_root": "/private/tmp/chain-prci-N-x64-native-artifact-14109658844-20261114-v1",
+      "target": "x64-artifact-and-completion",
+      "files": 45,
+      "bytes": 10964252
+    }
+  ],
+  "all_selected_sources_preverified": true,
+  "originals_preserved_without_relabeling": true,
+  "source_scope": {
+    "N_head": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "N_tree": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+    "original_business_confirmation_failed": true,
+    "native_test_passes_are_not_business_pass": true,
+    "M8_publication_or_hosted_result_not_claimed": true
+  },
+  "upstream_origin_chain": "strict origins name actual immutable Mac custody files; per-row upstream_original and original API/transport/member receipts identify the original GitHub bytes"
+}

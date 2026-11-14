@@ -1,0 +1,324 @@
+{
+  "schema": "trnm-N-cost-existing-job-metadata-v1",
+  "observation_started_at": "2026-11-14T10:53:45.499634+00:00",
+  "observation_finished_at": "2026-11-14T10:53:57.481502+00:00",
+  "source_observation_summary": {
+    "path": "/private/tmp/chain-prci-remote-5a4b-required-jobs-observation-20261114-v2/summary.json",
+    "bytes": 107925,
+    "sha256": "511582eb74e1a0c01cdcf6e1f04a0e600169b34de314ff0e0fdde920badc61b3"
+  },
+  "run": {
+    "id": 43582713392,
+    "head_sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+    "head_tree_from_run_metadata": "4bc5ade0813ba3172eeb0ad7425358469a1b1edd",
+    "run_attempt": 1,
+    "event": "pull_request"
+  },
+  "jobs": [
+    {
+      "id": 132415017426,
+      "name": "cross-arch-cost (x64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-14T10:12:38Z",
+      "completed_at": "2026-11-14T10:21:49Z",
+      "head_sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "run_id": 43582713392,
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392/job/132415017426",
+      "failed_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-14T10:15:55Z",
+          "completed_at": "2026-11-14T10:21:40Z"
+        }
+      ],
+      "all_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T10:12:39Z",
+          "completed_at": "2026-11-14T10:12:40Z"
+        },
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T10:12:40Z",
+          "completed_at": "2026-11-14T10:13:38Z"
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T10:13:38Z",
+          "completed_at": "2026-11-14T10:13:43Z"
+        },
+        {
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T10:13:43Z",
+          "completed_at": "2026-11-14T10:13:43Z"
+        },
+        {
+          "name": "Install pinned native release compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-14T10:13:43Z",
+          "completed_at": "2026-11-14T10:13:51Z"
+        },
+        {
+          "name": "Install matching native formatter",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-14T10:13:51Z",
+          "completed_at": "2026-11-14T10:13:52Z"
+        },
+        {
+          "name": "Execute native release setup and repeated-search costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T10:13:52Z",
+          "completed_at": "2026-11-14T10:14:50Z"
+        },
+        {
+          "name": "Execute native zero-matrix locality costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T10:14:50Z",
+          "completed_at": "2026-11-14T10:15:03Z"
+        },
+        {
+          "name": "Execute native one-zero rank-one locality costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T10:15:03Z",
+          "completed_at": "2026-11-14T10:15:16Z"
+        },
+        {
+          "name": "Execute native fixed maintenance producer and preparation costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T10:15:16Z",
+          "completed_at": "2026-11-14T10:15:31Z"
+        },
+        {
+          "name": "Execute native legal and late-rejection verifier costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-14T10:15:31Z",
+          "completed_at": "2026-11-14T10:15:55Z"
+        },
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-14T10:15:55Z",
+          "completed_at": "2026-11-14T10:21:40Z"
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-14T10:21:40Z",
+          "completed_at": "2026-11-14T10:21:45Z"
+        },
+        {
+          "name": "Retain native cost successes and failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-14T10:21:45Z",
+          "completed_at": "2026-11-14T10:21:47Z"
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-14T10:21:47Z",
+          "completed_at": "2026-11-14T10:21:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-14T10:21:48Z",
+          "completed_at": "2026-11-14T10:21:48Z"
+        }
+      ]
+    },
+    {
+      "id": 132415017455,
+      "name": "cross-arch-cost (arm64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-14T10:12:41Z",
+      "completed_at": "2026-11-14T10:21:22Z",
+      "head_sha": "5a4b7fe8de1adce803184f262fd9f704ead1930c",
+      "run_id": 43582713392,
+      "run_attempt": 1,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43582713392/job/132415017455",
+      "failed_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-14T10:15:43Z",
+          "completed_at": "2026-11-14T10:21:14Z"
+        }
+      ],
+      "all_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T10:12:42Z",
+          "completed_at": "2026-11-14T10:12:43Z"
+        },
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T10:12:43Z",
+          "completed_at": "2026-11-14T10:13:41Z"
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T10:13:41Z",
+          "completed_at": "2026-11-14T10:13:45Z"
+        },
+        {
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T10:13:45Z",
+          "completed_at": "2026-11-14T10:13:45Z"
+        },
+        {
+          "name": "Install pinned native release compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-14T10:13:45Z",
+          "completed_at": "2026-11-14T10:13:52Z"
+        },
+        {
+          "name": "Install matching native formatter",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-14T10:13:52Z",
+          "completed_at": "2026-11-14T10:13:52Z"
+        },
+        {
+          "name": "Execute native release setup and repeated-search costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T10:13:52Z",
+          "completed_at": "2026-11-14T10:14:47Z"
+        },
+        {
+          "name": "Execute native zero-matrix locality costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T10:14:47Z",
+          "completed_at": "2026-11-14T10:14:58Z"
+        },
+        {
+          "name": "Execute native one-zero rank-one locality costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T10:14:58Z",
+          "completed_at": "2026-11-14T10:15:09Z"
+        },
+        {
+          "name": "Execute native fixed maintenance producer and preparation costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T10:15:09Z",
+          "completed_at": "2026-11-14T10:15:21Z"
+        },
+        {
+          "name": "Execute native legal and late-rejection verifier costs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-14T10:15:21Z",
+          "completed_at": "2026-11-14T10:15:43Z"
+        },
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-14T10:15:43Z",
+          "completed_at": "2026-11-14T10:21:14Z"
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-14T10:21:14Z",
+          "completed_at": "2026-11-14T10:21:17Z"
+        },
+        {
+          "name": "Retain native cost successes and failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-14T10:21:17Z",
+          "completed_at": "2026-11-14T10:21:20Z"
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-14T10:21:20Z",
+          "completed_at": "2026-11-14T10:21:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-14T10:21:20Z",
+          "completed_at": "2026-11-14T10:21:20Z"
+        }
+      ]
+    }
+  ],
+  "actual_tested_tree_from_native_originals_verified": false
+}

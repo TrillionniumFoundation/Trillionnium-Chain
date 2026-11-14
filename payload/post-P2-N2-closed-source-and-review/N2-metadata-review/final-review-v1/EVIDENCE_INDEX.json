@@ -1,0 +1,1009 @@
+{
+  "evidence_root": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1",
+  "file_count": 111,
+  "files": [
+    {
+      "bytes": 37495,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/capture-summary.json"
+      },
+      "path": "capture-summary.json",
+      "sha256": "653fd6cbac5e8b9f1c9606ac974b4627b2d96b0c1ad797f544d823d28ea9dfe0"
+    },
+    {
+      "bytes": 5864,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/capture_fixed_metadata_v1.py"
+      },
+      "path": "capture_fixed_metadata_v1.py",
+      "sha256": "d7e4e1d455824cd671da6853d3acbb8e9b66e92dbdc26f45f38f0330e65369d1"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-all-name-status.stderr"
+      },
+      "path": "commands/N-N2-all-name-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 324,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-all-name-status.stdout"
+      },
+      "path": "commands/N-N2-all-name-status.stdout",
+      "sha256": "f6e38c088519396f3c851f908f17eda0f716d40e5ac9b2cb4fc03e01b257fb21"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-config--pon--hash-use-contract-v1.json-diff.stderr"
+      },
+      "path": "commands/N-N2-config--pon--hash-use-contract-v1.json-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3131,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-config--pon--hash-use-contract-v1.json-diff.stdout"
+      },
+      "path": "commands/N-N2-config--pon--hash-use-contract-v1.json-diff.stdout",
+      "sha256": "f113c326cd33715e61e4d6371c7ecf4ae84590bcdba68e56d6060be9dca9625b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stderr"
+      },
+      "path": "commands/N-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5286,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stdout"
+      },
+      "path": "commands/N-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stdout",
+      "sha256": "ff613118b2c583a4060b9a1953a8839dc9de9b0cafd5255dfd36a256904c0130"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-four-paths-diff.stderr"
+      },
+      "path": "commands/N-N2-four-paths-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 10916,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-four-paths-diff.stdout"
+      },
+      "path": "commands/N-N2-four-paths-diff.stdout",
+      "sha256": "4e57b52426fbae20589845c5ad01f21d89d6a4e355c75f3915bca1f6c360d2b4"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-scripts--ci--hash_use_contract.py-diff.stderr"
+      },
+      "path": "commands/N-N2-scripts--ci--hash_use_contract.py-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1066,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-scripts--ci--hash_use_contract.py-diff.stdout"
+      },
+      "path": "commands/N-N2-scripts--ci--hash_use_contract.py-diff.stdout",
+      "sha256": "b291c1e573a9d7ae84dd26cf954f9bee8e4ba1d3910004622f7c9b2b51cac2a9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stderr"
+      },
+      "path": "commands/N-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stdout"
+      },
+      "path": "commands/N-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stdout",
+      "sha256": "3663519902062870739c39303fa26ee1cae2cfe188d03dd8208b7596e303c517"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-commit.stderr"
+      },
+      "path": "commands/N-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 273,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-commit.stdout"
+      },
+      "path": "commands/N-commit.stdout",
+      "sha256": "8c41166147ca6ad0fa34ffb4397d237ab87428723216d7ed736d96db26b9ef4a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-config--pon--hash-use-contract-v1.json.stderr"
+      },
+      "path": "commands/N-config--pon--hash-use-contract-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-config--pon--hash-use-contract-v1.json.stdout"
+      },
+      "path": "commands/N-config--pon--hash-use-contract-v1.json.stdout",
+      "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-config--pon--pq-cross-branch-corpus-v1.json.stderr"
+      },
+      "path": "commands/N-config--pon--pq-cross-branch-corpus-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 523581,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-config--pon--pq-cross-branch-corpus-v1.json.stdout"
+      },
+      "path": "commands/N-config--pon--pq-cross-branch-corpus-v1.json.stdout",
+      "sha256": "128954354019f6311e4ab71adb70f6c178874a0b8278d4a6c6477a6197b2d546"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-scripts--ci--hash_use_contract.py.stderr"
+      },
+      "path": "commands/N-scripts--ci--hash_use_contract.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18159,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-scripts--ci--hash_use_contract.py.stdout"
+      },
+      "path": "commands/N-scripts--ci--hash_use_contract.py.stdout",
+      "sha256": "d16a951434a098809d65d2ebd23b0032dc7cd4c5394e1ec16eb69976171f392c"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-selected-ls-tree.stderr"
+      },
+      "path": "commands/N-selected-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 406,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-selected-ls-tree.stdout"
+      },
+      "path": "commands/N-selected-ls-tree.stdout",
+      "sha256": "e06b3d894b88b6e4af7162a95e0c48c3f6019daf3736cb46921a2427d9e683c5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-selected-object-sizes.stderr"
+      },
+      "path": "commands/N-selected-object-sizes.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 210,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-selected-object-sizes.stdout"
+      },
+      "path": "commands/N-selected-object-sizes.stdout",
+      "sha256": "8a08749f89d1787b18989bd2768f32d9e6c5ffcb29c46ee7d7601e0f8a39e53f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr"
+      },
+      "path": "commands/N-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 483451,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout"
+      },
+      "path": "commands/N-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout",
+      "sha256": "8e7c95a728d2c98558b52c5dda15b5c8a2966ee8b6153b2ffa9f71564ad24435"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-commit.stderr"
+      },
+      "path": "commands/N2-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 912,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-commit.stdout"
+      },
+      "path": "commands/N2-commit.stdout",
+      "sha256": "9123d667955f86fd121c81ea8e26e406af06d1ba36ef7c9b7244ecc8d0989551"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-config--pon--hash-use-contract-v1.json.stderr"
+      },
+      "path": "commands/N2-config--pon--hash-use-contract-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-config--pon--hash-use-contract-v1.json.stdout"
+      },
+      "path": "commands/N2-config--pon--hash-use-contract-v1.json.stdout",
+      "sha256": "a6786682171e9a87c43630ad6ff85d0de188d9c2bd018545b76bfff6902f1713"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-config--pon--pq-cross-branch-corpus-v1.json.stderr"
+      },
+      "path": "commands/N2-config--pon--pq-cross-branch-corpus-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 523581,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-config--pon--pq-cross-branch-corpus-v1.json.stdout"
+      },
+      "path": "commands/N2-config--pon--pq-cross-branch-corpus-v1.json.stdout",
+      "sha256": "cad94c5c098a6eac01cdd06c89237a74227e08a3cacc65df0d5b622d2fcc3fd7"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-scripts--ci--hash_use_contract.py.stderr"
+      },
+      "path": "commands/N2-scripts--ci--hash_use_contract.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18388,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-scripts--ci--hash_use_contract.py.stdout"
+      },
+      "path": "commands/N2-scripts--ci--hash_use_contract.py.stdout",
+      "sha256": "fc8683a3c784c0023919c7b44f782ebe5ec159d4db4d187690e83272a11ee3e7"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-selected-ls-tree.stderr"
+      },
+      "path": "commands/N2-selected-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 406,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-selected-ls-tree.stdout"
+      },
+      "path": "commands/N2-selected-ls-tree.stdout",
+      "sha256": "388a33ada9b3987c0d34ab6f3945ef74cb8481070742149ac2d507ae9c754167"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-selected-object-sizes.stderr"
+      },
+      "path": "commands/N2-selected-object-sizes.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 210,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-selected-object-sizes.stdout"
+      },
+      "path": "commands/N2-selected-object-sizes.stdout",
+      "sha256": "1f8b241b8bc925bf18f24cae6383187d0445cf7c6cf4e960a00fde97269fbd9d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr"
+      },
+      "path": "commands/N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 483933,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout"
+      },
+      "path": "commands/N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout",
+      "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-config--pon--hash-use-contract-v1.json-diff.stderr"
+      },
+      "path": "commands/P2-N2-config--pon--hash-use-contract-v1.json-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 767,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-config--pon--hash-use-contract-v1.json-diff.stdout"
+      },
+      "path": "commands/P2-N2-config--pon--hash-use-contract-v1.json-diff.stdout",
+      "sha256": "84539e91a3c4380d35e36ded7e97e6a262c9c7d9f3dd384a13c4aff6c6f09849"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stderr"
+      },
+      "path": "commands/P2-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28441,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stdout"
+      },
+      "path": "commands/P2-N2-config--pon--pq-cross-branch-corpus-v1.json-diff.stdout",
+      "sha256": "6d3e0d9a141db42dda8903f79553e989cce59ea8ce3899e03e1df682a35b7a46"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-four-paths-diff.stderr"
+      },
+      "path": "commands/P2-N2-four-paths-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 31172,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-four-paths-diff.stdout"
+      },
+      "path": "commands/P2-N2-four-paths-diff.stdout",
+      "sha256": "7897a302ffb94637531c2a36162b0df2070550bc8e5453d43c22b3210225c183"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-scripts--ci--hash_use_contract.py-diff.stderr"
+      },
+      "path": "commands/P2-N2-scripts--ci--hash_use_contract.py-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1964,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-scripts--ci--hash_use_contract.py-diff.stdout"
+      },
+      "path": "commands/P2-N2-scripts--ci--hash_use_contract.py-diff.stdout",
+      "sha256": "101866d64ba34e09689a50da3ee80a8b4b374f7e3724609f31b342262a7c41a6"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stderr"
+      },
+      "path": "commands/P2-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stdout"
+      },
+      "path": "commands/P2-N2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs-diff.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-commit.stderr"
+      },
+      "path": "commands/P2-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 309,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-commit.stdout"
+      },
+      "path": "commands/P2-commit.stdout",
+      "sha256": "2e63c9f93d782ad5f5066e868f393f10c9c5707ff78b2f3abe31a9640e49546a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-config--pon--hash-use-contract-v1.json.stderr"
+      },
+      "path": "commands/P2-config--pon--hash-use-contract-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-config--pon--hash-use-contract-v1.json.stdout"
+      },
+      "path": "commands/P2-config--pon--hash-use-contract-v1.json.stdout",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-config--pon--pq-cross-branch-corpus-v1.json.stderr"
+      },
+      "path": "commands/P2-config--pon--pq-cross-branch-corpus-v1.json.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 523769,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-config--pon--pq-cross-branch-corpus-v1.json.stdout"
+      },
+      "path": "commands/P2-config--pon--pq-cross-branch-corpus-v1.json.stdout",
+      "sha256": "983a1fedd7e90c515e6a33581385541afefdfc69cc06ee63315edcd368ddbf2e"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-scripts--ci--hash_use_contract.py.stderr"
+      },
+      "path": "commands/P2-scripts--ci--hash_use_contract.py.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18146,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-scripts--ci--hash_use_contract.py.stdout"
+      },
+      "path": "commands/P2-scripts--ci--hash_use_contract.py.stdout",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-selected-ls-tree.stderr"
+      },
+      "path": "commands/P2-selected-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 406,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-selected-ls-tree.stdout"
+      },
+      "path": "commands/P2-selected-ls-tree.stdout",
+      "sha256": "b267d08ed929ee1a92170cd960192512d1ba419b97c0f2d3717799125f804ac9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-selected-object-sizes.stderr"
+      },
+      "path": "commands/P2-selected-object-sizes.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 210,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-selected-object-sizes.stdout"
+      },
+      "path": "commands/P2-selected-object-sizes.stdout",
+      "sha256": "04be46f5e605fe5f1c0f3234c3f81066648f111d843187bc26c2eae29392eafb"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr"
+      },
+      "path": "commands/P2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 483933,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/commands/P2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout"
+      },
+      "path": "commands/P2-trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.stdout",
+      "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+    },
+    {
+      "bytes": 3131,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/N-to-N2--config--pon--hash-use-contract-v1.json.patch"
+      },
+      "path": "diffs/N-to-N2--config--pon--hash-use-contract-v1.json.patch",
+      "sha256": "f113c326cd33715e61e4d6371c7ecf4ae84590bcdba68e56d6060be9dca9625b"
+    },
+    {
+      "bytes": 5286,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/N-to-N2--config--pon--pq-cross-branch-corpus-v1.json.patch"
+      },
+      "path": "diffs/N-to-N2--config--pon--pq-cross-branch-corpus-v1.json.patch",
+      "sha256": "ff613118b2c583a4060b9a1953a8839dc9de9b0cafd5255dfd36a256904c0130"
+    },
+    {
+      "bytes": 1066,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/N-to-N2--scripts--ci--hash_use_contract.py.patch"
+      },
+      "path": "diffs/N-to-N2--scripts--ci--hash_use_contract.py.patch",
+      "sha256": "b291c1e573a9d7ae84dd26cf954f9bee8e4ba1d3910004622f7c9b2b51cac2a9"
+    },
+    {
+      "bytes": 1433,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/N-to-N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.patch"
+      },
+      "path": "diffs/N-to-N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.patch",
+      "sha256": "3663519902062870739c39303fa26ee1cae2cfe188d03dd8208b7596e303c517"
+    },
+    {
+      "bytes": 10916,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/N-to-N2.patch"
+      },
+      "path": "diffs/N-to-N2.patch",
+      "sha256": "4e57b52426fbae20589845c5ad01f21d89d6a4e355c75f3915bca1f6c360d2b4"
+    },
+    {
+      "bytes": 767,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/P2-to-N2--config--pon--hash-use-contract-v1.json.patch"
+      },
+      "path": "diffs/P2-to-N2--config--pon--hash-use-contract-v1.json.patch",
+      "sha256": "84539e91a3c4380d35e36ded7e97e6a262c9c7d9f3dd384a13c4aff6c6f09849"
+    },
+    {
+      "bytes": 28441,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/P2-to-N2--config--pon--pq-cross-branch-corpus-v1.json.patch"
+      },
+      "path": "diffs/P2-to-N2--config--pon--pq-cross-branch-corpus-v1.json.patch",
+      "sha256": "6d3e0d9a141db42dda8903f79553e989cce59ea8ce3899e03e1df682a35b7a46"
+    },
+    {
+      "bytes": 1964,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/P2-to-N2--scripts--ci--hash_use_contract.py.patch"
+      },
+      "path": "diffs/P2-to-N2--scripts--ci--hash_use_contract.py.patch",
+      "sha256": "101866d64ba34e09689a50da3ee80a8b4b374f7e3724609f31b342262a7c41a6"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/P2-to-N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.patch"
+      },
+      "path": "diffs/P2-to-N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 31172,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/diffs/P2-to-N2.patch"
+      },
+      "path": "diffs/P2-to-N2.patch",
+      "sha256": "7897a302ffb94637531c2a36162b0df2070550bc8e5453d43c22b3210225c183"
+    },
+    {
+      "bytes": 2775,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/README.md"
+      },
+      "path": "final-review-v1/README.md",
+      "sha256": "db8b56b7122ace8eb26e1eb66a838393fdff756e2040d9203f9aaa02530dbc40"
+    },
+    {
+      "bytes": 1852,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/actual-terminal-0.json"
+      },
+      "path": "final-review-v1/actual-terminal-0.json",
+      "sha256": "ad507d9b4b1694ad4e8ea6f86b0bb8b4d1229a1035ae675d9df2b614fa6e61fa"
+    },
+    {
+      "bytes": 1593,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/actual-terminal-1.json"
+      },
+      "path": "final-review-v1/actual-terminal-1.json",
+      "sha256": "6dfc0769ab26242c8f4b970e0209b122fe649e8991b250984ade1f3bb433110b"
+    },
+    {
+      "bytes": 2393,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/conditional-P2-corpus-three-W1-pins.patch"
+      },
+      "path": "final-review-v1/conditional-P2-corpus-three-W1-pins.patch",
+      "sha256": "37c8001a2ab792a6187ed625a02ef9cd1a1fd3c807e8eb364a17f916a6a20008"
+    },
+    {
+      "bytes": 5129,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/review.json"
+      },
+      "path": "final-review-v1/review.json",
+      "sha256": "e6d49c44e8837f18c5ff9d785f13ac2b6be18d3419b245210824da66af4efcf2"
+    },
+    {
+      "bytes": 10269,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/final-review-v1/seal_readonly_review_v1.py"
+      },
+      "path": "final-review-v1/seal_readonly_review_v1.py",
+      "sha256": "01e2f29e8d7f3d0150dd5bfeb2714489c9cea56976ddc36d49626317ee41a4a2"
+    },
+    {
+      "bytes": 9049,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/source-table.json"
+      },
+      "path": "source-table.json",
+      "sha256": "09d5dbf16ec41010891b0477bf30c02cd4984da492ea6422423ec1856b7d2549"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N--config--pon--hash-use-contract-v1.json.original"
+      },
+      "path": "sources/N--config--pon--hash-use-contract-v1.json.original",
+      "sha256": "2d094fea502e44b01dce55da6997c2a024c2cad0c90ecd0c83896421566c4caf"
+    },
+    {
+      "bytes": 523581,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N--config--pon--pq-cross-branch-corpus-v1.json.original"
+      },
+      "path": "sources/N--config--pon--pq-cross-branch-corpus-v1.json.original",
+      "sha256": "128954354019f6311e4ab71adb70f6c178874a0b8278d4a6c6477a6197b2d546"
+    },
+    {
+      "bytes": 18159,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N--scripts--ci--hash_use_contract.py.original"
+      },
+      "path": "sources/N--scripts--ci--hash_use_contract.py.original",
+      "sha256": "d16a951434a098809d65d2ebd23b0032dc7cd4c5394e1ec16eb69976171f392c"
+    },
+    {
+      "bytes": 483451,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original"
+      },
+      "path": "sources/N--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original",
+      "sha256": "8e7c95a728d2c98558b52c5dda15b5c8a2966ee8b6153b2ffa9f71564ad24435"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N2--config--pon--hash-use-contract-v1.json.original"
+      },
+      "path": "sources/N2--config--pon--hash-use-contract-v1.json.original",
+      "sha256": "a6786682171e9a87c43630ad6ff85d0de188d9c2bd018545b76bfff6902f1713"
+    },
+    {
+      "bytes": 523581,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N2--config--pon--pq-cross-branch-corpus-v1.json.original"
+      },
+      "path": "sources/N2--config--pon--pq-cross-branch-corpus-v1.json.original",
+      "sha256": "cad94c5c098a6eac01cdd06c89237a74227e08a3cacc65df0d5b622d2fcc3fd7"
+    },
+    {
+      "bytes": 18388,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N2--scripts--ci--hash_use_contract.py.original"
+      },
+      "path": "sources/N2--scripts--ci--hash_use_contract.py.original",
+      "sha256": "fc8683a3c784c0023919c7b44f782ebe5ec159d4db4d187690e83272a11ee3e7"
+    },
+    {
+      "bytes": 483933,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original"
+      },
+      "path": "sources/N2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original",
+      "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+    },
+    {
+      "bytes": 72224,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/P2--config--pon--hash-use-contract-v1.json.original"
+      },
+      "path": "sources/P2--config--pon--hash-use-contract-v1.json.original",
+      "sha256": "9d1e45dacc0717a9418360c0eb1d1652abc0ef7e761f730c978bab160b09c2d5"
+    },
+    {
+      "bytes": 523769,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/P2--config--pon--pq-cross-branch-corpus-v1.json.original"
+      },
+      "path": "sources/P2--config--pon--pq-cross-branch-corpus-v1.json.original",
+      "sha256": "983a1fedd7e90c515e6a33581385541afefdfc69cc06ee63315edcd368ddbf2e"
+    },
+    {
+      "bytes": 18146,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/P2--scripts--ci--hash_use_contract.py.original"
+      },
+      "path": "sources/P2--scripts--ci--hash_use_contract.py.original",
+      "sha256": "e7a3b41852509e4fdf9833ce65aadcfb3b749055044175176202276287218230"
+    },
+    {
+      "bytes": 483933,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/sources/P2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original"
+      },
+      "path": "sources/P2--trillionnium--crates--trnm-pon-node--examples--support--distributed_source_inventory.rs.original",
+      "sha256": "2f5b99e30574bc136238798a08a51671c45cf59586c89de2771ea8bd2aeb01c9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/N-31-source-ls-tree.stderr"
+      },
+      "path": "static-review-v1/N-31-source-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3493,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/N-31-source-ls-tree.stdout"
+      },
+      "path": "static-review-v1/N-31-source-ls-tree.stdout",
+      "sha256": "82f15dc36fc819b8a0b41d0a3dece9f08b2ae3fb980aec04a73e55b9f0e20aea"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/N2-31-source-ls-tree.stderr"
+      },
+      "path": "static-review-v1/N2-31-source-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3493,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/N2-31-source-ls-tree.stdout"
+      },
+      "path": "static-review-v1/N2-31-source-ls-tree.stdout",
+      "sha256": "82f15dc36fc819b8a0b41d0a3dece9f08b2ae3fb980aec04a73e55b9f0e20aea"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/P2-31-source-ls-tree.stderr"
+      },
+      "path": "static-review-v1/P2-31-source-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3493,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/P2-31-source-ls-tree.stdout"
+      },
+      "path": "static-review-v1/P2-31-source-ls-tree.stdout",
+      "sha256": "13ca5051a6b99aaabec5a1191366708388733f6f89c42bda01064fc2d046f699"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/P2-protected-current-paths.stderr"
+      },
+      "path": "static-review-v1/P2-protected-current-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 626,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/P2-protected-current-paths.stdout"
+      },
+      "path": "static-review-v1/P2-protected-current-paths.stdout",
+      "sha256": "d502f9c99aa0d3f6e93aa19d9d9c87b217c10166ceeba182951a27301e6630a7"
+    },
+    {
+      "bytes": 46382,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/all31-actual-source-objects.json"
+      },
+      "path": "static-review-v1/all31-actual-source-objects.json",
+      "sha256": "68bc6604aa158d71ecd6a299c7bc1d0559aaf30ff1ec1e44ea1c1510aab11218"
+    },
+    {
+      "bytes": 19328,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/review.json"
+      },
+      "path": "static-review-v1/review.json",
+      "sha256": "151c8365f7304a7191632c6cd0b5d673d030422a94741f91795d38d1fcd73f68"
+    },
+    {
+      "bytes": 12914,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/review_typed_and_declared_blobs_v1.py"
+      },
+      "path": "static-review-v1/review_typed_and_declared_blobs_v1.py",
+      "sha256": "29caa343bfec425750fd228c5531d165f0a0767199864fd1480b2f91e92334b0"
+    },
+    {
+      "bytes": 13120,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/summary.json"
+      },
+      "path": "static-review-v1/summary.json",
+      "sha256": "1a0aad703f6713dca120f7122d395e848e935916a9b79f66a476289a163069da"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/unique-source-object-sizes.stderr"
+      },
+      "path": "static-review-v1/unique-source-object-sizes.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1658,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/unique-source-object-sizes.stdout"
+      },
+      "path": "static-review-v1/unique-source-object-sizes.stdout",
+      "sha256": "7430b63e8de0ac90e192ea2542abad841ec23ca08f365a12f825f383e1d35631"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/unique-source-objects.stderr"
+      },
+      "path": "static-review-v1/unique-source-objects.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1338153,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-N2-metadata-integration-review-20261114-v1/static-review-v1/unique-source-objects.stdout"
+      },
+      "path": "static-review-v1/unique-source-objects.stdout",
+      "sha256": "10123773c1f4d88bd02012684cae26d0148eea6c3f956db26622b7230432dd6d"
+    }
+  ],
+  "index_and_seal_excluded_from_self_roster": true,
+  "schema": "trnm-N2-metadata-evidence-index-v1",
+  "tests_or_source_refs_stage_network_mutated": false,
+  "total_bytes": 8278323
+}

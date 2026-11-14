@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/package_original_repository_truth_2a8646_v1.py",
+    "--terminal-summary-sha256",
+    "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",
+    "--terminal-exit-code",
+    "0",
+    "--closed-log-manifest-sha256",
+    "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065"
+  ],
+  "cwd": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci",
+  "timeout_seconds": 180,
+  "producer": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/package_original_repository_truth_2a8646_v1.py",
+    "bytes": 28913,
+    "sha256": "591e2a6539276d4942e74b756ac3ea43c6863da4a8cb5a440d7bd49079d6d8e8"
+  },
+  "manifest": {
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-2a8646-v1-prci/closed-original-logs.json",
+    "bytes": 2753,
+    "sha256": "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065"
+  },
+  "started_at": "2026-11-14T11:53:16.811159+00:00",
+  "kind": "package_closed_receipts_only"
+}

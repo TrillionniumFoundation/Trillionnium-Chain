@@ -1,0 +1,12 @@
+{
+  "authority": "root message; not this observer's lane execution",
+  "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740",
+  "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354",
+  "full_lane_session_id": "dpty-0215e9b50d98773c04b32b38eaf528aba1ee39827fd680cd6da75d56fe0b5a63",
+  "terminal_exit": 0,
+  "output_complete": true,
+  "terminal_output_bytes": 1110,
+  "terminal_chunk_sha256": "f02a1bfdf2bba966318638c083d0d5241a2e90f99c475f17622ea28280f930ec",
+  "summary_bytes": 21340,
+  "summary_sha256": "61fd6d1d2054b78908d2caab5e3c946a4e32cef4dbbf082659a0b1f51427e806"
+}
