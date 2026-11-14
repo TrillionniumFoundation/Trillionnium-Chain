@@ -130,6 +130,32 @@ mod kernel_parent {
     }
 
     const MAX_LIMIT_BYTES: usize = 128;
+    const MAX_CPU_COUNTER_BYTES: usize = 2048;
+    const MAX_SCALAR_COUNTER_BYTES: usize = 64;
+
+    fn read_counter_text<'a>(reader: &mut impl Read, bytes: &'a mut [u8]) -> Result<&'a str> {
+        // The final byte is an overflow probe. A short read is never EOF,
+        // including a read exactly at the existing parser's byte bound.
+        if bytes.is_empty() {
+            return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+        }
+        let mut used = 0;
+        loop {
+            let count = match reader.read(&mut bytes[used..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(_) => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
+            };
+            if count == 0 {
+                return std::str::from_utf8(&bytes[..used])
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"));
+            }
+            used += count;
+            if used == bytes.len() {
+                return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+            }
+        }
+    }
 
     fn read_limit_text<'a>(
         reader: &mut impl Read,
@@ -212,14 +238,34 @@ mod kernel_parent {
         name: &CStr,
         bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
     ) -> Result<&'a str> {
-        let fd = rustix::fs::openat(
-            parent,
-            name,
-            rustix::fs::OFlags::RDONLY | rustix::fs::OFlags::CLOEXEC,
-            rustix::fs::Mode::empty(),
-        )
+        use rustix::fs::{openat, Mode, OFlags};
+        let fd = loop {
+            match openat(
+                parent,
+                name,
+                OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
+                Mode::empty(),
+            ) {
+                Err(error) if error == rustix::io::Errno::INTR => continue,
+                result => break result,
+            }
+        }
         .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
-        read_limit_text(&mut fs::File::from(fd), bytes)
+        let mut file = fs::File::from(fd);
+        // These cgroup-v2 children are regular files. A substituted FIFO
+        // must neither block nor lend buffered text or writer-free EOF.
+        if !file
+            .metadata()
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?
+            .file_type()
+            .is_file()
+        {
+            return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+        }
+        let text = read_limit_text(&mut file, bytes)?;
+        #[cfg(test)]
+        relative_tests::after_limit_read(name);
+        Ok(text)
     }
 
     fn read_limits_at(parent: &fs::File) -> Result<Limits> {
@@ -234,6 +280,125 @@ mod kernel_parent {
             read_limit_at(parent, c"memory.swap.max", swap)?,
             read_limit_at(parent, c"pids.max", pids)?,
         )
+    }
+
+    /// A directory opened and verified during one check or resource sample.
+    /// KernelBudget never stores this descriptor: every subsequent full check
+    /// freshly opens the current parent and verifies its actual metadata.
+    struct ScopedParentDirectory {
+        file: fs::File,
+        identity: (u64, u64, u32),
+    }
+
+    impl ScopedParentDirectory {
+        fn from_file(file: fs::File, identity: (u64, u64, u32)) -> Result<Self> {
+            let current = file
+                .metadata()
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            if !Self::matches(&current, identity) {
+                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+            }
+            Ok(Self { file, identity })
+        }
+
+        #[cfg(test)]
+        fn open(parent: &Path, expected: &fs::Metadata) -> Result<Self> {
+            Self::from_file(
+                open_current_parent(parent)?,
+                (expected.dev(), expected.ino(), expected.uid()),
+            )
+        }
+
+        fn matches(metadata: &fs::Metadata, identity: (u64, u64, u32)) -> bool {
+            metadata.file_type().is_dir()
+                && metadata.mode() & 0o022 == 0
+                && (metadata.dev(), metadata.ino(), metadata.uid()) == identity
+        }
+
+        fn verify_path(&self, parent: &Path) -> Result<()> {
+            let current = fs::symlink_metadata(parent)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            if !Self::matches(&current, self.identity) {
+                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+            }
+            Ok(())
+        }
+
+        #[cfg(test)]
+        fn read_limit<'a>(
+            &self,
+            name: &CStr,
+            bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+        ) -> Result<&'a str> {
+            read_limit_at(&self.file, name, bytes)
+        }
+
+        fn read_limits(&self) -> Result<Limits> {
+            read_limits_at(&self.file)
+        }
+
+        fn verify_limits(&self, parent: &Path, expected: Limits) -> Result<()> {
+            let observed = self.read_limits()?;
+            // Keep the current ordering: complete reads and parsing, final
+            // path/ownership fence, then comparison with the original limits.
+            self.verify_path(parent)?;
+            if observed != expected {
+                return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
+            }
+            Ok(())
+        }
+
+        fn read_counter<'a>(&self, name: &CStr, bytes: &'a mut [u8]) -> Result<&'a str> {
+            use rustix::fs::{openat, Mode, OFlags};
+            let fd = loop {
+                match openat(
+                    &self.file,
+                    name,
+                    OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
+                    Mode::empty(),
+                ) {
+                    Err(error) if error == rustix::io::Errno::INTR => continue,
+                    result => break result,
+                }
+            }
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?;
+            let mut file = fs::File::from(fd);
+            if !file
+                .metadata()
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?
+                .file_type()
+                .is_file()
+            {
+                return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+            }
+            read_counter_text(&mut file, bytes)
+        }
+
+        fn read_counters(&self) -> Result<KernelResourceSample> {
+            let mut cpu = [0; MAX_CPU_COUNTER_BYTES + 1];
+            let mut memory = [0; MAX_SCALAR_COUNTER_BYTES + 1];
+            let mut tasks = [0; MAX_SCALAR_COUNTER_BYTES + 1];
+            resource_sample(
+                self.read_counter(c"cpu.stat", &mut cpu)?,
+                self.read_counter(c"memory.current", &mut memory)?,
+                self.read_counter(c"pids.current", &mut tasks)?,
+            )
+        }
+    }
+
+    fn sample_counters(
+        check: impl Fn() -> Result<ScopedParentDirectory>,
+    ) -> Result<KernelResourceSample> {
+        // The initial full check freshly opens and validates the parent. Only
+        // this sample uses that local descriptor, which is dropped before the
+        // final full check freshly opens the parent again. No FD or verdict is
+        // retained across calls. Read/parse failures keep their earlier error.
+        let sample = {
+            let current = check()?;
+            current.read_counters()?
+        };
+        check()?;
+        Ok(sample)
     }
 
     // This is a common-case stack size, NOT a new limit on boot or membership
@@ -325,7 +490,10 @@ mod kernel_parent {
     /// The actual sysfs files are read only after the fixed parent was checked.
     fn resource_sample(cpu: &str, memory: &str, tasks: &str) -> Result<KernelResourceSample> {
         const INVALID: &str = "PUBLIC_HOST_KERNEL_COUNTERS";
-        if cpu.len() > 2048 || memory.len() > 64 || tasks.len() > 64 {
+        if cpu.len() > MAX_CPU_COUNTER_BYTES
+            || memory.len() > MAX_SCALAR_COUNTER_BYTES
+            || tasks.len() > MAX_SCALAR_COUNTER_BYTES
+        {
             return Err(INVALID.into());
         }
         let mut fields = std::collections::BTreeMap::<&str, u64>::new();
@@ -379,7 +547,7 @@ mod kernel_parent {
         limits: Limits,
     }
     impl KernelBudget {
-        fn check(&self) -> Result<()> {
+        fn checked_parent(&self) -> Result<ScopedParentDirectory> {
             let mut boot_bytes = [0; CONTEXT_STACK_BYTES + 1];
             let now_boot = read_context(
                 Path::new("/proc/sys/kernel/random/boot_id"),
@@ -388,37 +556,21 @@ mod kernel_parent {
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
-            let parent = open_current_parent(&self.parent)?;
-            let meta = parent
-                .metadata()
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
-            if !meta.file_type().is_dir()
-                || meta.uid() != 0
-                || meta.mode() & 0o022 != 0
-                || (meta.dev(), meta.ino()) != self.identity
-            {
-                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
-            }
+            let parent = ScopedParentDirectory::from_file(
+                open_current_parent(&self.parent)?,
+                (self.identity.0, self.identity.1, 0),
+            )?;
             if !in_parent_cgroup(&self.parent_relative)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let observed = read_limits_at(&parent)?;
-            // A directory descriptor pins its inode, not its pathname. Check
-            // the actual path again so a replacement during these reads cannot
-            // make a detached directory count as the current fixed parent.
-            let current = fs::symlink_metadata(&self.parent)
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
-            if !current.file_type().is_dir()
-                || current.uid() != 0
-                || current.mode() & 0o022 != 0
-                || (current.dev(), current.ino()) != self.identity
-            {
-                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
-            }
-            if observed != self.limits {
-                return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
-            }
-            Ok(())
+            // The current path is fenced again after all five current files
+            // are completely read. No later check reuses this directory FD.
+            parent.verify_limits(&self.parent, self.limits)?;
+            Ok(parent)
+        }
+
+        fn check(&self) -> Result<()> {
+            self.checked_parent().map(|_| ())
         }
         fn open(path: &str) -> Result<Self> {
             let user_path = Path::new(path);
@@ -463,17 +615,16 @@ mod kernel_parent {
                     tasks: 0,
                 },
             };
-            let read = |name: &str| -> Result<String> {
-                fs::read_to_string(budget.parent.join(name))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
+            // Initial acquisition uses the same regular-file, nonblocking,
+            // nofollow and bounded-EOF protections. It grants no authority;
+            // the independent full check below is still required.
+            let limits = {
+                let initial = ScopedParentDirectory::from_file(
+                    open_current_parent(&budget.parent)?,
+                    (budget.identity.0, budget.identity.1, 0),
+                )?;
+                initial.read_limits()?
             };
-            let limits = validate_limits(
-                &read("cpu.max")?,
-                &read("cpu.max.burst")?,
-                &read("memory.max")?,
-                &read("memory.swap.max")?,
-                &read("pids.max")?,
-            )?;
             let checked = Self { limits, ..budget };
             checked.check()?;
             Ok(checked)
@@ -486,18 +637,7 @@ mod kernel_parent {
         /// boot/inode/quotas/membership both before and after sampling; if any
         /// counter is unavailable or malformed, never issue a qualified receipt.
         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
-            self.check()?;
-            let read = |name| -> Result<String> {
-                fs::read_to_string(self.parent.join(name))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))
-            };
-            let sample = resource_sample(
-                &read("cpu.stat")?,
-                &read("memory.current")?,
-                &read("pids.current")?,
-            )?;
-            self.check()?;
-            Ok(sample)
+            sample_counters(|| self.checked_parent())
         }
     }
 
@@ -507,6 +647,16 @@ mod kernel_parent {
             None if !address.ip().is_loopback() => Err("PUBLIC_HOST_KERNEL_REQUIRED".into()),
             None => Ok(None), // Retained loopback-only development tools.
         }
+    }
+
+    #[cfg(test)]
+    mod relative_tests {
+        include!("host_kernel_parent_relative_tests.rs");
+    }
+
+    #[cfg(test)]
+    mod resource_tests {
+        include!("host_kernel_parent_resource_tests.rs");
     }
 
     #[cfg(test)]
