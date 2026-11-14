@@ -714,3 +714,17 @@ a demonstrated fix for the original confirmation failures or macOS physical
 retention failure. Main integration, the explicitly protected legacy deletion,
 and the final one-branch inventory remain separate uncompleted actions at this
 source checkpoint.
+
+
+## Reconciled-source inventory check
+
+The first seven-gate run on `c3ae6e71d7b0da4b43b0c7aa6df34aeabf838f47`
+passed six commands and failed the distributed-source inventory check. The
+complete failed receipt has SHA256
+`df8fafcf273cdd00bf2a3a468cbc7e4d318235f0b14a5033f93bfe16c37db512`.
+Both source observations were equal and verified 41,677 entries and
+3,994,945,659 bytes. The two new current PQ JSON paths were absent from the
+generated native inventory. The original generator adds exactly those two
+`include_bytes!` records, without removing or changing an existing entry.
+The sole plan and its corpus pin are updated after the correction. The new
+commit must pass its own gates; the original failed run remains failed.

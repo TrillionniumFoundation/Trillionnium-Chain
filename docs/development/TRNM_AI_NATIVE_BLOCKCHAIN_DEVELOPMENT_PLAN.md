@@ -15344,3 +15344,13 @@ receipts and the explicit 53-path merge selection. New results must bind the
 actual reconciled commit and tree. Source pins are refreshed only after this
 final plan append. This checkpoint grants no hosted, production or single-branch
 completion claim.
+
+
+### Generated inventory completion after the reconciled-source check
+
+The seven source gates on `c3ae6e71d7b0da4b43b0c7aa6df34aeabf838f47`
+reported six passes and one distributed-inventory failure with unchanged
+source identities. The original generator adds only the two newly selected
+current PQ JSON paths to the embedded native inventory. Existing inventory
+records and checker semantics remain. The original failed receipt is retained
+in the audit report; this successor requires new exact-source validation.

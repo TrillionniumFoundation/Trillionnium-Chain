@@ -351,6 +351,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq128-lifetime-composition-current-v3.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq128-lifetime-composition-current-v3.json"
+        )),
+    ),
+    (
         "config/pon/pq128-lifetime-composition-v2.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -362,6 +369,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/pq128-lifetime-example-v1.json"
+        )),
+    ),
+    (
+        "config/pon/pq128-source-correspondence-current-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq128-source-correspondence-current-v2.json"
         )),
     ),
     (
