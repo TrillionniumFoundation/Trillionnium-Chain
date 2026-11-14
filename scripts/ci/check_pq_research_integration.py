@@ -1497,6 +1497,17 @@ RELAY_PREFLIGHT_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= RELAY_PREFLIGHT_REQUIRED_PATHS
 
+# Original NPQ6 parallel controls bind both module registrations and the real fixtures.
+# Source integrity is not a throughput, public-node or production qualification.
+NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS
+
 class IntegrityError(ValueError):
     pass
 

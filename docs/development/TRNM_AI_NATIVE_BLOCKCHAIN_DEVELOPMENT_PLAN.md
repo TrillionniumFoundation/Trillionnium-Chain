@@ -14696,3 +14696,40 @@ added. Production caller search found only the active implementation/re-export,
 unit tests and the unwired old split definition. Source guards independently
 require and bind all three selected module/manifest paths; every qualification
 flag remains false.
+
+
+## 2026-11-14 — Retain original current-NPQ6 parallel execution controls
+
+Select the five test-source seams from
+`516382d87bbfdba85fbf34b6aa7b62edbc5759bb` (original parent
+`0bca28ebf59058b6aba9db5eb956c4479556e9ee`). Both new test modules retain
+their complete original bytes. The existing modules only register these tests
+and expose the already used signing fixture to its sibling test module.
+The current CheckedConfig, canonical NPQ6 wire, TLS, deadline and admission
+owners remain the source of all runtime behavior.
+
+Three M06 controls cover real 1/2/4/8-worker rendezvous and joins, canonical
+dependency ordering despite reversed completion, an early canonical state
+error before a late bad real signature, cancelled/panicked/partial workers,
+and the original 64/65 verification budget. The Node control independently
+compares every row of seven durable SQLite tables after serial and parallel
+admission, then checks cold reopen and the real PNQ2 socket replay journal.
+ACK is not business confirmation, and these controls confer no public-PQ
+deployment, throughput, CPU-cost or production qualification.
+
+All three original M06 controls passed on macOS aarch64 and Linux; the
+original Node control passed on Linux without ignored tests or changed
+assertions. The Mac M06 library/tests strict Clippy check passed. Linux
+library/tests strict Clippy exposed two existing Node test issues: duplicate
+TLS-fixture module loading and PublicClientMetrics field reassignment after
+Default. Their failure is retained for a separate minimal repair; this entry
+does not claim that the combined tests Clippy gate passed. Sparse-checkout
+compile inputs were materialized only from the same exact Git objects, and
+the initial missing-input failures remain in the audit record.
+
+Independent literal source controls require each of the five selected paths
+and its exact blob, and reject altered bytes. Both new modules join the
+distributed source inventory. The existing workspace all-target/all-feature
+CI command discovers these non-ignored tests without another workload.
+Historical source identities and all qualification flags remain unchanged;
+the actual source-corpus reader still reports HOLD_NO_GO.
