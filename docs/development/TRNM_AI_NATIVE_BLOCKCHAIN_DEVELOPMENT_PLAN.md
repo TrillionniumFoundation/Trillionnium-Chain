@@ -14992,3 +14992,9 @@ Selected the three independent 1d11f875 statement-boundary controls. They exerci
 ### 2026-11-14 retained literal-aware Rust token reader
 
 Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
+
+## 2026-11-14 — Explicit authenticated-caller observation V5
+
+The current default PublicRequestObserver::new retains the complete V4 observation schema and all existing cost, wait, lifecycle, error and timing fields. The separately selected new_with_authenticated_callers constructor emits V5 and records a caller only after the real signature check succeeds. Claimed Hello identities and invalid signatures do not bind this field. A second binding retains the first value and records a measurement failure.
+
+This is local observation only. It changes no signed request domain, admission result, r20 resource account, expiry, fresh Host check or production qualification. Existing V4 readers continue to reject V5. The original two branch controls retain their substantive assertions with the explicit schema literals adapted to the current V4/V5 namespace; an exact default V4 serialization control and a V4-reader rejection control cover the compatibility boundary. Native controls require actual Linux execution; source integrity alone does not certify them.
