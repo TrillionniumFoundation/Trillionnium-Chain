@@ -14779,3 +14779,44 @@ Integrated reviewed efb2997a, 022b3dcd, cf444991 and 687141e7 with all original 
 Live retirement successors must match the same M12 journal's completed physical effect, funding, receipt, window and current native anchor in addition to their M09 bytes. An already retired operation can replay its old readback after physical slot reuse without inventing new custody. Strict, pin and pinned account queries retain the original TransactionScope through success and errors, reject commit/rollback/savepoint ABA and implicit rollback, clear derived candidates on callback writes, preserve typed cancellation causes and never claim to undo another connection's commit.
 
 The only overlapping source was store.rs. Its existing endpoint-witness refusal, lazy reverse replay and active-root Q4 forecast are preserved byte-for-byte alongside the independent account-query change. The reviewed inline workflow pin follows the resulting source. Sixteen literal active paths each have independent omitted-path, omitted-pin and changed-byte controls. Existing required workspace --all-targets --all-features runs register these ordinary tests. Mac format and source/CI contracts are checked here; original Linux M12/Host/successor/ABA and combined PublicV3/W1 process validation remain pending on this exact composition. The original Mac invalid-UTF8 SQLite and Darwin integer-width failures and the fixed-budget hosted confirmation failures are retained; no native or four-second qualification is granted by this merge.
+
+
+## 2026-11-14 — Retain original current-NPQ6 parallel execution controls
+
+Select the five test-source seams from
+`516382d87bbfdba85fbf34b6aa7b62edbc5759bb` (original parent
+`0bca28ebf59058b6aba9db5eb956c4479556e9ee`). Both new test modules retain
+their complete original bytes. The existing modules only register these tests
+and expose the already used signing fixture to its sibling test module.
+The current CheckedConfig, canonical NPQ6 wire, TLS, deadline and admission
+owners remain the source of all runtime behavior.
+
+Three M06 controls cover real 1/2/4/8-worker rendezvous and joins, canonical
+dependency ordering despite reversed completion, an early canonical state
+error before a late bad real signature, cancelled/panicked/partial workers,
+and the original 64/65 verification budget. The Node control independently
+compares every row of seven durable SQLite tables after serial and parallel
+admission, then checks cold reopen and the real PNQ2 socket replay journal.
+ACK is not business confirmation, and these controls confer no public-PQ
+deployment, throughput, CPU-cost or production qualification.
+
+All three original M06 controls passed on macOS aarch64 and Linux; the
+original Node control passed on Linux without ignored tests or changed
+assertions. The Mac M06 library/tests strict Clippy check passed. Linux
+library/tests strict Clippy exposed two existing Node test issues: duplicate
+TLS-fixture module loading and PublicClientMetrics field reassignment after
+Default. Their failure is retained for a separate minimal repair; this entry
+does not claim that the combined tests Clippy gate passed. Sparse-checkout
+compile inputs were materialized only from the same exact Git objects, and
+the initial missing-input failures remain in the audit record.
+
+Independent literal source controls require each of the five selected paths
+and its exact blob, and reject altered bytes. Both new modules join the
+distributed source inventory. The existing workspace all-target/all-feature
+CI command discovers these non-ignored tests without another workload.
+Historical source identities and all qualification flags remain unchanged;
+the actual source-corpus reader still reports HOLD_NO_GO.
+
+### 2026-11-14 root composition: original NPQ6 parallel controls
+
+Reviewed and integrated all five source seams from 4e0943b7. Both original 516382d8 test modules are byte-identical, and only test registrations and sibling fixture visibility change in existing Rust files. Actual 1/2/4/8-worker lifetimes, reverse signature completion versus canonical state errors, partial spawn/panic/cancel joins, original 64/65 budget, all seven durable tables, cold reopen and PNQ2 loopback replay remain asserted. Three M06 controls passed on Mac/Linux and the Node control passed on Linux with no skips; strict production libraries passed. Known pre-existing test Clippy errors retain their original failure record and await a separately reviewed fixture/default-initialization repair. No production executor, workload, deadline, budget or acceptance claim changes in this merge.
