@@ -25,13 +25,20 @@ import w1_qrom_supplemental_controls as supplemental
 
 ROOT = Path(__file__).resolve().parents[2]
 ROSTER = 'config/pon/w1-qrom-current-required-tests-v1.json'
-ROSTER_SHA256 = 'e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581'
+ROSTER_SHA256 = '88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363'
 MODULES = ('test_w1_control_tree_audit', 'test_w1_qrom_conditional_budget',
            'test_w1_qrom_current_implementation_audit', 'test_w1_fri_transcript_audit',
            'test_w1_qrom_current_ci')
 HISTORICAL_SOURCE = '0c830e0be8939ce80c8443c9ad68021b87343a00'
 HISTORICAL_JOB_SHA256 = 'f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130'
 DRIFT_REASON = 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
+# Independent reviewed order: a jointly edited report/map cannot erase or add drift.
+REVIEWED_DIFFERENCE_PATHS = (
+    'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+    'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+)
 FALSE_FIELDS = (
     'post_quantum_soundness_qualified', 'complete_w1_soundness_qualified',
     'quantum_work_qualified', 'pq_signature_qualification_inferred',
@@ -312,7 +319,8 @@ def validate_drift(report, current, legacy):
     expected = [{'path': row['path'], 'historical': old[row['path']], 'current': row,
         'observed_bytes': row['bytes'], 'observed_sha256': row['sha256']}
         for row in current['project_files'] if row != old[row['path']]]
-    require(report.get('selected_source_differences') == expected and len(expected) == 2,
+    require(report.get('selected_source_differences') == expected
+            and tuple(row['path'] for row in expected) == REVIEWED_DIFFERENCE_PATHS,
             'historical/current selected-byte differences lost')
 
 

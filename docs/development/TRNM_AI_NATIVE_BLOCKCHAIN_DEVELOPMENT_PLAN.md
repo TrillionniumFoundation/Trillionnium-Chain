@@ -15111,3 +15111,19 @@ not claimed as verified project-file accesses. The original instrumentation
 errors and the duplicate-start once-guard refusal remain evidence. Production
 pilot/V2/V3 bytes, original 100ms limit, historical Diverse60 refusal and all
 qualification flags remain unchanged. No hosted confirmation target is granted.
+
+### Final consolidated current source bindings — 2026-11-14
+
+Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 separately rebinds the existing authority44,
+current-lifetime20, six-crate QROM145 and root-dependency46 inventories.
+The selected source union contains 232 distinct paths; each fixed Git blob
+and physical source byte matched the preceding reviewed dba81d56 inputs.
+Current reader constants, paired profile/upstream/route descriptors, independent
+test expectations and corpus pins move together. Historical 7150/1f2b/0f9
+namespaces, original proofs and guest identity, all limits, prior refusal
+records and false/null qualification fields remain. No Rust source is changed.
+
+T03's original Linux 59-control run also has a separate post-merge readback:
+all 67 actually observed absolute project inputs match this checkpoint, with
+60 modules loaded before and 61 afterward. This selected-input comparison
+does not claim a complete checkout or resolve the 7,331 relative open events.

@@ -478,3 +478,23 @@ key does not establish an independently administered surviving authority.
 ## Consolidation of immutable key expansion
 
 The [signature cost component](PQ_ROOT_SIGNATURE_COST_V1.md) retains exactly three successful ML-DSA-87 public-key expansions inside each immutable roster. All signature verification, complete statements and original budget charges remain per operation. The declared source scope includes its bounded observation example. The final consolidation snapshot is reviewed separately from the historical register; no runtime regeneration, new domain bound or qualification is authorized by this source addition.
+
+## Consolidated current source review, 2026-11-14
+
+The declared current source snapshot now selects 5c04c60e463462d9df8884786e0d5bb32af08a64 with 46 explicit
+paths. Five prior inputs changed: the crypto Cargo manifest, immutable roster
+implementation, its unit/native controls, and Node module exports. The explicit
+pq_root_v3_cost_observation.rs example is the additional path already selected
+by the reader's source roster. Canonical snapshot SHA-256: c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec.
+
+The roster cache retains only successful expansion of an immutable ML-DSA key.
+Each current message/signature still verifies after the original reservation
+and deadline checks. Both families, quorum sizes, caller trust, refusal caps,
+no-refund accounting and lifetime unknowns remain. The example retains bounded
+ABBA observations and false activation flags; source inclusion supplies no new
+performance result. The six role contracts, unwired effect-entry boundary and
+V5/V6 external ownership requirements are unchanged.
+
+Tests reconstruct the earlier 45-input 975af9eb snapshot and the original
+225ab38e declared snapshot with their original canonical digests, and reject both as
+current input. Earlier review records and all historical manifests remain.

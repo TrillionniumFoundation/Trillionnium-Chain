@@ -105,3 +105,18 @@ Source-before/after equality is not a native execution certificate. Concrete
 quantum auxiliary-state hypotheses, a complete shared-oracle reduction,
 recursive composition and complete lifetime event coverage still require their
 own mathematical and operational evidence.
+
+## Consolidated current source review, 2026-11-14
+
+Current checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
+20 historical SHA-256 values from 7150d96a. Four current rows changed from
+332d7f72: the crypto Cargo manifest, pon_work.rs, pq_accounts_v2.rs and Node
+store.rs. The historical-versus-current difference list now has eight paths,
+including the two newly different pon_work.rs and pq_accounts_v2.rs.
+
+Current contract SHA-256: bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7. The current reader still calls the original
+byte-pinned survey function in a private copied context. The 7150 fixture,
+the separate 1f2b0187 ledger and the 0f9b3054 PQ128 source lock retain their
+bytes and identities. All source limits, arithmetic rules, missing/symlink
+refusals and unknown qualification outputs remain. Current observation does
+not reproduce a historical execution or establish a lifetime failure bound.

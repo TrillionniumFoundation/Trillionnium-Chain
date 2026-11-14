@@ -98,7 +98,7 @@ class CurrentCiTests(unittest.TestCase):
                              ('historical-drift.json', self.drift)]:
             ci.write_once(out / name, report)
         # Isolated named cases create fixture receipts only; the real workflow
-        # executes the original eight historical and fourteen current controls.
+        # executes the original eight historical and sixteen current controls.
         supplemental_out = out / 'supplemental'
         supplemental_out.mkdir()
         manifest, retained = ci.supplemental.load_roster(ROOT)
@@ -136,8 +136,14 @@ class CurrentCiTests(unittest.TestCase):
         ci.validate_drift(self.drift, self.contract, self.legacy)
         self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
         self.assertEqual(self.drift['historical_exit_code'], 2)
+        self.assertEqual(ci.REVIEWED_DIFFERENCE_PATHS, (
+            'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+            'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+        ))
         self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
-                         [11172, 32654])
+                         [11172, 46018, 106066, 32654])
 
     def test_named_runner_records_every_real_start_and_success(self):
         report, roster = self.execute_fixture()
@@ -207,11 +213,53 @@ class CurrentCiTests(unittest.TestCase):
         failed = json.loads((self.temp / 'historical-drift.json').read_bytes())
         self.assertEqual(failed['classification'], 'UNCLASSIFIED_HISTORICAL_RESULT')
         self.assertEqual((self.temp / 'historical-on-current.stderr.log').read_bytes(), fake.stderr)
-        for mutation in ('missing', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
+        for mutation in ('missing', 'extra', 'wrong_digest', 'self_consistent_omission',
+                         'self_consistent_extra', 'self_consistent_substitution',
+                         'self_consistent_reorder', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
             with self.subTest(mutation=mutation):
                 report = deepcopy(self.drift)
+                contract = deepcopy(self.contract)
                 if mutation == 'missing':
                     report['selected_source_differences'].pop()
+                elif mutation == 'extra':
+                    report['selected_source_differences'].append(
+                        deepcopy(report['selected_source_differences'][0]))
+                elif mutation == 'wrong_digest':
+                    report['selected_source_differences'][2]['observed_sha256'] = '0' * 64
+                elif mutation == 'self_consistent_omission':
+                    removed = report['selected_source_differences'].pop(2)
+                    for row in contract['project_files']:
+                        if row['path'] == removed['path']:
+                            row.update(removed['historical'])
+                elif mutation == 'self_consistent_extra':
+                    old = {row['path']: row for row in self.legacy['project_files']}
+                    added = next(row for row in contract['project_files']
+                                 if row['path'] not in ci.REVIEWED_DIFFERENCE_PATHS)
+                    added['sha256'] = '0' * 64
+                    report['selected_source_differences'].append({
+                        'path': added['path'], 'historical': old[added['path']], 'current': added,
+                        'observed_bytes': added['bytes'], 'observed_sha256': added['sha256']})
+                    order = {row['path']: i for i, row in enumerate(contract['project_files'])}
+                    report['selected_source_differences'].sort(key=lambda row: order[row['path']])
+                elif mutation == 'self_consistent_substitution':
+                    removed = report['selected_source_differences'].pop(2)
+                    for row in contract['project_files']:
+                        if row['path'] == removed['path']:
+                            row.update(removed['historical'])
+                    old = {row['path']: row for row in self.legacy['project_files']}
+                    added = next(row for row in contract['project_files']
+                                 if row['path'] not in ci.REVIEWED_DIFFERENCE_PATHS)
+                    added['sha256'] = '0' * 64
+                    report['selected_source_differences'].append({
+                        'path': added['path'], 'historical': old[added['path']], 'current': added,
+                        'observed_bytes': added['bytes'], 'observed_sha256': added['sha256']})
+                    order = {row['path']: i for i, row in enumerate(contract['project_files'])}
+                    report['selected_source_differences'].sort(key=lambda row: order[row['path']])
+                    self.assertEqual(len(report['selected_source_differences']), 4)
+                elif mutation == 'self_consistent_reorder':
+                    contract['project_files'].reverse()
+                    report['selected_source_differences'].reverse()
+                    self.assertEqual(len(report['selected_source_differences']), 4)
                 elif mutation == 'wrong_reason':
                     report['historical_result']['reason'] = 'unrelated missing file'
                 elif mutation == 'exit_zero':
@@ -221,7 +269,7 @@ class CurrentCiTests(unittest.TestCase):
                 else:
                     report['historical_result']['qualification']['security_bits_quantum'] = 128
                 with self.assertRaises(ci.ObservationError):
-                    ci.validate_drift(report, self.contract, self.legacy)
+                    ci.validate_drift(report, contract, self.legacy)
 
     def test_source_checks_keep_candidate_and_historical_identities_separate(self):
         workflow = (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text()

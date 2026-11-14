@@ -274,8 +274,8 @@ class W1SemanticsAuditTests(unittest.TestCase):
         self.assertIs(qualification['valid_code_zero_control_digest_excluded'], False)
         self.assertIs(qualification['fresh_receipt_cryptographically_verified'], False)
         self.assertIs(self.report['kernel_release_match']['kernel_source_to_binary_rebuilt'], False)
-        # A current lock observation has a separate fixture. Retain the old
-        # report as an exact historical observation, not a passing current cmp.
+        # Both preceding source observations remain frozen. The present two-lock
+        # correspondence is explicit; neither saved report is rewritten as current.
         current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
         historical_path = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
         current_raw = (ROOT / current_path).read_bytes()
@@ -285,14 +285,22 @@ class W1SemanticsAuditTests(unittest.TestCase):
                          '129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe')
         self.assertEqual(AUDIT.sha256(historical_raw),
                          '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221')
-        self.assertEqual(encoded, current_raw)
+        self.assertNotEqual(encoded, current_raw)
         self.assertNotEqual(encoded, historical_raw)
         historical = json.loads(historical_raw)
         self.assertEqual(historical['provenance']['lock_checks'][2]['sha256'],
                          'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f')
         historical['provenance']['lock_checks'][2]['sha256'] = (
             'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a')
-        # Compare JSON values; the audit's in-memory structures include tuples.
+        # Preserve the preceding one-lock observation under its original SHA.
+        self.assertEqual(historical, json.loads(current_raw))
+        self.assertEqual(historical['provenance']['lock_checks'][0]['path'],
+                         'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock')
+        self.assertEqual(historical['provenance']['lock_checks'][0]['sha256'],
+                         '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
+        historical['provenance']['lock_checks'][0]['sha256'] = (
+            '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
+        # Compare all JSON values; the audit's in-memory structures include tuples.
         self.assertEqual(historical, json.loads(encoded))
         workflow = (ROOT / '.github/workflows/pon-w1-qrom-closure.yml').read_text()
         # The two explicitly different source jobs have different consumers.
