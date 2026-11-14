@@ -137,6 +137,8 @@ error_codes! {
     PublicMutationCpuUnavailable => ("PUBLIC_MUTATION_CPU_UNAVAILABLE", DependencyUnavailable),
     PublicSpentCapacity => ("PUBLIC_SPENT_CAPACITY", Capacity),
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
+    PublicCallerMutationCapacity => ("PUBLIC_CALLER_MUTATION_CAPACITY", Capacity),
+    PublicCallerMutationUnavailable => ("PUBLIC_CALLER_MUTATION_UNAVAILABLE", DependencyUnavailable),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
     PublicExecutionSnapshotCapacity => ("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY", Capacity),
     AdmissionHeaderEpochChanged => ("ADMISSION_HEADER_EPOCH_CHANGED", StaleContext),

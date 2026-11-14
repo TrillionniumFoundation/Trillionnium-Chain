@@ -16,10 +16,11 @@ import struct
 CONFIG = Path(__file__).resolve().parents[1] / 'config/pon/public-resource-profile-vectors-v1.json'
 OBSERVATION_SCHEMA = 'public-protected-resource-policy-observation-v1'
 ARITHMETIC_PROFILE = 'arithmetic-facts-v1'
-ARITHMETIC_REVISION = 'r19-native-completion-refusal-v1-arithmetic-facts-v1'
+ARITHMETIC_REVISION = 'r20-authenticated-caller-grants-v1-arithmetic-facts-v1'
 ARITHMETIC_REVISIONS = frozenset(('r13-arithmetic-facts-v1', 'r14-arithmetic-facts-v1',
                                  'r15-arithmetic-facts-v1',
                                  'r18-native-completion-v1-arithmetic-facts-v1',
+                                 'r19-native-completion-refusal-v1-arithmetic-facts-v1',
                                  ARITHMETIC_REVISION))
 
 
@@ -78,7 +79,7 @@ def load_profiles(path=CONFIG):
 
     config = json.loads(raw, object_pairs_hook=unique)
     require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
-            and config['current_revision'] == 'r19-native-completion-refusal-v1'
+            and config['current_revision'] == 'r20-authenticated-caller-grants-v1'
             and config['transport_profile'] == 'public-protected-development-v3'
             and config['hash_domain'] == 'public-protected-profile-v3'
             and [config[key] for key in ('burst_ns', 'refill_ns_per_second',
@@ -86,7 +87,8 @@ def load_profiles(path=CONFIG):
                 == [2_000_000_000, 250_000_000, 100_000_000, 2]
             and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13', 'r14', 'r15',
                                             'r18-native-completion-v1',
-                                            'r19-native-completion-refusal-v1'}
+                                            'r19-native-completion-refusal-v1',
+                                            'r20-authenticated-caller-grants-v1'}
             and config['source_vectors_are_native_acceptance'] is False,
             'original resource numbers and explicit profile history required')
     for revision, entry in config['revisions'].items():
@@ -98,9 +100,10 @@ def load_profiles(path=CONFIG):
             require(policy_id(config, revision, row['ticket_bits'], row['lifetime_ms'])
                     == row['policy_id'], 'public policy vector hash mismatch')
     require(set(config['historical_arithmetic_profiles'])
-                == {'r13', 'r14', 'r15', 'r18-native-completion-v1'},
+                == {'r13', 'r14', 'r15', 'r18-native-completion-v1',
+                    'r19-native-completion-refusal-v1'},
             'exact historical arithmetic profile set required')
-    arithmetic_profiles = [('r19-native-completion-refusal-v1', config['arithmetic_profile']),
+    arithmetic_profiles = [('r20-authenticated-caller-grants-v1', config['arithmetic_profile']),
                            *config['historical_arithmetic_profiles'].items()]
     for revision, entry in arithmetic_profiles:
         require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',

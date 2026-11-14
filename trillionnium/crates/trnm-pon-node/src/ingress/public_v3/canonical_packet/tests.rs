@@ -153,9 +153,11 @@ fn paid_task(raw_body: Vec<u8>, op: u8, server: &PublicServer, settings: &Settin
         cancelled: Arc::new(AtomicBool::new(false)),
         _permit: BufferPermit::acquire(Arc::new(Mutex::new(0)), body_bytes, MAX_PAID_BODY_BYTES)
             .unwrap(),
-        _lane_permit: Arc::new(
-            BufferPermit::acquire(Arc::new(Mutex::new(0)), 1, MAX_MUTATING_GRANTS).unwrap(),
-        ),
+        _lane_permit: Arc::new(PaidLanePermit {
+            _global: BufferPermit::acquire(Arc::new(Mutex::new(0)), 1, MAX_MUTATING_GRANTS)
+                .unwrap(),
+            _caller: None,
+        }),
         observation: None,
     }
 }
@@ -235,7 +237,7 @@ fn borrowed_body_keeps_original_error_order_and_same_task_permit_lifetime() {
 
     let mut task = paid_task(body(&[0]), 1, &server, &settings);
     let body_pool = task._permit.pool.clone();
-    let lane_pool = task._lane_permit.pool.clone();
+    let lane_pool = task._lane_permit._global.pool.clone();
     let reserved = task.raw_body.len() * 3;
     {
         let DecodedTaskBody::CanonicalSubmit(packet) =
