@@ -1222,6 +1222,15 @@ NATIVE_OBSERVATION_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= NATIVE_OBSERVATION_REQUIRED_PATHS
 
+# Public-fixture admission research remains separate from current owner/effect
+# authority. Preserve the exact reusable bridge and its original-control map.
+SP27_03_RESEARCH_REQUIRED_PATHS = frozenset((
+    "docs/security/SP27_03_RESEARCH_BRIDGE_RETAINED_V1.md",
+    "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
+))
+NATIVE_REQUIRED_PATHS |= SP27_03_RESEARCH_REQUIRED_PATHS
+
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
