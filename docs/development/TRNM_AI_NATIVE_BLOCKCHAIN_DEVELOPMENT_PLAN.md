@@ -14681,3 +14681,22 @@ current claim test suite then passed with the minimal parser change.
 This is parser consistency hardening, not evidence of an activation bypass.
 The retired fixed 17-file/RISC0 claim gate is not reintroduced. Current HOLD,
 source identities, ownership and every qualification flag remain unchanged.
+
+### 2026-11-14 selected SQLite cache requalification reader
+
+The ea909124 launcher identity and foreign-loader controls are retained on the
+current canonical-toolchain loader seed. The installed rustup must select the
+caller's exact pinned cargo/rustc; all three executable identities are recorded
+before and after. Four original cache transitions retain their own denominator,
+and two additional foreign-loader refusal/restoration phases use the same fresh
+target. Original failures and subsequent attempts remain recorded.
+
+The current canonical rustc/lib path validation and LD_LIBRARY_PATH seed are
+preserved. Inherited loader input and the intentionally selected canonical seed
+are reported separately; only the extra refusal phase adds the foreign directory,
+then the original selected seed is restored. The ten original reader controls
+include this current-seed adaptation and run in repository-truth. The actual
+workflow passes its installed rustup explicitly. These are synthetic orchestration
+and source-preservation controls, not a new real Cargo requalification, SQLite
+operation, dependency provenance or public-service result. All qualification
+flags remain false; exact hosted native execution remains separately required.

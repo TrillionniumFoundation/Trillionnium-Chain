@@ -1498,6 +1498,16 @@ PUBLIC_V3_REACTOR_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= PUBLIC_V3_REACTOR_REQUIRED_PATHS
 
 
+# Exact SQLite qualification reader and actual caller; controls alone grant no qualification.
+SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_sqlite_build_requalification.py',
+    'scripts/ci/test_sqlite_build_requalification.py',
+    '.github/workflows/pon-pq-system-continuation.yml',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
