@@ -11,6 +11,8 @@ pub(crate) mod authenticated_state;
 #[cfg(test)]
 mod canonical_row_reuse_tests;
 pub mod capacity_observation;
+#[cfg(test)]
+mod confirmation_chainwork_tests;
 pub mod demand_evidence;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
@@ -6821,6 +6823,11 @@ impl Node {
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_USE_CONFIRMATION_PROGRESS",
         )?;
+        // A successful observation must use one unchanged local storage epoch.
+        // The owner excludes cooperating writers; these counters additionally
+        // detect callback writes and commits by independent SQLite connections.
+        // They do not authenticate arbitrary out-of-band filesystem mutation.
+        let epoch = self.admission_state_epoch()?;
         self.ready()?;
         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
@@ -6844,6 +6851,8 @@ impl Node {
         }
         let observed = self.record(tip)?;
         let mut current = tip;
+        let mut expected_height = observed.height;
+        let mut expected_work = observed.work;
         let mut found = BTreeSet::new();
         let mut checked = 0u64;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
@@ -6851,14 +6860,49 @@ impl Node {
             // The prior query has ended before cancellation or caller code runs.
             progress(checked)?;
             let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
-                if included.contains_key(&id) {
+                let required =
+                    consensus::required_work(link.header.target).map_err(Error::local_integrity)?;
+                let cumulative = link
+                    .parent_work
+                    .checked_add(required)
+                    .map_err(Error::local_integrity)?;
+                ensure(
+                    link.record.height == expected_height
+                        && link.record.work == expected_work
+                        && link.record.work == cumulative,
+                    "STORAGE_PACKET",
+                )
+                .map_err(Error::local_integrity)?;
+                if let Some((row, _, _)) = included.get(&id) {
+                    ensure(
+                        row.height == link.record.height && row.work == link.record.work,
+                        "STORAGE_PACKET",
+                    )
+                    .map_err(Error::local_integrity)?;
                     found.insert(id);
                 }
-                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+                expected_height = link
+                    .record
+                    .height
+                    .checked_sub(1)
+                    .ok_or_else(|| Error::from("ANCESTRY_HEIGHT").local_integrity())?;
+                expected_work = link.parent_work;
+                Ok(())
             })?;
             current = parent;
             checked = checked.checked_add(count).ok_or("ANCESTRY_LIMIT")?;
         }
+        let genesis = self.record(current).map_err(Error::local_integrity)?;
+        ensure(
+            genesis.parent.is_none()
+                && genesis.height == 0
+                && genesis.work == Work::default()
+                && expected_height == 0
+                && expected_work == genesis.work,
+            "STORAGE_PACKET",
+        )
+        .map_err(Error::local_integrity)?;
         let depth_required = self.settings.limit("confirmation_depth")?;
         let multiplier = self.settings.limit("confirmation_work_multiplier")?;
         let mut observations = Vec::with_capacity(queries.len());
@@ -6895,7 +6939,10 @@ impl Node {
             });
         }
         progress(checked)?;
-        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        ensure(
+            self.active()? == (tip, generation) && self.admission_state_epoch()? == epoch,
+            "STALE_VIEW",
+        )?;
         Ok(ConfirmationBatch {
             observations,
             ancestry_checked: checked,

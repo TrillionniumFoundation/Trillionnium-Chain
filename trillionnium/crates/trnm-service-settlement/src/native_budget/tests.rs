@@ -2048,3 +2048,176 @@ fn completed_effect_readback_rejects_stale_or_changed_owner_after_restart() {
         assert_eq!(store.report().unwrap(), report);
     }
 }
+
+/// Run the ordinary observation, then commit through an independent connection.
+/// These are local SQLite races with synthetic native owners, not real payments.
+struct OwnerWithReadbackAppend<'a, F> {
+    owner: &'a mut SyntheticOwner,
+    payment: bool,
+    append: F,
+}
+impl<F: FnMut() -> NativeBudgetResultV1<()>> NativeFundingOwnerV1
+    for OwnerWithReadbackAppend<'_, F>
+{
+    fn observe_funding(
+        &mut self,
+        source: NativeFundingSourceV1,
+    ) -> NativeBudgetResultV1<NativeFundingObservationV1> {
+        let observed = self.owner.observe_funding(source)?;
+        if !self.payment {
+            (self.append)()?;
+        }
+        Ok(observed)
+    }
+
+    fn observe_payment(
+        &mut self,
+        query: &NativePaymentQueryV1,
+    ) -> NativeBudgetResultV1<NativePaymentObservationV1> {
+        let observed = self.owner.observe_payment(query)?;
+        if self.payment {
+            (self.append)()?;
+        }
+        Ok(observed)
+    }
+}
+
+fn native_readback_during_append(payment: bool, advance_generation: bool) {
+    let lane = NativeBudgetLaneV1::Serving;
+    let (directory, mut store, mut owner, policy, claim) = setup(lane);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], [81; 32], 5, 20)
+        .unwrap();
+    store
+        .complete_effect(claim.claim, [80; 32], [82; 32])
+        .unwrap();
+    store
+        .record_resources(
+            claim.claim,
+            NativeResourceOutcomeV1::Positive,
+            Some(resources(lane, 2)),
+        )
+        .unwrap();
+    owner.payment = Some(NativePaymentObservationV1 {
+        anchor: owner.anchor,
+        source: policy.source,
+        subject: claim.subject,
+        beneficiary: claim.beneficiary,
+        operation: [90; 32],
+        gross_escrow_debit: 20,
+        beneficiary_credit: 18,
+    });
+    store
+        .record_native_payment(&mut owner, claim.claim, [90; 32])
+        .unwrap();
+    let (before, before_sequence, before_root) =
+        load_snapshot(&store.connection, &configuration()).unwrap();
+    let historical = before.claim(claim.claim).unwrap().clone();
+
+    let mut other = claim.clone();
+    other.claim = [61; 32];
+    other.subject = [71; 32];
+    let mut writer_owner = owner.clone();
+    if advance_generation {
+        writer_owner.advance(6);
+    }
+    let mut writer =
+        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+            .unwrap();
+    let result = {
+        let mut callback = OwnerWithReadbackAppend {
+            owner: &mut owner,
+            payment,
+            append: || {
+                writer.reserve(&mut writer_owner, other.clone())?;
+                writer.record_resources(other.claim, NativeResourceOutcomeV1::Unknown, None)?;
+                Ok(())
+            },
+        };
+        if payment {
+            store
+                .reobserve_native_payment(&mut callback, claim.claim)
+                .map(|_| ())
+        } else {
+            store
+                .reobserve_completed_effect(
+                    &mut callback,
+                    claim.claim,
+                    [80; 32],
+                    [81; 32],
+                    Some((5, 20)),
+                    [82; 32],
+                )
+                .map(|_| ())
+        }
+    };
+    assert!(matches!(
+        result,
+        Err(NativeBudgetErrorV1::Invalid(
+            "BUDGET_NATIVE_READBACK_JOURNAL_CHANGED"
+        ))
+    ));
+    let (after, after_sequence, after_root) =
+        load_snapshot(&store.connection, &configuration()).unwrap();
+    assert_eq!(after_sequence, before_sequence + 2);
+    assert_ne!(after_root, before_root);
+    assert_eq!(after.claim(claim.claim).unwrap(), &historical);
+    let unknown = after.claim(other.claim).unwrap();
+    assert_eq!(unknown.outcome, Some(NativeResourceOutcomeV1::Unknown));
+    assert_eq!(unknown.consumed.as_ref(), Some(&other.resource_reservation));
+
+    owner.anchor = writer_owner.anchor;
+    owner.payment.as_mut().unwrap().anchor = owner.anchor;
+    if payment {
+        store
+            .reobserve_native_payment(&mut owner, claim.claim)
+            .unwrap();
+    } else {
+        store
+            .reobserve_completed_effect(
+                &mut owner,
+                claim.claim,
+                [80; 32],
+                [81; 32],
+                Some((5, 20)),
+                [82; 32],
+            )
+            .unwrap();
+    }
+    let (final_state, final_sequence, final_root) =
+        load_snapshot(&store.connection, &configuration()).unwrap();
+    assert_eq!((final_sequence, final_root), (after_sequence, after_root));
+    assert!(final_state == after);
+    drop(writer);
+    drop(store);
+    let mut reopened =
+        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+            .unwrap();
+    let (recovered, _, _) = load_snapshot(&reopened.connection, &configuration()).unwrap();
+    assert!(recovered == after);
+    assert_eq!(
+        reopened.reserve(&mut writer_owner, other).unwrap(),
+        NativeBudgetReplayV1::Done
+    );
+}
+
+#[test]
+fn native_payment_readback_rejects_same_generation_append_from_second_connection() {
+    native_readback_during_append(true, false);
+}
+
+#[test]
+fn native_payment_readback_rejects_new_generation_append_and_preserves_unknown() {
+    native_readback_during_append(true, true);
+}
+
+#[test]
+fn completed_effect_readback_rejects_same_generation_append_from_second_connection() {
+    native_readback_during_append(false, false);
+}
+
+#[test]
+fn completed_effect_readback_rejects_new_generation_append_and_preserves_unknown() {
+    native_readback_during_append(false, true);
+}
