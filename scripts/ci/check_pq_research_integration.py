@@ -1430,6 +1430,13 @@ NATIVE_REQUIRED_PATHS |= frozenset((
 ))
 
 # Independently reviewed final merge capabilities retain exact source coverage.
+# Exact immutable source inspector; passing its original fixtures confers no native acceptance.
+CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_cross_repo_candidate.py',
+    'scripts/ci/test_cross_repo_candidate.py',
+))
+NATIVE_REQUIRED_PATHS |= CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS
+
 FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
     '.github/workflows/pon-recent-batch-acceptance.yml',
     'config/pon/applicability-v1.json',

@@ -287,6 +287,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_wan_accounting_controls_cannot_disappear_duplicate_skip_swallow_or_move(self):
         # Independent literal scope; synthetic checks grant no WAN qualification.
         commands = (
+            '    python3 scripts/ci/test_cross_repo_candidate.py -v\n',
             '    python3 scripts/ci/test_pon_wan_evidence.py -v\n',
             '    python3 scripts/ci/test_pon_decentralization_audit.py -v\n',
             '    python3 scripts/ci/test_pon_wan_control_domains.py -v\n',

@@ -408,6 +408,8 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_authenticated_suite_count.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
+    # Immutable dependency inspection keeps all native and production claims false.
+    python3 scripts/ci/test_cross_repo_candidate.py -v
     # Explicit synthetic WAN accounting retains all external qualification flags false.
     python3 scripts/ci/test_pon_wan_evidence.py -v
     python3 scripts/ci/test_pon_decentralization_audit.py -v
@@ -781,6 +783,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
+    # Immutable dependency inspection keeps all native and production claims false.
+    python3 scripts/ci/test_cross_repo_candidate.py -v
     # Explicit synthetic WAN accounting retains all external qualification flags false.
     python3 scripts/ci/test_pon_wan_evidence.py -v
     python3 scripts/ci/test_pon_decentralization_audit.py -v
@@ -1526,12 +1530,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(command in lanes['protocol-contract'] and script.count(command) == 1,
                 'parent material and parent-step byte checks must execute exactly once in protocol-contract')
     for command in (
+            'python3 scripts/ci/test_cross_repo_candidate.py -v',
             'python3 scripts/ci/test_pon_wan_evidence.py -v',
             'python3 scripts/ci/test_pon_decentralization_audit.py -v',
             'python3 scripts/ci/test_pon_wan_control_domains.py -v'):
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
-                'WAN V1-V4 and control-registry controls must execute exactly once in repository-truth')
+                'WAN and immutable cross-repository controls must execute exactly once in repository-truth')
     for command in CURRENT_READER_COMMANDS:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
