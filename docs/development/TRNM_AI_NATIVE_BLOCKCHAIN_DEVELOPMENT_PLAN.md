@@ -14309,3 +14309,39 @@ controls provide the positive validation scope. Historical fault scenarios
 are not copied or executed for this repair. This narrow target-boundary change
 does not close the separately recorded Page JSON parsing-account gap or
 qualify the other source changes on that historical branch.
+
+
+### 2026-11-14 consolidation: cooperative paged restore owner contract
+
+This compatible port preserves the controlled restore capability from
+21c218cf552c6a10d1abca5d79844a02baab7123 on the frozen integration source
+332d7f723d71707d88a2cffa52b3754579a46926. The original caller supplies one
+cooperative cancellation/resource checkpoint through provider reads, bounded
+RS verification/reconstruction/re-encoding, CAS publication, complete content
+readback and final plan validation. It does not preempt a blocking operation
+or grant execution, funding, custody settlement or production authority.
+
+A checkpoint refusal or original deadline expiry permanently stops the same
+non-cloneable paged-restore reservation. Compatibility entry points cannot
+reopen it. Ordinary data/provider failure may use only the remaining original
+allowance. A final checkpoint after an operation error observes cancellation
+without replacing that original error; admitted counters and already committed
+valid cache bytes remain spent/retained. Lower-level controlled codec and content
+APIs propagate the checkpoint; their caller owns cancellation across calls.
+
+The current from_verified_chunk_with_shards helper, retained-plan batch writes,
+original identities and newer public Cell exports remain present. This is an
+additive in-memory control contract: signed domains and stored formats are
+unchanged. It does not enable the old DHT lookup/example or qualify Native FinalUse.
+
+The original five finite owner controls passed 5/5 on the fresh Mac combined
+source after the separate portable FIFO fixture fix (3.62 seconds, no ignored
+tests). The eight controlled-restore Rust blobs were byte-identical before and
+after that run. The FIFO control passed 1/1 separately. These local observations
+do not qualify Linux, Native FinalUse or a release; isolated Linux verification
+and the final combined repository gates remain pending. No historical pass is
+represented as a current run.
+The first Mac offline preparation lacked sqlite-wasm-rs. The subsequent locked
+build fetched the fixed dependencies but exposed the pre-existing Unix FIFO
+fixture using rustix::fs::mkfifoat, which rustix 1.1.6 excludes on Apple targets.
+That platform fixture requires a separate change, not a skipped negative test.

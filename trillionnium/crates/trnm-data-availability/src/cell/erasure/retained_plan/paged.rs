@@ -13,9 +13,9 @@ mod file;
 mod restore;
 pub use file::CellPagedRetainedShardPlanFileV2;
 pub use restore::{
-    restore_cell_paged_version_to_cache_v2, CellPagedShardRestoreBudgetV2,
-    CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2, CellPagedShardRestoreRequestV2,
-    CellPagedShardRestoreUsageV2,
+    restore_cell_paged_version_to_cache_controlled_v2, restore_cell_paged_version_to_cache_v2,
+    CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
+    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
 };
 
 /// The existing TCR1/CSP1 history limit remains a whole-plan admission limit.

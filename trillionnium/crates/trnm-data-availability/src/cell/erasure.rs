@@ -24,13 +24,13 @@ pub use provider::{
     CellRs46StoredShardV1, MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
 };
 pub use retained_plan::{
-    restore_cell_paged_version_to_cache_v2, CellPagedRetainedShardPlanFileV2,
-    CellPagedRetainedShardPlanRequestV2, CellPagedRetainedShardPlanV2,
-    CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
-    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2, CellRetainedShardChunkV1,
-    CellRetainedShardPagePinV2, CellRetainedShardPageV2, CellRetainedShardPlanFileV1,
-    CellRetainedShardPlanRequestV1, CellRetainedShardPlanV1, CellRetainedShardRootV1,
-    MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    restore_cell_paged_version_to_cache_controlled_v2, restore_cell_paged_version_to_cache_v2,
+    CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+    CellPagedRetainedShardPlanV2, CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2,
+    CellPagedShardRestoreReadbackV2, CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
+    CellRetainedShardChunkV1, CellRetainedShardPagePinV2, CellRetainedShardPageV2,
+    CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1, CellRetainedShardPlanV1,
+    CellRetainedShardRootV1, MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
     MAX_CELL_RETAINED_SHARD_PAGES_V2, MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1,
     MAX_CELL_RETAINED_SHARD_ROOTS_V1, MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
 };
