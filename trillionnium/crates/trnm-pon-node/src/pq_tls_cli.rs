@@ -224,7 +224,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     // Diagnostic allocation/file setup precedes ready and the unchanged service timer.
     #[cfg(feature = "pq-witness-phase-diagnostics")]
     let _phase_diagnostics =
-        crate::pq_rollback_witness::test_observation::Scope::cli_from_environment("node-cli");
+        trnm_pon_node::pq_rollback_witness::CliPhaseDiagnosticScope::from_environment();
     let listener = TcpListener::bind(address)?;
     println!(
         "{}",

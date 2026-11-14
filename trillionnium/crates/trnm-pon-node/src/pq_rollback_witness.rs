@@ -64,6 +64,21 @@ pub(crate) use {observe_operation, observe_phase};
 #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
 pub(crate) mod test_observation;
 
+/// Opaque diagnostic owner for the ordinary binary's existing CLI scope.
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+#[doc(hidden)]
+pub struct CliPhaseDiagnosticScope {
+    _scope: test_observation::Scope,
+}
+
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+impl CliPhaseDiagnosticScope {
+    pub fn from_environment() -> Option<Self> {
+        test_observation::Scope::cli_from_environment("node-cli")
+            .map(|scope| Self { _scope: scope })
+    }
+}
+
 /// Diagnostic scope for the integration fixture's own Witness thread.
 #[cfg(feature = "pq-witness-phase-diagnostics")]
 #[doc(hidden)]
