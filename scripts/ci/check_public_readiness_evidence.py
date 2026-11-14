@@ -511,7 +511,9 @@ def native_durable_schema(root):
                     'growth_observation_only': '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
                     # Current body includes the M06 account-profile refusal before
                     # namespace effects; deleting or bypassing it is not a legacy fallback.
-                    'observation_only': 'e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3',
+                    # The reviewed current body also requires the canonical endpoint
+                    # policy to select PqWitnessV4 with a retained witness before effects.
+                    'observation_only': 'f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978',
                 }
                 require(sha(selected_body.encode()) == reviewed_bodies[observation_field],
                         'durable backend selected implementation')

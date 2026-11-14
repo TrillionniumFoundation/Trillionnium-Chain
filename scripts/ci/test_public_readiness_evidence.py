@@ -1511,6 +1511,44 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
                     self.extract(source,index)
 
+    def test_current_endpoint_witness_gate_cannot_be_removed_or_deferred(self):
+        self.extract(self.current)
+        gate = (
+            '        if let Some(policy) = owners.pq_network.as_deref() {\n'
+            '            ensure(\n'
+            '                !crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?\n'
+            '                    || (state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()),\n'
+            '                "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",\n'
+            '            )?;\n'
+            '        }\n'
+        )
+        mutations = [
+            # This exactly restores the formerly accepted current body. It
+            # must not be authorized through a predecessor-hash fallback.
+            ('old-body-fallback', ''),
+            ('commented-gate', ''.join('        // ' + line.lstrip()
+                                     for line in gate.splitlines(keepends=True))),
+            ('canonical-policy-bypass', gate.replace(
+                '!crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?',
+                'true')),
+            ('witness-backend-or-client', gate.replace(
+                'state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()',
+                'state_backend == StateBackend::PqWitnessV4 || owners.pq_witness.is_some()')),
+            ('ignored-refusal', gate.replace('            ensure(', '            let _ = ensure(')
+                                   .replace('            )?;', '            );')),
+        ]
+        for label, replacement in mutations:
+            with self.subTest(label=label), self.assertRaisesRegex(
+                    ValueError, 'durable backend selected implementation'):
+                self.extract(self.replace_once(self.current, gate, replacement))
+        late = self.replace_once(self.current, gate, '')
+        late = self.replace_once(late, '            fs::create_dir_all(path)?;',
+                                 '            fs::create_dir_all(path)?;\n' + gate)
+        with self.subTest(label='witness-check-after-namespace-effect'), self.assertRaisesRegex(
+                ValueError, 'durable backend selected implementation'):
+            self.extract(late)
+
+
 
 class PipelineExecutableBindingTests(unittest.TestCase):
     """Bounded local files and harmless child exits, never native qualification."""
