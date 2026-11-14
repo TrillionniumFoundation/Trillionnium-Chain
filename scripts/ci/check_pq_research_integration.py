@@ -1288,6 +1288,25 @@ CONSOLIDATED_LIBRARY_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CONSOLIDATED_LIBRARY_REQUIRED_PATHS
 
 
+# Explicit SP27 research selectors retain the original Host, phase windows,
+# named controls and complete failure denominators. Source presence is never
+# collection success, business confirmation, or a qualification decision.
+SP27_RESEARCH_REQUIRED_PATHS = frozenset((
+    'scripts/ci/run_from_zero_host.py',
+    'scripts/ci/run_from_zero_native.py',
+    'scripts/ci/run_sp27_receiver_controls.py',
+    'scripts/ci/run_sp27_strata_controls.py',
+    'scripts/ci/test_run_from_zero_native.py',
+    'scripts/ci/test_sp27_receiver_controls.py',
+    'scripts/ci/test_sp27_strata_controls.py',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs',
+))
+NATIVE_REQUIRED_PATHS |= SP27_RESEARCH_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 

@@ -14412,3 +14412,11 @@ coverage, physical resource bounds or production activation.
 - Keep the reviewed publication fix (f71a99cca1489ecb19b116301f47ee62a2dd8412): an expired final rename/directory-fsync path reports failure while retaining published bytes and spent reservation. Failure never grants a refund or claims absence of partial publication.
 - Add an independent thirteen-path omission/pin/mutation control and refresh the generated source inventory. Agent validation covered the original nine cache controls, 23 Linux I/O controls and seven runtime controls; the additional publication control has a separate pending Linux result. These receipts are source-specific and are not relabeled as a final combined run.
 - Current proof/source descriptions will be rebound explicitly after all reviewed additions. Historical proof inputs, deployed profiles and qualification decisions remain immutable; source inclusion grants no production, network or proof qualification.
+
+## 2026-11-14 SP27 explicit research selector preservation
+
+The reviewed eleven-path continuation from 8da34affb9fe77fbb14da75d331746a17fdd6816 is preserved through 6cfd867096d301fbe55cb0e6bee8c2a6acecaf0d. Seven new files retain their original bytes. Existing Host dispatch and format-copy closure recognize the explicit selectors without changing any normal selector, Host authority reader, original four-second phase, worker cap, retry cap or resource allowance.
+
+The health and balanced-strata collectors stop on the original health/Host/coverage failures and retain unknown, panic, unstarted and incomplete denominators. Two ignored native campaigns require explicit selection and have not been run as part of this port. Collection status remains separate from business confirmation, causal attribution and publication qualification. Original branch-only automated workflows and historical attachments are not reinstated as current execution evidence.
+
+The original 36 Python selector controls passed on the isolated port. Linux verifies its current native reader/Host controls and four pure Rust classification controls separately. This merge adds an independent eleven-path omission/pin/mutation source guard and refreshes the complete source inventory; every activation and qualification assertion remains false.
