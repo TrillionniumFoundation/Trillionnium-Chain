@@ -57,6 +57,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/decentralization-audit-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/decentralization-audit-v1.json"
+        )),
+    ),
+    (
         "config/pon/devnet-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

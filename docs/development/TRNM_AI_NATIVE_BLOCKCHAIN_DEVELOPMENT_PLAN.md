@@ -14601,3 +14601,32 @@ An independent literal omission/pin/mutation roster now covers the complete revi
 ### 2026-11-14 root review: business-cohort-reader
 
 Integrated reviewed commit 3e9fc12e724a40d1d6c880706a9c2bd3eccb0eb5. Original scheduled1/5/9-second business cohort accounting retains the single30-second deadline, missing/failed denominators and all false authority fields. V1/V2/V3 historical derivations stay explicit; the failed ZIP consumer independently replays either V3 or V4. All154 selected original and new controls passed, with initial compatibility failures retained. No native campaign or four-second budget was changed. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+### 2026-11-14 selected WAN V3/V4 read-only control-domain port
+
+The all-branch source review selected the additive WAN V3/V4 accounting reader
+from 058a729a274b431ed1617efee2725cad8471d966 (actual old base
+513e92dfc27044ef3e0c9d62e7ae504fa5bea38f) and its immutable control-registry
+dependency. On fixed consolidation source 11bdc4cce16fc7d550d361f5cc863b061204f61b,
+the retained V1/V2 reader exactly matched that base; all six imported source,
+test, policy and fixture files preserve the original tip bytes. The independent
+evidence-file materializer is not a required dependency and remains historical.
+
+The new schemas explicitly bind operator/control context, preserve original
+typed results, schedule/window/failure-cost denominators and add V4 joint
+control/failure-domain matching. All original V1/V2, control-registry and V3/V4
+synthetic test suites passed on the fixed imported source. The existing
+repository-truth lane now runs all three suites explicitly. Independent
+negative lane controls reject omitted, duplicated, skipped, moved or swallowed
+commands; independent source controls bind the complete eight-path observation
+scope. These checks do not authenticate physical WAN operation, operators or
+receipts and do not confer native execution, protocol, PQ, release or production
+authority. Every original qualification flag remains false and WAN stays
+NOT RUN / HOLD_NO_GO.
+
+### 2026-11-14 root review: wan-control-reader
+
+Integrated reviewed commit 43633f6e7f4cb03aae02c1d7f2a6c76d2a70cf07. Original V3/V4 WAN and five-axis declaration readers retain V1/V2 typed/windowed costs and denominators, transitive common-control exclusion and simultaneous group/failure-domain matching. All125 original reader controls, eight-path omission/mutation controls and50 related CI controls passed. External independence, production and runtime authority remain false; no materializer or old workflow is restored. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+The combined CI contract initially refused the retained public_v3_multiprocess whole-file guard after reviewed commit bc5f9d4 added the opt-in full-client CPU observation and original controls. The prior f7991a5c126ee364d5d135b974b14a2b18b2a2ae blob is exactly the b6e4 source; the reviewed current blob is 1f4dd178a9493b71340a8684a9338a7782e0760d. Only that existing workflow literal is refreshed; no command, native budget or result is changed. Preserve the original refusal log.
