@@ -224,3 +224,36 @@ fn retained_owner_bounds_count_allocated_slot_capacity() {
         RejectionCache::new(1, MAX_REJECTION_CACHE_LIFETIME + Duration::from_nanos(1)).is_none()
     );
 }
+
+#[test]
+fn cheap_statement_refusal_records_native_outcome_without_cache_work() {
+    let cache = RejectionCache::new(8, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    let zeros = vec![0; CELLS];
+    let task = task_id(&zeros, &zeros).unwrap();
+    let challenge = [93; 32];
+    let proof = prove(challenge, &zeros, &zeros).unwrap();
+    let mut wrong_task = task;
+    wrong_task[0] ^= 1;
+    let mut low_target = [0; 32];
+    low_target[31] = 1;
+    for (task, target, expected) in [
+        (wrong_task, [255; 32], WorkError::Task),
+        (task, low_target, WorkError::Target),
+    ] {
+        let (result, observation, tiles) = call(
+            &cache,
+            challenge,
+            task,
+            target,
+            &proof,
+            Some(VerificationProgress::BeforeReplay),
+        );
+        assert_eq!(result.unwrap_err(), VerificationError::Relation(expected));
+        assert!(observation.native_verifier_started && observation.native_verifier_returned);
+        assert!(!observation.key_hashed && !observation.exact_fact_found);
+        assert!(!observation.cached_rejection_returned && !observation.full_replay_started);
+        assert!(!observation.lookup_contended && !observation.lookup_poisoned);
+        assert_eq!(observation.publication, RejectionPublication::None);
+        assert_eq!(tiles, 0);
+    }
+}
