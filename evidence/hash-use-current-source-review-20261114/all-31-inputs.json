@@ -1,0 +1,803 @@
+{
+  "all_current_equal_dc42": true,
+  "all_old_pins_match_last_mapping_commit": true,
+  "changed_count": 6,
+  "changed_paths": [
+    "config/pon/pq-proof-profile-binding-v1.json",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs"
+  ],
+  "declared_source_count": 31,
+  "declared_use_count": 19,
+  "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "manifest": {
+    "blob": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+    "bytes": 72224,
+    "last_mapping_blob": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+    "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+    "path": "config/pon/hash-use-contract-v1.json",
+    "same_raw_as_last_mapping_commit": true,
+    "sha256": "50c12b630049933110a400590d64f8bfb764a76bdf8737c71a53a71245a0fc92"
+  },
+  "no_source_edits": true,
+  "no_tests_run": true,
+  "review_base_revision": "e4abb172147e941b62483652b0ceabaae4317624",
+  "reviewed_semantics_sha256": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b",
+  "reviewed_source_map_sha256": "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf",
+  "rows": [
+    {
+      "current_blob": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+      "current_bytes": 2378,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 311,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/config--pon--pq-proof-profile-binding-v1.json.history",
+        "sha256": "23245bd3d6283ac952e8d6abfa20e1df5adeb4c567dc89976431e9a776d8c60d"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd",
+      "declared_pin": {
+        "bytes": 2378,
+        "sha256": "e2b13c985b1e00ad0d9e4bc6c41b6a2cb2c870da379db77fa2882defd79f8a23"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-risc0-selected"
+      ],
+      "full_blob_delta": {
+        "bytes": 701,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/config--pon--pq-proof-profile-binding-v1.json.patch",
+        "sha256": "3b8ed1d8210453b3ba5599c833bd05ebc99742dbde79478c2d1472a35d3009c5"
+      },
+      "last_mapping_blob": "304e81508897d7d865ea79d2cb4b25235ccb9d2f",
+      "last_mapping_bytes": 2378,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "e2b13c985b1e00ad0d9e4bc6c41b6a2cb2c870da379db77fa2882defd79f8a23",
+      "path": "config/pon/pq-proof-profile-binding-v1.json"
+    },
+    {
+      "current_blob": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+      "current_bytes": 5246,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9",
+      "declared_pin": {
+        "bytes": 5246,
+        "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-risc0-selected"
+      ],
+      "last_mapping_blob": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+      "last_mapping_bytes": 5246,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9",
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs"
+    },
+    {
+      "current_blob": "1c6f2028dd753e611112ba8b7a3d85a8585eb635",
+      "current_bytes": 13329,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "declared_pin": {
+        "bytes": 13329,
+        "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-p3-tagged-reference"
+      ],
+      "last_mapping_blob": "1c6f2028dd753e611112ba8b7a3d85a8585eb635",
+      "last_mapping_bytes": 13329,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+    },
+    {
+      "current_blob": "1d54eadd41166a6660ee09f499da7c76dd68ac80",
+      "current_bytes": 11732,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+      "declared_pin": {
+        "bytes": 11732,
+        "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-p3-tagged-reference"
+      ],
+      "last_mapping_blob": "1d54eadd41166a6660ee09f499da7c76dd68ac80",
+      "last_mapping_bytes": 11732,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs"
+    },
+    {
+      "current_blob": "88688018617bae938184329bc70d2851f76f656f",
+      "current_bytes": 284,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+      "declared_pin": {
+        "bytes": 284,
+        "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-risc0-selected"
+      ],
+      "last_mapping_blob": "88688018617bae938184329bc70d2851f76f656f",
+      "last_mapping_bytes": 284,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs"
+    },
+    {
+      "current_blob": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+      "current_bytes": 11172,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "declared_pin": {
+        "bytes": 11172,
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "proof-risc0-selected"
+      ],
+      "last_mapping_blob": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+      "last_mapping_bytes": 11172,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+    },
+    {
+      "current_blob": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "current_bytes": 106066,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 1115,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.history",
+        "sha256": "fa41f6a8388775e56729ba6752a11aca43c4d3faffb1d5765339aa9ebc264718"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+      "declared_pin": {
+        "bytes": 104121,
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "work-threshold"
+      ],
+      "full_blob_delta": {
+        "bytes": 3529,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.patch",
+        "sha256": "bd47da713121760d44c34c07fb2aa017fbcdf6751d5ff24ea8ffb39f739ee900"
+      },
+      "last_mapping_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "last_mapping_bytes": 104121,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "current_blob": "a20a9d26a02027055f59c861a6bc3beb70876f70",
+      "current_bytes": 3525,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9",
+      "declared_pin": {
+        "bytes": 3525,
+        "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "signature-cpq1-content"
+      ],
+      "last_mapping_blob": "a20a9d26a02027055f59c861a6bc3beb70876f70",
+      "last_mapping_bytes": 3525,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs"
+    },
+    {
+      "current_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "current_bytes": 11609,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+      "declared_pin": {
+        "bytes": 11609,
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "signature-cpq1-content"
+      ],
+      "last_mapping_blob": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "last_mapping_bytes": 11609,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
+    },
+    {
+      "current_blob": "c1a5569fca04316526132148c232005c175defd3",
+      "current_bytes": 12578,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447",
+      "declared_pin": {
+        "bytes": 12578,
+        "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "storage-bep52-root"
+      ],
+      "last_mapping_blob": "c1a5569fca04316526132148c232005c175defd3",
+      "last_mapping_bytes": 12578,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs"
+    },
+    {
+      "current_blob": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+      "current_bytes": 15264,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d",
+      "declared_pin": {
+        "bytes": 15264,
+        "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-legacy-root"
+      ],
+      "last_mapping_blob": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+      "last_mapping_bytes": 15264,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs"
+    },
+    {
+      "current_blob": "12fac3738fa388a633ff1634195632b04a20ff26",
+      "current_bytes": 10447,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06",
+      "declared_pin": {
+        "bytes": 10447,
+        "sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-full-payload",
+        "model-direct-dependencies"
+      ],
+      "last_mapping_blob": "12fac3738fa388a633ff1634195632b04a20ff26",
+      "last_mapping_bytes": 10447,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "e3cfc3e57583f0fe016879c5c1d8b5123200883c870bb212ed5195df04983a06",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs"
+    },
+    {
+      "current_blob": "d94ed4545bef1ec79ebb70f7b239f5341ea1c742",
+      "current_bytes": 10027,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b",
+      "declared_pin": {
+        "bytes": 10027,
+        "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-direct-dependencies"
+      ],
+      "last_mapping_blob": "d94ed4545bef1ec79ebb70f7b239f5341ea1c742",
+      "last_mapping_bytes": 10027,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs"
+    },
+    {
+      "current_blob": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+      "current_bytes": 11176,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5",
+      "declared_pin": {
+        "bytes": 11176,
+        "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-legacy-root",
+        "storage-cell-chunks",
+        "storage-bep52-root"
+      ],
+      "last_mapping_blob": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+      "last_mapping_bytes": 11176,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs"
+    },
+    {
+      "current_blob": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+      "current_bytes": 6915,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915",
+      "declared_pin": {
+        "bytes": 6915,
+        "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-legacy-root"
+      ],
+      "last_mapping_blob": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+      "last_mapping_bytes": 6915,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs"
+    },
+    {
+      "current_blob": "eb18bccfc79019c6fe2a8231c7ad92f90991bfcd",
+      "current_bytes": 28154,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 159,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-data-availability--src--cell--store.rs.history",
+        "sha256": "7d9495298b83d35a2259d35c5851b141ab2fe704dd7c6379e86f066bb62e67fe"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a",
+      "declared_pin": {
+        "bytes": 27237,
+        "sha256": "bb95507ff80d5a0f01931098f91fc1d7d1a9985e72d49937354ec2b86a966486"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "storage-cell-chunks",
+        "storage-bep52-root"
+      ],
+      "full_blob_delta": {
+        "bytes": 1581,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-data-availability--src--cell--store.rs.patch",
+        "sha256": "268f8a227b0320fe6d93089e9bb5132e97c8e427bdede1f182d40009630b47e5"
+      },
+      "last_mapping_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "last_mapping_bytes": 27237,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "bb95507ff80d5a0f01931098f91fc1d7d1a9985e72d49937354ec2b86a966486",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+    },
+    {
+      "current_blob": "907f5b2ee663d1b0d4f4665ec941b7597dc915f4",
+      "current_bytes": 12483,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042",
+      "declared_pin": {
+        "bytes": 12483,
+        "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "migration-full-state",
+        "migration-bounded-state-history"
+      ],
+      "last_mapping_blob": "907f5b2ee663d1b0d4f4665ec941b7597dc915f4",
+      "last_mapping_bytes": 12483,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs"
+    },
+    {
+      "current_blob": "594d06db78ce4d3b3d5c417f6abe3a0a93b3df6b",
+      "current_bytes": 37947,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 292,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-pon-node--src--lib.rs.history",
+        "sha256": "873d2b5f8714cc88a1b45636823ca7d7adee625382aeced8ecfe0693786ce9ad"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d",
+      "declared_pin": {
+        "bytes": 37665,
+        "sha256": "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "transaction-root"
+      ],
+      "full_blob_delta": {
+        "bytes": 1504,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-pon-node--src--lib.rs.patch",
+        "sha256": "1b79a577b410749a39d6b702f0aafb4db63fc9428d99e1b6adda88c0c7a6ed91"
+      },
+      "last_mapping_blob": "aafd91425cbde49bbb368f47f5c4a17c3b2b85bf",
+      "last_mapping_bytes": 37665,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910",
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs"
+    },
+    {
+      "current_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "current_bytes": 51391,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16",
+      "declared_pin": {
+        "bytes": 51391,
+        "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "history-block-anchor"
+      ],
+      "last_mapping_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "last_mapping_bytes": 51391,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs"
+    },
+    {
+      "current_blob": "e3ff2fa1f3ef4600e5198a69821e1bc3614e5650",
+      "current_bytes": 9650,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1",
+      "declared_pin": {
+        "bytes": 9650,
+        "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-full-payload",
+        "model-direct-dependencies",
+        "signature-cpq1-content",
+        "migration-full-state",
+        "release-artifact",
+        "model-declared-transitive-graph"
+      ],
+      "last_mapping_blob": "e3ff2fa1f3ef4600e5198a69821e1bc3614e5650",
+      "last_mapping_bytes": 9650,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1",
+      "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs"
+    },
+    {
+      "current_blob": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+      "current_bytes": 41595,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+      "declared_pin": {
+        "bytes": 41595,
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "signature-cpq1-content",
+        "profile-byte-commitment"
+      ],
+      "last_mapping_blob": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+      "last_mapping_bytes": 41595,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+    },
+    {
+      "current_blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+      "current_bytes": 19189,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+      "declared_pin": {
+        "bytes": 19189,
+        "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "state-root"
+      ],
+      "last_mapping_blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+      "last_mapping_bytes": 19189,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+    },
+    {
+      "current_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+      "current_bytes": 32654,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+      "declared_pin": {
+        "bytes": 32654,
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "transaction-root",
+        "state-root",
+        "history-block-anchor",
+        "migration-full-state",
+        "work-threshold",
+        "migration-bounded-state-history"
+      ],
+      "last_mapping_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+      "last_mapping_bytes": 32654,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    },
+    {
+      "current_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "current_bytes": 13891,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+      "declared_pin": {
+        "bytes": 13891,
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "signature-key-identity",
+        "signature-tpq1-payload"
+      ],
+      "last_mapping_blob": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "last_mapping_bytes": 13891,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    },
+    {
+      "current_blob": "019cfc40eb58839fd5184e0731d58dd628d47259",
+      "current_bytes": 6151,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+      "declared_pin": {
+        "bytes": 6151,
+        "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "signature-tpq1-payload"
+      ],
+      "last_mapping_blob": "019cfc40eb58839fd5184e0731d58dd628d47259",
+      "last_mapping_bytes": 6151,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+      "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs"
+    },
+    {
+      "current_blob": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+      "current_bytes": 5453,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc",
+      "declared_pin": {
+        "bytes": 5453,
+        "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "release-artifact"
+      ],
+      "last_mapping_blob": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+      "last_mapping_bytes": 5453,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc",
+      "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs"
+    },
+    {
+      "current_blob": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+      "current_bytes": 15173,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 815,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-data-availability--src--cell.rs.history",
+        "sha256": "02dcd1fac951e8f038b7a316f0d6a6981f2d2ffabefc41147c2484416d0408d2"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c",
+      "declared_pin": {
+        "bytes": 14762,
+        "sha256": "af920ebe2fc0d998c5083418b6d2e312aa90e4109b84241e44ee585c656c2739"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-declared-transitive-graph"
+      ],
+      "full_blob_delta": {
+        "bytes": 3634,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-data-availability--src--cell.rs.patch",
+        "sha256": "367788314e88fcfc59ca47bc6792ac3add03c24425c144ac57a6c5b603c95e24"
+      },
+      "last_mapping_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "last_mapping_bytes": 14762,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "af920ebe2fc0d998c5083418b6d2e312aa90e4109b84241e44ee585c656c2739",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs"
+    },
+    {
+      "current_blob": "9840744362447c406d7eab7554a53f53635e748c",
+      "current_bytes": 23468,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc",
+      "declared_pin": {
+        "bytes": 23468,
+        "sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "model-declared-transitive-graph"
+      ],
+      "last_mapping_blob": "9840744362447c406d7eab7554a53f53635e748c",
+      "last_mapping_bytes": 23468,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "de64c85b8a961bf5cf3b5df2e445b9992edaa20ad818024e921fbca0c38bfacc",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs"
+    },
+    {
+      "current_blob": "ea12a52cbcadeefded2108c7682f3c90f58d3588",
+      "current_bytes": 10548,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b",
+      "declared_pin": {
+        "bytes": 10548,
+        "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "migration-bounded-state-history"
+      ],
+      "last_mapping_blob": "ea12a52cbcadeefded2108c7682f3c90f58d3588",
+      "last_mapping_bytes": 10548,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs"
+    },
+    {
+      "current_blob": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "current_bytes": 391470,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": false,
+      "current_path_history": {
+        "bytes": 1281,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-pon-node--src--store.rs.history",
+        "sha256": "9b3a19d72f7a275dae91597cc814dcf1bc6b5eb503834bc8009750ee22686915"
+      },
+      "current_raw_equals_worktree": true,
+      "current_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+      "declared_pin": {
+        "bytes": 387798,
+        "sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "migration-bounded-state-history"
+      ],
+      "full_blob_delta": {
+        "bytes": 10268,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-pin-audit-v1/changed/trillionnium--crates--trnm-pon-node--src--store.rs.patch",
+        "sha256": "e26f4e88d7b58b78e545954f3e12b1ef9f5fdbd2069b79cfc38c7f187fb5e47f"
+      },
+      "last_mapping_blob": "6ef5f01142a33eace66256dd6ecc81d34681d194",
+      "last_mapping_bytes": 387798,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "current_blob": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+      "current_bytes": 13942,
+      "current_commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "current_equals_dc42": true,
+      "current_matches_declared_pin": true,
+      "current_raw_equals_worktree": true,
+      "current_sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156",
+      "declared_pin": {
+        "bytes": 13942,
+        "sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156"
+      },
+      "declared_pin_matches_last_mapping_commit": true,
+      "declared_uses": [
+        "migration-bounded-state-history"
+      ],
+      "last_mapping_blob": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+      "last_mapping_bytes": 13942,
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "last_mapping_sha256": "afcb6583ba4367325f2ea540f389a50700a6136decddd280e34b0686abf05156",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs"
+    }
+  ],
+  "schema": "hash-use-all-31-source-pins-readonly-review-v1",
+  "source_after": {
+    "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "status": "",
+    "tree": "47b283f20c7b2afdb668316c26d098e378b4b849"
+  },
+  "source_before": {
+    "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "status": "",
+    "tree": "47b283f20c7b2afdb668316c26d098e378b4b849"
+  },
+  "unchanged_count": 25
+}

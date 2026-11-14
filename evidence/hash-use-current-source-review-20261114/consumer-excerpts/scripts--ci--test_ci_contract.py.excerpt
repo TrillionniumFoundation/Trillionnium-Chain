@@ -1,0 +1,58 @@
+3180:             '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
+3181:         ), '    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n    python3 scripts/ci/test_w1_stark_field_certificates.py\n'),
+3182:         'stark_routes_and_fields': ('repository-truth', '    python3 scripts/ci/test_w1_qrom_current_ci.py\n    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n', (
+3183:             '    python3 scripts/ci/test_w1_stark_field_certificates.py\n',
+3184:             '    python3 scripts/w1_stark_field_certificates.py\n',
+3185:             '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
+3186:             '    python3 scripts/w1_stark_route_audit.py\n',
+3187:         ), '    # Conditional iid counting does not establish the actual transcript distribution.\n    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n'),
+3188:         'conditional_sampler': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Conditional iid counting does not establish the actual transcript distribution.\n', (
+3189:             '    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n',
+3190:             '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n',
+3191:         ), '    # Current lifetime source observation is separate from historical positive replay.\n    python3 scripts/ci/test_w1_lifetime_current_observation.py\n'),
+3192:         'lifetime_current_source': ('repository-truth', '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n    # Current lifetime source observation is separate from historical positive replay.\n', (
+3193:             '    python3 scripts/ci/test_w1_lifetime_current_observation.py\n',
+3194:             '    python3 scripts/w1_lifetime_current_observation.py\n',
+3195:             '    python3 scripts/ci/test_w1_qrom_closure_current_controls.py\n',
+3196:         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+3197:         'posterior_policy': ('repository-truth',
+3198:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v\n", (
+3199:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v\n",
+3200:         ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v\n"),
+3201:         'hash_use_contract': ('repository-truth', '    python3 scripts/ci/pq_authority_surface_scan.py --summary-only\n', (
+3202:             '    python3 scripts/ci/test_hash_use_contract.py\n',
+3203:             '    python3 scripts/ci/hash_use_contract.py\n',
+3204:         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v\n"),
+3205:         'failed_campaign_diagnostics': ('repository-truth',
+3206:             '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
+3207:                 '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
+3208:                 '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+3209:                 '    python3 scripts/ci/test_read_native_campaign_attempt.py\n',
+3210:             ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
+3211:         'fixed_probability': ('repository-truth',
+3212:                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
+3213:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
+3214:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v\n",
+3215:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v\n",
+3216:             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v\n",
+3217:             '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
+3218:             '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
+3219:         ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+3220:         'joint_consensus_qualification': ('repository-truth',
+
+3308:         self.reject_command_mutations('qrom_current_source')
+3309: 
+3310:     def test_upstream_security_controls_cannot_be_skipped_or_suppressed(self):
+3311:         self.reject_command_mutations('upstream_security')
+3312: 
+3313:     def test_posterior_policy_controls_cannot_be_skipped_or_suppressed(self):
+3314:         self.reject_command_mutations('posterior_policy')
+3315: 
+3316:     def test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+3317:         self.reject_command_mutations('hash_use_contract')
+3318:     def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+3319:         self.reject_command_mutations('stark_routes_and_fields')
+3320: 
+3321:     def test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+3322:         self.reject_command_mutations('conditional_sampler')
+
