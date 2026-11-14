@@ -14662,3 +14662,22 @@ of either reviewed path. Existing source inventories remain applicable.
 These component results do not establish a latency improvement, independent
 operation, production or PQ qualification. The original four-second confirmation
 failure remains unresolved pending final exact-source protected CI.
+
+
+### 2026-11-14 current claim JSON underflow refusal
+
+The old b2bbcc95 and 9fcd3fef strict numeric controls identified a concrete
+current parser gap: a nonzero exponent could silently deserialize as signed
+zero. The selected current whole-chain claim reader now rejects that collapse
+using an exact decimal zero check after its existing finite-number check.
+Both exact signed zeros, ordinary finite values and representable subnormal
+values remain readable. Existing duplicate-key, nonfinite, exact-boolean,
+reserved-claim and descriptor-bound source controls are unchanged.
+
+The original rejection cases were adapted to all five current claim documents,
+and the original finite cases retain their meanings with signed-zero controls.
+The two controls first reproduced the current underflow acceptance; the full
+current claim test suite then passed with the minimal parser change.
+This is parser consistency hardening, not evidence of an activation bypass.
+The retired fixed 17-file/RISC0 claim gate is not reintroduced. Current HOLD,
+source identities, ownership and every qualification flag remain unchanged.
