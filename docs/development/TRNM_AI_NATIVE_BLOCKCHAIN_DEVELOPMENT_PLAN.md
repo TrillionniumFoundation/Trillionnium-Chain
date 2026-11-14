@@ -14432,3 +14432,7 @@ Independent omission/pin/mutation guards cover the snapshot test and bridge sour
 ### 2026-11-14 branch consolidation: material progress and native debt control
 
 Reviewed and integrated c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4 and ba8a5e1fad3ea0cc2012da329667792684802db2. Cooperative material parsing, hashing and numeric checkpoints retain the first owner cancellation, original canonical material bytes, and legacy callback entry points. The original nonignored CPU-debt recovery test retains its actual verifier charge, shared meter, 2-second request budget, bounded preload/attack/recovery windows, nine blocks and independent transaction confirmation. Linux observed all nine material controls and the single original debt test with zero failures or ignored tests; target strict Clippy passed. These component observations do not qualify resource fairness, production activation or permissionless attacker depletion. Source omission, pin deletion and byte mutation are independently rejected.
+
+### 2026-11-14 branch consolidation: rollback assumption counterexamples
+
+Integrated 2f2dec9de8bd464c83d5c7769abf2f76a2ca950a: original negative controls show that co-restored witness state can answer a fresh challenge and that a reused challenge permits an old authentic receipt. Authentication alone is not independent anti-rollback authority. Existing four-selector root execution and recovery-floor source controls remain intact; both oracle reference and tests are explicit required sources. No security qualification or activation is inferred.

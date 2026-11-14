@@ -170,10 +170,12 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["node_activated"])
 
     def test_consolidation_controls_require_each_path_and_pin(self):
-        # Independent literals preserve the selected five-path review scope.
+        # Independent literals preserve the selected review scope.
         paths = (
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
@@ -197,6 +199,8 @@ class CorpusGateTests(unittest.TestCase):
         paths = (
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
@@ -1332,6 +1336,42 @@ class CorpusGateTests(unittest.TestCase):
             'trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs',
             'trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs',
             'trillionnium/crates/trnm-pon-node/tests/public_v3_paid_cpu_debt_recovery.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_rollback_oracle_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'scripts/ci/pq_external_rollback_oracle.py',
+            'scripts/ci/test_pq_external_rollback_oracle.py',
         )
         self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
         original = copy.deepcopy(self.manifest)

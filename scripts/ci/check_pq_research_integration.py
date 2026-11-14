@@ -1168,11 +1168,13 @@ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.js
  'scripts/w1_p3_sampling_audit.py',
  'scripts/w1_risc0_deep_event_audit.py'))
 
-# Explicitly retain the five reviewed consolidation controls.
+# Explicitly retain the reviewed consolidation controls.
 # These source pins do not grant runtime or production qualification.
 CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
     "scripts/ci/chain_system_security.py",
     "scripts/ci/test_chain_system_security.py",
+    "scripts/ci/pq_external_rollback_oracle.py",
+    "scripts/ci/test_pq_external_rollback_oracle.py",
     "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
     "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
@@ -1324,6 +1326,13 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs',
     'trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs',
     'trillionnium/crates/trnm-pon-node/tests/public_v3_paid_cpu_debt_recovery.rs',
+))
+
+
+# Audited reusable components; source integrity never implies activation.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'scripts/ci/pq_external_rollback_oracle.py',
+    'scripts/ci/test_pq_external_rollback_oracle.py',
 ))
 
 class IntegrityError(ValueError):
