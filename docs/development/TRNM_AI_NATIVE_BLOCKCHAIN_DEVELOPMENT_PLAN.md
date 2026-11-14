@@ -14820,3 +14820,36 @@ the actual source-corpus reader still reports HOLD_NO_GO.
 ### 2026-11-14 root composition: original NPQ6 parallel controls
 
 Reviewed and integrated all five source seams from 4e0943b7. Both original 516382d8 test modules are byte-identical, and only test registrations and sibling fixture visibility change in existing Rust files. Actual 1/2/4/8-worker lifetimes, reverse signature completion versus canonical state errors, partial spawn/panic/cancel joins, original 64/65 budget, all seven durable tables, cold reopen and PNQ2 loopback replay remain asserted. Three M06 controls passed on Mac/Linux and the Node control passed on Linux with no skips; strict production libraries passed. Known pre-existing test Clippy errors retain their original failure record and await a separately reviewed fixture/default-initialization repair. No production executor, workload, deadline, budget or acceptance claim changes in this merge.
+
+## N11 retained read-only throughput and cost coverage (2026-11-14)
+
+The selected reader and its complete original control file come from
+e6549a193d60a6b0fefd2377432aee4e910c6bb2 (direct parent
+630cd5ee1dc3db345d0c85c5a41c427013451fb3). The 543-line production reader
+is retained byte for byte. It binds a fixed source receipt before and after
+the observation, deduplicates business identities, retains the original three
+rounds and 30-second phase window, accounts for failed and unknown observations,
+and keeps nested CPU scopes and point RSS observations separate. It does not
+turn ACKs, unknown costs, or local source consistency into completion or
+production qualification.
+
+The current strict phase reader remains unchanged. Of the original 26 test
+methods, 25 remain byte identical. One unknown/ACK-only method now directly
+exercises the same finite_business_observation helper that production
+analyze calls; all original assertions are retained. A new full-analyzer
+control requires rejection for the four incomplete claimed-confirmation
+variants. The initial original-suite failure is retained in the audit evidence:
+the old whole-reader successful-unknown expectation is not asserted against
+the stricter current V4 namespace. The resulting 27 controls pass.
+
+The repository-truth lane executes this control file exactly once. Its
+independent command inventory checks omission, duplication, stubbing, comments
+and lane movement. An independent literal source roster binds both selected
+files and the unchanged bounded JSON reader; omission and byte-mutation
+counterexamples preserve the current HOLD state. No native or operator
+authority, hardware observation, throughput capacity claim, approved profile,
+cryptographic acceptance, or node activation is added.
+
+### 2026-11-14 root composition: N11 throughput and cost evidence
+
+Integrated the selected read-only reader at 09e5ab31. Its 543-line runtime is byte-identical to e6549a19. Twenty-five original methods are unchanged; one preserves all original unknown/no-credit assertions on the actual production helper, and the additional full-analyzer control rejects the four incomplete claimed-confirmation forms under the unchanged current V4 phase contract. Both selected files and their existing bounded JSON dependency are independently required and pinned; the repository-truth command is required once. Initial old-fixture failures remain retained. These synthetic reader controls make no throughput capacity, native execution, installed Host or production qualification claim.
