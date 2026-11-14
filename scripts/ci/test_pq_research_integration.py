@@ -2419,5 +2419,40 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+    def test_rust_token_reader_sources_cannot_omit_or_mutate(self):
+        # Literal paths are independent of the implementation's required roster.
+        dependencies = (
+            'scripts/ci/rust_source_tokens.py',
+            'scripts/ci/test_rust_source_tokens.py',
+            'scripts/ci/ci_job.sh',
+        )
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b"changed selected original control source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
 if __name__ == "__main__":
     unittest.main()

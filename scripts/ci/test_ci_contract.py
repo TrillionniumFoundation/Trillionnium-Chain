@@ -709,6 +709,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         paths = (
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
             'scripts/ci/test_throughput_cost_coverage.py',
+            'scripts/ci/test_rust_source_tokens.py',
             'scripts/ci/test_read_validated_business_goodput.py',
             'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
             'scripts/ci/test_run_w1_reused_cost_v3.py',

@@ -1631,6 +1631,14 @@ ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS
 
+# Independently selected original controls remain source-bound without qualification.
+RUST_TOKEN_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/rust_source_tokens.py',
+    'scripts/ci/test_rust_source_tokens.py',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= RUST_TOKEN_READER_REQUIRED_PATHS
+
 class IntegrityError(ValueError):
     pass
 
