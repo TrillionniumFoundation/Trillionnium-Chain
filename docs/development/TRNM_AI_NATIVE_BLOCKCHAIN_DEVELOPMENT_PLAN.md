@@ -14428,3 +14428,36 @@ The account aggregate observation now reads checkpoint, authenticated root and e
 The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
 
 Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+
+## 2026-11-14: retain the once-call PQ-account CheckedConfig boundary (042e)
+
+Source review compares incoming 042e3d4a22a444c028074ddd21561a6153205370
+against its actual base 7e044b65454f4c9ea505591727332acffb33e7e5 and the
+fixed consolidation source 11bdc4cce16fc7d550d361f5cc863b061204f61b. The
+two selected M06 PQ-account implementation/test files at the fixed source
+are byte-identical to that original base. This port takes both complete
+original files without changing their hashes.
+
+The private CheckedConfig borrows one immutable Config and Profile for
+one invocation. A complete current configuration check precedes reuse
+inside the batch; the borrow is never persisted or cached across calls.
+Current authority resolution, account state reads, every actual ML-DSA
+verification and its fee debit, complete parent validation, ordered error
+precedence, parallel worker joins, and cancellation checks remain present.
+No signed profile, protocol identifier, stored schema, native activation,
+default route, budget threshold, or qualification flag changes.
+
+Native validation on the independent macOS worktree used the fixed lock
+graph with Rust 1.95.0: all 11 PQ-account tests passed, including all four
+original config_check controls and the seven retained current controls.
+No tests were ignored. Strict release M06 library/test Clippy with
+-D warnings passed. Source hashes were compared with the incoming Git
+blobs again after formatting and tests. These are PQ-account controls,
+not a claim about the separate legacy FromZero/W1 four-second deadline:
+that failing workload uses the classic account route and native_pq_v2=None,
+so this optimization does not enter its execution path.
+
+Only the existing current corpus pins for these two reviewed files and
+this plan appendix are refreshed. Historical proofs, source revisions,
+profile contracts, and all HOLD/false qualification state remain unchanged.
