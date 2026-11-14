@@ -662,6 +662,8 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-w1-qrom-semantics-20261107/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+    "evidence/pon-w1-qrom-semantics-current-20261114/report.json",
+    "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
 ))
 # Historical fixture controls must retain the original exact source contract.
 # Their success does not accept the current worktree as that historical source.

@@ -497,7 +497,7 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix='semantics-correspondence-')
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        for name in (gate.HISTORICAL_SEMANTICS, gate.REVIEWED_LOCK):
+        for name in (gate.HISTORICAL_SEMANTICS, *(row[1] for row in gate.REVIEWED_LOCKS)):
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes((self.repository / name).read_bytes())
@@ -511,7 +511,12 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
     def test_actual_report_has_only_the_reviewed_lock_provenance_delta(self):
         historical = (self.root / gate.HISTORICAL_SEMANTICS).read_bytes()
         result = gate.check_semantics(self.root, self.current)
-        self.assertEqual(result['only_changed_json_pointer'], '/provenance/lock_checks/2/sha256')
+        self.assertEqual(result['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3')
+        self.assertEqual(result['only_changed_json_pointers'],
+                         ['/provenance/lock_checks/0/sha256', '/provenance/lock_checks/2/sha256'])
+        self.assertEqual([(row['path'], row['historical_sha256'], row['current_sha256'])
+                          for row in result['reviewed_locks']],
+                         [(path, old, current) for _, path, old, current in gate.REVIEWED_LOCKS])
         self.assertTrue(result['all_other_report_fields_identical'])
         self.assertFalse(result['historical_report_bytes_rewritten'])
         self.assertFalse(result['new_native_execution_or_dependency_equivalence_proved'])
@@ -519,35 +524,54 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
         self.assertEqual((self.root / gate.HISTORICAL_SEMANTICS).read_bytes(), historical)
 
     def test_any_other_report_field_change_is_refused(self):
-        value = json.loads(self.current.read_text())
-        value['unreviewed_extra_claim'] = True
-        self.current.write_text(json.dumps(value))
-        self.reject()
+        for change in ('extra_claim', 'boolean_integer_alias', 'integer_float_alias'):
+            with self.subTest(change=change):
+                value = json.loads(self.actual_bytes)
+                if change == 'extra_claim':
+                    value['unreviewed_extra_claim'] = True
+                elif change == 'boolean_integer_alias':
+                    value['qualification']['end_to_end_qrom_bound_established'] = 0
+                else:
+                    value['guest_binary']['binary_bytes'] = float(
+                        value['guest_binary']['binary_bytes'])
+                self.current.write_text(json.dumps(value))
+                self.reject()
 
     def test_missing_or_relabelled_reviewed_lock_entry_is_refused(self):
-        value = json.loads(self.actual_bytes)
-        value['provenance']['lock_checks'].pop(2)
-        self.current.write_text(json.dumps(value))
-        self.reject()
-        value = json.loads(self.actual_bytes)
-        value['provenance']['lock_checks'][2]['path'] = 'unrelated/Cargo.lock'
-        self.current.write_text(json.dumps(value))
-        self.reject()
+        for index in (0, 2):
+            with self.subTest(index=index):
+                value = json.loads(self.actual_bytes)
+                value['provenance']['lock_checks'].pop(index)
+                self.current.write_text(json.dumps(value))
+                self.reject()
+                value = json.loads(self.actual_bytes)
+                value['provenance']['lock_checks'][index]['path'] = 'unrelated/Cargo.lock'
+                self.current.write_text(json.dumps(value))
+                self.reject()
 
     def test_changed_other_lock_sha_is_refused(self):
-        value = json.loads(self.actual_bytes)
-        value['provenance']['lock_checks'][0]['sha256'] = '0' * 64
-        self.current.write_text(json.dumps(value))
-        self.reject()
+        for index in (0, 1, 2):
+            with self.subTest(index=index):
+                value = json.loads(self.actual_bytes)
+                value['provenance']['lock_checks'][index]['sha256'] = '0' * 64
+                self.current.write_text(json.dumps(value))
+                self.reject()
 
     def test_changed_current_lock_bytes_cannot_be_relabelled_in_report(self):
-        path = self.root / gate.REVIEWED_LOCK
-        changed = path.read_bytes() + b'\n'
-        path.write_bytes(changed)
-        value = json.loads(self.actual_bytes)
-        value['provenance']['lock_checks'][2]['sha256'] = hashlib.sha256(changed).hexdigest()
-        self.current.write_text(json.dumps(value))
-        self.reject()
+        for index, name, _, _ in gate.REVIEWED_LOCKS:
+            with self.subTest(index=index, path=name):
+                path = self.root / name
+                original = path.read_bytes()
+                try:
+                    changed = original + b'\n'
+                    path.write_bytes(changed)
+                    value = json.loads(self.actual_bytes)
+                    value['provenance']['lock_checks'][index]['sha256'] = hashlib.sha256(changed).hexdigest()
+                    self.current.write_text(json.dumps(value))
+                    self.reject()
+                finally:
+                    path.write_bytes(original)
+                    self.current.write_bytes(self.actual_bytes)
 
     def test_historical_report_bytes_are_frozen_even_for_json_whitespace(self):
         path = self.root / gate.HISTORICAL_SEMANTICS
@@ -559,7 +583,7 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
                    'check-semantics', '--root', str(self.root), '--output', str(self.current)]
         first = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)
         self.assertEqual(first.returncode, 0, first.stderr)
-        self.assertEqual(json.loads(first.stdout)['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE2')
+        self.assertEqual(json.loads(first.stdout)['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3')
         value = json.loads(self.actual_bytes)
         value['unreviewed_extra_claim'] = True
         self.current.write_text(json.dumps(value))

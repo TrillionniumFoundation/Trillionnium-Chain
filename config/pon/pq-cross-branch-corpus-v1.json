@@ -1691,7 +1691,7 @@
     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
-    "scripts/ci/check_pq_research_integration.py": "42fd8af9932cd6f703491638da98122c8ea8d633",
+    "scripts/ci/check_pq_research_integration.py": "b168ab091e68137a15d737b6ff015ad514af220e",
     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
     "scripts/ci/check_sqlite_build_requalification.py": "54440d8968cf5eee063605aabf81ea0f4438daf0",
     "scripts/ci/ci_job.sh": "d6f594a0e981c5cdd0568d661c80fba35bc8bb6c",
@@ -1800,12 +1800,12 @@
     "scripts/ci/test_w1_postwin_identity.py": "fd5c15900d7f3f098c6bbb69f7cadac94f540d9f",
     "scripts/ci/test_w1_proof_latency_readback.py": "285c70225d9bc84e59068b25f8730f2a3bb4047a",
     "scripts/ci/test_w1_qrom_closure_controls.py": "cc4df9f7ff564e34d51e61311fd99e12c049c677",
-    "scripts/ci/test_w1_qrom_closure_current_controls.py": "816dc81feca4e7b2a37e465f7d761725f1a89572",
-    "scripts/ci/test_w1_qrom_current_ci.py": "3ab5b3120a0d6ef508a051525e81140aa13d5f5a",
+    "scripts/ci/test_w1_qrom_closure_current_controls.py": "78fe8a95312fb7be6c13df517e799693039a2045",
+    "scripts/ci/test_w1_qrom_current_ci.py": "3575c59d6224dedf9da0d3f8ede32fbbba4e0eab",
     "scripts/ci/test_w1_qrom_current_implementation_audit.py": "44bca25661fec0fce3a7e1dfcd77e829cb0adbde",
     "scripts/ci/test_w1_qrom_historical_fixture.py": "50178265d145e700d0cb374790f2d2d4bf482055",
     "scripts/ci/test_w1_qrom_implementation_audit.py": "d93673dc175b2ec641197e7226752605c8c98f89",
-    "scripts/ci/test_w1_qrom_semantics_audit.py": "663fefbd94382bd5b56c9af06ec2afcb000b4cf5",
+    "scripts/ci/test_w1_qrom_semantics_audit.py": "5898fabbe0a40b2c59e420aa84269a1a7116c1fc",
     "scripts/ci/test_w1_qrom_workflow_gate.py": "96ef5939efc69a5d44bf3447d2509fec5372d67f",
     "scripts/ci/test_w1_receiver_real.py": "a4e0a97a94da5cb376944a46b800e6185d1fbd6c",
     "scripts/ci/test_w1_risc0_deep_event_audit.py": "80e05f1ada75521946225d7fd2e8260688074ee2",
@@ -1815,8 +1815,8 @@
     "scripts/ci/test_w1_upstream_security.py": "1f986e06950b2c501d0babd6ea4f4233ed549c4e",
     "scripts/ci/test_w1_v2_current_stage_gate.py": "ebd2f17581466ef8f293eae52e50c7d72b90d631",
     "scripts/ci/w1_qrom_closure_controls.py": "e50aff85289b7e6fa6ed1ccf45683d807e7ef9fd",
-    "scripts/ci/w1_qrom_closure_current_controls.py": "bb47591f471b3b7554ce8997f487568d8de0f64d",
-    "scripts/ci/w1_qrom_current_ci.py": "c7f6a7b72f861d3698bc0fa63447e30224758ac4",
+    "scripts/ci/w1_qrom_closure_current_controls.py": "2ebebcbb3847113f03fc0916722b870568c6799b",
+    "scripts/ci/w1_qrom_current_ci.py": "efe885ee30149880f7d2833de095c8434ce42324",
     "scripts/ci/w1_qrom_supplemental_controls.py": "9ec7ed08cad550491940d4a9880cea2149ac450f",
     "scripts/ci/w1_upstream_security.py": "a28bc572dcf6af3d01af12b57f088784cd085509",
     "scripts/ci/w1_v2_controls_gate.py": "e7f18f9399dd0a647ade02d48091f89689c6009c",
@@ -2599,7 +2599,9 @@
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs": "bdb9dd230f8ba0c3f8a78e4d94545d791ca7b32f",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs": "795418bfb07535ec3b2956ba844034f0cca00e3f",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs": "fde3c91122f6e9371d4e9488be4661a3ff3dae3a",
-    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs": "f208809419da051d312b8a09f7ca12e556cb89d6"
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs": "f208809419da051d312b8a09f7ca12e556cb89d6",
+    "evidence/pon-w1-qrom-semantics-current-20261114/README.md": "bceffb1db824f79cfa6d1b57b4aafb76ffe3732c",
+    "evidence/pon-w1-qrom-semantics-current-20261114/report.json": "31d94f63bf522a5c5a9fcb21c82f662268cefcdd"
   },
   "pql11b_module_ancestry": {
     "exact_isolated_failures": 0,
@@ -4976,7 +4978,9 @@
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
-    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs"
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+    "evidence/pon-w1-qrom-semantics-current-20261114/README.md",
+    "evidence/pon-w1-qrom-semantics-current-20261114/report.json"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {

@@ -276,18 +276,34 @@ class W1SemanticsAuditTests(unittest.TestCase):
         self.assertIs(self.report['kernel_release_match']['kernel_source_to_binary_rebuilt'], False)
         # A current lock observation has a separate fixture. Retain the old
         # report as an exact historical observation, not a passing current cmp.
-        current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
+        current_path = 'evidence/pon-w1-qrom-semantics-current-20261114/report.json'
+        prior_current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
         historical_path = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
         current_raw = (ROOT / current_path).read_bytes()
+        prior_current_raw = (ROOT / prior_current_path).read_bytes()
         historical_raw = (ROOT / historical_path).read_bytes()
         encoded = (json.dumps(self.report, indent=2, sort_keys=True) + '\n').encode()
         self.assertEqual(AUDIT.sha256(current_raw),
+                         '5101f65f58a7bb067654191126fc385780623fb77ff592035bd776777fb8364f')
+        self.assertEqual(AUDIT.sha256(prior_current_raw),
                          '129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe')
         self.assertEqual(AUDIT.sha256(historical_raw),
                          '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221')
         self.assertEqual(encoded, current_raw)
         self.assertNotEqual(encoded, historical_raw)
+        self.assertNotEqual(encoded, prior_current_raw)
+        prior_current = json.loads(prior_current_raw)
+        self.assertEqual(prior_current['provenance']['lock_checks'][0]['sha256'],
+                         '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
+        prior_current['provenance']['lock_checks'][0]['sha256'] = (
+            '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
+        self.assertEqual((json.dumps(prior_current, indent=2, sort_keys=True) + '\n').encode(),
+                         encoded)
         historical = json.loads(historical_raw)
+        self.assertEqual(historical['provenance']['lock_checks'][0]['sha256'],
+                         '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef')
+        historical['provenance']['lock_checks'][0]['sha256'] = (
+            '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b')
         self.assertEqual(historical['provenance']['lock_checks'][2]['sha256'],
                          'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f')
         historical['provenance']['lock_checks'][2]['sha256'] = (

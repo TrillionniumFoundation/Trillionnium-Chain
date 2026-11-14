@@ -136,8 +136,15 @@ class CurrentCiTests(unittest.TestCase):
         ci.validate_drift(self.drift, self.contract, self.legacy)
         self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
         self.assertEqual(self.drift['historical_exit_code'], 2)
-        self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
-                         [11172, 32654])
+        self.assertEqual(
+            [(row['path'], row['observed_bytes'], row['observed_sha256'])
+             for row in self.drift['selected_source_differences']],
+            [('formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs', 11172,
+              '5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7'),
+             ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock', 46018,
+              '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
+             ('trillionnium/crates/trnm-protocol/src/pon_wire.rs', 32654,
+              'ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b')])
 
     def test_named_runner_records_every_real_start_and_success(self):
         report, roster = self.execute_fixture()
@@ -207,11 +214,19 @@ class CurrentCiTests(unittest.TestCase):
         failed = json.loads((self.temp / 'historical-drift.json').read_bytes())
         self.assertEqual(failed['classification'], 'UNCLASSIFIED_HISTORICAL_RESULT')
         self.assertEqual((self.temp / 'historical-on-current.stderr.log').read_bytes(), fake.stderr)
-        for mutation in ('missing', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
+        for mutation in ('missing', 'duplicate', 'lock_digest', 'wrong_reason',
+                         'exit_zero', 'old_source', 'scope'):
             with self.subTest(mutation=mutation):
                 report = deepcopy(self.drift)
                 if mutation == 'missing':
                     report['selected_source_differences'].pop()
+                elif mutation == 'duplicate':
+                    report['selected_source_differences'].append(
+                        deepcopy(report['selected_source_differences'][0]))
+                elif mutation == 'lock_digest':
+                    lock = next(row for row in report['selected_source_differences']
+                                if row['path'].endswith('/w1_v2_verifier/Cargo.lock'))
+                    lock['observed_sha256'] = '0' * 64
                 elif mutation == 'wrong_reason':
                     report['historical_result']['reason'] = 'unrelated missing file'
                 elif mutation == 'exit_zero':
@@ -222,6 +237,18 @@ class CurrentCiTests(unittest.TestCase):
                     report['historical_result']['qualification']['security_bits_quantum'] = 128
                 with self.assertRaises(ci.ObservationError):
                     ci.validate_drift(report, self.contract, self.legacy)
+        # Even mutually consistent metadata/report edits cannot hide the new
+        # reviewed lock delta and restore the obsolete two-change allowance.
+        current = deepcopy(self.contract)
+        lock_path = 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock'
+        original = next(row for row in self.legacy['project_files'] if row['path'] == lock_path)
+        current['project_files'] = [deepcopy(original) if row['path'] == lock_path else row
+                                    for row in current['project_files']]
+        report = deepcopy(self.drift)
+        report['selected_source_differences'] = [
+            row for row in report['selected_source_differences'] if row['path'] != lock_path]
+        with self.assertRaisesRegex(ci.ObservationError, 'selected-byte differences lost'):
+            ci.validate_drift(report, current, self.legacy)
 
     def test_source_checks_keep_candidate_and_historical_identities_separate(self):
         workflow = (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text()
