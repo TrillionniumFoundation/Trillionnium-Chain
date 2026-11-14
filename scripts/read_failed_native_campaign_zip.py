@@ -576,7 +576,10 @@ def summarize(path, expected_sha256, expected_head, expected_tree, run_id, artif
                     "ORIGINAL_PREPARATION_REQUIRED")
             readback_name = f"{prefix}-phase-readback.json"
             readback = archive.json(readback_name)
-            require(readback.get("schema") == "pon-public-v3-multiprocess-phase-derivation-v3"
+            # Each named derivation is replayed against the exact original raw
+            # report below; the new projection grants no native authority.
+            require(readback.get("schema") in ("pon-public-v3-multiprocess-phase-derivation-v3",
+                                               "pon-public-v3-multiprocess-phase-derivation-v4")
                     and readback.get("input", {}).get("sha256") == identity["sha256"]
                     and readback.get("input", {}).get("bytes") == identity["bytes"],
                     "ORIGINAL_READBACK_INPUT_MISMATCH")

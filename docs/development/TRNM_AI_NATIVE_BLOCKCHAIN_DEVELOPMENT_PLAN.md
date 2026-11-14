@@ -14597,3 +14597,7 @@ Integrated reviewed commit 83612992abd90de344be699e8cf1a90e609480f5. The origina
 ### 2026-11-14 final reviewed branch source roster
 
 An independent literal omission/pin/mutation roster now covers the complete reviewed source/configuration/test paths of the eight selected component merges, including r20 caller grants, exact PQ outbound, four-domain and collector/reconciliation readers, peer prewrite fences, Q4 advice and native controls. These are source-preservation controls, not a claim that archived branches all share one protocol or that component execution qualifies the final candidate. Historical variants and unselected contracts retain distinct dispositions. Final exact-source CI and the original confirmation budget remain mandatory.
+
+### 2026-11-14 root review: business-cohort-reader
+
+Integrated reviewed commit 3e9fc12e724a40d1d6c880706a9c2bd3eccb0eb5. Original scheduled1/5/9-second business cohort accounting retains the single30-second deadline, missing/failed denominators and all false authority fields. V1/V2/V3 historical derivations stay explicit; the failed ZIP consumer independently replays either V3 or V4. All154 selected original and new controls passed, with initial compatibility failures retained. No native campaign or four-second budget was changed. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
