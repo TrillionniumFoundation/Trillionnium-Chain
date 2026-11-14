@@ -301,7 +301,40 @@ else:
         self.assertFalse(marker.exists())
         self.assertEqual(result["result"]["final_echild"]["errno"], 10)
         self.assertEqual(len(result["result"]["wait4_records"]), 1)
-        self.assertEqual(result["result"]["root_returncode"], 125)
+        record = result["result"]
+        row = record["wait4_records"][0]
+        self.assertEqual(record["cause"], "launch-error")
+        self.assertEqual(record["error"], "OSError: actual post-fork proc read fault control")
+        self.assertFalse(record["records_truncated"])
+        self.assertTrue(collector.same_identity(row["identity_before_reap"], record["root_identity"]))
+        self.assertEqual(row["identity_before_reap"]["parent"], record["collector_identity"]["pid"])
+        self.assertEqual(row["returncode"], record["root_returncode"])
+        status = row["wait4_status"]
+        self.assertEqual(os.waitstatus_to_exitcode(status), record["root_returncode"])
+        events = [json.loads(line) for line in (out / "events.jsonl").read_text().splitlines()]
+        self.assertFalse(any(event["kind"] == "root-exec-released" for event in events))
+        cleanup = [event for event in events
+                   if event["kind"] == "cleanup-started" and event["value"]["cause"] == "launch-error"]
+        self.assertEqual(len(cleanup), 1)
+        if os.WIFEXITED(status):
+            self.assertEqual(os.WEXITSTATUS(status), 125)
+            self.assertEqual(row["waitid_si_code"], os.CLD_EXITED)
+            self.assertEqual(row["waitid_si_status"], 125)
+        else:
+            self.assertTrue(os.WIFSIGNALED(status))
+            signum = os.WTERMSIG(status)
+            self.assertIn(signum, (signal.SIGTERM, signal.SIGKILL))
+            self.assertEqual(row["returncode"], -signum)
+            self.assertEqual(row["waitid_si_code"], os.CLD_KILLED)
+            self.assertEqual(row["waitid_si_status"], signum)
+            sent = [event for event in events
+                    if event["kind"] == "signal"
+                    and event["value"]["signal"] == signum
+                    and event["value"]["outcome"] == "sent"
+                    and collector.same_identity(event["value"]["identity"], record["root_identity"])]
+            self.assertTrue(sent, "the recorded root signal must come from this collector's cleanup")
+            self.assertTrue(any(cleanup[0]["monotonic_ns"] <= event["monotonic_ns"]
+                                <= row["reaped_monotonic_ns"] for event in sent))
         self.assertFalse(result["result"]["root_exec_released"])
         self.assertFalse(result["command_success"])
         self.assertFalse(result["collector_wait_domain_reaped"])
