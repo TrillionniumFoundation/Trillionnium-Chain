@@ -14544,3 +14544,19 @@ Integrated reviewed commit 50759539544c78a16aa66c2b1a6d8a51acdeace1. Original pa
 ### 2026-11-14 root review: four-domain-review
 
 Integrated reviewed commit 0d584032b2727a52105efbeb1407d7a92abbad18. The original bounded four-domain material reader retains V1 controls and signed V3 parent/NoUpdate checks. All140 original conformance controls passed under the exact locked Python dependencies. Missing environment/closure failures remain recorded. Material review does not establish actual operator independence or execution/installation authority. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+## 2026-11-14 final audit artifact, sealed handoff and Q4 controls
+
+The audit query now reads both export and index through a fresh held Unix descriptor with NOFOLLOW, NONBLOCK and CLOEXEC. It requires a single-link locally owned regular file without group/other writes, a nonblocking shared lock, full named/held identity before and after the bounded read, at most 64 MiB, valid UTF-8 and at most 1 MiB per line. A descriptor-bound MAX+1 stream limit also rejects growth after stat. Pretty JSON and the original missing-file error are preserved. This applies the old 871ade83 bounds to the current audit seam without replacing typed worker journals or granting execution authority.
+
+The original 360556e9 sealed-object change publishes an O_RDONLY description by dup3 onto the originally reserved descriptor number with CLOEXEC. Every subsequent recheck retains exact device/inode/size/uid/mode/mtime/ctime, all existing seals and the read-only access-mode check. Current metadata-only refusal controls remain unchanged; a rejected write cannot silently refresh the identity.
+
+The complete original all-32-slot lifecycle control and three finite native continuity/reorganization controls from 462306a2 are retained. Two original long maintenance campaigns remain explicitly ignored and were not executed or counted. The independent signed maintenance reentry/forecast integration is owned by its separate reviewed port.
+
+Exact Linux execution passed 23 controls: eight audit artifact controls, all eleven sealed-object controls, the all-32-slot control and three native continuity controls (zero ignored in those executions). Worker and Node all-target/all-feature strict Clippy and fmt passed with the locked graph. macOS passed the seven applicable artifact controls, the 32-slot control and strict worker Clippy. The Linux tested source was b6e4eb38 plus the separately verified two bounded-log/no-gain test files and these six exact files; source bytes were unchanged after every command. No full final-candidate or long-campaign claim is made.
+
+Original patch-context and driver-print failures are retained. The first Linux driver stopped before patch application because serialized git-diff bytes differed; the next run verified both prior full-file SHA-256 values and the exact dirty-path whitelist before applying the fixed patch. No failed run was relabeled. Independent literal omission/pin/mutation controls cover all six files. Production and cryptographic qualification remain false.
+
+### 2026-11-14 root review: final-file-and-q4-controls
+
+Integrated reviewed commit a0fa27a8160a339fbcf9315beabc5e4f6d2c17d8. The bounded artifact reader, readonly sealed handoff and original Q4/32-slot native controls passed all23 selected Linux controls, strict worker/Node Clippy and original format gate. Eight applicable macOS controls passed. Two original ignored long campaigns were not run or counted. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.

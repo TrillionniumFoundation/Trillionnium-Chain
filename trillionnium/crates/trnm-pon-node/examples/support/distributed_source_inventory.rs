@@ -10830,6 +10830,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

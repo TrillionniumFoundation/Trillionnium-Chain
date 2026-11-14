@@ -2,13 +2,14 @@
 use super::execution_wire::{FileIdentity, MAX_PROGRAM_BYTES};
 use super::frontier::{invalid, Digest32, Result};
 use rustix::fs::{
-    fchmod, fcntl_add_seals, fcntl_get_seals, memfd_create, MemfdFlags, Mode, SealFlags,
+    fchmod, fcntl_add_seals, fcntl_get_seals, fcntl_getfl, memfd_create, MemfdFlags, Mode, OFlags,
+    SealFlags,
 };
-use rustix::io::{fcntl_getfd, fcntl_setfd, FdFlags};
+use rustix::io::{dup3, fcntl_getfd, fcntl_setfd, DupFlags, FdFlags};
 use sha2::{Digest, Sha256};
 use std::fs::{File, OpenOptions};
 use std::io::Write;
-use std::os::fd::{AsRawFd, RawFd};
+use std::os::fd::{AsRawFd, OwnedFd, RawFd};
 use std::os::unix::fs::{FileExt, MetadataExt, OpenOptionsExt};
 use std::path::Path;
 
@@ -116,11 +117,26 @@ impl Sealed {
         {
             return Err(invalid("M15 immutable descriptor/hash binding"));
         }
-        Ok(Self {
-            file,
+        // A denied write to an O_RDWR sealed memfd can still update mtime and
+        // ctime before the kernel checks F_SEAL_WRITE. Retain every identity
+        // check by publishing only an O_RDONLY description instead. Keep the
+        // owned descriptor number: DataBuilder reserves it in LaunchAttempt
+        // before writing the final handoff. dup3 atomically replaces that live
+        // descriptor without a close/reallocate race and preserves CLOEXEC.
+        let read_only = open_descriptor_path(format!("/proc/self/fd/{}", file.as_raw_fd()))?;
+        if actual != identity(&read_only)? {
+            return Err(invalid("M15 sealed read-only object changed"));
+        }
+        let mut held: OwnedFd = file.into();
+        dup3(&read_only, &mut held, DupFlags::CLOEXEC)?;
+        drop(read_only);
+        let sealed = Self {
+            file: File::from(held),
             identity: actual,
             digest: expected,
-        })
+        };
+        sealed.recheck()?;
+        Ok(sealed)
     }
 
     pub fn from_file(
@@ -221,7 +237,9 @@ impl Sealed {
     /// snapshot. Even a rejected write can advance memfd mtime/ctime; the
     /// complete captured identity must still match before any use.
     pub fn recheck(&self) -> Result<()> {
-        if self.identity != identity(&self.file)? || !fcntl_get_seals(&self.file)?.contains(seals())
+        if self.identity != identity(&self.file)?
+            || !fcntl_get_seals(&self.file)?.contains(seals())
+            || (fcntl_getfl(&self.file)? & OFlags::ACCMODE) != OFlags::RDONLY
         {
             return Err(invalid("M15 sealed object identity/seals changed"));
         }

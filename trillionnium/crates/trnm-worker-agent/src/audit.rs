@@ -1,3 +1,12 @@
+#[cfg(unix)]
+mod artifact;
+#[cfg(not(unix))]
+mod artifact {
+    pub(super) fn read(_path: &std::path::Path) -> anyhow::Result<String> {
+        anyhow::bail!("safe worker audit artifact reads are unavailable on this platform")
+    }
+}
+
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -532,13 +541,13 @@ pub(crate) fn handle_query_audit(
     }
 
     let mut exports = Vec::new();
-    for line in fs::read_to_string(&output_file)?.lines() {
+    for line in artifact::read(&output_file)?.lines() {
         if line.trim().is_empty() {
             continue;
         }
         exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
     }
-    let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
+    let index: AuditExportIndex = serde_json::from_str(&artifact::read(&index_file)?)?;
     validate_audit_export_index(&index, exports.len())?;
 
     let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
