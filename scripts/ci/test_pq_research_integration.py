@@ -1678,5 +1678,89 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["cryptographic_acceptance"], False)
         self.assertIs(result["node_activated"], False)
 
+    def test_final_reviewed_branch_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            '.github/workflows/pon-recent-batch-acceptance.yml',
+            'config/pon/applicability-v1.json',
+            'config/pon/public-resource-profile-vectors-v1.json',
+            'docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md',
+            'docs/security/PQ_DURABLE_OUTBOUND_V1.md',
+            'formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json',
+            'formal/pon-native-fullpath-v1/collect_native.py',
+            'formal/pon-native-fullpath-v1/test_collect_native.py',
+            'formal/release-finality-v2/campaign_gate.py',
+            'formal/release-finality-v2/control_domains.py',
+            'formal/release-finality-v2/test_control_domains.py',
+            'scripts/ci/test_pon_public_v3_policy_read.py',
+            'scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py',
+            'scripts/llm_runtime_pilot.py',
+            'scripts/llm_runtime_trial_ledger.py',
+            'scripts/pon_public_v3_policy_read.py',
+            'scripts/pon_w1_false_trace_reuse_reader_v1.py',
+            'scripts/test_llm_runtime_trial_ledger.py',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs',
+            'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-peer-lease/src/payload_body.rs',
+            'trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs',
+            'trillionnium/crates/trnm-peer-lease/src/unix.rs',
+            'trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs',
+            'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/error.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/lib.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs',
+            'trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs',
+            'trillionnium/crates/trnm-pon-node/tests/native_node.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs',
+            'trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
 if __name__ == "__main__":
     unittest.main()
