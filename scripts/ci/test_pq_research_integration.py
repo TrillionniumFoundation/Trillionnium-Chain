@@ -1900,5 +1900,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result['node_activated'], False)
 
 
+
+    def test_final_python_boundaries_cannot_omit_or_mutate(self):
+        dependencies = (
+            'scripts/ci/ci_job.sh',
+            'scripts/ci/run_w1_fresh_service_v1.py',
+            'scripts/ci/test_ci_contract.py',
+            'scripts/ci/test_pon_public_v3_phase_read.py',
+            'scripts/ci/test_run_w1_fresh_service_v1.py',
+            'scripts/ci/test_w1_lifetime_ledger.py',
+            'scripts/pon_public_v3_phase_read.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed selected reader boundary')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
 if __name__ == "__main__":
     unittest.main()

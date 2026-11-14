@@ -198,6 +198,17 @@ def arithmetic_work(reused=False, completed=True):
             publication='none' if reused else 'product') if completed else None))
 
 
+def historical_report():
+    phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+    for phase, mode in zip(phases, reader.MODES):
+        phase['mode'] = mode
+    return dict(schema='native-public-v3-separate-process-campaign-v2',
+        state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+        economics_complete=False, best_observed_cold_legal_method=None,
+        preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+
+
+
 def arithmetic_report():
     """Exact native producer shape, with synthetic unknown/failed measurements."""
     phases = [attribution_phase([], [], [], [
@@ -236,6 +247,52 @@ def diagnostic_record():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_phase_process_and_setup_clocks_preserve_native_widths_and_unknowns(self):
+        for field, bits in (
+            ('whole_parent_phase_cpu_ns', 64), ('whole_parent_phase_wall_ns', 128),
+            ('receiver_and_verifier_setup_cpu_ns', 64),
+            ('receiver_and_verifier_setup_wall_ns', 128),
+        ):
+            for value in (None, 0, 1, (1 << bits) - 1):
+                with self.subTest(field=field, value=value):
+                    phase = attribution_phase([], [], [], [record()])
+                    phase[field] = value
+                    original = copy.deepcopy(phase)
+                    result = reader.phase_summary(phase)
+                    self.assertEqual(result[field], value)
+                    self.assertEqual(phase, original)
+                    self.assertFalse(result['native_phase_criteria_met'])
+            for value in (True, False, -1, 0.0, 1.5, '0', [], {}, 1 << bits):
+                with self.subTest(field=field, invalid=value):
+                    phase = attribution_phase([], [], [], [record()])
+                    phase[field] = value
+                    with self.assertRaisesRegex(ValueError, f'optional u{bits} clock'):
+                        reader.phase_summary(phase)
+
+
+    def test_preparation_clocks_validate_without_changing_retained_derivations(self):
+        for field, bits in (('cpu_ns', 64), ('wall_ns', 128)):
+            for value in (None, 0, 1, (1 << bits) - 1):
+                with self.subTest(field=field, value=value):
+                    report = historical_report()
+                    report['preparation'][field] = value
+                    original = copy.deepcopy(report)
+                    current = reader.analyze(report)
+                    self.assertEqual(current[f'honest_preparation_{field}'], value)
+                    self.assertEqual(report, original)
+                    self.assertFalse(current['native_finite_experiment_criteria_met'])
+                    for version in (1, 2, 3):
+                        retained = reader.analyze_for_retained_schema(report,
+                            f'pon-public-v3-multiprocess-phase-derivation-v{version}')
+                        self.assertEqual(retained[f'honest_preparation_{field}'], value)
+            for value in (True, False, -1, 0.0, 1.5, '0', [], {}, 1 << bits):
+                with self.subTest(field=field, invalid=value):
+                    report = historical_report()
+                    report['preparation'][field] = value
+                    with self.assertRaisesRegex(ValueError, f'optional u{bits} clock'):
+                        reader.analyze(report)
+
+
     def test_cancellation_keeps_signal_bracket_worker_return_and_all_owners_distinct(self):
         row = cancellation_record()
         value = reader.request_cancellation_summary([row])

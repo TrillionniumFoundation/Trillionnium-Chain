@@ -321,7 +321,8 @@ class LifetimeLedgerTests(unittest.TestCase):
         key = "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
         lock = "trillionnium/Cargo.lock"
         store = "trillionnium/crates/trnm-pon-node/src/store.rs"
-        for changed in (key, lock, store):
+        # Exercise every frozen historical pin; current-source pins are a separate namespace.
+        for changed in ledger.SOURCE_PINS:
             sources = dict(self.sources)
             sources[changed] += b"\n"
             with self.subTest(changed=changed), self.assertRaisesRegex(

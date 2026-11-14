@@ -1437,6 +1437,18 @@ CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS
 
+# Selected reader and receipt-boundary controls; no native acceptance is inferred.
+FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'scripts/ci/ci_job.sh',
+    'scripts/ci/run_w1_fresh_service_v1.py',
+    'scripts/ci/test_ci_contract.py',
+    'scripts/ci/test_pon_public_v3_phase_read.py',
+    'scripts/ci/test_run_w1_fresh_service_v1.py',
+    'scripts/ci/test_w1_lifetime_ledger.py',
+    'scripts/pon_public_v3_phase_read.py',
+))
+NATIVE_REQUIRED_PATHS |= FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS
+
 FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
     '.github/workflows/pon-recent-batch-acceptance.yml',
     'config/pon/applicability-v1.json',

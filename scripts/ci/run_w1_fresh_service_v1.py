@@ -335,9 +335,11 @@ def validate_fresh_report(path: Path) -> dict:
 
 def validate_execution(process: dict, log: Path, selector: str, report: Path) -> dict:
     require(selector in SELECTORS, 'FRESH_EXACT_SELECTOR_REQUIRED')
-    require(process.get('executed') is True and process.get('exit_code') == 0
-            and process.get('process_exit_code') == 0 and process.get('timed_out') is False
-            and process.get('source_verified') is True, 'FRESH_NATIVE_PROCESS_REQUIRED')
+    require(process.get('executed') is True and process.get('source_verified') is True,
+            'FRESH_NATIVE_PROCESS_REQUIRED')
+    require(process.get('timed_out') is False, 'FRESH_NATIVE_TEST_TIMEOUT')
+    require(process.get('exit_code') == 0 and process.get('process_exit_code') == 0,
+            'FRESH_NATIVE_TEST_FAILED')
     named = validate(log.read_text().splitlines(), selector)
     read = (native.validate_confirmation_report(report) if selector == ORIGINAL
             else validate_fresh_report(report))

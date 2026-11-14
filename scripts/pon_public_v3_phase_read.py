@@ -74,6 +74,15 @@ def integer(value):
     return value
 
 
+def optional_clock_ns(value, bits):
+    # Process CPU samples are Option<u64>; elapsed().as_nanos() is u128.
+    # Historical unavailable observations remain null, including wall clocks.
+    require(value is None or (type(value) is int and 0 <= value < (1 << bits)),
+            f'optional u{bits} clock observation required')
+    return value
+
+
+
 def stats(values):
     known = sorted(integer(value) for value in values if value is not None)
     n = len(known)
@@ -1487,10 +1496,10 @@ def phase_summary(phase, *, interval_outcomes=True, business_outcomes=False):
         'attacker_processes_requested': phase['attacker_processes_requested'],
         'attacker_processes_ready': phase['attacker_processes_ready'],
         'actor_reports_successful_without_cap_or_kill': phase['actor_reports_successful_without_cap_or_kill'],
-        'whole_parent_phase_cpu_ns': phase['whole_parent_phase_cpu_ns'],
-        'whole_parent_phase_wall_ns': phase['whole_parent_phase_wall_ns'],
-        'receiver_and_verifier_setup_cpu_ns': phase['receiver_and_verifier_setup_cpu_ns'],
-        'receiver_and_verifier_setup_wall_ns': phase['receiver_and_verifier_setup_wall_ns'],
+        'whole_parent_phase_cpu_ns': optional_clock_ns(phase['whole_parent_phase_cpu_ns'], 64),
+        'whole_parent_phase_wall_ns': optional_clock_ns(phase['whole_parent_phase_wall_ns'], 128),
+        'receiver_and_verifier_setup_cpu_ns': optional_clock_ns(phase['receiver_and_verifier_setup_cpu_ns'], 64),
+        'receiver_and_verifier_setup_wall_ns': optional_clock_ns(phase['receiver_and_verifier_setup_wall_ns'], 128),
     })
     return base
 
@@ -1528,8 +1537,8 @@ def analyze(report, *, interval_outcomes=True, business_outcomes=None):
             'native_finite_experiment_criteria_met': report['finite_experiment_criteria_met'],
             'native_economics_complete': report['economics_complete'],
             'best_observed_cold_legal_method': report['best_observed_cold_legal_method'],
-            'honest_preparation_cpu_ns': report['preparation']['cpu_ns'],
-            'honest_preparation_wall_ns': report['preparation']['wall_ns'],
+            'honest_preparation_cpu_ns': optional_clock_ns(report['preparation']['cpu_ns'], 64),
+            'honest_preparation_wall_ns': optional_clock_ns(report['preparation']['wall_ns'], 128),
             'phases': [phase_summary(row, interval_outcomes=interval_outcomes,
                                     business_outcomes=business_outcomes) for row in report['phases']],
             'scope': {'reader_runs_native_admission': False,

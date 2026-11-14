@@ -292,6 +292,7 @@ RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml
 MODEL_OBSERVATION_BLOCK = '''    (
       trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
       mkdir -p "$trnm_model_receipt_root"
+      export TRNM_CI_RECEIPT_DIR="$trnm_model_receipt_root"
       export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
       test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
       test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"
