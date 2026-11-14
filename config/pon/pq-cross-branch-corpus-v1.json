@@ -1697,7 +1697,7 @@
     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
-    "scripts/ci/check_pq_research_integration.py": "ba63d46177dea5eb64bb394efeb57973fbcc2977",
+    "scripts/ci/check_pq_research_integration.py": "b4712128feff0c54602d3279f468c08e5a9774f6",
     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
     "scripts/ci/check_sqlite_build_requalification.py": "54440d8968cf5eee063605aabf81ea0f4438daf0",
     "scripts/ci/check_w1_native_roster.py": "ddfa94842a5ddcf5f217184b61b23d9c6034e684",
@@ -1775,7 +1775,7 @@
     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
     "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
-    "scripts/ci/test_pq_research_integration.py": "a0facf47b578b153bce4f699a628aa1b6173611d",
+    "scripts/ci/test_pq_research_integration.py": "80ff152b7f5a09b9b9d9a5bef21b9f45a1fb5313",
     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
@@ -2619,7 +2619,9 @@
     "scripts/pon_w1_false_trace_reuse_reader_v1.py": "46e2dc433f4a854db326c00441fe58310b53562d",
     "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py": "1b96793032939fd6e28816da8d169761ea7ee23f",
     "scripts/llm_runtime_trial_ledger.py": "f9da0e41310616867270d6ceee7deb39e79818e6",
-    "scripts/test_llm_runtime_trial_ledger.py": "f8d72c2bcc77a7f5babd6fdda6b9f6eccaa07b48"
+    "scripts/test_llm_runtime_trial_ledger.py": "f8d72c2bcc77a7f5babd6fdda6b9f6eccaa07b48",
+    "formal/pon-native-fullpath-v1/collect_native.py": "2585cbd2c345edb194c0357322913ad6541daa99",
+    "formal/pon-native-fullpath-v1/test_collect_native.py": "426413a832cb17f5595e65d264fbeff428a697d1"
   },
   "pql11b_module_ancestry": {
     "exact_isolated_failures": 0,
@@ -5016,7 +5018,9 @@
     "scripts/pon_w1_false_trace_reuse_reader_v1.py",
     "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
     "scripts/llm_runtime_trial_ledger.py",
-    "scripts/test_llm_runtime_trial_ledger.py"
+    "scripts/test_llm_runtime_trial_ledger.py",
+    "formal/pon-native-fullpath-v1/collect_native.py",
+    "formal/pon-native-fullpath-v1/test_collect_native.py"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {

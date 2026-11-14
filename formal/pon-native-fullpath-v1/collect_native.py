@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -23,6 +24,15 @@ MAX_OUTPUT = 4 * 1024 * 1024
 MAX_PACKET = 1024 * 1024
 CLEANUP_TIMEOUT = 2
 SCHEMA = "trnm-native-fullpath-process-observations-v1"
+SOURCE_AUDIT_SCHEMA = "trnm-native-fullpath-raw-source-audit-v1"
+SOURCE_BINDING_SCHEMA = "trnm-native-fullpath-raw-source-binding-v1"
+# Reuse the exact-head guard used by CI. Git porcelain alone can hide changed
+# bytes through clean filters or index flags, and does not bind executed source.
+_verifier_spec = importlib.util.spec_from_file_location(
+    "fullpath_ci_source", Path(__file__).resolve().parents[2] / "scripts/ci/verify_ci_source.py")
+_verifier = importlib.util.module_from_spec(_verifier_spec)
+_verifier_spec.loader.exec_module(_verifier)
+verify_source = _verifier.verify
 
 
 def digest(data):
@@ -45,6 +55,30 @@ def save(path, data):
         output.flush()
         os.fsync(output.fileno())
     return {"path": path.name, "sha256": digest(data)}
+
+
+
+def audit_source(repo, expected_source, root, stage):
+    """Retain strict raw-byte snapshots, including unsuccessful preparations.
+
+    The audit is outside the timed experiment and is not execution attestation,
+    build provenance, resource enforcement, or a new public-service gate.
+    Existing process/context v1 formats keep their original fields and meaning.
+    """
+    if stage not in ("before", "after"):
+        raise ValueError("source audit stage must be before or after")
+    receipt = {"schema": SOURCE_AUDIT_SCHEMA, "stage": stage,
+        "expected_source_commit": expected_source, "snapshot": None, "error": None,
+        "scope": "tracked-raw-source-snapshot-only",
+        "execution_attested": False, "original_host_contract_qualified": False}
+    try:
+        receipt["snapshot"] = verify_source("head", expected_source, root=repo)
+    except Exception as error:
+        receipt["error"] = {"type": type(error).__name__, "message": str(error)}
+        save(root / f"source-{stage}.json", canonical(receipt))
+        raise
+    reference = save(root / f"source-{stage}.json", canonical(receipt))
+    return receipt["snapshot"], reference
 
 
 def usage():
@@ -306,11 +340,8 @@ def collect(args):
     binary = args.binary.resolve(strict=True)
     if not binary.is_file() or not os.access(binary, os.X_OK):
         raise ValueError("executable required")
-    source = git(repo, "rev-parse", "HEAD")
-    if source != args.expected_source:
-        raise ValueError("expected source does not match checkout")
-    if git(repo, "status", "--porcelain", "--untracked-files=all"):
-        raise ValueError("source must be committed and clean")
+    source_before, source_before_ref = audit_source(repo, args.expected_source, root, "before")
+    source = source_before["tested_commit"]
     binary_hash = digest(binary.read_bytes())
     # Fixed context is obtained before freezing starts. It does no Node I/O.
     try:
@@ -330,7 +361,7 @@ def collect(args):
     context = {
         "schema": "trnm-native-fullpath-process-context-v1",
         "scope": "same-host-development-component-observation",
-        "source_commit": source, "source_tree": git(repo, "rev-parse", "HEAD^{tree}"),
+        "source_commit": source, "source_tree": source_before["tested_tree"],
         "binary_sha256": binary_hash, "collector_sha256": digest(Path(__file__).read_bytes()),
         "native_context": native_context,
         "clock": "one parent Python time.monotonic_ns origin, shared by its reader threads",
@@ -425,13 +456,14 @@ def collect(args):
     end = collector.now()
     ending_usage = usage()
     unchanged = False
+    source_after_ref = None
     if collector.unresolved_owner:
         # Do not start even an audit subprocess after losing process ownership.
         collection_errors.append("FINAL_SOURCE_AUDIT_SKIPPED_UNRESOLVED_OWNER")
     else:
         try:
-            source_after = git(repo, "rev-parse", "HEAD")
-            unchanged = (source_after == source and not git(repo, "status", "--porcelain", "--untracked-files=all")
+            source_after, source_after_ref = audit_source(repo, source, root, "after")
+            unchanged = (source_after == source_before
                          and digest(binary.read_bytes()) == binary_hash)
         except Exception as error:
             collection_errors.append(f"SOURCE_AUDIT:{type(error).__name__}:{error}")
@@ -449,7 +481,17 @@ def collect(args):
         "qualification": "HOLD", "security_gate": "HOLD",
         "original_host_contract_qualified": False, "compressed_path_executed": False,
         "quantum_lower_bound_proved": False, "production_activation": False}
-    save(root / "process-observations.json", canonical(report))
+    report_ref = save(root / "process-observations.json", canonical(report))
+    # Separate namespace: historical context/process schemas are not rewritten.
+    # Hash-bind the successful snapshots to this exact original report. A failed
+    # after-audit is retained on disk and deliberately cannot close the binding.
+    save(root / "source-binding.json", canonical({
+        "schema": SOURCE_BINDING_SCHEMA, "context": context_ref,
+        "preregistration": manifest_ref, "observations": report_ref,
+        "source_before": source_before_ref, "source_after": source_after_ref,
+        "source_and_binary_unchanged": unchanged,
+        "execution_attested": False, "binary_build_provenance_qualified": False,
+        "original_host_contract_qualified": False, "qualification": "HOLD"}))
     print(json.dumps({"output": str(root), "manifest_sha256": manifest_ref["sha256"],
         "observations_sha256": digest(canonical(report)), "processes": len(collector.rows),
         "observed_through_ns": end, "source_and_binary_unchanged": unchanged,
