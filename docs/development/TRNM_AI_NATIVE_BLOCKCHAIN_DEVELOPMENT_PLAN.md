@@ -14775,3 +14775,16 @@ neither is evidence that the first failure was reproduced or explained. Ordinary
 miss ordering is a selected behavior policy, not a claim of improvement for every
 peer arrangement, a four-second confirmation result, activation or release
 qualification.
+
+### Original wall-clock MTP controls, 2026-11-14
+
+Two complete historical wall-clock controls now exercise the current Registered
+bootstrap task material and make_with_registered_material interface. Only their
+fixture adapter changes; original statements, exact event timestamp equality,
+explicit full W1 verification, persisted packet byte equality, pool-state checks
+and diagnostic records remain. The successful branch retains 4,096 search
+attempts and a two-second runtime. The future-median refusal retains its original
+150-millisecond runtime and zero-search/zero-work assertions. Existing
+pool_mining controls and all production mining, consensus and admission owners
+remain unchanged. These local controls do not establish hosted four-second
+confirmation, activation or production qualification.
