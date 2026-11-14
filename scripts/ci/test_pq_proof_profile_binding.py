@@ -78,12 +78,12 @@ class ProofProfileBindingTests(unittest.TestCase):
             self.assertIs(result[key], False)
 
     def test_composed_current_mapping_has_one_fixed_identity_and_no_approval(self):
-        # Fixed review values from the 80ee3a6a actor source review, independent of
+        # Fixed review values from the AM standalone-lock source review, independent of
         # constants or pin values supplied by the implementation under test.
         expected = {
             'path': 'config/pon/w1-qrom-implementation-current-v2.json',
-            'bytes': 46786,
-            'sha256': '27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934',
+            'bytes': 47960,
+            'sha256': '6884d8edf7415f0141a6bacd991d49cfb672692ab24d9ba88b031ddd135038ef',
         }
         security = json.loads((ROOT / binding.upstream.DEFAULT_MANIFEST).read_bytes())
         self.assertEqual(self.contract['mapping_contract'], expected)
@@ -160,7 +160,7 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
         result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
-                                 '9b30541f9d05e335d1f598db3834df40588cc0e0a57b3035c9ce2be2dcc62e97')
+                                 'd915eab9971289b08ed21615058dd26a2b71d878baa027c6896480dc81b13976')
         for row in self.mapping['audit_helpers']:
             self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
         self.assertEqual(result['selected_input_observation_count'], len(self.paths))
