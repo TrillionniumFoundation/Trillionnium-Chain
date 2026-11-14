@@ -2009,12 +2009,14 @@
     "trillionnium/crates/trnm-data-availability/src/bin/cell_pq/mod.rs": "32b5e7284e33b17b87cbbf894179a378851f8bf9",
     "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs": "c0926385d14c823929c9549999dd4b8c8e15d66d",
     "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs": "3f3611bd3d0e4c56c9590b5d3c4371e83c6f6290",
-    "trillionnium/crates/trnm-data-availability/src/cell.rs": "e996045a911e9c5b44fde657fbe3c00756520fca",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
     "trillionnium/crates/trnm-data-availability/src/cell/archive.rs": "7749eafe3e8ec128090f44b609ec1789b521d65d",
     "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs": "86fd50019efd601a974de3d8d15e1ef959239b92",
-    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer.rs": "d00fdc1b53ad65c49703ead852f04c8ec96263a1",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer.rs": "5895ac1f316b267913386240384e22104e427471",
     "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/bencode.rs": "f900dd824fef789bb0ca328c12d948962465ed38",
-    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht.rs": "fa8b3250b3eacbb850fdca32bdd21a3ff0a91351",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht.rs": "6b926441d02710db4fdebf50798e0ad4e3eb4e33",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs": "609d070e46963ffefa5ba6b651bc2291ac367597",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs": "aafaacf25ecf492367da77b5c30be2d0712fe335",
     "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/tests.rs": "568b5324c8813ed88c25aac2afbb2448550070ae",
     "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs": "755a932e31c51a4a4c0f52c465341ee88dccc7b8",
     "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/tests.rs": "e284a9167a209a51faa1c1f07eb9de65c9807478",
@@ -4994,7 +4996,9 @@
     "scripts/ci/w1_native_rosters_v1.json",
     "scripts/pon_fresh_rejection_report.py",
     "scripts/ci/test_fresh_rejection_report.py",
-    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs"
+    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {
