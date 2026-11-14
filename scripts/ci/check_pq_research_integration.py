@@ -1449,6 +1449,20 @@ FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS
 
+# Versioned W1 observations retain their original shared time budget.
+W1_RECEIPT_CLOCK_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-w1-transparent-profile.yml',
+    'evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz',
+    'scripts/ci/check_ci_contract.py',
+    'scripts/ci/test_ci_contract.py',
+    'scripts/ci/test_w1_v2_controls_gate.py',
+    'scripts/ci/test_w1_v2_current_stage_gate.py',
+    'formal/pon-nakamoto-v1/experiments/w1_stage_measure.py',
+    'scripts/ci/w1_v2_controls_gate.py',
+    'scripts/w1_v2_receipt_controls.py',
+))
+NATIVE_REQUIRED_PATHS |= W1_RECEIPT_CLOCK_REQUIRED_PATHS
+
 FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
     '.github/workflows/pon-recent-batch-acceptance.yml',
     'config/pon/applicability-v1.json',

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -40,7 +41,7 @@ def require_fields(row, expected, context):
                          f'{context} differs: {key}')
 
 
-def validate_process_observation(process, code, stage_schema):
+def validate_process_observation(process, code, stage_schema=CURRENT_STAGE_SCHEMA):
     """Select one explicit schema; current CLI observations cannot downgrade to v2."""
     controls.require(type(stage_schema) is str and stage_schema in
                      (HISTORICAL_STAGE_SCHEMA, CURRENT_STAGE_SCHEMA),
@@ -62,6 +63,26 @@ def validate_process_observation(process, code, stage_schema):
             'deadline_exhausted_at_snapshot': False,
             'prover_resource_completeness_established': False, 'complete_proof_claim': False,
         }, 'current process observation')
+        for name in ('started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
+                     'effective_remaining_seconds'):
+            value = process.get(name)
+            controls.require(type(value) in (int, float) and math.isfinite(value)
+                             and value > 0, f'current process clock differs: {name}')
+        started, wall, deadline, remaining = (process[name] for name in (
+            'started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
+            'effective_remaining_seconds'))
+        controls.require(0 < remaining <= 120 and remaining == deadline - started
+                         and started + wall < deadline,
+                         'current process exceeds its original deadline')
+    groups, pid = process['known_owned_groups'], process.get('pid')
+    controls.require(type(groups) is list and groups
+                     and all(type(group) is int and group > 0 for group in groups)
+                     and groups == sorted(set(groups))
+                     and type(pid) is int and pid > 0 and pid in groups
+                     and process['final_known_group_probes'] ==
+                     [{'group': group, 'state': 'ABSENT'} for group in groups]
+                     and all(type(probe['group']) is int for probe in process['final_known_group_probes']),
+                     'owned process groups were not all observed absent')
 
 
 def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None,
@@ -101,6 +122,13 @@ def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None,
     elapsed = report['elapsed_wall_seconds']
     controls.require(type(elapsed) in (int, float) and 0 < elapsed < 120,
                      'common 120-second deadline exceeded')
+    if stage_schema == CURRENT_STAGE_SCHEMA:
+        for name in ('started_monotonic', 'deadline_monotonic'):
+            value = report.get(name)
+            controls.require(type(value) in (int, float) and math.isfinite(value)
+                             and value > 0, f'current common clock differs: {name}')
+        controls.require(report['deadline_monotonic'] == report['started_monotonic'] + 120,
+                         'current common deadline was extended')
     require_fields(read_json(out / 'identity.json'), {
         'verifier_path': str(verifier_path), 'verifier_sha256': verifier_sha256,
         'assets': {key: {'bytes': len(data), 'sha256': controls.digest(data)}
@@ -124,15 +152,13 @@ def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None,
         controls.require(type(code) is int and (code == 0 if plan['expect'] == 'accept' else code > 0),
                          'control exit differs from expectation')
         validate_process_observation(process, code, stage_schema)
-        groups, pid = process['known_owned_groups'], process.get('pid')
-        controls.require(type(groups) is list and groups
-                         and all(type(group) is int and group > 0 for group in groups)
-                         and groups == sorted(set(groups))
-                         and type(pid) is int and pid > 0 and pid in groups
-                         and process['final_known_group_probes'] ==
-                         [{'group': group, 'state': 'ABSENT'} for group in groups]
-                         and all(type(probe['group']) is int for probe in process['final_known_group_probes']),
-                         'owned process groups were not all observed absent')
+        if stage_schema == CURRENT_STAGE_SCHEMA:
+            controls.require(process['effective_deadline_monotonic'] == report['deadline_monotonic']
+                             and process['started_monotonic'] >= report['started_monotonic'],
+                             'current process is outside the original common deadline')
+            controls.require(process['started_monotonic'] + process['wall_seconds']
+                             <= report['started_monotonic'] + elapsed,
+                             'current summary does not cover process completion')
         case_dir = out / case_name
         controls.require(read_json(case_dir / 'result.json') == case,
                          'case result differs from aggregate observation')

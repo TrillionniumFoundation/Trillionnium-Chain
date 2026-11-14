@@ -2019,5 +2019,47 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+
+    def test_w1_receipt_clock_sources_cannot_omit_or_mutate(self):
+        dependencies = (
+            '.github/workflows/pon-w1-transparent-profile.yml',
+            'evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz',
+            'scripts/ci/check_ci_contract.py',
+            'scripts/ci/test_ci_contract.py',
+            'scripts/ci/test_w1_v2_controls_gate.py',
+            'scripts/ci/test_w1_v2_current_stage_gate.py',
+            'formal/pon-nakamoto-v1/experiments/w1_stage_measure.py',
+            'scripts/ci/w1_v2_controls_gate.py',
+            'scripts/w1_v2_receipt_controls.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed current W1 clock source')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
 if __name__ == "__main__":
     unittest.main()

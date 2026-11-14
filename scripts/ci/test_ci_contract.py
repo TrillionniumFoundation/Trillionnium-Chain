@@ -2862,6 +2862,7 @@ class W1PostwinLaneTests(unittest.TestCase):
             ("  contents: read", "  contents: write"),
             ("  cancel-in-progress: false", "  cancel-in-progress: true"),
             ("      - evidence/pon-w1-full-v2-20261105/**\n", ""),
+            ("      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz\n", ""),
             ("      - evidence/pon-w1-fresh-runtime-20261107/**\n", ""),
             ("      - scripts/audit_w1_deployment_comparison.py\n", ""),
             ("      - scripts/w1_owned_process_collector_v1.py\n", ""),
@@ -2886,7 +2887,7 @@ class W1PostwinLaneTests(unittest.TestCase):
     def test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced(self):
         for name, count, command in (
             ('mapper_tests', 15, 'test_w1_profile_source_map.py'),
-            ('v2_gate_tests', 23, 'test_w1_v2_controls_gate.py'),
+            ('v2_gate_tests', 31, 'test_w1_v2_controls_gate.py'),
         ):
             block = self.step(name)
             mutations = (
