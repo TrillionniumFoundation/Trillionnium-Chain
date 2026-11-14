@@ -41,6 +41,8 @@ pub mod release_finality;
 pub mod release_owner;
 /// Opt-in bounded work-schedule checks; never selected by native admission.
 pub mod research_work_schedule;
+/// Explicit finite cross-process resource reservations for a fixed local Node.
+pub mod resource_owner_v1;
 #[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
 pub mod root_recovery_v3;
 mod store;
@@ -78,8 +80,8 @@ pub use store::native_owner_observation::{
     MAX_CENSUS_PACKET_BYTES,
 };
 pub use store::packet_observation::{
-    observe_existing_packet, PacketObservationBackend,
-    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+    observe_existing_packet, observe_existing_packet_owned, PacketObservationBackend,
+    PacketObservationResourceContractV1, DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{
