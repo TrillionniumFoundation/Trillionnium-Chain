@@ -14734,3 +14734,23 @@ checks, extra features, ambient overrides and unknown profiles refuse. The curre
 Cargo profile declarations match the required metadata. No native acceptance
 result is supplied by these synthetic or source-preservation checks. Both exact
 hosted native profiles remain required; release does not replace test.
+
+### 2026-11-14 explicit current Cell acquisition API
+
+The 75600213 reusable acquisition boundary and its five original controls are
+retained by extracting the current acquisition body. The immutable closure input
+carries the already checked path, generation, context and authentication arguments.
+The current bounded 4096-byte provider-event reader, explicit accept-loop ready
+event, one original 35-second acquisition deadline, retry/connection/byte limits,
+cache-only materialization and provider-exit checks are preserved. The wrapper
+continues to require the current runtime snapshot and its digest.
+
+A sixth control proves ready waiting cannot renew the original transfer deadline.
+The original five assertion sets remain unchanged; synthetic providers use real
+owned pipes to exercise the current bounded event reader. Linux passes six
+acquisition, six provider-ready, five deadline and three existing installed-policy
+controls. No native acquisition campaign or protected installed ELF deployment
+is claimed. The separate Mac installed-policy platform failure and its five
+pre-existing deployment skips remain recorded without weakening a test or policy.
+Repository-truth invokes the synthetic acquisition controls; all qualification,
+use-authority and installation-authority assertions retain their existing meaning.

@@ -1524,6 +1524,15 @@ ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS
 
 
+# Explicit acquisition keeps the current actual-ready and single absolute deadline.
+CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
+    'scripts/run_llm_cell_native_handoff.py',
+    'scripts/ci/test_llm_cell_acquisition.py',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 

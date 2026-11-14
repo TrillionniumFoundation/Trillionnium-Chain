@@ -410,6 +410,8 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
 ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
     # Synthetic launcher/cache reader controls do not execute or qualify SQLite.
     python3 scripts/ci/test_sqlite_build_requalification.py -v
+    # Synthetic acquisition controls retain the current ready and absolute-deadline contract.
+    python3 scripts/ci/test_llm_cell_acquisition.py -v
     # Explicit synthetic WAN accounting retains all external qualification flags false.
     python3 scripts/ci/test_pon_wan_evidence.py -v
     python3 scripts/ci/test_pon_decentralization_audit.py -v
@@ -785,6 +787,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
     # Synthetic launcher/cache reader controls do not execute or qualify SQLite.
     python3 scripts/ci/test_sqlite_build_requalification.py -v
+    # Synthetic acquisition controls retain the current ready and absolute-deadline contract.
+    python3 scripts/ci/test_llm_cell_acquisition.py -v
     # Explicit synthetic WAN accounting retains all external qualification flags false.
     python3 scripts/ci/test_pon_wan_evidence.py -v
     python3 scripts/ci/test_pon_decentralization_audit.py -v
