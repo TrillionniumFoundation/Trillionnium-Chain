@@ -311,11 +311,15 @@ jobs:
           cleanup() {
             original_status=$?
             trap - EXIT INT TERM
-            # Only this workflow's uniquely named transient unit is stopped.
+            # Creation may have failed or collided; this trap has no stop authority.
             set +e
-            sudo -n systemctl stop "$unit" >> "$OUT/unit-cleanup.log" 2>&1
+            /usr/bin/python3 -B "$GITHUB_WORKSPACE/scripts/ci/check_collected_unit_empty_v1.py" \
+              --unit "$unit" > "$OUT/unit-cleanup.json" 2>> "$OUT/unit-cleanup.log"
             cleanup_status=$?
             printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/unit-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
             exit "$original_status"
           }
           trap cleanup EXIT
