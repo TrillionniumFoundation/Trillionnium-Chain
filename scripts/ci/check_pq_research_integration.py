@@ -1581,6 +1581,41 @@ THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS
 
+# Exact SQLite qualification reader and actual caller; controls alone grant no qualification.
+SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_sqlite_build_requalification.py',
+    'scripts/ci/test_sqlite_build_requalification.py',
+    '.github/workflows/pon-pq-system-continuation.yml',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS
+
+
+# A non-atomic cgroup observation is not a Host capability or an effective quota proof.
+CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'scripts/ci/public_host_ci_observation.py',
+    'scripts/ci/run_w1_rank_batch_v5.py',
+    'scripts/ci/test_run_w1_rank_batch_v5.py',
+))
+NATIVE_REQUIRED_PATHS |= CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS
+
+
+# Original test and supplementary release profiles retain separate native receipts.
+ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-original-large-state-cpu.yml',
+))
+NATIVE_REQUIRED_PATHS |= ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS
+
+
+# Explicit acquisition keeps the current actual-ready and single absolute deadline.
+CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
+    'scripts/run_llm_cell_native_handoff.py',
+    'scripts/ci/test_llm_cell_acquisition.py',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 

@@ -22,6 +22,7 @@ import selectors
 import subprocess
 import sys
 import time
+from typing import NamedTuple
 
 
 def sha(path: Path) -> str:
@@ -79,6 +80,196 @@ def read_provider_event(stream, deadline: float, schema: str, address: str | Non
             or (address is not None and value["address"] != address)):
         raise ValueError("provider startup event differs from expected schema or listener")
     return value, line
+
+
+class ClosureAcquisition(NamedTuple):
+    """Already pinned transport inputs; this object confers no model authority."""
+
+    source_file: Path
+    destination: Path
+    sha256: str
+    closure_id: str
+    generation: int
+    loader_profile: str
+    context: tuple[tuple[str, str], ...]
+    authentication_arguments: tuple[str, ...]
+
+
+def acquire_complete_release(*, cell_bin: Path, output: Path, cache_limits,
+        producer: Path, consumer: Path, members, release_file: Path,
+        release, evidence, closure: ClosureAcquisition | None = None) -> Path:
+    """Cold acquire and read back the complete set under the original 35s clock.
+
+    Packing/preparation and finite provider drain retain their original phases.
+    A return value denotes byte completion only; callers retain qualification,
+    CURRENT, resource, installation and FinalUse authority.
+    """
+    total_bytes = sum(member["pack"]["bytes"] for member in members)
+    total_chunks = sum(member["pack"]["chunks"] for member in members)
+    server = None
+    try:
+        # A bounded retry allowance covers response headers and all manifests.
+        # These limits are shared across the release, not reset for each cell.
+        connection_budget = 2 * (total_chunks + len(members))
+        response_budget = 2 * total_bytes + len(members) * 1_048_576 + 9 * connection_budget
+        evidence["release"] = {"prepare": release, "source_file": str(release_file),
+            "source_sha256": sha(release_file), "max_response_bytes": response_budget,
+            "max_connections": connection_budget, "selection_authority": False}
+        if closure is not None:
+            evidence["release"].update(closure_file=str(closure.source_file),
+                closure_sha256=closure.sha256,
+                closure_id=closure.closure_id,
+                selected_generation=closure.generation, loader_profile=closure.loader_profile)
+        if consumer.exists():
+            raise ValueError("controlled consumer store must initially be absent")
+        evidence["release"]["consumer_initially_absent"] = True
+        # One finite producer, one initially empty consumer. These are controlled
+        # loopback processes and never count as independent custody or a WAN test.
+        with (output / "server-stderr.log").open("w") as server_error:
+            server = subprocess.Popen([str(cell_bin), "serve", "--store", str(producer),
+                "--bind", "127.0.0.1:0", "--seconds", "45", "--bounded-workers", "2",
+                "--announce-ready", "true",
+                "--max-connections", str(connection_budget),
+                "--max-served-bytes", str(response_budget)], stdout=subprocess.PIPE,
+                stderr=server_error, text=True)
+            listen_event, listen_line = read_provider_event(
+                server.stdout, time.monotonic() + 5, "trnm.cell.listen.v1")
+            address = listen_event["address"]
+            transfer_started = time.monotonic()
+            transfer_deadline = transfer_started + 35
+            (output / "server-stdout.log").write_text(listen_line)
+            transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
+                "limit_seconds": 35, "all_members_verified": False, "provider_ready_observed": False,
+                "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load"}
+            if closure is not None:
+                transfer.update(schema="cell-native-aggregate-transfer-v3",
+                    scope="listener announced through aggregate TCD1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and original Hepta startup")
+            evidence["transfer"] = transfer
+            try:
+                _, ready_line = read_provider_event(server.stdout, transfer_deadline,
+                    "trnm.cell.ready.v1", address)
+                transfer["provider_ready_observed"] = True
+                transfer["provider_ready_seconds"] = time.monotonic() - transfer_started
+                with (output / "server-stdout.log").open("a") as log:
+                    log.write(ready_line)
+                remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
+                complete_release = output / "consumer-release.tcr1"
+                command = [str(cell_bin), "fetch-release", *cache_limits, "--store", str(consumer),
+                    "--release-file", str(release_file), "--release", release["release"],
+                    "--peers", address, "--output", str(complete_release),
+                    "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
+                    "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                    "--max-response-bytes", str(response_budget),
+                    "--max-connections", str(connection_budget), "--parallelism", "2"]
+                if closure is not None:
+                    complete_release = Path(closure.destination)
+                    command = [str(cell_bin), "fetch-closure", *cache_limits,
+                        *closure.authentication_arguments, "--store", str(consumer), "--closure-file", str(closure.source_file),
+                        "--closure", closure.closure_id,
+                        "--loader-generation", str(closure.generation),
+                        "--loader-profile", closure.loader_profile,
+                        "--required-roles", "base,tokenizer,adapter,configuration",
+                        "--peers", address, "--output", str(complete_release),
+                        "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
+                        "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                        "--max-response-bytes", str(response_budget),
+                        "--max-connections", str(connection_budget), "--parallelism", "2"]
+                    for key in ("family", "base", "parent", "tokenizer", "layout", "runtime"):
+                        command.extend(("--" + key, dict(closure.context)[key]))
+                fetched = subprocess.run(command, capture_output=True, text=True,
+                    timeout=remaining + 2)
+                fetch_log = "fetch-closure.log" if closure is not None else "fetch-release.log"
+                (output / fetch_log).write_text(fetched.stdout + fetched.stderr)
+                fetched.check_returncode()
+                result = json.loads(fetched.stdout)
+                expected_schema = "trnm.cell.closure.fetch.v1" if closure is not None else "trnm.cell.release.fetch.v1"
+                expected_marker_sha = closure.sha256 if closure is not None else evidence["release"]["source_sha256"]
+                if (result["schema"] != expected_schema
+                        or result["release"] != release["release"]
+                        or result["cells"] != len(members)
+                        or result["payload_bytes"] != total_bytes
+                        or result["chunks"] != total_chunks
+                        or result["cached_chunks"] + result["downloaded_chunks"] != total_chunks
+                        or result["received_response_bytes"] > response_budget
+                        or result["connection_attempts"] > connection_budget
+                        or sha(complete_release) != expected_marker_sha):
+                    raise ValueError("aggregate release completion differs from pinned set or budget")
+                if closure is not None and (result["closure"] != closure.closure_id
+                        or result["generation"] != closure.generation
+                        or result["selection_authority"] is not False or result["use_authority"] is not False):
+                    raise ValueError("native closure observation differs from independent loader pins")
+                evidence["release"]["fetch"] = result
+                evidence["release"]["completion_file"] = str(complete_release)
+                # Any cache hits in the aggregate acquisition arise within this
+                # fresh release transfer. Materialization must now use only the
+                # verified local store and spend no further network budget.
+                for index, member in enumerate(members):
+                    member_started = time.monotonic()
+                    timing = {"started_seconds": member_started - transfer_started,
+                        "completed": False}
+                    member["transfer_timing"] = timing
+                    try:
+                        remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
+                        timing["overall_timeout_ms"] = overall_ms
+                        timing["request_timeout_ms"] = request_ms
+                        command = [str(cell_bin), "fetch", *cache_limits, "--store", str(consumer),
+                            "--manifest", member["pack"]["manifest"], "--peers", "",
+                            "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
+                            "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                            "--parallelism", "1", "--max-connections", "1",
+                            "--max-response-bytes", "0"]
+                        fetch_started = time.monotonic()
+                        try:
+                            fetched = subprocess.run(command, capture_output=True, text=True,
+                                timeout=remaining + 2)
+                        finally:
+                            timing["fetch_elapsed_seconds"] = time.monotonic() - fetch_started
+                        (output / f"fetch-{index}.log").write_text(fetched.stdout + fetched.stderr)
+                        fetched.check_returncode()
+                        result = json.loads(fetched.stdout)
+                        if (result["downloaded_chunks"] != 0
+                                or result["cached_chunks"] != member["pack"]["chunks"]
+                                or result["received_response_bytes"] != 0
+                                or result["connection_attempts"] != 0):
+                            raise ValueError("member materialization escaped the verified release store")
+                        readback_started = time.monotonic()
+                        try:
+                            if sha(Path(member["destination"])) != member["pack"]["payload_sha256"]:
+                                raise ValueError("consumer readback differs from pinned bytes")
+                            member["fetch"] = result
+                            member["consumer_sha256"] = sha(Path(member["destination"]))
+                        finally:
+                            timing["readback_elapsed_seconds"] = time.monotonic() - readback_started
+                        timing["completed"] = True
+                    finally:
+                        member_ended = time.monotonic()
+                        timing["ended_seconds"] = member_ended - transfer_started
+                        timing["elapsed_seconds"] = member_ended - member_started
+                transfer["all_members_verified"] = True
+            finally:
+                transfer_ended = time.monotonic()
+                transfer["elapsed_seconds"] = transfer_ended - transfer_started
+                transfer["within_original_deadline"] = transfer_ended < transfer_deadline
+            # The subprocess timeout includes cleanup slack. It is not authority
+            # to accept a late final file or readback as an in-window transfer.
+            if not transfer["within_original_deadline"]:
+                raise TimeoutError("original aggregate transfer deadline exhausted after consumer readback")
+            tail, _ = server.communicate(timeout=50)
+            with (output / "server-stdout.log").open("a") as log:
+                log.write(tail)
+            if server.returncode != 0:
+                raise RuntimeError("finite producer did not stop successfully")
+            evidence["producer_exit_code_before_consumer_load"] = server.returncode
+        return complete_release
+    finally:
+        if server is not None and server.poll() is None:
+            server.terminate()
+            try:
+                server.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                server.kill()
+                server.wait(timeout=5)
+            evidence["producer_cleanup_after_failure"] = True
 
 
 def main() -> None:
@@ -142,7 +333,6 @@ def main() -> None:
             authentication_profile=plan.value["authentication"]["profile"],
             execution_profile=plan.execution_profile,
             installation_observed=False, final_use_observed=False)
-    server = None
     exec_requested = False
     try:
         family_path = args.chain / "config/pon/model-family-smollm2-135m-v1.json"
@@ -219,158 +409,22 @@ def main() -> None:
         if plan is not None:
             closure_file = cell_host.prepare(plan, args, family, parent, evidence["members"],
                 release_file, release, producer, preparation_deadline)
-        # A bounded retry allowance covers response headers and all manifests.
-        # These limits are shared across the release, not reset for each cell.
-        connection_budget = 2 * (total_chunks + len(members))
-        response_budget = 2 * total_bytes + len(members) * 1_048_576 + 9 * connection_budget
-        evidence["release"] = {"prepare": release, "source_file": str(release_file),
-            "source_sha256": sha(release_file), "max_response_bytes": response_budget,
-            "max_connections": connection_budget, "selection_authority": False}
+        closure = None
         if plan is not None:
-            evidence["release"].update(closure_file=str(closure_file),
-                closure_sha256=plan.host["dependency_closure"]["sha256"],
+            closure = ClosureAcquisition(
+                source_file=closure_file,
+                destination=Path(plan.host["dependency_closure"]["path"]),
+                sha256=plan.host["dependency_closure"]["sha256"],
                 closure_id=plan.host["dependency_closure_id"],
-                selected_generation=plan.value["generation"], loader_profile=plan.value["loader_profile"])
-        if consumer.exists():
-            raise ValueError("controlled consumer store must initially be absent")
-        evidence["release"]["consumer_initially_absent"] = True
-        # One finite producer, one initially empty consumer. These are controlled
-        # loopback processes and never count as independent custody or a WAN test.
-        with (args.output / "server-stderr.log").open("w") as server_error:
-            server = subprocess.Popen([str(args.cell_bin), "serve", "--store", str(producer),
-                "--bind", "127.0.0.1:0", "--seconds", "45", "--bounded-workers", "2",
-                "--announce-ready", "true",
-                "--max-connections", str(connection_budget),
-                "--max-served-bytes", str(response_budget)], stdout=subprocess.PIPE,
-                stderr=server_error, text=True)
-            listen_event, listen_line = read_provider_event(
-                server.stdout, time.monotonic() + 5, "trnm.cell.listen.v1")
-            address = listen_event["address"]
-            transfer_started = time.monotonic()
-            transfer_deadline = transfer_started + 35
-            (args.output / "server-stdout.log").write_text(listen_line)
-            transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
-                "limit_seconds": 35, "all_members_verified": False, "provider_ready_observed": False,
-                "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load"}
-            if plan is not None:
-                transfer.update(schema="cell-native-aggregate-transfer-v3",
-                    scope="listener announced through aggregate TCD1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and original Hepta startup")
-            evidence["transfer"] = transfer
-            try:
-                _, ready_line = read_provider_event(server.stdout, transfer_deadline,
-                    "trnm.cell.ready.v1", address)
-                transfer["provider_ready_observed"] = True
-                transfer["provider_ready_seconds"] = time.monotonic() - transfer_started
-                with (args.output / "server-stdout.log").open("a") as log:
-                    log.write(ready_line)
-                remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
-                complete_release = args.output / "consumer-release.tcr1"
-                command = [str(args.cell_bin), "fetch-release", *cache_limits, "--store", str(consumer),
-                    "--release-file", str(release_file), "--release", release["release"],
-                    "--peers", address, "--output", str(complete_release),
-                    "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
-                    "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
-                    "--max-response-bytes", str(response_budget),
-                    "--max-connections", str(connection_budget), "--parallelism", "2"]
-                if plan is not None:
-                    complete_release = Path(plan.host["dependency_closure"]["path"])
-                    command = [str(args.cell_bin), "fetch-closure", *cache_limits,
-                        *plan.auth, "--store", str(consumer), "--closure-file", str(closure_file),
-                        "--closure", plan.host["dependency_closure_id"],
-                        "--loader-generation", str(plan.value["generation"]),
-                        "--loader-profile", plan.value["loader_profile"],
-                        "--required-roles", "base,tokenizer,adapter,configuration",
-                        "--peers", address, "--output", str(complete_release),
-                        "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
-                        "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
-                        "--max-response-bytes", str(response_budget),
-                        "--max-connections", str(connection_budget), "--parallelism", "2"]
-                    for key in ("family", "base", "parent", "tokenizer", "layout", "runtime"):
-                        command.extend(("--" + key, plan.value["context"][key]))
-                fetched = subprocess.run(command, capture_output=True, text=True,
-                    timeout=remaining + 2)
-                fetch_log = "fetch-closure.log" if plan is not None else "fetch-release.log"
-                (args.output / fetch_log).write_text(fetched.stdout + fetched.stderr)
-                fetched.check_returncode()
-                result = json.loads(fetched.stdout)
-                expected_schema = "trnm.cell.closure.fetch.v1" if plan is not None else "trnm.cell.release.fetch.v1"
-                expected_marker_sha = plan.host["dependency_closure"]["sha256"] if plan is not None else evidence["release"]["source_sha256"]
-                if (result["schema"] != expected_schema
-                        or result["release"] != release["release"]
-                        or result["cells"] != len(members)
-                        or result["payload_bytes"] != total_bytes
-                        or result["chunks"] != total_chunks
-                        or result["cached_chunks"] + result["downloaded_chunks"] != total_chunks
-                        or result["received_response_bytes"] > response_budget
-                        or result["connection_attempts"] > connection_budget
-                        or sha(complete_release) != expected_marker_sha):
-                    raise ValueError("aggregate release completion differs from pinned set or budget")
-                if plan is not None and (result["closure"] != plan.host["dependency_closure_id"]
-                        or result["generation"] != plan.value["generation"]
-                        or result["selection_authority"] is not False or result["use_authority"] is not False):
-                    raise ValueError("native closure observation differs from independent loader pins")
-                evidence["release"]["fetch"] = result
-                evidence["release"]["completion_file"] = str(complete_release)
-                # Any cache hits in the aggregate acquisition arise within this
-                # fresh release transfer. Materialization must now use only the
-                # verified local store and spend no further network budget.
-                for index, member in enumerate(evidence["members"]):
-                    member_started = time.monotonic()
-                    timing = {"started_seconds": member_started - transfer_started,
-                        "completed": False}
-                    member["transfer_timing"] = timing
-                    try:
-                        remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
-                        timing["overall_timeout_ms"] = overall_ms
-                        timing["request_timeout_ms"] = request_ms
-                        command = [str(args.cell_bin), "fetch", *cache_limits, "--store", str(consumer),
-                            "--manifest", member["pack"]["manifest"], "--peers", "",
-                            "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
-                            "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
-                            "--parallelism", "1", "--max-connections", "1",
-                            "--max-response-bytes", "0"]
-                        fetch_started = time.monotonic()
-                        try:
-                            fetched = subprocess.run(command, capture_output=True, text=True,
-                                timeout=remaining + 2)
-                        finally:
-                            timing["fetch_elapsed_seconds"] = time.monotonic() - fetch_started
-                        (args.output / f"fetch-{index}.log").write_text(fetched.stdout + fetched.stderr)
-                        fetched.check_returncode()
-                        result = json.loads(fetched.stdout)
-                        if (result["downloaded_chunks"] != 0
-                                or result["cached_chunks"] != member["pack"]["chunks"]
-                                or result["received_response_bytes"] != 0
-                                or result["connection_attempts"] != 0):
-                            raise ValueError("member materialization escaped the verified release store")
-                        readback_started = time.monotonic()
-                        try:
-                            if sha(Path(member["destination"])) != member["pack"]["payload_sha256"]:
-                                raise ValueError("consumer readback differs from pinned bytes")
-                            member["fetch"] = result
-                            member["consumer_sha256"] = sha(Path(member["destination"]))
-                        finally:
-                            timing["readback_elapsed_seconds"] = time.monotonic() - readback_started
-                        timing["completed"] = True
-                    finally:
-                        member_ended = time.monotonic()
-                        timing["ended_seconds"] = member_ended - transfer_started
-                        timing["elapsed_seconds"] = member_ended - member_started
-                transfer["all_members_verified"] = True
-            finally:
-                transfer_ended = time.monotonic()
-                transfer["elapsed_seconds"] = transfer_ended - transfer_started
-                transfer["within_original_deadline"] = transfer_ended < transfer_deadline
-            # The subprocess timeout includes cleanup slack. It is not authority
-            # to accept a late final file or readback as an in-window transfer.
-            if not transfer["within_original_deadline"]:
-                raise TimeoutError("original aggregate transfer deadline exhausted after consumer readback")
-            tail, _ = server.communicate(timeout=50)
-            with (args.output / "server-stdout.log").open("a") as log:
-                log.write(tail)
-            if server.returncode != 0:
-                raise RuntimeError("finite producer did not stop successfully")
-            evidence["producer_exit_code_before_consumer_load"] = server.returncode
+                generation=plan.value["generation"],
+                loader_profile=plan.value["loader_profile"],
+                context=tuple((key, plan.value["context"][key])
+                    for key in ("family", "base", "parent", "tokenizer", "layout", "runtime")),
+                authentication_arguments=tuple(plan.auth))
+        acquire_complete_release(cell_bin=args.cell_bin, output=args.output,
+            cache_limits=cache_limits, producer=producer, consumer=consumer,
+            members=evidence["members"], release_file=release_file, release=release,
+            evidence=evidence, closure=closure)
         parent["directory"] = str(stage)
         consumer_parent = stage / "parent-material.json"
         write_json(consumer_parent, parent)
@@ -391,14 +445,6 @@ def main() -> None:
         evidence["error"] = str(error)
         raise
     finally:
-        if server is not None and server.poll() is None:
-            server.terminate()
-            try:
-                server.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                server.kill()
-                server.wait(timeout=5)
-            evidence["producer_cleanup_after_failure"] = True
         evidence["elapsed_seconds"] = time.monotonic() - started
         write_json(args.output / "handoff.json", evidence)
         print(json.dumps({"status": evidence["status"], "report": str(args.output / "handoff.json")}))

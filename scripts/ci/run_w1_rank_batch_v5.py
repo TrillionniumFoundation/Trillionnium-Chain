@@ -19,6 +19,7 @@ import sys
 import time
 
 from ci_observation import ROOT, digest, source, _wait_without_reaping
+from public_host_ci_observation import current_cgroup_observation
 from check_cross_arch_cost import (ARCHITECTURES, COST_BUILD_TIMEOUT_SECONDS,
     COST_CAMPAIGN_TIMEOUT_SECONDS, COST_IDENTITY_TIMEOUT_SECONDS,
     COST_TERMINATION_GRACE_SECONDS, elf_machine)
@@ -132,6 +133,8 @@ def host(output):
             result["cgroup"][name] = path.read_text().strip()
         except OSError as error:
             result["cgroup"][name] = {"unavailable": type(error).__name__}
+    result["cgroup_scope"] = "root-view controller files only; not effective process quota"
+    result["current_cgroup"] = current_cgroup_observation()
     return result
 
 

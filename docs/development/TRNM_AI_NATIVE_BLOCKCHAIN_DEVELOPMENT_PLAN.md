@@ -14859,3 +14859,80 @@ Integrated the selected read-only reader at 09e5ab31. Its 543-line runtime is by
 The remote candidate advanced from 73d5a17b to e40d7071 while the audit was running. Its five-path delta was independently reviewed and merged without replacing concurrent work. The complete 41-name History roster (40 passing tests plus the original subprocess fixture) was already present in the integrated source and is byte-identical to the new remote roster. The current workflow retains the separately reviewed complete W1 result parser, all original native selectors and budgets. The remote diagnostic helper is retained byte-identically. Its complete new detached-diagnostic success/refusal method, exact current-source roster assertions and 38-pass stale-count refusal are preserved on the actual current gate; a further control prevents the retained helper borrowing another named test or suite summary's outcome. Full named results and failure records remain required. No original native workload, deadline, expected ignore or qualification state is changed.
 
 The first combined gate run correctly refused stale expected rosters: five already integrated rank-one kernel controls and one fixed-tip History admission control were missing from the named list. Its original failed log is retained. Current closed literal rosters now require all 19 kernel controls and all 42 History entries (41 passing controls and the original child fixture); no existing name or ignore reason was removed. Independent source-name checks and old 14/40-count false-success counterexamples bind this expansion. The remote's 41-entry roster remains preserved in its original commit, and its full diagnostic method and helper remain byte-identical. A separate fixed-source Linux replay runs the two complete native selectors; this does not run or qualify the original four-second confirmation campaign.
+
+### 2026-11-14 selected SQLite cache requalification reader
+
+The ea909124 launcher identity and foreign-loader controls are retained on the
+current canonical-toolchain loader seed. The installed rustup must select the
+caller's exact pinned cargo/rustc; all three executable identities are recorded
+before and after. Four original cache transitions retain their own denominator,
+and two additional foreign-loader refusal/restoration phases use the same fresh
+target. Original failures and subsequent attempts remain recorded.
+
+The current canonical rustc/lib path validation and LD_LIBRARY_PATH seed are
+preserved. Inherited loader input and the intentionally selected canonical seed
+are reported separately; only the extra refusal phase adds the foreign directory,
+then the original selected seed is restored. The ten original reader controls
+include this current-seed adaptation and run in repository-truth. The actual
+workflow passes its installed rustup explicitly. These are synthetic orchestration
+and source-preservation controls, not a new real Cargo requalification, SQLite
+operation, dependency provenance or public-service result. All qualification
+flags remain false; exact hosted native execution remains separately required.
+
+### 2026-11-14 current-process cgroup observation
+
+The 9f77f433 read-only observation and all original fourteen controls are retained.
+The current three source files exactly matched the original parent; all imported
+tip bytes remain exact, including six existing process-accounting tests and eight
+new cgroup controls. The rank reader records the calling process's unique visible
+cgroup2 mount, actual leaf and every visible ancestor, with bounded nonblocking
+regular-file reads and before/after membership and mount-table comparison.
+
+Ambiguous or shadowed mounts, noncanonical/overlong paths, missing values,
+device/identity changes, FIFO inputs and membership drift cannot become a complete
+observation. Root-view limits remain explicitly separate. Atomicity, effective
+quota, external namespace ancestry, child placement and consensus/model authority
+remain false. The original Linux controls run only synthetic namespace files and
+owned finite child processes; no rank campaign, Host provisioning, native service
+qualification or performance gate is executed by this port.
+
+### 2026-11-14 original large-state profile matrix
+
+The 41742ba4 workflow is retained exactly: each x64/arm64 and head/prospective-merge
+combination has independent test and release jobs. The four original native
+selectors and their complete command/error-propagation block are byte-identical.
+The original sixty-minute bound, fail-fast=false, retained failures, source
+before/after checks and read-only permissions remain. Test mode retains Node
+opt-level 3 with debug/overflow checks and M06 opt-level 1 with the same checks;
+release retains its distinct optimized profiles and supplementary denominator.
+
+Ten synthetic cases exercise the actual embedded profile verifiers: both
+declared profiles accept, while omitted/duplicated or substituted M06, lost Node
+checks, extra features, ambient overrides and unknown profiles refuse. The current
+Cargo profile declarations match the required metadata. No native acceptance
+result is supplied by these synthetic or source-preservation checks. Both exact
+hosted native profiles remain required; release does not replace test.
+
+### 2026-11-14 explicit current Cell acquisition API
+
+The 75600213 reusable acquisition boundary and its five original controls are
+retained by extracting the current acquisition body. The immutable closure input
+carries the already checked path, generation, context and authentication arguments.
+The current bounded 4096-byte provider-event reader, explicit accept-loop ready
+event, one original 35-second acquisition deadline, retry/connection/byte limits,
+cache-only materialization and provider-exit checks are preserved. The wrapper
+continues to require the current runtime snapshot and its digest.
+
+A sixth control proves ready waiting cannot renew the original transfer deadline.
+The original five assertion sets remain unchanged; synthetic providers use real
+owned pipes to exercise the current bounded event reader. Linux passes six
+acquisition, six provider-ready, five deadline and three existing installed-policy
+controls. No native acquisition campaign or protected installed ELF deployment
+is claimed. The separate Mac installed-policy platform failure and its five
+pre-existing deployment skips remain recorded without weakening a test or policy.
+Repository-truth invokes the synthetic acquisition controls; all qualification,
+use-authority and installation-authority assertions retain their existing meaning.
+
+### 2026-11-14 root composition: current SQLite, Host observation, profiles and Cell acquisition
+
+Integrated the four independently reviewed ports f631c890, ce28801d, 2a29b228 and 3eb2cfdd. Their selected runtime/test blobs are unchanged in composition. SQLite launcher provenance binds installed rustup plus before/after executable hashes; the read-only cgroup observer records bounded visible ancestry without conferring Host placement or effective-quota authority. The original large-state workflow retains both original test and release profiles on both architectures and exact/prospective inputs. Cell acquisition extracts the current ready-aware body with one original 35-second transfer deadline and cache-only materialization; it preserves the current runtime snapshot and provider cleanup. Original controls and independent source/command refusal checks remain. Six-phase real SQLite qualification, eight-profile native acceptance, native model acquisition and the original confirmation campaign are not supplied by the synthetic controls.
