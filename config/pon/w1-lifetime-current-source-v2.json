@@ -22,7 +22,7 @@
   },
   "schema": "TRNM-W1-LIFETIME-CURRENT-SOURCE-CONTRACT2",
   "selected_source_scope": "20_selected_paths_not_full_dependency_or_execution_closure",
-  "source_base_commit": "975ab0937243949b73cdbea9f13902802bbd7d00",
+  "source_base_commit": "332d7f723d71707d88a2cffa52b3754579a46926",
   "sources": [
     {
       "bytes": 924,
@@ -109,8 +109,8 @@
       "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py"
     },
     {
-      "bytes": 28132,
-      "current_sha256": "23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a",
+      "bytes": 29812,
+      "current_sha256": "3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049",
       "historical_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
       "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
     },
