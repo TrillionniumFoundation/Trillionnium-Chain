@@ -1,7 +1,0 @@
-Running as unit: w1-clean399-build-ac775abe57cae5b8a9d17c2833073cf9.service; invocation ID: fb375ace1b874b66a25cd17d33558775
-Finished with result: success
-Main processes terminated with: code=exited/status=0
-Service runtime: 10.985s
-CPU time consumed: 11.172s
-Memory peak: 2.5M
-Memory swap peak: 0B

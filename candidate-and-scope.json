@@ -1,0 +1,13 @@
+{
+  "schema": "trnm-pre-consolidation-history-archive-v1",
+  "frozen_manifest_sha256": "e52bb1c8c0963b2ddd303761ffe7ba949c080b3a0f72983f508978f8971e7734",
+  "observed_remote_manifest_sha256": "35b9f97cf2019347ddaf025eb9b5b58da4c66a4689a65b12dfba2c127a8dac94",
+  "branch_names": 908,
+  "distinct_remote_tips": 892,
+  "candidate_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "candidate_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "archive_preserves_history_not_semantic_equivalence": true,
+  "main_merge_performed": false,
+  "branches_deleted": false,
+  "required_head_and_prospective_ci_qualification": false
+}

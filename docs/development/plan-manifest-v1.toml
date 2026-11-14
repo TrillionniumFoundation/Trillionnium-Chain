@@ -1,6 +1,0 @@
-schema_version = 3
-plan_id = "trnm-chain-development-plan-v2"
-plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
-source_inventory = "config/portability-inventory-v1.json"
-source_binding = "derive-exact-head-tree-and-blobs-at-check-time"
-production_consensus_activation = false

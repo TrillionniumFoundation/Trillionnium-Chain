@@ -1,8 +1,0 @@
-{
-  "old_owner_sha256": "356c88ab41f77c2e51a53e3aab0cd0dbb1d78ed3ebcff410fd192d4f4d6f4eed",
-  "owner_sha256": "9afaea4a9ff9c14d6e397be379a4317b00d6dc2f953f527a5275c9eaa3921a6f",
-  "same_local600_clock_no_reset": true,
-  "first_red_compile101_E0599_not_kernel_test_result": true,
-  "new_source_sha256": "cae73cf90941cc6015a918e0b66501c9d286276c28c600ffa51af053275d0947",
-  "production_predicate_still_unmodified": true
-}

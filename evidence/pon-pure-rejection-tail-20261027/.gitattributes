@@ -1,2 +1,0 @@
-# Preserve exact native/test logs, including terminal blank lines.
-*.log -whitespace

@@ -1,3 +1,0 @@
-# Scientific/conformance environment only; not a runtime dependency or dynamic install hook.
-numpy==1.26.4
-cryptography==50.0.2

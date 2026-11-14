@@ -1,7 +1,0 @@
-schema_version = 2
-plan_id = "trnm-chain-development-plan-v2"
-development_target = "pon-nakamoto-v1"
-sequence = ["PN0", "PN1", "PN2", "PN3", "PN4", "PN5", "PN6"]
-production_candidate = false
-production_consensus_activation = false
-release_ready = false
