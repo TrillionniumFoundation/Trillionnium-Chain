@@ -54,7 +54,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc::{self, TryRecvError, TrySendError},
+        mpsc::{self, RecvTimeoutError, TryRecvError, TrySendError},
         Arc, Mutex,
     },
     thread,
@@ -1315,6 +1315,20 @@ enum Stage {
     },
 }
 impl Stage {
+    // This describes only work made visible during one complete reactor pass.
+    // It retains neither an I/O readiness verdict nor any authority decision.
+    fn progress_key(&self) -> (std::mem::Discriminant<Self>, usize) {
+        let cursor = match self {
+            Self::Hello(bytes) | Self::Solution { bytes, .. } | Self::Body { bytes, .. } => {
+                bytes.len()
+            }
+            Self::Challenge { cursor, .. }
+            | Self::Ready { cursor, .. }
+            | Self::Output { cursor, .. } => *cursor,
+            _ => 0,
+        };
+        (std::mem::discriminant(self), cursor)
+    }
     fn phase(&self) -> &'static str {
         match self {
             Self::Hello(_) | Self::WaitChallenge { .. } => "hello",
@@ -1647,7 +1661,7 @@ fn task_alive(deadline: Instant, stop: &AtomicBool, cancelled: &AtomicBool) -> R
         "PUBLIC_REQUEST_DEADLINE",
     )
 }
-fn read_available(socket: &mut TcpStream, bytes: &mut Vec<u8>, expected: usize) -> Result<bool> {
+fn read_available(socket: &mut impl Read, bytes: &mut Vec<u8>, expected: usize) -> Result<bool> {
     ensure(bytes.len() <= expected, "PUBLIC_READ_OVERFLOW")?;
     let remaining = expected - bytes.len();
     if remaining == 0 {
@@ -2400,6 +2414,7 @@ fn serve_public_protected_v3_inner(
     let mut last_kernel_check = Instant::now();
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
+        let reactor_thread = thread::current();
         for index in 0..3 {
             let queue = if index < 2 {
                 proof_rx.clone()
@@ -2414,6 +2429,7 @@ fn serve_public_protected_v3_inner(
             let server = &server;
             let settings = &settings;
             let kernel_for_worker = host_kernel.as_ref();
+            let reactor_thread = reactor_thread.clone();
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
                     // Its drop is last in this iteration, after the dequeued
@@ -2424,7 +2440,12 @@ fn serve_public_protected_v3_inner(
                     // task awaits CPU. Release before any native dispatch. The
                     // separate read queue and active workers remain independent.
                     let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
-                    let task = dequeue_order.as_ref().unwrap().try_recv();
+                    // Wake on the bounded queue while retaining the original
+                    // one-millisecond stop/deadline poll and FIFO CPU admission.
+                    let task = dequeue_order
+                        .as_ref()
+                        .unwrap()
+                        .recv_timeout(Duration::from_millis(1));
                     match task {
                         Ok(mut task) => {
                             _worker_observation = task
@@ -2749,21 +2770,22 @@ fn serve_public_protected_v3_inner(
                             {
                                 return Ok(());
                             }
+                            reactor_thread.unpark();
                         }
-                        Err(TryRecvError::Empty) => {
+                        Err(RecvTimeoutError::Timeout) => {
                             drop(dequeue_order);
                             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                                 return Ok(());
                             }
-                            thread::sleep(Duration::from_millis(1));
                         }
-                        Err(TryRecvError::Disconnected) => return Ok(()),
+                        Err(RecvTimeoutError::Disconnected) => return Ok(()),
                     }
                 }
             }));
         }
         let outcome = (|| -> Result<()> {
             while !stop.load(Ordering::Acquire) && Instant::now() < end {
+                let mut made_progress = false;
                 if let Some(budget) = host_kernel.as_ref() {
                     if last_kernel_check.elapsed() >= Duration::from_millis(50) {
                         budget.verify()?;
@@ -2778,6 +2800,7 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match listener.accept() {
                         Ok((socket, peer)) => {
+                            made_progress = true;
                             let accepted_at = Instant::now();
                             let mut accepted = AcceptedConnection {
                                 socket,
@@ -2815,14 +2838,17 @@ fn serve_public_protected_v3_inner(
                 }
                 for _ in 0..8 {
                     match finished_rx.try_recv() {
-                        Ok(done) => apply_finished_connection(
-                            &mut connections,
-                            done,
-                            &metrics,
-                            Instant::now(),
-                            end,
-                            &stop,
-                        )?,
+                        Ok(done) => {
+                            made_progress = true;
+                            apply_finished_connection(
+                                &mut connections,
+                                done,
+                                &metrics,
+                                Instant::now(),
+                                end,
+                                &stop,
+                            )?;
+                        }
                         Err(TryRecvError::Empty) => break,
                         Err(TryRecvError::Disconnected) => return Err("PUBLIC_WORKERS_GONE".into()),
                     }
@@ -2855,6 +2881,7 @@ fn serve_public_protected_v3_inner(
                         continue;
                     }
                     let current = std::mem::replace(&mut conn.stage, Stage::Await);
+                    let progress_before = current.progress_key();
                     let phase = current.phase();
                     let pending_before = current.pending();
                     let advanced = (|| -> Result<Stage> {
@@ -3255,7 +3282,10 @@ fn serve_public_protected_v3_inner(
                         }
                     })();
                     match advanced {
-                        Ok(next) => conn.stage = next,
+                        Ok(next) => {
+                            made_progress |= next.progress_key() != progress_before;
+                            conn.stage = next;
+                        }
                         Err(error) => {
                             record_stage_error(
                                 conn,
@@ -3274,6 +3304,7 @@ fn serve_public_protected_v3_inner(
                 remove.dedup();
                 for id in remove {
                     if let Some(conn) = connections.remove(&id) {
+                        made_progress = true;
                         let pressure = conn
                             .intake_lease
                             .as_ref()
@@ -3316,7 +3347,15 @@ fn serve_public_protected_v3_inner(
                         .count(),
                 );
                 drop(m);
-                thread::sleep(Duration::from_millis(1));
+                // Advance another fair pass only after actual bytes, a stage
+                // transition, accepted/closed connection or native completion.
+                // Per-pass I/O quantum, accepts/completions, original absolute
+                // deadlines and every r20 owner/CPU check remain unchanged.
+                // Idle passes retain the one-millisecond ceiling and can be
+                // woken by a completed native worker.
+                if !made_progress {
+                    thread::park_timeout(Duration::from_millis(1));
+                }
             }
             Ok(())
         })();

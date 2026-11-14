@@ -14634,3 +14634,31 @@ The combined CI contract initially refused the retained public_v3_multiprocess w
 ### 2026-11-14 concurrent publication history and exact material source pair
 
 Integrated reviewed shared commit 73d5a17b9b7fb5f67040554f22ff37d20725e548 and all four concurrent ancestors. The current runtime pilot differs only by the selected reconciliation CLI, so its exact source pair and three canonical loaded-contract values are rebound across the neural reader, research preparation and both original test suites. Historical material bytes and all refusal assertions remain; the prior runtime and authority checkpoints are explicit stale-source refusals. Both standalone locks already match root. Root current-source mappings remain selected pending final composition rebind. No inference algorithm, native protocol budget or qualification flag changes. Original protected CI failures and the initial pre-write source-pair refusal remain retained.
+
+
+### 2026-11-14 PublicV3 bounded worker and actual-progress scheduling
+
+The multiple-base branch review selected the bounded worker receive from
+347f7f087ca2413fc6f78f425905a62ed3584cf8 and actual-progress reactor wakeups from
+44b10ed1a4568209d18e617533ec8fa0d0b8a029 on reviewed source
+692f2454620faad648850f9421f2f11467ba046e. Workers retain the FIFO queue mutex,
+one-millisecond stop polling, original cancellation and absolute deadlines.
+The reactor parks only when its actual stage, byte/cursor, accepted/removed
+connection or completed-work state makes no progress; completed workers wake it.
+Admission, 64-KiB quantum, per-pass limits, r20 identity and accounting are unchanged.
+
+The direct reusable-Vec implementation of read_available was already retained.
+The 3e062b3a6f9f94a7a89283f666820025409de779 port therefore only restores its three
+original complete reader controls and an impl Read private test seam; it is not
+a new copy-elimination result. One additional control rejects waiting metadata
+and same-size content as progress while accepting real byte/cursor/stage changes.
+
+On an independently owned Linux source and target, the complete input_decode_tests
+module passed 10/10 with zero ignored, and Node library all-features strict Clippy
+passed. Both Rust source hashes were checked before and after execution; the
+component receipt preserves the previous tested state and exact 692f base.
+Independent literal source controls reject omission, missing pins and mutation
+of either reviewed path. Existing source inventories remain applicable.
+These component results do not establish a latency improvement, independent
+operation, production or PQ qualification. The original four-second confirmation
+failure remains unresolved pending final exact-source protected CI.

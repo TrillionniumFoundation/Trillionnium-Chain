@@ -311,3 +311,220 @@ fn canonical_packet_decoder_preserves_empty_maximum_and_structural_refusals() {
         compare_packet_decoder(bytes, 1);
     }
 }
+
+#[test]
+fn read_buffer_reuses_frame_capacity_and_preserves_quantum_and_trailing_bytes() {
+    struct Fragmented<'a> {
+        input: std::io::Cursor<&'a [u8]>,
+        calls: usize,
+        expected_offer: usize,
+    }
+    impl Read for Fragmented<'_> {
+        fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+            assert_eq!(target.len(), self.expected_offer);
+            assert!(target.len() <= IO_QUANTUM);
+            let limit =
+                [1, 7, HELLO_BYTES, IO_QUANTUM / 2, IO_QUANTUM][self.calls % 5].min(target.len());
+            self.calls += 1;
+            self.input.read(&mut target[..limit])
+        }
+    }
+    for expected in [
+        0,
+        1,
+        HELLO_BYTES,
+        IO_QUANTUM - 1,
+        IO_QUANTUM,
+        IO_QUANTUM + 1,
+        2 * IO_QUANTUM + 17,
+        MAX_BODY,
+    ] {
+        let prefix = expected.min(3);
+        let payload: Vec<u8> = (0..expected + 17).map(|i| (i % 251) as u8).collect();
+        let mut bytes = Vec::with_capacity(expected);
+        bytes.extend_from_slice(&payload[..prefix]);
+        let pointer = bytes.as_ptr();
+        let capacity = bytes.capacity();
+        let mut reader = Fragmented {
+            input: std::io::Cursor::new(&payload[prefix..]),
+            calls: 0,
+            expected_offer: 0,
+        };
+        while bytes.len() < expected {
+            let before = bytes.len();
+            reader.expected_offer = (expected - before).min(IO_QUANTUM);
+            let complete = read_available(&mut reader, &mut bytes, expected).unwrap();
+            assert_eq!(complete, bytes.len() == expected);
+            assert!(bytes.len() > before && bytes.len() - before <= IO_QUANTUM);
+            assert!(bytes.len() <= expected);
+            assert_eq!(bytes.capacity(), capacity);
+            assert_eq!(bytes.as_ptr(), pointer);
+        }
+        assert_eq!(bytes, payload[..expected]);
+        assert_eq!(reader.input.position() as usize, expected - prefix);
+        let calls = reader.calls;
+        assert!(read_available(&mut reader, &mut bytes, expected).unwrap());
+        assert_eq!(
+            reader.calls, calls,
+            "a completed frame must not read its successor"
+        );
+        assert_eq!(
+            &reader.input.get_ref()[expected - prefix..],
+            &payload[expected..]
+        );
+    }
+}
+
+#[test]
+fn read_buffer_small_fragments_and_idle_probes_keep_fixed_capacity() {
+    struct SlowInput {
+        remaining: usize,
+        calls: usize,
+    }
+    impl Read for SlowInput {
+        fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+            assert!(!target.is_empty() && target.len() <= IO_QUANTUM);
+            self.calls += 1;
+            if self.calls.is_multiple_of(7) {
+                target.fill(0xee);
+                return Err(std::io::ErrorKind::WouldBlock.into());
+            }
+            assert!(self.remaining > 0);
+            target[0] = (self.remaining % 251) as u8;
+            self.remaining -= 1;
+            Ok(1)
+        }
+    }
+    let expected = IO_QUANTUM + 17;
+    let mut bytes = Vec::with_capacity(expected);
+    let capacity = bytes.capacity();
+    let pointer = bytes.as_ptr();
+    let mut reader = SlowInput {
+        remaining: expected,
+        calls: 0,
+    };
+    while reader.remaining != 0 {
+        let before = bytes.len();
+        let complete = read_available(&mut reader, &mut bytes, expected).unwrap();
+        assert!(bytes.len() == before || bytes.len() == before + 1);
+        assert_eq!(bytes.len(), expected - reader.remaining);
+        assert_eq!(complete, reader.remaining == 0);
+        assert_eq!(bytes.capacity(), capacity);
+        assert_eq!(bytes.as_ptr(), pointer);
+    }
+    assert!(reader.calls > expected, "idle probes must actually execute");
+    let wanted: Vec<u8> = (1..=expected).rev().map(|i| (i % 251) as u8).collect();
+    assert_eq!(bytes, wanted);
+}
+
+#[test]
+fn read_buffer_errors_eof_and_overflow_preserve_received_prefix() {
+    struct Fault {
+        kind: Option<std::io::ErrorKind>,
+        calls: usize,
+    }
+    impl Read for Fault {
+        fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+            self.calls += 1;
+            target.fill(0xee);
+            match self.kind {
+                Some(kind) => Err(kind.into()),
+                None => Ok(0),
+            }
+        }
+    }
+    for kind in [
+        Some(std::io::ErrorKind::WouldBlock),
+        Some(std::io::ErrorKind::Interrupted),
+        Some(std::io::ErrorKind::PermissionDenied),
+        Some(std::io::ErrorKind::ConnectionReset),
+        None,
+    ] {
+        let mut bytes = Vec::with_capacity(HELLO_BYTES);
+        bytes.extend_from_slice(&[1, 2, 3]);
+        let capacity = bytes.capacity();
+        let pointer = bytes.as_ptr();
+        let mut fault = Fault { kind, calls: 0 };
+        let result = read_available(&mut fault, &mut bytes, HELLO_BYTES);
+        if matches!(
+            kind,
+            Some(std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted)
+        ) {
+            assert!(!result.unwrap());
+        } else if kind.is_none() {
+            assert_eq!(result.unwrap_err().to_string(), "PUBLIC_EOF");
+        } else {
+            let error = result.unwrap_err();
+            assert_eq!(
+                std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<std::io::Error>()
+                    .unwrap()
+                    .kind(),
+                kind.unwrap()
+            );
+        }
+        assert_eq!(bytes, [1, 2, 3]);
+        assert_eq!(bytes.capacity(), capacity);
+        assert_eq!(bytes.as_ptr(), pointer);
+        assert_eq!(fault.calls, 1);
+        assert!(read_available(&mut fault, &mut bytes, 3).unwrap());
+        assert_eq!(fault.calls, 1);
+        assert_eq!(
+            read_available(&mut fault, &mut bytes, 2)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_READ_OVERFLOW"
+        );
+        assert_eq!(fault.calls, 1);
+        assert_eq!(bytes, [1, 2, 3]);
+        let mut retry = std::io::Cursor::new([4, 5]);
+        assert!(read_available(&mut retry, &mut bytes, 5).unwrap());
+        assert_eq!(bytes, [1, 2, 3, 4, 5]);
+    }
+}
+
+#[test]
+fn reactor_progress_ignores_waiting_metadata_until_bytes_cursor_or_stage_change() {
+    let now = Instant::now();
+    let hello = Hello {
+        op: 1,
+        len: 1,
+        caller: [3; 32],
+        digest: [4; 32],
+        client_nonce: [5; 32],
+    };
+    let waiting = |sequence, entered_at| Stage::WaitChallenge {
+        hello,
+        pending: PendingOrder {
+            sequence,
+            entered_at,
+        },
+    };
+    // Fresh FIFO/clock observations alone cannot keep an idle reactor awake.
+    // Waiting does not acquire a body, grant, CPU reservation or native Task.
+    assert_eq!(
+        waiting(1, now).progress_key(),
+        waiting(2, now + Duration::from_secs(1)).progress_key()
+    );
+    assert_eq!(
+        Stage::Hello(vec![1]).progress_key(),
+        Stage::Hello(vec![2]).progress_key(),
+        "same-size storage is not a newly received byte"
+    );
+    assert_ne!(
+        Stage::Hello(vec![]).progress_key(),
+        Stage::Hello(vec![1]).progress_key()
+    );
+    assert_ne!(
+        Stage::Hello(vec![]).progress_key(),
+        Stage::Await.progress_key()
+    );
+    let output = |cursor| Stage::Output {
+        bytes: vec![1, 2],
+        cursor,
+        _permit: None,
+    };
+    assert_eq!(output(0).progress_key(), output(0).progress_key());
+    assert_ne!(output(0).progress_key(), output(1).progress_key());
+}
