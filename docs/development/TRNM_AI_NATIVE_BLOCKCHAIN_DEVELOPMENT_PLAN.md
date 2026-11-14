@@ -14512,3 +14512,31 @@ Integrated reviewed commit 6159b8ef0d334230e2b34071104ba94f9e835f5a. Cost covera
 ### 2026-11-14 root review: caller-and-native-controls
 
 Integrated reviewed commit 09f9303b834d41b4446b13dda64ddb2ead81e244. r20 authenticated caller grants preserve the full r19 contract suffix and historical vectors. Original signed caller controls, batch-preserving lazy ancestry spool, Go Q4 codec/signature vector, client CPU observations and fixed-tip internal history control passed on exact recorded Linux component sources. Internal16 and external singleton limits remain distinct; no four-second performance qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+## 2026-11-14 peer lease owner pre-write checks retained from 871ade83
+
+The consolidation port restores the bounded peer-lease checks from
+871ade83cd0bf43adbbefc397a88b187bf7bbd5d at the four reviewed seams.
+Payload append revalidates every bound endpoint immediately before the write;
+head-lag repair and ACK persistence repeat owner/endpoint validation before
+their durable writes. Existing post-write checks, poisoning and original
+absolute deadlines remain in force. The ordinary Unix daemon refuses any
+occupied socket path before opening the authority journal and never silently
+unlinks an existing endpoint.
+
+The current recovery daemon already rejects zero timeout before configuration
+or owner access, and decoded tokens already use validated reconstruction.
+Those stronger current controls remain unchanged. The original occupied-path
+control is retained. The isolated Linux source passed all 90 peer-lease tests
+and strict Clippy for all targets; the Mac source passed 89 platform-selected
+tests and strict Clippy. The sole non-semantic source adaptation is rustfmt on
+one test call. The subsequent, separate Q4 integration fixture failure in the
+combined Linux job is preserved and is not a peer-lease pass claim.
+
+This is a local compatibility port. It does not grant runtime activation,
+external authority, deployment, physical resource or security qualification.
+
+### 2026-11-14 root review: peer-prewrite
+
+Integrated reviewed commit 50759539544c78a16aa66c2b1a6d8a51acdeace1. Original payload, repair and ACK prewrite identity fences plus occupied socket refusal are retained. All ninety Linux and eighty-nine platform-selected macOS peer controls and strict all-target Clippy passed. Original zero-timeout checks are already stronger and remain retained. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.

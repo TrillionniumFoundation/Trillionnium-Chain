@@ -1538,5 +1538,51 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+    def test_peer_prewrite_sources_cannot_omit_source_or_pin(self):
+        # Independent review roster; simultaneous manifest deletion must fail.
+        dependencies = (
+            "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+            "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+
+    def test_peer_prewrite_sources_cannot_mutate_reviewed_bytes(self):
+        dependencies = (
+            "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+            "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+        )
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed peer pre-write owner")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
 if __name__ == "__main__":
     unittest.main()
