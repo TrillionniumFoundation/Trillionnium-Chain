@@ -14716,3 +14716,54 @@ flag remains false.
 ### 2026-11-14 root composition: relay-fresh-time
 
 Relay retains current decoder and wire limits. Shape, time, replay and capacity reject before digest and callback. Exactly one successful callback precedes fresh clock rollback/expiry checks and replay-map commit. The original 25 controls, four adapted original controls and two composition controls passed on Mac. There is no new production caller, durable replay qualification or unselected ML-DSA wire expansion.
+
+
+### 2026-11-14 PublicV3 bounded worker and actual-progress scheduling
+
+The multiple-base branch review selected the bounded worker receive from
+347f7f087ca2413fc6f78f425905a62ed3584cf8 and actual-progress reactor wakeups from
+44b10ed1a4568209d18e617533ec8fa0d0b8a029 on reviewed source
+692f2454620faad648850f9421f2f11467ba046e. Workers retain the FIFO queue mutex,
+one-millisecond stop polling, original cancellation and absolute deadlines.
+The reactor parks only when its actual stage, byte/cursor, accepted/removed
+connection or completed-work state makes no progress; completed workers wake it.
+Admission, 64-KiB quantum, per-pass limits, r20 identity and accounting are unchanged.
+
+The direct reusable-Vec implementation of read_available was already retained.
+The 3e062b3a6f9f94a7a89283f666820025409de779 port therefore only restores its three
+original complete reader controls and an impl Read private test seam; it is not
+a new copy-elimination result. One additional control rejects waiting metadata
+and same-size content as progress while accepting real byte/cursor/stage changes.
+
+On an independently owned Linux source and target, the complete input_decode_tests
+module passed 10/10 with zero ignored, and Node library all-features strict Clippy
+passed. Both Rust source hashes were checked before and after execution; the
+component receipt preserves the previous tested state and exact 692f base.
+Independent literal source controls reject omission, missing pins and mutation
+of either reviewed path. Existing source inventories remain applicable.
+These component results do not establish a latency improvement, independent
+operation, production or PQ qualification. The original four-second confirmation
+failure remains unresolved pending final exact-source protected CI.
+
+
+### 2026-11-14 current claim JSON underflow refusal
+
+The old b2bbcc95 and 9fcd3fef strict numeric controls identified a concrete
+current parser gap: a nonzero exponent could silently deserialize as signed
+zero. The selected current whole-chain claim reader now rejects that collapse
+using an exact decimal zero check after its existing finite-number check.
+Both exact signed zeros, ordinary finite values and representable subnormal
+values remain readable. Existing duplicate-key, nonfinite, exact-boolean,
+reserved-claim and descriptor-bound source controls are unchanged.
+
+The original rejection cases were adapted to all five current claim documents,
+and the original finite cases retain their meanings with signed-zero controls.
+The two controls first reproduced the current underflow acceptance; the full
+current claim test suite then passed with the minimal parser change.
+This is parser consistency hardening, not evidence of an activation bypass.
+The retired fixed 17-file/RISC0 claim gate is not reintroduced. Current HOLD,
+source identities, ownership and every qualification flag remain unchanged.
+
+### 2026-11-14 root composition: public-v3-reactor-json
+
+PublicV3 uses bounded blocking worker receipt and parks an idle reactor based on actual state/cursor/accept/remove/completion progress; completed workers unpark it. Existing direct-buffer reads, wire limits, work deadlines and cancellation are preserved. Original three read controls and one progress control passed with six current controls and strict Linux Clippy. This is not evidence of meeting the original four-second confirmation gate. Strict claim JSON additionally rejects nonzero float underflow while retaining signed exact zero and valid subnormal values; all 57 controls passed on the reviewed candidate.

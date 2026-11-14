@@ -7,6 +7,7 @@ advertises HOLD; it is NOT a PQ-128 attestation, authorization or consensus gate
 from __future__ import annotations
 
 import argparse
+import decimal
 import json
 import math
 from pathlib import Path
@@ -139,6 +140,12 @@ def strict_json(root: Path, relative: str) -> dict:
     def finite_float(value: str) -> float:
         parsed = float(value)
         require(math.isfinite(parsed), 'nonfinite JSON number: ' + relative)
+        if parsed == 0.0:
+            try:
+                exact_zero = decimal.Decimal(value).is_zero()
+            except decimal.InvalidOperation as error:
+                raise UnsafePromotion('invalid JSON number: ' + relative) from error
+            require(exact_zero, 'underflowed JSON number: ' + relative)
         return parsed
 
     def reject_nonstandard_constant(value: str) -> float:

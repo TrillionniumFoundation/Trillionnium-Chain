@@ -1516,6 +1516,16 @@ RELAY_PREFLIGHT_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= RELAY_PREFLIGHT_REQUIRED_PATHS
 
+
+# Reviewed scheduling preserves existing absolute deadlines and r20 authority.
+# These two paths are source identities, not a confirmation-latency claim.
+PUBLIC_V3_REACTOR_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs',
+))
+NATIVE_REQUIRED_PATHS |= PUBLIC_V3_REACTOR_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
