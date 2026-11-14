@@ -553,7 +553,12 @@ class CheckedInContractTests(ContractCase):
         self.assertEqual(set(correspondence['source_files_sha256']), set(report['source_paths']))
         self.assertEqual(len(correspondence['source_files_sha256']), 21)
         self.remains_unqualified(report)
-        self.remains_unqualified(current)
+        self.assertEqual(current['status'], 'HOLD')
+        self.assertIsNone(current['actual_lifetime_failure_bound'])
+        for field in ('whole_chain_pq_qualified', 'pq_128_qualified',
+                      'production_activation', 'composition_coverage_proved',
+                      'theorem_applicability_verified'):
+            self.assertIs(current[field], False, field)
 
     def test_checked_in_example_reproduces_only_the_illustrative_equality(self):
         example_path = 'config/pon/pq128-lifetime-example-v1.json'
