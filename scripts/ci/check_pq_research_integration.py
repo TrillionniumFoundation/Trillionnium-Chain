@@ -1205,6 +1205,22 @@ CELL_REVIEWED_PAGED_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CELL_REVIEWED_PAGED_REQUIRED_PATHS
 
+# Lossless retention, named native completion, and fresh rejection readers
+# are required source dependencies. Pins do not authenticate reported clocks
+# or grant native execution, resource-cost, or security qualification.
+NATIVE_OBSERVATION_REQUIRED_PATHS = frozenset((
+    "scripts/ci/prepare_artifact_upload.py",
+    "scripts/ci/test_prepare_artifact_upload.py",
+    "scripts/ci/w1_native_controls.py",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "scripts/ci/check_w1_native_roster.py",
+    "scripts/ci/test_w1_native_roster.py",
+    "scripts/ci/w1_native_rosters_v1.json",
+    "scripts/pon_fresh_rejection_report.py",
+    "scripts/ci/test_fresh_rejection_report.py",
+))
+NATIVE_REQUIRED_PATHS |= NATIVE_OBSERVATION_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(

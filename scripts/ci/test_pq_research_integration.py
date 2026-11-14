@@ -250,6 +250,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["cryptographic_acceptance"], False)
         self.assertIs(result["node_activated"], False)
 
+    def test_native_observation_guards_cannot_omit_pins_or_change_bytes(self):
+        # Independent names keep the retained archive, native completion and
+        # synthetic-clock reader dependencies mandatory even if a roster drifts.
+        dependencies = (
+            "scripts/ci/prepare_artifact_upload.py",
+            "scripts/ci/test_prepare_artifact_upload.py",
+            "scripts/ci/w1_native_controls.py",
+            "scripts/ci/test_w1_factorial_native_gate.py",
+            "scripts/ci/check_w1_native_roster.py",
+            "scripts/ci/test_w1_native_roster.py",
+            "scripts/ci/w1_native_rosters_v1.json",
+            "scripts/pon_fresh_rejection_report.py",
+            "scripts/ci/test_fresh_rejection_report.py",
+        )
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            retained = source.read_bytes()
+            try:
+                source.write_bytes(retained + b"changed native observation guard")
+                with self.subTest(path=name, mutation="bytes"), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(retained)
+        self.assertFalse(check(self.root)["node_activated"])
+
     def test_deep_event_and_sampler_inputs_cannot_omit_pins_or_change_bytes(self):
         # Independent literals: neither helper declarations nor the checker's
         # required roster supply this source-integrity regression inventory.
