@@ -1354,6 +1354,14 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     'docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md',
 ))
 
+# Native cheap refusal and cross-claim journal readback remain required.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
+))
+
 class IntegrityError(ValueError):
     pass
 
