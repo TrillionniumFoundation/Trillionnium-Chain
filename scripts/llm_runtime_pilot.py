@@ -2163,6 +2163,10 @@ def main():
         help='read existing spending for reconciliation; does not supply an external trusted checkpoint')
     inspector.add_argument('--ledger', required=True)
     inspector.add_argument('--policy', required=True)
+    reconciler = commands.add_parser('trial-ledger-reconcile',
+        help='observe one exact uncertain trial against a retained checkpoint; never retries effects')
+    for name in ('ledger', 'policy', 'trial', 'plan', 'minimum-checkpoint'):
+        reconciler.add_argument('--' + name, required=True)
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)
     worker.add_argument('--artifact')
@@ -2170,7 +2174,7 @@ def main():
     worker.add_argument('--expected-parent-step-input')
     # Existing ledger-only commands need no parent-step or model module graph.
     ledger_only = len(sys.argv) > 1 and sys.argv[1] in (
-        'trial-ledger-init', 'trial-ledger-inspect')
+        'trial-ledger-init', 'trial-ledger-inspect', 'trial-ledger-reconcile')
     if not ledger_only:
         from llm_runtime_parent_step import add_parser, run as run_parent_step
         add_parser(commands)
@@ -2184,6 +2188,11 @@ def main():
         print(json.dumps(dict(policy=state['policy_id'], checkpoint=state['checkpoint'],
             spent=state['spent'], scope=state['scope'],
             attempts={key: value['state'] for key, value in state['attempts'].items()}), sort_keys=True))
+    elif args.command == 'trial-ledger-reconcile':
+        from llm_runtime_trial_ledger import TrialLedger
+        state = TrialLedger(args.ledger, args.policy).reconcile(
+            args.trial, args.plan, args.minimum_checkpoint)
+        print(json.dumps(state, sort_keys=True))
     elif args.command == 'run': run(args)
     elif args.command == 'parent-step': run_parent_step(args)
     else: child(args)
