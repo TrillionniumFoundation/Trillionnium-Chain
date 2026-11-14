@@ -163,6 +163,54 @@ class CorpusGateTests(unittest.TestCase):
         q.parent.mkdir(parents=True, exist_ok=True)
         q.write_text(json.dumps(self.manifest))
 
+    def test_typed_pending_worker_requires_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "scripts/llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_exit_initial_pending.py",
+            "scripts/test_llm_runtime_exit_binding_pending.py",
+            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+            "scripts/test_llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_pilot.py",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_typed_pending_worker_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "scripts/llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_exit_initial_pending.py",
+            "scripts/test_llm_runtime_exit_binding_pending.py",
+            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+            "scripts/test_llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_pilot.py",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected typed pending worker source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def test_throughput_cost_coverage_requires_each_path_and_pin(self):
         # This reviewed scope is deliberately independent of the reader roster.
         paths = (

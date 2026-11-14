@@ -14992,3 +14992,42 @@ Selected the three independent 1d11f875 statement-boundary controls. They exerci
 ### 2026-11-14 retained literal-aware Rust token reader
 
 Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
+
+### 2026-11-14 retained three-stage typed pending worker observations
+
+Selected the complete 147bae52, 91e4a5e9 and c1650714 lineage for the existing
+explicit worker-pidfd V4 observer. Initial incomplete task observation, held-task
+ENOENT during partial binding, and post-binding ESRCH retain distinct pending
+records. The last case requires every original worker binding, the same held
+worker pidfd with its exact terminal event, unchanged owner/namespace/birth
+identity, and one proved roster loss. Previously observed invalid fields, new or
+reappearing tasks, a second unproved loss and unknown reads remain sticky refusals.
+
+Pending records neither claim zero RSS nor complete/release/refill a reservation.
+The existing pilot lifecycle, default profile, source-pair and trial-reconcile
+behavior remain byte-identical. Completion still requires the original same-owner
+wait4 with valid resource usage within both the whole operation deadline and the
+original missing-sample-plus-100ms bound. No Host/model campaign is activated.
+
+The original fourteen initial, ten binding and twelve post-binding controls enter
+the existing protocol-contract pilot command once. Only the two whole-pilot test
+fixture digests bind the already reviewed consolidated CLI body; original V2/V3
+pins, old observer-profile refusals and all original control assertions remain.
+Independent literal source and registration mutations refuse omission or bypass.
+Linux child/pidfd/proc/wait4 observations and controlled proc field views are
+recorded separately; they grant no model, production or campaign qualification.
+
+The old Diverse60 recipe deliberately retains its aae68f92 observer pin. It now
+refuses the changed observer at DIVERSE_V3_CURRENT_OBSERVER; neither its historical
+source namespace nor its old experimental receipts are refreshed or qualified.
+
+The selected Linux run completed all 59 original methods: 36 pending controls
+and 23 existing worker controls, with zero failures, errors or skips. The actual
+pilot discovery registered each of the 36 once. Sixty-seven absolute project
+inputs and the actual loaded project modules were source-bound before/after;
+unresolved dir_fd-relative audit events are separately counted, without claiming
+complete file-access coverage. The first external driver misinterpreted relative
+proc paths and produced 240 subtest errors; that failed run and its once-guard
+refusal remain retained. Correcting only this driver produced the passing run.
+Six independent CI/source negative controls and the actual CI/corpus readers
+also passed. These observations preserve all qualification flags as false.

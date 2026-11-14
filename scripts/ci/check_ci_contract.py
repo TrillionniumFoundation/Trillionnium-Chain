@@ -2311,6 +2311,105 @@ def check_pq_system_required_controls(root: Path) -> dict:
             'selected_meaningful_controls': 63, 'tests_executed': False}
 
 
+
+# Original typed-pending controls enter the existing pilot command once.
+# This checks registration, not execution or resource-owner qualification.
+LLM_TYPED_PENDING_TESTS = {
+    "test_llm_runtime_exit_initial_pending": {
+        "class": "InitialTerminalPendingTests",
+        "methods": [
+            "test_initial_task_set_shrink_keeps_pending_until_exact_wait4",
+            "test_initial_worker_stat_enoent_retains_validated_prefix_without_full_proof",
+            "test_constructor_refusal_is_retained_in_same_owner_slot_before_racing_terminal_wait4",
+            "test_pending_late_wait4_uses_both_original_deadlines",
+            "test_pending_requires_exact_wait4_and_valid_nonzero_resources",
+            "test_pending_full_owner_rejects_overcap_nonzero_exit_and_timeout_despite_final_exit0",
+            "test_observed_bad_status_or_stat_cannot_be_erased_by_later_enoent",
+            "test_successful_task_count_decrease_cannot_rebound_before_or_after_enoent",
+            "test_unknown_reads_malformed_fields_and_partial_constructor_fds_refuse",
+            "test_pending_new_tid_reappearance_changed_birth_and_reused_fd_are_sticky",
+            "test_actual_current_rss_failed_constructor_blocks_immediate_terminal_in_import_and_main",
+            "test_failed_slot_never_overwrites_an_earlier_result_or_foreign_owner",
+            "test_frozen_original_model_and_v2_v3_bytes_and_old_v4_profile_refusal",
+            "test_real_owned_wait4_closes_only_synthetic_initial_roster_gap"
+        ]
+    },
+    "test_llm_runtime_exit_binding_pending": {
+        "class": "BindingTerminalPendingTests",
+        "methods": [
+            "test_held_worker_enoent_in_each_acquisition_read_keeps_original_pending",
+            "test_successfully_read_bad_status_is_sticky_before_later_stat_enoent",
+            "test_other_task_read_errors_and_enoent_without_roster_loss_refuse",
+            "test_pidfd_open_or_fdinfo_failure_is_not_a_held_task_read",
+            "test_group_or_leader_read_failure_never_creates_binding_pending",
+            "test_real_supervise_and_owned_wait4_close_only_with_original_resource_rules",
+            "test_pending_unknown_wrong_wait_and_missing_receipts_cannot_close",
+            "test_original_whole_deadline_cannot_be_replaced_by_new_pending_window",
+            "test_constructor_failure_diagnostic_comes_from_actual_current_rss_call",
+            "test_legacy_sources_unchanged_and_previous_v4_source_receipt_refused"
+        ]
+    },
+    "test_llm_runtime_exit_post_binding_retirement": {
+        "class": "PostBindingRetirementTests",
+        "methods": [
+            "test_bound_esrch_in_each_postbinding_read_retains_only_pending",
+            "test_unbound_esrch_and_postbinding_other_errors_still_refuse",
+            "test_bound_esrch_requires_exact_original_worker_terminal_event",
+            "test_terminal_event_cannot_replace_original_binding_or_held_identity",
+            "test_event_does_not_qualify_live_reappearing_or_other_missing_worker",
+            "test_successful_bad_status_is_not_erased_by_later_bound_esrch",
+            "test_postbinding_leader_and_group_esrch_still_refuse",
+            "test_roster_change_after_first_retention_check_is_not_hidden",
+            "test_one_loss_from_three_threads_does_not_cover_a_later_other_loss",
+            "test_previous_v4_source_receipt_remains_closed",
+            "test_native_held_proc_read_esrch_and_pidfd_event_use_actual_owned_wait4",
+            "test_native_terminal_event_does_not_bypass_exit_rss_or_original_deadline"
+        ]
+    }
+}
+
+
+def check_typed_pending_worker_controls(root: Path) -> dict:
+    pilot_path = root / 'scripts/test_llm_runtime_pilot.py'
+    require(pilot_path.is_file() and not pilot_path.is_symlink(),
+            'typed pending controls require the regular pilot entry')
+    pilot = ast.parse(pilot_path.read_text())
+    counts = {}
+    for module_name, expected in LLM_TYPED_PENDING_TESTS.items():
+        imports = [node for node in ast.walk(pilot)
+                   if isinstance(node, ast.ImportFrom) and node.module == module_name]
+        require(len(imports) == 1 and imports[0] in pilot.body
+                and imports[0].level == 0
+                and [(alias.name, alias.asname) for alias in imports[0].names]
+                == [(expected['class'], None)],
+                'typed pending controls require one unconditional original class import: ' + module_name)
+        source = root / 'scripts' / (module_name + '.py')
+        require(source.is_file() and not source.is_symlink(),
+                'typed pending original control source missing: ' + module_name)
+        tree = ast.parse(source.read_text())
+        classes = [node for node in tree.body
+                   if isinstance(node, ast.ClassDef) and node.name == expected['class']]
+        require(len(classes) == 1 and not classes[0].decorator_list
+                and [ast.unparse(base) for base in classes[0].bases] == ['unittest.TestCase'],
+                'typed pending controls require their undecorated original TestCase: ' + module_name)
+        methods = [node for node in classes[0].body
+                   if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                   and node.name.startswith('test_')]
+        names = [node.name for node in methods]
+        require(len(names) == len(set(names)) == len(expected['methods'])
+                and set(names) == set(expected['methods'])
+                and all(isinstance(node, ast.FunctionDef) and not node.decorator_list
+                        and any(not isinstance(statement, ast.Pass)
+                                and not (isinstance(statement, ast.Expr)
+                                         and isinstance(statement.value, ast.Constant))
+                                for statement in node.body)
+                        for node in methods),
+                'typed pending controls must retain every original non-skipped method: ' + module_name)
+        counts[module_name] = len(methods)
+    return {'original_controls': counts, 'selected_original_controls': sum(counts.values()),
+            'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
@@ -2326,6 +2425,7 @@ def validate(root: Path = ROOT) -> dict:
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)
     check_manual_research_workflows(root)
+    typed_pending_worker_controls = check_typed_pending_worker_controls(root)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
     pq_system_controls = check_pq_system_required_controls(root)
@@ -2610,6 +2710,7 @@ def validate(root: Path = ROOT) -> dict:
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
             'pq_system_controls': pq_system_controls,
+            'typed_pending_worker_controls': typed_pending_worker_controls,
             'tests_executed': False}
 
 
