@@ -14853,3 +14853,17 @@ cryptographic acceptance, or node activation is added.
 ### 2026-11-14 root composition: N11 throughput and cost evidence
 
 Integrated the selected read-only reader at 09e5ab31. Its 543-line runtime is byte-identical to e6549a19. Twenty-five original methods are unchanged; one preserves all original unknown/no-credit assertions on the actual production helper, and the additional full-analyzer control rejects the four incomplete claimed-confirmation forms under the unchanged current V4 phase contract. Both selected files and their existing bounded JSON dependency are independently required and pinned; the repository-truth command is required once. Initial old-fixture failures remain retained. These synthetic reader controls make no throughput capacity, native execution, installed Host or production qualification claim.
+
+## Node test module and metric initialization repair (2026-11-14)
+
+The original NPQ6 test build exposed two pre-existing strict Clippy failures.
+The PQ network and TLS unit suites now reference one unchanged TLS fixture
+module instead of compiling the same file twice in the Node test crate. Its
+test-only configuration retains the original TLS suite's non-Linux visibility;
+Fixture::new still creates independent per-call settings and identities. The
+duplicate module's dead-code allowance is removed, with no new allowance.
+Two PublicV3 metric fixtures use equivalent structure-literal initialization,
+retaining the same measured value and all other initial fields. No production
+body, fixture cryptography, request bound, deadline or assertion is changed.
+The original lint failure is retained. Combined Linux all-target strict Clippy
+is a separate required validation after these source changes are integrated.

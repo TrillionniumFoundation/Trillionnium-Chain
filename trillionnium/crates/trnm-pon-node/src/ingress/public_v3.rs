@@ -4311,8 +4311,10 @@ mod tests {
                 "total_elapsed_ns":0, "failed_stage":null,
             })
         );
-        let mut measured = PublicClientMetrics::default();
-        measured.solution_search_thread_cpu_ns = Some(7);
+        let measured = PublicClientMetrics {
+            solution_search_thread_cpu_ns: Some(7),
+            ..PublicClientMetrics::default()
+        };
         assert_eq!(
             serde_json::to_value(measured).unwrap()["solution_search_thread_cpu_ns"],
             7
@@ -4343,8 +4345,10 @@ mod tests {
             "failed_stage": null,
         });
         assert_eq!(serde_json::to_value(initial()).unwrap(), expected);
-        let mut measured = initial();
-        measured.solution_search_thread_cpu_ns = Some(7);
+        let measured = PublicClientMetrics {
+            solution_search_thread_cpu_ns: Some(7),
+            ..initial()
+        };
         let mut measured_expected = expected.clone();
         measured_expected["solution_search_thread_cpu_ns"] = json!(7);
         assert_eq!(serde_json::to_value(measured).unwrap(), measured_expected);
