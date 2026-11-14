@@ -24,14 +24,14 @@
     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "806ea380863d5ccd178959277ca206ee7d54c7f57e06cc7e4f30af351e9daa8c",
-    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "18684092d5a701e4a11587361b0181d2ce80e8ec194e3092b7e6276b9a81a561",
     "trillionnium/crates/trnm-pon-node/src/store.rs": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
     "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
     "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
   },
-  "current_source_snapshot_sha256": "1725a4aa53ed4a7486611089ee77ec1493df1e4212d4567e8e864920ec311b2b",
+  "current_source_snapshot_sha256": "acd0fb898af21099239e1de16bc370cb3abeab7274414883740a1250d5742a0f",
   "qualification": {
     "actual_lifetime_failure_bound": null,
     "whole_chain_pq_qualified": false,
