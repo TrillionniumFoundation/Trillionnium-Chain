@@ -811,3 +811,51 @@ unchanged. H1's 19-use/31-source inventory is not expanded: the helper retains
 the existing PublicPolicy SHA-256 purpose, reviewed by framing/oracle evidence,
 without claiming full-callgraph coverage. No nonce optimization, Host-check
 reduction, limit increase or qualification waiver is included.
+
+### 2026-11-14: Reconcile the later 096c6b CI increment
+
+The complete remote observation from 11:25:36 to 11:25:49 UTC retained 908
+branch names and 892 distinct tips. Only the integration candidate advanced
+from 5a4b7fe8de1adce803184f262fd9f704ead1930c to
+096c6b5f9b952c49389fd975515744074ba61317; the other 907 refs and main remained
+unchanged. That one-parent increment modifies seven files. This normal
+reconciliation retains both it and local 1e54c4ff66a92827c83bea8715f59f6b299e98cf.
+
+The three selected W1 CI files require all 19 named factorial kernel controls
+and correct floating-point endpoint validation. The original 120-second
+producer endpoint remains the bound: deadline <= started + 120, remaining
+must equal deadline - started, and completion must be strictly before the
+deadline. The added cases cover an exact producer endpoint whose subtraction
+rounds above 120, and reject an extended endpoint, mismatched remaining
+duration and completion at the endpoint. The workflow's nine batch controls
+and original shard budgets remain.
+
+The incoming Hash-use source map agrees with the local map for 30 of 31 paths.
+Its remaining store identity belongs to the concurrent store variant that was
+not selected in the earlier review. The complete local H1 manifest and reader
+therefore remain unchanged, including their 19 declared purposes and false
+qualification fields. The generated inventory is already byte-identical.
+The local 2,606 corpus pins and 2,510 required paths, including the B1 raw
+historical fixture and both current PQ manifests, are retained; only the
+three selected W1 pins and appended plan pin are updated.
+
+Before this reconciliation, the first Linux P1 attempt stopped before running
+the repository lane: the existing sparse-checkout setting reapplied two
+skip-worktree flags and removed two tracked historical ZIP files. Restoring
+the full checkout from the existing local Git objects left the commit and
+tree unchanged. The original source verifier then accepted all 41,677
+tracked entries. A separate P1 run finished at 11:28:39 UTC with all 18 stages
+successful; its original repository lane took 546.056 seconds within the
+unchanged 2,700-second budget. That receipt is bound to
+6a8cd55573065ceb50cdb65a7834615f79b521ae, not this later merge. Original
+failures remain preserved, and the merged commit still requires its own
+gates. No hosted four-second result or whole-system qualification is granted.
+
+The first local merge-validation attempt invoked the unchanged Linux-oriented
+W1 controls on macOS and stopped with 'Ran 31 tests; failures=1, errors=6'.
+All six error events report the missing '/proc/sys/kernel/random/boot_id';
+the cancellation test separately reports '0 != 1'. These are preserved as
+failures, without inferring that every failure has the same cause. No test
+or producer is altered to make macOS pass. The normal merge is finalized
+after its repository and inventory checks; the original Linux lane must
+validate this merged source separately before publication.

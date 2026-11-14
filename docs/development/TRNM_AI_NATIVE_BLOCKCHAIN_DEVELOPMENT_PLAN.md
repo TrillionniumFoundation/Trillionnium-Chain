@@ -15386,3 +15386,18 @@ temporary directory. Seven policy-vector and 33 Hash-use controls also passed.
 The Hash-use reader still covers only its 19 declared purposes and 31 sources,
 not this entire call graph. The normal merged-source and hosted gates remain
 required; no 4-second completion or latency improvement has been measured.
+
+### 2026-11-14: Reconcile the later 096c6b CI increment
+
+This reconciliation combines local 1e54c4ff66a92827c83bea8715f59f6b299e98cf
+with remote 096c6b5f9b952c49389fd975515744074ba61317, whose single parent is
+5a4b7fe8de1adce803184f262fd9f704ead1930c. It selects the three reviewed W1
+workflow/control files, retaining the original producer endpoint, 120-second
+budget and strict completion-before-deadline condition. The workflow requires
+all 19 named factorial kernel controls; its nine batch controls remain.
+The identical generated inventory needs no further change. The existing H1
+31-source/19-purpose manifest and reader remain bound to the selected complete
+store implementation; current PQ correspondence, frozen records and the B1
+historical fixture remain. Only the three selected W1 corpus pins and this
+plan pin change. The resulting commit requires its own original source,
+repository and external-evidence gates before publication and protected merge.
