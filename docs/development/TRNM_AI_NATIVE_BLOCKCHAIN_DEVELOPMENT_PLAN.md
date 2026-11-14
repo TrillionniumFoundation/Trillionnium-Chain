@@ -15031,3 +15031,11 @@ and V4-consumer refusal control from eb3a02048eb219558697dffa710e41de8e471899.
 Default V4 output and the existing r20 authorization remain selected. The new
 V5 local observation is opt-in; pending native control execution is not replaced
 by source pins or by the earlier V4 272-control observation.
+
+## 2026-11-14 — Read-only collected-unit observation
+
+Retain the bounded, local-only collected-unit absence reader and its 20 standalone original read/child controls. UNKNOWN, permission/I/O failure, a nonzero query status, retained cgroup/unit paths, invalid manager output or a final manager failure remain failures. The observer neither stops nor deletes a service and grants no cleanup ownership. The current single native-campaign EXIT trap observes collection, preserves an existing native failure, and propagates an observation failure when the native command succeeded. Existing service limits, cancellation traps and native budgets remain unchanged.
+
+The old 21st control is retained against four exact b23c0ef8 workflow fixtures outside the active workflow directory. Its six historical traps and 36 synthetic exit cases do not restore retired jobs or certify current execution. A separate current-source control checks the one selected active trap, its six exit cases and unchanged owner limits. No host systemd service, cgroup, native campaign or provisioner is run by these controls.
+
+Root composed T04 on the current Cell/V5 source. The original observer and all 21 original method ASTs were independently compared to b23c0ef8; four historical workflow fixtures match exact Git blobs. Only the one current cleanup trap changes, and no system service or native campaign is created by the 23 synthetic/read-child controls.

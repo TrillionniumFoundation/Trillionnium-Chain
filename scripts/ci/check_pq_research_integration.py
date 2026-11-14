@@ -1296,6 +1296,21 @@ AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS
 
+
+# Bounded current observation plus exact inactive historical trap inputs.
+COLLECTED_UNIT_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_collected_unit_empty_v1.py',
+    'scripts/ci/test_collected_unit_empty_v1.py',
+    '.github/workflows/pon-native-campaign-qualification.yml',
+    'formal/pon-nakamoto-v1/bounded_process.py',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/manifest.json',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-history-raw-joint.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-native-campaign-qualification.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-admission-daa-v2.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-history-epoch-v1-native.yml',
+))
+NATIVE_REQUIRED_PATHS |= COLLECTED_UNIT_READER_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
