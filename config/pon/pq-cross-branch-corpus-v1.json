@@ -2328,7 +2328,7 @@
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "6e221408298bb0bae0b615af5969fca3686f70ab",
     "trillionnium/crates/trnm-pon-node/src/pq_parent_cli.rs": "bd4b98cb487e3f79ab8b64e78a2c563710105be7",
     "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config.rs": "4e7a3afacdd11c90e9c694eb72bf64a9d4fefad7",
-    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config/npq6.rs": "0065011b74c5f6b954a49cdfaaf0300072e6a837",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config/npq6.rs": "dacb77b2850ad7ef40d8dfd8aa9b310839c087fe",
     "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/recovery.rs": "091f771bccdbc70d42326905723ce38c2d8f84ff",
     "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/service.rs": "bf4d5a4c546c2bde6350e87a6b4aec65c7e859fc",
     "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/tests.rs": "87aee108473d3ad535f72fc5f2e95ccf7e011924",
