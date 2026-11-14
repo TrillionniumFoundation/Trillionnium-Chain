@@ -14309,3 +14309,24 @@ controls provide the positive validation scope. Historical fault scenarios
 are not copied or executed for this repair. This narrow target-boundary change
 does not close the separately recorded Page JSON parsing-account gap or
 qualify the other source changes on that historical branch.
+
+
+### 2026-11-14 retain the reviewed hash-purpose proof descriptor binding
+
+The existing hash-purpose source guard correctly refused the stale proof
+descriptor identity after the independently reviewed standalone verifier lock
+alignment. Rebind only that descriptor within the existing 31-path inventory
+and retain the exact 19-use semantic identity. The descriptor changes only the
+byte count and digest of its selected W1 implementation map. That map preserves
+the 16 selected inputs and 140 local-closure inputs, updating the one verifier
+lock in both inventories with its explicit review record.
+
+The selected RISC Zero package versions, sources, checksums and resolved direct
+dependency edges, proof parameters, expected image and control identities, historical proof materials and unresolved obligations stay
+unchanged. The hash-purpose inspector still refuses unreviewed source changes
+or automatic repinning. Its existing 33 finite controls and positive source
+inspection are the validation scope for this correction; successful inspection
+continues to report HOLD_NO_GO, unknown security bits and no production
+activation. Original failed CI records remain valid observations of their
+original source. This binding supplies no new native execution, complete
+callgraph review, authenticated history or cryptographic qualification.
