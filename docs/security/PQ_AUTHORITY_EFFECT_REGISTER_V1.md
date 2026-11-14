@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
-`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. The
+`c82c6eabe8f27e2b918de850d237f6b0b06444bb`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,39 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current typed weak-key source continuation, 2026-11-13
+## Current discovery fixture source continuation, 2026-11-14
+
+The reviewed source checkpoint is `c82c6eabe8f27e2b918de850d237f6b0b06444bb`, tree
+`c841f924d57dac58f3c74a74479e73ee532134d7`. All 44 declared regular Git blobs were
+independently read and hashed at that immutable checkpoint. The canonical lock is
+`f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a`.
+
+The earlier map still matches all 44 paths at
+`93171bbdb67a6da4c93765fccadf52e68fda9b1c`. Only
+`trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs`
+changes in the subsequent source history, in commit
+`04ee65c3f3d6d5b46461a9b72bcdea469d1b8a2e`, from SHA-256
+`e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554` to
+`db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3`. That complete change and its current
+test-only include and readiness consumer were reviewed. The fixture waits for
+its existing server's readiness notification within the original ten-second
+setup allowance. It adds no TCP readiness probe, request, signature or retained
+record, and changes no production authentication or admission rule. The original
+request timeout and resource limits remain. Its existing synchronous teardown
+join is not a bounded cancellation guarantee, and readiness does not promise
+later scheduling progress.
+
+The retained source-AI CI run `43531685339` failed both head and prospective
+repository-truth checks with 33 failures and 3 errors across 18 tests. The stale
+digest above was the first mismatch and also preempted later negative checks.
+Those failures remain historical failures. This continuation updates that one
+digest, the fixed checkpoint and canonical lock; the previous checkpoint is an
+additional explicit refusal case. The other 43 digests, all seven route records,
+all existing refusal controls and every false qualification field stay fixed.
+This source binding does not transfer historical executions to the current
+revision or establish complete call-graph or runtime coverage.
+
+## Retained typed weak-key source continuation, 2026-11-13
 
 The reviewed source checkpoint is `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`, tree
 `887f402546a4d1449919915a82f122acf3d0d49d`. All 44 declared regular Git blobs were
