@@ -3017,6 +3017,29 @@ class W1PostwinLaneTests(unittest.TestCase):
                     self.workflow_check(self.workflow.replace(block, replacement, 1))
             self.assertIn(command, block)
 
+        # The original ten controls are independent of the expanded 31-control
+        # suite. Mutate their own executable tail, not an earlier shared gate.
+        block = self.step('v2_gate_tests')
+        marker = ('          python3 -m unittest discover -s scripts/ci '
+                  '-p test_w1_v2_current_stage_gate.py -v')
+        self.assertEqual(block.count(marker), 1)
+        retained = block[block.index(marker):]
+        for before, after in (
+                (marker, marker.replace('python3', 'true # python3', 1)),
+                ("!= ['10']", "!= ['0']"),
+                ('sorted(rows) != required', 'False'),
+                ("!= ['OK']", "!= ['OK (skipped=1)']"),
+                ("              'test_current_cli_selects_current_schema_without_a_downgrade_option',\n", '')):
+            with self.subTest(retained_current_control=before):
+                self.assertIn(before, retained)
+                changed = block.replace(retained, retained.replace(before, after, 1), 1)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, changed, 1))
+        for replacement in ('', retained + retained):
+            with self.subTest(retained_tail=replacement[:40]), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(
+                    block, block.replace(retained, replacement, 1), 1))
+
     def test_verifier_keeps_all_three_exact_tests_and_independent_build(self):
         block = self.step('verifier_v2')
         mutations = (
