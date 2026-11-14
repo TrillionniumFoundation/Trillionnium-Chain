@@ -1517,6 +1517,13 @@ CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS
 
 
+# Original test and supplementary release profiles retain separate native receipts.
+ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-original-large-state-cpu.yml',
+))
+NATIVE_REQUIRED_PATHS |= ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 

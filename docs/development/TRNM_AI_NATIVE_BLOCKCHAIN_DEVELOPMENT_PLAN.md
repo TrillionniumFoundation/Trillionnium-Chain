@@ -14717,3 +14717,20 @@ quota, external namespace ancestry, child placement and consensus/model authorit
 remain false. The original Linux controls run only synthetic namespace files and
 owned finite child processes; no rank campaign, Host provisioning, native service
 qualification or performance gate is executed by this port.
+
+### 2026-11-14 original large-state profile matrix
+
+The 41742ba4 workflow is retained exactly: each x64/arm64 and head/prospective-merge
+combination has independent test and release jobs. The four original native
+selectors and their complete command/error-propagation block are byte-identical.
+The original sixty-minute bound, fail-fast=false, retained failures, source
+before/after checks and read-only permissions remain. Test mode retains Node
+opt-level 3 with debug/overflow checks and M06 opt-level 1 with the same checks;
+release retains its distinct optimized profiles and supplementary denominator.
+
+Ten synthetic cases exercise the actual embedded profile verifiers: both
+declared profiles accept, while omitted/duplicated or substituted M06, lost Node
+checks, extra features, ambient overrides and unknown profiles refuse. The current
+Cargo profile declarations match the required metadata. No native acceptance
+result is supplied by these synthetic or source-preservation checks. Both exact
+hosted native profiles remain required; release does not replace test.
