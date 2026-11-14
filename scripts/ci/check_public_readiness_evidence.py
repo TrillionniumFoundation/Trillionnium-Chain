@@ -21,6 +21,13 @@ ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
          'future_window_accepted', 'work_profile_qualified', 'physical_power_loss',
          'native_execution_authenticated')
+# These optional statements must remain false wherever an artifact includes
+# them. They are not new mandatory fields in historical evidence schemas.
+UNSUPPORTED_AUTHORITY_FLAGS = frozenset(FLAGS) | frozenset({
+    'pq128_qualified', 'pq_128_security_qualified', 'public_ingress_qualified',
+    'consensus_activation', 'consensus_authority', 'production_consensus_activation',
+    'physical_quantum_oracle_measured', 'quantum_cost_bound',
+})
 CASES = (('hot', 'legacy'), ('hot', 'protected'), ('disjoint4', 'protected'), ('growth', 'protected'))
 TESTS = ('test_model_attribution', 'test_work_utility', 'test_public_evaluation_lifecycle', 'test_llm_adapter_contract')
 SOCKET_RUN = 'transport-sustained-paid-unpaid'
@@ -47,7 +54,12 @@ def unique(pairs):
 def load(path):
     def constant(value):
         raise ValueError('noncanonical JSON constant '+value)
-    return json.loads(path.read_text(), object_pairs_hook=unique, parse_constant=constant)
+    def floating(value):
+        number = float(value)
+        require(math.isfinite(number), 'nonfinite JSON number')
+        return number
+    return json.loads(path.read_text(), object_pairs_hook=unique, parse_constant=constant,
+                      parse_float=floating)
 
 
 def sha(raw):
@@ -81,7 +93,7 @@ def digest(value, length=64):
 def scope_flags(value):
     if isinstance(value, dict):
         for key, item in value.items():
-            if key in FLAGS:
+            if key in UNSUPPORTED_AUTHORITY_FLAGS:
                 require(item is False, 'artifact unsupported authority '+key)
             scope_flags(item)
     elif isinstance(value, list):
@@ -138,6 +150,7 @@ def validate_source(root, report, manifest, *, current=True):
 
 
 def validate_artifacts(root, folder, manifest, *, tracked=True):
+    scope_flags(manifest)
     files = manifest['files']
     require(isinstance(files, dict) and 'qualification.json' in files, 'artifact inventory')
     observed = set()
