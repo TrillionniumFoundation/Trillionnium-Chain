@@ -14677,3 +14677,42 @@ Integrated reviewed 6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc with current THP2 w
 Selected the independent optional u64 CPU/u128 wall-clock guards and two original controls from 20844dab61a2f4c6a9dc17444ad2bc6552361120 without its alternate resource-policy identities. Preserved the current V4 reader and historical derivation entrypoints. Retained 552d5816/ae377113/e49b191d's original distinction between an unexecuted or unbound process, a timeout and a real nonzero native test; all remain refusals. Retained e6549a19's receipt-root export and original real-shell control, including explicit/fallback paths with spaces and unchanged exit 101. Extended the existing historical lifetime source mutation and missing-source controls from three selected pins to every frozen historical pin; no historical source identity is rebound. These are parser, diagnostic and source-integrity controls, not a successful native campaign or original four-second gate.
 
 The original historical lifetime control currently refuses in setUpClass before any test executes: its frozen 1f2b0187 source map is still read from the current physical checkout, and Cargo.toml differs. This failed Ran0 receipt is preserved. The historical pins and reports remain unchanged; final integration must explicitly reproduce the old source fixture separately from the current-source namespace before claiming this control passed.
+
+
+### 2026-11-14 — Relay cheap refusal and explicit post-signature clock
+
+Selected historical changes `f8f9aa0031bbff61e65478d0b42cc97ed2fe2ad7`,
+`90f83f7c3ede27f019ebebf81b30a89bb72683b9` and
+`ffe9b22fade6af3e6fd0f1e732e2d181f80a99e1` are composed in the active
+`trnm-types/src/relay.rs` on current source `692f2454620faad648850f9421f2f11467ba046e`.
+The actual `mod relay;` entry and crate manifest are included in the reviewed
+source set. The old split `relay/verifier.rs` remains unwired and is not used
+as evidence of the active contract.
+
+Shape, original-time, sequence, nonce and capacity refusal now precede payload
+hashing and the caller's signature callback. The explicit fresh-time API samples
+the trusted caller clock only after signature success; rollback or expiry refuses
+before either in-memory replay map changes. The single-time compatibility API
+keeps its documented limitation. Chain binding, disabled legacy compatibility,
+sequence-one start, finite fail-closed capacity and original namespace remain.
+
+The existing 25 active controls, all four selected original controls and two
+composition controls passed on macOS aarch64 with the locked offline graph.
+The two additions check both capacity maps before a forged large-payload digest
+and preserve the current 512-byte deserialize/256-byte verifier signature bounds
+plus unknown-field refusal. Strict library/tests Clippy and whole-workspace
+formatting passed. These synthetic callback controls prove ordering and
+in-memory replay behavior; they do not prove cryptographic authentication.
+
+The separate `f5ffba9072485d7e2d7e19ba0059b7887c61ea87` opt-in ML-DSA wire
+constructor is not selected: its 6,618-character signature format conflicts
+with the current bounded decoder. Its original source/control remains historical.
+No signature limit, Node/CLI caller, durable replay owner or qualification is
+added. Production caller search found only the active implementation/re-export,
+unit tests and the unwired old split definition. Source guards independently
+require and bind all three selected module/manifest paths; every qualification
+flag remains false.
+
+### 2026-11-14 root composition: relay-fresh-time
+
+Relay retains current decoder and wire limits. Shape, time, replay and capacity reject before digest and callback. Exactly one successful callback precedes fresh clock rollback/expiry checks and replay-map commit. The original 25 controls, four adapted original controls and two composition controls passed on Mac. There is no new production caller, durable replay qualification or unselected ML-DSA wire expansion.

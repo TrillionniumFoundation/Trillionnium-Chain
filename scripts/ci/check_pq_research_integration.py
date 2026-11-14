@@ -1507,6 +1507,15 @@ FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= FINAL_REVIEWED_BRANCH_REQUIRED_PATHS
 
+# Relay source integrity binds the actual module entry and callback verifier.
+# It establishes no cryptographic trust root, production caller or PQ wire.
+RELAY_PREFLIGHT_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-types/Cargo.toml",
+    "trillionnium/crates/trnm-types/src/lib.rs",
+    "trillionnium/crates/trnm-types/src/relay.rs",
+))
+NATIVE_REQUIRED_PATHS |= RELAY_PREFLIGHT_REQUIRED_PATHS
+
 class IntegrityError(ValueError):
     pass
 
