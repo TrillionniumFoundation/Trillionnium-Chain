@@ -39,6 +39,7 @@ EXPECTED = {
         '648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6',
         '33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4',
     ],
+    'r20-authenticated-caller-grants-v1': ['ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb', '3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203', '59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b'],
 }
 ARITHMETIC_EXPECTED = [
     '14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3',
@@ -61,12 +62,14 @@ R18_ARITHMETIC_EXPECTED = [
     'a9689a341e24f624a97296a4a1764cbea0a864e57c89117aab527d91e0d27853',
 ]
 
-CURRENT_ARITHMETIC_EXPECTED = [
+R19_ARITHMETIC_EXPECTED = [
     '26633220933436b2f17bcc609736bbd0486018eb9f8dec32d354ea90c725ced2',
     '33d88b124dab8b1ada74c382637600ad470be9d9c0fcdc463c9eb99f3c3983b3',
     'f51bacaf9aa3f2fb147e0d866526cc42071d5020fbc4471c6a4f7564e64bd7de',
 ]
 
+
+CURRENT_ARITHMETIC_EXPECTED = ['f155360e2dd1482e8d9e3e58e27588d013f17a00b5588c18621596e07170aab6', '93d5c7ce88b1064b0f8963ce522cddbd4bf3db9ef80a11b592847457a57b5eb8', 'a493159383f1e3c1a8ba8e1f5610c42b2392807bd0bbc3e0468dbdc437a413be']
 
 
 def observation(revision='r13'):
@@ -79,7 +82,8 @@ def arithmetic_observation(revision='r13'):
     expected = {'r13': ARITHMETIC_EXPECTED, 'r14': R14_ARITHMETIC_EXPECTED,
                 'r15': R15_ARITHMETIC_EXPECTED,
                 'r18-native-completion-v1': R18_ARITHMETIC_EXPECTED,
-                'r19-native-completion-refusal-v1': CURRENT_ARITHMETIC_EXPECTED}[revision]
+                'r19-native-completion-refusal-v1': R19_ARITHMETIC_EXPECTED,
+                'r20-authenticated-caller-grants-v1': CURRENT_ARITHMETIC_EXPECTED}[revision]
     return {**observation(revision), 'policy_id': expected[0]}
 
 
@@ -93,7 +97,8 @@ class PolicyReaderTests(unittest.TestCase):
                                    ('r14', R14_ARITHMETIC_EXPECTED),
                                    ('r15', R15_ARITHMETIC_EXPECTED),
                                    ('r18-native-completion-v1', R18_ARITHMETIC_EXPECTED),
-                                   ('r19-native-completion-refusal-v1', CURRENT_ARITHMETIC_EXPECTED)):
+                                   ('r19-native-completion-refusal-v1', R19_ARITHMETIC_EXPECTED),
+                                   ('r20-authenticated-caller-grants-v1', CURRENT_ARITHMETIC_EXPECTED)):
             self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000,
                                                          base_revision=revision)
                               for bits in (8, 12, 16)], expected)
@@ -146,13 +151,13 @@ class PolicyReaderTests(unittest.TestCase):
                               for bits in (8, 12, 16)], expected)
             self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],
                              revision)
-        self.assertEqual(config['current_revision'], 'r19-native-completion-refusal-v1')
+        self.assertEqual(config['current_revision'], 'r20-authenticated-caller-grants-v1')
 
     def test_current_rust_contract_and_independent_config_are_byte_identical(self):
         config = reader.load_profiles()
         source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'
-        contracts = re.findall(r'b"(resource-revision-r19-native-completion-refusal-v1/[^\"]+)"', source.read_text())
-        self.assertEqual(contracts, [config['revisions']['r19-native-completion-refusal-v1']['resource_contract']])
+        contracts = re.findall(r'b"(resource-revision-r20-authenticated-caller-grants-v1/[^\"]+)"', source.read_text())
+        self.assertEqual(contracts, [config['revisions']['r20-authenticated-caller-grants-v1']['resource_contract']])
 
     def test_historical_arithmetic_cannot_be_omitted_or_relabelled(self):
         config = reader.load_profiles()
@@ -172,6 +177,8 @@ class PolicyReaderTests(unittest.TestCase):
             lambda c: c['historical_arithmetic_profiles'].pop('r18-native-completion-v1'),
             lambda c: c['revisions'].pop('r15'),
             lambda c: c['revisions'].pop('r18-native-completion-v1'),
+            lambda c: c['historical_arithmetic_profiles'].pop('r19-native-completion-refusal-v1'),
+            lambda c: c['revisions'].pop('r19-native-completion-refusal-v1'),
         ):
             changed = copy.deepcopy(config)
             edit(changed)

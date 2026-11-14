@@ -14508,3 +14508,7 @@ Integrated reviewed commit f66df9b7324daaf7171d6e9f940f562c1a244633. Exact signe
 ### 2026-11-14 root review: readonly-audit-tools
 
 Integrated reviewed commit 6159b8ef0d334230e2b34071104ba94f9e835f5a. Cost coverage preserves missing costs as unknown; anchored trial reconciliation authorizes no retry/refund; collector retains exact raw-source snapshots and failed attempts. Original finite Python suites passed on the recorded platform; no native campaign or qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: caller-and-native-controls
+
+Integrated reviewed commit 09f9303b834d41b4446b13dda64ddb2ead81e244. r20 authenticated caller grants preserve the full r19 contract suffix and historical vectors. Original signed caller controls, batch-preserving lazy ancestry spool, Go Q4 codec/signature vector, client CPU observations and fixed-tip internal history control passed on exact recorded Linux component sources. Internal16 and external singleton limits remain distinct; no four-second performance qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.

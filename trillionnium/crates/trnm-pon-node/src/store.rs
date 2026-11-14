@@ -4003,7 +4003,7 @@ impl Node {
         if tip == self.active()?.0 {
             return Ok(self.read_active_with_readback(progress, readback)?.2);
         }
-        let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
+        let mut path = reverse_path::ReversePath::new_lazy();
         let mut count = 0u64;
         let mut prefer_replay_prefix = false;
         let mut cur = tip;
@@ -4058,13 +4058,12 @@ impl Node {
                 }
                 break (state, commitment);
             }
-            path.push(cur)?;
+            path.push_with(cur, tempfile::tempfile)?;
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
             cur = self.parent(cur)?;
         };
         for replay_index in 0..count {
-            progress()?;
-            let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
+            let id = path.pop_with_progress(progress)?.ok_or("ANCESTRY_LIMIT")?;
             for (index, (key, before, after)) in self
                 .delta_rows_with_progress(id, progress)?
                 .into_iter()
