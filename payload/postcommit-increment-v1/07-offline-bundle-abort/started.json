@@ -1,9 +1,0 @@
-{
-  "excluded_base": "dba81d56be6598cec9df2774446ca3ab7fccca98",
-  "expected_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
-  "pid": 33925,
-  "source": "/private/tmp/chain-consolidation-20261114-mainline",
-  "source_writes_authorized": false,
-  "started_at": "2026-11-14T06:14:04.652002+00:00",
-  "tests_authorized": false
-}

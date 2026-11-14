@@ -1,7 +1,0 @@
-Auto-merging config/pon/hash-use-contract-v1.json
-CONFLICT (content): Merge conflict in config/pon/hash-use-contract-v1.json
-Auto-merging config/pon/pq-cross-branch-corpus-v1.json
-CONFLICT (content): Merge conflict in config/pon/pq-cross-branch-corpus-v1.json
-Auto-merging scripts/ci/hash_use_contract.py
-CONFLICT (content): Merge conflict in scripts/ci/hash_use_contract.py
-Automatic merge failed; fix conflicts and then commit the result.

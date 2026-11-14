@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File [35m"<string>"[0m, line [35m5[0m, in [35m<module>[0m
-    useful=next(r for r in records if r.get('work_started_ns') is not None)
-[1;35mStopIteration[0m

@@ -1,0 +1,2740 @@
+{
+  "rows": [
+    {
+      "attacker_workers_cpu_ns": 382272415,
+      "call.client_thread_cpu_ns": {
+        "known_count": 331,
+        "known_sum": 297650031,
+        "null_or_missing_count": 0,
+        "values_count": 331
+      },
+      "calls_per_worker_max": 23,
+      "calls_per_worker_min": 18,
+      "calls_total": 331,
+      "construction_coverage_original": null,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "search_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "setup_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        }
+      },
+      "latest_recorded_call_end_ns": 4091727589,
+      "member": "fresh-service/original/report.json",
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 330,
+        "known_sum": 13096146,
+        "null_or_missing_count": 1,
+        "values_count": 331
+      },
+      "metrics.solution_trials": {
+        "known_count": 331,
+        "known_sum": 77684,
+        "null_or_missing_count": 0,
+        "values_count": 331
+      },
+      "mode": "head",
+      "original_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "report_sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08",
+      "residual_after_client_and_construction_cpu_ns": 84622384,
+      "residual_scope": "Unmeasured separately: original prepare/clone or fresh packet digest, post-call response conversion/diagnostic JSON, compact_pressure_call serde+hash, row/loop/clock/bookkeeping. Never exclusively JSON.",
+      "root_cpu_scope_fields": {
+        "attacker_construction_cpu_ns": 6389220,
+        "honest_chain_aggregate_cpu_ns": null,
+        "honest_chain_process_cpu_ns": 37980029,
+        "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution"
+      },
+      "variant": "original",
+      "worker_count": 16,
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 23,
+            "known_sum": 20905917,
+            "null_or_missing_count": 0,
+            "values_count": 23
+          },
+          "calling_thread_cpu_ns": 26627503,
+          "calls_count": 23,
+          "first_call_started_ns": 1460841,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089909391,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 23,
+            "known_sum": 909548,
+            "null_or_missing_count": 0,
+            "values_count": 23
+          },
+          "metrics.solution_trials": {
+            "known_count": 23,
+            "known_sum": 5471,
+            "null_or_missing_count": 0,
+            "values_count": 23
+          },
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 5721586,
+          "statuses": {
+            "error": 1,
+            "refused": 22
+          },
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 22,
+            "known_sum": 19522656,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "calling_thread_cpu_ns": 24865224,
+          "calls_count": 22,
+          "first_call_started_ns": 1479680,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090415389,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 22,
+            "known_sum": 957316,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "metrics.solution_trials": {
+            "known_count": 22,
+            "known_sum": 5999,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 5342568,
+          "statuses": {
+            "error": 1,
+            "refused": 21
+          },
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19109239,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24590104,
+          "calls_count": 21,
+          "first_call_started_ns": 1874725,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090998469,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 809801,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 4924,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 5480865,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 18066768,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 23150118,
+          "calls_count": 21,
+          "first_call_started_ns": 2488349,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089223945,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 578057,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 2959,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 5083350,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 18684752,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 23748728,
+          "calls_count": 21,
+          "first_call_started_ns": 2044223,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090346939,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 1034761,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 6162,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 5063976,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18799445,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 24139528,
+          "calls_count": 20,
+          "first_call_started_ns": 2827469,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089981580,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 805786,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 5043,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 5340083,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19283759,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24949798,
+          "calls_count": 21,
+          "first_call_started_ns": 2769515,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089223973,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 730306,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 4375,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 5666039,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 18933541,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24535066,
+          "calls_count": 21,
+          "first_call_started_ns": 3812826,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090923557,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 1085665,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 6409,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 5601525,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 17827389,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 22829078,
+          "calls_count": 20,
+          "first_call_started_ns": 3191808,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091542566,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 851760,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 5135,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 5001689,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 16529913,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "calling_thread_cpu_ns": 21267234,
+          "calls_count": 18,
+          "first_call_started_ns": 5248001,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091106994,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 792597,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "metrics.solution_trials": {
+            "known_count": 18,
+            "known_sum": 4569,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4737321,
+          "statuses": {
+            "error": 1,
+            "refused": 17
+          },
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 17880674,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 22830611,
+          "calls_count": 20,
+          "first_call_started_ns": 5276427,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091727589,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 624264,
+            "null_or_missing_count": 1,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 3805,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4949937,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19228885,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24805980,
+          "calls_count": 21,
+          "first_call_started_ns": 4502361,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089932602,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 884661,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 4938,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 5577095,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 17706569,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 22747709,
+          "calls_count": 20,
+          "first_call_started_ns": 5272782,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089240588,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 760182,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 4490,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 5041140,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 18799699,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24367151,
+          "calls_count": 21,
+          "first_call_started_ns": 1339141,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090426583,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 963569,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 5883,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 5567452,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 16696452,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "calling_thread_cpu_ns": 21229027,
+          "calls_count": 19,
+          "first_call_started_ns": 6017371,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090724050,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 791778,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "metrics.solution_trials": {
+            "known_count": 19,
+            "known_sum": 4646,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4532575,
+          "statuses": {
+            "error": 1,
+            "refused": 18
+          },
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 22,
+            "known_sum": 19674373,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "calling_thread_cpu_ns": 25589556,
+          "calls_count": 22,
+          "first_call_started_ns": 1317165,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089240601,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 22,
+            "known_sum": 516095,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "metrics.solution_trials": {
+            "known_count": 22,
+            "known_sum": 2876,
+            "null_or_missing_count": 0,
+            "values_count": 22
+          },
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 5915183,
+          "statuses": {
+            "error": 1,
+            "refused": 21
+          },
+          "worker": 15
+        }
+      ],
+      "zip_path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "attacker_workers_cpu_ns": 355550457,
+      "call.client_thread_cpu_ns": {
+        "known_count": 209,
+        "known_sum": 189065344,
+        "null_or_missing_count": 0,
+        "values_count": 209
+      },
+      "calls_per_worker_max": 14,
+      "calls_per_worker_min": 12,
+      "calls_total": 209,
+      "construction_coverage_original": {
+        "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+        "all_context_bindings_and_challenges_unique": true,
+        "all_nested_cpu_measurements_known": true,
+        "constructed": 209,
+        "exhausted": 0,
+        "full_transcript_rejections": 193,
+        "nested_from_zero_construction_cpu_ns": 95293275,
+        "submitted": 209,
+        "unique_challenges": 209,
+        "unique_packet_indices": 209
+      },
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 95293275,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 77690349,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "search_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 953188,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "setup_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 15027333,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        }
+      },
+      "latest_recorded_call_end_ns": 4093312122,
+      "member": "fresh-service/fresh/report.json",
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 207,
+        "known_sum": 9846195,
+        "null_or_missing_count": 2,
+        "values_count": 209
+      },
+      "metrics.solution_trials": {
+        "known_count": 209,
+        "known_sum": 58854,
+        "null_or_missing_count": 0,
+        "values_count": 209
+      },
+      "mode": "head",
+      "original_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "report_sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96",
+      "residual_after_client_and_construction_cpu_ns": 71191838,
+      "residual_scope": "Unmeasured separately: original prepare/clone or fresh packet digest, post-call response conversion/diagnostic JSON, compact_pressure_call serde+hash, row/loop/clock/bookkeeping. Never exclusively JSON.",
+      "root_cpu_scope_fields": {
+        "attacker_setup_and_workers_cpu_ns": 355605269,
+        "honest_chain_process_cpu_ns": 38521393,
+        "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
+        "shared_material_setup_cpu_ns": 54812,
+        "shared_material_setup_wall_ns": 73289739
+      },
+      "variant": "fresh",
+      "worker_count": 16,
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11883966,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22056093,
+          "calls_count": 13,
+          "first_call_started_ns": 3264606,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5971407,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4002229226,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 820108,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 5092,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 4200720,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 12296195,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "calling_thread_cpu_ns": 22948157,
+          "calls_count": 14,
+          "first_call_started_ns": 3077302,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 6150692,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "last_call_ended_ns": 4091458303,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 396160,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "metrics.solution_trials": {
+            "known_count": 14,
+            "known_sum": 2304,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 4501270,
+          "statuses": {
+            "error": 1,
+            "refused": 13
+          },
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11387426,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 21204122,
+          "calls_count": 13,
+          "first_call_started_ns": 5501103,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5661281,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4090749602,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 523046,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3158,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 4155415,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11827369,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22414942,
+          "calls_count": 13,
+          "first_call_started_ns": 92762194,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5971082,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4090749600,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 527124,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3075,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4616491,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11989023,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22279874,
+          "calls_count": 13,
+          "first_call_started_ns": 2072133,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5933119,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4092849372,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 473563,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 2972,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4357732,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 12121849,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "calling_thread_cpu_ns": 23140707,
+          "calls_count": 14,
+          "first_call_started_ns": 4285084,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 6225479,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "last_call_ended_ns": 4093312122,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 573580,
+            "null_or_missing_count": 1,
+            "values_count": 14
+          },
+          "metrics.solution_trials": {
+            "known_count": 14,
+            "known_sum": 3171,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 4793379,
+          "statuses": {
+            "error": 1,
+            "refused": 13
+          },
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 12572405,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "calling_thread_cpu_ns": 23956622,
+          "calls_count": 14,
+          "first_call_started_ns": 2309223,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 6551241,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "last_call_ended_ns": 4002561361,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 734871,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "metrics.solution_trials": {
+            "known_count": 14,
+            "known_sum": 4595,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4832976,
+          "statuses": {
+            "error": 1,
+            "refused": 13
+          },
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12060423,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22866797,
+          "calls_count": 13,
+          "first_call_started_ns": 5462408,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6039568,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4002617971,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 940787,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 6002,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 4766806,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11930801,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22466970,
+          "calls_count": 13,
+          "first_call_started_ns": 91630486,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5960080,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4092737428,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 642297,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3970,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 4576089,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11119372,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21012431,
+          "calls_count": 12,
+          "first_call_started_ns": 3653930,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5666534,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4091241595,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 648318,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 3819,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4226525,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11065487,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21357811,
+          "calls_count": 12,
+          "first_call_started_ns": 5920006,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5917431,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4091452129,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 11,
+            "known_sum": 397030,
+            "null_or_missing_count": 1,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 2309,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4374893,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12279297,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22795093,
+          "calls_count": 13,
+          "first_call_started_ns": 91426491,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5908083,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4001220982,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 837049,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 4670,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 4607713,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11709090,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 21719936,
+          "calls_count": 13,
+          "first_call_started_ns": 91647271,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5687130,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4002222469,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 489643,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 2439,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4323716,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 10654236,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 19642968,
+          "calls_count": 12,
+          "first_call_started_ns": 93034306,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5081199,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4091785488,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 711497,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 4214,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 3907533,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11303497,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 21637245,
+          "calls_count": 13,
+          "first_call_started_ns": 4706785,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6017095,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4092011011,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 523386,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3330,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4316653,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 12864908,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "calling_thread_cpu_ns": 24050689,
+          "calls_count": 14,
+          "first_call_started_ns": 1871020,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 6551854,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "last_call_ended_ns": 4092226275,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 14,
+            "known_sum": 607736,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "metrics.solution_trials": {
+            "known_count": 14,
+            "known_sum": 3734,
+            "null_or_missing_count": 0,
+            "values_count": 14
+          },
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4633927,
+          "statuses": {
+            "error": 1,
+            "refused": 13
+          },
+          "worker": 15
+        }
+      ],
+      "zip_path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "attacker_workers_cpu_ns": 375937894,
+      "call.client_thread_cpu_ns": {
+        "known_count": 316,
+        "known_sum": 293112715,
+        "null_or_missing_count": 0,
+        "values_count": 316
+      },
+      "calls_per_worker_max": 21,
+      "calls_per_worker_min": 18,
+      "calls_total": 316,
+      "construction_coverage_original": null,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "search_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "setup_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        }
+      },
+      "latest_recorded_call_end_ns": 4092374390,
+      "member": "fresh-service/original/report.json",
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 315,
+        "known_sum": 13774002,
+        "null_or_missing_count": 1,
+        "values_count": 316
+      },
+      "metrics.solution_trials": {
+        "known_count": 316,
+        "known_sum": 82897,
+        "null_or_missing_count": 0,
+        "values_count": 316
+      },
+      "mode": "prospective",
+      "original_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "report_sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686",
+      "residual_after_client_and_construction_cpu_ns": 82825179,
+      "residual_scope": "Unmeasured separately: original prepare/clone or fresh packet digest, post-call response conversion/diagnostic JSON, compact_pressure_call serde+hash, row/loop/clock/bookkeeping. Never exclusively JSON.",
+      "root_cpu_scope_fields": {
+        "attacker_construction_cpu_ns": 6283047,
+        "honest_chain_aggregate_cpu_ns": null,
+        "honest_chain_process_cpu_ns": 40059314,
+        "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution"
+      },
+      "variant": "original",
+      "worker_count": 16,
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19281442,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24642480,
+          "calls_count": 21,
+          "first_call_started_ns": 2365940,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089179911,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 764468,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 4525,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 5361038,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19369605,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24910130,
+          "calls_count": 21,
+          "first_call_started_ns": 1965390,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089179771,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 896492,
+            "null_or_missing_count": 1,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 5688,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 5540525,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19129763,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24509506,
+          "calls_count": 21,
+          "first_call_started_ns": 1607032,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089762110,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 1010527,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 5796,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 5379743,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 17740515,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "calling_thread_cpu_ns": 22722729,
+          "calls_count": 19,
+          "first_call_started_ns": 2137372,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089746281,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 833124,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "metrics.solution_trials": {
+            "known_count": 19,
+            "known_sum": 5064,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4982214,
+          "statuses": {
+            "error": 1,
+            "refused": 18
+          },
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 16137092,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "calling_thread_cpu_ns": 20827772,
+          "calls_count": 18,
+          "first_call_started_ns": 2796806,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091190203,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 650962,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "metrics.solution_trials": {
+            "known_count": 18,
+            "known_sum": 3620,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4690680,
+          "statuses": {
+            "error": 1,
+            "refused": 17
+          },
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18577464,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 23750094,
+          "calls_count": 20,
+          "first_call_started_ns": 4102990,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089179989,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 864070,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 5041,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 5172630,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 16809527,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "calling_thread_cpu_ns": 21561010,
+          "calls_count": 19,
+          "first_call_started_ns": 4129089,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4092374390,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 734499,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "metrics.solution_trials": {
+            "known_count": 19,
+            "known_sum": 4537,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4751483,
+          "statuses": {
+            "error": 1,
+            "refused": 18
+          },
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19568323,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 25030740,
+          "calls_count": 21,
+          "first_call_started_ns": 6738278,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091449886,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 777589,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 4758,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 5462417,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18836493,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 23906139,
+          "calls_count": 20,
+          "first_call_started_ns": 89407265,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4092164183,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 1015734,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 6000,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 5069646,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 18280359,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "calling_thread_cpu_ns": 24211011,
+          "calls_count": 19,
+          "first_call_started_ns": 3497848,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091636808,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 19,
+            "known_sum": 1039423,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "metrics.solution_trials": {
+            "known_count": 19,
+            "known_sum": 6393,
+            "null_or_missing_count": 0,
+            "values_count": 19
+          },
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 5930652,
+          "statuses": {
+            "refused": 19
+          },
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18206872,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 23585342,
+          "calls_count": 20,
+          "first_call_started_ns": 91229232,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091470319,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 697972,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 4221,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 5378470,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18440579,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 23625529,
+          "calls_count": 20,
+          "first_call_started_ns": 5028133,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4091922805,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 731402,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 4187,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 5184950,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 17529783,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "calling_thread_cpu_ns": 22407662,
+          "calls_count": 18,
+          "first_call_started_ns": 91235506,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090984670,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 789062,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "metrics.solution_trials": {
+            "known_count": 18,
+            "known_sum": 4636,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4877879,
+          "statuses": {
+            "error": 1,
+            "refused": 17
+          },
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 18599713,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "calling_thread_cpu_ns": 23638731,
+          "calls_count": 20,
+          "first_call_started_ns": 2125702,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4089179893,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 20,
+            "known_sum": 1195243,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "metrics.solution_trials": {
+            "known_count": 20,
+            "known_sum": 7336,
+            "null_or_missing_count": 0,
+            "values_count": 20
+          },
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 5039018,
+          "statuses": {
+            "error": 1,
+            "refused": 19
+          },
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 19407514,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "calling_thread_cpu_ns": 24823576,
+          "calls_count": 21,
+          "first_call_started_ns": 1474889,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090754878,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 21,
+            "known_sum": 893187,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "metrics.solution_trials": {
+            "known_count": 21,
+            "known_sum": 5667,
+            "null_or_missing_count": 0,
+            "values_count": 21
+          },
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 5416062,
+          "statuses": {
+            "error": 1,
+            "refused": 20
+          },
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 17197671,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "calling_thread_cpu_ns": 21785443,
+          "calls_count": 18,
+          "first_call_started_ns": 91564382,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 0,
+            "known_sum": 0,
+            "null_or_missing_count": 0,
+            "values_count": 0
+          },
+          "last_call_ended_ns": 4090276202,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 18,
+            "known_sum": 880248,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "metrics.solution_trials": {
+            "known_count": 18,
+            "known_sum": 5428,
+            "null_or_missing_count": 0,
+            "values_count": 18
+          },
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4587772,
+          "statuses": {
+            "error": 1,
+            "refused": 17
+          },
+          "worker": 15
+        }
+      ],
+      "zip_path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    },
+    {
+      "attacker_workers_cpu_ns": 351309889,
+      "call.client_thread_cpu_ns": {
+        "known_count": 198,
+        "known_sum": 187157544,
+        "null_or_missing_count": 0,
+        "values_count": 198
+      },
+      "calls_per_worker_max": 13,
+      "calls_per_worker_min": 11,
+      "calls_total": 198,
+      "construction_coverage_original": {
+        "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+        "all_context_bindings_and_challenges_unique": true,
+        "all_nested_cpu_measurements_known": true,
+        "constructed": 198,
+        "exhausted": 0,
+        "full_transcript_rejections": 182,
+        "nested_from_zero_construction_cpu_ns": 94587391,
+        "submitted": 198,
+        "unique_challenges": 198,
+        "unique_packet_indices": 198
+      },
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 94587391,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 77137224,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "search_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 905468,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "setup_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 14876953,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        }
+      },
+      "latest_recorded_call_end_ns": 4093793431,
+      "member": "fresh-service/fresh/report.json",
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 196,
+        "known_sum": 8756571,
+        "null_or_missing_count": 2,
+        "values_count": 198
+      },
+      "metrics.solution_trials": {
+        "known_count": 198,
+        "known_sum": 52835,
+        "null_or_missing_count": 0,
+        "values_count": 198
+      },
+      "mode": "prospective",
+      "original_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "report_sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71",
+      "residual_after_client_and_construction_cpu_ns": 69564954,
+      "residual_scope": "Unmeasured separately: original prepare/clone or fresh packet digest, post-call response conversion/diagnostic JSON, compact_pressure_call serde+hash, row/loop/clock/bookkeeping. Never exclusively JSON.",
+      "root_cpu_scope_fields": {
+        "attacker_setup_and_workers_cpu_ns": 351367436,
+        "honest_chain_process_cpu_ns": 40819848,
+        "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
+        "shared_material_setup_cpu_ns": 57547,
+        "shared_material_setup_wall_ns": 64431
+      },
+      "variant": "fresh",
+      "worker_count": 16,
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12300028,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22964666,
+          "calls_count": 13,
+          "first_call_started_ns": 2205825,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6121625,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4090286058,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 530902,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3283,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 4543013,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11795401,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22205293,
+          "calls_count": 13,
+          "first_call_started_ns": 3160274,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6075929,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4089126599,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 675699,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3910,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 4333963,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12575321,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 23414835,
+          "calls_count": 13,
+          "first_call_started_ns": 2205807,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6201811,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4089126963,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 772731,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 4869,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 4637703,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11333340,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21080829,
+          "calls_count": 12,
+          "first_call_started_ns": 10069721,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5579515,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4093793431,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 584351,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 3477,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4167974,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11722010,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 22032106,
+          "calls_count": 12,
+          "first_call_started_ns": 89990495,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5790257,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4089798516,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 483040,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 2608,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4519839,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11207029,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21072606,
+          "calls_count": 12,
+          "first_call_started_ns": 10658356,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5646318,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4089758591,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 350242,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 1788,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 4219259,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11172939,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21721040,
+          "calls_count": 12,
+          "first_call_started_ns": 92890290,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5992687,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4091972554,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 505841,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 3147,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4555414,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11696778,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21699772,
+          "calls_count": 12,
+          "first_call_started_ns": 91415080,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 5767229,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4092977193,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 386973,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 2286,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 4235765,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11660189,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 22352438,
+          "calls_count": 12,
+          "first_call_started_ns": 190152358,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 6132753,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4089126979,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 413752,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 2530,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 4559496,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 11,
+            "known_sum": 10979559,
+            "null_or_missing_count": 0,
+            "values_count": 11
+          },
+          "calling_thread_cpu_ns": 21043256,
+          "calls_count": 11,
+          "first_call_started_ns": 195117036,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 11,
+            "known_sum": 5925873,
+            "null_or_missing_count": 0,
+            "values_count": 11
+          },
+          "last_call_ended_ns": 4093458494,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 11,
+            "known_sum": 386599,
+            "null_or_missing_count": 0,
+            "values_count": 11
+          },
+          "metrics.solution_trials": {
+            "known_count": 11,
+            "known_sum": 2311,
+            "null_or_missing_count": 0,
+            "values_count": 11
+          },
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4137824,
+          "statuses": {
+            "error": 1,
+            "refused": 10
+          },
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11783441,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22199319,
+          "calls_count": 13,
+          "first_call_started_ns": 92827794,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 6088915,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4091460379,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 633362,
+            "null_or_missing_count": 1,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 4148,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4326963,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11026682,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21097264,
+          "calls_count": 12,
+          "first_call_started_ns": 193138848,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 6009515,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4090427867,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 11,
+            "known_sum": 536171,
+            "null_or_missing_count": 1,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 3203,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 4061067,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12381471,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22455908,
+          "calls_count": 13,
+          "first_call_started_ns": 9564930,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5727181,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4090369985,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 640150,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 4206,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4347256,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 12396830,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 22517163,
+          "calls_count": 13,
+          "first_call_started_ns": 8467527,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5749944,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4089126602,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 619726,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 3961,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 4370389,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 11491908,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "calling_thread_cpu_ns": 21946777,
+          "calls_count": 12,
+          "first_call_started_ns": 190676180,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 6230627,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "last_call_ended_ns": 4092508456,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 12,
+            "known_sum": 503837,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "metrics.solution_trials": {
+            "known_count": 12,
+            "known_sum": 2814,
+            "null_or_missing_count": 0,
+            "values_count": 12
+          },
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4224242,
+          "statuses": {
+            "error": 1,
+            "refused": 11
+          },
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "call.client_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 11634618,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "calling_thread_cpu_ns": 21506617,
+          "calls_count": 13,
+          "first_call_started_ns": 2280939,
+          "from_zero_construction.attacker_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 5547212,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "last_call_ended_ns": 4090619635,
+          "metrics.solution_search_thread_cpu_ns": {
+            "known_count": 13,
+            "known_sum": 733195,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "metrics.solution_trials": {
+            "known_count": 13,
+            "known_sum": 4294,
+            "null_or_missing_count": 0,
+            "values_count": 13
+          },
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4324787,
+          "statuses": {
+            "error": 1,
+            "refused": 12
+          },
+          "worker": 15
+        }
+      ],
+      "zip_path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    }
+  ],
+  "schema": "trnm-r1-pressure-attacker-cpu-breakdown-readonly-v1"
+}

@@ -1,9 +1,0 @@
-{
-  "created_at_utc": "2026-11-14T08:53:25.025281+00:00",
-  "native_executed": false,
-  "pid": 73156,
-  "schema": "trnm-readonly-review-producer-owner-v1",
-  "source_checkpoint": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
-  "source_mutation": false,
-  "tests_executed": false
-}

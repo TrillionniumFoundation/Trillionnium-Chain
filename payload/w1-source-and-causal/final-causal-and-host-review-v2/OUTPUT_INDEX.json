@@ -1,0 +1,64 @@
+{
+  "file_count": 11,
+  "files": [
+    {
+      "bytes": 21979,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/producer.py",
+      "sha256": "00bedcef9f2468df3157237e3215b1007327c1ac50933201311929072f83cdbe"
+    },
+    {
+      "bytes": 11720,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/analysis-input.json",
+      "sha256": "1a5d4782e7b0cf8be0c561d485a3ae1014bf5df9fb1bda6ac0013561f38c276b"
+    },
+    {
+      "bytes": 61163,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/cpu-phases.json",
+      "sha256": "0704b5b4107a3c41943fc98b51f5350108ab7424cacabae094369606a00adbb8"
+    },
+    {
+      "bytes": 42910,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/attacker-cpu.json",
+      "sha256": "53337df16d608b08925d0c4d4a7dfb063cad8296ee24e47813deb096720d8c95"
+    },
+    {
+      "bytes": 22908,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/summary.json",
+      "sha256": "d766d38b296720b55c43f6a4c6916c31c872edaa56b8ea91fba080eefca8ed0f"
+    },
+    {
+      "bytes": 22512,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/current-entry-and-progress-excerpts.txt",
+      "sha256": "d379fe13fc922b584a6e8e39b4792eefd00236d8ca2a8c9d33fc9a67ce1937cf"
+    },
+    {
+      "bytes": 25905,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/original-controls-and-design-excerpts.txt",
+      "sha256": "9ce3cbd42e92e8466638aee9ec1bcfe10ad7cca5cc523946eeb0b9fdb3419225"
+    },
+    {
+      "bytes": 14039,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/host-check-operation-excerpts.txt",
+      "sha256": "0060626e44d0480e45d96012b1bf26e2fda97e8873310ce9e89cba5c7d3fd208"
+    },
+    {
+      "bytes": 3324,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/cpu-tables.md",
+      "sha256": "96ece8ebcc86d6afa3481927540ca877dbd90d7c423a6e4e0d707b51c971ce92"
+    },
+    {
+      "bytes": 5873,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/review.md",
+      "sha256": "f8fb3fff23ce7b70b2a81a182826578be692095a9842f3c1510f4b73300de2d6"
+    },
+    {
+      "bytes": 39630,
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-review-v2/source-and-evidence-refs.json",
+      "sha256": "6a9f6030733f7174e63d22629ec262ff4d52cf9b9803a50f8002c782907fc50c"
+    }
+  ],
+  "no_runtime_or_tests_executed": true,
+  "schema": "trnm-r1-causal-closure-output-index-v1",
+  "source_inputs_stable": true,
+  "total_bytes": 271963
+}

@@ -1,0 +1,31 @@
+--- 84e68b4f7a9b2f48f9c47ed05c9a44229d186e30:trillionnium/crates/trnm-pon-node/Cargo.toml
++++ 2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/Cargo.toml
+@@ -33,21 +33,24 @@
+ hex = "0.4"
+ fs2 = "0.4"
+ libc = "0.2"
+-rustix = { version = "1.1.4", features = ["fs", "net", "process", "time"] }
++rustix = { version = "1.1.6", features = ["fs", "net", "process", "time"] }
+ sha2 = "0.10"
+-rusqlite = { version = "=0.41.0", features = ["bundled", "fallible_uint", "hooks"] }
++rusqlite = { version = "=0.41.1", features = ["bundled", "fallible_uint", "hooks"] }
+ openssl = { version = "=0.10.81", optional = true }
+ zeroize = "=1.9.1"
+ 
+ tempfile = "3"
+ 
+ [dev-dependencies]
++# The explicit native research example reuses the original sealed research owner.
++# This package is already pinned in the existing DA dependency graph.
++getrandom = "=0.2.17"
+ # Test-only safe executed-SQL observation. Production features stay unchanged;
+ # this uses the existing pinned rusqlite package and adds no lockfile package.
+-rusqlite = { version = "=0.41.0", features = ["trace"] }
++rusqlite = { version = "=0.41.1", features = ["trace"] }
+ 
+ # Explicit Linux sealed-object profile; no path-exec/platform fallback.
+ [target.'cfg(target_os = "linux")'.dependencies]
+ trnm-release-bundle = { version = "=0.1.0", path = "../trnm-release-bundle" }
+ nix = { version = "=0.30.1", features = ["fs", "poll", "process"] }
+-rustix = { version = "1.1.4", features = ["rand"] }
++rustix = { version = "1.1.6", features = ["rand"] }

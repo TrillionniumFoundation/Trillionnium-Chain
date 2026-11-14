@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "bytes": 35462,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/.github--workflows--trnm-required-baseline.yml",
+      "git_blob": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    },
+    {
+      "bytes": 46605,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--ci_job.sh",
+      "git_blob": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    }
+  ],
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

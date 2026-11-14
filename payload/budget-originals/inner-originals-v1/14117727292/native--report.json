@@ -1,0 +1,144 @@
+{
+  "cases": [],
+  "commands": [
+    {
+      "cleanup_errors": [],
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+      "elapsed_wall_ns": 55437505,
+      "exit_code": 0,
+      "failure": null,
+      "pid": 2768,
+      "started": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43604217513-1/native/driver-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 133,
+        "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43604217513-1/native/driver-preflight.stdout",
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+      }
+    },
+    {
+      "cleanup_errors": [],
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+      "elapsed_wall_ns": 54481566,
+      "exit_code": 0,
+      "failure": null,
+      "pid": 2826,
+      "started": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43604217513-1/native/subject-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 133,
+        "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43604217513-1/native/subject-preflight.stdout",
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+      }
+    }
+  ],
+  "errors": [
+    "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+  ],
+  "executables": {},
+  "expected_driver": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "expected_failures": 6,
+  "expected_integration_passes": 0,
+  "expected_passes": 1,
+  "expected_source": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+  "groups": [
+    "budget"
+  ],
+  "matched_failure_controls": 0,
+  "matched_pass_controls": 0,
+  "mode": "budget-before-v2",
+  "native_campaign_executed": false,
+  "native_control_processes_started": 0,
+  "native_pool_integration_process_started": false,
+  "old_source_current_corpus_qualification": false,
+  "pool_integration": null,
+  "production_activation": false,
+  "required_lib_tests": [
+    "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+    "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+    "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+    "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io",
+    "mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution",
+    "mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries",
+    "mining::prepare_control_tests::registered_prepare_control_preserves_packets_errors_and_cold_commit"
+  ],
+  "result": "FAIL",
+  "schema": "pon-original-budget-component-controls-v2",
+  "scope": "assigned-native-component-controls-only",
+  "source_after": {
+    "driver": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2554978813,
+      "tracked_entries": 27985,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_before": {
+    "driver": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2554978813,
+      "tracked_entries": 27985,
+      "tracked_worktree_verified": true
+    }
+  },
+  "throughput_measured": false,
+  "whole_business_liveness_qualified": false
+}

@@ -1,0 +1,38 @@
+{
+  "source_after": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "source_before": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  }
+}

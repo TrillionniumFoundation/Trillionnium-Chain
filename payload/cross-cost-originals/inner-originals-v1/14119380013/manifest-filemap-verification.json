@@ -1,0 +1,9 @@
+{
+  "actual_non_manifest_files_under_prefix": 54,
+  "all_declared_hashes_match": true,
+  "declared_files": 54,
+  "exact_prefix_closure": true,
+  "extra_non_manifest_files_under_prefix": [],
+  "hash_mismatches": [],
+  "missing": []
+}

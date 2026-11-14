@@ -1,0 +1,37 @@
+{
+  "phases": {
+    "count": 8,
+    "first": {
+      "kind": {
+        "length": null,
+        "type": "str"
+      },
+      "member": {
+        "length": null,
+        "type": "str"
+      },
+      "mode": {
+        "length": null,
+        "type": "str"
+      },
+      "phase": {
+        "length": null,
+        "type": "int"
+      },
+      "report_sha256": {
+        "length": null,
+        "type": "str"
+      },
+      "rows": {
+        "length": 14,
+        "type": "list"
+      }
+    }
+  },
+  "scope": "Derived exact matched original request spans. Wall intervals may be nested or overlap; no summed total CPU attribution is claimed.",
+  "source": {
+    "bytes": 1683365,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/artifact-readback-v1/client-server-stage-binding.json",
+    "sha256": "af149f8dee0bb7ec37456775cf67421dd9e7ade5248594e6a0d80d400745cb24"
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "CI_dispatch_rerun_cancel_PR_writes": false,
+  "PR_prospective_SHA_is_not_tested_source_proof": true,
+  "actual_tested_source_verified": false,
+  "artifacts_or_job_logs_downloaded": false,
+  "errors": [],
+  "expected_candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "expected_candidate_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "expected_check_app_id": 15368,
+  "expected_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "final_observer_or_collector_substituted": false,
+  "finished_at": "2026-11-14T14:30:07.605678+00:00",
+  "hosted_qualification_granted": false,
+  "job_name_source_kind_is_only_a_hint": true,
+  "latest_checks": {
+    "all_returned_head_sha_equal_R1": true,
+    "app15368_status_counts": {
+      "completed/failure": 6,
+      "completed/skipped": 3,
+      "completed/success": 74,
+      "in_progress/None": 60,
+      "queued/None": 2
+    },
+    "filter": "latest",
+    "normalized": {
+      "bytes": 118519,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-latest-checks-normalized.json",
+      "sha256": "23c960035321326b79afb463bf388b03af73d2cf6ca7874c79ae7f121df2832a"
+    },
+    "pagination": {
+      "actual_rows": 146,
+      "complete": true,
+      "failed_pages": [],
+      "maximum_pages": 5,
+      "observations_non_atomic": true,
+      "page_total_counts": [
+        146,
+        146
+      ],
+      "reported_total": 146,
+      "required_pages": 2,
+      "unique_ids": 146
+    },
+    "status_counts": {
+      "completed/failure": 6,
+      "completed/neutral": 1,
+      "completed/skipped": 3,
+      "completed/success": 74,
+      "in_progress/None": 60,
+      "queued/None": 2
+    }
+  },
+  "metadata_pages_complete": true,
+  "network_readonly": true,
+  "no_source_refs_stage_or_config_changes": true,
+  "observations_non_atomic": true,
+  "older_N_N2_results_inherited": false,
+  "pending_or_in_progress_is_not_pass": true,
+  "policy_data_collected": false,
+  "pr": {
+    "auto_merge": null,
+    "base": {
+      "label": "TrillionniumFoundation:main",
+      "ref": "main",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+    },
+    "created_at": "2026-11-09T14:37:45Z",
+    "draft": false,
+    "head": {
+      "label": "TrillionniumFoundation:fix/chain-hepta-closure-candidate-20261109-481716",
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "identity_matches_R1_and_main": true,
+    "merge_commit_sha": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "number": 847,
+    "open_ready_without_auto_merge": true,
+    "state": "open",
+    "updated_at": "2026-11-14T14:23:10Z"
+  },
+  "producer": {
+    "bytes": 19408,
+    "path": "/private/tmp/chain-prci-R1-ci-progress-reader-preparation-20261114-v1/read_R1_required_ci_progress_v1.py",
+    "sha256": "8d3a5cba653cd53caa4144d71193e4b7ff3faf49f4a10a1ebce45940eb072503"
+  },
+  "required_run_event": "pull_request",
+  "required_runs": {
+    "eligible_pull_request_runs": 1,
+    "excluded_run_metadata": [],
+    "no_required_run_observed_yet": false,
+    "normalized": {
+      "bytes": 1495,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-required-runs-normalized.json",
+      "sha256": "7fba830ccf4ac37e65b168b14815dd5836c7a99dec78200ec63a06690b8e6552"
+    },
+    "pagination": {
+      "actual_rows": 1,
+      "complete": true,
+      "failed_pages": [],
+      "maximum_pages": 3,
+      "observations_non_atomic": true,
+      "page_total_counts": [
+        1
+      ],
+      "reported_total": 1,
+      "required_pages": 1,
+      "unique_ids": 1
+    },
+    "run_jobs": [
+      {
+        "all_attempt_job_counts": {},
+        "all_returned_jobs_match_run_and_R1": true,
+        "attempt_changed_during_snapshot": false,
+        "jobs": {
+          "bytes": 3,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-run-43604217412-jobs-normalized.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "jobs_pagination": {
+          "actual_rows": 0,
+          "complete": true,
+          "failed_pages": [],
+          "maximum_pages": 3,
+          "observations_non_atomic": true,
+          "page_total_counts": [
+            0
+          ],
+          "reported_total": 0,
+          "required_pages": 1,
+          "unique_ids": 0
+        },
+        "listed_attempt": 1,
+        "metadata": {
+          "check_suite_id": 118064997779,
+          "conclusion": null,
+          "created_at": "2026-11-14T14:19:01Z",
+          "event": "pull_request",
+          "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412",
+          "id": 43604217412,
+          "name": "trnm-required-baseline",
+          "path": ".github/workflows/trnm-required-baseline.yml",
+          "pull_requests": [
+            {
+              "base": {
+                "ref": "main",
+                "repo": {
+                  "id": 1323087357,
+                  "name": "Trillionnium-Chain",
+                  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+                },
+                "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+              },
+              "head": {
+                "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+                "repo": {
+                  "id": 1323087357,
+                  "name": "Trillionnium-Chain",
+                  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+                },
+                "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+              },
+              "id": 5225636007,
+              "number": 847,
+              "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+            }
+          ],
+          "run_attempt": 1,
+          "run_started_at": "2026-11-14T14:19:01Z",
+          "status": "pending",
+          "updated_at": "2026-11-14T14:19:02Z"
+        },
+        "metadata_matches_R1_pull_request_workflow": true,
+        "observed_attempt": 1,
+        "observed_attempt_job_count": 0,
+        "observed_attempt_job_counts": {},
+        "run_id": 43604217412
+      }
+    ],
+    "selected_cap": 20,
+    "unobserved_due_to_deadline": [],
+    "unselected_due_to_cap": []
+  },
+  "required_workflow": ".github/workflows/trnm-required-baseline.yml",
+  "schema": "trnm-R1-required-ci-progress-v1",
+  "started_at": "2026-11-14T14:29:56.390260+00:00",
+  "status": "OBSERVED",
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/2a86462a1ab20c68151719ba4635e3c294391e64/check-runs?filter=latest&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 4.862,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:30:01.253656+00:00",
+      "label": "R1-latest-checks-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:29:56.392062+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-latest-checks-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 373760,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-latest-checks-page-001.stdout",
+        "sha256": "e1083fa01865d785a94a7036a8b430eabf7c4e52965b3681a3fbbf0862bd7372"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/2a86462a1ab20c68151719ba4635e3c294391e64/check-runs?filter=latest&per_page=100&page=2"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 3.482,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:30:04.743083+00:00",
+      "label": "R1-latest-checks-page-002",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:30:01.261385+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-latest-checks-page-002.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 170138,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-latest-checks-page-002.stdout",
+        "sha256": "e01f4f4986ed321c09f8bd6745de21d2895c980479090bad747fcd218f9c8fde"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/trnm-required-baseline.yml/runs?head_sha=2a86462a1ab20c68151719ba4635e3c294391e64&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 3.192,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:29:59.584306+00:00",
+      "label": "R1-required-runs-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:29:56.392095+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-required-runs-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15185,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-required-runs-page-001.stdout",
+        "sha256": "41980f083fdae1ebd4b0acf33da43c178063620187ca452b67fedfdfe2252b18"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/jobs?filter=all&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.285,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:30:07.603704+00:00",
+      "label": "R1-run-43604217412-jobs-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:30:06.319207+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-run-43604217412-jobs-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 27,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-run-43604217412-jobs-page-001.stdout",
+        "sha256": "b3dab5870ff3a8209160335de7c1077b89e461d875d9041ac9d8b8ed7c1666f6"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.564,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:30:06.317050+00:00",
+      "label": "R1-run-43604217412-metadata",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:30:04.752763+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-run-43604217412-metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15149,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/R1-run-43604217412-metadata.stdout",
+        "sha256": "9a786122fadae6169a3a5bf53772ca87e8e79a518eaf75ffa324b988aab1cd60"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 3.772,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:30:00.164366+00:00",
+      "label": "pr847",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T14:29:56.392020+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/pr847.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 27631,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-003/pr847.stdout",
+        "sha256": "676b7193b9f1845c376348526c096c0dba91b9b38aab9a5948581933e38b2197"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    }
+  ],
+  "unknown_reads": []
+}

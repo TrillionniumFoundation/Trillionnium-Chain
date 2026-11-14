@@ -1,0 +1,27 @@
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs:154:            observation.stage("ingress_admission");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:22:                    "PQ_WITNESS_DEADLINE" => Some("PQ_WITNESS_DEADLINE"),
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:120:            Some(&Error::from("PQ_WITNESS_DEADLINE")),
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:131:        assert_eq!(record["bio_error_code"], "PQ_WITNESS_DEADLINE");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:141:        let deadline = Error::from("PQ_WITNESS_DEADLINE");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:142:        let quoted = Error::from("PQ_WITNESS_DEADLINE: quoted");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs:145:            Some("PQ_WITNESS_DEADLINE")
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs:207:    ensure(!left.is_zero(), "PQ_WITNESS_DEADLINE")?;
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs:275:        "PQ_WITNESS_DEADLINE" => Some("PQ_WITNESS_DEADLINE"),
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs:947:                    Err::<(), crate::Error>("PQ_WITNESS_DEADLINE".into())
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs:963:            "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs:1027:        let error: crate::Result<()> = Err("PQ_WITNESS_DEADLINE".into());
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs:1040:        assert!(encoded.contains("PQ_WITNESS_DEADLINE"));
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:99:        "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:103:        "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:326:        "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:372:        "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:412:    assert_eq!(result.unwrap_err().to_string(), "PQ_WITNESS_DEADLINE");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs:415:        "PQ_WITNESS_DEADLINE"
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs:556:        "PQ_WITNESS_DEADLINE",
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs:11:        "bio_error_kind":"Unclassified", "bio_error_code":"PQ_WITNESS_DEADLINE",
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs:22:        value["error_code"] = "PQ_WITNESS_DEADLINE: private path".into();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs:26:    assert_eq!(records[0]["bio_error_code"], "PQ_WITNESS_DEADLINE");
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:30:fn witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database() {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs:23:    "PQ_WITNESS_DEADLINE",
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs:52:            "ingress_admission",
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:274:        "PQ_WITNESS_DEADLINE",

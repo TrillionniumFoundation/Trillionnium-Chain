@@ -1,0 +1,977 @@
+{
+  "bytes": 1721805,
+  "count": 138,
+  "entries": [
+    {
+      "bytes": 3036,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-metadata.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-metadata.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "3a8a8946caa39e707f7503e012bff9d18ebab51f234b7dbcec6d2176fb8c0497"
+    },
+    {
+      "bytes": 323305,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-original-log.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-original-log.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "fc18f5f6f31c65825fd327a3d13f4b121089ad01a4f651fa32a3a52b2270c5f3"
+    },
+    {
+      "bytes": 3038,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-metadata.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-metadata.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "f32a5190e5e7bd17daae21f0c958d910dd304479a2b4b28f4d96ca6085f83b19"
+    },
+    {
+      "bytes": 323222,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-original-log.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-original-log.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "eed776ed4458c1410f4d264576cfa6aab417a8159db985226756252f202a8f80"
+    },
+    {
+      "bytes": 3038,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-metadata.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-metadata.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "7c0c25705570c65aa2b4b51279e86d4e84eba6ed04ce3097264112df42730054"
+    },
+    {
+      "bytes": 323275,
+      "origin": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-original-log.stdout",
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-original-log.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "24a5a568afc63d5135c485e9c61312fddbaf05696c5b678a87978b131d1f515b"
+    },
+    {
+      "bytes": 17384,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--Cargo.lock.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--Cargo.lock.patch",
+      "role": "explicit_causal_input",
+      "sha256": "d8216f04cda46afaf40fdac4aee6bed5dead4c3d30babecd88f7720eeece541a"
+    },
+    {
+      "bytes": 1526,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "role": "explicit_causal_input",
+      "sha256": "9804ad9a457447334c21f2d1f0a62edf36e1653247d1db89926d3aec2066fdf1"
+    },
+    {
+      "bytes": 11756,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--src--ingress--history_import_detached_budget_tests.rs.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--src--ingress--history_import_detached_budget_tests.rs.patch",
+      "role": "explicit_causal_input",
+      "sha256": "269411447760f3abc1e0d8eceeb6a55e831710b7d1a9818219a4e449c1abf382"
+    },
+    {
+      "bytes": 17384,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--Cargo.lock.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--Cargo.lock.patch",
+      "role": "explicit_causal_input",
+      "sha256": "0265b6edefeeb0a8851275955dcea3dad35e5e3d89757862d773b9e26e857e75"
+    },
+    {
+      "bytes": 1526,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "role": "explicit_causal_input",
+      "sha256": "d7ee0e670ddd7b2e4349bb61bef6e15dec7b7dd58d858e2ddac3137e1dd90c04"
+    },
+    {
+      "bytes": 17384,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--Cargo.lock.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--Cargo.lock.patch",
+      "role": "explicit_causal_input",
+      "sha256": "15d13987ed19369fd2cbd481d731d9468e31144532f1a6682aa8f85161b24dc6"
+    },
+    {
+      "bytes": 1526,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+      "role": "explicit_causal_input",
+      "sha256": "b0d5f6d7a9d7c877f873de3413b36f095bdf5e4db74e6ca816e2a17df4ef416f"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 363,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stdout",
+      "role": "closed_original_support",
+      "sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 525,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stdout",
+      "role": "closed_original_support",
+      "sha256": "ea69ee856e2d80610defd4d2fafe093ada9897a0140bc2905654f780453033dd"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 605,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stdout",
+      "role": "closed_original_support",
+      "sha256": "73b918dc18901075b29a8f7912aee69fa198051f963b413b81c0d4953731aa50"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 646,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stdout",
+      "role": "closed_original_support",
+      "sha256": "2da191df779b83bbf5781e4bd0f4c150181634d80eaf443f00fece5469b5055e"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 278,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stdout",
+      "role": "closed_original_support",
+      "sha256": "ccff359a6be20d908a7ba22877efc4b056612e71d141b4172775a83a4ea7ba19"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3896,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 47276,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 59699,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+      "role": "explicit_causal_input",
+      "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 827,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stdout",
+      "role": "closed_original_support",
+      "sha256": "0c733ed60629989a9bb40e34f9659283c458d11896638457dbe6c89a563c44e7"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 86,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+      "role": "closed_original_support",
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 42127,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+      "role": "closed_original_support",
+      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2204,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+      "role": "closed_original_support",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2357,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+      "role": "closed_original_support",
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16321,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stdout",
+      "role": "closed_original_support",
+      "sha256": "9753eb12cc1e6b5f7864bf2a8082ee0d964343a19382e102524f3d6fe879c208"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12211,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stdout",
+      "role": "closed_original_support",
+      "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8536,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stdout",
+      "role": "closed_original_support",
+      "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 19292,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stdout",
+      "role": "closed_original_support",
+      "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 448,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stdout",
+      "role": "closed_original_support",
+      "sha256": "fd3dcc55932abdb78228996c7df9a69bbfe44afd16a0885e8f67e0d5f2bd3f75"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 40597,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+      "role": "closed_original_support",
+      "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2183,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+      "role": "closed_original_support",
+      "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 587,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stdout",
+      "role": "closed_original_support",
+      "sha256": "7d3d4e92eb5512dac48556f76d7a326fe6119639818112e6fa2c95c8c6a4b5b3"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12090,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stdout",
+      "role": "closed_original_support",
+      "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 442,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stdout",
+      "role": "closed_original_support",
+      "sha256": "7824ce4e25660fbda2096c033575738639e08302d83c648c8649fe4e125c32ce"
+    },
+    {
+      "bytes": 52264,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/source-comparison.json",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/source-comparison.json",
+      "role": "explicit_causal_input",
+      "sha256": "9ec6a0b0650dc8ec0d91f700a0e1efc96519277a398facce0aa9d2870d751de4"
+    },
+    {
+      "bytes": 6927,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/14117367614.zip",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/14117367614.zip",
+      "role": "explicit_causal_input",
+      "sha256": "7c05f187fb5395fcddf250f6e772f366d7de7636824a9546cf4ca7b050ad22ed"
+    },
+    {
+      "bytes": 4653,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/EVIDENCE_INDEX.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/EVIDENCE_INDEX.json",
+      "role": "explicit_causal_input",
+      "sha256": "f643179f5619ac00f2d50771ba6d65d43bb5859b9e3e90be23ed1246f468b44c"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 832,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stdout",
+      "role": "closed_original_support",
+      "sha256": "7f3e93317870970a2d90e25634c15b3c4a129d8a17a00a27a52a58ba748501ac"
+    },
+    {
+      "bytes": 1309,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.step.json",
+      "role": "closed_original_support",
+      "sha256": "a2375e40fc8939c66ed6c35c8d84b68a34fcfe325e45a717fa39f5b3b3b2bdb6"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6927,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stdout",
+      "role": "closed_original_support",
+      "sha256": "7c05f187fb5395fcddf250f6e772f366d7de7636824a9546cf4ca7b050ad22ed"
+    },
+    {
+      "bytes": 1281,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.step.json",
+      "role": "closed_original_support",
+      "sha256": "0e31e75fc69df8f20095733aa61c6d02e354e3eb245e941f687c4322ad1db50d"
+    },
+    {
+      "bytes": 5468,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/summary.json",
+      "role": "closed_original_support",
+      "sha256": "bfb2bc52d4664e242357ce9b119d2b2756a1230e583fd73d2e6e47abf82f16a3"
+    },
+    {
+      "bytes": 7142,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/14117727292.zip",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/14117727292.zip",
+      "role": "explicit_causal_input",
+      "sha256": "6001cd25a2166e59a314a89d2d04c426dadbc083182922c9f443cbb8359db77f"
+    },
+    {
+      "bytes": 4653,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/EVIDENCE_INDEX.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/EVIDENCE_INDEX.json",
+      "role": "explicit_causal_input",
+      "sha256": "797e08926915f3c7493d29e680ccc303cd6c22c7789223acf8e67bb8d60012f6"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 832,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stdout",
+      "role": "closed_original_support",
+      "sha256": "d60a9e28a740cc92d223a9aac7ec0976d1d120571c1547a3bd30919aebba3313"
+    },
+    {
+      "bytes": 1308,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.step.json",
+      "role": "closed_original_support",
+      "sha256": "d767034cac99ae456b05d4e0f30a92f930a7cb8eb2da7d659018d3193b909510"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7142,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stdout",
+      "role": "closed_original_support",
+      "sha256": "6001cd25a2166e59a314a89d2d04c426dadbc083182922c9f443cbb8359db77f"
+    },
+    {
+      "bytes": 1280,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.step.json",
+      "role": "closed_original_support",
+      "sha256": "0c9441c84ed50a19f3139bb5fc79ddd1175e11e7c2a02002f9b85c8843c9c8fe"
+    },
+    {
+      "bytes": 5466,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/summary.json",
+      "role": "closed_original_support",
+      "sha256": "975ed97cfb2ec24c978e5680cb7d53c4c7e06d138ba20d07f4a4adabf0538507"
+    },
+    {
+      "bytes": 7065,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/14118225390.zip",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/14118225390.zip",
+      "role": "explicit_causal_input",
+      "sha256": "ff20fd1ec49332453151a25d9481eae8e1a34cb81f57947b15ce969b73ba3a9a"
+    },
+    {
+      "bytes": 4653,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/EVIDENCE_INDEX.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/EVIDENCE_INDEX.json",
+      "role": "explicit_causal_input",
+      "sha256": "28786ec186839031dc442738d723edc7ff39481b001fd86cdf0be00d539da478"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 830,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stdout",
+      "role": "closed_original_support",
+      "sha256": "f3d1f2e6c0836001e89b8a332d89942f5a50a54008d0987e0d6630e75b436bfd"
+    },
+    {
+      "bytes": 1308,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.step.json",
+      "role": "closed_original_support",
+      "sha256": "f5f2068805affcd464ecda21f272507a0c05015ab5b09a6862d2a42c51c8b7d3"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7065,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stdout",
+      "role": "closed_original_support",
+      "sha256": "ff20fd1ec49332453151a25d9481eae8e1a34cb81f57947b15ce969b73ba3a9a"
+    },
+    {
+      "bytes": 1281,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.step.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.step.json",
+      "role": "closed_original_support",
+      "sha256": "083c566bbdeaca68bcbb3d191406979df8261388dea94f5f8762ebe2a37c9512"
+    },
+    {
+      "bytes": 5465,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/summary.json",
+      "role": "closed_original_support",
+      "sha256": "cbc23c39f211e6e0b1634e54de15f320f6c48345cc046d63efbb97b31b8aad51"
+    },
+    {
+      "bytes": 19409,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/acquisition-summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/acquisition-summary.json",
+      "role": "explicit_causal_input",
+      "sha256": "9177b5fb42fac4280c9260fb40e21ab37159d17fcba0a4c11da39cde4936605f"
+    },
+    {
+      "bytes": 13711,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/extraction-summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/extraction-summary.json",
+      "role": "explicit_causal_input",
+      "sha256": "cb288e48df0d420a3b8ee0ce729107ffbd4caad0096648d4429c63b62788ca37"
+    },
+    {
+      "bytes": 762,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "c6eedadd9b0003429f7a1da4e6edce5f2a4340de43bc5ac0885201ea1b2ef876"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--driver-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 4881,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--report.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--report.json",
+      "role": "closed_original_support",
+      "sha256": "fa474e66fe546605092a1180ad2591ac18a5553f0cc99204479536710cace901"
+    },
+    {
+      "bytes": 765,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "db3f4fced602f170d89bb23750e434497bb44e492f25588eeb1f31aed2a2d6ac"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "43a97dddfd327e8a07f65d1cd185f66c2f343e12a38329cf64246f0bec648750"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/native--subject-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "43a97dddfd327e8a07f65d1cd185f66c2f343e12a38329cf64246f0bec648750"
+    },
+    {
+      "bytes": 149,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/request.txt",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/request.txt",
+      "role": "closed_original_support",
+      "sha256": "adbf897abdb9f8aca4ef95743d9cd01498bd66b0d00fefdb1ef124eb3fca5acf"
+    },
+    {
+      "bytes": 7403,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/runner-controls.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/runner-controls.stderr",
+      "role": "closed_original_support",
+      "sha256": "050223ebcfe1bcc75ab54a2afb3b2da7d470be6b5ec4f5382aff4dedfbc1e341"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/runner-controls.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/runner-controls.stdout",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14347,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/extraction-summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/extraction-summary.json",
+      "role": "explicit_causal_input",
+      "sha256": "84eee193c72dcfbdd9e966c6d74cd55602fdfc93d1eb25fb1766d32bf23b5cdc"
+    },
+    {
+      "bytes": 762,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "840ea435fbc86bfaa152e7989eb4e6775cc8ac4ad2cf5b2215e278bfa7007bbb"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--driver-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 5507,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--report.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--report.json",
+      "role": "closed_original_support",
+      "sha256": "34db977c215feae5e6ca0d5f83200370afddb408a459bd94d456c163807fa7b0"
+    },
+    {
+      "bytes": 765,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "e54537aa0f0cf650506f19fb1127078ad27f6312e42a2efb8b2018535fdf60fb"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "cdde4e168f085b1da6d6a39ab0a4ed50058b4929c6f98c2f46052c9306a5f2ce"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/native--subject-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "cdde4e168f085b1da6d6a39ab0a4ed50058b4929c6f98c2f46052c9306a5f2ce"
+    },
+    {
+      "bytes": 149,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/request.txt",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/request.txt",
+      "role": "closed_original_support",
+      "sha256": "ceea399b93570ea11a21188a41a9a58401c4e51763af72c90023cccab26ca869"
+    },
+    {
+      "bytes": 7403,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/runner-controls.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/runner-controls.stderr",
+      "role": "closed_original_support",
+      "sha256": "907378f22a853327ce47442ee0f261555e0cfb7a6e6f321af7c64b76bc3c23c2"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/runner-controls.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/runner-controls.stdout",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14164,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/extraction-summary.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/extraction-summary.json",
+      "role": "explicit_causal_input",
+      "sha256": "f8132e6a88882a57693b7c8392fb91adbaa70f4d5b319bb8bfafe90e828dc174"
+    },
+    {
+      "bytes": 758,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "06afba61037b904cdcccb17f008e1db828a1f708d56518ffbfa0205345c5ad76"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--driver-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 5324,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--report.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--report.json",
+      "role": "closed_original_support",
+      "sha256": "20d52329b84293718e177c3c640bdb907ee22fff6fc974384bb49315e5b0f6ea"
+    },
+    {
+      "bytes": 761,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.process.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.process.json",
+      "role": "closed_original_support",
+      "sha256": "ab6a4d4930011f388bd086626d67b28ff6f599d83255f5f1624f2a41101ddb22"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.stderr",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-preflight.stdout",
+      "role": "closed_original_support",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-source-after.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-source-after.json",
+      "role": "closed_original_support",
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83"
+    },
+    {
+      "bytes": 423,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-source-before.json",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/native--subject-source-before.json",
+      "role": "closed_original_support",
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83"
+    },
+    {
+      "bytes": 147,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/request.txt",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/request.txt",
+      "role": "closed_original_support",
+      "sha256": "32f12386e5bd52cc54ef6149a847d58688dccccc66be12797a1d31b23cd275e3"
+    },
+    {
+      "bytes": 7403,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/runner-controls.stderr",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/runner-controls.stderr",
+      "role": "closed_original_support",
+      "sha256": "c939b78d44b9e098be5cbb8a3e987f06cae7df003230467dc823c8bfbb1a4a17"
+    },
+    {
+      "bytes": 0,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/runner-controls.stdout",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/runner-controls.stdout",
+      "role": "closed_original_support",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12789,
+      "origin": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/producer.py",
+      "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/producer.py",
+      "role": "closed_original_support",
+      "sha256": "b89b78f0765e988f4268c104e9b08b97c1d680e46eb834db2d2e8300282e25e2"
+    },
+    {
+      "bytes": 4166,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/seal_review.py",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/seal_review.py",
+      "role": "derived_readonly_review",
+      "sha256": "5a3fadf71144dabcdd0fa706a7c90d211c89fb02d018f5f14cb99b6170f1e783"
+    },
+    {
+      "bytes": 37279,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.json",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.json",
+      "role": "derived_readonly_review",
+      "sha256": "3dd7ef73021880a8b38d0267cf5f22b2f113e393b47785da0ba1bdf14d2ac455"
+    },
+    {
+      "bytes": 5211,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.md",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.md",
+      "role": "derived_readonly_review",
+      "sha256": "4239134def409885f499e8a3e33c01b81b0e80e3c132ca7b2c219d978ed23c3a"
+    },
+    {
+      "bytes": 95769,
+      "origin": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/completed-tool-return-objects.json",
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/completed-tool-return-objects.json",
+      "role": "derived_readonly_review",
+      "sha256": "22a13a1e714e064005864d1f22054758c4c8b98561f8fabd1d00ae5dfffeead6"
+    }
+  ],
+  "includes_self": false,
+  "network_native_tests_executed_by_sealer": false,
+  "schema": "trnm-r1-budget-failure-causal-evidence-index-v1",
+  "sealed_at": "2026-11-14T15:58:35.367793+00:00",
+  "source_git_stage_modified": false
+}

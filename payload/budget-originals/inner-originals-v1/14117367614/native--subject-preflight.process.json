@@ -1,0 +1,24 @@
+{
+  "cleanup_errors": [],
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+  "elapsed_wall_ns": 55127392,
+  "exit_code": 0,
+  "failure": null,
+  "pid": 2825,
+  "started": true,
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/subject-preflight.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 133,
+    "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/subject-preflight.stdout",
+    "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+  }
+}

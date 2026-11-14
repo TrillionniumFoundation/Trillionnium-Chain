@@ -1,0 +1,97 @@
+{
+  "all_complete": true,
+  "extractions": [
+    {
+      "bytes": 12907,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.extraction.json",
+      "sha256": "9878698960548f74a77d7be18bebfc21f39da86efadd631416d31d283b548b3b"
+    },
+    {
+      "bytes": 12972,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.extraction.json",
+      "sha256": "e46a047850559d0321a1e1a00aaac91c0e3db878594c4d605639fb62ab3ab915"
+    }
+  ],
+  "native_executed": false,
+  "network_mutations": false,
+  "schema": "trnm-R1-W1-failed-job-raw-log-read-v1",
+  "source_or_refs_or_stage_changed": false,
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475259337/logs"
+      ],
+      "capture_error": null,
+      "complete_read": true,
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 31.915,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:35:30.921636+00:00",
+      "job_id": 132475259337,
+      "limit_exceeded": false,
+      "max_stream_bytes": 16777216,
+      "owned_pid": 79629,
+      "started_at": "2026-11-14T14:34:59.005705+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 215469,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.stdout",
+        "sha256": "8a8308148cc4584b222a1ad4b89f9ed3b9315e10fc4a3f9b41804d4113692a2c"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258996/logs"
+      ],
+      "capture_error": null,
+      "complete_read": true,
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 12.889,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:35:11.895750+00:00",
+      "job_id": 132475258996,
+      "limit_exceeded": false,
+      "max_stream_bytes": 16777216,
+      "owned_pid": 79627,
+      "started_at": "2026-11-14T14:34:59.006205+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 216283,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.stdout",
+        "sha256": "d8f8acf7d7e83ff24212cc5b2ce9f09a6817f40910b38d7f25750ed148165002"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    }
+  ]
+}

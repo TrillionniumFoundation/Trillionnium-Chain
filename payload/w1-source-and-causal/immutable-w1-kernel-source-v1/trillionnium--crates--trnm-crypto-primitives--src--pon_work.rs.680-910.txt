@@ -1,0 +1,231 @@
+680:}
+681:
+682:struct CheckedProofInputs {
+683:    matrices: Vec<u32>,
+684:    actual_task: Hash,
+685:    ticket: Hash,
+686:}
+687:
+688:// Current canonical bytes and cheap statement checks only, never a work fact.
+689:// Borrowing the immutable proof lets cache lookup precede the 32-KiB A/B
+690:// allocation. Only an actual arithmetic replay needs decoded input matrices.
+691:struct CheckedProofStatement<'a> {
+692:    inputs: &'a [u8],
+693:    actual_task: Hash,
+694:    ticket: Hash,
+695:}
+696:impl CheckedProofStatement<'_> {
+697:    fn decode_inputs(&self) -> Vec<u32> {
+698:        #[cfg(test)]
+699:        ARITHMETIC_INPUT_DECODES.with(|count| count.set(count.get() + 1));
+700:        self.inputs
+701:            .chunks_exact(4)
+702:            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+703:            .collect()
+704:    }
+705:}
+706:
+707:// Preserve the complete original optimized cheap-check order before any cache
+708:// access or callback. This deliberately differs from the wire-only precheck.
+709:fn checked_proof_statement(
+710:    challenge: Hash,
+711:    expected_task: Hash,
+712:    target: Hash,
+713:    bytes: &[u8],
+714:) -> Result<CheckedProofStatement<'_>, WorkError> {
+715:    if bytes.len() != PROOF_BYTES {
+716:        return Err(WorkError::Length);
+717:    }
+718:    if &bytes[..4] != b"PNW1" {
+719:        return Err(WorkError::Version);
+720:    }
+721:    if target == [0; 32] {
+722:        return Err(WorkError::Target);
+723:    }
+724:    // Preserve C, A, B field-error precedence before task, ticket and
+725:    // callbacks. Exact fixed slices need no allocation, unaligned cast,
+726:    // host-endian assumption or reduction of noncanonical input words.
+727:    for matrix in [2, 0, 1] {
+728:        let start = 4 + matrix * CELLS * 4;
+729:        if bytes[start..start + CELLS * 4]
+730:            .chunks_exact(4)
+731:            .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
+732:        {
+733:            return Err(WorkError::Field);
+734:        }
+735:    }
+736:    // These are the current canonical bytes, not a cached task verdict.
+737:    let actual_task = hash(
+738:        b"task",
+739:        &[
+740:            &bytes[4..4 + CELLS * 4],
+741:            &bytes[4 + CELLS * 4..4 + CELLS * 8],
+742:        ],
+743:    );
+744:    if actual_task != expected_task {
+745:        return Err(WorkError::Task);
+746:    }
+747:    let trace_claim: &[u8] = &bytes[4 + 3 * CELLS * 4..];
+748:    // Cheap ticket rejection before expensive transcript verification is only an admission filter.
+749:    // A passing filter alone never constructs VerifiedWork.
+750:    let ticket = hash(b"ticket", &[&challenge, trace_claim]);
+751:    if ticket > target {
+752:        return Err(WorkError::Target);
+753:    }
+754:    Ok(CheckedProofStatement {
+755:        inputs: &bytes[4..4 + 2 * CELLS * 4],
+756:        actual_task,
+757:        ticket,
+758:    })
+759:}
+760:
+761:fn checked_proof_inputs(
+762:    challenge: Hash,
+763:    expected_task: Hash,
+764:    target: Hash,
+765:    bytes: &[u8],
+766:    kernel: VerificationKernel,
+767:) -> Result<CheckedProofInputs, WorkError> {
+768:    if !matches!(kernel, VerificationKernel::ScalarReference) {
+769:        let checked = checked_proof_statement(challenge, expected_task, target, bytes)?;
+770:        return Ok(CheckedProofInputs {
+771:            matrices: checked.decode_inputs(),
+772:            actual_task: checked.actual_task,
+773:            ticket: checked.ticket,
+774:        });
+775:    }
+776:    // Retain the scalar reference's original three-matrix decoding and
+777:    // independent field re-encoding, including its original error order.
+778:    if bytes.len() != PROOF_BYTES {
+779:        return Err(WorkError::Length);
+780:    }
+781:    if &bytes[..4] != b"PNW1" {
+782:        return Err(WorkError::Version);
+783:    }
+784:    if target == [0; 32] {
+785:        return Err(WorkError::Target);
+786:    }
+787:    let matrices = bytes[4..4 + 3 * CELLS * 4]
+788:        .chunks_exact(4)
+789:        .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+790:        .collect::<Vec<_>>();
+791:    let (a, tail) = matrices.split_at(CELLS);
+792:    let (b, claimed) = tail.split_at(CELLS);
+793:    validate(claimed)?;
+794:    let actual_task = task_id(a, b)?;
+795:    if actual_task != expected_task {
+796:        return Err(WorkError::Task);
+797:    }
+798:    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
+799:    let ticket = hash(b"ticket", &[&challenge, trace_claim]);
+800:    if ticket > target {
+801:        return Err(WorkError::Target);
+802:    }
+803:    Ok(CheckedProofInputs {
+804:        matrices,
+805:        actual_task,
+806:        ticket,
+807:    })
+808:}
+809:
+810:fn verify_with_kernel<E>(
+811:    challenge: Hash,
+812:    expected_task: Hash,
+813:    target: Hash,
+814:    bytes: &[u8],
+815:    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+816:    kernel: VerificationKernel,
+817:) -> Result<VerifiedWork, VerificationError<E>> {
+818:    let checked = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+819:    verify_checked_with_kernel(challenge, bytes, progress, kernel, checked)
+820:}
+821:
+822:// Private continuation of the native verifier. Only the current invocation's
+823:// checked statement/inputs may enter: callers cannot supply a cached verdict.
+824:fn verify_checked_with_kernel<E>(
+825:    challenge: Hash,
+826:    bytes: &[u8],
+827:    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+828:    kernel: VerificationKernel,
+829:    checked: CheckedProofInputs,
+830:) -> Result<VerifiedWork, VerificationError<E>> {
+831:    let CheckedProofInputs {
+832:        matrices,
+833:        actual_task,
+834:        ticket,
+835:    } = checked;
+836:    let (a, tail) = matrices.split_at(CELLS);
+837:    let (b, claimed) = tail.split_at(CELLS);
+838:    let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
+839:    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
+840:    progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
+841:    let evaluated = match kernel {
+842:        VerificationKernel::ScalarReference => ReplayedTranscript::Reference(
+843:            evaluate_transcript_with_progress(challenge, a, b, progress)?,
+844:        ),
+845:        VerificationKernel::Transposed => ReplayedTranscript::Optimized(
+846:            evaluate_transposed_with_progress::<false, E>(challenge, a, b, progress)?,
+847:        ),
+848:        VerificationKernel::LimbTranscript => ReplayedTranscript::Optimized(
+849:            evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?,
+850:        ),
+851:        VerificationKernel::ColumnLimbTranscript => {
+852:            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<
+853:                false,
+854:                true,
+855:                false,
+856:                E,
+857:            >(challenge, a, b, progress)?)
+858:        }
+859:        VerificationKernel::FullLimb => {
+860:            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<
+861:                true,
+862:                false,
+863:                true,
+864:                E,
+865:            >(challenge, a, b, progress)?)
+866:        }
+867:    };
+868:    // PNW1 submits only a final digest: every transcript update is still replayed.
+869:    // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
+870:    if evaluated.trace().as_slice() != trace_claim {
+871:        return Err(WorkError::Transcript.into());
+872:    }
+873:    let product = match evaluated {
+874:        ReplayedTranscript::Reference(evaluated) => {
+875:            finish_product_with_progress(a, evaluated, progress)
+876:        }
+877:        ReplayedTranscript::Optimized(evaluated) => {
+878:            if matches!(kernel, VerificationKernel::FullLimb) {
+879:                finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
+880:            } else {
+881:                finish_transposed_with_progress(a, evaluated, progress)
+882:            }
+883:        }
+884:    }
+885:    .map_err(VerificationError::Cancelled)?;
+886:    let matches_claim = match kernel {
+887:        VerificationKernel::ScalarReference => product == claimed,
+888:        VerificationKernel::Transposed
+889:        | VerificationKernel::LimbTranscript
+890:        | VerificationKernel::FullLimb
+891:        | VerificationKernel::ColumnLimbTranscript => product
+892:            .iter()
+893:            .flat_map(|word| word.to_le_bytes())
+894:            .eq(claimed_bytes.iter().copied()),
+895:    };
+896:    if !matches_claim {
+897:        return Err(WorkError::Product.into());
+898:    }
+899:    progress(VerificationProgress::BeforeVerifiedWork).map_err(VerificationError::Cancelled)?;
+900:    Ok(VerifiedWork {
+901:        challenge,
+902:        task: actual_task,
+903:        ticket,
+904:        product,
+905:    })
+906:}
+907:
+908:// q = 2^32 - 5. A transcript sum is below 2^70; two folds followed by
+909:// one subtraction are exact. The prepared producer and retained transposed dots
+910:// use this arithmetic, as do field additions in the limb paths. The separately

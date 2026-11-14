@@ -1,6 +1,0 @@
-# v2 git bundle
--e40d7071c4724e6600deef8a2820bf35c1982289 fix(ci): retain complete History roster and diagnostic test results
--73d5a17b9b7fb5f67040554f22ff37d20725e548 fix: align independent verifier locks and source bindings
--dc42ce4df5cff79cc61c5addbaf01074b56b06ca docs: preserve empty network receipt as raw evidence
--2a62061177852dc3ebd200fa8d7c66c661a119a1 Merge exact collector control count and preserve original lane outcomes
-ed0d35487f2a67239e4d646fd41c2c7acb5cc740 HEAD

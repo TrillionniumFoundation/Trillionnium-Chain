@@ -1,0 +1,28 @@
+{
+  "actual_native_result_remains": "FAIL_BEFORE_COMPILATION",
+  "archivable_roots": [
+    "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1",
+    "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1"
+  ],
+  "external_explicit_inputs_preserved_by_reference": true,
+  "implementation_or_rerun_performed": false,
+  "index": {
+    "bytes": 58261,
+    "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "53882992810c3491e38cdbcd4e3d51c5201e41ac8044bf845db9edcf33bb2d4f"
+  },
+  "indexed_bytes": 1721805,
+  "indexed_files": 138,
+  "readable_review": {
+    "bytes": 5211,
+    "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.md",
+    "sha256": "4239134def409885f499e8a3e33c01b81b0e80e3c132ca7b2c219d978ed23c3a"
+  },
+  "review": {
+    "bytes": 37279,
+    "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/review.json",
+    "sha256": "3dd7ef73021880a8b38d0267cf5f22b2f113e393b47785da0ba1bdf14d2ac455"
+  },
+  "schema": "trnm-r1-budget-review-seal-v1",
+  "status": "CLOSED"
+}

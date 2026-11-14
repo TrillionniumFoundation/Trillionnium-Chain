@@ -1,0 +1,32 @@
+[
+  {
+    "bytes": 61,
+    "line": 1229,
+    "text": "2026-11-14T14:20:16.8874650Z   \"schema\": \"trnm-ci-source-v1\","
+  },
+  {
+    "bytes": 1309,
+    "line": 1822,
+    "text": "2026-11-14T15:03:22.2881834Z test witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database ... TRNM_PQ_TLS_CLI_DIAGNOSTIC {\"child_after_cleanup\":{\"exit_code\":null,\"signal\":9,\"state\":\"exited\",\"success\":false},\"child_before_cleanup\":{\"state\":\"running\"},\"cleanup_elapsed_us\":952,\"failure_since_spawn_start_us\":340580,\"pid\":32415,\"ready_received_us\":76903,\"request_stages\":[],\"request_stages_truncated\":false,\"schema\":\"trnm-pq-tls-cli-failure-v1\",\"stderr\":{\"connection_refusals\":[{\"bio_error_code\":null,\"bio_error_kind\":null,\"deadline_elapsed\":false,\"elapsed_us\":261315,\"error_code\":\"P"
+  },
+  {
+    "bytes": 121,
+    "line": 1831,
+    "text": "2026-11-14T15:03:22.2886869Z ---- witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database stdout ----"
+  },
+  {
+    "bytes": 189,
+    "line": 1833,
+    "text": "2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:"
+  },
+  {
+    "bytes": 315,
+    "line": 1834,
+    "text": "2026-11-14T15:03:22.2894470Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PQ_NETWORK_CRYPTO:Error { code: ErrorCode(5), cause: Some(Io(Os { code: 104, kind: ConnectionReset, message: \\\"Connection reset by peer\\\" })) }\", source: None, request_history_budget: false }"
+  },
+  {
+    "bytes": 108,
+    "line": 1839,
+    "text": "2026-11-14T15:03:22.2895942Z     witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database"
+  }
+]

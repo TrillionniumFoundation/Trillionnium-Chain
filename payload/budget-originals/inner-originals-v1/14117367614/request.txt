@@ -1,0 +1,4 @@
+driver=2a86462a1ab20c68151719ba4635e3c294391e64
+subject=ae657e262278ae4a058220f66a6a0495721eb9ad
+mode=pool-scan-before
+scope=component-controls-only

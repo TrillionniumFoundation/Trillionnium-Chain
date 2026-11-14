@@ -1,0 +1,29 @@
+{
+  "artifacts": [
+    {
+      "arch": "arm64",
+      "bytes": 9927038,
+      "id": 14119000610,
+      "job": 132481412245,
+      "log_bytes": 184625,
+      "log_sha256": "2563aac4968c906fa6664d84be5ba069093d0dc3bbdc7a055b9f0f796098b170",
+      "name": "cost-arm64-2a86462a1ab20c68151719ba4635e3c294391e64-1",
+      "sha256": "8249d0279e12e95bb59da7644b3d62ca1243589f9488b26e3b2b95560c9735ff"
+    },
+    {
+      "arch": "x64",
+      "bytes": 9851618,
+      "id": 14119380013,
+      "job": 132481412405,
+      "log_bytes": 184966,
+      "log_sha256": "e42c8af82a6600ef7dfe65c8e57d96728c3f38f5f0a8df54af0b62d921c4b8a4",
+      "name": "cost-x64-2a86462a1ab20c68151719ba4635e3c294391e64-1",
+      "sha256": "d46ce31d5db37912f19115160d8b46e0bf32597fb3c4976a9c80b70bcc3df456"
+    }
+  ],
+  "full_ZIP_GET_timeout_seconds": 1200,
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "no_automatic_retry": true,
+  "run_attempt": 1,
+  "run_id": 43604217412
+}

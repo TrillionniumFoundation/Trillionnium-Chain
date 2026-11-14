@@ -1,0 +1,973 @@
+{
+  "schema": "prepared-pr847-audit-update-v10",
+  "status": "prepared",
+  "remote_writes": false,
+  "started_at": "2026-11-14T14:21:00.612641+00:00",
+  "driver": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v10.py",
+    "sha256": "af773495a3e27a008377c08c87141af91f741c23a132c3615d57d51413411989"
+  },
+  "inputs": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/pr847-final-audit-inputs-2a8646-parallel-hook-v1.json",
+    "bytes": 2431,
+    "sha256": "f48d98f3a21b92b463800bffca05c0b3266acda85ac05de779789c77aecf7b37"
+  },
+  "validated_facts": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "pr_number": 847,
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "previous_own_published_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "expected_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+    "publication_spec": {
+      "bytes": 1847,
+      "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+      "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+    },
+    "publication_receipt": {
+      "bytes": 6458208,
+      "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    "publication_status": "UNKNOWN",
+    "publication_transport_exit": 124,
+    "publication_observation_phase": "after",
+    "publication_resume_spec": {
+      "bytes": 2428,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    "publication_resume_receipt": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+      "bytes": 231108,
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    "publication_resume_terminal": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+      "bytes": 22383,
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    "publication_resume_status": "confirmed",
+    "publication_resume_transport_exit": 0,
+    "publication_completion": {
+      "kind": "resume-executor",
+      "receipt": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+        "bytes": 231108,
+        "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+      },
+      "original_receipt": {
+        "bytes": 6458208,
+        "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+        "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+      },
+      "resume_spec": {
+        "bytes": 2428,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+        "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+      },
+      "actual_terminal": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+        "bytes": 22383,
+        "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+      },
+      "status": "confirmed",
+      "observation_phase": "after",
+      "transport_exit": 0,
+      "terminal_proof": {
+        "session_id": "dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589",
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589/output.log",
+        "exit_code": 0,
+        "output_complete": true,
+        "page_count": 1,
+        "bytes": 3185,
+        "sha256": "3eeb44f50d42b8826f766dd4e19cc00daf2031de58cde07a088f9f39a9e3012b"
+      },
+      "previous_resume_attempts": [
+        {
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+            "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+          },
+          "terminal_pages": {
+            "bytes": 19706,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+            "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+          }
+        },
+        {
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+            "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+          },
+          "terminal_pages": {
+            "bytes": 19710,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+            "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+          }
+        }
+      ],
+      "previous_resume_failures": [
+        {
+          "number": 1,
+          "push_exit": 1,
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+            "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+          },
+          "status": "UNKNOWN",
+          "terminal_pages": {
+            "bytes": 19706,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+            "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+          },
+          "terminal_proof": {
+            "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7/output.log",
+            "bytes": 2824,
+            "exit_code": 1,
+            "output_complete": true,
+            "page_count": 1,
+            "session_id": "dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7",
+            "sha256": "67aa8d5c3f62c62a59ce6ab6e8ea15cdb4ad62bddcdbaf012ab1cbd70ee5ca4e"
+          },
+          "transport_stderr": {
+            "bytes": 13318,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/atomic-publish-resume.stderr",
+            "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+          }
+        },
+        {
+          "number": 2,
+          "push_exit": 1,
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+            "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+          },
+          "status": "UNKNOWN",
+          "terminal_pages": {
+            "bytes": 19710,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+            "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+          },
+          "terminal_proof": {
+            "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c/output.log",
+            "bytes": 2824,
+            "exit_code": 1,
+            "output_complete": true,
+            "page_count": 1,
+            "session_id": "dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c",
+            "sha256": "e37edca34ed8fe412f2ed640bbe2fea91c32720a72accd1ad8d692f6b63835f5"
+          },
+          "transport_stderr": {
+            "bytes": 13318,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/atomic-publish-resume.stderr",
+            "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+          }
+        }
+      ],
+      "transport_trace": {
+        "NO_DATA": true,
+        "REDACT": true,
+        "bounds": {
+          "events": 4096,
+          "line": 8192,
+          "parsed_input": 16777216,
+          "postprocess_EOF_seconds": 5,
+          "retained_bytes": 524288
+        },
+        "complete": true,
+        "eof": true,
+        "errors": [],
+        "events": {
+          "bytes": 1250,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+          "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+        },
+        "events_retained": 17,
+        "header_auth_cookie_URL_or_body_retained": false,
+        "input_bytes_seen": 20483,
+        "lines_seen": 227,
+        "overlong_lines_discarded": 0,
+        "raw_trace_written": false,
+        "schema": "trnm-redacted-git-curl-info-v1",
+        "scope": "Strict typed connection/DNS/ALPN/TLS events; not a complete HTTP trace.",
+        "summary": {
+          "bytes": 919,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/summary.json",
+          "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+        },
+        "trace_fd": 4,
+        "unrecognized_or_header_lines_discarded": 210
+      },
+      "effective_hook_plan": {
+        "effective_hook_bytes": 7522,
+        "effective_hook_sha256": "5351fbd3ccaece41da37e7c779431b7c310f085fc98195ec244b8d78ae76fe6e",
+        "original_hook_sha256": "7a2b1d50bae4957e8b5b8c4a76c7fb07b821e2e31c9714e9ac90459fdce98cd8",
+        "parallel_capture_labels": [
+          "heads",
+          "tags"
+        ],
+        "receipt_command_order": [
+          "push-url",
+          "fetch-url",
+          "heads",
+          "tags"
+        ],
+        "schema": "trnm-followup-parallel-hook-read-plan-v1"
+      }
+    },
+    "archive": {
+      "archive_bytes": 272975787,
+      "archive_files": 5670,
+      "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "commit": "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9",
+      "direct_parents": [
+        "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "file_index_sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a",
+      "payload_manifest_sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223",
+      "tag": "archive/execution-receipts-20261114-2a86462a1ab2-v1",
+      "tag_oid": "454761ef276433740453b5b80ce886c1d251c6d3",
+      "tree": "e7c0cdcc71af648f430acd323d33dedfaf1ed63b"
+    },
+    "original_branch_names": 908,
+    "original_distinct_tips": 892,
+    "original_archive_direct_parents": 893,
+    "execution_manifest": {
+      "bytes": 2329620,
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json",
+      "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+    },
+    "seven_gate_receipt": {
+      "bytes": 9143,
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a8646-v1/receipt.json",
+      "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+    },
+    "seven_gate_commands": 7,
+    "full_linux_receipt": {
+      "bytes": 21354,
+      "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/R1-final-original-executions-and-publication-review/full/flat/original/summary.json",
+      "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+    },
+    "original_linux_commands": 18,
+    "hosted_checks": {
+      "state": "not_observed_for_final_candidate"
+    },
+    "collector_disposition": {
+      "exact_excerpt": "B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification.",
+      "payload_path": "post-m5-root-closures/reviewed-collector-disposition-v1.txt",
+      "state": "reviewed"
+    },
+    "template": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md",
+      "bytes": 6355,
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    "qualification_granted": false
+  },
+  "dependencies": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/dependencies.json",
+    "bytes": 3100423,
+    "sha256": "ede7c9c2a6091ccdb0190950264953051c31751361c843f81be616c76d7a42d9"
+  },
+  "retained_inputs": [
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/publication-spec.json",
+      "bytes": 1847,
+      "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-publication.json",
+      "bytes": 6458208,
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/execution-manifest.json",
+      "bytes": 2329620,
+      "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a8646-v1/receipt.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/seven-local-gates.json",
+      "bytes": 9143,
+      "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/R1-final-original-executions-and-publication-review/full/flat/original/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/full-linux-lane.json",
+      "bytes": 21354,
+      "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/archive-file-index.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/archive-file-index.json",
+      "bytes": 1811373,
+      "sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-1-receipt.json",
+      "bytes": 223986,
+      "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-1-terminal-pages.json",
+      "bytes": 19706,
+      "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-2-receipt.json",
+      "bytes": 223986,
+      "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-2-terminal-pages.json",
+      "bytes": 19710,
+      "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-receipt.json",
+      "bytes": 231108,
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-typed-trace-summary.json",
+      "bytes": 919,
+      "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-typed-trace-events.jsonl",
+      "bytes": 1250,
+      "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/origin-push-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-push-url.stdout",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/origin-push-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-push-url.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/origin-fetch-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-fetch-url.stdout",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/origin-fetch-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-fetch-url.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/existing-hook-config.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-existing-hook-config.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/existing-hook-config.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-existing-hook-config.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/default-hook-path.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-default-hook-path.stdout",
+      "bytes": 107,
+      "sha256": "0b4863d62d1ffb4cadd13d668b30eb105c74ecaa4d1e0d07e650b9284582875d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/default-hook-path.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-default-hook-path.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-local-tag.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-tag.stdout",
+      "bytes": 41,
+      "sha256": "507950203ff28b3aec6c5840f025970f3a288cbe1a17b968ee6853e6b12395b9"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-local-tag.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-tag.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-local-peel.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-peel.stdout",
+      "bytes": 41,
+      "sha256": "ecfa5835945b5cdddae1eef212115cfd27c4e625ee6b58fa84fbd910b8b3e585"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-local-peel.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-peel.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-local-tag.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-tag.stdout",
+      "bytes": 41,
+      "sha256": "432650b394eb5116254a165159081c7d7f820bda28ba92886a6d236259590a91"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-local-tag.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-tag.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-local-peel.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-peel.stdout",
+      "bytes": 41,
+      "sha256": "1d14af7103a0e727c649cbe610afc49bd0dabf6bc6a32285e611cdf4a3d2685d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-local-peel.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-peel.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-commit-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object-size.stdout",
+      "bytes": 6,
+      "sha256": "667eb642356d621ebeaec3eba658779ef92e9f5b10ce711ddef7c744fab4dbba"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-commit-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object-size.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-commit-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object.stdout",
+      "bytes": 43183,
+      "sha256": "2f581bd59d740f3a0b6405ca5ed9db2f36ead80a91acad506bdd5a218eb82a41"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-commit-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-tag-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object-size.stdout",
+      "bytes": 4,
+      "sha256": "19f89deee590664e3f917abb7e8cf9e7d9a71707c875de58b5914b08f5d19de8"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-tag-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object-size.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-tag-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object.stdout",
+      "bytes": 471,
+      "sha256": "fa23fe34446467989dc3774381ef2dc3dbad8ca794f68e44caaa6263a02defa1"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/old-archive-tag-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-commit-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object-size.stdout",
+      "bytes": 4,
+      "sha256": "f8bf41177a5f5e808a7ccb648b51080b031f15ca8018d91a576263d6cc626eb6"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-commit-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object-size.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-commit-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object.stdout",
+      "bytes": 404,
+      "sha256": "4b28c4dd961684ed018db2f077a9d050513d2097314ddd40c1708a5281d0ba01"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-commit-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-tag-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object-size.stdout",
+      "bytes": 4,
+      "sha256": "9cc6ce83098a2d1c852b990cedc63220f77a3e4cac7e605949da8fde0e4a3191"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-tag-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object-size.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-tag-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object.stdout",
+      "bytes": 411,
+      "sha256": "cc6094fe1a918d96324932ba4346e465966644b94cf2af22ac2b505de58c7dce"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-tag-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-exact-tree-list.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-exact-tree-list.stdout",
+      "bytes": 869793,
+      "sha256": "cfa99a498e226b4fecedc95e748c2eaa250da1a37f146620f75d0640a418d705"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/same-archive-exact-tree-list.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-exact-tree-list.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/project-preflight.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-project-preflight.stdout",
+      "bytes": 163,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/project-preflight.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-project-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/verify-source-before.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-before.stdout",
+      "bytes": 423,
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/verify-source-before.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/candidate-fast-forward.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-candidate-fast-forward.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/candidate-fast-forward.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-candidate-fast-forward.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/main-ancestry.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-main-ancestry.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/main-ancestry.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-main-ancestry.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/semantic-ledger-ancestry.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-semantic-ledger-ancestry.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/semantic-ledger-ancestry.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-semantic-ledger-ancestry.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/published-to-reviewed-remote.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-reviewed-remote.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/published-to-reviewed-remote.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-reviewed-remote.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/reviewed-remote-to-candidate.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-reviewed-remote-to-candidate.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/reviewed-remote-to-candidate.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-reviewed-remote-to-candidate.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/published-to-rog-start.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-rog-start.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/published-to-rog-start.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-rog-start.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/rog-start-to-candidate.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-rog-start-to-candidate.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/rog-start-to-candidate.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-rog-start-to-candidate.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/actor.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor.stdout",
+      "bytes": 37,
+      "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/actor.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/pr-before.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-before.stdout",
+      "bytes": 242,
+      "sha256": "2193ac1ecbc5e9b4b6dbdae0bda162401fd44248cdb2c7228cb3ce8716a054e4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/pr-before.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-before-heads.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-heads.stdout",
+      "bytes": 87154,
+      "sha256": "c24ac4d1acc2a6f1cd58abb63bec4087abbc878bbd5636b89242c97bb8d0f043"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-before-heads.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-heads.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-before-tags.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-tags.stdout",
+      "bytes": 231,
+      "sha256": "524b1d36fdd3c9d9d26856a15715415db3609c8c5a174acc905446dfee05b952"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-before-tags.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-tags.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-preflight.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-preflight.stdout",
+      "bytes": 163,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-preflight.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-origin-push-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-origin-push-url.stdout",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-origin-push-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-origin-push-url.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-existing-hook-config.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-existing-hook-config.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/prepush-existing-hook-config.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-existing-hook-config.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/pr-prepush.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-prepush.stdout",
+      "bytes": 242,
+      "sha256": "2193ac1ecbc5e9b4b6dbdae0bda162401fd44248cdb2c7228cb3ce8716a054e4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/pr-prepush.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-prepush.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/actor-prepush.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor-prepush.stdout",
+      "bytes": 37,
+      "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/actor-prepush.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor-prepush.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-atomic-publish-resume.stdout",
+      "bytes": 334,
+      "sha256": "ab2487c0e46bd7f0283e3ce9c2df70ac6367d2062f05a1c8e07eb9ce3675b326"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-atomic-publish-resume.stderr",
+      "bytes": 83077,
+      "sha256": "a4b064c1175c52b38b9814535fd8a9502053cada96715a7f743a07dc50924749"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-after-heads.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-heads.stdout",
+      "bytes": 87154,
+      "sha256": "66aa7f7e4d5f98bbd1cb0363e40a8c7c105478ea3b2d8eba4f19bb103cdf2e43"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-after-heads.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-heads.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-after-tags.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-tags.stdout",
+      "bytes": 440,
+      "sha256": "97cc8ca7c7242e2b6857098b0a152017314a3fa7e6fbaffcc0fd6b5a6146bb50"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/remote-after-tags.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-tags.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/verify-source-after.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-after.stdout",
+      "bytes": 423,
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/verify-source-after.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actual-terminal-pages.json",
+      "bytes": 22383,
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/post-m5-root-closures/reviewed-collector-disposition-v1.txt",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/collector-disposition-original",
+      "bytes": 873,
+      "sha256": "4c7499eb1563e57b49c26512c6641e3a2e1bfb30bf0c84b293d82ef7cd9e5ae3"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/body-template-v3.md",
+      "bytes": 6355,
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    {
+      "source_path": "/private/tmp/chain-prci-final-execution-coverage-checker-20261114-v1/run-final-v1/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-13.raw",
+      "bytes": 9614,
+      "sha256": "49b43f68b433423cb5af57ce56db18c00d7aa0f320a325740946e6d86bdf8004"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/pr847-final-audit-inputs-2a8646-parallel-hook-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/final-inputs.json",
+      "bytes": 2431,
+      "sha256": "f48d98f3a21b92b463800bffca05c0b3266acda85ac05de779789c77aecf7b37"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v5.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/preparer-v5.py",
+      "bytes": 36663,
+      "sha256": "12776f0a436732589e46ef13548cb8f34180a532ab1ff63671560326c541cd6d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume_followup_candidate_execution_archive_v3.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-producer-v3.py",
+      "bytes": 78875,
+      "sha256": "f4db0552a747f18525a4938510b5768e4852b0a787271762c6e80c204b829627"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-spec.json",
+      "bytes": 2428,
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-final-payload-coverage-tool-records-v1/checker-terminal.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-0.raw",
+      "bytes": 1925,
+      "sha256": "6cd2ea64417238094d53d34f084e71e8739c40d0b18b535d26b2355146a210ca"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-launch-inputs-v1/inputs.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-1.raw",
+      "bytes": 2426,
+      "sha256": "2381ac94dab56b9016f4cea84442fbde8ddda135ed46592c7708d95a83b58acb"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-launch-inputs-v1/producer.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-2.raw",
+      "bytes": 5488,
+      "sha256": "2b611845764a6830e47ad05a897961db5c409958e8d2cc06d3165ca30e798376"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-original-terminal-pages-v1.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-3.raw",
+      "bytes": 885065,
+      "sha256": "753dbb0b65fa4377a28b705c888dd9319de5707cd569c1cb268759439e66612d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/publish_followup_candidate_execution_archive_v2.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-8.raw",
+      "bytes": 73492,
+      "sha256": "0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/atomic-publish-resume.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-9.raw",
+      "bytes": 13318,
+      "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/atomic-publish-resume.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-11.raw",
+      "bytes": 13318,
+      "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+    }
+  ],
+  "steps": [
+    {
+      "label": "actor",
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:21:00.702019+00:00",
+      "finished_at": "2026-11-14T14:21:05.999856+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stdout",
+      "stdout_bytes": 37,
+      "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pr-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:21:06.002540+00:00",
+      "finished_at": "2026-11-14T14:21:10.165078+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stdout",
+      "stdout_bytes": 20182,
+      "stdout_sha256": "c7778a723784e32630f2628c5369ea2d10cdd07ec054c6221f9806bc88dd5d56",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "errors": [],
+  "before_raw_sha256": "c7778a723784e32630f2628c5369ea2d10cdd07ec054c6221f9806bc88dd5d56",
+  "before_title": "Converge fixed Chain/Hepta closure source and evidence contracts",
+  "before_draft": true,
+  "before_body_bytes": 19624,
+  "desired_title": "Consolidate audited branch history and current runtime",
+  "desired_body_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-body.md",
+  "desired_body_bytes": 8644,
+  "desired_body_sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4",
+  "desired_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/desired.json",
+  "desired_sha256": "0753542bf11813d6e8623e3061bd0a24d810409e53638d6bd84c7737d750c0d3",
+  "finished_at": "2026-11-14T14:21:10.289275+00:00"
+}

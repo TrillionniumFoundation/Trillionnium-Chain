@@ -1,0 +1,177 @@
+{
+  "excerpt_is_not_complete_log": true,
+  "long_matching_lines_omitted": 1,
+  "matching_lines": 42,
+  "original": {
+    "bytes": 818816,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258045-original-log.stdout",
+    "sha256": "39f05164eaaeb530d90ecae6dda34ef6176d90889d55931519c0b2b4a9109fa0"
+  },
+  "selected_last_matching_lines": [
+    {
+      "line": 19,
+      "text": "2026-11-14T14:19:07.4736030Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md"
+    },
+    {
+      "line": 32,
+      "text": "2026-11-14T14:19:07.9843290Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)"
+    },
+    {
+      "line": 44,
+      "text": "2026-11-14T14:19:08.3313404Z   sparse-checkout-cone-mode: true"
+    },
+    {
+      "line": 71,
+      "text": "2026-11-14T14:19:08.6047404Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 471,
+      "text": "2026-11-14T14:19:57.9091078Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 766,
+      "text": "2026-11-14T14:19:57.9324049Z  * [new branch]          fix/pon-unified-m10-history-source-20261015 -> origin/fix/pon-unified-m10-history-source-20261015"
+    },
+    {
+      "line": 790,
+      "text": "2026-11-14T14:19:57.9340459Z  * [new branch]          fix/pq-pcp2-postverify-lease-freshness-20261030 -> origin/fix/pq-pcp2-postverify-lease-freshness-20261030"
+    },
+    {
+      "line": 883,
+      "text": "2026-11-14T14:19:57.9404365Z  * [new branch]          research/pon-asert-c-reference-20261026 -> origin/research/pon-asert-c-reference-20261026"
+    },
+    {
+      "line": 884,
+      "text": "2026-11-14T14:19:57.9404961Z  * [new branch]          research/pon-asert-cpp-oracle-20261026 -> origin/research/pon-asert-cpp-oracle-20261026"
+    },
+    {
+      "line": 1114,
+      "text": "2026-11-14T14:20:10.9404773Z Updating files:  88% (36676/41677)"
+    },
+    {
+      "line": 1124,
+      "text": "2026-11-14T14:20:11.8452005Z Updating files:  97% (40427/41677)"
+    },
+    {
+      "line": 1290,
+      "text": "2026-11-14T14:29:00.2107404Z ##[group]Run set -euo pipefail"
+    },
+    {
+      "line": 1383,
+      "text": "2026-11-14T14:38:43.3417404Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.IgQnNpSw/install"
+    },
+    {
+      "line": 1578,
+      "text": "2026-11-14T14:49:44.7234404Z {\"exit_code\": 0, \"receipt\": \"/home/runner/work/_temp/pq-system-records/checkpoint-probe-endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart.json\", \"status\": \"command_succeeded\"}"
+    },
+    {
+      "line": 1823,
+      "text": "2026-11-14T15:03:22.2885922Z FAILED"
+    },
+    {
+      "line": 1833,
+      "text": "2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:"
+    },
+    {
+      "line": 1841,
+      "text": "2026-11-14T15:03:22.2896399Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 4.91s"
+    },
+    {
+      "line": 1843,
+      "text": "2026-11-14T15:03:22.2896865Z error: test failed, to rerun pass `-p trnm-pon-node --test pq_tls_witness_cli`"
+    },
+    {
+      "line": 1848,
+      "text": "2026-11-14T15:03:58.1700727Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 2019,
+      "text": "2026-11-14T15:08:25.7560215Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 2237,
+      "text": "2026-11-14T15:36:25.7556387Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"one-warm-key\",\"charged_cpu_ns\":1257419,\"elapsed_ns\":1277879,\"error\":null,\"input\":21,\"matches_expected\":true,\"nonce\":1021,\"original_accounting_preserved\":true,\"pair\":10,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1285201,\"wire_sha256\":\"86f0eaf648e1d4008cc09cd7e1512c7ca37acc808832c404790f64ef3d1aee57\"}"
+    },
+    {
+      "line": 2238,
+      "text": "2026-11-14T15:36:25.7558331Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"one-warm-key\",\"charged_cpu_ns\":8499495,\"elapsed_ns\":8520344,\"error\":null,\"input\":21,\"matches_expected\":true,\"nonce\":1021,\"original_accounting_preserved\":true,\"pair\":10,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8521277,\"wire_sha256\":\"86f0eaf648e1d4008cc09cd7e1512c7ca37acc808832c404790f64ef3d1aee57\"}"
+    },
+    {
+      "line": 2309,
+      "text": "2026-11-14T15:36:25.7695000Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"one-warm-key\",\"charged_cpu_ns\":1276658,\"elapsed_ns\":1297076,\"error\":null,\"input\":57,\"matches_expected\":true,\"nonce\":1057,\"original_accounting_preserved\":true,\"pair\":28,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1297929,\"wire_sha256\":\"0e465404ee33e097dbd509e06890e6979c25cde01c1c7a1abd3f813e7aea2a0d\"}"
+    },
+    {
+      "line": 2310,
+      "text": "2026-11-14T15:36:25.7697112Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"one-warm-key\",\"charged_cpu_ns\":8456401,\"elapsed_ns\":8475385,\"error\":null,\"input\":57,\"matches_expected\":true,\"nonce\":1057,\"original_accounting_preserved\":true,\"pair\":28,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8476371,\"wire_sha256\":\"0e465404ee33e097dbd509e06890e6979c25cde01c1c7a1abd3f813e7aea2a0d\"}"
+    },
+    {
+      "line": 2331,
+      "text": "2026-11-14T15:36:25.7737595Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"eight-warm-keys\",\"charged_cpu_ns\":8448589,\"elapsed_ns\":8468065,\"error\":null,\"input\":4,\"matches_expected\":true,\"nonce\":1004,\"original_accounting_preserved\":true,\"pair\":2,\"retained_slots\":8,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8469010,\"wire_sha256\":\"0b2ec16c9d5916035c317d074f292eac31592a036aa1cbda303e2ab084404d4e\"}"
+    },
+    {
+      "line": 2332,
+      "text": "2026-11-14T15:36:25.7739468Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"eight-warm-keys\",\"charged_cpu_ns\":1256678,\"elapsed_ns\":1277507,\"error\":null,\"input\":4,\"matches_expected\":true,\"nonce\":1004,\"original_accounting_preserved\":true,\"pair\":2,\"retained_slots\":8,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1278561,\"wire_sha256\":\"0b2ec16c9d5916035c317d074f292eac31592a036aa1cbda303e2ab084404d4e\"}"
+    },
+    {
+      "line": 2375,
+      "text": "2026-11-14T15:36:25.7823429Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"eight-warm-keys\",\"charged_cpu_ns\":8476720,\"elapsed_ns\":8503337,\"error\":null,\"input\":26,\"matches_expected\":true,\"nonce\":1026,\"original_accounting_preserved\":true,\"pair\":13,\"retained_slots\":8,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8497772,\"wire_sha256\":\"12df1a1c63879cdaa5e8abfc450e3780a9e2cbc85df464f85bfe404e60b2c58b\"}"
+    },
+    {
+      "line": 2376,
+      "text": "2026-11-14T15:36:25.7825447Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"eight-warm-keys\",\"charged_cpu_ns\":1251390,\"elapsed_ns\":1272409,\"error\":null,\"input\":26,\"matches_expected\":true,\"nonce\":1026,\"original_accounting_preserved\":true,\"pair\":13,\"retained_slots\":8,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1273232,\"wire_sha256\":\"12df1a1c63879cdaa5e8abfc450e3780a9e2cbc85df464f85bfe404e60b2c58b\"}"
+    },
+    {
+      "line": 2389,
+      "text": "2026-11-14T15:36:25.7850539Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"eight-warm-keys\",\"charged_cpu_ns\":1254045,\"elapsed_ns\":1273461,\"error\":null,\"input\":33,\"matches_expected\":true,\"nonce\":1033,\"original_accounting_preserved\":true,\"pair\":16,\"retained_slots\":8,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1274294,\"wire_sha256\":\"e76df35b37dc4c898af293dc3adf775cd422d93ab48a45c14e8028f5ff1385e6\"}"
+    },
+    {
+      "line": 2581,
+      "text": "2026-11-14T15:36:25.8225016Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":1259342,\"elapsed_ns\":1278089,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":1,\"matches_expected\":true,\"nonce\":1001,\"original_accounting_preserved\":true,\"pair\":0,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1278901,\"wire_sha256\":\"def10512db404660b695c2364efffa3f33ebca37771275c8deaf6c12d20bf499\"}"
+    },
+    {
+      "line": 2582,
+      "text": "2026-11-14T15:36:25.8227044Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8456110,\"elapsed_ns\":8475187,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":1,\"matches_expected\":true,\"nonce\":1001,\"original_accounting_preserved\":true,\"pair\":0,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8476070,\"wire_sha256\":\"def10512db404660b695c2364efffa3f33ebca37771275c8deaf6c12d20bf499\"}"
+    },
+    {
+      "line": 2587,
+      "text": "2026-11-14T15:36:25.8244815Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8449500,\"elapsed_ns\":8468287,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":4,\"matches_expected\":true,\"nonce\":1004,\"original_accounting_preserved\":true,\"pair\":2,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8469190,\"wire_sha256\":\"911f0e4c0cd404e46eeb96c8bbd1e2dc78d54400973cc5af6bea62016723f4e3\"}"
+    },
+    {
+      "line": 2588,
+      "text": "2026-11-14T15:36:25.8248299Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":1258952,\"elapsed_ns\":1278009,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":4,\"matches_expected\":true,\"nonce\":1004,\"original_accounting_preserved\":true,\"pair\":2,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1278871,\"wire_sha256\":\"911f0e4c0cd404e46eeb96c8bbd1e2dc78d54400973cc5af6bea62016723f4e3\"}"
+    },
+    {
+      "line": 2618,
+      "text": "2026-11-14T15:36:25.8365521Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8444043,\"elapsed_ns\":8464792,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":19,\"matches_expected\":true,\"nonce\":1019,\"original_accounting_preserved\":true,\"pair\":9,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8465785,\"wire_sha256\":\"8ba8d0881ff63a62e9a0eb3dd86e9f7a8f0d9b07171d10cae728678e7498cd7e\"}"
+    },
+    {
+      "line": 2622,
+      "text": "2026-11-14T15:36:25.8380747Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8478404,\"elapsed_ns\":8497409,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":21,\"matches_expected\":true,\"nonce\":1021,\"original_accounting_preserved\":true,\"pair\":10,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8498303,\"wire_sha256\":\"25b5fc5a04d3537c5eb1ade5c1d1d943b5ff0bb8dcd04643df3c4a0f6d376dda\"}"
+    },
+    {
+      "line": 2623,
+      "text": "2026-11-14T15:36:25.8384681Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8501938,\"elapsed_ns\":8521455,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":22,\"matches_expected\":true,\"nonce\":1022,\"original_accounting_preserved\":true,\"pair\":11,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8522379,\"wire_sha256\":\"4b194472a94e7404b303cedc500945b3c706e6676b54505f9c91ed71ba741b37\"}"
+    },
+    {
+      "line": 2624,
+      "text": "2026-11-14T15:36:25.8388456Z {\"actual_cache_hits\":1,\"actual_completed_expansions\":0,\"arm\":\"cached\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":1264360,\"elapsed_ns\":1285541,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":22,\"matches_expected\":true,\"nonce\":1022,\"original_accounting_preserved\":true,\"pair\":11,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":1286613,\"wire_sha256\":\"4b194472a94e7404b303cedc500945b3c706e6676b54505f9c91ed71ba741b37\"}"
+    },
+    {
+      "line": 2690,
+      "text": "2026-11-14T15:36:25.8714040Z {\"actual_cache_hits\":0,\"actual_completed_expansions\":1,\"arm\":\"original\",\"case\":\"warm-invalid-signature\",\"charged_cpu_ns\":8459605,\"elapsed_ns\":8478161,\"error\":\"PUBLIC_CALLER_SIGNATURE\",\"input\":55,\"matches_expected\":true,\"nonce\":1055,\"original_accounting_preserved\":true,\"pair\":27,\"retained_slots\":1,\"schema\":\"pon-pq-caller-auth-cost-sample-v1\",\"thread_cpu_ns\":8479135,\"wire_sha256\":\"1f1d99fce333ce473e0e98d41b75e5817e0569c7d75518b70c5ee011932b0e12\"}"
+    },
+    {
+      "line": 2761,
+      "text": "2026-11-14T15:38:15.5388836Z {\"bindings_per_sample\":8,\"case\":\"same_root_hint_last_value_changed\",\"checked_shared_map_ns\":[1790118,1782827,1792121,1778370,1790238,1794424,1805951,1801234,1790278,1801404,1787433,1774524],\"complete_actual_state_compared\":true,\"equal_result\":true,\"expected_root_checked\":true,\"mismatch_path\":\"candidate stops at first mismatch; original full-map preparation rechecks all actual rows\",\"node_owner_measured\":false,\"order\":\"alternating paired arms\",\"original_full_map_ns\":[1191823,1191372,1194797,1204893,1188107,1188428,1193826,1198152,1194477,1190631,1190581,1185243],\"physical_memory_bound\":false,\"public_tps_measured\":false,\"samples_per_arm\":12,\"schema\":\"unchanged-snapshot-full-binding-cost-v1\",\"scope\":\"full component binding and output destruction; unchanged cache limits\",\"state_keys\":128,\"tree_empty_delta_check_retained\":true,\"value_width\":64}"
+    },
+    {
+      "line": 2775,
+      "text": "2026-11-14T15:38:15.5892036Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 2833,
+      "text": "2026-11-14T15:38:17.9817391Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ],
+  "total_lines": 2833
+}

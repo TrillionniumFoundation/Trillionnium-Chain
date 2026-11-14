@@ -1,0 +1,58 @@
+{
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "network_reads": false,
+  "schema": "trnm-R1-required-queue-source-read-v1",
+  "source_or_refs_changed": false,
+  "stage_written": false,
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "cat-file",
+        "commit",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T14:29:16.113566+00:00",
+      "label": "R1-commit",
+      "started_at": "2026-11-14T14:29:16.104233+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 363,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-commit.stdout",
+        "sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+      },
+      "timeout": false
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "cat-file",
+        "blob",
+        "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/trnm-required-baseline.yml"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T14:29:16.122002+00:00",
+      "label": "R1-required-workflow",
+      "started_at": "2026-11-14T14:29:16.113844+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-required-workflow.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 35462,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-required-workflow.stdout",
+        "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+      },
+      "timeout": false
+    }
+  ],
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+}

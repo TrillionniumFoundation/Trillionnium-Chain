@@ -1,0 +1,242 @@
+{
+  "actions": {
+    "external_readonly_capture_only": true,
+    "new_native_or_tests_or_helpers_executed": false,
+    "new_network": false,
+    "source_or_git_refs_or_stage_mutated": false
+  },
+  "actual_failure_context_from_parent": {
+    "ended": "2026-11-14T15:10:45Z",
+    "job": 132475258347,
+    "metadata_failure_only": true,
+    "name": "Execute 4105 real work blocks and paid public full sync",
+    "raw_log_not_observed_by_this_entry_map": true,
+    "started": "2026-11-14T14:23:16Z",
+    "step": 21
+  },
+  "diagnostic_records": [
+    {
+      "fields": [
+        "configured_lifetime_seconds",
+        "service_elapsed_ns",
+        "stop_requested_when_exited",
+        "loop_exit_before_internal_shutdown",
+        "server_exit_ok",
+        "server_exit_error"
+      ],
+      "interpretation": "Prefer actual loop_exit before internal stop mutation. Post-return stop flag alone cannot prove which event ended the server.",
+      "schema": "native-ancestry-public-server-exit-evidence-v1"
+    },
+    {
+      "failure_location_fields": [
+        "stage",
+        "completed_import_calls",
+        "last_successful_after",
+        "last_requested_after",
+        "pinned_tip",
+        "advertised_page_complete",
+        "head_rpc_elapsed_ns",
+        "last_history_rpc_elapsed_ns",
+        "last_import_call_expression_elapsed_ns"
+      ],
+      "fields": [
+        "elapsed_ns",
+        "sync_error",
+        "failure_location",
+        "native_legacy_reorg_observation"
+      ],
+      "interpretation": "completed_import_calls counts successful returns, not durable blocks; page.complete is an unvalidated reply flag; unreturned timing remains null. Original replay Result is preserved.",
+      "schema": "native-ancestry-independent-sync-exit-evidence-v1"
+    }
+  ],
+  "host": {
+    "eligibility": "GITHUB_ACTIONS=true, CI=true, canonical source cwd, original unprivileged UID; actual fixed Host parent and inside/outside observations",
+    "helpers_read_not_executed": true,
+    "important": "TimeoutStopSec is shutdown cleanup, not a 20-second work budget. History uses its original prepared binary and whole test, not the five from-zero selectors.",
+    "limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "new_child_execution_timeout": false,
+    "path": "scripts/ci/run_from_zero_host.py",
+    "stop_timeout_seconds": 20,
+    "systemd_runtime_max_added": false
+  },
+  "native": {
+    "blocks": 4105,
+    "corruption_control": "alter active ancestry_jump level12 seal -> require ANCESTRY_INDEX_SEAL -> restore exact original seal",
+    "history_loop": "4105 paid one-packet History replies with strict receive_public_page_from into a separate confirmer; no partial activation; final full state equality and reopen equality",
+    "listener": "127.0.0.1:0",
+    "no_four_second_pressure_claim": true,
+    "public_policy": {
+      "argument": 8,
+      "rpc_seconds": 2
+    },
+    "public_protocol": "public_v2::serve_public_protected_v2 and call_public_protected_v2; V3 describes task continuity lifecycle, not use of the PublicV3 service function",
+    "server_lifetime_seconds": 1800,
+    "source_state_reopen_heights": "each multiple of900,1001,4097",
+    "task_renewals_at_heights": [
+      900,
+      1800,
+      2700,
+      3600
+    ],
+    "whole_test_in_fixed_host": true,
+    "work_per_block": "make_with_task + packet encode/write + native admit + activation"
+  },
+  "not_yet_known": [
+    "actual native error or wrapper refusal in job132475258347",
+    "whether the server lifetime was reached",
+    "whether a signal or outer source/Host/binary fence failed",
+    "actual completed import count or reorganization arithmetic cost"
+  ],
+  "prohibited_inferences": [
+    "47-minute failed step alone is not a workflow or1800s server timeout proof",
+    "a failed Host wrapper alone does not identify the inner Rust assertion",
+    "do not inherit four-second service/C0/N failure explanations",
+    "do not change any budget, packet count, source fence, work, or assertions"
+  ],
+  "runner": {
+    "build_argv": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--release",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "ancestry_long_sync",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "execution_schema": "trnm-ci-history-native-execution-v1",
+    "native_argv": [
+      "/usr/bin/time",
+      "-v",
+      "-o",
+      "$OUT/history-resources.txt",
+      "<same-job prepared release test ELF>",
+      "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "--exact",
+      "--ignored",
+      "--show-output"
+    ],
+    "native_summary_schema": "native-ancestry-long-sync-observation-v1",
+    "new_child_execution_timeout": false,
+    "no_from_zero_900_second_timeout_added": true,
+    "outputs": [
+      "preparation.json",
+      "build.jsonl",
+      "build.stderr",
+      "execution-start.json",
+      "history.log",
+      "history-resources.txt",
+      "manifest.json",
+      "long-history/source.json",
+      "long-history/config.json",
+      "long-history/summary.json"
+    ],
+    "pass_requirements": [
+      "actual named Rust test success",
+      "native summary passed exactly true",
+      "blocks and confirmed_packets exact int4105",
+      "renewals exact int4",
+      "corrupt_active_index_reopen_refused exactly true",
+      "all qualification/production flags false",
+      "same source and compiled binary before and after"
+    ],
+    "path": "scripts/ci/run_history_native.py",
+    "preparation_schema": "trnm-ci-history-build-preparation-v1",
+    "process_wait": "Popen(start_new_session=True), then child.wait() without timeout; exception cleanup owns only this process group",
+    "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "source": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+    "source_binary_build_env_before_after_required": true,
+    "target": "ancestry_long_sync"
+  },
+  "schema": "trnm-r1-history-4105-readonly-entry-map-v1",
+  "source": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "source_references": [
+    {
+      "bytes": 24989,
+      "capture": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/workflow.yml.original",
+      "git_blob": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+      "matching_line": 346,
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "selected_lines": [
+        206,
+        374
+      ],
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+      "source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tests_or_workflow_executed": false,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/.github/workflows/pon-priority-acceptance.yml"
+    },
+    {
+      "bytes": 21380,
+      "capture": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/run_history_native.py.original",
+      "executed": false,
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "path": "scripts/ci/run_history_native.py",
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+      "source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/scripts/ci/run_history_native.py"
+    },
+    {
+      "bytes": 21736,
+      "capture": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/ancestry_long_sync.rs.original",
+      "executed": false,
+      "git_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+      "source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs"
+    },
+    {
+      "bytes": 28366,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_from_zero_host.py",
+      "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+      "path": "scripts/ci/run_from_zero_host.py",
+      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb",
+      "source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/scripts/ci/run_from_zero_host.py"
+    }
+  ],
+  "workflow": {
+    "build_separate": true,
+    "campaign": "history",
+    "execution_command": [
+      "python3",
+      "scripts/ci/run_from_zero_host.py",
+      "--",
+      "python3",
+      "scripts/ci/run_history_native.py",
+      "--out",
+      "$TRNM_CI_RECEIPT_DIR/history-native"
+    ],
+    "job": "native-priorities",
+    "original_environment": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_INCREMENTAL": "0",
+      "RUST_TEST_THREADS": "1"
+    },
+    "path": ".github/workflows/pon-priority-acceptance.yml",
+    "prepare_command": [
+      "python3",
+      "scripts/ci/run_history_native.py",
+      "--prepare",
+      "--out",
+      "$TRNM_CI_RECEIPT_DIR/history-native"
+    ],
+    "source_guard": "immutable event-bound source before and always after",
+    "timeout_minutes": 180
+  }
+}

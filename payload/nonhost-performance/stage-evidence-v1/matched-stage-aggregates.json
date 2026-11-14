@@ -1,0 +1,3596 @@
+{
+  "phases": [
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1144203,
+              "min": 260837,
+              "n": 7,
+              "sum": 3768375
+            },
+            "construction_ns": {
+              "max": 502457,
+              "min": 328752,
+              "n": 7,
+              "sum": 2601450
+            },
+            "solution_body_response_ns": {
+              "max": 81482262,
+              "min": 7343441,
+              "n": 7,
+              "sum": 201035441
+            },
+            "solution_search_ns": {
+              "max": 72378040,
+              "min": 10559,
+              "n": 7,
+              "sum": 72632535
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 88375,
+              "min": 9207,
+              "n": 7,
+              "sum": 311481
+            },
+            "total_elapsed_ns": {
+              "max": 82164033,
+              "min": 8113597,
+              "n": 7,
+              "sum": 280300542
+            }
+          },
+          "client_span_ns": {
+            "end": 284437164,
+            "start": 574230
+          },
+          "client_thread_cpu_ns": {
+            "max": 961954,
+            "min": 722188,
+            "n": 7,
+            "sum": 5871856
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 6370516,
+            "min": 5595338,
+            "n": 7,
+            "sum": 41533268
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 2949713,
+                "min": 2369922,
+                "n": 7,
+                "sum": 18245140
+              },
+              "wall_ns": {
+                "max": 3472935,
+                "min": 2753764,
+                "n": 7,
+                "sum": 21579723
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 6933,
+                "min": 6342,
+                "n": 7,
+                "sum": 45795
+              },
+              "wall_ns": {
+                "max": 7023,
+                "min": 6351,
+                "n": 7,
+                "sum": 45904
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 447214,
+                "min": 327772,
+                "n": 7,
+                "sum": 2830890
+              },
+              "wall_ns": {
+                "max": 447083,
+                "min": 327571,
+                "n": 7,
+                "sum": 2829867
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 194853,
+                "min": 163084,
+                "n": 7,
+                "sum": 1213303
+              },
+              "wall_ns": {
+                "max": 194844,
+                "min": 163114,
+                "n": 7,
+                "sum": 1213334
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2167966,
+                "min": 1640271,
+                "n": 7,
+                "sum": 13106224
+              },
+              "wall_ns": {
+                "max": 2690707,
+                "min": 2023532,
+                "n": 7,
+                "sum": 16436966
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 3536,
+                "min": 3346,
+                "n": 7,
+                "sum": 24194
+              },
+              "wall_ns": {
+                "max": 3567,
+                "min": 3347,
+                "n": 7,
+                "sum": 24327
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 345785,
+                "min": 141513,
+                "n": 7,
+                "sum": 2055254
+              },
+              "wall_ns": {
+                "max": 345655,
+                "min": 141404,
+                "n": 7,
+                "sum": 2054322
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 1713,
+                "min": 1553,
+                "n": 7,
+                "sum": 11552
+              },
+              "wall_ns": {
+                "max": 1723,
+                "min": 1553,
+                "n": 7,
+                "sum": 11630
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 3155,
+                "min": 2885,
+                "n": 7,
+                "sum": 20808
+              },
+              "wall_ns": {
+                "max": 3146,
+                "min": 2905,
+                "n": 7,
+                "sum": 20929
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 5651,
+                "min": 2705,
+                "n": 7,
+                "sum": 26179
+              },
+              "wall_ns": {
+                "max": 5921,
+                "min": 3045,
+                "n": 7,
+                "sum": 28063
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 109815,
+                "min": 64571,
+                "n": 7,
+                "sum": 553543
+              },
+              "wall_ns": {
+                "max": 109755,
+                "min": 64480,
+                "n": 7,
+                "sum": 553000
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 322743,
+                "min": 110656,
+                "n": 7,
+                "sum": 1164422
+              },
+              "wall_ns": {
+                "max": 322702,
+                "min": 110646,
+                "n": 7,
+                "sum": 1164179
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 38322,
+                "min": 36518,
+                "n": 7,
+                "sum": 263582
+              },
+              "wall_ns": {
+                "max": 38182,
+                "min": 36378,
+                "n": 7,
+                "sum": 262531
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 179315,
+                "min": 76552,
+                "n": 7,
+                "sum": 800634
+              },
+              "wall_ns": {
+                "max": 179324,
+                "min": 76573,
+                "n": 7,
+                "sum": 800604
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1359216,
+                "min": 1080405,
+                "n": 7,
+                "sum": 8499167
+              },
+              "wall_ns": {
+                "max": 73753154,
+                "min": 1379221,
+                "n": 7,
+                "sum": 82769745
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1637806,
+                "min": 1430408,
+                "n": 7,
+                "sum": 10398971
+              },
+              "wall_ns": {
+                "max": 1637764,
+                "min": 1430447,
+                "n": 7,
+                "sum": 10399070
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 65462,
+              "min": 50274,
+              "n": 7,
+              "sum": 376743
+            },
+            "grant_wait": {
+              "max": 54081,
+              "min": 12494,
+              "n": 7,
+              "sum": 185856
+            },
+            "paid_task_queue_wait": {
+              "max": 68811475,
+              "min": 16817,
+              "n": 7,
+              "sum": 68947262
+            },
+            "response_write": {
+              "max": 46587,
+              "min": 21109,
+              "n": 7,
+              "sum": 183581
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_submissions/0",
+            "/phases/0/honest_submissions/1",
+            "/phases/0/honest_submissions/2",
+            "/phases/0/honest_submissions/3",
+            "/phases/0/honest_submissions/4",
+            "/phases/0/honest_submissions/5",
+            "/phases/0/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1229753,
+              "min": 419222,
+              "n": 7,
+              "sum": 6388791
+            },
+            "construction_ns": {
+              "max": 53249,
+              "min": 15880,
+              "n": 7,
+              "sum": 153625
+            },
+            "solution_body_response_ns": {
+              "max": 78563202,
+              "min": 3511547,
+              "n": 7,
+              "sum": 100372114
+            },
+            "solution_search_ns": {
+              "max": 80159,
+              "min": 9618,
+              "n": 7,
+              "sum": 259714
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 79008,
+              "min": 8496,
+              "n": 7,
+              "sum": 251120
+            },
+            "total_elapsed_ns": {
+              "max": 79799756,
+              "min": 4068625,
+              "n": 7,
+              "sum": 107405802
+            }
+          },
+          "client_span_ns": {
+            "end": 2779684996,
+            "start": 284687421
+          },
+          "client_thread_cpu_ns": {
+            "max": 923824,
+            "min": 797216,
+            "n": 7,
+            "sum": 6009117
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1170474,
+            "min": 731995,
+            "n": 7,
+            "sum": 6182947
+          },
+          "records": 7,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 33843,
+                "min": 11491,
+                "n": 7,
+                "sum": 108883
+              },
+              "wall_ns": {
+                "max": 33422,
+                "min": 11431,
+                "n": 7,
+                "sum": 107981
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 433398,
+                "min": 266106,
+                "n": 7,
+                "sum": 2210474
+              },
+              "wall_ns": {
+                "max": 75213927,
+                "min": 266146,
+                "n": 7,
+                "sum": 77075697
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 54150,
+              "min": 50043,
+              "n": 7,
+              "sum": 356613
+            },
+            "grant_wait": {
+              "max": 36277,
+              "min": 11371,
+              "n": 7,
+              "sum": 108202
+            },
+            "paid_task_queue_wait": {
+              "max": 21847,
+              "min": 15917,
+              "n": 7,
+              "sum": 132733
+            },
+            "response_write": {
+              "max": 108572,
+              "min": 47749,
+              "n": 7,
+              "sum": 520700
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_history/0",
+            "/phases/0/honest_history/1",
+            "/phases/0/honest_history/2",
+            "/phases/0/honest_history/3",
+            "/phases/0/honest_history/4",
+            "/phases/0/honest_history/5",
+            "/phases/0/honest_history/6"
+          ]
+        }
+      ],
+      "kind": "head",
+      "member": "fresh-service/original/report.json",
+      "mode": "attack-free-baseline",
+      "phase": 0,
+      "report_sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 93756792,
+              "min": 388745,
+              "n": 7,
+              "sum": 101381277
+            },
+            "construction_ns": {
+              "max": 1053004,
+              "min": 242452,
+              "n": 7,
+              "sum": 2906701
+            },
+            "solution_body_response_ns": {
+              "max": 293367102,
+              "min": 107167257,
+              "n": 7,
+              "sum": 1493013668
+            },
+            "solution_search_ns": {
+              "max": 164737,
+              "min": 9858,
+              "n": 7,
+              "sum": 310058
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 163305,
+              "min": 8456,
+              "n": 7,
+              "sum": 300701
+            },
+            "total_elapsed_ns": {
+              "max": 296072655,
+              "min": 198413790,
+              "n": 7,
+              "sum": 1598840656
+            }
+          },
+          "client_span_ns": {
+            "end": 1697580798,
+            "start": 94305693
+          },
+          "client_thread_cpu_ns": {
+            "max": 975308,
+            "min": 753999,
+            "n": 7,
+            "sum": 5961605
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 8040152,
+            "min": 6274735,
+            "n": 7,
+            "sum": 48794003
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3927659,
+                "min": 2465689,
+                "n": 7,
+                "sum": 20964591
+              },
+              "wall_ns": {
+                "max": 93246318,
+                "min": 2856156,
+                "n": 7,
+                "sum": 202469442
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 567807,
+                "min": 6893,
+                "n": 7,
+                "sum": 642836
+              },
+              "wall_ns": {
+                "max": 95258703,
+                "min": 7013,
+                "n": 7,
+                "sum": 99496414
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 648490,
+                "min": 324976,
+                "n": 7,
+                "sum": 3403799
+              },
+              "wall_ns": {
+                "max": 648149,
+                "min": 324805,
+                "n": 7,
+                "sum": 3402073
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 231401,
+                "min": 160339,
+                "n": 7,
+                "sum": 1372158
+              },
+              "wall_ns": {
+                "max": 231371,
+                "min": 160389,
+                "n": 7,
+                "sum": 1372177
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2799133,
+                "min": 1732130,
+                "n": 7,
+                "sum": 15036069
+              },
+              "wall_ns": {
+                "max": 92526205,
+                "min": 2121957,
+                "n": 7,
+                "sum": 196471707
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 4989,
+                "min": 3477,
+                "n": 7,
+                "sum": 27672
+              },
+              "wall_ns": {
+                "max": 5020,
+                "min": 3487,
+                "n": 7,
+                "sum": 27804
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 461551,
+                "min": 151211,
+                "n": 7,
+                "sum": 2501906
+              },
+              "wall_ns": {
+                "max": 461450,
+                "min": 151122,
+                "n": 7,
+                "sum": 2491466
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 18876,
+                "min": 1572,
+                "n": 7,
+                "sum": 30077
+              },
+              "wall_ns": {
+                "max": 2081061,
+                "min": 1574,
+                "n": 7,
+                "sum": 2092403
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 4358,
+                "min": 2655,
+                "n": 7,
+                "sum": 22732
+              },
+              "wall_ns": {
+                "max": 4388,
+                "min": 2685,
+                "n": 7,
+                "sum": 23204
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 3015,
+                "min": 1984,
+                "n": 7,
+                "sum": 17192
+              },
+              "wall_ns": {
+                "max": 3096,
+                "min": 2094,
+                "n": 7,
+                "sum": 17873
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 141744,
+                "min": 64090,
+                "n": 7,
+                "sum": 708394
+              },
+              "wall_ns": {
+                "max": 141664,
+                "min": 63930,
+                "n": 7,
+                "sum": 707610
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 303556,
+                "min": 115575,
+                "n": 7,
+                "sum": 1248360
+              },
+              "wall_ns": {
+                "max": 303506,
+                "min": 115545,
+                "n": 7,
+                "sum": 1248277
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 65622,
+                "min": 37259,
+                "n": 7,
+                "sum": 319456
+              },
+              "wall_ns": {
+                "max": 65673,
+                "min": 37139,
+                "n": 7,
+                "sum": 318714
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 180426,
+                "min": 77093,
+                "n": 7,
+                "sum": 826471
+              },
+              "wall_ns": {
+                "max": 180527,
+                "min": 77114,
+                "n": 7,
+                "sum": 826731
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1479381,
+                "min": 1089403,
+                "n": 7,
+                "sum": 9274897
+              },
+              "wall_ns": {
+                "max": 92392070,
+                "min": 1355137,
+                "n": 7,
+                "sum": 101997642
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 2075282,
+                "min": 1434576,
+                "n": 7,
+                "sum": 12806402
+              },
+              "wall_ns": {
+                "max": 94517310,
+                "min": 1480511,
+                "n": 7,
+                "sum": 198426283
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 1121492,
+              "min": 61215,
+              "n": 7,
+              "sum": 2420385
+            },
+            "grant_wait": {
+              "max": 99133598,
+              "min": 2664098,
+              "n": 7,
+              "sum": 400852869
+            },
+            "paid_task_queue_wait": {
+              "max": 95600748,
+              "min": 492823,
+              "n": 7,
+              "sum": 105412911
+            },
+            "response_write": {
+              "max": 44944,
+              "min": 25538,
+              "n": 7,
+              "sum": 220422
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_submissions/0",
+            "/phases/1/honest_submissions/1",
+            "/phases/1/honest_submissions/2",
+            "/phases/1/honest_submissions/3",
+            "/phases/1/honest_submissions/4",
+            "/phases/1/honest_submissions/5",
+            "/phases/1/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 406548,
+              "min": 406548,
+              "n": 1,
+              "sum": 406548
+            },
+            "construction_ns": {
+              "max": 21801,
+              "min": 21801,
+              "n": 1,
+              "sum": 21801
+            },
+            "solution_body_response_ns": {
+              "max": 94400774,
+              "min": 94400774,
+              "n": 1,
+              "sum": 94400774
+            },
+            "solution_search_ns": {
+              "max": 39243,
+              "min": 39243,
+              "n": 1,
+              "sum": 39243
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 38010,
+              "min": 38010,
+              "n": 1,
+              "sum": 38010
+            },
+            "total_elapsed_ns": {
+              "max": 94892140,
+              "min": 94892140,
+              "n": 1,
+              "sum": 94892140
+            }
+          },
+          "client_span_ns": {
+            "end": 1792796662,
+            "start": 1697842346
+          },
+          "client_thread_cpu_ns": {
+            "max": 908694,
+            "min": 908694,
+            "n": 1,
+            "sum": 908694
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1759463,
+            "min": 1759463,
+            "n": 1,
+            "sum": 1759463
+          },
+          "records": 1,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 15059,
+                "min": 15059,
+                "n": 1,
+                "sum": 15059
+              },
+              "wall_ns": {
+                "max": 14817,
+                "min": 14817,
+                "n": 1,
+                "sum": 14817
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 542402,
+                "min": 542402,
+                "n": 1,
+                "sum": 542402
+              },
+              "wall_ns": {
+                "max": 542582,
+                "min": 542582,
+                "n": 1,
+                "sum": 542582
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 80109,
+              "min": 80109,
+              "n": 1,
+              "sum": 80109
+            },
+            "grant_wait": {
+              "max": 44793,
+              "min": 44793,
+              "n": 1,
+              "sum": 44793
+            },
+            "paid_task_queue_wait": {
+              "max": 90809647,
+              "min": 90809647,
+              "n": 1,
+              "sum": 90809647
+            },
+            "response_write": {
+              "max": 189734,
+              "min": 189734,
+              "n": 1,
+              "sum": 189734
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_history/0"
+          ]
+        }
+      ],
+      "kind": "head",
+      "member": "fresh-service/original/report.json",
+      "mode": "from-zero-pressure",
+      "phase": 1,
+      "report_sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 68440661,
+              "min": 266857,
+              "n": 7,
+              "sum": 71280946
+            },
+            "construction_ns": {
+              "max": 409524,
+              "min": 326219,
+              "n": 7,
+              "sum": 2507715
+            },
+            "solution_body_response_ns": {
+              "max": 81611534,
+              "min": 7890209,
+              "n": 7,
+              "sum": 205600307
+            },
+            "solution_search_ns": {
+              "max": 77745,
+              "min": 14367,
+              "n": 7,
+              "sum": 231242
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 76242,
+              "min": 12944,
+              "n": 7,
+              "sum": 220622
+            },
+            "total_elapsed_ns": {
+              "max": 82293724,
+              "min": 8732619,
+              "n": 7,
+              "sum": 279885985
+            }
+          },
+          "client_span_ns": {
+            "end": 283719153,
+            "start": 524578
+          },
+          "client_thread_cpu_ns": {
+            "max": 959489,
+            "min": 744529,
+            "n": 7,
+            "sum": 5777767
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 6419927,
+            "min": 5452502,
+            "n": 7,
+            "sum": 41532194
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 2940435,
+                "min": 2231031,
+                "n": 7,
+                "sum": 18147627
+              },
+              "wall_ns": {
+                "max": 75518093,
+                "min": 2629606,
+                "n": 7,
+                "sum": 93536874
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 6662,
+                "min": 6231,
+                "n": 7,
+                "sum": 44934
+              },
+              "wall_ns": {
+                "max": 6702,
+                "min": 6202,
+                "n": 7,
+                "sum": 44924
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 464237,
+                "min": 343921,
+                "n": 7,
+                "sum": 2914347
+              },
+              "wall_ns": {
+                "max": 464055,
+                "min": 343611,
+                "n": 7,
+                "sum": 2913130
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 206115,
+                "min": 164578,
+                "n": 7,
+                "sum": 1228222
+              },
+              "wall_ns": {
+                "max": 206114,
+                "min": 164577,
+                "n": 7,
+                "sum": 1228331
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2141154,
+                "min": 1531436,
+                "n": 7,
+                "sum": 13032403
+              },
+              "wall_ns": {
+                "max": 74723793,
+                "min": 1929372,
+                "n": 7,
+                "sum": 88417493
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 3957,
+                "min": 3487,
+                "n": 7,
+                "sum": 25178
+              },
+              "wall_ns": {
+                "max": 4007,
+                "min": 3487,
+                "n": 7,
+                "sum": 25316
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 341488,
+                "min": 139500,
+                "n": 7,
+                "sum": 2096860
+              },
+              "wall_ns": {
+                "max": 341366,
+                "min": 139410,
+                "n": 7,
+                "sum": 2095987
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 1753,
+                "min": 1603,
+                "n": 7,
+                "sum": 11641
+              },
+              "wall_ns": {
+                "max": 1763,
+                "min": 1603,
+                "n": 7,
+                "sum": 11671
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 10840,
+                "min": 2905,
+                "n": 7,
+                "sum": 28783
+              },
+              "wall_ns": {
+                "max": 19777,
+                "min": 2956,
+                "n": 7,
+                "sum": 37862
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 5831,
+                "min": 2725,
+                "n": 7,
+                "sum": 25126
+              },
+              "wall_ns": {
+                "max": 5981,
+                "min": 2936,
+                "n": 7,
+                "sum": 27010
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 110335,
+                "min": 64300,
+                "n": 7,
+                "sum": 553564
+              },
+              "wall_ns": {
+                "max": 110256,
+                "min": 64200,
+                "n": 7,
+                "sum": 552952
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 327091,
+                "min": 113171,
+                "n": 7,
+                "sum": 1146478
+              },
+              "wall_ns": {
+                "max": 327109,
+                "min": 113141,
+                "n": 7,
+                "sum": 1146395
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 54492,
+                "min": 36728,
+                "n": 7,
+                "sum": 297384
+              },
+              "wall_ns": {
+                "max": 54231,
+                "min": 36608,
+                "n": 7,
+                "sum": 296191
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 190075,
+                "min": 76763,
+                "n": 7,
+                "sum": 792358
+              },
+              "wall_ns": {
+                "max": 190105,
+                "min": 76763,
+                "n": 7,
+                "sum": 792327
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1385004,
+                "min": 1112766,
+                "n": 7,
+                "sum": 8662461
+              },
+              "wall_ns": {
+                "max": 3532555,
+                "min": 1395121,
+                "n": 7,
+                "sum": 12920565
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1529303,
+                "min": 1413747,
+                "n": 7,
+                "sum": 10257477
+              },
+              "wall_ns": {
+                "max": 1529271,
+                "min": 1413796,
+                "n": 7,
+                "sum": 10257272
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 69690,
+              "min": 49672,
+              "n": 7,
+              "sum": 380418
+            },
+            "grant_wait": {
+              "max": 26589,
+              "min": 12353,
+              "n": 7,
+              "sum": 106257
+            },
+            "paid_task_queue_wait": {
+              "max": 41369,
+              "min": 17325,
+              "n": 7,
+              "sum": 202853
+            },
+            "response_write": {
+              "max": 27290,
+              "min": 20428,
+              "n": 7,
+              "sum": 161760
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_submissions/0",
+            "/phases/0/honest_submissions/1",
+            "/phases/0/honest_submissions/2",
+            "/phases/0/honest_submissions/3",
+            "/phases/0/honest_submissions/4",
+            "/phases/0/honest_submissions/5",
+            "/phases/0/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 878107,
+              "min": 364439,
+              "n": 7,
+              "sum": 4812832
+            },
+            "construction_ns": {
+              "max": 22983,
+              "min": 15388,
+              "n": 7,
+              "sum": 120726
+            },
+            "solution_body_response_ns": {
+              "max": 79022508,
+              "min": 3446485,
+              "n": 7,
+              "sum": 100685704
+            },
+            "solution_search_ns": {
+              "max": 31168,
+              "min": 6632,
+              "n": 7,
+              "sum": 121757
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 29876,
+              "min": 5339,
+              "n": 7,
+              "sum": 112621
+            },
+            "total_elapsed_ns": {
+              "max": 79473539,
+              "min": 4038439,
+              "n": 7,
+              "sum": 105960238
+            }
+          },
+          "client_span_ns": {
+            "end": 2777959097,
+            "start": 283982784
+          },
+          "client_thread_cpu_ns": {
+            "max": 845008,
+            "min": 786367,
+            "n": 7,
+            "sum": 5726746
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1125560,
+            "min": 740972,
+            "n": 7,
+            "sum": 6009070
+          },
+          "records": 7,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 14177,
+                "min": 11200,
+                "n": 7,
+                "sum": 86510
+              },
+              "wall_ns": {
+                "max": 14106,
+                "min": 11161,
+                "n": 7,
+                "sum": 86130
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 360342,
+                "min": 256829,
+                "n": 7,
+                "sum": 2020821
+              },
+              "wall_ns": {
+                "max": 360322,
+                "min": 256889,
+                "n": 7,
+                "sum": 2021128
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 63048,
+              "min": 49673,
+              "n": 7,
+              "sum": 372297
+            },
+            "grant_wait": {
+              "max": 35526,
+              "min": 11311,
+              "n": 7,
+              "sum": 106929
+            },
+            "paid_task_queue_wait": {
+              "max": 26456,
+              "min": 16086,
+              "n": 7,
+              "sum": 134737
+            },
+            "response_write": {
+              "max": 86361,
+              "min": 47498,
+              "n": 7,
+              "sum": 430372
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_history/0",
+            "/phases/0/honest_history/1",
+            "/phases/0/honest_history/2",
+            "/phases/0/honest_history/3",
+            "/phases/0/honest_history/4",
+            "/phases/0/honest_history/5",
+            "/phases/0/honest_history/6"
+          ]
+        }
+      ],
+      "kind": "head",
+      "member": "fresh-service/fresh/report.json",
+      "mode": "attack-free-baseline",
+      "phase": 0,
+      "report_sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 96236361,
+              "min": 640672,
+              "n": 7,
+              "sum": 189847478
+            },
+            "construction_ns": {
+              "max": 379868,
+              "min": 235509,
+              "n": 7,
+              "sum": 2128629
+            },
+            "solution_body_response_ns": {
+              "max": 395611680,
+              "min": 204074018,
+              "n": 7,
+              "sum": 2109534699
+            },
+            "solution_search_ns": {
+              "max": 40846,
+              "min": 10609,
+              "n": 7,
+              "sum": 152663
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 39473,
+              "min": 9268,
+              "n": 7,
+              "sum": 143347
+            },
+            "total_elapsed_ns": {
+              "max": 396559365,
+              "min": 299254386,
+              "n": 7,
+              "sum": 2301937371
+            }
+          },
+          "client_span_ns": {
+            "end": 2498053967,
+            "start": 192551670
+          },
+          "client_thread_cpu_ns": {
+            "max": 954860,
+            "min": 740372,
+            "n": 7,
+            "sum": 5887384
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 7902561,
+            "min": 6053995,
+            "n": 7,
+            "sum": 48669999
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3631482,
+                "min": 2638672,
+                "n": 7,
+                "sum": 22090569
+              },
+              "wall_ns": {
+                "max": 99214502,
+                "min": 3022644,
+                "n": 7,
+                "sum": 300882429
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 40997,
+                "min": 6652,
+                "n": 7,
+                "sum": 88757
+              },
+              "wall_ns": {
+                "max": 2092390,
+                "min": 6693,
+                "n": 7,
+                "sum": 2140550
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 686118,
+                "min": 445030,
+                "n": 7,
+                "sum": 3809356
+              },
+              "wall_ns": {
+                "max": 95674543,
+                "min": 444909,
+                "n": 7,
+                "sum": 188600754
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 278750,
+                "min": 160450,
+                "n": 7,
+                "sum": 1495611
+              },
+              "wall_ns": {
+                "max": 278769,
+                "min": 160509,
+                "n": 7,
+                "sum": 1495749
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2552000,
+                "min": 1864518,
+                "n": 7,
+                "sum": 15538625
+              },
+              "wall_ns": {
+                "max": 93267876,
+                "min": 2248062,
+                "n": 7,
+                "sum": 109535830
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 6852,
+                "min": 3687,
+                "n": 7,
+                "sum": 32571
+              },
+              "wall_ns": {
+                "max": 6843,
+                "min": 3686,
+                "n": 7,
+                "sum": 32730
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 561798,
+                "min": 164447,
+                "n": 7,
+                "sum": 2693394
+              },
+              "wall_ns": {
+                "max": 1297171,
+                "min": 164427,
+                "n": 7,
+                "sum": 3557447
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 2875,
+                "min": 1573,
+                "n": 7,
+                "sum": 15338
+              },
+              "wall_ns": {
+                "max": 2895,
+                "min": 1573,
+                "n": 7,
+                "sum": 15518
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 4689,
+                "min": 2835,
+                "n": 7,
+                "sum": 23444
+              },
+              "wall_ns": {
+                "max": 4839,
+                "min": 2855,
+                "n": 7,
+                "sum": 24003
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 3597,
+                "min": 2134,
+                "n": 7,
+                "sum": 18735
+              },
+              "wall_ns": {
+                "max": 3807,
+                "min": 2224,
+                "n": 7,
+                "sum": 19497
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 148356,
+                "min": 64029,
+                "n": 7,
+                "sum": 759757
+              },
+              "wall_ns": {
+                "max": 148296,
+                "min": 63959,
+                "n": 7,
+                "sum": 759256
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 307033,
+                "min": 125214,
+                "n": 7,
+                "sum": 1353296
+              },
+              "wall_ns": {
+                "max": 307003,
+                "min": 125194,
+                "n": 7,
+                "sum": 1353183
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 55733,
+                "min": 36818,
+                "n": 7,
+                "sum": 292134
+              },
+              "wall_ns": {
+                "max": 55684,
+                "min": 36819,
+                "n": 7,
+                "sum": 292025
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 180988,
+                "min": 78026,
+                "n": 7,
+                "sum": 871495
+              },
+              "wall_ns": {
+                "max": 181058,
+                "min": 78036,
+                "n": 7,
+                "sum": 872019
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1501641,
+                "min": 1202042,
+                "n": 7,
+                "sum": 9213552
+              },
+              "wall_ns": {
+                "max": 92704896,
+                "min": 1476723,
+                "n": 7,
+                "sum": 191476148
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1946181,
+                "min": 1447340,
+                "n": 7,
+                "sum": 11832766
+              },
+              "wall_ns": {
+                "max": 94943090,
+                "min": 1447408,
+                "n": 7,
+                "sum": 104861549
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 421155,
+              "min": 62066,
+              "n": 7,
+              "sum": 1127481
+            },
+            "grant_wait": {
+              "max": 195348949,
+              "min": 96529759,
+              "n": 7,
+              "sum": 886366367
+            },
+            "paid_task_queue_wait": {
+              "max": 102032373,
+              "min": 3474741,
+              "n": 7,
+              "sum": 505682589
+            },
+            "response_write": {
+              "max": 30697,
+              "min": 21730,
+              "n": 7,
+              "sum": 176077
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_submissions/0",
+            "/phases/1/honest_submissions/1",
+            "/phases/1/honest_submissions/2",
+            "/phases/1/honest_submissions/3",
+            "/phases/1/honest_submissions/4",
+            "/phases/1/honest_submissions/5",
+            "/phases/1/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 554852,
+              "min": 554852,
+              "n": 1,
+              "sum": 554852
+            },
+            "construction_ns": {
+              "max": 18424,
+              "min": 18424,
+              "n": 1,
+              "sum": 18424
+            },
+            "solution_body_response_ns": {
+              "max": 97903291,
+              "min": 97903291,
+              "n": 1,
+              "sum": 97903291
+            },
+            "solution_search_ns": {
+              "max": 72395,
+              "min": 72395,
+              "n": 1,
+              "sum": 72395
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 71252,
+              "min": 71252,
+              "n": 1,
+              "sum": 71252
+            },
+            "total_elapsed_ns": {
+              "max": 98581422,
+              "min": 98581422,
+              "n": 1,
+              "sum": 98581422
+            }
+          },
+          "client_span_ns": {
+            "end": 2596897988,
+            "start": 2498273887
+          },
+          "client_thread_cpu_ns": {
+            "max": 950383,
+            "min": 950383,
+            "n": 1,
+            "sum": 950383
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1612058,
+            "min": 1612058,
+            "n": 1,
+            "sum": 1612058
+          },
+          "records": 1,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 15970,
+                "min": 15970,
+                "n": 1,
+                "sum": 15970
+              },
+              "wall_ns": {
+                "max": 15980,
+                "min": 15980,
+                "n": 1,
+                "sum": 15980
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 459638,
+                "min": 459638,
+                "n": 1,
+                "sum": 459638
+              },
+              "wall_ns": {
+                "max": 459637,
+                "min": 459637,
+                "n": 1,
+                "sum": 459637
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 79158,
+              "min": 79158,
+              "n": 1,
+              "sum": 79158
+            },
+            "grant_wait": {
+              "max": 77955,
+              "min": 77955,
+              "n": 1,
+              "sum": 77955
+            },
+            "paid_task_queue_wait": {
+              "max": 290544,
+              "min": 290544,
+              "n": 1,
+              "sum": 290544
+            },
+            "response_write": {
+              "max": 230690,
+              "min": 230690,
+              "n": 1,
+              "sum": 230690
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_history/0"
+          ]
+        }
+      ],
+      "kind": "head",
+      "member": "fresh-service/fresh/report.json",
+      "mode": "from-zero-pressure",
+      "phase": 1,
+      "report_sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1396323,
+              "min": 246351,
+              "n": 7,
+              "sum": 5945225
+            },
+            "construction_ns": {
+              "max": 431417,
+              "min": 340477,
+              "n": 7,
+              "sum": 2578004
+            },
+            "solution_body_response_ns": {
+              "max": 82996377,
+              "min": 7608119,
+              "n": 7,
+              "sum": 204904600
+            },
+            "solution_search_ns": {
+              "max": 52017,
+              "min": 6172,
+              "n": 7,
+              "sum": 187701
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 50514,
+              "min": 4829,
+              "n": 7,
+              "sum": 177771
+            },
+            "total_elapsed_ns": {
+              "max": 83708049,
+              "min": 8239612,
+              "n": 7,
+              "sum": 213934308
+            }
+          },
+          "client_span_ns": {
+            "end": 218029611,
+            "start": 589934
+          },
+          "client_thread_cpu_ns": {
+            "max": 910618,
+            "min": 742645,
+            "n": 7,
+            "sum": 5772092
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 6692261,
+            "min": 5635058,
+            "n": 7,
+            "sum": 42288342
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3141859,
+                "min": 2406176,
+                "n": 7,
+                "sum": 18797576
+              },
+              "wall_ns": {
+                "max": 74123644,
+                "min": 2839383,
+                "n": 7,
+                "sum": 92851116
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 22532,
+                "min": 6362,
+                "n": 7,
+                "sum": 62045
+              },
+              "wall_ns": {
+                "max": 2079962,
+                "min": 6392,
+                "n": 7,
+                "sum": 2119836
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 568419,
+                "min": 330185,
+                "n": 7,
+                "sum": 3201990
+              },
+              "wall_ns": {
+                "max": 71536463,
+                "min": 329957,
+                "n": 7,
+                "sum": 74169151
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 207477,
+                "min": 165138,
+                "n": 7,
+                "sum": 1232039
+              },
+              "wall_ns": {
+                "max": 207458,
+                "min": 165159,
+                "n": 7,
+                "sum": 1232065
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2186287,
+                "min": 1662539,
+                "n": 7,
+                "sum": 13278072
+              },
+              "wall_ns": {
+                "max": 2682690,
+                "min": 2109027,
+                "n": 7,
+                "sum": 16358671
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 4128,
+                "min": 3466,
+                "n": 7,
+                "sum": 25598
+              },
+              "wall_ns": {
+                "max": 4148,
+                "min": 3477,
+                "n": 7,
+                "sum": 25689
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 338171,
+                "min": 144439,
+                "n": 7,
+                "sum": 2098764
+              },
+              "wall_ns": {
+                "max": 338022,
+                "min": 144350,
+                "n": 7,
+                "sum": 2097775
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 1874,
+                "min": 1633,
+                "n": 7,
+                "sum": 12122
+              },
+              "wall_ns": {
+                "max": 1904,
+                "min": 1653,
+                "n": 7,
+                "sum": 12312
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 3316,
+                "min": 2946,
+                "n": 7,
+                "sum": 21791
+              },
+              "wall_ns": {
+                "max": 3407,
+                "min": 2975,
+                "n": 7,
+                "sum": 22040
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 4959,
+                "min": 2765,
+                "n": 7,
+                "sum": 27671
+              },
+              "wall_ns": {
+                "max": 5520,
+                "min": 3177,
+                "n": 7,
+                "sum": 30437
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 109965,
+                "min": 65732,
+                "n": 7,
+                "sum": 616290
+              },
+              "wall_ns": {
+                "max": 109966,
+                "min": 65622,
+                "n": 7,
+                "sum": 615961
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 302655,
+                "min": 112650,
+                "n": 7,
+                "sum": 1119068
+              },
+              "wall_ns": {
+                "max": 302616,
+                "min": 112600,
+                "n": 7,
+                "sum": 1118933
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 54732,
+                "min": 37900,
+                "n": 7,
+                "sum": 292633
+              },
+              "wall_ns": {
+                "max": 54332,
+                "min": 37750,
+                "n": 7,
+                "sum": 291826
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 179875,
+                "min": 76352,
+                "n": 7,
+                "sum": 745309
+              },
+              "wall_ns": {
+                "max": 179877,
+                "min": 76322,
+                "n": 7,
+                "sum": 745515
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1403659,
+                "min": 1085134,
+                "n": 7,
+                "sum": 8664476
+              },
+              "wall_ns": {
+                "max": 1742120,
+                "min": 1366086,
+                "n": 7,
+                "sum": 10928797
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1575418,
+                "min": 1434856,
+                "n": 7,
+                "sum": 10257710
+              },
+              "wall_ns": {
+                "max": 72651650,
+                "min": 1435125,
+                "n": 7,
+                "sum": 81334549
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 66534,
+              "min": 51447,
+              "n": 7,
+              "sum": 394317
+            },
+            "grant_wait": {
+              "max": 49693,
+              "min": 12513,
+              "n": 7,
+              "sum": 141434
+            },
+            "paid_task_queue_wait": {
+              "max": 32681,
+              "min": 18342,
+              "n": 7,
+              "sum": 179684
+            },
+            "response_write": {
+              "max": 30307,
+              "min": 21850,
+              "n": 7,
+              "sum": 174237
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_submissions/0",
+            "/phases/0/honest_submissions/1",
+            "/phases/0/honest_submissions/2",
+            "/phases/0/honest_submissions/3",
+            "/phases/0/honest_submissions/4",
+            "/phases/0/honest_submissions/5",
+            "/phases/0/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1299953,
+              "min": 453167,
+              "n": 7,
+              "sum": 6281032
+            },
+            "construction_ns": {
+              "max": 26931,
+              "min": 16521,
+              "n": 7,
+              "sum": 146183
+            },
+            "solution_body_response_ns": {
+              "max": 79071955,
+              "min": 3506441,
+              "n": 7,
+              "sum": 101154065
+            },
+            "solution_search_ns": {
+              "max": 90340,
+              "min": 10841,
+              "n": 7,
+              "sum": 303541
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 88986,
+              "min": 9427,
+              "n": 7,
+              "sum": 293798
+            },
+            "total_elapsed_ns": {
+              "max": 79631311,
+              "min": 4334631,
+              "n": 7,
+              "sum": 108096907
+            }
+          },
+          "client_span_ns": {
+            "end": 2805783811,
+            "start": 218263820
+          },
+          "client_thread_cpu_ns": {
+            "max": 1194287,
+            "min": 799721,
+            "n": 7,
+            "sum": 6521242
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1143914,
+            "min": 798168,
+            "n": 7,
+            "sum": 6593977
+          },
+          "records": 7,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 15359,
+                "min": 12494,
+                "n": 7,
+                "sum": 95850
+              },
+              "wall_ns": {
+                "max": 15509,
+                "min": 12484,
+                "n": 7,
+                "sum": 95850
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 404405,
+                "min": 264283,
+                "n": 7,
+                "sum": 2273400
+              },
+              "wall_ns": {
+                "max": 75459345,
+                "min": 264585,
+                "n": 7,
+                "sum": 77328753
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 67817,
+              "min": 52127,
+              "n": 7,
+              "sum": 403346
+            },
+            "grant_wait": {
+              "max": 14306,
+              "min": 11792,
+              "n": 7,
+              "sum": 88875
+            },
+            "paid_task_queue_wait": {
+              "max": 24729,
+              "min": 16543,
+              "n": 7,
+              "sum": 140827
+            },
+            "response_write": {
+              "max": 73708,
+              "min": 50304,
+              "n": 7,
+              "sum": 411319
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_history/0",
+            "/phases/0/honest_history/1",
+            "/phases/0/honest_history/2",
+            "/phases/0/honest_history/3",
+            "/phases/0/honest_history/4",
+            "/phases/0/honest_history/5",
+            "/phases/0/honest_history/6"
+          ]
+        }
+      ],
+      "kind": "prospective-merge",
+      "member": "fresh-service/original/report.json",
+      "mode": "attack-free-baseline",
+      "phase": 0,
+      "report_sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 100271039,
+              "min": 603990,
+              "n": 7,
+              "sum": 198140195
+            },
+            "construction_ns": {
+              "max": 395821,
+              "min": 251120,
+              "n": 7,
+              "sum": 2364664
+            },
+            "solution_body_response_ns": {
+              "max": 298850143,
+              "min": 108241446,
+              "n": 7,
+              "sum": 1502818358
+            },
+            "solution_search_ns": {
+              "max": 49152,
+              "min": 11221,
+              "n": 7,
+              "sum": 218510
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 47699,
+              "min": 9167,
+              "n": 7,
+              "sum": 206966
+            },
+            "total_elapsed_ns": {
+              "max": 399551309,
+              "min": 199277276,
+              "n": 7,
+              "sum": 1703842452
+            }
+          },
+          "client_span_ns": {
+            "end": 1800221855,
+            "start": 92963212
+          },
+          "client_thread_cpu_ns": {
+            "max": 1009581,
+            "min": 734229,
+            "n": 7,
+            "sum": 6327018
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 7543506,
+            "min": 6272389,
+            "n": 7,
+            "sum": 49119383
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3589174,
+                "min": 2652697,
+                "n": 7,
+                "sum": 21734641
+              },
+              "wall_ns": {
+                "max": 96190802,
+                "min": 3003020,
+                "n": 7,
+                "sum": 207270488
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 98494,
+                "min": 7584,
+                "n": 7,
+                "sum": 172342
+              },
+              "wall_ns": {
+                "max": 93594897,
+                "min": 7644,
+                "n": 7,
+                "sum": 95735725
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 616610,
+                "min": 441443,
+                "n": 7,
+                "sum": 3698267
+              },
+              "wall_ns": {
+                "max": 616162,
+                "min": 441266,
+                "n": 7,
+                "sum": 3697218
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 271687,
+                "min": 186097,
+                "n": 7,
+                "sum": 1484991
+              },
+              "wall_ns": {
+                "max": 522127,
+                "min": 186139,
+                "n": 7,
+                "sum": 1783086
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2458255,
+                "min": 1734495,
+                "n": 7,
+                "sum": 15009429
+              },
+              "wall_ns": {
+                "max": 95317398,
+                "min": 2084190,
+                "n": 7,
+                "sum": 200540774
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 5029,
+                "min": 3586,
+                "n": 7,
+                "sum": 27882
+              },
+              "wall_ns": {
+                "max": 5060,
+                "min": 3606,
+                "n": 7,
+                "sum": 28243
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 557390,
+                "min": 176599,
+                "n": 7,
+                "sum": 2954800
+              },
+              "wall_ns": {
+                "max": 96066533,
+                "min": 176500,
+                "n": 7,
+                "sum": 98463256
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 2986,
+                "min": 2024,
+                "n": 7,
+                "sum": 16249
+              },
+              "wall_ns": {
+                "max": 2986,
+                "min": 2094,
+                "n": 7,
+                "sum": 16462
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 3566,
+                "min": 2915,
+                "n": 7,
+                "sum": 22422
+              },
+              "wall_ns": {
+                "max": 3577,
+                "min": 3015,
+                "n": 7,
+                "sum": 22874
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 3507,
+                "min": 2334,
+                "n": 7,
+                "sum": 19506
+              },
+              "wall_ns": {
+                "max": 3617,
+                "min": 2675,
+                "n": 7,
+                "sum": 20970
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 142996,
+                "min": 115846,
+                "n": 7,
+                "sum": 877415
+              },
+              "wall_ns": {
+                "max": 143018,
+                "min": 115657,
+                "n": 7,
+                "sum": 876570
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 385229,
+                "min": 147516,
+                "n": 7,
+                "sum": 1389943
+              },
+              "wall_ns": {
+                "max": 384980,
+                "min": 147486,
+                "n": 7,
+                "sum": 1389830
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 67706,
+                "min": 37921,
+                "n": 7,
+                "sum": 304760
+              },
+              "wall_ns": {
+                "max": 67566,
+                "min": 37811,
+                "n": 7,
+                "sum": 304911
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 216234,
+                "min": 89417,
+                "n": 7,
+                "sum": 841230
+              },
+              "wall_ns": {
+                "max": 216085,
+                "min": 89437,
+                "n": 7,
+                "sum": 841485
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1429766,
+                "min": 1094542,
+                "n": 7,
+                "sum": 9114788
+              },
+              "wall_ns": {
+                "max": 1682658,
+                "min": 1330118,
+                "n": 7,
+                "sum": 10967055
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 2003527,
+                "min": 1465122,
+                "n": 7,
+                "sum": 12252270
+              },
+              "wall_ns": {
+                "max": 98348344,
+                "min": 1465262,
+                "n": 7,
+                "sum": 200684129
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 96297544,
+              "min": 81903,
+              "n": 7,
+              "sum": 96961447
+            },
+            "grant_wait": {
+              "max": 95386133,
+              "min": 1845330,
+              "n": 7,
+              "sum": 474394565
+            },
+            "paid_task_queue_wait": {
+              "max": 97756795,
+              "min": 151360,
+              "n": 7,
+              "sum": 203431791
+            },
+            "response_write": {
+              "max": 38222,
+              "min": 25979,
+              "n": 7,
+              "sum": 218491
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_submissions/0",
+            "/phases/1/honest_submissions/1",
+            "/phases/1/honest_submissions/2",
+            "/phases/1/honest_submissions/3",
+            "/phases/1/honest_submissions/4",
+            "/phases/1/honest_submissions/5",
+            "/phases/1/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1154410,
+              "min": 554027,
+              "n": 2,
+              "sum": 1708437
+            },
+            "construction_ns": {
+              "max": 18886,
+              "min": 18264,
+              "n": 2,
+              "sum": 37150
+            },
+            "solution_body_response_ns": {
+              "max": 191283538,
+              "min": 94643375,
+              "n": 2,
+              "sum": 285926913
+            },
+            "solution_search_ns": {
+              "max": 84819,
+              "min": 39524,
+              "n": 2,
+              "sum": 124343
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 83325,
+              "min": 38281,
+              "n": 2,
+              "sum": 121606
+            },
+            "total_elapsed_ns": {
+              "max": 192574705,
+              "min": 95290486,
+              "n": 2,
+              "sum": 287865191
+            }
+          },
+          "client_span_ns": {
+            "end": 3991610327,
+            "start": 1800413855
+          },
+          "client_thread_cpu_ns": {
+            "max": 1022977,
+            "min": 963777,
+            "n": 2,
+            "sum": 1986754
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1560570,
+            "min": 1544098,
+            "n": 2,
+            "sum": 3104668
+          },
+          "records": 2,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 18976,
+                "min": 16851,
+                "n": 2,
+                "sum": 35827
+              },
+              "wall_ns": {
+                "max": 19195,
+                "min": 16891,
+                "n": 2,
+                "sum": 36086
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 510642,
+                "min": 410436,
+                "n": 2,
+                "sum": 921078
+              },
+              "wall_ns": {
+                "max": 595424,
+                "min": 410128,
+                "n": 2,
+                "sum": 1005552
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 125355,
+              "min": 106940,
+              "n": 2,
+              "sum": 232295
+            },
+            "grant_wait": {
+              "max": 57818,
+              "min": 28644,
+              "n": 2,
+              "sum": 86462
+            },
+            "paid_task_queue_wait": {
+              "max": 89734699,
+              "min": 3202658,
+              "n": 2,
+              "sum": 92937357
+            },
+            "response_write": {
+              "max": 209953,
+              "min": 120366,
+              "n": 2,
+              "sum": 330319
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_history/0",
+            "/phases/1/honest_history/1"
+          ]
+        }
+      ],
+      "kind": "prospective-merge",
+      "member": "fresh-service/original/report.json",
+      "mode": "from-zero-pressure",
+      "phase": 1,
+      "report_sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1324307,
+              "min": 268722,
+              "n": 7,
+              "sum": 5073901
+            },
+            "construction_ns": {
+              "max": 544369,
+              "min": 327993,
+              "n": 7,
+              "sum": 2667610
+            },
+            "solution_body_response_ns": {
+              "max": 82395992,
+              "min": 6847883,
+              "n": 7,
+              "sum": 199236377
+            },
+            "solution_search_ns": {
+              "max": 88176,
+              "min": 7474,
+              "n": 7,
+              "sum": 205936
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 86592,
+              "min": 6312,
+              "n": 7,
+              "sum": 196407
+            },
+            "total_elapsed_ns": {
+              "max": 84127481,
+              "min": 7768831,
+              "n": 7,
+              "sum": 207526540
+            }
+          },
+          "client_span_ns": {
+            "end": 211588940,
+            "start": 580334
+          },
+          "client_thread_cpu_ns": {
+            "max": 1022076,
+            "min": 805532,
+            "n": 7,
+            "sum": 6108470
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 6577426,
+            "min": 5787252,
+            "n": 7,
+            "sum": 43089300
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3064294,
+                "min": 2452155,
+                "n": 7,
+                "sum": 19065596
+              },
+              "wall_ns": {
+                "max": 76380646,
+                "min": 2740829,
+                "n": 7,
+                "sum": 94374673
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 9858,
+                "min": 6463,
+                "n": 7,
+                "sum": 51126
+              },
+              "wall_ns": {
+                "max": 9738,
+                "min": 6502,
+                "n": 7,
+                "sum": 51355
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 683934,
+                "min": 324274,
+                "n": 7,
+                "sum": 3208011
+              },
+              "wall_ns": {
+                "max": 73651830,
+                "min": 324107,
+                "n": 7,
+                "sum": 76175203
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 189704,
+                "min": 164437,
+                "n": 7,
+                "sum": 1208345
+              },
+              "wall_ns": {
+                "max": 189715,
+                "min": 164447,
+                "n": 7,
+                "sum": 1208500
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2236280,
+                "min": 1687729,
+                "n": 7,
+                "sum": 13542396
+              },
+              "wall_ns": {
+                "max": 2532638,
+                "min": 1975817,
+                "n": 7,
+                "sum": 15879459
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 4158,
+                "min": 3707,
+                "n": 7,
+                "sum": 26679
+              },
+              "wall_ns": {
+                "max": 4177,
+                "min": 3717,
+                "n": 7,
+                "sum": 26819
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 369740,
+                "min": 143708,
+                "n": 7,
+                "sum": 2245940
+              },
+              "wall_ns": {
+                "max": 369562,
+                "min": 143609,
+                "n": 7,
+                "sum": 2244921
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 1813,
+                "min": 1613,
+                "n": 7,
+                "sum": 11771
+              },
+              "wall_ns": {
+                "max": 1853,
+                "min": 1623,
+                "n": 7,
+                "sum": 11852
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 4438,
+                "min": 2835,
+                "n": 7,
+                "sum": 23031
+              },
+              "wall_ns": {
+                "max": 4468,
+                "min": 2916,
+                "n": 7,
+                "sum": 23402
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 5330,
+                "min": 3066,
+                "n": 7,
+                "sum": 28293
+              },
+              "wall_ns": {
+                "max": 5781,
+                "min": 3667,
+                "n": 7,
+                "sum": 31237
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 125424,
+                "min": 66063,
+                "n": 7,
+                "sum": 613705
+              },
+              "wall_ns": {
+                "max": 125455,
+                "min": 66054,
+                "n": 7,
+                "sum": 613660
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 301593,
+                "min": 123430,
+                "n": 7,
+                "sum": 1203125
+              },
+              "wall_ns": {
+                "max": 301485,
+                "min": 123391,
+                "n": 7,
+                "sum": 1202791
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 49302,
+                "min": 39344,
+                "n": 7,
+                "sum": 302735
+              },
+              "wall_ns": {
+                "max": 49052,
+                "min": 39283,
+                "n": 7,
+                "sum": 302185
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 179145,
+                "min": 77645,
+                "n": 7,
+                "sum": 787810
+              },
+              "wall_ns": {
+                "max": 179155,
+                "min": 77665,
+                "n": 7,
+                "sum": 787974
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1411072,
+                "min": 1205909,
+                "n": 7,
+                "sum": 9006148
+              },
+              "wall_ns": {
+                "max": 68886986,
+                "min": 1489988,
+                "n": 7,
+                "sum": 78344913
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1519825,
+                "min": 1424497,
+                "n": 7,
+                "sum": 10356896
+              },
+              "wall_ns": {
+                "max": 1519804,
+                "min": 1424535,
+                "n": 7,
+                "sum": 10357169
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 81272,
+              "min": 51066,
+              "n": 7,
+              "sum": 397614
+            },
+            "grant_wait": {
+              "max": 73737,
+              "min": 12804,
+              "n": 7,
+              "sum": 237774
+            },
+            "paid_task_queue_wait": {
+              "max": 31317,
+              "min": 17284,
+              "n": 7,
+              "sum": 159062
+            },
+            "response_write": {
+              "max": 53159,
+              "min": 27803,
+              "n": 7,
+              "sum": 273331
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_submissions/0",
+            "/phases/0/honest_submissions/1",
+            "/phases/0/honest_submissions/2",
+            "/phases/0/honest_submissions/3",
+            "/phases/0/honest_submissions/4",
+            "/phases/0/honest_submissions/5",
+            "/phases/0/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 1202510,
+              "min": 393667,
+              "n": 7,
+              "sum": 4809720
+            },
+            "construction_ns": {
+              "max": 21059,
+              "min": 16651,
+              "n": 7,
+              "sum": 136696
+            },
+            "solution_body_response_ns": {
+              "max": 80654534,
+              "min": 3488507,
+              "n": 7,
+              "sum": 175896563
+            },
+            "solution_search_ns": {
+              "max": 89297,
+              "min": 6983,
+              "n": 7,
+              "sum": 206295
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 87984,
+              "min": 5551,
+              "n": 7,
+              "sum": 196547
+            },
+            "total_elapsed_ns": {
+              "max": 81212608,
+              "min": 4087969,
+              "n": 7,
+              "sum": 181280487
+            }
+          },
+          "client_span_ns": {
+            "end": 2799783049,
+            "start": 211867651
+          },
+          "client_thread_cpu_ns": {
+            "max": 955641,
+            "min": 736673,
+            "n": 7,
+            "sum": 6018202
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1471094,
+            "min": 794853,
+            "n": 7,
+            "sum": 6737846
+          },
+          "records": 7,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 22953,
+                "min": 11481,
+                "n": 7,
+                "sum": 110908
+              },
+              "wall_ns": {
+                "max": 23114,
+                "min": 11411,
+                "n": 7,
+                "sum": 110887
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 505703,
+                "min": 248353,
+                "n": 7,
+                "sum": 2234518
+              },
+              "wall_ns": {
+                "max": 505987,
+                "min": 248435,
+                "n": 7,
+                "sum": 2235654
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 61365,
+              "min": 50555,
+              "n": 7,
+              "sum": 377297
+            },
+            "grant_wait": {
+              "max": 12924,
+              "min": 11672,
+              "n": 7,
+              "sum": 87252
+            },
+            "paid_task_queue_wait": {
+              "max": 29331,
+              "min": 16349,
+              "n": 7,
+              "sum": 160365
+            },
+            "response_write": {
+              "max": 187421,
+              "min": 56956,
+              "n": 7,
+              "sum": 580786
+            }
+          },
+          "source_pointers": [
+            "/phases/0/honest_history/0",
+            "/phases/0/honest_history/1",
+            "/phases/0/honest_history/2",
+            "/phases/0/honest_history/3",
+            "/phases/0/honest_history/4",
+            "/phases/0/honest_history/5",
+            "/phases/0/honest_history/6"
+          ]
+        }
+      ],
+      "kind": "prospective-merge",
+      "member": "fresh-service/fresh/report.json",
+      "mode": "attack-free-baseline",
+      "phase": 0,
+      "report_sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71"
+    },
+    {
+      "categories": [
+        {
+          "category": "honest_submissions",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 101975699,
+              "min": 634674,
+              "n": 7,
+              "sum": 380497841
+            },
+            "construction_ns": {
+              "max": 417101,
+              "min": 240059,
+              "n": 7,
+              "sum": 2129784
+            },
+            "solution_body_response_ns": {
+              "max": 401268236,
+              "min": 209748773,
+              "n": 7,
+              "sum": 2209426751
+            },
+            "solution_search_ns": {
+              "max": 1962271,
+              "min": 13735,
+              "n": 7,
+              "sum": 2223138
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 73487,
+              "min": 11502,
+              "n": 7,
+              "sum": 268061
+            },
+            "total_elapsed_ns": {
+              "max": 402383183,
+              "min": 303306315,
+              "n": 7,
+              "sum": 2594598369
+            }
+          },
+          "client_span_ns": {
+            "end": 2690236357,
+            "start": 91747539
+          },
+          "client_thread_cpu_ns": {
+            "max": 1103486,
+            "min": 786987,
+            "n": 7,
+            "sum": 6369927
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 8046725,
+            "min": 6214448,
+            "n": 7,
+            "sum": 49684834
+          },
+          "records": 7,
+          "server_phases": {
+            "admission": {
+              "thread_cpu_ns": {
+                "max": 3826656,
+                "min": 2430102,
+                "n": 7,
+                "sum": 21791208
+              },
+              "wall_ns": {
+                "max": 98234946,
+                "min": 2789169,
+                "n": 7,
+                "sum": 302854066
+              }
+            },
+            "admission_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 9307,
+                "min": 6993,
+                "n": 7,
+                "sum": 56355
+              },
+              "wall_ns": {
+                "max": 9317,
+                "min": 7103,
+                "n": 7,
+                "sum": 56876
+              }
+            },
+            "admission_prepare": {
+              "thread_cpu_ns": {
+                "max": 766449,
+                "min": 403171,
+                "n": 7,
+                "sum": 3534992
+              },
+              "wall_ns": {
+                "max": 92670143,
+                "min": 403135,
+                "n": 7,
+                "sum": 95438414
+              }
+            },
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 223587,
+                "min": 203179,
+                "n": 7,
+                "sum": 1485130
+              },
+              "wall_ns": {
+                "max": 229980,
+                "min": 204803,
+                "n": 7,
+                "sum": 1512029
+              }
+            },
+            "commit": {
+              "thread_cpu_ns": {
+                "max": 2664107,
+                "min": 1681555,
+                "n": 7,
+                "sum": 15560988
+              },
+              "wall_ns": {
+                "max": 95338927,
+                "min": 2040117,
+                "n": 7,
+                "sum": 202677919
+              }
+            },
+            "commit_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 22983,
+                "min": 3587,
+                "n": 7,
+                "sum": 47448
+              },
+              "wall_ns": {
+                "max": 2061828,
+                "min": 3596,
+                "n": 7,
+                "sum": 2086442
+              }
+            },
+            "context": {
+              "thread_cpu_ns": {
+                "max": 671622,
+                "min": 312173,
+                "n": 7,
+                "sum": 3255211
+              },
+              "wall_ns": {
+                "max": 2145414,
+                "min": 312074,
+                "n": 7,
+                "sum": 5473468
+              }
+            },
+            "context_owner_wait": {
+              "thread_cpu_ns": {
+                "max": 23243,
+                "min": 1733,
+                "n": 7,
+                "sum": 36468
+              },
+              "wall_ns": {
+                "max": 96292793,
+                "min": 1753,
+                "n": 7,
+                "sum": 96306318
+              }
+            },
+            "cpu_settle": {
+              "thread_cpu_ns": {
+                "max": 3867,
+                "min": 3136,
+                "n": 7,
+                "sum": 23474
+              },
+              "wall_ns": {
+                "max": 3978,
+                "min": 3216,
+                "n": 7,
+                "sum": 24426
+              }
+            },
+            "cpu_wait": {
+              "thread_cpu_ns": {
+                "max": 4288,
+                "min": 2535,
+                "n": 7,
+                "sum": 22262
+              },
+              "wall_ns": {
+                "max": 4829,
+                "min": 2675,
+                "n": 7,
+                "sum": 23914
+              }
+            },
+            "decode": {
+              "thread_cpu_ns": {
+                "max": 126886,
+                "min": 70962,
+                "n": 7,
+                "sum": 765838
+              },
+              "wall_ns": {
+                "max": 126977,
+                "min": 71064,
+                "n": 7,
+                "sum": 765112
+              }
+            },
+            "execution": {
+              "thread_cpu_ns": {
+                "max": 370170,
+                "min": 123230,
+                "n": 7,
+                "sum": 1309783
+              },
+              "wall_ns": {
+                "max": 370003,
+                "min": 123271,
+                "n": 7,
+                "sum": 1309781
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 91570,
+                "min": 38442,
+                "n": 7,
+                "sum": 393214
+              },
+              "wall_ns": {
+                "max": 90540,
+                "min": 38533,
+                "n": 7,
+                "sum": 391242
+              }
+            },
+            "root_commitment": {
+              "thread_cpu_ns": {
+                "max": 200634,
+                "min": 78336,
+                "n": 7,
+                "sum": 812364
+              },
+              "wall_ns": {
+                "max": 200675,
+                "min": 78447,
+                "n": 7,
+                "sum": 813071
+              }
+            },
+            "submit_result": {
+              "thread_cpu_ns": {
+                "max": 1688549,
+                "min": 1155104,
+                "n": 7,
+                "sum": 9551843
+              },
+              "wall_ns": {
+                "max": 90398048,
+                "min": 1453139,
+                "n": 7,
+                "sum": 100239372
+              }
+            },
+            "work": {
+              "thread_cpu_ns": {
+                "max": 1976947,
+                "min": 1515737,
+                "n": 7,
+                "sum": 12141956
+              },
+              "wall_ns": {
+                "max": 1976959,
+                "min": 1515757,
+                "n": 7,
+                "sum": 12142622
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 89282377,
+              "min": 61425,
+              "n": 7,
+              "sum": 90368118
+            },
+            "grant_wait": {
+              "max": 197122861,
+              "min": 97758548,
+              "n": 7,
+              "sum": 793199679
+            },
+            "paid_task_queue_wait": {
+              "max": 100995530,
+              "min": 96008333,
+              "n": 7,
+              "sum": 693971954
+            },
+            "response_write": {
+              "max": 44764,
+              "min": 24666,
+              "n": 7,
+              "sum": 219681
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_submissions/0",
+            "/phases/1/honest_submissions/1",
+            "/phases/1/honest_submissions/2",
+            "/phases/1/honest_submissions/3",
+            "/phases/1/honest_submissions/4",
+            "/phases/1/honest_submissions/5",
+            "/phases/1/honest_submissions/6"
+          ]
+        },
+        {
+          "category": "honest_history",
+          "client_metrics": {
+            "challenge_ns": {
+              "max": 2824104,
+              "min": 2824104,
+              "n": 1,
+              "sum": 2824104
+            },
+            "construction_ns": {
+              "max": 22633,
+              "min": 22633,
+              "n": 1,
+              "sum": 22633
+            },
+            "solution_body_response_ns": {
+              "max": 99258504,
+              "min": 99258504,
+              "n": 1,
+              "sum": 99258504
+            },
+            "solution_search_ns": {
+              "max": 20869,
+              "min": 20869,
+              "n": 1,
+              "sum": 20869
+            },
+            "solution_search_thread_cpu_ns": {
+              "max": 19086,
+              "min": 19086,
+              "n": 1,
+              "sum": 19086
+            },
+            "total_elapsed_ns": {
+              "max": 102168380,
+              "min": 102168380,
+              "n": 1,
+              "sum": 102168380
+            }
+          },
+          "client_span_ns": {
+            "end": 2792741606,
+            "start": 2690501513
+          },
+          "client_thread_cpu_ns": {
+            "max": 1011828,
+            "min": 1011828,
+            "n": 1,
+            "sum": 1011828
+          },
+          "dispatch_thread_cpu_ns": {
+            "max": 1670635,
+            "min": 1670635,
+            "n": 1,
+            "sum": 1670635
+          },
+          "records": 1,
+          "server_phases": {
+            "body_decode": {
+              "thread_cpu_ns": {
+                "max": 36849,
+                "min": 36849,
+                "n": 1,
+                "sum": 36849
+              },
+              "wall_ns": {
+                "max": 37080,
+                "min": 37080,
+                "n": 1,
+                "sum": 37080
+              }
+            },
+            "response_encoding": {
+              "thread_cpu_ns": {
+                "max": 453766,
+                "min": 453766,
+                "n": 1,
+                "sum": 453766
+              },
+              "wall_ns": {
+                "max": 453699,
+                "min": 453699,
+                "n": 1,
+                "sum": 453699
+              }
+            }
+          },
+          "server_waits": {
+            "challenge_wait": {
+              "max": 156062,
+              "min": 156062,
+              "n": 1,
+              "sum": 156062
+            },
+            "grant_wait": {
+              "max": 143649,
+              "min": 143649,
+              "n": 1,
+              "sum": 143649
+            },
+            "paid_task_queue_wait": {
+              "max": 94042284,
+              "min": 94042284,
+              "n": 1,
+              "sum": 94042284
+            },
+            "response_write": {
+              "max": 168074,
+              "min": 168074,
+              "n": 1,
+              "sum": 168074
+            }
+          },
+          "source_pointers": [
+            "/phases/1/honest_history/0"
+          ]
+        }
+      ],
+      "kind": "prospective-merge",
+      "member": "fresh-service/fresh/report.json",
+      "mode": "from-zero-pressure",
+      "phase": 1,
+      "report_sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71"
+    }
+  ],
+  "schema": "trnm-r1-existing-matched-client-stage-summary-v1",
+  "scope": "Sums are only same named field across disjoint matched requests; stages are nested and MUST NOT be summed together or across clock domains. No new measurement or test.",
+  "source": {
+    "bytes": 359489,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/critical-path-summary-v2/client-server-compact.json",
+    "sha256": "74a49317aba30ba6059dddde27de4c5fcbc452ce7ad419964599ad9c353de418"
+  }
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "check_suite_id": 118064997779,
+    "conclusion": null,
+    "created_at": "2026-11-14T14:19:01Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412",
+    "id": 43604217412,
+    "name": "trnm-required-baseline",
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "pull_requests": [
+      {
+        "base": {
+          "ref": "main",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        },
+        "head": {
+          "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+        },
+        "id": 5225636007,
+        "number": 847,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      }
+    ],
+    "run_attempt": 1,
+    "run_started_at": "2026-11-14T14:19:01Z",
+    "status": "in_progress",
+    "updated_at": "2026-11-14T14:51:52Z"
+  }
+]

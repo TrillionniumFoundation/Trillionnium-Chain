@@ -1,0 +1,65 @@
+{
+  "excerpt_is_not_complete_log": true,
+  "long_matching_lines_omitted": 0,
+  "matching_lines": 13,
+  "original": {
+    "bytes": 219457,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/132481412290-original-log.stdout",
+    "sha256": "a2abb8f09485c32739ca970ac1aa8ab12d3cfee01f53a954e9c9d2dded0ae935"
+  },
+  "selected_last_matching_lines": [
+    {
+      "line": 19,
+      "text": "2026-11-14T14:42:28.6182690Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md"
+    },
+    {
+      "line": 32,
+      "text": "2026-11-14T14:42:29.0522571Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)"
+    },
+    {
+      "line": 464,
+      "text": "2026-11-14T14:43:12.8164077Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 712,
+      "text": "2026-11-14T14:43:12.8404437Z  * [new branch]          fix/pcp2-consolidated-expiry-581-20261030 -> origin/fix/pcp2-consolidated-expiry-581-20261030"
+    },
+    {
+      "line": 751,
+      "text": "2026-11-14T14:43:12.8440417Z  * [new branch]          fix/pon-priority-consumer-context-20261008 -> origin/fix/pon-priority-consumer-context-20261008"
+    },
+    {
+      "line": 1085,
+      "text": "2026-11-14T14:43:19.9699404Z Updating files:  65% (27164/41677)"
+    },
+    {
+      "line": 1120,
+      "text": "2026-11-14T14:43:23.1019290Z Updating files:  97% (40427/41677)"
+    },
+    {
+      "line": 1330,
+      "text": "2026-11-14T14:45:35.1404631Z test_expanded_secret_and_wallet64_are_rejected_without_auto_truncation (test_pq_seed_relation_vectors_v1.PublicSeedRelationVectorsTests.test_expanded_secret_and_wallet64_are_rejected_without_auto_truncation) ... ok"
+    },
+    {
+      "line": 1354,
+      "text": "2026-11-14T14:45:51.1734045Z test_mismatched_executable_pin_has_no_fallback (__main__.RootNativeCryptographyTests.test_mismatched_executable_pin_has_no_fallback) ... ok"
+    },
+    {
+      "line": 1368,
+      "text": "2026-11-14T14:45:59.4404815Z test_original_signatures_cannot_authenticate_rebound_request (__main__.ProviderReadbackNativeTests.test_original_signatures_cannot_authenticate_rebound_request) ... ok"
+    },
+    {
+      "line": 1410,
+      "text": "2026-11-14T15:48:42.4084939Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1446,
+      "text": "2026-11-14T15:48:47.2824962Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 1501,
+      "text": "2026-11-14T15:48:49.7189780Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ],
+  "total_lines": 1501
+}

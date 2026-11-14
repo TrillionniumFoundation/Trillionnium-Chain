@@ -1,0 +1,67 @@
+1190:                }
+1191:                pon_work::VerificationError::Cancelled(error) => error,
+1192:            })?;
+1193:        Ok(Self {
+1194:            packet,
+1195:            work,
+1196:            owner_permit: None,
+1197:        })
+1198:    }
+1199:
+1200:    pub(crate) fn verify_with_progress(
+1201:        packet: Packet,
+1202:        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+1203:    ) -> Result<Self> {
+1204:        let h = &packet.header;
+1205:        let work = pon_work::verify_with_progress(
+1206:            h.challenge(),
+1207:            h.work_task,
+1208:            h.target,
+1209:            &packet.proof,
+1210:            progress,
+1211:        )
+1212:        .map_err(|error| match error {
+1213:            pon_work::VerificationError::Relation(error) => Error::from(format!("WORK:{error:?}")),
+1214:            pon_work::VerificationError::Cancelled(error) => error,
+1215:        })?;
+1216:        Ok(Self {
+1217:            packet,
+1218:            work,
+1219:            owner_permit: None,
+1220:        })
+1221:    }
+1222:}
+1223:
+1224:fn local_execution_error(error: ExecutionError<Error>) -> Error {
+1225:    match error {
+1226:        ExecutionError::Relation(error) => error.into(),
+1227:        ExecutionError::Cancelled(error) => error,
+1228:    }
+1229:}
+1230:
+1231:/// Cancellation stages for the complete checked native account proof query.
+1232:/// Individual State commitment/hash primitives remain bounded single stages.
+1233:#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+1234:pub enum NativeAccountProofProgress {
+1235:    BeforeRead,
+1236:    StateReplay,
+1237:    StateVerification,
+1238:    Proof(crate::account_archive_prototype::multiproof::MultiproofProgress),
+1239:    BeforeOutput,
+1240:}
+1241:
+1242:enum NativeAccountProofFailure {
+1243:    Archive(crate::account_archive_prototype::ArchiveError),
+1244:    Control(Error),
+1245:}
+1246:impl From<crate::account_archive_prototype::ArchiveError> for NativeAccountProofFailure {
+1247:    fn from(error: crate::account_archive_prototype::ArchiveError) -> Self {
+1248:        Self::Archive(error)
+1249:    }
+1250:}
+1251:impl NativeAccountProofFailure {
+1252:    fn into_error(self) -> Error {
+1253:        use crate::account_archive_prototype::ArchiveError;
+1254:        match self {
+1255:            Self::Control(error) => error,
+1256:            Self::Archive(error) => {

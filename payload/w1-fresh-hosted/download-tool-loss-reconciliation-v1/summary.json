@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "exists": true,
+      "observed_bytes": 4620288,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip"
+    },
+    {
+      "exists": true,
+      "observed_bytes": 4176816,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip"
+    },
+    {
+      "exists": false,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip.step.json"
+    },
+    {
+      "exists": false,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip.step.json"
+    },
+    {
+      "exists": false,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/download-summary.json"
+    }
+  ],
+  "no_download_restarted": true,
+  "observed_at": "2026-11-14T14:45:21.689132+00:00",
+  "read_only": true,
+  "steps": [
+    {
+      "argv": [
+        "/bin/ps",
+        "-p",
+        "84900,84901",
+        "-o",
+        "pid=,ppid=,comm=,etime=,stat="
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "84900     1 /Applications/Xc 04:31 Ss  \n84901 84900 /opt/homebrew/Ce 04:30 Ss+ \n"
+    },
+    {
+      "argv": [
+        "/usr/sbin/sysctl",
+        "kern.boottime"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "kern.boottime: { sec = 1794536756, usec = 366418 } Fri Nov 13 10:25:56 2026\n"
+    }
+  ]
+}

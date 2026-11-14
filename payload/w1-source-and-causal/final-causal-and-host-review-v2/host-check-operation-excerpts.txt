@@ -1,0 +1,323 @@
+SOURCE trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
+GIT_BLOB c70b9948f48d8349f63420b6c82d70ef9cf2afa6
+SHA256 6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
+
+120:             || swap.trim() != "0"
+121:         {
+122:             return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
+123:         }
+124:         Ok(Limits {
+125:             cpu_quota_us: quota,
+126:             cpu_period_us: period,
+127:             memory_bytes: memory,
+128:             tasks,
+129:         })
+130:     }
+131: 
+132:     const MAX_LIMIT_BYTES: usize = 128;
+133:     const MAX_CPU_COUNTER_BYTES: usize = 2048;
+134:     const MAX_SCALAR_COUNTER_BYTES: usize = 64;
+135: 
+136:     fn read_counter_text<'a>(reader: &mut impl Read, bytes: &'a mut [u8]) -> Result<&'a str> {
+137:         // The final byte is an overflow probe. A short read is never EOF,
+138:         // including a read exactly at the existing parser's byte bound.
+139:         if bytes.is_empty() {
+140:             return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+141:         }
+142:         let mut used = 0;
+143:         loop {
+144:             let count = match reader.read(&mut bytes[used..]) {
+145:                 Ok(count) => count,
+146:                 Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+147:                 Err(_) => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
+148:             };
+149:             if count == 0 {
+150:                 return std::str::from_utf8(&bytes[..used])
+151:                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"));
+152:             }
+153:             used += count;
+154:             if used == bytes.len() {
+155:                 return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+156:             }
+157:         }
+158:     }
+159: 
+160:     fn read_limit_text<'a>(
+161:         reader: &mut impl Read,
+162:         bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+163:     ) -> Result<&'a str> {
+164:         let mut used = 0;
+165:         loop {
+166:             // At least one byte remains until overflow is rejected. A short
+167:             // read is not EOF, including at the original 128-byte boundary.
+168:             let count = match reader.read(&mut bytes[used..]) {
+169:                 Ok(count) => count,
+170:                 Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+171:                 Err(_) => return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into()),
+172:             };
+173:             if count == 0 {
+174:                 return std::str::from_utf8(&bytes[..used])
+175:                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"));
+176:             }
+177:             used += count;
+178:             if used > MAX_LIMIT_BYTES {
+179:                 return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+180:             }
+181:         }
+182:     }
+183: 
+184:     #[cfg(test)]
+185:     fn read_limit<'a>(path: &Path, bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1]) -> Result<&'a str> {
+186:         // Reopen the actual path on EVERY observation. No descriptor, file
+187:         // contents or prior resource decision survives this read. The bounded
+188:         // stack buffer needs no file-size metadata or heap String allocation.
+189:         let mut file = fs::File::open(path)
+190:             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+191:         read_limit_text(&mut file, bytes)
+192:     }
+193: 
+194:     #[cfg(test)]
+195:     fn limit_paths(parent: &Path) -> [PathBuf; 5] {
+196:         [
+197:             "cpu.max",
+198:             "cpu.max.burst",
+199:             "memory.max",
+200:             "memory.swap.max",
+201:             "pids.max",
+202:         ]
+203:         .map(|name| parent.join(name))
+204:     }
+205: 
+206:     #[cfg(test)]
+207:     fn read_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
+208:         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
+209:         // Preserve the original read order and parse only AFTER all five
+210:         // complete reads, including the original I/O-before-parse error order.
+211:         validate_limits(
+212:             read_limit(&paths[0], cpu)?,
+213:             read_limit(&paths[1], burst)?,
+214:             read_limit(&paths[2], memory)?,
+215:             read_limit(&paths[3], swap)?,
+216:             read_limit(&paths[4], pids)?,
+217:         )
+218:     }
+219: 
+220:     fn open_current_parent(path: &Path) -> Result<fs::File> {
+221:         // Resolve the actual directory on EVERY check. O_PATH preserves the
+222:         // original search-only access requirement; this does not need directory
+223:         // read permission or open any resource file for writing.
+224:         rustix::fs::open(
+225:             path,
+226:             rustix::fs::OFlags::PATH
+227:                 | rustix::fs::OFlags::DIRECTORY
+228:                 | rustix::fs::OFlags::NOFOLLOW
+229:                 | rustix::fs::OFlags::CLOEXEC,
+230:             rustix::fs::Mode::empty(),
+231:         )
+232:         .map(fs::File::from)
+233:         .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))
+234:     }
+235: 
+236:     fn read_limit_at<'a>(
+237:         parent: &fs::File,
+238:         name: &CStr,
+239:         bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+240:     ) -> Result<&'a str> {
+241:         use rustix::fs::{openat, Mode, OFlags};
+242:         let fd = loop {
+243:             match openat(
+244:                 parent,
+245:                 name,
+246:                 OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
+247:                 Mode::empty(),
+248:             ) {
+249:                 Err(error) if error == rustix::io::Errno::INTR => continue,
+250:                 result => break result,
+251:             }
+252:         }
+253:         .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+254:         let mut file = fs::File::from(fd);
+255:         // These cgroup-v2 children are regular files. A substituted FIFO
+256:         // must neither block nor lend buffered text or writer-free EOF.
+257:         if !file
+258:             .metadata()
+259:             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?
+260:             .file_type()
+261:             .is_file()
+262:         {
+263:             return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+264:         }
+265:         let text = read_limit_text(&mut file, bytes)?;
+266:         #[cfg(test)]
+267:         relative_tests::after_limit_read(name);
+268:         Ok(text)
+269:     }
+270: 
+271:     fn read_limits_at(parent: &fs::File) -> Result<Limits> {
+272:         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
+273:         // Reopen and completely read all five files in the original order.
+274:         // The directory was freshly opened and checked in this same call;
+275:         // neither it, the files, their contents nor a verdict is retained.
+276:         validate_limits(
+277:             read_limit_at(parent, c"cpu.max", cpu)?,
+278:             read_limit_at(parent, c"cpu.max.burst", burst)?,
+279:             read_limit_at(parent, c"memory.max", memory)?,
+280:             read_limit_at(parent, c"memory.swap.max", swap)?,
+281:             read_limit_at(parent, c"pids.max", pids)?,
+282:         )
+283:     }
+284: 
+285:     /// A directory opened and verified during one check or resource sample.
+286:     /// KernelBudget never stores this descriptor: every subsequent full check
+287:     /// freshly opens the current parent and verifies its actual metadata.
+288:     struct ScopedParentDirectory {
+289:         file: fs::File,
+290:         identity: (u64, u64, u32),
+291:     }
+292: 
+293:     impl ScopedParentDirectory {
+294:         fn from_file(file: fs::File, identity: (u64, u64, u32)) -> Result<Self> {
+295:             let current = file
+296:                 .metadata()
+297:                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+298:             if !Self::matches(&current, identity) {
+299:                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+300:             }
+301:             Ok(Self { file, identity })
+302:         }
+303: 
+304:         #[cfg(test)]
+305:         fn open(parent: &Path, expected: &fs::Metadata) -> Result<Self> {
+306:             Self::from_file(
+307:                 open_current_parent(parent)?,
+308:                 (expected.dev(), expected.ino(), expected.uid()),
+309:             )
+310:         }
+311: 
+312:         fn matches(metadata: &fs::Metadata, identity: (u64, u64, u32)) -> bool {
+313:             metadata.file_type().is_dir()
+314:                 && metadata.mode() & 0o022 == 0
+315:                 && (metadata.dev(), metadata.ino(), metadata.uid()) == identity
+316:         }
+317: 
+318:         fn verify_path(&self, parent: &Path) -> Result<()> {
+319:             let current = fs::symlink_metadata(parent)
+320:                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+321:             if !Self::matches(&current, self.identity) {
+322:                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+323:             }
+324:             Ok(())
+325:         }
+326: 
+327:         #[cfg(test)]
+328:         fn read_limit<'a>(
+329:             &self,
+330:             name: &CStr,
+331:             bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+332:         ) -> Result<&'a str> {
+333:             read_limit_at(&self.file, name, bytes)
+334:         }
+335: 
+336:         fn read_limits(&self) -> Result<Limits> {
+337:             read_limits_at(&self.file)
+338:         }
+339: 
+340:         fn verify_limits(&self, parent: &Path, expected: Limits) -> Result<()> {
+341:             let observed = self.read_limits()?;
+342:             // Keep the current ordering: complete reads and parsing, final
+343:             // path/ownership fence, then comparison with the original limits.
+344:             self.verify_path(parent)?;
+345:             if observed != expected {
+346:                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
+347:             }
+348:             Ok(())
+349:         }
+350: 
+351:         fn read_counter<'a>(&self, name: &CStr, bytes: &'a mut [u8]) -> Result<&'a str> {
+352:             use rustix::fs::{openat, Mode, OFlags};
+353:             let fd = loop {
+354:                 match openat(
+355:                     &self.file,
+356:                     name,
+357:                     OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
+358:                     Mode::empty(),
+359:                 ) {
+360:                     Err(error) if error == rustix::io::Errno::INTR => continue,
+361:                     result => break result,
+362:                 }
+363:             }
+364:             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?;
+365:             let mut file = fs::File::from(fd);
+366:             if !file
+367:                 .metadata()
+368:                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?
+369:                 .file_type()
+370:                 .is_file()
+371:             {
+372:                 return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+373:             }
+374:             read_counter_text(&mut file, bytes)
+375:         }
+
+513:         }
+514:         let required = |key| {
+515:             fields
+516:                 .get(key)
+517:                 .copied()
+518:                 .ok_or_else(|| crate::Error::from(INVALID))
+519:         };
+520:         let current = |raw: &str| -> Result<u64> {
+521:             let mut parts = raw.split_ascii_whitespace();
+522:             let value = parts
+523:                 .next()
+524:                 .ok_or(INVALID)?
+525:                 .parse::<u64>()
+526:                 .map_err(|_| crate::Error::from(INVALID))?;
+527:             if parts.next().is_some() {
+528:                 return Err(INVALID.into());
+529:             }
+530:             Ok(value)
+531:         };
+532:         Ok(KernelResourceSample {
+533:             cpu_usage_usec: required("usage_usec")?,
+534:             cpu_nr_periods: required("nr_periods")?,
+535:             cpu_nr_throttled: required("nr_throttled")?,
+536:             cpu_throttled_usec: required("throttled_usec")?,
+537:             memory_current_bytes: current(memory)?,
+538:             pids_current: current(tasks)?,
+539:         })
+540:     }
+541: 
+542:     pub struct KernelBudget {
+543:         parent: PathBuf,
+544:         parent_relative: String,
+545:         identity: (u64, u64),
+546:         boot_id: String,
+547:         limits: Limits,
+548:     }
+549:     impl KernelBudget {
+550:         fn checked_parent(&self) -> Result<ScopedParentDirectory> {
+551:             let mut boot_bytes = [0; CONTEXT_STACK_BYTES + 1];
+552:             let now_boot = read_context(
+553:                 Path::new("/proc/sys/kernel/random/boot_id"),
+554:                 &mut boot_bytes,
+555:             )?;
+556:             if now_boot.trim() != self.boot_id {
+557:                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+558:             }
+559:             let parent = ScopedParentDirectory::from_file(
+560:                 open_current_parent(&self.parent)?,
+561:                 (self.identity.0, self.identity.1, 0),
+562:             )?;
+563:             if !in_parent_cgroup(&self.parent_relative)? {
+564:                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
+565:             }
+566:             // The current path is fenced again after all five current files
+567:             // are completely read. No later check reuses this directory FD.
+568:             parent.verify_limits(&self.parent, self.limits)?;
+569:             Ok(parent)
+570:         }
+571: 
+572:         fn check(&self) -> Result<()> {
+573:             self.checked_parent().map(|_| ())

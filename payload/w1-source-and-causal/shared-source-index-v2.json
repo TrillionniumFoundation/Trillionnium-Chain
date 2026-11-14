@@ -1,0 +1,43 @@
+{
+  "files": [
+    {
+      "bytes": 115087,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_from_zero_native.py",
+      "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+      "lines": 1856,
+      "path": "scripts/ci/run_from_zero_native.py",
+      "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+    },
+    {
+      "bytes": 28366,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_from_zero_host.py",
+      "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+      "lines": 520,
+      "path": "scripts/ci/run_from_zero_host.py",
+      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+    },
+    {
+      "bytes": 438782,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs",
+      "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+      "lines": 10129,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    },
+    {
+      "bytes": 13543,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--public_host_ci_observation.py",
+      "git_blob": "160c489693f3ec600e2e015c30773d66cff3bcdf",
+      "lines": 295,
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
+    }
+  ],
+  "prior_partial_capture": "Wrong src/public_v3.rs path refused. Earlier two source captures verified against immutable blobs; actual ingress path resolved by exact Git tree.",
+  "protocol_workflow_search": {
+    "exit": 0,
+    "stderr": "",
+    "stdout": "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/trnm-required-baseline.yml:244:  protocol-contract:\n"
+  },
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

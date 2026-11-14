@@ -1,0 +1,51 @@
+460:    Ok(out)
+461:}
+462:/// Draft native default using exact bounded limb sums for the complete relation.
+463:/// This implementation selection does not qualify work hardness or public service.
+464:pub fn verify(
+465:    challenge: Hash,
+466:    expected_task: Hash,
+467:    target: Hash,
+468:    bytes: &[u8],
+469:) -> Result<VerifiedWork, WorkError> {
+470:    relation_only(verify_with_progress(
+471:        challenge,
+472:        expected_task,
+473:        target,
+474:        bytes,
+475:        &mut no_cancellation,
+476:    ))
+477:}
+478:/// Full PNW1 replay with bounded limb arithmetic and caller-local cancellation.
+479:/// A callback error drops all intermediates; only complete success creates VerifiedWork.
+480:/// Checkpoints bound arithmetic between observations, not physical CPU time or preemption.
+481:pub fn verify_with_progress<E>(
+482:    challenge: Hash,
+483:    expected_task: Hash,
+484:    target: Hash,
+485:    bytes: &[u8],
+486:    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+487:) -> Result<VerifiedWork, VerificationError<E>> {
+488:    verify_with_kernel(
+489:        challenge,
+490:        expected_task,
+491:        target,
+492:        bytes,
+493:        progress,
+494:        VerificationKernel::FullLimb,
+495:    )
+496:}
+497:
+498:/// Retained transposed baseline using exact reduction of u128 dot-product sums.
+499:/// Explicit selection keeps historical measurements independent of the default.
+500:pub fn verify_transposed(
+501:    challenge: Hash,
+502:    expected_task: Hash,
+503:    target: Hash,
+504:    bytes: &[u8],
+505:) -> Result<VerifiedWork, WorkError> {
+506:    relation_only(verify_transposed_with_progress(
+507:        challenge,
+508:        expected_task,
+509:        target,
+510:        bytes,

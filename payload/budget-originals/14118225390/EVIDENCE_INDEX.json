@@ -1,0 +1,163 @@
+{
+  "all_member_crc_verified": true,
+  "expanded_bytes": 16351,
+  "member_count": 14,
+  "members": [
+    {
+      "bytes": 758,
+      "compressed_bytes": 390,
+      "crc32": "d67be5b9",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 0,
+      "path": "native/driver-preflight.process.json",
+      "sha256": "06afba61037b904cdcccb17f008e1db828a1f708d56518ffbfa0205345c5ad76"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 241,
+      "crc32": "63111cae",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 1,
+      "path": "native/driver-source-after.json",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 2,
+      "path": "native/driver-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "crc32": "64de7ce4",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 3,
+      "path": "native/driver-preflight.stdout",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 241,
+      "crc32": "63111cae",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 4,
+      "path": "native/driver-source-before.json",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 5324,
+      "compressed_bytes": 1390,
+      "crc32": "d35949db",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 5,
+      "path": "native/report.json",
+      "sha256": "20d52329b84293718e177c3c640bdb907ee22fff6fc974384bb49315e5b0f6ea"
+    },
+    {
+      "bytes": 761,
+      "compressed_bytes": 387,
+      "crc32": "1d27186b",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 6,
+      "path": "native/subject-preflight.process.json",
+      "sha256": "ab6a4d4930011f388bd086626d67b28ff6f599d83255f5f1624f2a41101ddb22"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 7,
+      "path": "native/subject-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "crc32": "64de7ce4",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 8,
+      "path": "native/subject-preflight.stdout",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 241,
+      "crc32": "901536e1",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 9,
+      "path": "native/subject-source-after.json",
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 241,
+      "crc32": "901536e1",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 10,
+      "path": "native/subject-source-before.json",
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83"
+    },
+    {
+      "bytes": 147,
+      "compressed_bytes": 118,
+      "crc32": "d1012909",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 11,
+      "path": "request.txt",
+      "sha256": "32f12386e5bd52cc54ef6149a847d58688dccccc66be12797a1d31b23cd275e3"
+    },
+    {
+      "bytes": 7403,
+      "compressed_bytes": 1480,
+      "crc32": "b7e6c91f",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 12,
+      "path": "runner-controls.stderr",
+      "sha256": "c939b78d44b9e098be5cbb8a3e987f06cae7df003230467dc823c8bfbb1a4a17"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "crc32_verified": true,
+      "directory": false,
+      "executed": false,
+      "index": 13,
+      "path": "runner-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "members_executed": false,
+  "schema": "trnm-r1-budget-original-zip-index-v1"
+}

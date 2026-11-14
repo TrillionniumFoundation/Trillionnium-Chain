@@ -1,0 +1,1230 @@
+{
+  "only_long_packet_strings_omitted": true,
+  "phases": [
+    {
+      "all_keys": [
+        "accounting_closed",
+        "attacker_workers_cpu_ns",
+        "attacker_workers_cpu_scope",
+        "attacks",
+        "business_receive_clock",
+        "business_started_ns",
+        "client_confirmation_latency_ns",
+        "client_confirmed_before_original_window_end",
+        "client_confirmed_transactions",
+        "completed_false_calls_at_confirmation",
+        "completed_false_calls_before_business",
+        "confirmation_ended_ns",
+        "final_meter",
+        "finite_business_target_met",
+        "full_native_state_equal",
+        "honest_head_successes_in_window",
+        "honest_heads",
+        "honest_history",
+        "honest_submissions",
+        "independent_client_confirmation",
+        "independent_final_confirmation_stage",
+        "independent_history_page_replay",
+        "independent_operator_accepted",
+        "independent_replay_and_confirmation_cpu_ns",
+        "independent_replay_and_confirmation_wall_ns",
+        "initial_meter",
+        "initial_state_root",
+        "initial_tip",
+        "invariant_target_met",
+        "maximum_honest_head_gap_ns",
+        "mode",
+        "no_attack_accepted",
+        "observations",
+        "overlap_demonstrated",
+        "overlapping_false_calls",
+        "production_activation",
+        "public_network_ready",
+        "reader_cpu_ns",
+        "receiver_matches_valid_honest_prefix",
+        "requested_window_ns",
+        "resource_fairness_qualified",
+        "scope",
+        "service",
+        "target",
+        "task",
+        "verification_errors",
+        "work_profile_qualified",
+        "workers"
+      ],
+      "client_confirmed_transactions": 1,
+      "confirmation_ended_ns": 3196792242,
+      "history": [
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 929211,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 5057636,
+          "ended_ns": 217430055,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 850497,
+            "construction_ns": 23053,
+            "failed_stage": null,
+            "solution_body_response_ns": 4016664,
+            "solution_found": true,
+            "solution_search_ns": 65703,
+            "solution_search_thread_cpu_ns": 64169,
+            "solution_trials": 456,
+            "total_elapsed_ns": 4991232
+          },
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 64660,
+            "solve_trials": 456,
+            "value": {
+              "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99418,
+                  "original_json_pointer": "/phases/0/history/0/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 212373210,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 824908,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 4144743,
+          "ended_ns": 916077476,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 439771,
+            "construction_ns": 21660,
+            "failed_stage": null,
+            "solution_body_response_ns": 3589597,
+            "solution_found": true,
+            "solution_search_ns": 16731,
+            "solution_search_thread_cpu_ns": 15268,
+            "solution_trials": 82,
+            "total_elapsed_ns": 4096993
+          },
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 15759,
+            "solve_trials": 82,
+            "value": {
+              "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/1/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 911934016,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 872797,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 4774368,
+          "ended_ns": 1217480218,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 1026565,
+            "construction_ns": 18534,
+            "failed_stage": null,
+            "solution_body_response_ns": 3626276,
+            "solution_found": true,
+            "solution_search_ns": 28383,
+            "solution_search_thread_cpu_ns": 27030,
+            "solution_trials": 178,
+            "total_elapsed_ns": 4729063
+          },
+          "request": {
+            "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 27491,
+            "solve_trials": 178,
+            "value": {
+              "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/2/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1212707223,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 902975,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 4426157,
+          "ended_ns": 1607817282,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 607112,
+            "construction_ns": 19327,
+            "failed_stage": null,
+            "solution_body_response_ns": 3708259,
+            "solution_found": true,
+            "solution_search_ns": 16040,
+            "solution_search_thread_cpu_ns": 14848,
+            "solution_trials": 82,
+            "total_elapsed_ns": 4380293
+          },
+          "request": {
+            "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 15128,
+            "solve_trials": 82,
+            "value": {
+              "after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/3/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1603392728,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 866406,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 3460356,
+          "ended_ns": 1998712987,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 650533,
+            "construction_ns": 17854,
+            "failed_stage": null,
+            "solution_body_response_ns": 2658129,
+            "solution_found": true,
+            "solution_search_ns": 32271,
+            "solution_search_thread_cpu_ns": 31188,
+            "solution_trials": 206,
+            "total_elapsed_ns": 3386879
+          },
+          "request": {
+            "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 31328,
+            "solve_trials": 206,
+            "value": {
+              "after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/4/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1995253823,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 897374,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 4567761,
+          "ended_ns": 2314113599,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 889830,
+            "construction_ns": 15880,
+            "failed_stage": null,
+            "solution_body_response_ns": 3493577,
+            "solution_found": true,
+            "solution_search_ns": 96300,
+            "solution_search_thread_cpu_ns": 95217,
+            "solution_trials": 700,
+            "total_elapsed_ns": 4522848
+          },
+          "request": {
+            "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 95378,
+            "solve_trials": 700,
+            "value": {
+              "after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/5/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 2309547080,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 820901,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 4181861,
+          "ended_ns": 2708616833,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 554965,
+            "construction_ns": 16461,
+            "failed_stage": null,
+            "solution_body_response_ns": 3525597,
+            "solution_found": true,
+            "solution_search_ns": 11411,
+            "solution_search_thread_cpu_ns": 10279,
+            "solution_trials": 46,
+            "total_elapsed_ns": 4136857
+          },
+          "request": {
+            "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 10480,
+            "solve_trials": 46,
+            "value": {
+              "after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "complete": true,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99016,
+                  "original_json_pointer": "/phases/0/history/6/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 2704436184,
+          "status": "ok"
+        }
+      ],
+      "independent_client_confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1794671288,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3196788785,
+        "confirmation_started_ns": 3195779493,
+        "confirmation_thread_cpu_ns": 1010233,
+        "confirmation_wall_ns": 1009292,
+        "observation_returned": true
+      },
+      "json_pointer": "/phases/0",
+      "submissions": [
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 906528,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9166131,
+          "ended_ns": 9745371,
+          "error": null,
+          "height": 1,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 1418376,
+            "construction_ns": 442265,
+            "failed_stage": null,
+            "solution_body_response_ns": 7177511,
+            "solution_found": true,
+            "solution_search_ns": 28444,
+            "solution_search_thread_cpu_ns": 27240,
+            "solution_trials": 173,
+            "total_elapsed_ns": 9115306
+          },
+          "packet_index": 0,
+          "recorded_request_bytes": 99445,
+          "recorded_request_digest": "ae89dd11b9e11ee359c34dd9b8d83f02e4f997ca096e6947a1b7a1fc3f34bf16",
+          "response": {
+            "body_bytes_sent": 99445,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 27521,
+            "solve_trials": 173,
+            "value": {
+              "active": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "generation": 1,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 581144,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 793280,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9490386,
+          "ended_ns": 19724369,
+          "error": null,
+          "height": 2,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 269983,
+            "construction_ns": 328142,
+            "failed_stage": null,
+            "solution_body_response_ns": 8764061,
+            "solution_found": true,
+            "solution_search_ns": 28263,
+            "solution_search_thread_cpu_ns": 27141,
+            "solution_trials": 176,
+            "total_elapsed_ns": 9426126
+          },
+          "packet_index": 1,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "bbc4c040dd3b582f8f17e6b496cf93f1c32e19acde697696bd699ef12966943e",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 27361,
+            "solve_trials": 176,
+            "value": {
+              "active": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "block": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "generation": 2,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 10235506,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 806275,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 79333210,
+          "ended_ns": 99508591,
+          "error": null,
+          "height": 3,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 326129,
+            "construction_ns": 346757,
+            "failed_stage": null,
+            "solution_body_response_ns": 78552864,
+            "solution_found": true,
+            "solution_search_ns": 19667,
+            "solution_search_thread_cpu_ns": 18545,
+            "solution_trials": 112,
+            "total_elapsed_ns": 79287726
+          },
+          "packet_index": 2,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "f621d9129564a7acd2f4e9a520cab5af0ba364464054ea8306fe32132f337584",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 18755,
+            "solve_trials": 112,
+            "value": {
+              "active": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "block": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "generation": 3,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 20176803,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 884730,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 9680040,
+          "ended_ns": 109680909,
+          "error": null,
+          "height": 4,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 1072381,
+            "construction_ns": 452504,
+            "failed_stage": null,
+            "solution_body_response_ns": 8039379,
+            "solution_found": true,
+            "solution_search_ns": 19236,
+            "solution_search_thread_cpu_ns": 17814,
+            "solution_trials": 104,
+            "total_elapsed_ns": 9619948
+          },
+          "packet_index": 3,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "ca1ec819d6746d4d07bc9d24fa70590cdec9dd1491a9398a6e3e61b1235e408f",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 18324,
+            "solve_trials": 104,
+            "value": {
+              "active": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "block": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "generation": 4,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 100002793,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 819048,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 10167729,
+          "ended_ns": 120331901,
+          "error": null,
+          "height": 5,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 242693,
+            "construction_ns": 379438,
+            "failed_stage": null,
+            "solution_body_response_ns": 9414204,
+            "solution_found": true,
+            "solution_search_ns": 27922,
+            "solution_search_thread_cpu_ns": 26409,
+            "solution_trials": 170,
+            "total_elapsed_ns": 10123097
+          },
+          "packet_index": 4,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "38796bff0ea731e623433ee51e42d238502a62d145d099158ec2d10186734042",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 27010,
+            "solve_trials": 170,
+            "value": {
+              "active": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "block": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "generation": 5,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 110165493,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 833032,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 80675695,
+          "ended_ns": 201476170,
+          "error": null,
+          "height": 6,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 72312903,
+            "construction_ns": 319015,
+            "failed_stage": null,
+            "solution_body_response_ns": 7925807,
+            "solution_found": true,
+            "solution_search_ns": 33883,
+            "solution_search_thread_cpu_ns": 31699,
+            "solution_trials": 156,
+            "total_elapsed_ns": 80630611
+          },
+          "packet_index": 5,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "3a9c52d7557717f6e0b2bb071c103846cce9cdb641508f96954a648b9c2b30fc",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 32350,
+            "solve_trials": 156,
+            "value": {
+              "active": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "block": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "generation": 6,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 120801797,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 773372,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 10160847,
+          "ended_ns": 212122653,
+          "error": null,
+          "height": 7,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 244156,
+            "construction_ns": 360182,
+            "failed_stage": null,
+            "solution_body_response_ns": 9468976,
+            "solution_found": true,
+            "solution_search_ns": 9858,
+            "solution_search_thread_cpu_ns": 8547,
+            "solution_trials": 33,
+            "total_elapsed_ns": 10115663
+          },
+          "packet_index": 6,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "c900b977969d3fed70e75f1ead75709549944bbabd455d84bcbe8ba9a4c54266",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 8956,
+            "solve_trials": 33,
+            "value": {
+              "active": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "block": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "generation": 7,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 201963409,
+          "status": "ok"
+        }
+      ],
+      "verification_errors": []
+    },
+    {
+      "all_keys": [
+        "accounting_closed",
+        "attacker_workers_cpu_ns",
+        "attacker_workers_cpu_scope",
+        "attacks",
+        "business_receive_clock",
+        "business_started_ns",
+        "client_confirmation_latency_ns",
+        "client_confirmed_before_original_window_end",
+        "client_confirmed_transactions",
+        "completed_false_calls_at_confirmation",
+        "completed_false_calls_before_business",
+        "confirmation_ended_ns",
+        "final_meter",
+        "finite_business_target_met",
+        "full_native_state_equal",
+        "honest_head_successes_in_window",
+        "honest_heads",
+        "honest_history",
+        "honest_submissions",
+        "independent_client_confirmation",
+        "independent_final_confirmation_stage",
+        "independent_history_page_replay",
+        "independent_operator_accepted",
+        "independent_replay_and_confirmation_cpu_ns",
+        "independent_replay_and_confirmation_wall_ns",
+        "initial_meter",
+        "initial_state_root",
+        "initial_tip",
+        "invariant_target_met",
+        "maximum_honest_head_gap_ns",
+        "mode",
+        "no_attack_accepted",
+        "observations",
+        "overlap_demonstrated",
+        "overlapping_false_calls",
+        "production_activation",
+        "public_network_ready",
+        "reader_cpu_ns",
+        "receiver_matches_valid_honest_prefix",
+        "requested_window_ns",
+        "resource_fairness_qualified",
+        "scope",
+        "service",
+        "target",
+        "task",
+        "verification_errors",
+        "work_profile_qualified",
+        "workers"
+      ],
+      "client_confirmed_transactions": 0,
+      "confirmation_ended_ns": null,
+      "history": [
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 1001337,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 190066628,
+          "ended_ns": 1993328789,
+          "error": null,
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 510914,
+            "construction_ns": 19697,
+            "failed_stage": null,
+            "solution_body_response_ns": 189423669,
+            "solution_found": true,
+            "solution_search_ns": 47889,
+            "solution_search_thread_cpu_ns": 46557,
+            "solution_trials": 292,
+            "total_elapsed_ns": 190021976
+          },
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": {
+            "body_bytes_sent": 164,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 46737,
+            "solve_trials": 292,
+            "value": {
+              "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "complete": false,
+              "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+              "next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "packets": [
+                {
+                  "omitted_long_string_chars": 99418,
+                  "original_json_pointer": "/phases/1/history/0/response/value/packets/0"
+                }
+              ],
+              "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+              "schema": "pon-native-history-v1",
+              "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1803263042,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 74,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 234468,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 92940380,
+          "ended_ns": 4092303244,
+          "error": "IO: Resource temporarily unavailable (os error 11)",
+          "lane": "confirmation_honest_history",
+          "metrics": {
+            "challenge_ns": 92874356,
+            "construction_ns": 16722,
+            "failed_stage": "challenge",
+            "solution_body_response_ns": 0,
+            "solution_found": false,
+            "solution_search_ns": 0,
+            "solution_trials": 0,
+            "total_elapsed_ns": 92891479
+          },
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "response": null,
+          "returned_after_deadline": false,
+          "returned_after_window": true,
+          "started_ns": 3999364226,
+          "status": "error"
+        }
+      ],
+      "independent_client_confirmation": null,
+      "independent_final_confirmation_stage": null,
+      "json_pointer": "/phases/1",
+      "submissions": [
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 835487,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 305457899,
+          "ended_ns": 401285566,
+          "error": null,
+          "height": 1,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 804310,
+            "construction_ns": 248423,
+            "failed_stage": null,
+            "solution_body_response_ns": 304283569,
+            "solution_found": true,
+            "solution_search_ns": 29334,
+            "solution_search_thread_cpu_ns": 28032,
+            "solution_trials": 154,
+            "total_elapsed_ns": 305411082
+          },
+          "packet_index": 0,
+          "recorded_request_bytes": 99445,
+          "recorded_request_digest": "ae89dd11b9e11ee359c34dd9b8d83f02e4f997ca096e6947a1b7a1fc3f34bf16",
+          "response": {
+            "body_bytes_sent": 99445,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 28082,
+            "solve_trials": 154,
+            "value": {
+              "active": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+              "generation": 1,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 95829951,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 1015955,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 294553578,
+          "ended_ns": 696439905,
+          "error": null,
+          "height": 2,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 1194658,
+            "construction_ns": 91506989,
+            "failed_stage": null,
+            "solution_body_response_ns": 201650114,
+            "solution_found": true,
+            "solution_search_ns": 76413,
+            "solution_search_thread_cpu_ns": 74529,
+            "solution_trials": 542,
+            "total_elapsed_ns": 294485692
+          },
+          "packet_index": 1,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "bbc4c040dd3b582f8f17e6b496cf93f1c32e19acde697696bd699ef12966943e",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 75491,
+            "solve_trials": 542,
+            "value": {
+              "active": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "block": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+              "generation": 2,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 401887469,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 972653,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 199526585,
+          "ended_ns": 896602818,
+          "error": null,
+          "height": 3,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 564563,
+            "construction_ns": 395428,
+            "failed_stage": null,
+            "solution_body_response_ns": 198436703,
+            "solution_found": true,
+            "solution_search_ns": 19345,
+            "solution_search_thread_cpu_ns": 18074,
+            "solution_trials": 91,
+            "total_elapsed_ns": 199462156
+          },
+          "packet_index": 2,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "f621d9129564a7acd2f4e9a520cab5af0ba364464054ea8306fe32132f337584",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 18274,
+            "solve_trials": 91,
+            "value": {
+              "active": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "block": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+              "generation": 3,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 697077565,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 811994,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 202108834,
+          "ended_ns": 1099228426,
+          "error": null,
+          "height": 4,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 870354,
+            "construction_ns": 268852,
+            "failed_stage": null,
+            "solution_body_response_ns": 200842712,
+            "solution_found": true,
+            "solution_search_ns": 7884,
+            "solution_search_thread_cpu_ns": 6312,
+            "solution_trials": 3,
+            "total_elapsed_ns": 202027622
+          },
+          "packet_index": 3,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "ca1ec819d6746d4d07bc9d24fa70590cdec9dd1491a9398a6e3e61b1235e408f",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 6802,
+            "solve_trials": 3,
+            "value": {
+              "active": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "block": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+              "generation": 4,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 897121005,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 883115,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 293053670,
+          "ended_ns": 1392762823,
+          "error": null,
+          "height": 5,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 1292351,
+            "construction_ns": 248343,
+            "failed_stage": null,
+            "solution_body_response_ns": 200456500,
+            "solution_found": true,
+            "solution_search_ns": 90955978,
+            "solution_search_thread_cpu_ns": 54342,
+            "solution_trials": 134,
+            "total_elapsed_ns": 292988218
+          },
+          "packet_index": 4,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "38796bff0ea731e623433ee51e42d238502a62d145d099158ec2d10186734042",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 90953843,
+            "solve_trials": 134,
+            "value": {
+              "active": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "block": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+              "generation": 5,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1099710495,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 1006125,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 199845150,
+          "ended_ns": 1593419376,
+          "error": null,
+          "height": 6,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 2078267,
+            "construction_ns": 365001,
+            "failed_stage": null,
+            "solution_body_response_ns": 197223179,
+            "solution_found": true,
+            "solution_search_ns": 62296,
+            "solution_search_thread_cpu_ns": 60644,
+            "solution_trials": 395,
+            "total_elapsed_ns": 199781071
+          },
+          "packet_index": 5,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "3a9c52d7557717f6e0b2bb071c103846cce9cdb641508f96954a648b9c2b30fc",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 60634,
+            "solve_trials": 395,
+            "value": {
+              "active": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "block": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+              "generation": 6,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1393575840,
+          "status": "ok"
+        },
+        {
+          "caller_fixture": 73,
+          "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+          "client_thread_cpu_ns": 896012,
+          "deadline_ms": 2000,
+          "elapsed_wall_ns": 208969986,
+          "ended_ns": 1803016411,
+          "error": null,
+          "height": 7,
+          "lane": "confirmation_honest_submit",
+          "metrics": {
+            "challenge_ns": 748690,
+            "construction_ns": 387182,
+            "failed_stage": null,
+            "solution_body_response_ns": 207708519,
+            "solution_found": true,
+            "solution_search_ns": 8506,
+            "solution_search_thread_cpu_ns": 7314,
+            "solution_trials": 26,
+            "total_elapsed_ns": 208892661
+          },
+          "packet_index": 6,
+          "recorded_request_bytes": 99043,
+          "recorded_request_digest": "c900b977969d3fed70e75f1ead75709549944bbabd455d84bcbe8ba9a4c54266",
+          "response": {
+            "body_bytes_sent": 99043,
+            "identity_authority": false,
+            "ok": true,
+            "public_network_ready": false,
+            "solve_elapsed_ns": 7614,
+            "solve_trials": 26,
+            "value": {
+              "active": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "block": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "generation": 7,
+              "physical_execution": false
+            }
+          },
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "started_ns": 1594047789,
+          "status": "ok"
+        }
+      ],
+      "verification_errors": []
+    }
+  ],
+  "report": {
+    "bytes": 11707964,
+    "path": "from-zero-native/confirmation/report.json",
+    "sha256": "71661f80ce81979eefd2ca2353476b534258fe2de112e830c1b8ffb426a9cb83"
+  },
+  "schema": "trnm-required-protocol-compact-business-boundaries-v1",
+  "source": {
+    "bytes": 842707,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/business-boundaries.json",
+    "sha256": "13b5399bfd017a776aaf9b21f0aae7911cfaf18b6aafddbcff097622ffda4660"
+  }
+}

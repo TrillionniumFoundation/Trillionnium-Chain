@@ -1,0 +1,153 @@
+def inspect_complete_zip(path):
+    stable_bytes(path, SIZE, DIGEST)
+    rows, seen, total = [], set(), 0
+    with zipfile.ZipFile(path) as archive:
+        infos = archive.infolist()
+        need(0 < len(infos) <= 10000, "ZIP_MEMBER_COUNT")
+        for info in infos:
+            normalized = safe_member(info.filename).as_posix()
+            need(normalized not in seen, "DUPLICATE_ZIP_MEMBER")
+            seen.add(normalized)
+            kind = stat.S_IFMT(info.external_attr >> 16)
+            need(kind in (0, stat.S_ISREG, stat.S_IFDIR) and not info.flag_bits & 0x41,
+                 "LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER")
+            need(info.compress_type in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED),
+                 "UNSUPPORTED_ZIP_COMPRESSION")
+            need(info.file_size <= 256 * 1024 * 1024, "ZIP_MEMBER_SIZE")
+            if info.is_dir():
+                need(info.file_size == 0, "DIRECTORY_BYTES")
+                continue
+            need(kind != stat.S_IFDIR, "DIRECTORY_NAME_MISMATCH")
+            total += info.file_size
+            need(total <= 512 * 1024 * 1024, "ZIP_TOTAL_SIZE")
+            h, crc, count = hashlib.sha256(), 0, 0
+            with archive.open(info) as stream:
+                while True:
+                    block = stream.read(65536)
+                    if not block:
+                        break
+                    h.update(block)
+                    crc = zlib.crc32(block, crc)
+                    count += len(block)
+                    need(count <= info.file_size, "EXPANDED_MEMBER_OVERRUN")
+            need(count == info.file_size and (crc & 0xffffffff) == info.CRC,
+                 "MEMBER_CRC_OR_SIZE")
+            rows.append({"path": info.filename, "bytes": count, "sha256": h.hexdigest(),
+                         "crc32": f"{info.CRC:08x}", "compressed_bytes": info.compress_size,
+                         "mode": info.external_attr >> 16})
+        stable_bytes(path, SIZE, DIGEST)
+        index = {"schema": "trnm-original-artifact-full-member-index-v1",
+                 "artifact_id": ARTIFACT, "zip": {"path": str(path), "bytes": SIZE, "sha256": DIGEST},
+                 "member_count": len(infos), "file_count": len(rows),
+                 "total_uncompressed_bytes": total, "all_members_CRC_SHA256_verified": True,
+                 "files": rows, "no_inner_code_executed": True}
+        index_pin = save_json("complete-zip-member-index.json", index)
+        members = {row["path"]: row for row in rows}
+        def read_member(name, cap):
+            need(name in members and members[name]["bytes"] <= cap, "DECLARED_MEMBER_BOUND")
+            data = archive.read(name)
+            need(len(data) == members[name]["bytes"]
+                 and hashlib.sha256(data).hexdigest() == members[name]["sha256"],
+                 "MEMBER_READBACK_SHA")
+            return data
+        prefix = "from-zero-native/"
+        manifest_raw = read_member(prefix + "manifest.json", 2 * 1024 * 1024)
+        manifest = parse_json(manifest_raw)
+        need(manifest.get("schema") == "trnm-from-zero-native-execution-v3", "NATIVE_MANIFEST_SCHEMA")
+        filemap = manifest.get("files")
+        need(isinstance(filemap, dict), "NATIVE_FILEMAP_TYPE")
+        expected_members = set()
+        for rel, digest in filemap.items():
+            path_part = safe_member(rel)
+            need(str(path_part) == rel and isinstance(digest, str)
+                 and re.fullmatch(r"[0-9a-f]{64}", digest) is not None, "NATIVE_FILEMAP_ROW")
+            name = prefix + rel
+            need(name in members and members[name]["sha256"] == digest,
+                 "NATIVE_DECLARED_MEMBER_SHA")
+            expected_members.add(name)
+        actual_members = {name for name in members if name.startswith(prefix)} - {prefix + "manifest.json"}
+        need(expected_members == actual_members, "NATIVE_EXACT_FILEMAP_CLOSURE")
+        map_pin = save_json("native-manifest-filemap-verification.json",
+                            {"declared_files": len(filemap), "actual_files": len(actual_members),
+                             "all_declared_hashes_match": True, "exact_prefix_closure": True})
+        before, after = manifest.get("source_before"), manifest.get("source_after")
+        need(isinstance(before, dict) and before == after, "NATIVE_SOURCE_BEFORE_AFTER")
+        need(before.get("commit") == HEAD and before.get("tree") == TREE
+             and before.get("test_sha256") == TEST_SHA, "NATIVE_SOURCE_AND_TEST_IDENTITY")
+        tracked = before.get("tracked_source_identity")
+        need(isinstance(tracked, dict) and tracked.get("schema") == "trnm-ci-source-v1"
+             and tracked.get("kind") == "head" and tracked.get("candidate") == HEAD
+             and tracked.get("tested_commit") == HEAD and tracked.get("tested_tree") == TREE
+             and tracked.get("base") is None and tracked.get("prospective_merge") is None
+             and tracked.get("tracked_worktree_verified") is True
+             and tracked.get("tests_executed_by_identity_check") is False,
+             "TRACKED_SOURCE_IDENTITY")
+        binary_before, binary_after = manifest.get("binary_sha256_before"), manifest.get("binary_sha256_after")
+        need(isinstance(binary_before, str) and re.fullmatch(r"[0-9a-f]{64}", binary_before) is not None
+             and binary_before == binary_after, "NATIVE_BINARY_BEFORE_AFTER")
+        runs = manifest.get("runs")
+        need(isinstance(runs, list) and [row.get("name") for row in runs] == list(SELECTORS),
+             "EXACT_FIVE_NATIVE_SELECTOR_ROSTER")
+        run_facts = []
+        for row in runs:
+            name = row["name"]
+            log_pins, raw_streams = {}, {}
+            for leaf in ("stdout", "stderr", "process.json"):
+                member_name = prefix + name + "/" + leaf
+                data = read_member(member_name, 2 * 1024 * 1024)
+                raw_streams[leaf] = data
+                log_pins[leaf] = save_member(member_name, data)
+            process = parse_json(raw_streams["process.json"])
+            need(process == row.get("process"), "ORIGINAL_PROCESS_MANIFEST_BINDING")
+            need(process.get("stdout_sha256") == hashlib.sha256(raw_streams["stdout"]).hexdigest()
+                 and process.get("stderr_sha256") == hashlib.sha256(raw_streams["stderr"]).hexdigest(),
+                 "NATIVE_STREAM_PROCESS_SHA")
+            run_facts.append({"name": name, "process": process, "passed": row.get("passed"),
+                              "named_execution": row.get("named_execution"), "failure": row.get("failure"),
+                              "failure_diagnostic": row.get("failure_diagnostic"),
+                              "originals": log_pins})
+        manifest_pin = save_member(prefix + "manifest.json", manifest_raw)
+        source_pin = save_json("source-before-after-extracted.json",
+                              {"source_before": before, "source_after": after,
+                               "binary_sha256_before": binary_before, "binary_sha256_after": binary_after})
+        report_name = prefix + "confirmation/report.json"
+        report_facts = None
+        if report_name in members:
+            report = parse_json(read_member(report_name, 128 * 1024 * 1024))
+            need(report.get("schema") == "public-v3-signed-confirmation-pressure-v1",
+                 "CONFIRMATION_REPORT_SCHEMA")
+            phases = report.get("phases")
+            need(isinstance(phases, list) and len(phases) == 2, "CONFIRMATION_PHASE_COUNT")
+            compact = []
+            for i, phase in enumerate(phases):
+                replays = phase.get("independent_history_page_replay")
+                need(isinstance(replays, list) and len(replays) <= 64, "REPLAY_RECORD_BOUND")
+                replay_facts = []
+                for j, replay in enumerate(replays):
+                    native = replay.get("native_import_observation")
+                    replay_facts.append({
+                        "json_pointer": f"/phases/{i}/independent_history_page_replay/{j}",
+                        "replay": {k: v for k, v in replay.items() if k != "native_import_observation"},
+                        "host_checks": native.get("host_checks") if isinstance(native, dict) else None,
+                        "measurement_failures": native.get("measurement_failures") if isinstance(native, dict) else None})
+                compact.append({"json_pointer": f"/phases/{i}",
+                                "phase_scalars": {k: v for k, v in phase.items()
+                                                  if v is None or isinstance(v, (bool, int, float, str))},
+                                "honest_submissions_count": len(phase.get("honest_submissions", [])),
+                                "honest_history_count": len(phase.get("honest_history", [])),
+                                "verification_errors": phase.get("verification_errors"), "replays": replay_facts})
+            report_facts = save_json("bounded-confirmation-report-facts.json",
+                                    {"report_member": members[report_name],
+                                     "top_scalar_values": {k: v for k, v in report.items()
+                                                          if v is None or isinstance(v, (bool, int, float, str))},
+                                     "phases": compact, "raw_report_only_in_verified_complete_ZIP": True,
+                                     "nested_intervals_not_additive": True, "no_wall_minus_CPU_causal_inference": True})
+        result = {"member_index": index_pin, "native_filemap": map_pin, "manifest": manifest_pin,
+                  "source_identity": source_pin, "runs": run_facts, "confirmation_facts": report_facts,
+                  "manifest_outcome": {key: manifest.get(key) for key in
+                      ("source_recompiled", "all_named_tests_passed", "format_passed", "failures",
+                       "passed", "execution_finished", "service_report", "sustained_report",
+                       "confirmation_report", "independent_wan_accepted", "work_hardness_accepted",
+                       "production_activation")}, "no_inner_code_or_test_executed": True}
+        stable_bytes(path, SIZE, DIGEST)
+        return result

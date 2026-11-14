@@ -1,8 +1,0 @@
-{
-  "producer_bytes": 28913,
-  "producer_sha256": "591e2a6539276d4942e74b756ac3ea43c6863da4a8cb5a440d7bd49079d6d8e8",
-  "manifest_bytes": 2753,
-  "manifest_sha256": "4fd6af800b1dd0afe4232fd77a7d78d1cee31e7cea914ab365a36a1ce2882065",
-  "terminal_exit": 0,
-  "summary_sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
-}

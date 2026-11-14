@@ -1,0 +1,85 @@
+{
+  "live_file_sizes": [
+    {
+      "bytes_at_observation": 2128840,
+      "device": 16777233,
+      "inode": 607202370,
+      "mtime_ns": 1794669510413007833,
+      "observation_only_not_completed_file_pin": true,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119000610.zip"
+    },
+    {
+      "bytes_at_observation": 4571136,
+      "device": 16777233,
+      "inode": 607202386,
+      "mtime_ns": 1794669511349122454,
+      "observation_only_not_completed_file_pin": true,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119380013.zip"
+    },
+    {
+      "bytes_at_observation": 0,
+      "device": 16777233,
+      "inode": 607202371,
+      "mtime_ns": 1794669238385180173,
+      "observation_only_not_completed_file_pin": true,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119000610-zip.stderr"
+    },
+    {
+      "bytes_at_observation": 0,
+      "device": 16777233,
+      "inode": 607202387,
+      "mtime_ns": 1794669239423750482,
+      "observation_only_not_completed_file_pin": true,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119380013-zip.stderr"
+    }
+  ],
+  "no_restart_no_retry_no_signal": true,
+  "observed_at": "2026-11-14T15:18:32.209164+00:00",
+  "rows": [
+    {
+      "argv": [
+        "/usr/sbin/sysctl",
+        "-n",
+        "kern.boottime"
+      ],
+      "exit_code": 0,
+      "label": "boot",
+      "started_at": "2026-11-14T15:18:32.200125+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/owner-observation-v1/boot.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 61,
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/owner-observation-v1/boot.stdout",
+        "sha256": "1bf2961ac3ea17ebc665923d2b4d0e3fc8f1ee625bfeb922c4d03c1afce4fb09"
+      },
+      "stdout_text": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\n"
+    },
+    {
+      "argv": [
+        "/bin/ps",
+        "-p",
+        "7695,7702,7773,7782",
+        "-o",
+        "pid=,ppid=,uid=,comm=,etime=,stat=,lstart="
+      ],
+      "exit_code": 0,
+      "label": "owned",
+      "started_at": "2026-11-14T15:18:32.202312+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/owner-observation-v1/owned.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 300,
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/owner-observation-v1/owned.stdout",
+        "sha256": "e01fe7b54cb0cf9f4ecb5586e4a88d19c80f6fa64a9491a6d4bef6710cefe044"
+      },
+      "stdout_text": " 7695     1   501 /Applications/Xc 04:36 Ss   Sat Nov 14 23:13:56 2026    \n 7773  7702   501 /opt/homebrew/bi 04:34 Ss   Sat Nov 14 23:13:58 2026    \n 7782  7702   501 /opt/homebrew/bi 04:33 Ss   Sat Nov 14 23:13:59 2026    \n 7702  7695   501 /opt/homebrew/Ce 04:36 Ss+  Sat Nov 14 23:13:56 2026    \n"
+    }
+  ],
+  "schema": "trnm-original-download-owner-readonly-observation-v1"
+}

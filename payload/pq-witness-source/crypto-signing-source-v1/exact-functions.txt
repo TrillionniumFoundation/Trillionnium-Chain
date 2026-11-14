@@ -1,0 +1,3 @@
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs:154:    pub fn verify_exact_message<'a>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs:182:pub struct PqNativeSigningKey {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs:232:    pub fn sign_exact_message(

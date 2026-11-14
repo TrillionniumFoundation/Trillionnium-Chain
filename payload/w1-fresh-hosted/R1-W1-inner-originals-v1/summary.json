@@ -1,0 +1,180 @@
+{
+  "complete": true,
+  "created_at": "2026-11-14T14:48:01.387566+00:00",
+  "download_summary": {
+    "bytes": 3514,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/download-summary.json",
+    "sha256": "338058bd142703008b8dc4308c131008b082ff2cb9738100d084a33a30817df6",
+    "version": [
+      16777233,
+      607185835,
+      33152,
+      1,
+      3514,
+      1794667663134427018,
+      1794667663134427018
+    ]
+  },
+  "metadata": {
+    "bytes": 6117,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/metadata-summary.json",
+    "sha256": "2a538933fc2ffda93843423b2b3a75208343187596b2578fdd532b07b3324238",
+    "version": [
+      16777233,
+      607181671,
+      33152,
+      1,
+      6117,
+      1794667218017605523,
+      1794667218017605523
+    ]
+  },
+  "native_or_tests_run": false,
+  "note": "All original bytes retained in full ZIP. Selected bounded text/JSON extracted without executing artifact content; report bodies above1MiB retained only in complete ZIP.",
+  "qualification": false,
+  "results": [
+    {
+      "artifact_id": 14117751904,
+      "file_count": 57,
+      "index": {
+        "bytes": 35408,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904-index.json",
+        "sha256": "336d9c72148da9a24b4864a19ae1d7d5e0e7c07ec1d9555fa4fb002529a12cf6",
+        "version": [
+          16777233,
+          607186128,
+          33152,
+          1,
+          35408,
+          1794667681347026559,
+          1794667681347026559
+        ]
+      },
+      "job_id": 132475259337,
+      "kind": "head",
+      "manifest": {
+        "bytes": 8909,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/manifest.json",
+        "sha256": "1aa8604941327a834c9ae2897006f45cec3f71d19a97887734635bb1f32a1924",
+        "version": [
+          16777233,
+          607186094,
+          33152,
+          1,
+          8909,
+          1794667681309172310,
+          1794667681309172310
+        ]
+      },
+      "manifest_top_level_keys": [
+        "schema",
+        "source_before",
+        "source_after",
+        "source_expected",
+        "source_recompiled",
+        "all_named_tests_passed",
+        "runs",
+        "failures",
+        "passed",
+        "execution_finished",
+        "requested_window_ns",
+        "attack_workers",
+        "independent_wan_accepted",
+        "work_hardness_accepted",
+        "production_activation",
+        "build",
+        "binary_sha256_before",
+        "binary_sha256_after",
+        "files"
+      ],
+      "selected_files": 32,
+      "total_uncompressed_bytes": 38149251,
+      "zip": {
+        "bytes": 6479218,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+        "sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+        "version": [
+          16777233,
+          607182104,
+          33152,
+          1,
+          6479218,
+          1794667632793698441,
+          1794667632793698441
+        ]
+      }
+    },
+    {
+      "artifact_id": 14117403147,
+      "file_count": 57,
+      "index": {
+        "bytes": 35421,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147-index.json",
+        "sha256": "2f0d62fea1eaa55052a74094d6b1f597e020cbe6e6eabc2e7522d1af7dcd5ca6",
+        "version": [
+          16777233,
+          607186165,
+          33152,
+          1,
+          35421,
+          1794667681387448973,
+          1794667681387448973
+        ]
+      },
+      "job_id": 132475258996,
+      "kind": "prospective-merge",
+      "manifest": {
+        "bytes": 8909,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/fresh-service/manifest.json",
+        "sha256": "c61b4c8d1e8c43d8f3b2f9555add5fc0bfffdf84606f995ca62d149f37058358",
+        "version": [
+          16777233,
+          607186133,
+          33152,
+          1,
+          8909,
+          1794667681356601873,
+          1794667681356601873
+        ]
+      },
+      "manifest_top_level_keys": [
+        "schema",
+        "source_before",
+        "source_after",
+        "source_expected",
+        "source_recompiled",
+        "all_named_tests_passed",
+        "runs",
+        "failures",
+        "passed",
+        "execution_finished",
+        "requested_window_ns",
+        "attack_workers",
+        "independent_wan_accepted",
+        "work_hardness_accepted",
+        "production_activation",
+        "build",
+        "binary_sha256_before",
+        "binary_sha256_after",
+        "files"
+      ],
+      "selected_files": 32,
+      "total_uncompressed_bytes": 37570452,
+      "zip": {
+        "bytes": 6451341,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+        "sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a",
+        "version": [
+          16777233,
+          607182105,
+          33152,
+          1,
+          6451341,
+          1794667663040196402,
+          1794667663040196402
+        ]
+      }
+    }
+  ],
+  "schema": "trnm-r1-fresh-service-complete-zip-verification-v1"
+}

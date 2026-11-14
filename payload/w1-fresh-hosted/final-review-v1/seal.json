@@ -1,0 +1,18 @@
+{
+  "all_selected_source_bytes_hash_verified": true,
+  "index": {
+    "bytes": 70352,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "57f85deaee4ac30a919e61ae6f9a2c439f52fb717662b22caf1d14b750d0570b"
+  },
+  "no_inflight_download": true,
+  "review": {
+    "bytes": 25313,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/final-review-v1/review.json",
+    "sha256": "8c795074c468b1af0c43967fa51ba1a2e9da36e92fbd426b7d1c27fb998832d6"
+  },
+  "schema": "trnm-closed-review-seal-v1",
+  "selected_bytes": 14545496,
+  "selected_files": 182,
+  "stage_written": false
+}

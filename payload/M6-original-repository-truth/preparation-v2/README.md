@@ -1,3 +1,0 @@
-# M6 closed original evidence roster extension
-
-The original lane passed. The first custody packager stopped before ZIP/index output because the successful lane produced twelve additional original w1-postwin-contracts logs, totaling 29,470 bytes. This preparation retains that failed packaging result unchanged. The v2 roster adds exactly those twelve original relative paths, sizes and SHA256 values; all original 39 required flat files, original driver, invocation, source identity and terminal guards remain. The resulting ZIP has 54 members (51 originals, driver, packager, index). No original execution or test is rerun. The v2 packager has not been executed at this preparation stage.

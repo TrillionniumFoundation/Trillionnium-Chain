@@ -1,0 +1,30 @@
+{
+  "all_member_crc_verified": false,
+  "archive_bytes": 59887660,
+  "central_directory_fully_in_existing_tail": false,
+  "eocd": {
+    "absolute_offset": 59887638,
+    "central_directory_bytes": 376516,
+    "central_directory_disk": 0,
+    "central_directory_offset": 59511122,
+    "comment_bytes": 0,
+    "disk": 0,
+    "entries_on_disk": 4140,
+    "total_entries": 4140
+  },
+  "member_execution": false,
+  "network_requests": 0,
+  "next_exact_central_directory_range": "bytes=59511122-59887637",
+  "observed_at": "2026-11-14T15:41:36.699321+00:00",
+  "original_512_guard_exceeded": true,
+  "qualification": false,
+  "schema": "trnm-r1-history-existing-tail-eocd-observation-v1",
+  "tail": {
+    "bytes": 65557,
+    "offset": 59822103,
+    "path": "/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2/tail-range.body",
+    "sha256": "f140bd7c067a6448800914fbccc9ed06b982fbde5485f5b6d1249681df39f559"
+  },
+  "whole_artifact_sha256_verified": false,
+  "zip64_locator_present": false
+}

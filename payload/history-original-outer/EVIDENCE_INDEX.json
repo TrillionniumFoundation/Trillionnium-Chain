@@ -1,0 +1,67 @@
+{
+  "coverage": "Only this one bounded GET acquisition; no CI rerun and no tested-source inference",
+  "files": [
+    {
+      "bytes": 16927,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/acquisition-summary.json",
+      "sha256": "608157881e7cb623aab3f3f1cb26028879f6b98265d3ee370fc9a266c7fe04db"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6097,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stdout",
+      "sha256": "f58d644a9fd4cc596c5d62af6f9df8aab94e2e8beebe49594b486b7f97fa9068"
+    },
+    {
+      "bytes": 1409,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.step.json",
+      "sha256": "6d9f6ff1db9560148a65e8677a2fb60a88a747e617dbfc9373bcf3bc6f8454ef"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178249,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stdout",
+      "sha256": "3ba328053189e7e8a25c8fb5cfc5780941dc21d96afba56808fe61bc1a7e536e"
+    },
+    {
+      "bytes": 1440,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.step.json",
+      "sha256": "6eb0f9bed5863373f25ca3cf3a67618fb2fb99809f8d02802192c192aeabece7"
+    },
+    {
+      "bytes": 488,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/launch.json",
+      "sha256": "1077f2c7864c764c30485b49d6890d5a5e6d53228147bd9701b59374756c3423"
+    },
+    {
+      "bytes": 7331,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/producer.py",
+      "sha256": "fadc44ad0a758ef5cf9e97ee6b0da0ded2a0dc25e055e3844e3f1c837be312f7"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15155,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.stdout",
+      "sha256": "87af81915052f6a1f04effef72fb362e5f9edb771a49602d6a7871bb38402061"
+    },
+    {
+      "bytes": 1403,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.step.json",
+      "sha256": "4ae441f901f46dfcce346b0f0caedf7b1b042d6af83e77ef105229de167b5053"
+    }
+  ],
+  "schema": "trnm-fixed-original-file-index-v1",
+  "self_excluded": true
+}

@@ -1,0 +1,14 @@
+{
+  "corrected": {
+    "bytes": 29683,
+    "sha256": "89643383cab36c98575064c45ff0029693b3dd987ef7b453377c04e2a2dad34d"
+  },
+  "exact_changed_identifier": "stat.S_ISREG function to stat.S_IFREG regular-file type constant",
+  "link_special_and_encryption_guards_unchanged": true,
+  "original": {
+    "bytes": 29683,
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py",
+    "sha256": "6aec3684388395ae38f6d871f5d764dce419a41ba1c62d425c81dabcb415b3f9"
+  },
+  "source_file_not_modified": true
+}

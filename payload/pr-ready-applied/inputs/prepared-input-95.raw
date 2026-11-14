@@ -1,0 +1,36 @@
+{
+  "collector_disposition": {
+    "exact_excerpt": "B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification.",
+    "payload_path": "post-m5-root-closures/reviewed-collector-disposition-v1.txt",
+    "state": "reviewed"
+  },
+  "hosted_checks": {
+    "state": "not_observed_for_final_candidate"
+  },
+  "publication_receipt": {
+    "bytes": 6458208,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+    "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+  },
+  "publication_resume_receipt": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+    "bytes": 231108,
+    "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+  },
+  "publication_resume_spec": {
+    "bytes": 2428,
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+    "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+  },
+  "publication_resume_terminal": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+    "bytes": 22383,
+    "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+  },
+  "publication_spec": {
+    "bytes": 1847,
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+    "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+  },
+  "schema": "trnm-pr847-final-audit-inputs-v2"
+}

@@ -1,0 +1,485 @@
+{
+  "artifact_inputs": {
+    "download": {
+      "bytes": 3514,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/download-summary.json",
+      "sha256": "338058bd142703008b8dc4308c131008b082ff2cb9738100d084a33a30817df6"
+    },
+    "metadata": {
+      "bytes": 6117,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/metadata-summary.json",
+      "sha256": "2a538933fc2ffda93843423b2b3a75208343187596b2578fdd532b07b3324238"
+    },
+    "verification": {
+      "bytes": 5353,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/summary.json",
+      "sha256": "af9c530a544283d04a7c63ba86dc4833889717b55e8da86d121babaf48f12c4d"
+    }
+  },
+  "conclusion": {
+    "P1_cache_present_not_performance_qualification": true,
+    "four_second_budget_and_six_depth_not_relaxed": true,
+    "fresh": "Both explicit fresh selectors exit101 at fresh_challenge.rs:244:5, asserting original four-second/six-depth business target; runner retains FRESH_NATIVE_TEST_FAILED.",
+    "host_controller_cause": "Complete outer logs retain failure=null and final_host_errors=[]; systemd child exit1 follows actual inner failures.",
+    "last_replay": "All four retained failure diagnostics end with PUBLIC_REQUEST_DEADLINE and replay_accepted=false.",
+    "original": "Both Rust original selectors exit0 with1pass, but finite_target_met=false and the report validator rejects CONFIRMATION_TARGET.",
+    "rootcause_below_deadline": "Precise scheduling/CPU/verification-cost cause is not established by these manifests alone; architecture independently reviews original report phase data.",
+    "sixteen_workers_not_relaxed": true,
+    "source_or_build_failure": false
+  },
+  "merge_condition": {
+    "current_M3": "CLEAN required",
+    "official_sources": [
+      "https://docs.github.com/en/graphql/reference/pulls#mergestatestatus",
+      "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
+    ],
+    "risk": "Official UNSTABLE means mergeable with nonpassing commit status; CLEAN may be broader than protection-required checks when optional checks fail. No adapter or policy changed; actual required results/state still govern."
+  },
+  "no_actions": {
+    "Git_or_stage_write": true,
+    "budget_change": true,
+    "cancel_dispatch_rerun": true,
+    "source_or_workflow_change": true,
+    "test_or_native_execution": true
+  },
+  "optional_boundary": {
+    "cannot_replace_required_protocol_five_selectors": true,
+    "initial_four": "Historical retained-failure and three historical-subject budget controls; their names alone do not prove expected success or a current runtime regression.",
+    "new_two": "Actual R1 fresh-service head/prospective jobs from run43604217632, attempt1; substantive finite-business-target failure retained.",
+    "not_promoted_to_required_gate": true
+  },
+  "preserved_observational_failures": [
+    "First raw job-log downloads ended network timeout and are preserved separately; subsequent explicit bounded retrieval obtained complete logs.",
+    "Hepta temporarily marked the unique ZIP download session lost/target_reboot while boottime seconds and original processes continued; original lost observation and readonly reconciliation retained. Same session later naturally closed exit0; no second ZIP request.",
+    "Two local orchestration parse errors occurred before any target invocation and are recorded separately, with no CI effect."
+  ],
+  "queue": {
+    "cancel_in_progress": false,
+    "group_expression": "portable-${{ github.workflow }}-${{ github.ref }}",
+    "identical_N2_workflow": {
+      "bytes": 35462,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-required-workflow.stdout",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    },
+    "interpretation_at_original_snapshot": "Old N2 was the observed active workflow for the same PR group; R1 pending with zero jobs was workflow concurrency waiting, not an optional job dependency.",
+    "latest_status_not_polled": true,
+    "newer_external_observations": [
+      {
+        "bytes": 14088,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-004/summary.json",
+        "sha256": "558bd56aabc31c5174f104c6a174069a53b4a459434170bfcc28fa29aa6a3d96"
+      },
+      {
+        "bytes": 137780,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-old-required-after-cancel-ready-004/summary.json",
+        "sha256": "82f2c8798d1a7b30bfc12330f93700234b664a95547180650c45c0ae7de16444"
+      }
+    ],
+    "newer_reported_facts": "ready004 at14:42:27Z R1 queued with18jobs; old N2 observed14:43:01Z completed/cancelled. These are separately captured observations after root's cancellation, not actions by this review.",
+    "old_jobs": {
+      "bytes": 65982,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/dependent-and-controls-v1/N2-required-43588788281-jobs-page-001.stdout",
+      "sha256": "7c46e3c028d4003e046193c70e28d449c186f4dea39faee858107118ca97dd76"
+    },
+    "old_jobs_complete": true,
+    "old_metadata": {
+      "bytes": 17155,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-run-43588788281-metadata.stdout",
+      "sha256": "0d18ba5d00d228a5c2392df41cc516e42c99b7ee58b37dc46761b6194a1a3254"
+    },
+    "old_nonterminal_ids": [
+      132453107096,
+      132453107166,
+      132453107168,
+      132453107234
+    ],
+    "old_source_head": "096c6b5f9b952c49389fd975515744074ba61317",
+    "old_source_run": 43588788281,
+    "required_run": 43604217412,
+    "workflow": {
+      "bytes": 35462,
+      "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-required-workflow.stdout",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    }
+  },
+  "results": [
+    {
+      "all57_crc_sha_verified": true,
+      "all_declared_manifest_file_hashes_match": true,
+      "archive": {
+        "bytes": 6479218,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+        "sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+        "version": [
+          16777233,
+          607182104,
+          33152,
+          1,
+          6479218,
+          1794667632793698441,
+          1794667632793698441
+        ]
+      },
+      "artifact_id": 14117751904,
+      "attack_workers": 16,
+      "binary_sha256": "00947de0454b64fc04d2ced0be3d76009218f22ab8edeb564eea563708745ce4",
+      "flags": {
+        "all_named_tests_passed": false,
+        "execution_finished": true,
+        "independent_wan_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "work_hardness_accepted": false
+      },
+      "inner_manifest_source": {
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+          "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3994964901,
+          "tracked_entries": 41677,
+          "tracked_worktree_verified": true
+        },
+        "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+      },
+      "inner_source_kind_note": "The inner verifier identifies its actual checked-out commit as kind head; the outer source record retains head/prospective-merge distinction. Actual tested commit and tree agree.",
+      "job_id": 132475259337,
+      "manifest": {
+        "bytes": 8909,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/manifest.json",
+        "sha256": "1aa8604941327a834c9ae2897006f45cec3f71d19a97887734635bb1f32a1924"
+      },
+      "member_index": {
+        "bytes": 35408,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904-index.json",
+        "sha256": "336d9c72148da9a24b4864a19ae1d7d5e0e7c07ec1d9555fa4fb002529a12cf6"
+      },
+      "requested_window_ns": 4000000000,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "original_log": {
+            "bytes": 421,
+            "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/original.log",
+            "sha256": "446c0eb07471786cb3ec42c8d9e1d490f64200168cae3af82b627664a4f2f647"
+          },
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 47917949430,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "raw_log_text": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-43604217632-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 9.00s\n\n",
+          "report_original_zip_member": {
+            "bytes": 12003417,
+            "crc32": "742939c1",
+            "path": "fresh-service/original/report.json",
+            "sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08"
+          },
+          "selector": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+        },
+        {
+          "failure": "FRESH_NATIVE_TEST_FAILED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "original_log": {
+            "bytes": 915,
+            "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/fresh.log",
+            "sha256": "d833a6bbe0de6e2fa0ef14c7110d9c50f63471feba25435b837525515178213e"
+          },
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 47812459035,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "raw_log_text": "\nrunning 1 test\ntest fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-43604217632-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}\n\nthread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5582) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:\nfresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 8.80s\n\n",
+          "report_original_zip_member": {
+            "bytes": 8528638,
+            "crc32": "6fcd5c62",
+            "path": "fresh-service/fresh/report.json",
+            "sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96"
+          },
+          "selector": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget"
+        }
+      ],
+      "source": {
+        "base": null,
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "bytes": 423,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/source-after.json",
+        "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+      },
+      "source_before": {
+        "bytes": 423,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/source.json",
+        "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+      },
+      "source_kind": "head",
+      "source_recompiled": true
+    },
+    {
+      "all57_crc_sha_verified": true,
+      "all_declared_manifest_file_hashes_match": true,
+      "archive": {
+        "bytes": 6451341,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+        "sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a",
+        "version": [
+          16777233,
+          607182105,
+          33152,
+          1,
+          6451341,
+          1794667663040196402,
+          1794667663040196402
+        ]
+      },
+      "artifact_id": 14117403147,
+      "attack_workers": 16,
+      "binary_sha256": "00947de0454b64fc04d2ced0be3d76009218f22ab8edeb564eea563708745ce4",
+      "flags": {
+        "all_named_tests_passed": false,
+        "execution_finished": true,
+        "independent_wan_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "work_hardness_accepted": false
+      },
+      "inner_manifest_source": {
+        "commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+          "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 3994964901,
+          "tracked_entries": 41677,
+          "tracked_worktree_verified": true
+        },
+        "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+      },
+      "inner_source_kind_note": "The inner verifier identifies its actual checked-out commit as kind head; the outer source record retains head/prospective-merge distinction. Actual tested commit and tree agree.",
+      "job_id": 132475258996,
+      "manifest": {
+        "bytes": 8909,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/fresh-service/manifest.json",
+        "sha256": "c61b4c8d1e8c43d8f3b2f9555add5fc0bfffdf84606f995ca62d149f37058358"
+      },
+      "member_index": {
+        "bytes": 35421,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147-index.json",
+        "sha256": "2f0d62fea1eaa55052a74094d6b1f597e020cbe6e6eabc2e7522d1af7dcd5ca6"
+      },
+      "requested_window_ns": 4000000000,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "original_log": {
+            "bytes": 434,
+            "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/fresh-service/original.log",
+            "sha256": "77a830c4a3536acf7e122e74e39eb09d3081cd7d68e403510ffd39c796241f27"
+          },
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 49025210949,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "raw_log_text": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 9.09s\n\n",
+          "report_original_zip_member": {
+            "bytes": 11774935,
+            "crc32": "56c51b74",
+            "path": "fresh-service/original/report.json",
+            "sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686"
+          },
+          "selector": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+        },
+        {
+          "failure": "FRESH_NATIVE_TEST_FAILED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "original_log": {
+            "bytes": 928,
+            "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/fresh-service/fresh.log",
+            "sha256": "19c15b6f516f9e7ac0ee16794b2beba64a0d504b342ec7f79538268bf1e3212d"
+          },
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 48698464793,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "raw_log_text": "\nrunning 1 test\ntest fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}\n\nthread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5605) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:\nfresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 8.89s\n\n",
+          "report_original_zip_member": {
+            "bytes": 8177939,
+            "crc32": "259f3952",
+            "path": "fresh-service/fresh/report.json",
+            "sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71"
+          },
+          "selector": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget"
+        }
+      ],
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "bytes": 512,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/source-after.json",
+        "sha256": "2b62da02a9cd68920e67923dd8ac2baa1c4102d1e632446499edbcc038720680"
+      },
+      "source_before": {
+        "bytes": 512,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117403147/source.json",
+        "sha256": "2b62da02a9cd68920e67923dd8ac2baa1c4102d1e632446499edbcc038720680"
+      },
+      "source_kind": "prospective-merge",
+      "source_recompiled": true
+    }
+  ],
+  "schema": "trnm-R1-required-queue-and-fresh-service-failure-review-v1",
+  "scope": "Read-only existing source/API/log/artifact evidence; no native/test rerun or source/stage/Git/remote mutation",
+  "source": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  }
+}

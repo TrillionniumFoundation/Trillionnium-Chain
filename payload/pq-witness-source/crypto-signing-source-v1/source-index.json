@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "bytes": 12902,
+      "file": "trillionnium--crates--trnm-crypto-primitives--src--pq_auth.rs.original",
+      "git_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+    }
+  ],
+  "revision": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

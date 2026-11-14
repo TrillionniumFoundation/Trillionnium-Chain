@@ -1,0 +1,98 @@
+{
+  "actual_tool_readbacks": [
+    {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362/output.log",
+      "available_end": 452,
+      "bytes_hex": "7b2270726f6475636572223a207b2270617468223a20222f707269766174652f746d702f636861696e2d52312d72657175697265642d686561642d70726f746f636f6c2d61727469666163742d7265766965772d32303236313131342d76312f616371756972652d73656c65637465642d6d656d626572732d76312e7079222c20226279746573223a2031373835312c2022736861323536223a202238313264636137643437336233323663623035326661333435356533383565626365663362343962313538663761313563396162373130353430633833376439227d7d0d0a7b2272616e67655f636c6f736564223a202263616c6c65722d7265636f726473222c202265786974223a20302c2022636f6d706c657465223a20747275652c202272657461696e65645f6279746573223a20313036362c20226572726f72223a206e756c6c7d0d0a7b2272616e67655f636c6f736564223a202272656d61696e696e672d73656c6563746f72732d616e642d6d616e6966657374222c202265786974223a20302c2022636f6d706c657465223a20747275652c202272657461696e65645f6279746573223a2031373438322c20226572726f72223a206e756c6c7d0d0a",
+      "chunk_sha256": "a1eb70ba9a92dc37875c7bab38e962108fa52e879cd147b2921ed9f7f7743e23",
+      "host": "mac",
+      "next_offset": 452,
+      "offset": 0,
+      "output_complete": false,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 452,
+        "bytes_stored": 452,
+        "capture_error": null,
+        "created_unix_ms": 1794671981862,
+        "output_complete": false,
+        "owner_pid": 57220,
+        "pid": 57221,
+        "state": "running"
+      },
+      "storage": "target_archive",
+      "text": "{\"producer\": {\"path\": \"/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py\", \"bytes\": 17851, \"sha256\": \"812dca7d473b326cb052fa3455e385ebcef3b49b158f7a15c9ab710540c837d9\"}}\r\n{\"range_closed\": \"caller-records\", \"exit\": 0, \"complete\": true, \"retained_bytes\": 1066, \"error\": null}\r\n{\"range_closed\": \"remaining-selectors-and-manifest\", \"exit\": 0, \"complete\": true, \"retained_bytes\": 17482, \"error\": null}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    },
+    {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362/output.log",
+      "available_end": 938,
+      "bytes_hex": "7b2272616e67655f636c6f736564223a2022636f6e6669726d6174696f6e2d7265706f7274222c202265786974223a20302c2022636f6d706c657465223a20747275652c202272657461696e65645f6279746573223a203532353933352c20226572726f72223a206e756c6c7d0d0a7b22737461747573223a202253454c45435445445f4f524947494e414c5f4d454d424552535f5645524946494544222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d52312d72657175697265642d686561642d70726f746f636f6c2d61727469666163742d7265766965772d32303236313131342d76312f73656c65637465642d6d656d626572732d76312f73756d6d6172792e6a736f6e222c20226279746573223a2031383837342c2022736861323536223a202238363662316566313439613232393935333861653134343439663931326466316137333734366166363839353038613038626137616162343366323832383261227d2c20226572726f7273223a205b5d2c20226d616e69666573745f6661696c75726573223a205b22434f4e4649524d4154494f4e5f544152474554225d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73657d0d0a",
+      "chunk_sha256": "78affaa8e73f26484a1a9f5a359c2309f46857b0fde0688fd1c96f268b9c61ee",
+      "host": "mac",
+      "next_offset": 938,
+      "offset": 452,
+      "output_complete": true,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 938,
+        "bytes_stored": 938,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794671981862,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 57220,
+        "pid": 57221,
+        "state": "exited"
+      },
+      "storage": "target_archive",
+      "text": "{\"range_closed\": \"confirmation-report\", \"exit\": 0, \"complete\": true, \"retained_bytes\": 525935, \"error\": null}\r\n{\"status\": \"SELECTED_ORIGINAL_MEMBERS_VERIFIED\", \"summary\": {\"path\": \"/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json\", \"bytes\": 18874, \"sha256\": \"866b1ef149a2299538ae14449f912df1a73746af689508a08ba7aab43f28282a\"}, \"errors\": [], \"manifest_failures\": [\"CONFIRMATION_TARGET\"], \"whole_artifact_sha256_verified\": false}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    }
+  ],
+  "raw_archive_complete": true,
+  "schema": "trnm-actual-terminal-archive-readback-v1",
+  "session_id": "dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 938,
+    "bytes_stored": 938,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794671981862,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 57220,
+    "pid": 57221,
+    "state": "exited"
+  },
+  "whole_archive": {
+    "origin": {
+      "host": "mac",
+      "path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-b78dee045f197a8da47dab2a347f5cfb958302db1802fb351a3fd11a6b3d6362/output.log"
+    },
+    "preserved": {
+      "bytes": 938,
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/selected-ranges.stdout",
+      "sha256": "12b287f5669d0c5d515a5411de24f2fc9c900eee6dfe04c4fa4a642e55602d46"
+    },
+    "version": [
+      16777233,
+      607232968,
+      33152,
+      1,
+      938,
+      1794672017231883743,
+      1794672017231883743
+    ]
+  }
+}

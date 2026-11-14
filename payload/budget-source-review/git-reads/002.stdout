@@ -1,0 +1,10 @@
+tree def5ae894d06b787222b6b2b2b2d97bf8be59366
+parent 85a905b9e47cea0d76144253abb4a483b58bc2be
+author Codex <codex@openai.com> 1794367449 -0500
+committer Codex <codex@openai.com> 1794367449 -0500
+
+test(pon): expose missed original pool reconciliation stop checks
+
+Retain exact prior production and add only cfg(test) observation hooks with real signed pool rows. The same source-bound controls will run on the corrected candidate. No budget, Host polling, timeout or consensus change.
+
+Signed-off-by: Codex <codex@openai.com>

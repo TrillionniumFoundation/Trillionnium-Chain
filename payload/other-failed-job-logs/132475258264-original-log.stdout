@@ -1,0 +1,57 @@
+﻿2026-11-14T14:19:06.0520800Z Current runner version: '2.338.2'
+2026-11-14T14:19:06.0552129Z ##[group]Runner Image Provisioner
+2026-11-14T14:19:06.0553132Z Hosted Compute Agent
+2026-11-14T14:19:06.0554008Z Version: 20261103.629
+2026-11-14T14:19:06.0554922Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-14T14:19:06.0555984Z Build Date: 2026-11-03T17:26:59Z
+2026-11-14T14:19:06.0557068Z Worker ID: {257e56f0-efc6-4a50-b7e8-15ac72069579}
+2026-11-14T14:19:06.0558048Z Region: eastus2
+2026-11-14T14:19:06.0558778Z Cloud: Azure
+2026-11-14T14:19:06.0559497Z ##[endgroup]
+2026-11-14T14:19:06.0561310Z ##[group]Operating System
+2026-11-14T14:19:06.0562086Z Ubuntu
+2026-11-14T14:19:06.0562804Z 24.04.5
+2026-11-14T14:19:06.0563468Z LTS
+2026-11-14T14:19:06.0564283Z ##[endgroup]
+2026-11-14T14:19:06.0564994Z ##[group]Runner Image
+2026-11-14T14:19:06.0565754Z Image: ubuntu-24.04
+2026-11-14T14:19:06.0566842Z Version: 20261111.370.1
+2026-11-14T14:19:06.0568502Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-14T14:19:06.0570660Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.370
+2026-11-14T14:19:06.0572002Z ##[endgroup]
+2026-11-14T14:19:06.0573552Z ##[group]GITHUB_TOKEN Permissions
+2026-11-14T14:19:06.0576032Z Actions: read
+2026-11-14T14:19:06.0576950Z Contents: read
+2026-11-14T14:19:06.0577636Z Metadata: read
+2026-11-14T14:19:06.0578466Z ##[endgroup]
+2026-11-14T14:19:06.0581084Z Secret source: Actions
+2026-11-14T14:19:06.0582391Z Cache mode: write
+2026-11-14T14:19:06.0583656Z Prepare workflow directory
+2026-11-14T14:19:06.1021402Z Prepare all required actions
+2026-11-14T14:19:06.1060790Z Getting action download info
+2026-11-14T14:19:06.2659574Z Download action repository 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0' (SHA:634f93cb2916e3fdff6788551b99b062d0335ce0)
+2026-11-14T14:19:06.6348352Z Complete job name: retained-pressure-failure
+2026-11-14T14:19:06.6988046Z ##[group]Run actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+2026-11-14T14:19:06.6988975Z with:
+2026-11-14T14:19:06.6989620Z   artifact-ids: 11531476198
+2026-11-14T14:19:06.6990034Z   run-id: 37730166589
+2026-11-14T14:19:06.6993093Z   github-token: ***
+2026-11-14T14:19:06.6993537Z   path: /home/runner/work/_temp/historical-pressure
+2026-11-14T14:19:06.6994051Z   merge-multiple: false
+2026-11-14T14:19:06.6994512Z   repository: TrillionniumFoundation/Trillionnium-Chain
+2026-11-14T14:19:06.6995158Z env:
+2026-11-14T14:19:06.6995493Z   CI: true
+2026-11-14T14:19:06.6995836Z   CARGO_INCREMENTAL: 0
+2026-11-14T14:19:06.6996209Z   CARGO_BUILD_JOBS: 2
+2026-11-14T14:19:06.6996721Z   RUST_TEST_THREADS: 1
+2026-11-14T14:19:06.6997108Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-14T14:19:06.6997542Z ##[endgroup]
+2026-11-14T14:19:07.1150299Z Downloading artifacts by ID
+2026-11-14T14:19:07.1152414Z Fetching artifact list for workflow run 37730166589 in repository TrillionniumFoundation/Trillionnium-Chain
+2026-11-14T14:19:07.1255079Z (node:2002) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-14T14:19:07.1257230Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-14T14:19:07.2955162Z (node:2002) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-14T14:19:07.5875177Z Found 0 artifact(s)
+2026-11-14T14:19:07.5893613Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found
+2026-11-14T14:19:07.6128806Z Cleaning up orphan processes
+2026-11-14T14:19:07.6571037Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

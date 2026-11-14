@@ -1,0 +1,60 @@
+{
+  "GETs_executed": 0,
+  "compile_only": true,
+  "compile_optimize": 0,
+  "created_at": "2026-11-14T15:43:14.394108+00:00",
+  "diff": {
+    "bytes": 12088,
+    "path": "/private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/explicit-tail-v2-to-central-directory-v1.patch",
+    "sha256": "c669e2a744327df9229917761d87c48b60044e11a1399d46ea2a5b53ff7e6daf"
+  },
+  "eocd_receipt": {
+    "bytes": 1009,
+    "path": "/private/tmp/chain-prci-R1-history-tail-eocd-readonly-20261114-v1/eocd-observation.json",
+    "sha256": "c6e8a107f4b7355f9f21d063aa2600c94fc26de258f92543a41bf0b6fea0cd7c"
+  },
+  "fixed_scope": {
+    "artifact": 14118769328,
+    "bytes": 59887660,
+    "entries": 4140,
+    "range_bytes": 376516,
+    "range_end": 59887637,
+    "range_start": 59511122
+  },
+  "future_total_budget_seconds": 180,
+  "maximum_future_GETs": 2,
+  "original": {
+    "bytes": 17756,
+    "path": "/private/tmp/chain-consolidation-20261114-root/probe_history_artifact_explicit_tail_v2.py",
+    "sha256": "d5855261347c49727c2879defd5470eb6356b1f0a40679ee89d1c258adb25513"
+  },
+  "original_tail_summary": {
+    "bytes": 5257,
+    "path": "/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2/summary.json",
+    "sha256": "43c6e15a945eb486c2383cec6c3ccdeb50a05938c969f726c3e7ad91b3c5c0d8"
+  },
+  "producer": {
+    "bytes": 18677,
+    "path": "/private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/read_history_artifact_central_directory_v1.py",
+    "sha256": "4f6f6fbaa9a464eb1ca529cd77739a4517b78d9c2c6c1e4c0d82708904476386"
+  },
+  "readme": {
+    "bytes": 655,
+    "path": "/private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/README.txt",
+    "sha256": "78b3fee05242fd6e6d389979a5df2a3bc2d83ba2f07618fad94c680ac4805d0e"
+  },
+  "runtime_functions_executed": false,
+  "schema": "trnm-r1-history-central-directory-preparation-v1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "unchanged_helper_AST": [
+    "need",
+    "now",
+    "fingerprint",
+    "stable_bytes",
+    "save",
+    "save_json",
+    "pairs",
+    "parse_json",
+    "parsed_headers"
+  ]
+}

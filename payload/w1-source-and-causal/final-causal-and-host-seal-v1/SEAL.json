@@ -1,0 +1,15 @@
+{
+  "final_packaging_exit": 0,
+  "first_packaging_exit": 1,
+  "index": {
+    "bytes": 8896,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/final-causal-and-host-seal-v1/EVIDENCE_INDEX.json",
+    "sha256": "de043c62d06e60d52b0621614a7e1ea58dad0f8c3106ce28b3a46ab582154dd0"
+  },
+  "indexed_file_count": 23,
+  "indexed_total_bytes": 393244,
+  "schema": "trnm-r1-causal-and-host-review-seal-v1",
+  "source_or_network_or_test_actions": false,
+  "stage_writer": false,
+  "target_terminal_output_complete": true
+}

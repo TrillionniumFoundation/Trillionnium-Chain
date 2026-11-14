@@ -1,8 +1,0 @@
-{
-  "schema": "trnm-P1-full-v2-copy-destination-v1",
-  "created_at": "2026-11-14T11:35:23.997890+00:00",
-  "path": "/private/tmp/chain-consolidation-20261114-root/original-repository-truth-6a8cd5-copy-v2-prci",
-  "create_only": true,
-  "stage_written": false,
-  "source_or_git_or_lane_commands_executed": false
-}

@@ -1,0 +1,4 @@
+{
+  "AST": "Call(func=Name(id='need', ctx=Load()), args=[BoolOp(op=And(), values=[Compare(left=Name(id='kind', ctx=Load()), ops=[In()], comparators=[Tuple(elts=[Constant(value=0), Attribute(value=Name(id='stat', ctx=Load()), attr='S_ISREG', ctx=Load()), Attribute(value=Name(id='stat', ctx=Load()), attr='S_IFDIR', ctx=Load())], ctx=Load())]), UnaryOp(op=Not(), operand=BinOp(left=Attribute(value=Name(id='info', ctx=Load()), attr='flag_bits', ctx=Load()), op=BitAnd(), right=Constant(value=65)))]), Constant(value='LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER')])",
+  "source": "need(kind in (0, stat.S_ISREG, stat.S_IFDIR) and not info.flag_bits & 0x41,\n                 \"LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER\")"
+}

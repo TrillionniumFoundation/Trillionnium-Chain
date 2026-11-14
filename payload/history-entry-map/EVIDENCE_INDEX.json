@@ -1,0 +1,206 @@
+{
+  "file_count": 22,
+  "files": [
+    {
+      "bytes": 1278,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/README.md"
+      },
+      "path": "README.md",
+      "sha256": "bf6d63ae18b32447ed08135daf69641832da8d6e09cf32ad7aff0f80383dd6e3"
+    },
+    {
+      "bytes": 21736,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/ancestry_long_sync.rs.original"
+      },
+      "path": "ancestry_long_sync.rs.original",
+      "sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/cat-file.stderr"
+      },
+      "path": "cat-file.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9637,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/entry-map.json"
+      },
+      "path": "entry-map.json",
+      "sha256": "151ccc8c906b244763cfd80dfe6e2af5f7320e8bd727f9c8ba02d66317527d1e"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/ls-tree.stderr"
+      },
+      "path": "ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 99,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/ls-tree.stdout"
+      },
+      "path": "ls-tree.stdout",
+      "sha256": "bb6e5b7c0a0dcba055859baf8d6aaf07d4703a99bf2ec40b88b7bcbbdd40e25f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/native-cat-file.stderr"
+      },
+      "path": "native-cat-file.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/native-ls-tree.stderr"
+      },
+      "path": "native-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 115,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/native-ls-tree.stdout"
+      },
+      "path": "native-ls-tree.stdout",
+      "sha256": "df02b44ca6f0ebc080ee45c3ddf4aa997e3c0f91289451be5865c6901b1781ae"
+    },
+    {
+      "bytes": 415,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/native-source.json"
+      },
+      "path": "native-source.json",
+      "sha256": "bc38d1ed90b0e2ff2c99d371ec20c01a8e3910f22b65447f968b25e710ed8a59"
+    },
+    {
+      "bytes": 1502,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/producer-native-source.py"
+      },
+      "path": "producer-native-source.py",
+      "sha256": "a15b7be5b13cf18d9e6132223474fa454d6b8b9f5d3ac611cdab884826afea18"
+    },
+    {
+      "bytes": 1476,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/producer-runner.py"
+      },
+      "path": "producer-runner.py",
+      "sha256": "a4e1b2e15a399adee4828dbf5dac8e429a22e24fb15fa77d48eb14886fccd6a0"
+    },
+    {
+      "bytes": 4219,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/producer-summary.py"
+      },
+      "path": "producer-summary.py",
+      "sha256": "c3d26caccf51d1a52a7a5f957f57a27ea35ee0c5ffbdc2c8125b5e10a98e9563"
+    },
+    {
+      "bytes": 1914,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/producer-workflow.py"
+      },
+      "path": "producer-workflow.py",
+      "sha256": "98fde3c1009b162be6fb94de9865c72b56facdaf7ff2eabf070716b40e66026f"
+    },
+    {
+      "bytes": 21380,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/run_history_native.py.original"
+      },
+      "path": "run_history_native.py.original",
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/runner-cat-file.stderr"
+      },
+      "path": "runner-cat-file.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/runner-ls-tree.stderr"
+      },
+      "path": "runner-ls-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 86,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/runner-ls-tree.stdout"
+      },
+      "path": "runner-ls-tree.stdout",
+      "sha256": "9096ca4090fd118a25e0fa13c133bb2f9315b3eb776350fb209836308f561d72"
+    },
+    {
+      "bytes": 386,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/runner-source.json"
+      },
+      "path": "runner-source.json",
+      "sha256": "009dea6074e97482f0871f7f1be548eab8adb456f4bf7e8c545a7f5a83f790d6"
+    },
+    {
+      "bytes": 476,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/workflow-source.json"
+      },
+      "path": "workflow-source.json",
+      "sha256": "9ecf0e2405b2b624f170523ec3c31f11d43dab12b415f43f44ef2027ffba2e0b"
+    },
+    {
+      "bytes": 13565,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/workflow-step-context.txt"
+      },
+      "path": "workflow-step-context.txt",
+      "sha256": "908b4660ef5c19342d39589253ad9ba9460b0f89343bfca731ef146700e949a0"
+    },
+    {
+      "bytes": 24989,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/workflow.yml.original"
+      },
+      "path": "workflow.yml.original",
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb"
+    }
+  ],
+  "readonly_source_only": true,
+  "schema": "trnm-r1-history-4105-entry-map-index-v1",
+  "total_bytes": 103273
+}

@@ -1,0 +1,66 @@
+{
+  "bytes": 81375,
+  "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/history-progress-controls-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import_tests.rs",
+  "git_blob": "30bc194cbc1a2bd29c7c142deac388d402c17378",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+  "relevant_function_hits": [
+    {
+      "line": 272,
+      "source": "fn history_w1_checks_host_once_at_every_real_progress_boundary() {"
+    },
+    {
+      "line": 333,
+      "source": "fn history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries() {"
+    },
+    {
+      "line": 419,
+      "source": "fn history_w1_original_deadline_precedes_resource_and_complete_work() {"
+    },
+    {
+      "line": 460,
+      "source": "fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {"
+    },
+    {
+      "line": 564,
+      "source": "fn history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account() {"
+    },
+    {
+      "line": 970,
+      "source": "fn shared_history_refill_full_w1_and_actual_m06_release_the_original_writer() {"
+    },
+    {
+      "line": 1026,
+      "source": "fn history_decode_cannot_renew_the_original_w1_deadline() {"
+    },
+    {
+      "line": 1130,
+      "source": "fn committed_history_keeps_original_deadline_inside_native_activation() {"
+    },
+    {
+      "line": 1176,
+      "source": "fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit() {"
+    },
+    {
+      "line": 1488,
+      "source": "fn first_history_resource_failure_preserves_cold_account_and_clean_restart() {"
+    },
+    {
+      "line": 1549,
+      "source": "fn history_checkpoint_transfer(settings: &Settings) -> Vec<u8> {"
+    },
+    {
+      "line": 1574,
+      "source": "fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account() {"
+    },
+    {
+      "line": 1835,
+      "source": "fn history_shared_owner_checks_host_once_before_each_uncontended_action() {"
+    },
+    {
+      "line": 1864,
+      "source": "fn history_shared_owner_busy_retry_keeps_fresh_host_refusal() {"
+    }
+  ],
+  "sha256": "cb32977cb1e549a44c3967d38ebfef39b13e0f9575097c42044f2aa2e525b932"
+}

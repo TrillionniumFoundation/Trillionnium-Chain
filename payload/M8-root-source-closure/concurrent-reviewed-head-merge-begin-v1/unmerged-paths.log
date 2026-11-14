@@ -1,7 +1,0 @@
-config/pon/hash-use-contract-v1.json
-config/pon/pq-cross-branch-corpus-v1.json
-docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
-scripts/ci/check_public_readiness_evidence.py
-scripts/ci/hash_use_contract.py
-scripts/ci/pq_lifetime_composition.py
-scripts/ci/test_pq_lifetime_composition.py

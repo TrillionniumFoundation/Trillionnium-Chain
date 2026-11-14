@@ -1,0 +1,55 @@
+[
+  {
+    "bytes": 438782,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs",
+    "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "windows": [
+      [
+        967,
+        1140
+      ],
+      [
+        1877,
+        1915
+      ],
+      [
+        2376,
+        2483
+      ],
+      [
+        3776,
+        3940
+      ],
+      [
+        4010,
+        4034
+      ]
+    ]
+  },
+  {
+    "bytes": 391470,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/immutable-w1-kernel-source-v1/trillionnium--crates--trnm-pon-node--src--store.rs",
+    "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+    "windows": [
+      [
+        1200,
+        1220
+      ],
+      [
+        4974,
+        5148
+      ]
+    ]
+  },
+  {
+    "bytes": 82351,
+    "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--scalar_cpu.rs",
+    "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384",
+    "windows": [
+      [
+        678,
+        879
+      ]
+    ]
+  }
+]

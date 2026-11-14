@@ -1,0 +1,101 @@
+{
+  "excerpt_is_not_complete_log": true,
+  "long_matching_lines_omitted": 0,
+  "matching_lines": 22,
+  "original": {
+    "bytes": 323305,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-original-log.stdout",
+    "sha256": "fc18f5f6f31c65825fd327a3d13f4b121089ad01a4f651fa32a3a52b2270c5f3"
+  },
+  "selected_last_matching_lines": [
+    {
+      "line": 19,
+      "text": "2026-11-14T14:19:07.1829390Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md"
+    },
+    {
+      "line": 32,
+      "text": "2026-11-14T14:19:07.7592551Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)"
+    },
+    {
+      "line": 130,
+      "text": "2026-11-14T14:19:55.8240435Z  * [new branch]          archive/chain-initial-root-evidence-20261104 -> origin/archive/chain-initial-root-evidence-20261104"
+    },
+    {
+      "line": 314,
+      "text": "2026-11-14T14:19:55.8404204Z  * [new branch]          dot/pon-p1-w2c-integration-20261025 -> origin/dot/pon-p1-w2c-integration-20261025"
+    },
+    {
+      "line": 315,
+      "text": "2026-11-14T14:19:55.8404783Z  * [new branch]          dot/pon-p1-w2c-integration-preview-20261025 -> origin/dot/pon-p1-w2c-integration-preview-20261025"
+    },
+    {
+      "line": 366,
+      "text": "2026-11-14T14:19:55.8440453Z  * [new branch]          feat/pon-snapshot-read-verified-20261010 -> origin/feat/pon-snapshot-read-verified-20261010"
+    },
+    {
+      "line": 489,
+      "text": "2026-11-14T14:19:55.8521315Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 916,
+      "text": "2026-11-14T14:19:55.8854046Z  * [new branch]          research/pon-fork-local-asert-w1-20261026 -> origin/research/pon-fork-local-asert-w1-20261026"
+    },
+    {
+      "line": 1045,
+      "text": "2026-11-14T14:19:55.8940419Z [command]/usr/bin/git sparse-checkout disable"
+    },
+    {
+      "line": 1127,
+      "text": "2026-11-14T14:20:08.2524049Z Updating files:  80% (33374/41677)"
+    },
+    {
+      "line": 1146,
+      "text": "2026-11-14T14:20:10.2780366Z Updating files:  97% (40427/41677)"
+    },
+    {
+      "line": 1616,
+      "text": "2026-11-14T14:20:59.7223922Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 1641,
+      "text": "2026-11-14T14:20:59.7240434Z  * [new branch]          fix/chain-native-demand-acceptance-20261107 -> origin/fix/chain-native-demand-acceptance-20261107"
+    },
+    {
+      "line": 1778,
+      "text": "2026-11-14T14:20:59.7404415Z  * [new branch]          fix/chain-retirement-preparation-candidate-20261024 -> origin/fix/chain-retirement-preparation-candidate-20261024"
+    },
+    {
+      "line": 1951,
+      "text": "2026-11-14T14:20:59.7564049Z  * [new branch]          fix/pq-root-930-pq-system-source-pin-20261112-r11 -> origin/fix/pq-root-930-pq-system-source-pin-20261112-r11"
+    },
+    {
+      "line": 2263,
+      "text": "2026-11-14T14:21:06.3404588Z Updating files:  97% (27146/27985)"
+    },
+    {
+      "line": 2321,
+      "text": "2026-11-14T14:21:17.4042709Z ##[group]Run set -euo pipefail"
+    },
+    {
+      "line": 2322,
+      "text": "2026-11-14T14:21:17.4043113Z \u001b[36;1mset -euo pipefail\u001b[0m"
+    },
+    {
+      "line": 2323,
+      "text": "2026-11-14T14:21:17.4043594Z \u001b[36;1mpython3 -B driver/scripts/ci/test_pon_budget_controls.py > \"$OUT/runner-controls.stdout\" 2> \"$OUT/runner-controls.stderr\"\u001b[0m"
+    },
+    {
+      "line": 2359,
+      "text": "2026-11-14T14:21:38.5019928Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 2360,
+      "text": "2026-11-14T14:21:38.5098478Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 2421,
+      "text": "2026-11-14T14:21:40.0314294Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ],
+  "total_lines": 2421
+}

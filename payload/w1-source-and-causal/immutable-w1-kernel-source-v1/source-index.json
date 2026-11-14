@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "bytes": 391470,
+      "git_blob": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/immutable-w1-kernel-source-v1/trillionnium--crates--trnm-pon-node--src--store.rs",
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "bytes": 106066,
+      "git_blob": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/immutable-w1-kernel-source-v1/trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs",
+      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    }
+  ],
+  "git_dir": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

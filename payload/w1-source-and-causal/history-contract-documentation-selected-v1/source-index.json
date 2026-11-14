@@ -1,0 +1,62 @@
+[
+  {
+    "bytes": 6977,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/history-contract-documentation-selected-v1/HISTORY_W1_SHARED_CPU_HOST_20261027.md.original",
+    "git_blob": "968047246315f2119d4237da6386e704d1762499",
+    "path": "docs/protocol/pon-nakamoto-v1/details/HISTORY_W1_SHARED_CPU_HOST_20261027.md",
+    "read_ranges": [
+      [
+        1,
+        92
+      ]
+    ],
+    "sha256": "3c2b5e289c1cc78607e224921fa64be646f72d1da47a9d03fe961a1e625b7fe8",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 9555,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/history-contract-documentation-selected-v1/REMOTE_SYNC_W1_HOST_GUARD.md.original",
+    "git_blob": "fc60daebb9825d4480225f1f14efe1514241a3e5",
+    "path": "docs/protocol/pon-nakamoto-v1/details/REMOTE_SYNC_W1_HOST_GUARD.md",
+    "read_ranges": [
+      [
+        1,
+        28
+      ],
+      [
+        129,
+        169
+      ]
+    ],
+    "sha256": "f7a8000abce1d306cc0385789478fd0c56eb538700469a11c86730cce86bfb21",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 6214,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/history-contract-documentation-selected-v1/W1_P0_P1_STRICT_INTEGRATION_20261027.md.original",
+    "git_blob": "a36ab9e7ce7148843aa9bf0dff8ecc618775de0a",
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_P0_P1_STRICT_INTEGRATION_20261027.md",
+    "read_ranges": [
+      [
+        1,
+        53
+      ]
+    ],
+    "sha256": "30d2507c1f9df0c771cfde2e30d2ab0497c1ff2a5cb0fc672420111101a894f5",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 88730,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/history-contract-documentation-selected-v1/PUBLIC_POOL_INTAKE_V3.md.original",
+    "git_blob": "8daef91b07e61ce2f5798c47a9e3478161bb22eb",
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+    "read_ranges": [
+      [
+        1058,
+        1094
+      ]
+    ],
+    "sha256": "78ae18db9d5e339bbc806b8b0f8c721dd5a702ac8d9fb43f7695d1d0ddeebcfa",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  }
+]

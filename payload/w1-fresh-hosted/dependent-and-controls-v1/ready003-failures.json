@@ -1,0 +1,141 @@
+{
+  "failures": [
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998346
+      },
+      "completed_at": "2026-11-14T14:28:08Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259337",
+      "external_id": "83bd1eb8-c236-5904-97bb-fbc418041af3",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259337",
+      "id": 132475259337,
+      "name": "W1 fresh challenge service (x64, head)",
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998346
+      },
+      "completed_at": "2026-11-14T14:28:27Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475258996",
+      "external_id": "775cbc5d-406d-5631-8ef5-afff298983bc",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475258996",
+      "id": 132475258996,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998186
+      },
+      "completed_at": "2026-11-14T14:19:08Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258264",
+      "external_id": "601faf9b-1205-5ddc-b9ff-5f3096f30eb8",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258264",
+      "id": 132475258264,
+      "name": "retained-pressure-failure",
+      "started_at": "2026-11-14T14:19:05Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998046
+      },
+      "completed_at": "2026-11-14T14:22:47Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258169",
+      "external_id": "e5fdb3d9-98a1-5711-ae26-b563eeaf5308",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258169",
+      "id": 132475258169,
+      "name": "Original budget controls (pool-scan-before)",
+      "started_at": "2026-11-14T14:19:07Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998046
+      },
+      "completed_at": "2026-11-14T14:22:46Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258063",
+      "external_id": "0132a467-9a12-5f76-9a53-2c8cb0697079",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258063",
+      "id": 132475258063,
+      "name": "Original budget controls (budget-before-v2)",
+      "started_at": "2026-11-14T14:19:05Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "app15368": true,
+      "check_suite": {
+        "id": 118064998046
+      },
+      "completed_at": "2026-11-14T14:21:41Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475257835",
+      "external_id": "f9732ccf-7669-5f2a-9039-ce7d16b2e6c0",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475257835",
+      "id": 132475257835,
+      "name": "Original budget controls (pool-before-v2)",
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed"
+    }
+  ],
+  "source": {
+    "bytes": 118519,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/dependent-and-controls-v1/ready003-latest-checks-normalized.original.json",
+    "sha256": "23c960035321326b79afb463bf388b03af73d2cf6ca7874c79ae7f121df2832a"
+  }
+}

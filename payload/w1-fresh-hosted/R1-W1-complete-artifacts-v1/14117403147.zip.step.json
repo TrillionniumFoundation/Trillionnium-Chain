@@ -1,0 +1,44 @@
+{
+  "actual_returncode": 0,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "-H",
+    "Accept: application/vnd.github+json",
+    "-H",
+    "X-GitHub-Api-Version: 2026-03-10",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117403147/zip"
+  ],
+  "artifact_id": 14117403147,
+  "complete": true,
+  "completed_at": "2026-11-14T14:47:43.122190+00:00",
+  "cwd": "/private/tmp",
+  "digest_matches_api": true,
+  "digest_matches_original_log": true,
+  "duration_seconds": 412.01251562499965,
+  "exit_code": 0,
+  "job_id": 132475258996,
+  "label": "artifact-14117403147-complete-zip",
+  "pid": 84904,
+  "size_matches_api": true,
+  "source_kind": "prospective-merge",
+  "started_at": "2026-11-14T14:40:51.047126+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 1048576,
+  "stdout": {
+    "bytes": 6451341,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+    "sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+  },
+  "stdout_cap_bytes": 16777216,
+  "stop_reason": null,
+  "timeout_seconds": 600
+}

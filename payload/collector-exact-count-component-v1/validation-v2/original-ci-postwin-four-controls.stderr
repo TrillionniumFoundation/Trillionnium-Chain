@@ -1,9 +1,0 @@
-test_actual_postwin_lanes_retain_real_controls (__main__.W1PostwinLaneTests.test_actual_postwin_lanes_retain_real_controls) ... ok
-test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed (__main__.W1PostwinLaneTests.test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed) ... ok
-test_required_postwin_commands_cannot_change_or_duplicate_lane (__main__.W1PostwinLaneTests.test_required_postwin_commands_cannot_change_or_duplicate_lane) ... ok
-test_postwin_count_and_original_budget_controls_cannot_be_softened (__main__.W1PostwinLaneTests.test_postwin_count_and_original_budget_controls_cannot_be_softened) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 1.166s
-
-OK

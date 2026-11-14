@@ -1,0 +1,153 @@
+{
+  "file_count": 16,
+  "files": [
+    {
+      "bytes": 1416,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/AGENTS.md.original"
+      },
+      "path": "AGENTS.md.original",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631"
+    },
+    {
+      "bytes": 896,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/existing-client-stage-shape.json"
+      },
+      "path": "existing-client-stage-shape.json",
+      "sha256": "522b90574525b6728f738a4824a93d084cd8f89ad63fa6c8dbdc8f4662ddd4fa"
+    },
+    {
+      "bytes": 50985,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/original-tool-records.json"
+      },
+      "path": "final-review-v1/original-tool-records.json",
+      "sha256": "9e357862532063171215e11b2204d0b90c64ae1bdaa4390800dabce518a60e8e"
+    },
+    {
+      "bytes": 3145,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/producer.py"
+      },
+      "path": "final-review-v1/producer.py",
+      "sha256": "178845610aecaf0a2a7ca663bcf48b2ddbb37a9d0e5eb25e286abec933edd023"
+    },
+    {
+      "bytes": 2397,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/review.md"
+      },
+      "path": "final-review-v1/review.md",
+      "sha256": "d41834bacba876345dce6cf67963fa61e4f6bb7d269f94d10111a7263cc8cdda"
+    },
+    {
+      "bytes": 1246,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/source-excerpt-pins.json"
+      },
+      "path": "final-review-v1/source-excerpt-pins.json",
+      "sha256": "610e52eee5d06049fc3d5ef8f9061e48c84da21469efdae2e6719f81a9c0ad77"
+    },
+    {
+      "bytes": 44468,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/source-excerpts.txt"
+      },
+      "path": "final-review-v1/source-excerpts.txt",
+      "sha256": "fde903bd9cc85641fdef74b673d9972e70356eaf97e785b33c209fa36aadc579"
+    },
+    {
+      "bytes": 6924,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/final-review-v1/summary.json"
+      },
+      "path": "final-review-v1/summary.json",
+      "sha256": "9e5640829ac028dabb5fc131b5f5da44df2e344c55f629578cc79f10fae4d8b6"
+    },
+    {
+      "bytes": 2613,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/producer.py"
+      },
+      "path": "producer.py",
+      "sha256": "afe9c51aaf3e15e65d6573e67851480fe9a41afb5268a5760051d58e166312a4"
+    },
+    {
+      "bytes": 1955,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/source-index.json"
+      },
+      "path": "source-index.json",
+      "sha256": "4faffb12a4c3e25965e5e2680e2ed16c03417585a1f8542a886fd74e15e7279a"
+    },
+    {
+      "bytes": 95914,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/stage-evidence-v1/matched-stage-aggregates.json"
+      },
+      "path": "stage-evidence-v1/matched-stage-aggregates.json",
+      "sha256": "edf63be28dca5ae9558231aa9a12f34bd9976a3d2d1a24a59ae8d6ae98d4a5f4"
+    },
+    {
+      "bytes": 3574,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/stage-evidence-v1/producer.py"
+      },
+      "path": "stage-evidence-v1/producer.py",
+      "sha256": "22a474db3a3324b9b4a9b5eb3615c96331a6f71b67db03438818f13c44d800ef"
+    },
+    {
+      "bytes": 17257,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/stage-evidence-v1/small-table.json"
+      },
+      "path": "stage-evidence-v1/small-table.json",
+      "sha256": "bd861b6965e56bb172fbc9678171ecb17137e290bd00d195c986fe0fa3b6cc86"
+    },
+    {
+      "bytes": 2445,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--canonical_packet.rs.original"
+      },
+      "path": "trillionnium--crates--trnm-pon-node--src--ingress--public_v3--canonical_packet.rs.original",
+      "sha256": "58e50e5014daa332547f8787f55be33bc2845af967445b34e3597e3800255cce"
+    },
+    {
+      "bytes": 4345,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--history_response.rs.original"
+      },
+      "path": "trillionnium--crates--trnm-pon-node--src--ingress--public_v3--history_response.rs.original",
+      "sha256": "2594c838128018b2187d504fbdc6a3c07193c0900f6a9239af48752bb236aa61"
+    },
+    {
+      "bytes": 12757,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original"
+      },
+      "path": "trillionnium--crates--trnm-pon-node--src--ingress--public_v3--pq_identity.rs.original",
+      "sha256": "ee7b44de5d90db0931dd22624c9e4e4b1ac89f10395f34a642088f83f13cc3e7"
+    }
+  ],
+  "root": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1",
+  "schema": "trnm-r1-nonhost-performance-evidence-index-v1",
+  "scope": "read-only source/previous originals; no new test or qualified optimization",
+  "total_bytes": 252337
+}

@@ -1,0 +1,21 @@
+{
+  "excerpt_is_not_complete_log": true,
+  "long_matching_lines_omitted": 0,
+  "matching_lines": 2,
+  "original": {
+    "bytes": 4110,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-original-log.stdout",
+    "sha256": "6c91925ad9c38eb9f09198b4e1f85a125142614cd9da3ad7cce51bfe7bb8f502"
+  },
+  "selected_last_matching_lines": [
+    {
+      "line": 19,
+      "text": "2026-11-14T14:19:06.0568502Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md"
+    },
+    {
+      "line": 55,
+      "text": "2026-11-14T14:19:07.5893613Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found"
+    }
+  ],
+  "total_lines": 57
+}

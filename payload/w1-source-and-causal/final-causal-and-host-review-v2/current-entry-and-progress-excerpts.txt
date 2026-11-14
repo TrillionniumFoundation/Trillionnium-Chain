@@ -1,0 +1,463 @@
+SOURCE trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs
+GIT_BLOB dededee2bfae0f6d9ba20b7a68c15d1ad2826933
+SHA256 c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs
+
+1280:     packets: &[Packet],
+1281:     prepare: ConfirmationAttackBuilder,
+1282:     pressured: bool,
+1283: ) -> Value {
+1284:     fs::create_dir(path).unwrap();
+1285:     let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
+1286:     let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
+1287:     receiver
+1288:         .enable_local_mempool(PoolLimits {
+1289:             max_records: 16,
+1290:             max_bytes: 32768,
+1291:             max_group_members: 4,
+1292:             critical_reserve: 0,
+1293:             max_removals: 64,
+1294:             preview_miner: development_public(0).unwrap(),
+1295:         })
+1296:         .unwrap();
+1297:     let initial = receiver.read_active().unwrap();
+1298:     let target = receiver.expected_target(settings.genesis()).unwrap();
+1299:     let owner = Arc::new(Mutex::new(receiver));
+1300:     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+1301:     let address = listener.local_addr().unwrap();
+1302:     let stop = Arc::new(AtomicBool::new(false));
+1303:     let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+1304:     let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
+1305:     let server = PublicServer::new(identity(71), policy()).unwrap();
+1306:     let domain = server.mutation_cpu_domain();
+1307:     let initial_meter = domain.observe().unwrap();
+1308:     let (shared, signal, measurement, capture) =
+1309:         (owner.clone(), stop.clone(), metrics, observer.clone());
+1310:     let service = RunningService {
+1311:         stop,
+1312:         worker: Some(thread::spawn(move || {
+1313:             match public_v3::serve_public_protected_v3_with_request_observer(
+1314:                 listener,
+1315:                 shared,
+1316:                 Duration::from_secs(30),
+1317:                 signal,
+1318:                 server,
+1319:                 measurement,
+1320:                 capture,
+1321:             ) {
+1322:                 Ok(metrics) => json!({"metrics": metrics, "error": null}),
+
+1433:     let mut confirmation_ended_ns = None;
+1434:     while next_packet == packets.len() && Instant::now() < end && history_calls.len() < 16 {
+1435:         let row = client.call_before(
+1436:             "confirmation_honest_history",
+1437:             74,
+1438:             Request::History {
+1439:                 tip: hex::encode(tip),
+1440:                 after: hex::encode(after),
+1441:             },
+1442:             Some(end),
+1443:         );
+1444:         if row["status"] == "ok" && row["returned_after_window"] == false {
+1445:             let replay_started_ns = ns(epoch);
+1446:             let page_cpu = ThreadCpuStamp::start();
+1447:             let import_observer = ingress::HistoryImportObserver::new();
+1448:             let imported =
+1449:                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
+1450:                     .map_err(|error| error.to_string())
+1451:                     .and_then(|page| {
+1452:                         ingress::receive_public_page_from_before_observed(
+1453:                             &mut verifier,
+1454:                             client.address,
+1455:                             page,
+1456:                             tip,
+1457:                             after,
+1458:                             ingress::now().unwrap(),
+1459:                             end,
+1460:                             Some(&import_observer),
+1461:                         )
+1462:                         .map_err(|error| error.to_string())
+1463:                     });
+1464:             let replay_ended_ns = ns(epoch);
+1465:             // Capture the actual calling-thread CPU once. Wall intervals may
+1466:             // overlap other threads; these two totals must not be summed.
+1467:             let replay_thread_cpu_ns = cpu_elapsed(page_cpu);
+1468:             independent_history_page_replay.push(json!({
+1469:                 "history_call_index": history_calls.len(),
+1470:                 "history_request_ended_ns": row["ended_ns"].clone(),
+1471:                 "replay_started_ns": replay_started_ns,
+1472:                 "replay_ended_ns": replay_ended_ns,
+1473:                 "replay_wall_ns": replay_ended_ns - replay_started_ns,
+1474:                 "replay_thread_cpu_ns": replay_thread_cpu_ns,
+1475:                 "prior_after": hex::encode(after),
+
+SOURCE trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+GIT_BLOB b62de39bdba906c9d989498a6299df9a14d900e8
+SHA256 0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+
+1991:             if let Some(charge) = mutation_cpu {
+1992:                 if cpu.is_none() {
+1993:                     charge.unavailable.set(true);
+1994:                     charge.workers.unknown();
+1995:                     return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+1996:                 }
+1997:             }
+1998:             let start = Instant::now();
+1999:             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
+2000:             if let Some(record) = observation {
+2001:                 record.work_started();
+2002:             }
+2003:             let mut checkpoint = |_| {
+2004:                 task_alive(deadline, stop, cancelled)?;
+2005:                 if let Some(checkpoint) = &continuous_progress {
+2006:                     checkpoint.check()?;
+2007:                 }
+2008:                 live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+2009:             };
+2010:             let result = match arithmetic_facts {
+2011:                 None => match w1_rejection_cache {
+
+2385:     ensure(
+2386:         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
+2387:         "PUBLIC_LIFETIME",
+2388:     )?;
+2389:     // This guard must be in the exported library service itself, not only the
+2390:     // CLI. Direct embedders with a wildcard/nonloopback listener cannot bypass
+2391:     // the one fixed kernel parent by avoiding binary argument parsing.
+2392:     let host_kernel = crate::host_kernel_parent::require_for_listener(listener.local_addr()?)?;
+2393:     listener.set_nonblocking(true)?;
+2394:     let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
+2395:     let intake = server.listener_intake()?;
+2396:     // Reserve the existing whole-service slot before waiting for the Node or
+2397:     // allocating its queues. A fifth listener cannot contend with an admitted
+2398:     // service's profile/State work before discovering that its domain is full.
+2399:     // RAII returns this slot on every pre-worker error; no new budget is made.
+2400:     let _listener_permit =
+2401:         BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
+2402:             .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
+2403:     let settings = {
+
+2575:                                                         task.cancelled.clone(),
+2576:                                                     )?;
+2577:                                                 }
+2578:                                                 // Recheck this worker's own kernel
+2579:                                                 // cgroup after its original FIFO wait.
+2580:                                                 kernel_for_worker
+2581:                                                     .map_or(Ok(()), |kernel| kernel.verify())?;
+2582:                                                 task_alive(task.deadline, &stop, &task.cancelled)?;
+2583:                                                 if let Some(cpu) = mutation_cpu {
+2584:                                                     cpu.workers.checkpoint()?;
+2585:                                                 }
+2586:                                                 let decoded = super::observe_submit_phase(
+2587:                                                     task.observation.as_ref(),
+
+2818:             }));
+2819:         }
+2820:         let outcome = (|| -> Result<()> {
+2821:             while !stop.load(Ordering::Acquire) && Instant::now() < end {
+2822:                 let mut made_progress = false;
+2823:                 if let Some(budget) = host_kernel.as_ref() {
+2824:                     if last_kernel_check.elapsed() >= Duration::from_millis(50) {
+2825:                         budget.verify()?;
+2826:                         last_kernel_check = Instant::now();
+2827:                     }
+2828:                 }
+2829:                 if last_cleanup.elapsed() >= Duration::from_millis(20) {
+2830:                     spent.cleanup(server.tick()?);
+2831:                     metrics.lock().map_err(|_| "PUBLIC_METRICS")?.cleanup_scans += 1;
+
+SOURCE trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
+GIT_BLOB c70b9948f48d8349f63420b6c82d70ef9cf2afa6
+SHA256 6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
+
+550:         fn checked_parent(&self) -> Result<ScopedParentDirectory> {
+551:             let mut boot_bytes = [0; CONTEXT_STACK_BYTES + 1];
+552:             let now_boot = read_context(
+553:                 Path::new("/proc/sys/kernel/random/boot_id"),
+554:                 &mut boot_bytes,
+555:             )?;
+556:             if now_boot.trim() != self.boot_id {
+557:                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+558:             }
+559:             let parent = ScopedParentDirectory::from_file(
+560:                 open_current_parent(&self.parent)?,
+561:                 (self.identity.0, self.identity.1, 0),
+562:             )?;
+563:             if !in_parent_cgroup(&self.parent_relative)? {
+564:                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
+565:             }
+566:             // The current path is fenced again after all five current files
+567:             // are completely read. No later check reuses this directory FD.
+568:             parent.verify_limits(&self.parent, self.limits)?;
+569:             Ok(parent)
+570:         }
+571: 
+572:         fn check(&self) -> Result<()> {
+573:             self.checked_parent().map(|_| ())
+
+637:         /// boot/inode/quotas/membership both before and after sampling; if any
+638:         /// counter is unavailable or malformed, never issue a qualified receipt.
+639:         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
+640:             sample_counters(|| self.checked_parent())
+641:         }
+642:     }
+643: 
+644:     pub fn require(address: SocketAddr, parent: Option<&str>) -> Result<Option<KernelBudget>> {
+645:         match parent {
+646:             Some(path) => KernelBudget::open(path).map(Some),
+647:             None if !address.ip().is_loopback() => Err("PUBLIC_HOST_KERNEL_REQUIRED".into()),
+648:             None => Ok(None), // Retained loopback-only development tools.
+649:         }
+650:     }
+
+1570: /// Single protocol-neutral, administrator-provisioned host resource parent.
+1571: /// The public V3 library and development CLI use the EXACT same eligibility.
+1572: pub const FIXED_PUBLIC_KERNEL_PARENT: &str = "/sys/fs/cgroup/trnmponpublic.slice";
+1573: /// Direct library callers cannot bypass the CLI's kernel-parent requirement.
+1574: /// A loopback test service needs no administrator privileges; an externally
+1575: /// reachable service must already be placed under the one fixed parent.
+1576: pub fn require_for_listener(
+1577:     address: std::net::SocketAddr,
+1578: ) -> crate::Result<Option<HostKernelBudget>> {
+1579:     require_host_kernel_budget(
+1580:         address,
+1581:         (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),
+1582:     )
+1583: }
+
+SOURCE trillionnium/crates/trnm-pon-node/src/ingress.rs
+GIT_BLOB a9aef9689af378bd115a54c25a076941ef2cbb96
+SHA256 b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/ingress.rs
+
+2660:     after: Hash,
+2661:     clock: u64,
+2662:     deadline: Instant,
+2663: ) -> Result<Hash> {
+2664:     receive_public_page_from_before_observed(node, source, page, tip, after, clock, deadline, None)
+2665: }
+2666: 
+2667: /// Explicit optional local measurements over the identical full importer. The
+2668: /// observer adds no admission capability, budget, deadline or signed bytes.
+2669: #[allow(clippy::too_many_arguments)] // Original seven inputs plus one optional diagnostic sink.
+2670: pub fn receive_public_page_from_before_observed(
+2671:     node: &mut Node,
+2672:     source: SocketAddr,
+2673:     page: Page,
+2674:     tip: Hash,
+2675:     after: Hash,
+2676:     clock: u64,
+2677:     deadline: Instant,
+2678:     observation: Option<&HistoryImportObserver>,
+2679: ) -> Result<Hash> {
+2680:     use history_import::{observe_host, HistoryHostPhase};
+2681:     // The ORIGINAL fixed administrator-owned Host parent is required even
+2682:     // for a loopback source: a caller's socket address is not provenance.
+2683:     let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {
+2684:         crate::host_kernel_parent::require_host_kernel_budget(
+2685:             source,
+2686:             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2687:         )?
+2688:         .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
+2689:     })?;
+2690:     observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;
+2691:     let native = history_import::receive_observed(
+2692:         history_import::Owner::Exclusive(node),
+2693:         page,
+2694:         tip,
+2695:         after,
+2696:         clock,
+2697:         history_import::Control {
+2698:             deadline,
+2699:             resource: &|| {
+2700:                 observe_host(observation, HistoryHostPhase::Checkpoint, || {
+2701:                     kernel.verify()
+2702:                 })
+2703:             },
+2704:         },
+2705:         observation,
+2706:     );
+2707:     // Do not convert an already committed block into an invalid work proof
+2708:     // when the last local Host owner observation fails.
+2709:     history_import::finish_with_resource(native, deadline, || {
+2710:         observe_host(observation, HistoryHostPhase::Final, || kernel.verify())
+2711:     })
+2712: }
+2713: 
+2714: /// Shared public History import: refill and full W1 never hold the Node mutex.
+2715: /// It uses the same Host parent, original CPU account and durable epoch as the
+2716: /// exclusive compatibility API; continuous imports stay denied by #498.
+2717: pub fn receive_public_page_from_shared(
+2718:     node: &Mutex<Node>,
+2719:     source: SocketAddr,
+2720:     page: Page,
+2721:     tip: Hash,
+2722:     after: Hash,
+2723:     clock: u64,
+2724:     deadline: Instant,
+2725: ) -> Result<Hash> {
+2726:     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+2727:         source,
+2728:         Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2729:     )?
+2730:     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+2731:     kernel.verify()?;
+2732:     let result = history_import::receive(
+2733:         history_import::Owner::Shared(node),
+2734:         page,
+2735:         tip,
+2736:         after,
+2737:         clock,
+2738:         history_import::Control {
+2739:             deadline,
+2740:             resource: &|| kernel.verify(),
+2741:         },
+2742:     );
+2743:     history_import::finish_with_resource(result, deadline, || kernel.verify())
+2744: }
+2745: 
+
+3718:     fn public_loopback_history_requires_real_fixed_host_parent() {
+3719:         let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+3720:         let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
+3721:         assert!(
+3722:             legacy.is_none(),
+3723:             "weak local compatibility remains local only"
+3724:         );
+3725:         let strict = crate::host_kernel_parent::require_host_kernel_budget(
+3726:             loopback,
+3727:             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+3728:         );
+3729:         // A real matching parent yields Some; an unprovisioned one returns an
+3730:         // operational refusal. Neither is an unguarded None for public import.
+3731:         assert!(!matches!(strict, Ok(None)));
+3732:     }
+
+SOURCE trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs
+GIT_BLOB 5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943
+SHA256 79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs
+
+20: 
+21: pub(super) const PAGE_BUDGET: Duration = Duration::from_secs(30);
+22: pub(super) const SYNC_BUDGET: Duration = Duration::from_secs(300);
+23: 
+24: pub(super) struct Control<'a> {
+25:     pub deadline: Instant,
+26:     pub resource: &'a (dyn Fn() -> Result<()> + Sync),
+27: }
+28: impl Control<'_> {
+29:     fn alive(&self) -> Result<()> {
+30:         ensure(Instant::now() < self.deadline, "PUBLIC_REQUEST_DEADLINE")
+31:     }
+32:     fn check(&self) -> Result<()> {
+33:         self.alive()?;
+34:         (self.resource)()?;
+35:         // A fresh Host/resource observation can itself outlive the caller's
+36:         // original absolute deadline. Preserve resource errors, but do not
+37:         // grant the next native action from a successful late observation.
+38:         self.alive()
+39:     }
+40: }
+41: 
+42: /// The public wrapper still owes its original final Host observation after
+43: /// native cleanup. That observation can itself cross the request deadline.
+
+299:         !page.packets.is_empty() || (after == tip && page.complete),
+300:         "EMPTY_PAGE",
+301:     )?;
+302:     let mut total = 0usize;
+303:     for packet in &page.packets {
+304:         total = total.checked_add(packet.len()).ok_or("PAGE_LIMIT")?;
+305:         ensure(total <= MAX_FRAME - 1024, "PAGE_LIMIT")?;
+306:     }
+307:     Ok(())
+308: }
+309: 
+310: fn verify_history_work(
+311:     packet: Packet,
+312:     progress: &public_v3::ServiceMutationCpuCheckpoint,
+313:     owns_node_mutex: bool,
+314:     control: &Control<'_>,
+315: ) -> Result<WorkCheckedPacket> {
+316:     WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
+317:         control.alive()?;
+318:         // This checks the actual Host once at EVERY native W1 boundary and
+319:         // again throughout any original refill wait. A second Host read here
+320:         // used to follow selected boundaries without intervening native work.
+321:         // Only that duplicate is removed; no boundary or resource verdict is
+322:         // skipped, cached, weakened or promoted to mathematical invalidity.
+323:         progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
+324:         if matches!(
+325:             point,
+326:             trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
+327:                 row: 4,
+328:                 column: 0,
+329:                 inner: 0,
+330:             }
+331:         ) {
+332:             // Noise/matrix preparation and half the real transcript have
+333:             // already executed. This is not a pre-verification mock cut.
+334:             cut("w1");
+335:         }
+336:         Ok(())
+337:     })
+338: }
+339: 
+340: fn admit_packet(
+
+SOURCE trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
+GIT_BLOB a7fd76834d321f57cc46a6559e2bcc3f046de0c5
+SHA256 799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
+
+664:     pub(super) fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
+665:         let wait = match self.state.lock() {
+666:             Ok(state) => state.wait_inside_checkpoint,
+667:             Err(error) => {
+668:                 // This policy read precedes observe_sample, so it must retain
+669:                 // that sampler's fail-closed global fence. Release the poisoned
+670:                 // guard before unknown() reacquires the request registry.
+671:                 drop(error);
+672:                 self.unknown();
+673:                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+674:             }
+675:         };
+676:         self.observe_with_control(remove, enforce, wait, &|| Ok(()))
+677:     }
+678:     fn observe_with_control(
+679:         &self,
+680:         remove: bool,
+681:         enforce: bool,
+
+877:             ensure(!refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+878:         }
+879:         Ok(wait)
+880:     }
+881:     pub(super) fn checkpoint(&self) -> Result<()> {
+882:         self.observe(false, true)
+883:     }
+884:     pub(super) fn finish_thread(&self) {
+885:         let _ = self.observe(true, false);
+886:     }
+887:     pub(super) fn complete(&self) -> Option<u64> {
+888:         let state = match self.state.lock() {
+889:             Ok(state) => state,
+
+914:     pub(super) known: AtomicU64,
+915:     pub(super) total_ns: AtomicU64,
+916:     pub(super) unavailable: AtomicBool,
+917:     pub(super) budget: Option<Arc<Mutex<PaidMutationCpuBudget>>>,
+918:     pub(super) live: Option<Arc<LiveRequestCpu>>,
+919:     #[cfg(test)]
+920:     pub(super) fail_next_start: AtomicBool,
+921:     #[cfg(test)]
+922:     pub(super) fail_next_finish: AtomicBool,
+923: }
+924: impl ScopedWorkerCpu {
+925:     pub(super) fn checkpoint(&self) -> Result<()> {
+926:         self.live.as_ref().map_or(Ok(()), |live| live.checkpoint())
+927:     }
+928:     pub(super) fn unknown(&self) {

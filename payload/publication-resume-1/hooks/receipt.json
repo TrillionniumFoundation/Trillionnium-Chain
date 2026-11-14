@@ -1,0 +1,102 @@
+{
+  "argv": [
+    "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/pre-push",
+    "origin",
+    "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "push-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/push-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/push-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--all",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "fetch-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/fetch-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/fetch-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "heads",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/heads.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 87154,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/heads.stdout",
+      "stdout_sha256": "c24ac4d1acc2a6f1cd58abb63bec4087abbc878bbd5636b89242c97bb8d0f043",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2",
+        "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2^{}",
+        "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1",
+        "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1^{}"
+      ],
+      "exit": 0,
+      "label": "tags",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/tags.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 231,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/hooks/tags.stdout",
+      "stdout_sha256": "524b1d36fdd3c9d9d26856a15715415db3609c8c5a174acc905446dfee05b952",
+      "timeout_seconds": 90
+    }
+  ],
+  "errors": [],
+  "expected_sha256": "3005d3e4b22dbdd6d241b02bf6d17f53455574bcffea80e0d9a20d9295aae3a5",
+  "finished_at": "2026-11-14T13:02:51.043841+00:00",
+  "hook_sha256": "7a2b1d50bae4957e8b5b8c4a76c7fb07b821e2e31c9714e9ac90459fdce98cd8",
+  "schema": "trnm-followup-publication-exact-prepush-v1",
+  "started_at": "2026-11-14T13:02:26.358951+00:00",
+  "status": "passed",
+  "updates": {
+    "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716": {
+      "local_ref": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "new": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "old": "096c6b5f9b952c49389fd975515744074ba61317"
+    },
+    "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1": {
+      "local_ref": "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1",
+      "new": "454761ef276433740453b5b80ce886c1d251c6d3",
+      "old": "0000000000000000000000000000000000000000"
+    }
+  }
+}

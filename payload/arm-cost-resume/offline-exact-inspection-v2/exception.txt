@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<string>", line 47, in <module>
+    try:result=scope["inspect_complete_zip"](Z)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py", line 268, in inspect_complete_zip
+    need(kind in (0, stat.S_ISREG, stat.S_IFDIR) and not info.flag_bits & 0x41,
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         "LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py", line 54, in need
+    raise ValueError(message)
+ValueError: LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER

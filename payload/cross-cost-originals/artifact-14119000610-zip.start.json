@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "-H",
+    "Accept: application/vnd.github+json",
+    "-H",
+    "X-GitHub-Api-Version: 2026-03-10",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14119000610/zip"
+  ],
+  "automatic_retry": false,
+  "cwd": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3",
+  "label": "artifact-14119000610-zip",
+  "pid": 7773,
+  "started_at": "2026-11-14T15:13:58.384742+00:00",
+  "stderr_cap_bytes": 1048576,
+  "stderr_path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119000610-zip.stderr",
+  "stdout_cap_bytes": 9992574,
+  "stdout_path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119000610.zip",
+  "timeout_seconds": 1200
+}

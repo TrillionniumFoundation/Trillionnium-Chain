@@ -1,0 +1,395 @@
+{
+  "error": {
+    "message": "LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER",
+    "type": "ValueError"
+  },
+  "frames": [
+    {
+      "function": "<module>",
+      "last_instruction_offset": 2616,
+      "line": 47,
+      "nearby_bytecode": [
+        {
+          "argrepr": "'new_OUT_only'",
+          "offset": 2564,
+          "opname": "LOAD_CONST",
+          "starts_line": false
+        },
+        {
+          "argrepr": "str",
+          "offset": 2566,
+          "opname": "LOAD_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2568,
+          "opname": "PUSH_NULL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "O",
+          "offset": 2570,
+          "opname": "LOAD_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2572,
+          "opname": "CALL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2580,
+          "opname": "BUILD_MAP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "runtime",
+          "offset": 2582,
+          "opname": "STORE_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "None",
+          "offset": 2584,
+          "opname": "LOAD_CONST",
+          "starts_line": true
+        },
+        {
+          "argrepr": "result",
+          "offset": 2586,
+          "opname": "STORE_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "None",
+          "offset": 2588,
+          "opname": "LOAD_CONST",
+          "starts_line": false
+        },
+        {
+          "argrepr": "error",
+          "offset": 2590,
+          "opname": "STORE_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2592,
+          "opname": "BUILD_LIST",
+          "starts_line": false
+        },
+        {
+          "argrepr": "frames",
+          "offset": 2594,
+          "opname": "STORE_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "scope",
+          "offset": 2596,
+          "opname": "LOAD_NAME",
+          "starts_line": true
+        },
+        {
+          "argrepr": "'inspect_complete_zip'",
+          "offset": 2598,
+          "opname": "LOAD_CONST",
+          "starts_line": false
+        },
+        {
+          "argrepr": "[]",
+          "offset": 2600,
+          "opname": "BINARY_OP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2612,
+          "opname": "PUSH_NULL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "Z",
+          "offset": 2614,
+          "opname": "LOAD_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 2616,
+          "opname": "CALL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "result",
+          "offset": 2624,
+          "opname": "STORE_NAME",
+          "starts_line": false
+        },
+        {
+          "argrepr": "'schema'",
+          "offset": 2626,
+          "opname": "LOAD_CONST",
+          "starts_line": true
+        },
+        {
+          "argrepr": "'trnm-arm-original-inspector-independent-observation-v1'",
+          "offset": 2628,
+          "opname": "LOAD_CONST",
+          "starts_line": false
+        }
+      ],
+      "source": "<string>"
+    },
+    {
+      "entry": {
+        "external_attr": 2175008800,
+        "flag_bits": 8,
+        "flags_and_0x41": 0,
+        "kind": 32768,
+        "mode": 33188,
+        "path": "cross-arch-cost/build-configuration-v1.json",
+        "predicate": true
+      },
+      "function": "inspect_complete_zip",
+      "last_instruction_offset": 618,
+      "line": 268,
+      "nearby_bytecode": [
+        {
+          "argrepr": "stat",
+          "offset": 486,
+          "opname": "LOAD_GLOBAL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "S_ISREG",
+          "offset": 496,
+          "opname": "LOAD_ATTR",
+          "starts_line": false
+        },
+        {
+          "argrepr": "stat",
+          "offset": 516,
+          "opname": "LOAD_GLOBAL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "S_IFDIR",
+          "offset": 526,
+          "opname": "LOAD_ATTR",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 546,
+          "opname": "BUILD_TUPLE",
+          "starts_line": false
+        },
+        {
+          "argrepr": "in",
+          "offset": 548,
+          "opname": "CONTAINS_OP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 552,
+          "opname": "COPY",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 554,
+          "opname": "TO_BOOL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "to L4",
+          "offset": 562,
+          "opname": "POP_JUMP_IF_FALSE",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 566,
+          "opname": "NOT_TAKEN",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 568,
+          "opname": "POP_TOP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "info",
+          "offset": 570,
+          "opname": "LOAD_FAST_BORROW",
+          "starts_line": false
+        },
+        {
+          "argrepr": "flag_bits",
+          "offset": 572,
+          "opname": "LOAD_ATTR",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 592,
+          "opname": "LOAD_SMALL_INT",
+          "starts_line": false
+        },
+        {
+          "argrepr": "&",
+          "offset": 594,
+          "opname": "BINARY_OP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 606,
+          "opname": "TO_BOOL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 614,
+          "opname": "UNARY_NOT",
+          "starts_line": false
+        },
+        {
+          "argrepr": "'LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER'",
+          "offset": 616,
+          "opname": "LOAD_CONST",
+          "starts_line": true
+        },
+        {
+          "argrepr": "",
+          "offset": 618,
+          "opname": "CALL",
+          "starts_line": true
+        },
+        {
+          "argrepr": "",
+          "offset": 626,
+          "opname": "POP_TOP",
+          "starts_line": false
+        },
+        {
+          "argrepr": "need + NULL",
+          "offset": 628,
+          "opname": "LOAD_GLOBAL",
+          "starts_line": true
+        },
+        {
+          "argrepr": "info",
+          "offset": 638,
+          "opname": "LOAD_FAST_BORROW",
+          "starts_line": false
+        }
+      ],
+      "source": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py"
+    },
+    {
+      "function": "need",
+      "last_instruction_offset": 38,
+      "line": 54,
+      "nearby_bytecode": [
+        {
+          "argrepr": "",
+          "offset": 0,
+          "opname": "RESUME",
+          "starts_line": true
+        },
+        {
+          "argrepr": "ok",
+          "offset": 2,
+          "opname": "LOAD_FAST_BORROW",
+          "starts_line": true
+        },
+        {
+          "argrepr": "",
+          "offset": 4,
+          "opname": "TO_BOOL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "to L1",
+          "offset": 12,
+          "opname": "POP_JUMP_IF_TRUE",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 16,
+          "opname": "NOT_TAKEN",
+          "starts_line": false
+        },
+        {
+          "argrepr": "ValueError + NULL",
+          "offset": 18,
+          "opname": "LOAD_GLOBAL",
+          "starts_line": true
+        },
+        {
+          "argrepr": "message",
+          "offset": 28,
+          "opname": "LOAD_FAST_BORROW",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 30,
+          "opname": "CALL",
+          "starts_line": false
+        },
+        {
+          "argrepr": "",
+          "offset": 38,
+          "opname": "RAISE_VARARGS",
+          "starts_line": false
+        },
+        {
+          "argrepr": "None",
+          "offset": 40,
+          "opname": "LOAD_CONST",
+          "starts_line": true
+        },
+        {
+          "argrepr": "",
+          "offset": 42,
+          "opname": "RETURN_VALUE",
+          "starts_line": false
+        }
+      ],
+      "need_arguments": {
+        "message": "'LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER'",
+        "ok": "False"
+      },
+      "source": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py"
+    }
+  ],
+  "network_or_native_calls": 0,
+  "only_original_offline_inspector_called": true,
+  "original_HOLD_preserved": true,
+  "result": null,
+  "runtime": {
+    "capture_not_called": true,
+    "compiled_source_sha256": "6aec3684388395ae38f6d871f5d764dce419a41ba1c62d425c81dabcb415b3f9",
+    "constants": {
+      "S_IFDIR": 16384,
+      "S_IFREG": 32768
+    },
+    "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "function_source_sha256": "b6438bb30e36be2470f159126438d18ddcd4e33b2197cdf72e89db9fb4d804dd",
+    "main_not_loaded_as_call": true,
+    "new_OUT_only": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2",
+    "stat_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py",
+    "version": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "zipfile_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/zipfile/__init__.py"
+  },
+  "schema": "trnm-arm-original-inspector-independent-observation-v1"
+}

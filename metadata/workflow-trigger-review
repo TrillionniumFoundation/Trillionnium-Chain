@@ -1,0 +1,23 @@
+{
+  "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "candidate_review": {
+    "bytes": 19048,
+    "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-postpublication-r1-v1/archive-tag-workflow-triggers/compact-trigger-inventory.json",
+    "sha256": "783cbb3b7babe4bcb9210663034f91e75c7f497877b42c31a149a160ff9c1639"
+  },
+  "candidate_workflow_count": 36,
+  "conclusion": "No matching automatic archive-tag push/create/release/workflow_run declaration in either fixed Actions source. The tag publication is not a deployment or qualification operation in these declarations.",
+  "default_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "default_main_review": {
+    "bytes": 11026,
+    "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-postpublication-r1-v1/archive-tag-workflow-triggers/default-main-v1/summary.json",
+    "sha256": "c66b83cdfda89a533df104dd39f5af961c3ebc5626082cb526dc62c88f563c4d"
+  },
+  "default_main_workflow_count": 1,
+  "external_apps_or_webhooks_proved_absent": false,
+  "review_kind": "STATIC_ONLY_NOT_A_WORKFLOW_EXECUTION",
+  "schema": "trnm-archive-only-two-source-workflow-static-review-v1",
+  "source_evidence": "Original independently reviewed declarations copied exactly into the frozen scanned payload; root read both fixed reports.",
+  "tag": "archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1",
+  "this_combining_report_is_not_in_the_scanned_1880_file_scope": true
+}

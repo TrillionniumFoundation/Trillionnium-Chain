@@ -1,0 +1,15 @@
+{
+  "archive_bytes": 272975787,
+  "archive_files": 5670,
+  "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "commit": "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9",
+  "direct_parents": [
+    "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+    "2a86462a1ab20c68151719ba4635e3c294391e64"
+  ],
+  "file_index_sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a",
+  "payload_manifest_sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223",
+  "tag": "archive/execution-receipts-20261114-2a86462a1ab2-v1",
+  "tag_oid": "454761ef276433740453b5b80ce886c1d251c6d3",
+  "tree": "e7c0cdcc71af648f430acd323d33dedfaf1ed63b"
+}

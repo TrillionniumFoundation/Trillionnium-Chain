@@ -1,0 +1,143 @@
+{
+  "admission-source-v1": {
+    "data": {
+      "files": [
+        {
+          "bytes": 46767,
+          "file": "trillionnium--crates--trnm-pon-node--src--ingress--pq_network.rs.original",
+          "git_blob": "dfad36b1032617e1ec9b95486bc8a0b0015639fc",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "sha256": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b"
+        },
+        {
+          "bytes": 9756,
+          "file": "trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--io.rs.original",
+          "git_blob": "91cb2069d027db992e55ba6e06d0c8be132d6dd2",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+          "sha256": "52eeb34e8fe666248fc9c2e1ed3526c1f472ff0cbce952f81b092cc9160f8132"
+        },
+        {
+          "bytes": 27534,
+          "file": "trillionnium--crates--trnm-pon-node--src--store--pq_network.rs.original",
+          "git_blob": "648f54a948af672932c85c1b2c1d2c2eaa37b243",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+          "sha256": "0842e29ff49fcd485b8fc78f61cab93868900e1dace5de39550b6a26d5cbbe66"
+        },
+        {
+          "bytes": 16488,
+          "file": "trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness.rs.original",
+          "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+        }
+      ],
+      "revision": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "pin": {
+      "bytes": 1495,
+      "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/source-index.json",
+      "sha256": "3447fe2980980cfef9107438bf9c213de7fa881258fa59fbad8de435acddd2c1"
+    }
+  },
+  "crypto-signing-source-v1": {
+    "data": {
+      "files": [
+        {
+          "bytes": 12902,
+          "file": "trillionnium--crates--trnm-crypto-primitives--src--pq_auth.rs.original",
+          "git_blob": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+          "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+        }
+      ],
+      "revision": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "pin": {
+      "bytes": 421,
+      "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/crypto-signing-source-v1/source-index.json",
+      "sha256": "7a085cbb5b1b5400d156aabdcd62e19cc17d2f9d83bdd3b39108e1ff58c761b2"
+    }
+  },
+  "immutable-source-v1": {
+    "data": {
+      "files": [
+        {
+          "bytes": 8471,
+          "file": "trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls.rs.original",
+          "git_blob": "0f4ae1887c2f1158cfd4f4035a6013fbe7ad20b3",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+          "sha256": "e2b7f742cb69411e473cc5f715ba09175cd016b4118233974cf317d7b4fd31ee"
+        },
+        {
+          "bytes": 5782,
+          "file": "trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--diagnostics.rs.original",
+          "git_blob": "3c09eec6db4fdba3d68617c358f4e9402fa27428",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs",
+          "sha256": "38ec29adf8a967869e6bed154a3d4d4de806ee0558cfdb19878cfb240323e8cf"
+        },
+        {
+          "bytes": 38829,
+          "file": "trillionnium--crates--trnm-pon-node--src--pq_rollback_witness.rs.original",
+          "git_blob": "89a0acf1f7851822fc3b54fdcf7a91596252ec98",
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+        },
+        {
+          "bytes": 41717,
+          "file": "trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--test_observation.rs.original",
+          "git_blob": "655f0701562203f2e57c4e71591e08b301ac8b92",
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+          "sha256": "0153c8fe811dccaa64bb6f8ac2d882e83e79f49c068a74526dc3e03c5ac80a8e"
+        },
+        {
+          "bytes": 31629,
+          "file": "trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--tests.rs.original",
+          "git_blob": "bd77ba22d19dd28573d4fd28a4e5c304ba1ea6c9",
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "sha256": "f99f8f41e51354e3ca59d67b01ae1f3ea3714b216a7dbfdeb70de074e430451a"
+        },
+        {
+          "bytes": 34649,
+          "file": "trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness--tests.rs.original",
+          "git_blob": "0a439f04af942eda4aab0db20f1315b0fbf5b312",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "sha256": "205098456dd281599bec215e718a1055b07808d858c03f2d36beec9311a8bf4c"
+        },
+        {
+          "bytes": 1973,
+          "file": "trillionnium--crates--trnm-pon-node--tests--pq_tls_refusal_diagnostics.rs.original",
+          "git_blob": "5eea5cad9f13b21eb20944d36cf30655e45dd292",
+          "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs",
+          "sha256": "c91101f966c1affe117b8c5683eae9434ef19f6eec690004310d1883ab2572ff"
+        },
+        {
+          "bytes": 12089,
+          "file": "trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli.rs.original",
+          "git_blob": "def79da7523fcd3543aad76f8483628b9eb94d77",
+          "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+          "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+        },
+        {
+          "bytes": 2568,
+          "file": "trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--refusal_diagnostics.rs.original",
+          "git_blob": "ac389ebc3e45ba21ceaf08bafaf4d720d10ac9bd",
+          "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs",
+          "sha256": "088e857bdd2b39eb61936e59f392e6d99302cf55f3642df941a8958fe2511ae5"
+        },
+        {
+          "bytes": 17795,
+          "file": "trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--support.rs.original",
+          "git_blob": "5cfbc87f1aa76c0db8cd6dd08c25f6294a6844b8",
+          "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+          "sha256": "78066dc62d98b9fb5f652f17f296a19923687a9f947d55f5e78a4650e530e068"
+        }
+      ],
+      "revision": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "pin": {
+      "bytes": 3761,
+      "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/source-index.json",
+      "sha256": "4a3e6da14c2cc2fcf9ff1f54c59c5d7d4f950aeafac40f1eaca6bda3743fd266"
+    }
+  }
+}

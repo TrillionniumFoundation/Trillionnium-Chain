@@ -1,0 +1,5 @@
+{"producer": {"path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py", "bytes": 17851, "sha256": "812dca7d473b326cb052fa3455e385ebcef3b49b158f7a15c9ab710540c837d9"}}
+{"range_closed": "caller-records", "exit": 0, "complete": true, "retained_bytes": 1066, "error": null}
+{"range_closed": "remaining-selectors-and-manifest", "exit": 0, "complete": true, "retained_bytes": 17482, "error": null}
+{"range_closed": "confirmation-report", "exit": 0, "complete": true, "retained_bytes": 525935, "error": null}
+{"status": "SELECTED_ORIGINAL_MEMBERS_VERIFIED", "summary": {"path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json", "bytes": 18874, "sha256": "866b1ef149a2299538ae14449f912df1a73746af689508a08ba7aab43f28282a"}, "errors": [], "manifest_failures": ["CONFIRMATION_TARGET"], "whole_artifact_sha256_verified": false}

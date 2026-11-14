@@ -1,0 +1,102 @@
+{
+  "actual_inner_service_failure": "UNKNOWN_PENDING_ARTIFACT",
+  "limited_initial_parser_retained": "v2 extraction selected only same-line source JSON; this overlay parses full timestamp-stripped JSON blocks; original logs unchanged",
+  "native_or_remote_mutation": false,
+  "results": [
+    {
+      "artifact_log_lines": [
+        "2026-11-14T14:28:05.2470501Z With the provided path, there will be 57 files uploaded",
+        "2026-11-14T14:28:06.3248165Z SHA256 digest of uploaded artifact zip is b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+        "2026-11-14T14:28:06.7157781Z Artifact w1-fresh-service-head-2a86462a1ab20c68151719ba4635e3c294391e64-1.zip successfully finalized. Artifact ID 14117751904",
+        "2026-11-14T14:28:06.7160506Z Artifact w1-fresh-service-head-2a86462a1ab20c68151719ba4635e3c294391e64-1 has been successfully uploaded! Final size is 6479218 bytes. Artifact ID is 14117751904",
+        "2026-11-14T14:28:06.7166165Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/artifacts/14117751904"
+      ],
+      "host_controller": {
+        "bytes": 8150,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-log-source-binding-v1/job-132475259337-actual-host-controller.json",
+        "sha256": "fc9b092835a00f0c94cf461dc95b8490a29fb9cc329c813e38bdcb3dc337f868"
+      },
+      "host_outer": {
+        "build_exit": 0,
+        "build_wall_ns": 233089017081,
+        "failure": null,
+        "final_host_errors": [],
+        "passed": false,
+        "systemd_run_exit": 1
+      },
+      "job_id": 132475259337,
+      "kind": "head",
+      "log": {
+        "bytes": 215469,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.stdout",
+        "sha256": "8a8308148cc4584b222a1ad4b89f9ed3b9315e10fc4a3f9b41804d4113692a2c"
+      },
+      "source": {
+        "base": null,
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after": {
+        "bytes": 1365,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-log-source-binding-v1/job-132475259337-source-before-after.json",
+        "sha256": "5117644da58eaa27dc475da09b28d20f4187df0961ef98f7519f2dadf71f033c"
+      }
+    },
+    {
+      "artifact_log_lines": [
+        "2026-11-14T14:28:24.5687830Z With the provided path, there will be 57 files uploaded",
+        "2026-11-14T14:28:25.6884019Z SHA256 digest of uploaded artifact zip is 2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a",
+        "2026-11-14T14:28:26.0329841Z Artifact w1-fresh-service-prospective-merge-a7ee9542d10e15bba4256de9579a0196ba9ab9c9-1.zip successfully finalized. Artifact ID 14117403147",
+        "2026-11-14T14:28:26.0332852Z Artifact w1-fresh-service-prospective-merge-a7ee9542d10e15bba4256de9579a0196ba9ab9c9-1 has been successfully uploaded! Final size is 6451341 bytes. Artifact ID is 14117403147",
+        "2026-11-14T14:28:26.0347787Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/artifacts/14117403147"
+      ],
+      "host_controller": {
+        "bytes": 8163,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-log-source-binding-v1/job-132475258996-actual-host-controller.json",
+        "sha256": "9b3bfaea96400faea3709617e7bd4f37bddceb3cea0d1ed2d96940540f859173"
+      },
+      "host_outer": {
+        "build_exit": 0,
+        "build_wall_ns": 243350355649,
+        "failure": null,
+        "final_host_errors": [],
+        "passed": false,
+        "systemd_run_exit": 1
+      },
+      "job_id": 132475258996,
+      "kind": "prospective-merge",
+      "log": {
+        "bytes": 216283,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.stdout",
+        "sha256": "d8f8acf7d7e83ff24212cc5b2ce9f09a6817f40910b38d7f25750ed148165002"
+      },
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after": {
+        "bytes": 1556,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-log-source-binding-v1/job-132475258996-source-before-after.json",
+        "sha256": "eb940c4c7c540e48dff62858a0e208a60e5d1ebb6ab5bedf3aa9016ac00f0b10"
+      }
+    }
+  ],
+  "schema": "trnm-R1-W1-full-log-source-and-host-review-v1"
+}

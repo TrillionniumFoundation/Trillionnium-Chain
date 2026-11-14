@@ -1,0 +1,10 @@
+tree 4e85966ae98b0081fcc2f9d0e8af313bc4f7d005
+parent db93026b9314bfd8bc4350945036998f1b7d34aa
+author Codex <codex@openai.com> 1794370329 -0500
+committer Codex <codex@openai.com> 1794370329 -0500
+
+test(pon): retain old pool production with exact schema-clean durability fixture
+
+This immutable old-production subject changes only the test injector cleanup. It drops its auxiliary counter table before cold reopen, matching the fixed subject. All original runtime limits, injected errors, assertions and five designated negative sites remain. The previous db93026 observation is retained, not reclassified.
+
+Signed-off-by: Codex <codex@openai.com>

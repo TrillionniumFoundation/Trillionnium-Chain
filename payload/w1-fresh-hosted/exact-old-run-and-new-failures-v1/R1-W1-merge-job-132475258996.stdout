@@ -1,0 +1,29 @@
+HTTP/2.0 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+Cache-Control: private, max-age=60, s-maxage=60
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 14:32:42 GMT
+Etag: W/"85b65277df59d13cb9aac34f7d7d6f11bbd8247e32a4b9c442ca54549d1a603b"
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Server: github.com
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+Vary: Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+X-Accepted-Oauth-Scopes: 
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Github-Api-Version-Selected: 2026-03-10
+X-Github-Edge-Region: fra
+X-Github-Media-Type: github.v3; format=json
+X-Github-Request-Id: FDAE:28BACB:5B18D75:8B0FDF1:6AF8710A
+X-Oauth-Client-Id: 178c6fc778ccc68e1d6a
+X-Oauth-Scopes: gist, read:org, repo, workflow
+X-Ratelimit-Limit: 5000
+X-Ratelimit-Remaining: 4598
+X-Ratelimit-Reset: 1794668240
+X-Ratelimit-Resource: core
+X-Ratelimit-Used: 402
+X-Xss-Protection: 0
+
+{"id":132475258996,"run_id":43604217632,"workflow_name":"PoN W1 work security observations","head_branch":"fix/chain-hepta-closure-candidate-20261109-481716","run_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632","run_attempt":1,"node_id":"CR_kwDOTty1_c8AAAAe2CQIdA","head_sha":"2a86462a1ab20c68151719ba4635e3c294391e64","url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258996","html_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475258996","status":"completed","conclusion":"failure","created_at":"2026-11-14T14:19:02Z","started_at":"2026-11-14T14:19:06Z","completed_at":"2026-11-14T14:28:27Z","name":"W1 fresh challenge service (x64, prospective-merge)","steps":[{"name":"Set up job","status":"completed","conclusion":"success","number":1,"started_at":"2026-11-14T14:19:07Z","completed_at":"2026-11-14T14:19:07Z"},{"name":"Checkout exact observed source","status":"completed","conclusion":"success","number":2,"started_at":"2026-11-14T14:19:07Z","completed_at":"2026-11-14T14:20:05Z"},{"name":"Reproduce the frozen integration-push source","status":"completed","conclusion":"skipped","number":3,"started_at":"2026-11-14T14:20:05Z","completed_at":"2026-11-14T14:20:05Z"},{"name":"Reserve observations and verify ordered source identity","status":"completed","conclusion":"success","number":4,"started_at":"2026-11-14T14:20:05Z","completed_at":"2026-11-14T14:20:11Z"},{"name":"Install original pinned compiler","status":"completed","conclusion":"success","number":5,"started_at":"2026-11-14T14:20:11Z","completed_at":"2026-11-14T14:20:19Z"},{"name":"Run refusal controls for original Host and fresh successor","status":"completed","conclusion":"success","number":6,"started_at":"2026-11-14T14:20:19Z","completed_at":"2026-11-14T14:20:43Z"},{"name":"Execute original and fresh service with original Host resources","status":"completed","conclusion":"failure","number":7,"started_at":"2026-11-14T14:20:43Z","completed_at":"2026-11-14T14:28:19Z"},{"name":"Verify observed source after execution","status":"completed","conclusion":"success","number":8,"started_at":"2026-11-14T14:28:19Z","completed_at":"2026-11-14T14:28:24Z"},{"name":"Preserve this lane's actual push source context","status":"completed","conclusion":"skipped","number":9,"started_at":"2026-11-14T14:28:24Z","completed_at":"2026-11-14T14:28:24Z"},{"name":"Retain both service outcomes and original Host evidence","status":"completed","conclusion":"success","number":10,"started_at":"2026-11-14T14:28:24Z","completed_at":"2026-11-14T14:28:26Z"},{"name":"Post Checkout exact observed source","status":"completed","conclusion":"success","number":20,"started_at":"2026-11-14T14:28:26Z","completed_at":"2026-11-14T14:28:26Z"},{"name":"Complete job","status":"completed","conclusion":"success","number":21,"started_at":"2026-11-14T14:28:26Z","completed_at":"2026-11-14T14:28:26Z"}],"check_run_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/132475258996","labels":["ubuntu-24.04"],"runner_id":1000144115,"runner_name":"GitHub Actions 1000144115","runner_group_id":0,"runner_group_name":"GitHub Actions"}

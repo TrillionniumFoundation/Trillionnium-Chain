@@ -1,0 +1,321 @@
+{
+  "actions": {
+    "native_executed": false,
+    "network_requests_performed_by_this_review": false,
+    "source_or_git_or_config_or_stage_mutated": false,
+    "tests_executed": false
+  },
+  "captured_source_files": [
+    {
+      "bytes": 40413,
+      "git_blob": "ce94e0a5423d91840849d91579ec541081117274",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/.github--workflows--pon-w1-work-security.yml",
+      "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+    },
+    {
+      "bytes": 35462,
+      "git_blob": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/.github--workflows--trnm-required-baseline.yml",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+    },
+    {
+      "bytes": 46605,
+      "git_blob": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--ci_job.sh",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    {
+      "bytes": 13543,
+      "git_blob": "160c489693f3ec600e2e015c30773d66cff3bcdf",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--public_host_ci_observation.py",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
+    },
+    {
+      "bytes": 28366,
+      "git_blob": "df0643a36ab7110d0b5af9d13cd9e291bbf022f0",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_from_zero_host.py",
+      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
+    },
+    {
+      "bytes": 115087,
+      "git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_from_zero_native.py",
+      "sha256": "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"
+    },
+    {
+      "bytes": 28612,
+      "git_blob": "5da74ae0ebee18ef19e6b849d5ddfa8f4add7a90",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_w1_fresh_service_v1.py",
+      "sha256": "b6850cecbd4d6fec1911b0b237c7cbdaf8888fc9c5f67baf7836d5adca058519"
+    },
+    {
+      "bytes": 10762,
+      "git_blob": "c3ff122d03708dc472dfa9ce21ce3729014aff08",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs",
+      "sha256": "2799bd30b73fae3b89b894e2c55f2dcb4c3231b670eb40f4f79a6e29d8362dbd"
+    },
+    {
+      "bytes": 438782,
+      "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs",
+      "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a"
+    },
+    {
+      "bytes": 11911,
+      "git_blob": "ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero--fresh_challenge.rs",
+      "sha256": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9"
+    },
+    {
+      "bytes": 79324,
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "path": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs",
+      "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    }
+  ],
+  "fresh_execution": {
+    "each_test_timeout_seconds": 90,
+    "fresh_explicit_ignored": true,
+    "fresh_report_required": true,
+    "fresh_rust_asserts": "invariants and finite original-window business outcome",
+    "harness_threads": 1,
+    "original_failure_does_not_prevent_fresh_collection": true,
+    "original_ignored": false,
+    "original_report_required": true,
+    "original_rust_asserts": "safety/accounting invariants; finite service separately in report",
+    "release": true,
+    "same_compiled_target": "public_v3_from_zero"
+  },
+  "fresh_selectors": [
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+    "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget"
+  ],
+  "not_proven": [
+    "Actual inner original or fresh failure before manifest/raw child logs are obtained.",
+    "CONFIRMATION_TARGET is not established by outer child exit1.",
+    "No quantified P1 runtime gain or 4-second remedy.",
+    "No CPU-only causal attribution, no inherited C0 failure result, no hosted/global qualification."
+  ],
+  "outer_job_evidence": [
+    {
+      "extraction": {
+        "bytes": 12907,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.extraction.json",
+        "sha256": "9878698960548f74a77d7be18bebfc21f39da86efadd631416d31d283b548b3b"
+      },
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_w1_fresh_service_v1.py",
+          "--out",
+          "/home/runner/work/_temp/w1-fresh-service-head-43604217632-1/fresh-service"
+        ],
+        "failure": null,
+        "final_host_errors": [],
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "preparation": {
+          "after": {
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+              "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 3994964901,
+              "tracked_entries": 41677,
+              "tracked_worktree_verified": true
+            },
+            "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+          },
+          "before": {
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+              "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 3994964901,
+              "tracked_entries": 41677,
+              "tracked_worktree_verified": true
+            },
+            "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+          },
+          "completed": true,
+          "exit_code": 0,
+          "wall_ns": 233089017081
+        },
+        "systemd_run_exit": 1
+      },
+      "job": 132475259337,
+      "raw": {
+        "bytes": 215469,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475259337-original-log.stdout",
+        "sha256": "8a8308148cc4584b222a1ad4b89f9ed3b9315e10fc4a3f9b41804d4113692a2c"
+      }
+    },
+    {
+      "extraction": {
+        "bytes": 12972,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.extraction.json",
+        "sha256": "e46a047850559d0321a1e1a00aaac91c0e3db878594c4d605639fb62ab3ab915"
+      },
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_w1_fresh_service_v1.py",
+          "--out",
+          "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service"
+        ],
+        "failure": null,
+        "final_host_errors": [],
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "passed": false,
+        "preparation": {
+          "after": {
+            "commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+            "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+              "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 3994964901,
+              "tracked_entries": 41677,
+              "tracked_worktree_verified": true
+            },
+            "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+          },
+          "before": {
+            "commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+            "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+            "tracked_source_identity": {
+              "base": null,
+              "candidate": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+              "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 3994964901,
+              "tracked_entries": 41677,
+              "tracked_worktree_verified": true
+            },
+            "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+          },
+          "completed": true,
+          "exit_code": 0,
+          "wall_ns": 243350355649
+        },
+        "systemd_run_exit": 1
+      },
+      "job": 132475258996,
+      "raw": {
+        "bytes": 216283,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.stdout",
+        "sha256": "d8f8acf7d7e83ff24212cc5b2ce9f09a6817f40910b38d7f25750ed148165002"
+      }
+    }
+  ],
+  "p1": {
+    "bytes": 438782,
+    "git_blob": "b62de39bdba906c9d989498a6299df9a14d900e8",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "performance_efficacy_for_R1_hosted_failure": "unmeasured",
+    "policy_call_counts_from_host_checks": false,
+    "scope": "Pure immutable SHA256 framing-prefix cache; all six dynamic fields remain hashed each call.",
+    "sha256": "0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a",
+    "static_reachability": true
+  },
+  "required_protocol": {
+    "argv": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "protocol-contract"
+    ],
+    "exact_original_selectors": 5,
+    "fresh_additional_selector_in_this_call": false,
+    "lane": "protocol-contract",
+    "native_host_call_line": 255,
+    "runner": "scripts/ci/run_from_zero_native.py",
+    "workflow": ".github/workflows/trnm-required-baseline.yml",
+    "workflow_timeout_minutes": 240
+  },
+  "schema": "trnm-R1-w1-fresh-service-static-scope-v1",
+  "scope": "Read-only fixed Git source and complete original outer-job excerpts; inner artifact cause not yet observed.",
+  "shared_call_graph": [
+    "signed_confirmation_phase_with_builder",
+    "Client::call_before",
+    "public_v3::call_public_protected_v3_with_deadline",
+    "call_public_protected_v3_with_profile",
+    "call_public_authenticated_with_timing",
+    "ClientProfile::Legacy.id(policy)",
+    "PublicPolicy::id",
+    "hash_public_policy"
+  ],
+  "shared_limits": {
+    "attack_workers": 16,
+    "calls_per_worker_cap": 1024,
+    "host": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "per_rpc_absolute_deadline": "min(call start + 2s, original traffic window end)",
+    "per_rpc_budget_ms": 2000,
+    "policy_cookie_lifetime_ms": 2000,
+    "traffic_window_ns": 4000000000
+  },
+  "source": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "workflow": {
+    "argv": [
+      "python3",
+      "scripts/ci/run_from_zero_host.py",
+      "--",
+      "python3",
+      "scripts/ci/run_w1_fresh_service_v1.py",
+      "--out",
+      "$OUT/fresh-service"
+    ],
+    "job": "fresh-challenge-service",
+    "matrix": [
+      "head",
+      "prospective-merge"
+    ],
+    "path": ".github/workflows/pon-w1-work-security.yml",
+    "runner": "ubuntu-24.04",
+    "timeout_minutes": 55
+  }
+}

@@ -1,0 +1,836 @@
+{
+  "acquisition": {
+    "bytes": 19409,
+    "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/acquisition-summary.json",
+    "sha256": "9177b5fb42fac4280c9260fb40e21ab37159d17fcba0a4c11da39cde4936605f"
+  },
+  "cases": [
+    {
+      "actual_native_report": {
+        "cases": [],
+        "commands": [
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "exit_code": 0,
+            "started": true
+          },
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "exit_code": 0,
+            "started": true
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_failures_not_executed": 2,
+        "expected_passes_not_executed": 0,
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "result": "FAIL"
+      },
+      "artifact_id": 14117367614,
+      "extraction_summary": {
+        "bytes": 13711,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117367614/extraction-summary.json",
+        "sha256": "cb288e48df0d420a3b8ee0ce729107ffbd4caad0096648d4429c63b62788ca37"
+      },
+      "independently_tested_subject": {
+        "base": null,
+        "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+        "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2555020399,
+        "tracked_entries": 27987,
+        "tracked_worktree_verified": true
+      },
+      "job_id": 132475258169,
+      "mode": "pool-scan-before",
+      "original_job_log": {
+        "bytes": 323275,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-original-log.stdout",
+        "sha256": "24a5a568afc63d5135c485e9c61312fddbaf05696c5b678a87978b131d1f515b"
+      },
+      "original_job_metadata": {
+        "bytes": 3038,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-metadata.stdout",
+        "sha256": "7c0c25705570c65aa2b4b51279e86d4e84eba6ed04ce3097264112df42730054"
+      },
+      "original_runner_refusal_controls": {
+        "executed_here": false,
+        "methods": 43,
+        "status": "PASS",
+        "tail": [
+          "test_release_profile_cannot_be_relabeled (__main__.BudgetControlsTests.test_release_profile_cannot_be_relabeled) ... ok",
+          "test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored (__main__.BudgetControlsTests.test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored) ... ok",
+          "test_workflow_keeps_four_sources_separate_and_all_failures (__main__.BudgetControlsTests.test_workflow_keeps_four_sources_separate_and_all_failures) ... ok",
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 43 tests in 0.324s",
+          "",
+          "OK"
+        ]
+      },
+      "run_attempt": 1,
+      "run_id": 43604217513,
+      "source_before_after_byte_equal": {
+        "driver": true,
+        "subject": true
+      },
+      "workflow_head": {
+        "base": null,
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "zip": {
+        "bytes": 6927,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/14117367614.zip",
+        "sha256": "7c05f187fb5395fcddf250f6e772f366d7de7636824a9546cf4ca7b050ad22ed"
+      },
+      "zip_index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/EVIDENCE_INDEX.json",
+        "sha256": "f643179f5619ac00f2d50771ba6d65d43bb5859b9e3e90be23ed1246f468b44c"
+      }
+    },
+    {
+      "actual_native_report": {
+        "cases": [],
+        "commands": [
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "exit_code": 0,
+            "started": true
+          },
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "exit_code": 0,
+            "started": true
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_failures_not_executed": 6,
+        "expected_passes_not_executed": 1,
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "result": "FAIL"
+      },
+      "artifact_id": 14117727292,
+      "extraction_summary": {
+        "bytes": 14347,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14117727292/extraction-summary.json",
+        "sha256": "84eee193c72dcfbdd9e966c6d74cd55602fdfc93d1eb25fb1766d32bf23b5cdc"
+      },
+      "independently_tested_subject": {
+        "base": null,
+        "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+        "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554978813,
+        "tracked_entries": 27985,
+        "tracked_worktree_verified": true
+      },
+      "job_id": 132475258063,
+      "mode": "budget-before-v2",
+      "original_job_log": {
+        "bytes": 323222,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-original-log.stdout",
+        "sha256": "eed776ed4458c1410f4d264576cfa6aab417a8159db985226756252f202a8f80"
+      },
+      "original_job_metadata": {
+        "bytes": 3038,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-metadata.stdout",
+        "sha256": "f32a5190e5e7bd17daae21f0c958d910dd304479a2b4b28f4d96ca6085f83b19"
+      },
+      "original_runner_refusal_controls": {
+        "executed_here": false,
+        "methods": 43,
+        "status": "PASS",
+        "tail": [
+          "test_release_profile_cannot_be_relabeled (__main__.BudgetControlsTests.test_release_profile_cannot_be_relabeled) ... ok",
+          "test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored (__main__.BudgetControlsTests.test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored) ... ok",
+          "test_workflow_keeps_four_sources_separate_and_all_failures (__main__.BudgetControlsTests.test_workflow_keeps_four_sources_separate_and_all_failures) ... ok",
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 43 tests in 0.331s",
+          "",
+          "OK"
+        ]
+      },
+      "run_attempt": 1,
+      "run_id": 43604217513,
+      "source_before_after_byte_equal": {
+        "driver": true,
+        "subject": true
+      },
+      "workflow_head": {
+        "base": null,
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "zip": {
+        "bytes": 7142,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/14117727292.zip",
+        "sha256": "6001cd25a2166e59a314a89d2d04c426dadbc083182922c9f443cbb8359db77f"
+      },
+      "zip_index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/EVIDENCE_INDEX.json",
+        "sha256": "797e08926915f3c7493d29e680ccc303cd6c22c7789223acf8e67bb8d60012f6"
+      }
+    },
+    {
+      "actual_native_report": {
+        "cases": [],
+        "commands": [
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "exit_code": 0,
+            "started": true
+          },
+          {
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "exit_code": 0,
+            "started": true
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_failures_not_executed": 5,
+        "expected_passes_not_executed": 2,
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "result": "FAIL"
+      },
+      "artifact_id": 14118225390,
+      "extraction_summary": {
+        "bytes": 14164,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/inner-originals-v1/14118225390/extraction-summary.json",
+        "sha256": "f8132e6a88882a57693b7c8392fb91adbaa70f4d5b319bb8bfafe90e828dc174"
+      },
+      "independently_tested_subject": {
+        "base": null,
+        "candidate": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+        "tested_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554976778,
+        "tracked_entries": 27985,
+        "tracked_worktree_verified": true
+      },
+      "job_id": 132475257835,
+      "mode": "pool-before-v2",
+      "original_job_log": {
+        "bytes": 323305,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-original-log.stdout",
+        "sha256": "fc18f5f6f31c65825fd327a3d13f4b121089ad01a4f651fa32a3a52b2270c5f3"
+      },
+      "original_job_metadata": {
+        "bytes": 3036,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-metadata.stdout",
+        "sha256": "3a8a8946caa39e707f7503e012bff9d18ebab51f234b7dbcec6d2176fb8c0497"
+      },
+      "original_runner_refusal_controls": {
+        "executed_here": false,
+        "methods": 43,
+        "status": "PASS",
+        "tail": [
+          "test_release_profile_cannot_be_relabeled (__main__.BudgetControlsTests.test_release_profile_cannot_be_relabeled) ... ok",
+          "test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored (__main__.BudgetControlsTests.test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored) ... ok",
+          "test_workflow_keeps_four_sources_separate_and_all_failures (__main__.BudgetControlsTests.test_workflow_keeps_four_sources_separate_and_all_failures) ... ok",
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 43 tests in 2.275s",
+          "",
+          "OK"
+        ]
+      },
+      "run_attempt": 1,
+      "run_id": 43604217513,
+      "source_before_after_byte_equal": {
+        "driver": true,
+        "subject": true
+      },
+      "workflow_head": {
+        "base": null,
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      },
+      "zip": {
+        "bytes": 7065,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/14118225390.zip",
+        "sha256": "ff20fd1ec49332453151a25d9481eae8e1a34cb81f57947b15ce969b73ba3a9a"
+      },
+      "zip_index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/EVIDENCE_INDEX.json",
+        "sha256": "28786ec186839031dc442738d723edc7ff39481b001fd86cdf0be00d539da478"
+      }
+    }
+  ],
+  "current_driver": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "run_attempt": 1,
+    "run_id": 43604217513,
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "workflow": ".github/workflows/pon-budget-controls.yml"
+  },
+  "input_comparison": [
+    {
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "inputs": [
+        {
+          "diff": null,
+          "driver_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "equal": true,
+          "path": "trillionnium/Cargo.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--Cargo.lock.patch",
+            "sha256": "15d13987ed19369fd2cbd481d731d9468e31144532f1a6682aa8f85161b24dc6"
+          },
+          "driver_oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+          "equal": false,
+          "path": "trillionnium/Cargo.lock",
+          "profile_semantically_equal": null,
+          "subject_oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "b0d5f6d7a9d7c877f873de3413b36f095bdf5e4db74e6ca816e2a17df4ef416f"
+          },
+          "driver_oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+          "equal": false,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject_oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "diff": null,
+          "driver_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "equal": true,
+          "path": "rust-toolchain.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": null,
+          "driver_oid": "2a41c8cf8e1cd781a604f6fcaf43ade17c42e2cc",
+          "equal": true,
+          "path": "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+          "profile_semantically_equal": null,
+          "subject_oid": "2a41c8cf8e1cd781a604f6fcaf43ade17c42e2cc",
+          "toml_top_level_keys_changed": null
+        }
+      ],
+      "mode": "pool-scan-before"
+    },
+    {
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "inputs": [
+        {
+          "diff": null,
+          "driver_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "equal": true,
+          "path": "trillionnium/Cargo.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--Cargo.lock.patch",
+            "sha256": "d8216f04cda46afaf40fdac4aee6bed5dead4c3d30babecd88f7720eeece541a"
+          },
+          "driver_oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+          "equal": false,
+          "path": "trillionnium/Cargo.lock",
+          "profile_semantically_equal": null,
+          "subject_oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "9804ad9a457447334c21f2d1f0a62edf36e1653247d1db89926d3aec2066fdf1"
+          },
+          "driver_oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+          "equal": false,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject_oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "diff": null,
+          "driver_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "equal": true,
+          "path": "rust-toolchain.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 11756,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--src--ingress--history_import_detached_budget_tests.rs.patch",
+            "sha256": "269411447760f3abc1e0d8eceeb6a55e831710b7d1a9818219a4e449c1abf382"
+          },
+          "driver_oid": "cf02b6c7426626c0bd56a91e0ff515dc6053083c",
+          "equal": false,
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+          "profile_semantically_equal": null,
+          "subject_oid": "0c910637bb3644968adfc59d1a96724402c0530e",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": null,
+          "driver_oid": "3a1a67380768b0c6e5a29ac7cc5d6d963600c2a1",
+          "equal": true,
+          "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+          "profile_semantically_equal": null,
+          "subject_oid": "3a1a67380768b0c6e5a29ac7cc5d6d963600c2a1",
+          "toml_top_level_keys_changed": null
+        }
+      ],
+      "mode": "budget-before-v2"
+    },
+    {
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "inputs": [
+        {
+          "diff": null,
+          "driver_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "equal": true,
+          "path": "trillionnium/Cargo.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--Cargo.lock.patch",
+            "sha256": "0265b6edefeeb0a8851275955dcea3dad35e5e3d89757862d773b9e26e857e75"
+          },
+          "driver_oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+          "equal": false,
+          "path": "trillionnium/Cargo.lock",
+          "profile_semantically_equal": null,
+          "subject_oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "d7ee0e670ddd7b2e4349bb61bef6e15dec7b7dd58d858e2ddac3137e1dd90c04"
+          },
+          "driver_oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+          "equal": false,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject_oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "diff": null,
+          "driver_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "equal": true,
+          "path": "rust-toolchain.toml",
+          "profile_semantically_equal": null,
+          "subject_oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+          "toml_top_level_keys_changed": null
+        },
+        {
+          "diff": null,
+          "driver_oid": "e2c8f8224270449587907a0a5607efaab147eb70",
+          "equal": true,
+          "path": "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+          "profile_semantically_equal": null,
+          "subject_oid": "e2c8f8224270449587907a0a5607efaab147eb70",
+          "toml_top_level_keys_changed": null
+        }
+      ],
+      "mode": "pool-before-v2"
+    }
+  ],
+  "observed_result": "All three actual historical-subject jobs stopped before compilation at IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED. This is not an executed expected native counterexample.",
+  "proposed_direction": {
+    "current_comparable_experiment_option": "If a new current-R1 before/after experiment is required, prepare separately reviewed new subjects with the same current fixture/dependency/profile inputs and only the intended production change, assign new exact commit/tree identities, and obtain actual native outcomes. This is additional work not authorized or performed here.",
+    "disallowed_shortcuts": [
+      "Remove Cargo.lock or the fixture from the guard",
+      "Silently replace old subject identities or old test bodies",
+      "Relabel native_control_processes_started=0 as an expected failure control pass",
+      "Claim old History v2 is current v3 by changing only schema or digest",
+      "Roll current runtime/dependencies back to historical inputs to silence this check"
+    ],
+    "historical_experiment_option": "Explicitly bind each retained historical experiment to independently reviewed immutable fixture/lock/profile inputs and a genuine matched reference source if a paired before/after claim is intended. A reference source has not been selected or verified in this review. Keep current fixed-arm validation separately identified. Old History v2 and current v3 must be named as different semantic contracts rather than asserted byte-equal.",
+    "narrow_diagnostic_change": "Write stable subject/driver file records and first mismatching path before the existing refusal. Do not skip any input or convert refusal into pass.",
+    "no_source_implementation": true,
+    "preserve": [
+      "Original three failures and original subjects/trees/fixtures",
+      "All strict expected-outcome checks and native-zero on precondition failure",
+      "Current fixed subject equals actual driver",
+      "Original toolchain/release/build/environment restrictions",
+      "All qualification/activation flags false"
+    ],
+    "status": "PROPOSAL_ONLY_REQUIRES_COORDINATOR_CONTRACT_CHOICE"
+  },
+  "review_producer": {
+    "bytes": 4166,
+    "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/final-review-v1/seal_review.py",
+    "sha256": "5a3fadf71144dabcdd0fa706a7c90d211c89fb02d018f5f14cb99b6170f1e783"
+  },
+  "review_sealed_at": "2026-11-14T15:58:35.362524+00:00",
+  "schema": "trnm-r1-budget-historical-current-input-review-v1",
+  "scope_limits": {
+    "artifact_members_executed": false,
+    "git_mutation": false,
+    "native_run_here": false,
+    "paired_reference_selected": false,
+    "source_modified": false,
+    "stage_modified": false,
+    "tests_run_here": false,
+    "whole_business_or_required_qualification": false,
+    "workflow_retried": false
+  },
+  "semantic_findings": [
+    {
+      "classification": "direct_original_report_plus_source_order",
+      "id": "first_actual_failure",
+      "text": "Cargo.lock differs in all three pairs: def80fa394ebb1ae6ce7d1d62ed77524152a2d04 -> 19530b3bce6b679ae87cb5b92b0578faf781c0b3. It is the first unequal checked input; this path is inferred from exact checked order and bytes, not claimed to have been printed by the original report."
+    },
+    {
+      "classification": "exact_source_diff",
+      "id": "dependency_changes",
+      "text": "The Node manifest changes rustix 1.1.4 to 1.1.6, rusqlite =0.41.0 to =0.41.1 in production/dev trace, and adds getrandom =0.2.17 dev dependency. Cargo.lock has additional concrete dependency graph changes, including cryptography/SQLite/serde/clap packages. These are not formatting-only changes."
+    },
+    {
+      "classification": "exact_source_identity",
+      "id": "unchanged_profile_toolchain",
+      "text": "Workspace Cargo.toml and rust-toolchain.toml are byte-identical. This does not make the changed lockfile or Node dependency manifest equivalent."
+    },
+    {
+      "classification": "exact_source_diff",
+      "id": "history_control_semantics",
+      "text": "The historical History fixture injects debt at M06 before native completion. Current positive cases select admitted after native commit, use a successor packet, and require retained completion identity. Cancellation/deadline preserves the first durable commit and cold reopen can activate it. A new current negative case retains pre-completion sticky refusal. Old and current test bodies are not equivalent."
+    },
+    {
+      "classification": "exact_source_identity",
+      "id": "unchanged_group_controls",
+      "text": "pool_reconcile_control_tests.rs, pool_run_control_tests.rs and mining_prepare_control_tests.rs are byte-identical in their compared historical/current pairs."
+    },
+    {
+      "classification": "source_consistency_inference",
+      "id": "current_reader_contract_conflict",
+      "text": "history_evidence deliberately validates historical v2 and current v3 with different phase semantics, while same_input_groups/run still demand whole-file equality of that same fixture across the immutable old subject and moving driver. Fixing only the shared dependency comparison cannot close budget-before-v2."
+    },
+    {
+      "classification": "exact_source_order",
+      "id": "diagnostic_gap",
+      "text": "identical_group_inputs is attached only after all compares succeed. The failing original reports therefore omit the offending path/hash rows. Preserve the rejection but record compared inputs and the precise first mismatch before raising."
+    },
+    {
+      "classification": "original_test_log_plus_test_source",
+      "id": "runner_tests_scope",
+      "text": "Each original Python refusal suite reports 43 PASS. Its equal synthetic fixtures prove reader/refusal behavior, not that the real frozen subjects satisfy the current equal-input precondition."
+    }
+  ],
+  "source_anchors": [
+    {
+      "line_end": 7,
+      "line_start": 1,
+      "meaning": "Documented identical group tests across old/current and no arbitrary nonzero as a counterexample.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 78,
+      "line_start": 63,
+      "meaning": "Four shared inputs, selected group files and release profile.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 147,
+      "line_start": 144,
+      "meaning": "Common input ordering makes Cargo.lock the first unequal input after identical workspace manifest.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 377,
+      "line_start": 362,
+      "meaning": "Reader explicitly distinguishes historical History schema v2 from current native-completion v3.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 439,
+      "line_start": 422,
+      "meaning": "Historical pre-completion refusal and current native-committed continuation have separate semantic checks.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 618,
+      "line_start": 611,
+      "meaning": "Historical subjects are fixed commits; fixed subject must equal actual driver.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 687,
+      "line_start": 665,
+      "meaning": "Actual source identities/preflights/tree check precede strict equal-bytes comparison; report input table is assigned only after full equality.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 715,
+      "line_start": 691,
+      "meaning": "Toolchain/platform/environment/build stages follow the equality guard and were not reached.",
+      "record": {
+        "bytes": 47276,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+        "path": "scripts/ci/run_pon_budget_controls.py",
+        "raw": {
+          "bytes": 47276,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+          "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+        },
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "line_end": 787,
+      "line_start": 760,
+      "meaning": "Mock fixtures create equal synthetic file bodies, not a comparison of real current and historical Git inputs.",
+      "record": {
+        "bytes": 59699,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+        "path": "scripts/ci/test_pon_budget_controls.py",
+        "raw": {
+          "bytes": 59699,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+          "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+        },
+        "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+      }
+    },
+    {
+      "line_end": 912,
+      "line_start": 896,
+      "meaning": "Two original refusal tests require zero native starts and no compilation after input changes.",
+      "record": {
+        "bytes": 59699,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+        "path": "scripts/ci/test_pon_budget_controls.py",
+        "raw": {
+          "bytes": 59699,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+          "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+        },
+        "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+      }
+    },
+    {
+      "line_end": 47,
+      "line_start": 31,
+      "meaning": "Four-mode matrix uses current PR head as driver and immutable historical SHAs as three subjects.",
+      "record": {
+        "bytes": 3896,
+        "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "oid": "d9e7e2141ef26833deba030cb8b70d80c22274b6",
+        "path": ".github/workflows/pon-budget-controls.yml",
+        "raw": {
+          "bytes": 3896,
+          "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stdout",
+          "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+        },
+        "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+      }
+    }
+  ],
+  "source_comparison": {
+    "bytes": 52264,
+    "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/source-comparison.json",
+    "sha256": "9ec6a0b0650dc8ec0d91f700a0e1efc96519277a398facce0aa9d2870d751de4"
+  },
+  "status": "DIAGNOSIS_COMPLETE_NO_SOURCE_CHANGE"
+}

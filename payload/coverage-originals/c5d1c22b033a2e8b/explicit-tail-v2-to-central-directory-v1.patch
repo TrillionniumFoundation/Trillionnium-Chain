@@ -1,0 +1,198 @@
+--- /private/tmp/chain-consolidation-20261114-root/probe_history_artifact_explicit_tail_v2.py
++++ /private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/read_history_artifact_central_directory_v1.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Fixed read-only 65,557-byte tail probe. This is not whole-artifact verification."""
++"""Fixed read-only central-directory GET after the closed tail probe; no member GETs."""
+ import datetime
+ import hashlib
+ import json
+@@ -13,7 +13,7 @@
+ import sys
+ import time
+ 
+-OUT = Path("/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2")
++OUT = Path("/private/tmp/chain-prci-R1-history-artifact-central-directory-20261114-v1")
+ GH = "/opt/homebrew/bin/gh"
+ REPO = "TrillionniumFoundation/Trillionnium-Chain"
+ ARTIFACT = 14118769328
+@@ -22,12 +22,19 @@
+ NAME = "priority-ubuntu-24.04-head-history-" + HEAD + "-1"
+ SIZE = 59887660
+ DIGEST = "cf934b39339e2039beb285ade75473b9bb1035b0a69441c13ce08d3b47e376dc"
+-TAIL = 65557
+-START = SIZE - TAIL
++RANGE_BYTES = 376516
++START = 59511122
++END = 59887637
++ENTRY_COUNT = 4140
++EOCD_OFFSET = 59887638
++EXISTING_TAIL = Path("/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2/tail-range.body")
++EXISTING_TAIL_BYTES = 65557
++EXISTING_TAIL_START = 59822103
++EXISTING_TAIL_SHA = "f140bd7c067a6448800914fbccc9ed06b982fbde5485f5b6d1249681df39f559"
+ SOURCE_LOG = Path("/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stdout")
+ SOURCE_BYTES = 178249
+ SOURCE_SHA = "3ba328053189e7e8a25c8fb5cfc5780941dc21d96afba56808fe61bc1a7e536e"
+-BUDGET = 120
++BUDGET = 180
+ SAFE_HEADERS = {"content-range", "content-length", "content-type", "accept-ranges", "content-encoding"}
+ 
+ def need(ok, message):
+@@ -109,7 +116,7 @@
+ def capture(label, endpoint, deadline, range_probe=False):
+     argv = [GH, "api", "--hostname", "github.com", "--method", "GET"]
+     if range_probe:
+-        argv += ["--include", "--header", f"Range: bytes={START}-{SIZE - 1}"]
++        argv += ["--include", "--header", f"Range: bytes={START}-{END}"]
+     argv += [endpoint]
+     env = os.environ.copy()
+     env.pop("GH_DEBUG", None)
+@@ -139,7 +146,7 @@
+             sel.register(stream, selectors.EVENT_READ, name)
+         got_headers = not range_probe
+         while sel.get_map():
+-            need(time.monotonic() < deadline, "TOTAL_120_SECOND_DEADLINE")
++            need(time.monotonic() < deadline, "TOTAL_180_SECOND_DEADLINE")
+             for key, _ in sel.select(min(0.1, max(0.0, deadline - time.monotonic()))):
+                 chunk = os.read(key.fileobj.fileno(), 4096)
+                 name = key.data
+@@ -169,17 +176,17 @@
+                     headers.clear()
+                     if status != 206:
+                         raise ValueError("RANGE_UNSUPPORTED_HTTP_STATUS")
+-                    need(safe.get("content-range") == f"bytes {START}-{SIZE - 1}/{SIZE}", "EXACT_TAIL_CONTENT_RANGE_REQUIRED")
+-                    need("content-length" not in safe or safe["content-length"] == str(TAIL), "EXACT_TAIL_CONTENT_LENGTH")
++                    need(safe.get("content-range") == f"bytes {START}-{END}/{SIZE}", "EXACT_CD_CONTENT_RANGE_REQUIRED")
++                    need("content-length" not in safe or safe["content-length"] == str(RANGE_BYTES), "EXACT_CD_CONTENT_LENGTH")
+                     need(safe.get("content-encoding", "identity") == "identity", "ENCODED_RANGE_REFUSED")
+                     got_headers = True
+-                cap = TAIL if range_probe else 65536
++                cap = RANGE_BYTES if range_probe else 65536
+                 need(len(body) + len(chunk) <= cap, "BODY_BYTE_BOUND")
+                 body.extend(chunk)
+         rec["exit"] = process.wait(timeout=max(0.01, deadline - time.monotonic()))
+         need(rec["exit"] == 0, "GH_GET_NONZERO")
+         if range_probe:
+-            need(got_headers and rec["http_status"] == 206 and len(body) == TAIL, "COMPLETE_EXACT_TAIL_REQUIRED")
++            need(got_headers and rec["http_status"] == 206 and len(body) == RANGE_BYTES, "COMPLETE_EXACT_CD_REQUIRED")
+         rec["accepted_body_bytes"] = len(body)
+     except Exception as error:
+         # All ValueError messages above are fixed codes, never server strings.
+@@ -207,29 +214,35 @@
+         rec["step_receipt"] = save_json(label + ".step.json", rec)
+     return rec, bytes(body)
+ 
+-def central_directory(tail):
+-    """Parse only the declared central directory present inside the acquired tail."""
+-    positions = [i for i in range(max(0, len(tail) - 65557), len(tail) - 21)
+-                 if tail[i:i + 4] == b"PK\x05\x06" and i + 22 + int.from_bytes(tail[i + 20:i + 22], "little") == len(tail)]
+-    need(len(positions) == 1, "UNIQUE_TERMINAL_EOCD")
+-    position = positions[0]
+-    _, disk, cd_disk, on_disk, count, cd_size, cd_offset, comment_size = struct.unpack_from("<4s4H2IH", tail, position)
+-    need(disk == 0 and cd_disk == 0 and on_disk == count, "MULTI_DISK_ZIP_REFUSED")
+-    need(0 < count <= 512 and count != 65535 and cd_size != 0xffffffff and cd_offset != 0xffffffff, "ZIP64_OR_MEMBER_BOUND")
+-    need(cd_offset + cd_size == START + position, "CENTRAL_DIRECTORY_END")
+-    need(cd_offset >= START and cd_size <= TAIL, "CENTRAL_DIRECTORY_NOT_FULLY_IN_TAIL")
+-    cursor = cd_offset - START
+-    end = cursor + cd_size
++def validate_existing_tail():
++    raw = stable_bytes(EXISTING_TAIL, EXISTING_TAIL_BYTES, EXISTING_TAIL_SHA)
++    position = EOCD_OFFSET - EXISTING_TAIL_START
++    need(len(raw) == position + 22, "FIXED_EOCD_TERMINAL_OFFSET")
++    fields = struct.unpack_from("<4s4H2IH", raw, position)
++    need(fields == (b"PK\x05\x06", 0, 0, ENTRY_COUNT, ENTRY_COUNT,
++                    RANGE_BYTES, START, 0), "FIXED_ACTUAL_EOCD")
++    need(raw[position - 20:position - 16] != b"PK\x06\x07", "UNEXPECTED_ZIP64_LOCATOR")
++    need(START + RANGE_BYTES == END + 1 == EOCD_OFFSET
++         and EOCD_OFFSET + 22 == SIZE, "EXACT_DIRECTORY_ARCHIVE_BOUND")
++    return raw
++
++def central_directory(body, existing_tail):
++    """Inventory exactly the observed 4,140 entries; never fetch or execute members."""
++    need(len(body) == RANGE_BYTES, "EXACT_CD_BYTES")
++    overlap = EOCD_OFFSET - EXISTING_TAIL_START
++    need(body[-overlap:] == existing_tail[:overlap], "EXISTING_TAIL_OVERLAP_MISMATCH")
++    count, cd_size, cd_offset, comment_size = ENTRY_COUNT, RANGE_BYTES, START, 0
++    cursor, end = 0, len(body)
+     rows, seen = [], set()
+     for number in range(count):
+         need(cursor + 46 <= end, "CENTRAL_HEADER_BOUND")
+-        fields = struct.unpack_from("<4s6H3I5H2I", tail, cursor)
++        fields = struct.unpack_from("<4s6H3I5H2I", body, cursor)
+         sig, made, version, flags, method, mtime, mdate, crc, compressed, expanded, nlen, xlen, clen, member_disk, iattr, eattr, local_offset = fields
+         need(sig == b"PK\x01\x02" and member_disk == 0, "CENTRAL_ENTRY_FRAMING")
+         need(0 < nlen <= 1024 and cursor + 46 + nlen + xlen + clen <= end, "CENTRAL_ENTRY_LENGTH")
+         need(compressed != 0xffffffff and expanded != 0xffffffff and local_offset != 0xffffffff, "ZIP64_ENTRY_REFUSED")
+         need(local_offset < cd_offset and not flags & 0x41, "LOCAL_OFFSET_OR_ENCRYPTION_REFUSED")
+-        name_bytes = tail[cursor + 46:cursor + 46 + nlen]
++        name_bytes = body[cursor + 46:cursor + 46 + nlen]
+         name = name_bytes.decode("utf-8" if flags & 0x800 else "cp437")
+         need(not any(ord(c) < 32 or ord(c) == 127 for c in name), "CONTROL_CHARACTER_PATH")
+         need("\\" not in name and ":" not in name and "\x00" not in name, "UNSAFE_MEMBER_PATH")
+@@ -251,10 +264,11 @@
+                                                       and compressed <= 16 * 1024 * 1024 and method in (0, 8))})
+         cursor += 46 + nlen + xlen + clen
+     need(cursor == end, "CENTRAL_DIRECTORY_COUNT_OR_TRAILING_BYTES")
+-    return {"schema": "trnm-r1-history-central-directory-tail-observation-v1",
+-            "artifact_id": ARTIFACT, "complete_central_directory_in_acquired_tail": True,
++    return {"schema": "trnm-r1-history-central-directory-observation-v1",
++            "artifact_id": ARTIFACT, "complete_central_directory_observed": True,
++            "existing_tail_overlap_verified": True,
+             "entries": count, "central_directory_offset": cd_offset,
+-            "central_directory_bytes": cd_size, "eocd_absolute_offset": START + position,
++            "central_directory_bytes": cd_size, "eocd_absolute_offset": EOCD_OFFSET,
+             "zip_comment_bytes": comment_size, "members": rows,
+             "whole_artifact_sha256_verified": False, "all_member_crc_verified": False,
+             "member_contents_downloaded_or_executed": False}
+@@ -265,7 +279,7 @@
+     OUT.mkdir(mode=0o700)
+     started = now()
+     deadline = time.monotonic() + BUDGET
+-    result = {"schema": "trnm-r1-history-artifact-tail-probe-v1", "status": "HOLD",
++    result = {"schema": "trnm-r1-history-artifact-central-directory-read-v1", "status": "HOLD",
+               "started_at": started, "finished_at": None, "errors": [], "steps": [],
+               "artifact_id": ARTIFACT, "run_id": RUN, "head": HEAD,
+               "expected_artifact_name": NAME, "expected_archive_bytes": SIZE,
+@@ -276,6 +290,11 @@
+               "source_refs_config_CI_modified": False, "qualification": False,
+               "automatic_other_ranges_or_retries": False}
+     try:
++        existing_tail = validate_existing_tail()
++        result["existing_tail"] = {"path": str(EXISTING_TAIL), "bytes": EXISTING_TAIL_BYTES,
++                                   "sha256": EXISTING_TAIL_SHA}
++        result["exact_directory_scope"] = {"start": START, "end": END, "bytes": RANGE_BYTES,
++                                           "entries": ENTRY_COUNT, "zip64": False}
+         raw = stable_bytes(SOURCE_LOG, SOURCE_BYTES, SOURCE_SHA)
+         need((f"Artifact ID is {ARTIFACT}").encode() in raw and DIGEST.encode() in raw
+              and (f"Final size is {SIZE} bytes").encode() in raw, "ORIGINAL_UPLOAD_ANCHOR")
+@@ -294,15 +313,15 @@
+         # Preserve only the successfully validated API metadata body; no response headers.
+         result["metadata"] = save("artifact-metadata.json", metadata_raw)
+         result["metadata_identity_verified"] = True
+-        step, body = capture("tail-range", endpoint + "/zip", deadline, range_probe=True)
++        step, body = capture("central-directory-range", endpoint + "/zip", deadline, range_probe=True)
+         result["steps"].append(step)
+         if step["http_status"] == 206 and body:
+-            result["tail_body"] = save("tail-range.body" if step["complete_transport"] else "tail-range.body.partial", body)
++            result["central_directory_body"] = save("central-directory.body" if step["complete_transport"] else "central-directory.body.partial", body)
+         if step["error"] == "RANGE_UNSUPPORTED_HTTP_STATUS":
+             result["status"] = "RANGE_UNSUPPORTED"
+-        need(step["complete_transport"], "EXACT_206_TAIL_NOT_COMPLETE")
+-        result["central_directory"] = save_json("central-directory.json", central_directory(body))
+-        result["status"] = "TAIL_AND_CENTRAL_DIRECTORY_OBSERVED"
++        need(step["complete_transport"], "EXACT_206_CD_NOT_COMPLETE")
++        result["central_directory"] = save_json("central-directory.json", central_directory(body, existing_tail))
++        result["status"] = "CENTRAL_DIRECTORY_OBSERVED"
+     except Exception as error:
+         result["errors"].append(str(error) if isinstance(error, ValueError) else type(error).__name__)
+     finally:
+@@ -313,7 +332,7 @@
+         summary = save_json("summary.json", result)
+         print(json.dumps({"status": result["status"], "summary": summary,
+                           "whole_artifact_sha256_verified": False, "qualification": False}), flush=True)
+-    return 0 if result["status"] == "TAIL_AND_CENTRAL_DIRECTORY_OBSERVED" else 1
++    return 0 if result["status"] == "CENTRAL_DIRECTORY_OBSERVED" else 1
+ 
+ if __name__ == "__main__":
+     raise SystemExit(main())

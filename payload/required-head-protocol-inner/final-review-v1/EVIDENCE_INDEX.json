@@ -1,0 +1,629 @@
+{
+  "file_count": 62,
+  "files": [
+    {
+      "bytes": 17851,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py",
+      "relative_path": "acquire-selected-members-v1.py",
+      "sha256": "812dca7d473b326cb052fa3455e385ebcef3b49b158f7a15c9ab710540c837d9"
+    },
+    {
+      "bytes": 19563,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py",
+      "relative_path": "acquire-tail-v1.py",
+      "sha256": "34f629cbbfabfd76f733a013d1349b631c75cc14bda59d64b69401d902d3d9f1"
+    },
+    {
+      "bytes": 842707,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/business-boundaries.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/business-boundaries.json",
+      "relative_path": "confirmation-boundary-v1/business-boundaries.json",
+      "sha256": "13b5399bfd017a776aaf9b21f0aae7911cfaf18b6aafddbcff097622ffda4660"
+    },
+    {
+      "bytes": 1987,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-boundaries.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-boundaries.py",
+      "relative_path": "confirmation-boundary-v1/compact-boundaries.py",
+      "sha256": "b7e8f44fac6b368208c9f9f5f68153c20902a494a27d0a05b583fbbae5c59e68"
+    },
+    {
+      "bytes": 51030,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-business-boundaries.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-business-boundaries.json",
+      "relative_path": "confirmation-boundary-v1/compact-business-boundaries.json",
+      "sha256": "4c43e80ec62a42ed56a9d224ee256b5d78a0040523413b70385dbec72633be6d"
+    },
+    {
+      "bytes": 2321,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/extract-boundaries.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/extract-boundaries.py",
+      "relative_path": "confirmation-boundary-v1/extract-boundaries.py",
+      "sha256": "c7349ed18e10cb069ffe3cca31fe9f52d1d5d024ad6e2f433cb67585a79fe5e2"
+    },
+    {
+      "bytes": 2203,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/README.md"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/README.md",
+      "relative_path": "final-review-v1/README.md",
+      "sha256": "f83945cdcc12672422f3aa92394160e0807af8a26025fb6c71da6223478ef7e8"
+    },
+    {
+      "bytes": 30059,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/preexisting-identity-preservation.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/preexisting-identity-preservation.json",
+      "relative_path": "final-review-v1/preexisting-identity-preservation.json",
+      "sha256": "4f1a69efd5c9a9d61713b34746d3ea2580f043b83599a9bf770e9971d541e8f2"
+    },
+    {
+      "bytes": 362,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/prelaunch-orchestration-error.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/prelaunch-orchestration-error.json",
+      "relative_path": "final-review-v1/prelaunch-orchestration-error.json",
+      "sha256": "738d4d70f55d774a034f9f4c3c1d9f200c1a0a2caf1fc5f320d0b30ed4201817"
+    },
+    {
+      "bytes": 42945,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/review.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/review.json",
+      "relative_path": "final-review-v1/review.json",
+      "sha256": "9c87e3d8ba331bcc467169ff5fd5f52b27efcf7afd44343a273e03ba0e356f42"
+    },
+    {
+      "bytes": 13576,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/seal-evidence-v1.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/seal-evidence-v1.py",
+      "relative_path": "final-review-v1/seal-evidence-v1.py",
+      "sha256": "38eec7d9f1b41af6d114f59f215e9fb239350126a0321027eff6668a12a78d4c"
+    },
+    {
+      "bytes": 51688,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/business-boundaries.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/business-boundaries.json",
+      "relative_path": "final-review-v1/terminals/business-boundaries.json",
+      "sha256": "5821a2a4714a04992466a4bb4b15683623eb4566de09d900698fa8fcfee8f1af"
+    },
+    {
+      "bytes": 112680,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/business-boundaries.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/business-boundaries.stdout",
+      "relative_path": "final-review-v1/terminals/business-boundaries.stdout",
+      "sha256": "f320044f1bf418cd6fa435218930b689cbce54ea433feed4bb230521947bdb6d"
+    },
+    {
+      "bytes": 12044,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/compact-boundaries.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/compact-boundaries.json",
+      "relative_path": "final-review-v1/terminals/compact-boundaries.json",
+      "sha256": "589a9225990ea7cf80da6ad6557476bf350e58c4a940e86fe67cdc09fd49f953"
+    },
+    {
+      "bytes": 3173,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/compact-boundaries.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/compact-boundaries.stdout",
+      "relative_path": "final-review-v1/terminals/compact-boundaries.stdout",
+      "sha256": "46c6e1e0dd2c56be95c165ca5d2b3425aa3d516dad87b1400d4a25985aca112b"
+    },
+    {
+      "bytes": 5056,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/metadata-and-tail.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/metadata-and-tail.json",
+      "relative_path": "final-review-v1/terminals/metadata-and-tail.json",
+      "sha256": "cd5e0e298243d8c17fdf471f8247582d8a261ba5760eccb4d7a0605546161575"
+    },
+    {
+      "bytes": 552,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/metadata-and-tail.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/metadata-and-tail.stdout",
+      "relative_path": "final-review-v1/terminals/metadata-and-tail.stdout",
+      "sha256": "b6901cb3be471bb1c86ae6d567bfb9102b7741331fd756d2ec47411ffa98d76e"
+    },
+    {
+      "bytes": 93408,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/original-log-review.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/original-log-review.json",
+      "relative_path": "final-review-v1/terminals/original-log-review.json",
+      "sha256": "83527ad274c1948e72aa6c80a0b854ca79e87aebd8663f082a858419d01d06b7"
+    },
+    {
+      "bytes": 29106,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/original-log-review.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/original-log-review.stdout",
+      "relative_path": "final-review-v1/terminals/original-log-review.stdout",
+      "sha256": "df4434e4f4371797733a9eba58bffc1d768e062a40361157c89751ab26a4c7bd"
+    },
+    {
+      "bytes": 6258,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/selected-ranges.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/selected-ranges.json",
+      "relative_path": "final-review-v1/terminals/selected-ranges.json",
+      "sha256": "445dc063409c2f58e92c5cf9e39a69e598df706feb69b780d29d1e4defaaab33"
+    },
+    {
+      "bytes": 938,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/selected-ranges.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/selected-ranges.stdout",
+      "relative_path": "final-review-v1/terminals/selected-ranges.stdout",
+      "sha256": "12b287f5669d0c5d515a5411de24f2fc9c900eee6dfe04c4fa4a642e55602d46"
+    },
+    {
+      "bytes": 219457,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-job-log.stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-job-log.stdout",
+      "relative_path": "original-job-log.stdout",
+      "sha256": "a2abb8f09485c32739ca970ac1aa8ab12d3cfee01f53a954e9c9d2dded0ae935"
+    },
+    {
+      "bytes": 32154,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-log-review.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-log-review.json",
+      "relative_path": "original-log-review.json",
+      "sha256": "cf68e60f3f80e33d711fe706807cb4a226cf8333885a8e453b1b60ae3ae3ad5a"
+    },
+    {
+      "bytes": 2845,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/review-original-log.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/review-original-log.py",
+      "relative_path": "review-original-log.py",
+      "sha256": "2d4130f239ced55df8bcd8b6b6302717c36efe59fc9f67c0114b9cdde3cc434c"
+    },
+    {
+      "bytes": 30406,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/bounded-confirmation-report-facts.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/bounded-confirmation-report-facts.json",
+      "relative_path": "selected-members-v1/bounded-confirmation-report-facts.json",
+      "sha256": "6fff7c709de8039572ec0c210994ac4ae8059c0d6dea3a3ac73a3a6d3df2c3ac"
+    },
+    {
+      "bytes": 19553,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/derived-capture-definitions-source.py"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/derived-capture-definitions-source.py",
+      "relative_path": "selected-members-v1/derived-capture-definitions-source.py",
+      "sha256": "154e9c1f7d441c5a7f3696853c6e589fca6c31d06913a36ff638ea13c3a15b5c"
+    },
+    {
+      "bytes": 887,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "6ca84d3cfc3dd46054c8ab70318c3945f651e4db520490148a00f7dc920549b8"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "relative_path": "selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "relative_path": "selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    {
+      "bytes": 899,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "3251366c661a1949c22cafd9b29f67c545f2e509c7b029b4bbd5a6a6845080d3"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "relative_path": "selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3364,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "relative_path": "selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "00ba255d478c72202b5f7a80a64581120f6559ac6e4d2271aca507af502a2ae4"
+    },
+    {
+      "bytes": 899,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "bc1f05a85e19d3a1c283e0e362394377dc26a6c4b0f7b9420264a7d04d328a00"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda"
+    },
+    {
+      "bytes": 915,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "5b9a4eb36c917045471263656e0200f9c97b9a27dcd316a541f62a15da69c63d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 917,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "f2b3a113492654ef9dc9b82e8daefc25b3f6ef82f657cd2bfaa8c94d53354e40"
+    },
+    {
+      "bytes": 952,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "431c19ff25820720459ae01479293ee3d2c3739e420206f765bcffd39a444e46"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 408,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "relative_path": "selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689"
+    },
+    {
+      "bytes": 73892,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/manifest.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/manifest.json",
+      "relative_path": "selected-members-v1/members/from-zero-native/manifest.json",
+      "sha256": "99f54304398fdf2df2762ae079e60453b8b801724480c75b7afc3b7c0b13aa50"
+    },
+    {
+      "bytes": 423,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/source.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/source.json",
+      "relative_path": "selected-members-v1/members/source.json",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 6880,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/range-receipts.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/range-receipts.json",
+      "relative_path": "selected-members-v1/range-receipts.json",
+      "sha256": "0697024abf81937f7e59db95142a31c6b02bcc3f0f2e8a70089665e5b27e6842"
+    },
+    {
+      "bytes": 1066,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body",
+      "relative_path": "selected-members-v1/ranges/caller-records/body",
+      "sha256": "467b84c632056e0901d2e5d5cdc95cfd8ebc81a6c21e5c104f2f317d5237b195"
+    },
+    {
+      "bytes": 1392,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json",
+      "relative_path": "selected-members-v1/ranges/caller-records/caller-records.step.json",
+      "sha256": "054eb27b8b4a48a45ea2844576909f409d119a2a015fe9d8bfdd607c66a9b6e6"
+    },
+    {
+      "bytes": 525935,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body",
+      "relative_path": "selected-members-v1/ranges/confirmation-report/body",
+      "sha256": "9055907e6728bcc52b85498c3349d7932e48ad449f21cd5142b5d334530fcf49"
+    },
+    {
+      "bytes": 1411,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+      "relative_path": "selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+      "sha256": "e9afebba9747d0edc4ecf3db96d430cb9a2bfc7972a549f0a65669bfbcf35fa0"
+    },
+    {
+      "bytes": 17482,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+      "relative_path": "selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+      "sha256": "11c81a06432758d26b92b52db23b7b385f348b5e5a9f686dfa5c2a1a91b2817a"
+    },
+    {
+      "bytes": 1420,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+      "relative_path": "selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+      "sha256": "cb64a9cd96cbe125738035f6814d34b51f75500b1f08058c5469d505395a04ec"
+    },
+    {
+      "bytes": 2464,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/request-plan.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/request-plan.json",
+      "relative_path": "selected-members-v1/request-plan.json",
+      "sha256": "135e119d329b142f9b44e67ef137cfc4bee31158646438328261b1640021af91"
+    },
+    {
+      "bytes": 4268,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-filemap-verification.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-filemap-verification.json",
+      "relative_path": "selected-members-v1/selected-filemap-verification.json",
+      "sha256": "154ac6658274ca971af00ab6c539c1b5766cd32dcfdf95c73c11c0b9d654c26c"
+    },
+    {
+      "bytes": 13545,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-member-index.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-member-index.json",
+      "relative_path": "selected-members-v1/selected-member-index.json",
+      "sha256": "831073e7488fc5c82ca7b85735f792f8ea223111cbcfc6f327229e9ee353926b"
+    },
+    {
+      "bytes": 2155,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/source-before-after-extracted.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/source-before-after-extracted.json",
+      "relative_path": "selected-members-v1/source-before-after-extracted.json",
+      "sha256": "fd2e27413602802d0ec163fb4af655b327a8ad9b73a1c957f8f817cf04cb5e23"
+    },
+    {
+      "bytes": 18874,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json",
+      "relative_path": "selected-members-v1/summary.json",
+      "sha256": "866b1ef149a2299538ae14449f912df1a73746af689508a08ba7aab43f28282a"
+    },
+    {
+      "bytes": 821,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.json",
+      "relative_path": "tail-acquisition-v1/artifact-metadata.json",
+      "sha256": "44b83b461a6f5a346d2e45eba77fc0b6e65f46b91891cd5ad900b1f89239379f"
+    },
+    {
+      "bytes": 1111,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.step.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.step.json",
+      "relative_path": "tail-acquisition-v1/artifact-metadata.step.json",
+      "sha256": "a0ce74820efa30fde9562d28a3a337f4a7ad354f5309a0a7806c32343fc20c8c"
+    },
+    {
+      "bytes": 46153,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/central-directory.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/central-directory.json",
+      "relative_path": "tail-acquisition-v1/central-directory.json",
+      "sha256": "6b9b809e2c65ad5540603dc16246f67c9eac158d988dedbb1966ba8a4c1c762a"
+    },
+    {
+      "bytes": 10979,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/outer-source-and-host.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/outer-source-and-host.json",
+      "relative_path": "tail-acquisition-v1/outer-source-and-host.json",
+      "sha256": "dab4d22d6f0d80f0c6ed4469eebfc8c6fc4152f8d7aa164d626207a8e405bac1"
+    },
+    {
+      "bytes": 5929,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json",
+      "relative_path": "tail-acquisition-v1/summary.json",
+      "sha256": "c38a2d565cc1138d9aa543108223e3d1495b6b13412fa9f9ec8bce09da7c3431"
+    },
+    {
+      "bytes": 65557,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.body"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.body",
+      "relative_path": "tail-acquisition-v1/tail-range.body",
+      "sha256": "476359df8fcc3c38b09623fa66807cce0c6f1c17c008a7738fda798e0b104b4a"
+    },
+    {
+      "bytes": 1402,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.step.json"
+      },
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.step.json",
+      "relative_path": "tail-acquisition-v1/tail-range.step.json",
+      "sha256": "4a2959793e99f97ab92f60b8400ffbb375ce8e414bfeb04c6c049189e34c2c22"
+    }
+  ],
+  "index_and_seal_excluded": true,
+  "root": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1",
+  "schema": "trnm-closed-evidence-index-v1",
+  "total_bytes": 2456708
+}

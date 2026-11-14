@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File [35m"<string>"[0m, line [35m26[0m, in [35m<module>[0m
-    for name,value in json.loads([31msys.argv[0m[1;31m[2][0m):
-                                 [31m~~~~~~~~[0m[1;31m^^^[0m
-[1;35mIndexError[0m: [35mlist index out of range[0m

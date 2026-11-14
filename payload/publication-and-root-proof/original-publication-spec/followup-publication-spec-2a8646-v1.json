@@ -1,0 +1,30 @@
+{
+  "archive_tag": "archive/execution-receipts-20261114-2a86462a1ab2-v1",
+  "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "candidate_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1",
+  "execution_manifest": {
+    "bytes": 2329620,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+  },
+  "expected_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+  "local_gate_receipt": {
+    "bytes": 9143,
+    "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a8646-v1/receipt.json",
+    "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+  },
+  "publisher_sha256": "0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2",
+  "rog_invocation": {
+    "driver_path": "/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py",
+    "executable": "/home/qian-qi/chain-final-consolidation-20261114-root/final-python312-env/bin/python",
+    "expected_start_head": "6a8cd55573065ceb50cdb65a7834615f79b521ae",
+    "original_receipt_path": "/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-2a8646-v1/summary.json"
+  },
+  "rog_lane_receipt": {
+    "bytes": 21354,
+    "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/R1-final-original-executions-and-publication-review/full/flat/original/summary.json",
+    "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+  },
+  "schema": "trnm-followup-candidate-execution-publication-spec-v2"
+}

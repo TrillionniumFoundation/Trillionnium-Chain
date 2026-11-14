@@ -1,0 +1,96 @@
+{
+  "actual_provision": {
+    "ctime_ns": 1794666303086971625,
+    "device": 2049,
+    "inode": 9969015,
+    "mtime_ns": 1794666303086971625,
+    "path": "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service-host/after-provision.json",
+    "sha256": "db1b13b046cb0ae5176ff319fb6b9242fe2642fe91931e1de48e23b283888124",
+    "size_bytes": 1634
+  },
+  "consensus_or_model_authority": false,
+  "context": {
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "gid": 1001,
+    "job": {
+      "GITHUB_JOB": "fresh-challenge-service",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "43604217632"
+    },
+    "receipts": "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1",
+    "source": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "prospective-merge",
+      "prospective_merge": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "uid": 1001
+  },
+  "creator_command": [
+    "python3",
+    "scripts/ci/run_w1_fresh_service_v1.py",
+    "--out",
+    "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service"
+  ],
+  "creator_controller": "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service-host",
+  "creator_service": "trnm-from-zero-43604217632-1-fresh-challenge-service-2608.service",
+  "host_readiness_only": true,
+  "native_tests_executed_by_lease": false,
+  "original_absence": {
+    "ctime_ns": 1794666048896189048,
+    "device": 2049,
+    "inode": 9961494,
+    "mtime_ns": 1794666048896189048,
+    "path": "/home/runner/work/_temp/w1-fresh-service-prospective-merge-43604217632-1/fresh-service-host/unprovisioned-parent.json",
+    "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+    "size_bytes": 229
+  },
+  "parent_identity": {
+    "boot_id": "2837af9a-61b3-4f49-a5d7-9f907be0ba7b",
+    "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+    "limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "parent": {
+      "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "device": 31,
+      "directory": true,
+      "gid": 0,
+      "inode": 7157,
+      "mode": 493,
+      "symlink": false,
+      "uid": 0
+    },
+    "unit_file": {
+      "ctime_ns": 1794666302782337956,
+      "device": 29,
+      "inode": 1461,
+      "mtime_ns": 1794666302782337956,
+      "path": "/run/systemd/system/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "size_bytes": 325
+    }
+  },
+  "schema": "trnm-ci-public-fixture-parent-lease-v1",
+  "systemd_properties": {
+    "CPUQuotaPerSecUSec": "250ms",
+    "CPUQuotaPeriodUSec": "100ms",
+    "ControlGroup": "/trnmponpublic.slice",
+    "DropInPaths": "",
+    "FragmentPath": "/run/systemd/system/trnmponpublic.slice",
+    "MemoryMax": "2147483648",
+    "MemorySwapMax": "0",
+    "TasksMax": "256"
+  }
+}

@@ -1,0 +1,542 @@
+{
+  "GET_count": 2,
+  "excludes_itself_and_seal": true,
+  "file_count": 59,
+  "files": [
+    {
+      "bytes": 9927038,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/14119000610.complete.zip"
+      },
+      "path": "14119000610.complete.zip",
+      "sha256": "8249d0279e12e95bb59da7644b3d62ca1243589f9488b26e3b2b95560c9735ff"
+    },
+    {
+      "bytes": 809,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/artifact-metadata.json"
+      },
+      "path": "artifact-metadata.json",
+      "sha256": "3fa5307054076081c82ad86e34acfb268c1a9d91494772ae6de3e60c2959590f"
+    },
+    {
+      "bytes": 1146,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/artifact-metadata.step.json"
+      },
+      "path": "artifact-metadata.step.json",
+      "sha256": "c73d9ec5bf70515f3508afde64101ea4efccdf298d2745e54360359ed07e6a82"
+    },
+    {
+      "bytes": 1943,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/README.md"
+      },
+      "path": "final-review-v1/README.md",
+      "sha256": "390cd216ec52337f6556371afb544a2ce3a1a7d33e9b5e04813d04d0a907e32d"
+    },
+    {
+      "bytes": 1846,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_central_metadata.json"
+      },
+      "path": "final-review-v1/actual_central_metadata.json",
+      "sha256": "ece1413798a4e55f7c2437a5268188b1106d5a8b45b2a378e450a02ad0ac22e7"
+    },
+    {
+      "bytes": 281,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_central_metadata.output.bin"
+      },
+      "path": "final-review-v1/actual_central_metadata.output.bin",
+      "sha256": "31f75d03966082530885c419e2421df10cbde5efdf2eb155e6144de361f3ca59"
+    },
+    {
+      "bytes": 9007,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_corrected_offline_inspection.json"
+      },
+      "path": "final-review-v1/actual_corrected_offline_inspection.json",
+      "sha256": "0b58f0a97ea9df218ae76ee7fdd2bea3b0210f9cbd79335adcc16f05a8936d71"
+    },
+    {
+      "bytes": 2620,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_corrected_offline_inspection.output.bin"
+      },
+      "path": "final-review-v1/actual_corrected_offline_inspection.output.bin",
+      "sha256": "dba48a66e2ff6faa7e787e16df52a49ae750dd4e90c8cc783069508f542c6084"
+    },
+    {
+      "bytes": 6318,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_exact_inspection_v1.json"
+      },
+      "path": "final-review-v1/actual_exact_inspection_v1.json",
+      "sha256": "63f71092377b71270192b56e97d1ead9ad38c412c279b0b853973353c223f498"
+    },
+    {
+      "bytes": 1737,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_exact_inspection_v1.output.bin"
+      },
+      "path": "final-review-v1/actual_exact_inspection_v1.output.bin",
+      "sha256": "91caedbcfe252cf8bd7597bc58e43bf0af6e86b29af477404622511b389f938c"
+    },
+    {
+      "bytes": 21394,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_exact_inspection_v2.json"
+      },
+      "path": "final-review-v1/actual_exact_inspection_v2.json",
+      "sha256": "58e00a4fdef7d8906486360afa35642349f42773e8305c02e5d6a56be24238c4"
+    },
+    {
+      "bytes": 6535,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_exact_inspection_v2.output.bin"
+      },
+      "path": "final-review-v1/actual_exact_inspection_v2.output.bin",
+      "sha256": "e68fae7f84b894f9cfce74e20d684981ba075cbbbe13755729f2d363cd2fbb48"
+    },
+    {
+      "bytes": 4510,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_range_resume.json"
+      },
+      "path": "final-review-v1/actual_range_resume.json",
+      "sha256": "409bd4bde1a27f51d1f49b9af0bffef1e210dc8a6721712a23fc106ebf329e2e"
+    },
+    {
+      "bytes": 1135,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/actual_range_resume.output.bin"
+      },
+      "path": "final-review-v1/actual_range_resume.output.bin",
+      "sha256": "143ff8c86a4f1f5b7cb56227f21b44f0b93e4ef5fb6cc8e463067b10dbfadeb3"
+    },
+    {
+      "bytes": 29683,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/original-resume-helper.py"
+      },
+      "path": "final-review-v1/original-resume-helper.py",
+      "sha256": "6aec3684388395ae38f6d871f5d764dce419a41ba1c62d425c81dabcb415b3f9"
+    },
+    {
+      "bytes": 1404,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/original-root-launcher.py"
+      },
+      "path": "final-review-v1/original-root-launcher.py",
+      "sha256": "7ebdfd21eea67419bc2d4b8dfc1ad3a6e404dd743d0a07901179a3a47759c870"
+    },
+    {
+      "bytes": 56932,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/review.json"
+      },
+      "path": "final-review-v1/review.json",
+      "sha256": "dd1f663266a98243d0b6f4d4ef84d3a12c31e5f39a954e5f079f26ccbc4884cd"
+    },
+    {
+      "bytes": 9268,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/seal-closed-arm-evidence.py"
+      },
+      "path": "final-review-v1/seal-closed-arm-evidence.py",
+      "sha256": "e969a829c46839368ccd8ac58224b6aaf374ca483fe1e84a4b1d7edaff50f8f1"
+    },
+    {
+      "bytes": 75254,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/member-header-review-v1/central-metadata.json"
+      },
+      "path": "member-header-review-v1/central-metadata.json",
+      "sha256": "00e4e42069d985b09ddb25a71aff4ac4187275b91b5432cf4e24fce4bfe64438"
+    },
+    {
+      "bytes": 2265,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/member-header-review-v1/inspect-central-metadata.py"
+      },
+      "path": "member-header-review-v1/inspect-central-metadata.py",
+      "sha256": "163a7e797a748736b559dc628a8e7731af2c622cbbf24d03c64e7b706da7d500"
+    },
+    {
+      "bytes": 39024,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/bounded-confirmation-report-facts.json"
+      },
+      "path": "offline-corrected-inspection-v1/bounded-confirmation-report-facts.json",
+      "sha256": "2c95158ab4e84bb7bb87a3713f7b819f1e8711ced3c8e00d868e505c5cf66747"
+    },
+    {
+      "bytes": 42578,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/complete-zip-member-index.json"
+      },
+      "path": "offline-corrected-inspection-v1/complete-zip-member-index.json",
+      "sha256": "a6f9cb3ca38caabd40f12bffc6bf1400fe65226ee7be29d405fbf0ec075633ef"
+    },
+    {
+      "bytes": 29683,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/corrected-validator-source.py"
+      },
+      "path": "offline-corrected-inspection-v1/corrected-validator-source.py",
+      "sha256": "89643383cab36c98575064c45ff0029693b3dd987ef7b453377c04e2a2dad34d"
+    },
+    {
+      "bytes": 10209,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/exact-inspect-function.txt"
+      },
+      "path": "offline-corrected-inspection-v1/exact-inspect-function.txt",
+      "sha256": "fac31b68cf255ea209ff5e0faa5b42a4dbd2255098d8eb6b20f202ab53a8ba95"
+    },
+    {
+      "bytes": 665,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/exact-one-identifier.patch"
+      },
+      "path": "offline-corrected-inspection-v1/exact-one-identifier.patch",
+      "sha256": "261b3e123b3f5db27d3c5bbcc34542eb765b86ebdbefb401caf6f244fe14e09a"
+    },
+    {
+      "bytes": 885,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "cb5e789d60bcfd9e730804dab7602bfc5ea1789fb1ac1afe62cf8da09a0a9ff5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    {
+      "bytes": 897,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "a40e3d5fb02852105ad4b63ba27c0ea8ba774c312e0091d8a88f88496ef71a9b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3364,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "0e40a9d1a1363d1c54796f95d3f02ed5cffee10dd298724d3cfec9a8cf4d9fe7"
+    },
+    {
+      "bytes": 898,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "2aab18a1ef0419b444e678896a871b917c0ab4c66cafe1de5afe0d6ea36ca332"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "39ee1b2fb59f9b43a9ad42273d5b96922b727fd9332645d734ad36909310fbaa"
+    },
+    {
+      "bytes": 911,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "3231442fa09e2424867b1cd166c21d8b59e1ab6dcfe17ac2db0483a607a3e152"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 916,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "8afb053d4bdff30496d64b7805eebce3607229dfb1da4797cb9a928aaf8815f0"
+    },
+    {
+      "bytes": 949,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "1a759605ac0752fae80e2d736d85c24321b67abf19b3367c0450fec4e62473bb"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 408,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "88aa55ff7a87ddc8b7fff5e95a67a89a35b865c3ee851139c21f2a0a3f1a009c"
+    },
+    {
+      "bytes": 73771,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/manifest.json"
+      },
+      "path": "offline-corrected-inspection-v1/members/from-zero-native/manifest.json",
+      "sha256": "bf9d42534a15fea4c68a3f1298a91b2a9032c10b5f34f2cc0436b445d1fa69a8"
+    },
+    {
+      "bytes": 118,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/native-manifest-filemap-verification.json"
+      },
+      "path": "offline-corrected-inspection-v1/native-manifest-filemap-verification.json",
+      "sha256": "c39fce6d767f091aef7d68aac5c2a489b525a9880aff4cb611a9f11d01c5dd24"
+    },
+    {
+      "bytes": 5798,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/observe-original-inspection.py"
+      },
+      "path": "offline-corrected-inspection-v1/observe-original-inspection.py",
+      "sha256": "f8fa2e1835a7657faa55370e248081849266e5501be63b47062652492967674e"
+    },
+    {
+      "bytes": 1647,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/source-before-after-extracted.json"
+      },
+      "path": "offline-corrected-inspection-v1/source-before-after-extracted.json",
+      "sha256": "64c32fcc12cc92bae60dd65dc224130df08e1772bba3dd4c403ee47ec3d9e707"
+    },
+    {
+      "bytes": 536,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/source-correction.json"
+      },
+      "path": "offline-corrected-inspection-v1/source-correction.json",
+      "sha256": "05eae3de9f27395d1b0fec0bb3eae468898506e2c5f8e8bc9ed493bf35508e0e"
+    },
+    {
+      "bytes": 18651,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/summary.json"
+      },
+      "path": "offline-corrected-inspection-v1/summary.json",
+      "sha256": "0629ef20cb32329bf3ff25152887de8335397a859bfc0407614844a815938211"
+    },
+    {
+      "bytes": 10209,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v1/exact-inspect-function.txt"
+      },
+      "path": "offline-exact-inspection-v1/exact-inspect-function.txt",
+      "sha256": "b6438bb30e36be2470f159126438d18ddcd4e33b2197cdf72e89db9fb4d804dd"
+    },
+    {
+      "bytes": 736,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v1/exception.txt"
+      },
+      "path": "offline-exact-inspection-v1/exception.txt",
+      "sha256": "821472f55bdff1670c1ee0d143b7899c3172c0d70fabe50d9cdeac609a415fdd"
+    },
+    {
+      "bytes": 4377,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v1/observe-original-inspection.py"
+      },
+      "path": "offline-exact-inspection-v1/observe-original-inspection.py",
+      "sha256": "641fd1c5e76275d09d3611d9454ff1c59c39e4ec77f5cfed03ced3f31151bf01"
+    },
+    {
+      "bytes": 1899,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v1/summary.json"
+      },
+      "path": "offline-exact-inspection-v1/summary.json",
+      "sha256": "b8b2702945382ead801c62439b8af8b751dbae82dba6b89bfccd395ad69b630f"
+    },
+    {
+      "bytes": 10209,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2/exact-inspect-function.txt"
+      },
+      "path": "offline-exact-inspection-v2/exact-inspect-function.txt",
+      "sha256": "b6438bb30e36be2470f159126438d18ddcd4e33b2197cdf72e89db9fb4d804dd"
+    },
+    {
+      "bytes": 736,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2/exception.txt"
+      },
+      "path": "offline-exact-inspection-v2/exception.txt",
+      "sha256": "6eca7b2b64a5a032bc84467207580419a12a463b9c34517470ac9dc75a9d44d3"
+    },
+    {
+      "bytes": 705,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2/guard-AST.json"
+      },
+      "path": "offline-exact-inspection-v2/guard-AST.json",
+      "sha256": "826af7d70e9fd50fe65aaa5db600dec4562eadef07fd8a224598f7d16d281409"
+    },
+    {
+      "bytes": 5322,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2/observe-original-inspection.py"
+      },
+      "path": "offline-exact-inspection-v2/observe-original-inspection.py",
+      "sha256": "f6d4e3b5b6f7f34fac28df3db9d255dcdc37b6621c1a754ba59c1cd87f0a58b6"
+    },
+    {
+      "bytes": 9977,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v2/summary.json"
+      },
+      "path": "offline-exact-inspection-v2/summary.json",
+      "sha256": "2526dd971eed91c4804365e81c9e5797ea514ba30a331954a257afb81a3311c0"
+    },
+    {
+      "bytes": 5026,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/original-failed-download.json"
+      },
+      "path": "original-failed-download.json",
+      "sha256": "319dc40dd4626e4bf9e5eb13fe89ce2a00736f562a40c265245704cf538150b2"
+    },
+    {
+      "bytes": 784766,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/remaining-range.body"
+      },
+      "path": "remaining-range.body",
+      "sha256": "64ee99a54d2b535c0dea47057d5ce94f7878f0f7b63d5bdaf21afcaf72c6ecc1"
+    },
+    {
+      "bytes": 1446,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/remaining-range.step.json"
+      },
+      "path": "remaining-range.step.json",
+      "sha256": "4019993ed4b8e412730ccd8f6192c1550b86fd5016ad166a97831027e77bc9a0"
+    },
+    {
+      "bytes": 6660,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/summary.json"
+      },
+      "path": "summary.json",
+      "sha256": "a8bc3bb1da7b0e049185f0846efd4e71da29cb255fa21b00462a739a57679889"
+    }
+  ],
+  "no_native_execution": true,
+  "root": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1",
+  "schema": "trnm-closed-evidence-index-v1",
+  "total_bytes": 11235487
+}

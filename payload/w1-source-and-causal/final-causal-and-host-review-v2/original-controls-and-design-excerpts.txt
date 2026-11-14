@@ -1,0 +1,486 @@
+SOURCE docs/protocol/pon-nakamoto-v1/details/REMOTE_SYNC_W1_HOST_GUARD.md
+GIT_BLOB fc60daebb9825d4480225f1f14efe1514241a3e5
+SHA256 f7a8000abce1d306cc0385789478fd0c56eb538700469a11c86730cce86bfb21
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/protocol/pon-nakamoto-v1/details/REMOTE_SYNC_W1_HOST_GUARD.md
+
+8: ## Current API boundary
+9: 
+10: The current [ingress module](../../../../trillionnium/crates/trnm-pon-node/src/ingress.rs)
+11: keeps `receive_page` and `receive_page_from` as `#[cfg(test)] pub(crate)`
+12: adapters. The exported page-import functions are
+13: `receive_public_page_from`, `receive_public_page_from_before`,
+14: `receive_public_page_from_before_observed` and
+15: `receive_public_page_from_shared`. Each requires the original fixed Host
+16: kernel parent even for a loopback source, and enters the
+17: [paid History importer](../../../../trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs).
+18: The deadline-taking variants retain the caller's original deadline; a late
+19: Host failure does not reverse an already committed native admission.
+20: 
+21: The sections below preserve the earlier candidate designs and observations.
+22: Their earlier exported API names and loopback exceptions do not describe
+23: the current public import surface. Source addresses still do not attest
+24: provenance, and this API summary does not establish global fairness or
+25: production qualification. Existing HOLD and open gates remain unchanged.
+
+129: ## 2026-10-27: Public and signed CLI loopback-proxy cost floor
+130: 
+131: The original `require_for_listener(source)` deliberately permits plain
+132: loopback-only development without an administrator-provisioned cgroup. This
+133: was still unsafe for **explicitly selected public or authenticated History
+134: sync**, because a local forwarder can present remote malicious W1 bytes under
+135: a loopback destination. The source locator does not attest provenance.
+136: 
+137: `main.rs::priced_sync_context` now selects the existing **fixed Host kernel
+138: parent**, irrespective of destination IP family or loopback bit, whenever a
+139: public V2/V3/growth admission profile or any authenticated-sync credentials
+140: are requested. In this mode `sync_host_kernel_owner` requires an actual
+141: `HostKernelBudget` for `/sys/fs/cgroup/trnmponpublic.slice`, rechecks its
+142: real calling-thread membership and immutable resource ceilings, and refuses
+143: before the first socket request or W1 proof if unavailable. Subsequent page
+144: checks retain this same original verified budget instance. A profile with
+145: partial authentication flags cannot accidentally access a cheap fallback.
+146: The original `receive_page_from` contextual import retains its own checks.
+147: 
+148: Plain non-public, explicitly local development sync retains its original
+149: loopback-only exception for compatibility, and remains outside public
+150: hardening qualification. An embedding caller that directly invokes
+151: `receive_page_from` can still supply a loopback address without a real
+152: end-to-end source attestation; local Node ownership is a trusted
+153: application boundary. A hostile local process that invokes Node admission
+154: directly is not made economically honest by transport policy.
+155: 
+156: Added regression
+157: `public_sync_cannot_use_loopback_proxy_to_avoid_fixed_host_cpu_owner`
+158: compares the strict loopback caller against the original fixed kernel-parent
+159: checker and covers all public profiles and partial authentication options.
+160: Source-only behavior must be compiled and exercised under an actual
+161: root-provisioned cgroup before P1 can be considered satisfied.
+162: 
+163: This removes a free loopback override for **public and authenticated CLI
+164: sync**, not the unresolved developer tunnel/embedding boundary, global
+165: service fairness or original W1 cheap-false-transcript economics.
+166: P1-P6 and A03 remain unqualified.
+
+SOURCE docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md
+GIT_BLOB 8daef91b07e61ce2f5798c47a9e3478161bb22eb
+SHA256 78ae18db9d5e339bbc806b8b0f8c721dd5a702ac8d9fb43f7695d1d0ddeebcfa
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md
+
+1061: ### Single host-parent checker for both CLI and exported V3 library
+1062: 
+1063: The previous kernel-parent requirement lived ONLY in the public V3 development
+1064: CLI. A trusted Rust embedding could call the exported
+1065: `serve_public_protected_v3`, `_with_metrics` or `_with_request_observer`
+1066: using a non-loopback `TcpListener` and skip that CLI guard entirely. A finite
+1067: 80ms stopped-by-deadline test with an actual wildcard TCP listener, no client
+1068: connections and no guest work showed the original exported library returned
+1069: ordinary success without any kernel parent (expected-refusal exit101). An
+1070: initial pre-stopped harness attempt instead triggered startup deadline before
+1071: service admission; its log is retained as an inconclusive test rather than
+1072: false evidence of an accepted V3 request.
+1073: 
+1074: The ORIGINAL kernel-parent checker is now compiled from one library-owned
+1075: module and reused directly by the development CLI, not duplicated in two
+1076: separately maintained implementations. Every exported V3 serve variant
+1077: checks its actual bound address before even allocating a proof/read worker
+1078: or binding the Node CPU identity. Loopback remains supported without root.
+1079: A wildcard or non-loopback socket requires the exact same root-owned fixed
+1080: `/sys/fs/cgroup/trnmponpublic.slice`, current cgroup membership and all
+1081: original finite CPU/memory/swap/tasks limits. The V3 socket reactor performs
+1082: a 50ms read-only parent check and a final check after all workers join.
+1083: Failures stop admission, preserve native state effects and cannot masquerade
+1084: as invalid PoN work. The CLI's preflight/watchdog is retained but now uses
+1085: the same library code, rather than an independent parent policy.
+
+SOURCE docs/protocol/pon-nakamoto-v1/details/HISTORY_W1_SHARED_CPU_HOST_20261027.md
+GIT_BLOB 968047246315f2119d4237da6386e704d1762499
+SHA256 3c2b5e289c1cc78607e224921fa64be646f72d1da47a9d03fe961a1e625b7fe8
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/protocol/pon-nakamoto-v1/details/HISTORY_W1_SHARED_CPU_HOST_20261027.md
+
+1: # P1 History W1: combine the original CPU account and Host/M06 fence
+2: 
+3: Status: **DRAFT / SHADOW_ONLY / HOLD_NO_GO**, not production qualification.
+4: Exact source parent: Chain #490 `197ba7a076ea9b89b9644e850341f4a45a3c0c79`;
+5: the candidate is a separate child branch, not a merge to #328 or main.
+6: No W1/PNW1 encoding, TaskId, lottery ticket, target, chainwork, signed
+7: public V3 Cookie, final-use, consensus, state schema or activation changes.
+
+25: - `store/operator_continuous_owner.rs::Node::remote_history_cpu_domain`
+26:   uses the same previously bound V3/continuous CPU owner; if none exists it
+27:   checks the durable `ordinary-public-v3-epoch-v1` metadata and refuses a
+28:   leftover active/unclean epoch, then binds one **zero-initial-credit** original
+29:   domain. No caller, peer key, packet or restart gets an independent warm burst.
+30: - `ingress/public_v3/scalar_cpu.rs::cold_remote_history_epoch` reuses the
+31:   original scalar credit/refill and actual same-thread accounting. No change
+32:   to V3 quotas, credits or version signature.
+33: - `ingress.rs::receive_page` reserves/settles an original CPU operation for
+34:   bounded packet decoding, packet IDs/parent linkage, **each** complete
+35:   new W1 + native M06 verification, and final activation. No nesting or
+36:   double billing; already stored exact packets still run original context
+37:   checks. Known budget depletion may wait at most two seconds for original
+38:   refill; exhausted credit is local Busy/Capacity, never consensus Invalid.
+39: - Each W1 callback checks its live original CPU debit. At the original
+40:   bounded Host checkpoint cadence it also checks actual fixed cgroup owner.
+41:   The native `ExecutionControl` combines that same Host check and live CPU
+42:   checkpoint with `operation.worker_accounting()`, so M06 scoped workers,
+43:   state-root work, ledger deltas and BeforeDurableCommit are inside one
+44:   metered cancellation/commit authority. No new block verifier was created.
+45: - Every operation settles even on false Transcript/Product, CPU refusal,
+46:   cancellation and M06 failure. Missing/unknown CPU disables further starts
+47:   without manufacturing a zero charge or rewriting an already durable block.
+48:   Post-commit Host failures likewise refuse **sync completion**, not W1
+49:   mathematical validity or existing persisted state.
+50: - Public `receive_public_page_from` retains #488/#490's strict root-owned
+51:   Host requirement even for loopback proxy sources. Crate-private
+52:   `receive_page_from` retains local development compatibility but still
+53:   charges the **same Node CPU account**. Raw/authenticated/durable/CLI
+54:   History paths continue to call the original Host guarded owner.
+
+SOURCE docs/protocol/pon-nakamoto-v1/details/W1_P0_P1_STRICT_INTEGRATION_20261027.md
+GIT_BLOB a36ab9e7ce7148843aa9bf0dff8ecc618775de0a
+SHA256 30d2507c1f9df0c771cfde2e30d2ab0497c1ff2a5cb0fc672420111101a894f5
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/protocol/pon-nakamoto-v1/details/W1_P0_P1_STRICT_INTEGRATION_20261027.md
+
+1: # P0–P1 exact integration preview: W1 negatives and Host-bound history
+2: Status: **draft / shadow-only / HOLD_NO_GO**. No PNW1 byte, target, ticket, fork-weight,
+3: FinalUse, model installation, V3 Cookie, genesis, or production flag modification.
+4: 
+5: ## Frozen input owners and retained failures
+6: - Source parent: Chain PR #484, commit `288e6a7f12770aec44f6449b0330c917b1d382bd`. This already incorporates
+7:   #340 (pinned-peer shared CPU), #342 (nonloopback History guard), and #483
+8:   (durable single-host W2-C spent tickets with a copied-DB double-spend counterexample).
+
+15: - P1: preserve #479 strict paid public/authenticated History request context
+16:   and #480 explicit fixed Host parent for V3 loopback listeners with remote
+17:   pinned-peer polling. Plain loopback-only local developer serving without
+18:   external history remains distinct.
+19: - P1 external API: `ingress::receive_page_from` is now crate-private.
+20:   It deliberately retains the old loopback-only developer compatibility.
+21:   The sole public History page import is `receive_public_page_from`,
+22:   requiring the original admin-provisioned
+23:   `/sys/fs/cgroup/trnmponpublic.slice` even if the caller's socket address
+24:   is loopback (a TCP proxy is not source provenance).
+25:   A compile-fail rustdoc rejects importing the weak symbol from an external crate.
+26: - P1 full W1 replay: the existing Native Node remains sole authority.
+27:   `admit_with_work_progress` preserves `Node::admit`'s task,
+28:   owner, parent, and durable checks while allowing a *local* resource callback;
+29:   no new work primitive or arithmetic-cache acceptance is created.
+30:   Import checks actual Host membership/limits before and after each of up to
+31:   16 received packets, before and after activation, and during W1 at
+32:   BeforeReplay, BeforeProduct, BeforeVerifiedWork, bounded noise/row and
+33:   every 64 transcript tiles. Raw cgroup `cpu.max` remains enforced by the
+34:   kernel between reads. An already committed native block is not turned
+35:   into invalid W1 after a local post-admission resource fault.
+36: 
+37: ## Focused source/test selectors (not yet qualified in this session)
+38: - `python3 formal/pon-nakamoto-v1/test_work_precheck.py -v`
+39: - `cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node
+40:   kernel_progress_rechecks_original_host_at_most_every_64_tiles -- --exact`
+41: - `cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node
+42:   public_loopback_history_requires_real_fixed_host_parent`
+
+SOURCE trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs
+GIT_BLOB 30bc194cbc1a2bd29c7c142deac388d402c17378
+SHA256 cb32977cb1e549a44c3967d38ebfef39b13e0f9575097c42044f2aa2e525b932
+URL https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs
+
+259: fn native_work_boundaries(
+260:     packet: &Packet,
+261: ) -> Vec<trnm_crypto_primitives::pon_work::VerificationProgress> {
+262:     let mut boundaries = Vec::new();
+263:     WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+264:         boundaries.push(point);
+265:         Ok(())
+266:     })
+267:     .unwrap();
+268:     boundaries
+269: }
+270: 
+271: #[test]
+272: fn history_w1_checks_host_once_at_every_real_progress_boundary() {
+273:     use trnm_crypto_primitives::pon_work::VerificationProgress;
+274:     let (_directory, _settings, _node, packet, _clock) = fixture();
+275:     // The reference is the actual full verifier's callbacks, not a hand-built
+276:     // selector sequence or a claim that this fixture changed a real cgroup.
+277:     let boundaries = native_work_boundaries(&packet);
+278:     assert_eq!(
+279:         boundaries.first(),
+280:         Some(&VerificationProgress::BeforeReplay)
+281:     );
+282:     assert_eq!(
+283:         boundaries.last(),
+284:         Some(&VerificationProgress::BeforeVerifiedWork)
+285:     );
+286:     assert_eq!(
+287:         boundaries
+288:             .iter()
+289:             .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+290:             .count(),
+291:         512
+292:     );
+293:     assert!(boundaries
+294:         .iter()
+295:         .any(|point| matches!(point, VerificationProgress::Noise { .. })));
+296:     assert!(boundaries
+297:         .iter()
+298:         .any(|point| matches!(point, VerificationProgress::MatrixRow { .. })));
+299:     assert!(boundaries.contains(&VerificationProgress::BeforeProduct));
+300:     for owns_node_mutex in [false, true] {
+301:         let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+302:         let operation = cpu.begin().unwrap();
+303:         let deadline = Instant::now() + Duration::from_secs(10);
+304:         operation.bind_history_request(deadline).unwrap();
+305:         let calls = AtomicUsize::new(0);
+306:         let resource = || {
+307:             calls.fetch_add(1, Ordering::SeqCst);
+308:             Ok(())
+309:         };
+310:         let result = verify_history_work(
+311:             packet.clone(),
+312:             &operation.checkpoint_handle(),
+313:             owns_node_mutex,
+314:             &Control {
+315:                 deadline,
+316:                 resource: &resource,
+317:             },
+318:         );
+319:         let receipt = operation.finish();
+320:         assert!(result.is_ok());
+321:         assert_eq!(
+322:             calls.load(Ordering::SeqCst),
+323:             boundaries.len(),
+324:             "every actual boundary checks the Host once without a refill wait"
+325:         );
+326:         assert!(receipt.total_cpu_ns.is_some_and(|paid| paid > 0));
+327:         assert!(!receipt.accounting_unavailable && !receipt.live_refused);
+328:         assert_eq!(cpu.observe().unwrap().in_flight, 0);
+329:     }
+
+333: fn history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries() {
+334:     use trnm_crypto_primitives::pon_work::VerificationProgress;
+335:     let (_directory, _settings, _node, packet, _clock) = fixture();
+336:     let boundaries = native_work_boundaries(&packet);
+337:     let noise = boundaries
+338:         .iter()
+339:         .position(|point| matches!(point, VerificationProgress::Noise { .. }))
+340:         .unwrap();
+341:     let row = boundaries
+342:         .iter()
+343:         .position(|point| matches!(point, VerificationProgress::MatrixRow { .. }))
+344:         .unwrap();
+345:     let tile = boundaries
+346:         .iter()
+347:         .position(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+348:         .unwrap();
+349:     let product = boundaries
+350:         .iter()
+351:         .position(|point| *point == VerificationProgress::BeforeProduct)
+352:         .unwrap();
+353:     // Cover original selected boundaries AND immediately following boundaries
+354:     // omitted by the removed coarse selector. The actual resource check must
+355:     // still occur before the next piece of native work at each of these points.
+356:     let cuts = [
+357:         0,
+358:         noise,
+359:         noise + 1,
+360:         row,
+361:         row + 1,
+362:         tile,
+363:         tile + 1,
+364:         product,
+365:         boundaries.len() - 1,
+366:     ];
+367:     for owns_node_mutex in [false, true] {
+368:         for index in cuts {
+369:             let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+370:             let deadline = Instant::now() + Duration::from_secs(10);
+371:             let operation = cpu.begin().unwrap();
+372:             operation.bind_history_request(deadline).unwrap();
+373:             let calls = AtomicUsize::new(0);
+374:             let resource = || {
+375:                 let current = calls.fetch_add(1, Ordering::SeqCst);
+376:                 ensure(current < index, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+377:             };
+378:             let result = verify_history_work(
+379:                 packet.clone(),
+380:                 &operation.checkpoint_handle(),
+381:                 owns_node_mutex,
+382:                 &Control {
+383:                     deadline,
+384:                     resource: &resource,
+385:                 },
+386:             );
+387:             let receipt = operation.finish();
+388:             assert_eq!(
+389:                 result.err().unwrap().to_string(),
+390:                 "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+391:             );
+392:             assert_eq!(calls.load(Ordering::SeqCst), index + 1);
+393:             assert!(!receipt.accounting_unavailable);
+394:             assert_eq!(cpu.observe().unwrap().in_flight, 0);
+395: 
+396:             // A local resource failure is neither a false mathematical claim
+397:             // nor a cached negative. Retry the identical proof on the same
+398:             // original CPU domain, settling both real paid operations.
+399:             let retry = cpu.begin().unwrap();
+400:             retry.bind_history_request(deadline).unwrap();
+401:             let accepted = verify_history_work(
+402:                 packet.clone(),
+403:                 &retry.checkpoint_handle(),
+404:                 owns_node_mutex,
+405:                 &Control {
+406:                     deadline,
+407:                     resource: &|| Ok(()),
+408:                 },
+409:             );
+410:             let retry_receipt = retry.finish();
+411:             assert!(accepted.is_ok());
+412:             assert!(!retry_receipt.accounting_unavailable);
+413:             assert_eq!(cpu.observe().unwrap().in_flight, 0);
+414:         }
+415:     }
+416: }
+417: 
+418: #[test]
+419: fn history_w1_original_deadline_precedes_resource_and_complete_work() {
+420:     let (_directory, _settings, _node, packet, _clock) = fixture();
+421:     let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+422:     let operation = cpu.begin().unwrap();
+423:     let deadline = Instant::now();
+424:     assert_eq!(
+425:         operation
+426:             .bind_history_request(deadline)
+427:             .unwrap_err()
+428:             .to_string(),
+429:         "PUBLIC_REQUEST_DEADLINE"
+430:     );
+431:     let calls = AtomicUsize::new(0);
+432:     let resource = || {
+433:         calls.fetch_add(1, Ordering::SeqCst);
+434:         Err(crate::Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"))
+435:     };
+436:     // The real caller refuses the expired binding above. Also check the
+437:     // extracted verifier's own first boundary: even an unbound operation
+438:     // cannot bypass that deadline or reach the Host/CPU callback here.
+439:     let result = verify_history_work(
+440:         packet,
+441:         &operation.checkpoint_handle(),
+442:         false,
+443:         &Control {
+444:             deadline,
+445:             resource: &resource,
+446:         },
+447:     );
+448:     let receipt = operation.finish();
+449:     assert_eq!(result.err().unwrap().to_string(), "PUBLIC_REQUEST_DEADLINE");
+450:     assert_eq!(calls.load(Ordering::SeqCst), 0);
+451:     assert!(!receipt.accounting_unavailable);
+452:     assert_eq!(cpu.observe().unwrap().in_flight, 0);
+453:     assert_eq!(
+454:         cpu.observe_completion_work().unwrap().retained_identities,
+455:         0
+456:     );
+457: }
+
+460: fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {
+461:     use trnm_crypto_primitives::pon_work::{self, VerificationProgress, WorkError};
+462:     let (_directory, _settings, _node, packet, _clock) = fixture();
+463:     let mut false_trace = packet.clone();
+464:     let trace_start = pon_work::PROOF_BYTES - 32;
+465:     let mut ticket_passed = false;
+466:     for attempt in 0..4096_u64 {
+467:         let trace = pon_work::hash(b"history-host-count-false-trace", &[&attempt.to_le_bytes()]);
+468:         if trace.as_slice() == &packet.proof[trace_start..] {
+469:             continue;
+470:         }
+471:         false_trace.proof[trace_start..].copy_from_slice(&trace);
+472:         if pon_work::precheck_proof_statement(
+473:             false_trace.header.challenge(),
+474:             false_trace.header.work_task,
+475:             false_trace.header.target,
+476:             &false_trace.proof,
+477:         )
+478:         .is_ok()
+479:         {
+480:             ticket_passed = true;
+481:             break;
+482:         }
+483:     }
+484:     assert!(ticket_passed, "exercise actual full false-trace rejection");
+485:     for (name, packet) in [("valid", packet), ("false-trace", false_trace)] {
+486:         // The retained scalar relation independently supplies the complete
+487:         // boundary count, including data-dependent noise rejection sampling.
+488:         let mut reference_points = Vec::new();
+489:         let reference = pon_work::verify_reference_with_progress(
+490:             packet.header.challenge(),
+491:             packet.header.work_task,
+492:             packet.header.target,
+493:             &packet.proof,
+494:             &mut |point| {
+495:                 reference_points.push(point);
+496:                 Ok::<_, crate::Error>(())
+497:             },
+498:         );
+499:         if name == "false-trace" {
+500:             assert!(matches!(
+501:                 reference.unwrap_err(),
+502:                 pon_work::VerificationError::Relation(WorkError::Transcript)
+503:             ));
+504:         } else {
+505:             reference.unwrap();
+506:         }
+507:         assert_eq!(
+508:             reference_points
+509:                 .iter()
+510:                 .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+511:                 .count(),
+512:             512
+513:         );
+514:         for owns_node_mutex in [false, true] {
+515:             // This control counts callbacks, not physical cgroup reads or
+516:             // public-service latency. The original standalone burst avoids
+517:             // refill so each mathematical checkpoint must check Host once.
+518:             let domain = public_v3::ServiceMutationCpuDomain::standalone();
+519:             let initial = domain.observe().unwrap();
+520:             let calls = AtomicUsize::new(0);
+521:             let resource = || {
+522:                 calls.fetch_add(1, Ordering::SeqCst);
+523:                 Ok(())
+524:             };
+525:             let control = Control {
+526:                 deadline: Instant::now() + Duration::from_secs(10),
+527:                 resource: &resource,
+528:             };
+529:             let operation = domain.begin().unwrap();
+530:             operation.bind_history_request(control.deadline).unwrap();
+531:             let result = verify_history_work(
+532:                 packet.clone(),
+533:                 &operation.checkpoint_handle(),
+534:                 owns_node_mutex,
+535:                 &control,
+536:             );
+537:             if name == "false-trace" {
+538:                 assert_eq!(result.err().unwrap().to_string(), "WORK:Transcript");
+539:             } else {
+540:                 assert!(result.is_ok(), "{name}/{owns_node_mutex}");
+541:             }
+542:             assert_eq!(calls.load(Ordering::SeqCst), reference_points.len());
+543:             let receipt = operation.finish();
+544:             assert!(!receipt.accounting_unavailable);
+545:             assert!(!receipt.live_refused);
+546:             let flow = domain.observe_actual_flow().unwrap().unwrap();
+547:             assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
+548:             assert_eq!(flow.booked_reservation_ns, 0);
+549:             assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+550:             assert!(flow.balance_identity_verified);
+551:             println!(
+552:                 "{}",
+553:                 serde_json::json!({"schema":"history-w1-host-boundary-count-v1",
+554:                 "case":name,"owns_node_mutex":owns_node_mutex,
+555:                 "reference_boundaries":reference_points.len(),
+556:                 "resource_calls":calls.load(Ordering::SeqCst),
+557:                 "physical_host_measurement":false,"receipt":receipt,"flow":flow})
+558:             );
+559:         }
+560:     }
+561: }

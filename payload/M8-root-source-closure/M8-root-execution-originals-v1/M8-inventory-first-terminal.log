@@ -1,3 +1,0 @@
-{"label": "source-before-status", "exit": 0, "seconds": 0.348, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
-{"label": "preflight-before-edit", "exit": 0, "seconds": 0.052, "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"}
-{"status": "HOLD", "head": null, "tree": null, "errors": ["AssertionError: "], "summary": "/private/tmp/chain-consolidation-20261114-root/concurrent-source-inventory-completion-v1/summary.json", "bytes": 629, "sha256": "3395df0f963381f89e0c7bb37ff2f48c261e5e6c3e1ef0f3ce4bd03fbee498ff"}

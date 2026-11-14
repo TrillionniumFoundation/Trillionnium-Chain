@@ -1,0 +1,39 @@
+{
+  "observed_kind": "prospective-merge",
+  "source": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-failure-raw-logs-v2/job-132475258996-original-log.stdout",
+  "source_sha256": "d8f8acf7d7e83ff24212cc5b2ce9f09a6817f40910b38d7f25750ed148165002",
+  "source_values": [
+    {
+      "line": 1192,
+      "value": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "line": 1499,
+      "value": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "kind": "prospective-merge",
+        "prospective_merge": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+        "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3994964901,
+        "tracked_entries": 41677,
+        "tracked_worktree_verified": true
+      }
+    }
+  ]
+}

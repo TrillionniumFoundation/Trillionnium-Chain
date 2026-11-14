@@ -1,0 +1,259 @@
+{
+  "archive": {
+    "archive_bytes": 272975787,
+    "archive_files": 5670,
+    "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "commit": "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9",
+    "direct_parents": [
+      "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+      "2a86462a1ab20c68151719ba4635e3c294391e64"
+    ],
+    "file_index_sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a",
+    "payload_manifest_sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223",
+    "tag": "archive/execution-receipts-20261114-2a86462a1ab2-v1",
+    "tag_oid": "454761ef276433740453b5b80ce886c1d251c6d3",
+    "tree": "e7c0cdcc71af648f430acd323d33dedfaf1ed63b"
+  },
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "collector_disposition": {
+    "exact_excerpt": "B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification.",
+    "payload_path": "post-m5-root-closures/reviewed-collector-disposition-v1.txt",
+    "state": "reviewed"
+  },
+  "execution_manifest": {
+    "bytes": 2329620,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+  },
+  "expected_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+  "full_linux_receipt": {
+    "bytes": 21354,
+    "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/R1-final-original-executions-and-publication-review/full/flat/original/summary.json",
+    "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+  },
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+  "hosted_checks": {
+    "state": "not_observed_for_final_candidate"
+  },
+  "original_archive_direct_parents": 893,
+  "original_branch_names": 908,
+  "original_distinct_tips": 892,
+  "original_linux_commands": 18,
+  "pr_number": 847,
+  "previous_own_published_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "publication_completion": {
+    "actual_terminal": {
+      "bytes": 22383,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    "effective_hook_plan": {
+      "effective_hook_bytes": 7522,
+      "effective_hook_sha256": "5351fbd3ccaece41da37e7c779431b7c310f085fc98195ec244b8d78ae76fe6e",
+      "original_hook_sha256": "7a2b1d50bae4957e8b5b8c4a76c7fb07b821e2e31c9714e9ac90459fdce98cd8",
+      "parallel_capture_labels": [
+        "heads",
+        "tags"
+      ],
+      "receipt_command_order": [
+        "push-url",
+        "fetch-url",
+        "heads",
+        "tags"
+      ],
+      "schema": "trnm-followup-parallel-hook-read-plan-v1"
+    },
+    "kind": "resume-executor",
+    "observation_phase": "after",
+    "original_receipt": {
+      "bytes": 6458208,
+      "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    "previous_resume_attempts": [
+      {
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+          "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+        },
+        "terminal_pages": {
+          "bytes": 19706,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+          "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+        }
+      },
+      {
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+          "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+        },
+        "terminal_pages": {
+          "bytes": 19710,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+          "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+        }
+      }
+    ],
+    "previous_resume_failures": [
+      {
+        "number": 1,
+        "push_exit": 1,
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+          "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+        },
+        "status": "UNKNOWN",
+        "terminal_pages": {
+          "bytes": 19706,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+          "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+        },
+        "terminal_proof": {
+          "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7/output.log",
+          "bytes": 2824,
+          "exit_code": 1,
+          "output_complete": true,
+          "page_count": 1,
+          "session_id": "dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7",
+          "sha256": "67aa8d5c3f62c62a59ce6ab6e8ea15cdb4ad62bddcdbaf012ab1cbd70ee5ca4e"
+        },
+        "transport_stderr": {
+          "bytes": 13318,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/atomic-publish-resume.stderr",
+          "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+        }
+      },
+      {
+        "number": 2,
+        "push_exit": 1,
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+          "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+        },
+        "status": "UNKNOWN",
+        "terminal_pages": {
+          "bytes": 19710,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+          "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+        },
+        "terminal_proof": {
+          "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c/output.log",
+          "bytes": 2824,
+          "exit_code": 1,
+          "output_complete": true,
+          "page_count": 1,
+          "session_id": "dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c",
+          "sha256": "e37edca34ed8fe412f2ed640bbe2fea91c32720a72accd1ad8d692f6b63835f5"
+        },
+        "transport_stderr": {
+          "bytes": 13318,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/atomic-publish-resume.stderr",
+          "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+        }
+      }
+    ],
+    "receipt": {
+      "bytes": 231108,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    "resume_spec": {
+      "bytes": 2428,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    "status": "confirmed",
+    "terminal_proof": {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589/output.log",
+      "bytes": 3185,
+      "exit_code": 0,
+      "output_complete": true,
+      "page_count": 1,
+      "session_id": "dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589",
+      "sha256": "3eeb44f50d42b8826f766dd4e19cc00daf2031de58cde07a088f9f39a9e3012b"
+    },
+    "transport_exit": 0,
+    "transport_trace": {
+      "NO_DATA": true,
+      "REDACT": true,
+      "bounds": {
+        "events": 4096,
+        "line": 8192,
+        "parsed_input": 16777216,
+        "postprocess_EOF_seconds": 5,
+        "retained_bytes": 524288
+      },
+      "complete": true,
+      "eof": true,
+      "errors": [],
+      "events": {
+        "bytes": 1250,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+        "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+      },
+      "events_retained": 17,
+      "header_auth_cookie_URL_or_body_retained": false,
+      "input_bytes_seen": 20483,
+      "lines_seen": 227,
+      "overlong_lines_discarded": 0,
+      "raw_trace_written": false,
+      "schema": "trnm-redacted-git-curl-info-v1",
+      "scope": "Strict typed connection/DNS/ALPN/TLS events; not a complete HTTP trace.",
+      "summary": {
+        "bytes": 919,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/summary.json",
+        "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+      },
+      "trace_fd": 4,
+      "unrecognized_or_header_lines_discarded": 210
+    }
+  },
+  "publication_observation_phase": "after",
+  "publication_receipt": {
+    "bytes": 6458208,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+    "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+  },
+  "publication_resume_receipt": {
+    "bytes": 231108,
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+    "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+  },
+  "publication_resume_spec": {
+    "bytes": 2428,
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+    "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+  },
+  "publication_resume_status": "confirmed",
+  "publication_resume_terminal": {
+    "bytes": 22383,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+    "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+  },
+  "publication_resume_transport_exit": 0,
+  "publication_spec": {
+    "bytes": 1847,
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+    "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+  },
+  "publication_status": "UNKNOWN",
+  "publication_transport_exit": 124,
+  "qualification_granted": false,
+  "seven_gate_commands": 7,
+  "seven_gate_receipt": {
+    "bytes": 9143,
+    "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a8646-v1/receipt.json",
+    "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+  },
+  "template": {
+    "bytes": 6355,
+    "path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md",
+    "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+  },
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "grep",
+    "-n",
+    "-F",
+    "W1 fresh challenge service",
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "--",
+    ".github/workflows"
+  ],
+  "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+  "elapsed_seconds": 0.022,
+  "exit": 0,
+  "finished_at": "2026-11-14T14:32:42.659322+00:00",
+  "label": "R1-W1-fresh-workflow-match",
+  "started_at": "2026-11-14T14:32:42.636883+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow-match.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 153,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow-match.stdout",
+    "sha256": "7ea40956c443f6e1747cc95a559494e0a4733d2ccc04b7dfab492fa285693077"
+  },
+  "timed_out": false,
+  "timeout_seconds": 30
+}

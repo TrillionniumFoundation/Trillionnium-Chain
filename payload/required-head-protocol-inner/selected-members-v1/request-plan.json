@@ -1,0 +1,50 @@
+{
+  "existing_tail_reused": true,
+  "groups": [
+    {
+      "bytes": 1066,
+      "end": 10106,
+      "label": "caller-records",
+      "start": 9041
+    },
+    {
+      "bytes": 525935,
+      "end": 681123,
+      "label": "confirmation-report",
+      "start": 155189
+    },
+    {
+      "bytes": 17482,
+      "end": 765048,
+      "label": "remaining-selectors-and-manifest",
+      "start": 747567
+    }
+  ],
+  "metadata_and_tail": {
+    "bytes": 821,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.json",
+    "sha256": "44b83b461a6f5a346d2e45eba77fc0b6e65f46b91891cd5ad900b1f89239379f"
+  },
+  "new_bytes": 544483,
+  "selected_paths": [
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+    "from-zero-native/confirmation/report.json",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+    "from-zero-native/manifest.json",
+    "source.json"
+  ],
+  "whole_zip_unverified": true
+}

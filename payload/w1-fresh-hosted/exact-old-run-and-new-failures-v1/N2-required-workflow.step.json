@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "cat-file",
+    "blob",
+    "096c6b5f9b952c49389fd975515744074ba61317:.github/workflows/trnm-required-baseline.yml"
+  ],
+  "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+  "elapsed_seconds": 0.032,
+  "exit": 0,
+  "finished_at": "2026-11-14T14:32:42.635734+00:00",
+  "label": "N2-required-workflow",
+  "started_at": "2026-11-14T14:32:42.604248+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-required-workflow.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 35462,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-required-workflow.stdout",
+    "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+  },
+  "timed_out": false,
+  "timeout_seconds": 30
+}

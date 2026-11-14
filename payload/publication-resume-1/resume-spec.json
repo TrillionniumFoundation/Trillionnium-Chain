@@ -1,0 +1,26 @@
+{
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1",
+  "original_launch_inputs": {
+    "bytes": 2426,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-launch-inputs-v1/inputs.json",
+    "sha256": "2381ac94dab56b9016f4cea84442fbde8ddda135ed46592c7708d95a83b58acb"
+  },
+  "original_publication_receipt": {
+    "bytes": 6458208,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+    "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+  },
+  "original_publication_spec": {
+    "bytes": 1847,
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+    "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+  },
+  "original_terminal_pages": {
+    "bytes": 885065,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-original-terminal-pages-v1.json",
+    "sha256": "753dbb0b65fa4377a28b705c888dd9319de5707cd569c1cb268759439e66612d"
+  },
+  "resume_sha256": "0da42495c82b668047cfcc2115f7cda75b3b78520688119aa654ed99cd631a2e",
+  "schema": "trnm-followup-candidate-execution-resume-spec-v1",
+  "transport_timeout_seconds": 3600
+}

@@ -1,0 +1,279 @@
+{
+  "schema": "trnm-root-postpublication-original-terminal-evidence-v1",
+  "saved_at_utc": "2026-11-14T16:08:16Z",
+  "original_tool_objects_retained": true,
+  "terminal_bytes_in_original_hex": true,
+  "derived_status_not_substituted": true,
+  "no_original_directory_modified": true,
+  "network_GETs_started_by_this_save": 0,
+  "observations": [
+    {
+      "label": "history_suffix_tail",
+      "launch_cache_key": "rootR1HistoryTailProbeV1ActualLaunch",
+      "read_cache_key": "rootR1HistoryTailProbeV1CompleteReadForArchive",
+      "original_launch_tool_result": {
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "host": "mac",
+        "persistent_across_runtime_restart": true,
+        "reused": false,
+        "session_id": "dpty-e1b055e8135a9cfa7d8a0543a08c36b8ef6b87ea90ea9d86e09c9f3d93a8c5d2",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 0,
+          "bytes_stored": 0,
+          "capture_error": null,
+          "created_unix_ms": 1794670231865,
+          "output_complete": false,
+          "owner_pid": 25003,
+          "pid": 25004,
+          "state": "running"
+        }
+      },
+      "complete_read_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"archive_path\":\"/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e1b055e8135a9cfa7d8a0543a08c36b8ef6b87ea90ea9d86e09c9f3d93a8c5d2/output.log\",\"available_end\":295,\"bytes_hex\":\"7b22737461747573223a202252414e47455f554e535550504f52544544222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d52312d686973746f72792d61727469666163742d7461696c2d70726f62652d32303236313131342d76312f73756d6d6172792e6a736f6e222c20226279746573223a20353030312c2022736861323536223a202239623738303762313732626534663462613863346232336161643139626338373466623835373339393465336164386236356466303463646534343432316236227d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73652c20227175616c696669636174696f6e223a2066616c73657d0d0a\",\"chunk_sha256\":\"de27d2809341b74bd3b2695261ba51900f523b3cb420988192f6ad44a928d28c\",\"host\":\"mac\",\"next_offset\":295,\"offset\":0,\"output_complete\":true,\"persistent_across_runtime_restart\":true,\"session_id\":\"dpty-e1b055e8135a9cfa7d8a0543a08c36b8ef6b87ea90ea9d86e09c9f3d93a8c5d2\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":295,\"bytes_stored\":295,\"capture_error\":null,\"closed\":false,\"created_unix_ms\":1794670231865,\"exit_code\":1,\"output_complete\":true,\"owner_pid\":25003,\"pid\":25004,\"state\":\"exited\"},\"storage\":\"target_archive\",\"text\":\"{\\\"status\\\": \\\"RANGE_UNSUPPORTED\\\", \\\"summary\\\": {\\\"path\\\": \\\"/private/tmp/chain-prci-R1-history-artifact-tail-probe-20261114-v1/summary.json\\\", \\\"bytes\\\": 5001, \\\"sha256\\\": \\\"9b7807b172be4f4ba8c4b23aad19bc874fb8573994e3ad8b65df04cde44421b6\\\"}, \\\"whole_artifact_sha256_verified\\\": false, \\\"qualification\\\": false}\\r\\n\",\"text_is_lossy\":false,\"truncated_before_offset\":false,\"utf8_pending\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "label": "history_explicit_tail",
+      "launch_cache_key": "rootR1HistoryExplicitTailProbeV2ActualLaunch",
+      "read_cache_key": "rootR1HistoryExplicitTailProbeV2Read001",
+      "original_launch_tool_result": {
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "host": "mac",
+        "persistent_across_runtime_restart": true,
+        "reused": false,
+        "session_id": "dpty-c44f83e3ffdcf1ef31e691a53817fb373f385235a7402aac02593440c7678132",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 0,
+          "bytes_stored": 0,
+          "capture_error": null,
+          "created_unix_ms": 1794670432086,
+          "output_complete": false,
+          "owner_pid": 27431,
+          "pid": 27432,
+          "state": "running"
+        }
+      },
+      "complete_read_tool_result": {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-c44f83e3ffdcf1ef31e691a53817fb373f385235a7402aac02593440c7678132/output.log",
+        "available_end": 291,
+        "bytes_hex": "7b22737461747573223a2022484f4c44222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d52312d686973746f72792d61727469666163742d6578706c696369742d7461696c2d70726f62652d32303236313131342d76322f73756d6d6172792e6a736f6e222c20226279746573223a20353235372c2022736861323536223a202234336336653135613934356562343836633233383363656336633363636465623530613035393338633936396637323663336537616439316233633563306438227d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73652c20227175616c696669636174696f6e223a2066616c73657d0d0a",
+        "chunk_sha256": "a712f0d00939662f6a75250ac1b4c7035020ecaba395c79e25a26f8cf4ebf910",
+        "host": "mac",
+        "next_offset": 291,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-c44f83e3ffdcf1ef31e691a53817fb373f385235a7402aac02593440c7678132",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 291,
+          "bytes_stored": 291,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794670432086,
+          "exit_code": 1,
+          "output_complete": true,
+          "owner_pid": 27431,
+          "pid": 27432,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"status\": \"HOLD\", \"summary\": {\"path\": \"/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2/summary.json\", \"bytes\": 5257, \"sha256\": \"43c6e15a945eb486c2383cec6c3ccdeb50a05938c969f726c3e7ad91b3c5c0d8\"}, \"whole_artifact_sha256_verified\": false, \"qualification\": false}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    },
+    {
+      "label": "history_central_directory",
+      "launch_cache_key": "rootR1HistoryCentralDirectoryReaderActualLaunch",
+      "read_cache_key": "rootR1HistoryCentralDirectoryReaderRead001",
+      "original_launch_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"mac\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-e04b494241b7f0cf1c69c30ad41623b68464f60f931b5ff5493cf42539459d6c\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":0,\"bytes_stored\":0,\"capture_error\":null,\"created_unix_ms\":1794671050049,\"output_complete\":false,\"owner_pid\":40736,\"pid\":40737,\"state\":\"running\"}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "complete_read_tool_result": {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e04b494241b7f0cf1c69c30ad41623b68464f60f931b5ff5493cf42539459d6c/output.log",
+        "available_end": 311,
+        "bytes_hex": "7b22737461747573223a202243454e5452414c5f4449524543544f52595f4f42534552564544222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d52312d686973746f72792d61727469666163742d63656e7472616c2d6469726563746f72792d32303236313131342d76312f73756d6d6172792e6a736f6e222c20226279746573223a20353936312c2022736861323536223a202265306538343766353236383938633239313338613639363362343939356133643038636338336361306137386634643931306562373866363965323635646233227d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73652c20227175616c696669636174696f6e223a2066616c73657d0d0a",
+        "chunk_sha256": "213df6257e697feaa8f29b52867c8fabe2606b05e19eadfd3d484c513432fa5b",
+        "host": "mac",
+        "next_offset": 311,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-e04b494241b7f0cf1c69c30ad41623b68464f60f931b5ff5493cf42539459d6c",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 311,
+          "bytes_stored": 311,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794671050049,
+          "exit_code": 0,
+          "output_complete": true,
+          "owner_pid": 40736,
+          "pid": 40737,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"status\": \"CENTRAL_DIRECTORY_OBSERVED\", \"summary\": {\"path\": \"/private/tmp/chain-prci-R1-history-artifact-central-directory-20261114-v1/summary.json\", \"bytes\": 5961, \"sha256\": \"e0e847f526898c29138a6963b4995a3d08cc83ca0a78f4d910eb78f69e265db3\"}, \"whole_artifact_sha256_verified\": false, \"qualification\": false}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    },
+    {
+      "label": "history_selected_members",
+      "launch_cache_key": "rootR1HistorySelectedMemberReaderActualLaunch",
+      "read_cache_key": "rootR1HistorySelectedMemberReaderRead001",
+      "original_launch_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"mac\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-9173bbf5c4ff39b6c14c5ba021acb280eb6b917b5f123a013709d7a757080f14\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":0,\"bytes_stored\":0,\"capture_error\":null,\"created_unix_ms\":1794671296420,\"output_complete\":false,\"owner_pid\":48805,\"pid\":48806,\"state\":\"running\"}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "complete_read_tool_result": {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-9173bbf5c4ff39b6c14c5ba021acb280eb6b917b5f123a013709d7a757080f14/output.log",
+        "available_end": 310,
+        "bytes_hex": "7b22737461747573223a202253454c45435445445f4d454d424552535f4f42534552564544222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d707263692d52312d686973746f72792d61727469666163742d73656c65637465642d6d656d626572732d32303236313131342d76312f73756d6d6172792e6a736f6e222c20226279746573223a2031373538352c2022736861323536223a202265316164376430306561323336666539393138363263303931393735666263383431333634663363616332346566626638363138623037346265656566383137227d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73652c20227175616c696669636174696f6e223a2066616c73657d0d0a",
+        "chunk_sha256": "fd6934340fc9ebbeef0324b3102f5bdcf2eb6db77858fcc1bd9e27348bb1dc0e",
+        "host": "mac",
+        "next_offset": 310,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-9173bbf5c4ff39b6c14c5ba021acb280eb6b917b5f123a013709d7a757080f14",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 310,
+          "bytes_stored": 310,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794671296420,
+          "exit_code": 0,
+          "output_complete": true,
+          "owner_pid": 48805,
+          "pid": 48806,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"status\": \"SELECTED_MEMBERS_OBSERVED\", \"summary\": {\"path\": \"/private/tmp/chain-prci-R1-history-artifact-selected-members-20261114-v1/summary.json\", \"bytes\": 17585, \"sha256\": \"e1ad7d00ea236fe991862c091975fbc841364f3cac24efbf8618b074beeef817\"}, \"whole_artifact_sha256_verified\": false, \"qualification\": false}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    },
+    {
+      "label": "postpublication_remote_refs",
+      "launch_cache_key": "rootPostpublicationRemoteRefsSnapshotLaunch",
+      "read_cache_key": "rootPostpublicationRemoteRefsSnapshotRead001",
+      "original_launch_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"mac\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-f0cae4640cd6d372deb50354e1fe2394c553db06542881c65822f76b1f6a4f91\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":0,\"bytes_stored\":0,\"capture_error\":null,\"created_unix_ms\":1794671897921,\"output_complete\":false,\"owner_pid\":56160,\"pid\":56162,\"state\":\"running\"}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "complete_read_tool_result": {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-f0cae4640cd6d372deb50354e1fe2394c553db06542881c65822f76b1f6a4f91/output.log",
+        "available_end": 380,
+        "bytes_hex": "7b2263616e646964617465223a202232613836343632613161623230633638313531373139626134363335653363323934333931653634222c2022686561645f636f756e74223a203930382c20226d61696e223a202264643665316333636265616362646335333262303637393239373833356233613061616337386630222c2022737461747573223a20224f425345525645445f554e4348414e474544222c202273756d6d617279223a207b226279746573223a2039313539322c202270617468223a20222f707269766174652f746d702f636861696e2d636f6e736f6c69646174696f6e2d32303236313131342d726f6f742f706f73747075626c69636174696f6e2d72656d6f74652d726566732d736e617073686f742d76312f73756d6d6172792e6a736f6e222c2022736861323536223a202233616265323939303061663262646633376236303339306564633631333135343232386330323665326536386132376133396565303262306161653539303135227d7d0d0a",
+        "chunk_sha256": "7c700edcd3de5b7140545b9940e8c0b0ca145a260bd4a8b110301c34b94f00d2",
+        "host": "mac",
+        "next_offset": 380,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-f0cae4640cd6d372deb50354e1fe2394c553db06542881c65822f76b1f6a4f91",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 380,
+          "bytes_stored": 380,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794671897921,
+          "exit_code": 0,
+          "output_complete": true,
+          "owner_pid": 56160,
+          "pid": 56162,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"candidate\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"head_count\": 908, \"main\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"status\": \"OBSERVED_UNCHANGED\", \"summary\": {\"bytes\": 91592, \"path\": \"/private/tmp/chain-consolidation-20261114-root/postpublication-remote-refs-snapshot-v1/summary.json\", \"sha256\": \"3abe29900af2bdf37b60390edc613154228c026e2e68a27a39ee02b0aae59015\"}}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    },
+    {
+      "label": "required_protocol_outer_original_log",
+      "launch_cache_key": "rootR1RequiredProtocolOriginalLogReaderActualLaunch",
+      "read_cache_key": "rootR1RequiredProtocolOriginalLogReaderRead001",
+      "original_launch_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"mac\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-d8c7000e89704cb738c049abcf12b30268d0ecf90077191cc176f41d8699ba38\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":0,\"bytes_stored\":0,\"capture_error\":null,\"created_unix_ms\":1794671546818,\"output_complete\":false,\"owner_pid\":52278,\"pid\":52279,\"state\":\"running\"}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "complete_read_tool_result": {
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-d8c7000e89704cb738c049abcf12b30268d0ecf90077191cc176f41d8699ba38/output.log",
+        "available_end": 579,
+        "bytes_hex": "7b226a6f6273223a205b7b226572726f7273223a205b5d2c20226964223a203133323438313431323239302c202272656365697074223a207b226279746573223a20343639392c202270617468223a20222f707269766174652f746d702f636861696e2d636f6e736f6c69646174696f6e2d32303236313131342d726f6f742f52312d72657175697265642d70726f746f636f6c2d6661696c65642d6a6f622d6f726967696e616c2d6c6f672d76312f3133323438313431323239302d7265766965772e6a736f6e222c2022736861323536223a202261306232353933366335353037313936623338333933363336373939323964313832633437393030366261386361623737316531393639306434636164333933227d2c2022737461747573223a20224f524947494e414c5f4a4f425f4c4f475f4341505455524544227d5d2c2022737461747573223a2022434150545552455f434f4d504c455445222c202273756d6d617279223a207b226279746573223a20363230392c202270617468223a20222f707269766174652f746d702f636861696e2d636f6e736f6c69646174696f6e2d32303236313131342d726f6f742f52312d72657175697265642d70726f746f636f6c2d6661696c65642d6a6f622d6f726967696e616c2d6c6f672d76312f73756d6d6172792e6a736f6e222c2022736861323536223a202237636136396534373565326430376130636364616333633736323133666233363664623032326532343138303964663464333630376139623735653638653339227d7d0d0a",
+        "chunk_sha256": "47c10c713832780c604f070820311ecb93639183859d7e67e6417de623692c2d",
+        "host": "mac",
+        "next_offset": 579,
+        "offset": 0,
+        "output_complete": true,
+        "persistent_across_runtime_restart": true,
+        "session_id": "dpty-d8c7000e89704cb738c049abcf12b30268d0ecf90077191cc176f41d8699ba38",
+        "status": {
+          "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+          "bytes_seen": 579,
+          "bytes_stored": 579,
+          "capture_error": null,
+          "closed": false,
+          "created_unix_ms": 1794671546818,
+          "exit_code": 0,
+          "output_complete": true,
+          "owner_pid": 52278,
+          "pid": 52279,
+          "state": "exited"
+        },
+        "storage": "target_archive",
+        "text": "{\"jobs\": [{\"errors\": [], \"id\": 132481412290, \"receipt\": {\"bytes\": 4699, \"path\": \"/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/132481412290-review.json\", \"sha256\": \"a0b25936c5507196b3839363679929d182c479006ba8cab771e19690d4cad393\"}, \"status\": \"ORIGINAL_JOB_LOG_CAPTURED\"}], \"status\": \"CAPTURE_COMPLETE\", \"summary\": {\"bytes\": 6209, \"path\": \"/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/summary.json\", \"sha256\": \"7ca69e475e2d07a0ccdac3c76213fb366db022e241809df4d3607a9b75e68e39\"}}\r\n",
+        "text_is_lossy": false,
+        "truncated_before_offset": false,
+        "utf8_pending": false
+      }
+    }
+  ]
+}

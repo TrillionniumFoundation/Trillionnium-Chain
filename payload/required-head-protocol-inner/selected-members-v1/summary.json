@@ -1,0 +1,477 @@
+{
+  "all_artifact_member_crc_verified": false,
+  "artifact_id": 14120622057,
+  "automatic_retry": false,
+  "capture_source": {
+    "bytes": 19553,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/derived-capture-definitions-source.py",
+    "sha256": "154e9c1f7d441c5a7f3696853c6e589fca6c31d06913a36ff638ea13c3a15b5c"
+  },
+  "confirmation_facts": {
+    "bytes": 30406,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/bounded-confirmation-report-facts.json",
+    "sha256": "6fff7c709de8039572ec0c210994ac4ae8059c0d6dea3a3ac73a3a6d3df2c3ac"
+  },
+  "declared_artifact_bytes": 7001798,
+  "declared_artifact_sha256": "a8c9b352fdb5bcd27785b13d753d59949e6330bbd29222104bf284b7c9822961",
+  "errors": [],
+  "filemap": {
+    "bytes": 4268,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-filemap-verification.json",
+    "sha256": "154ac6658274ca971af00ab6c539c1b5766cd32dcfdf95c73c11c0b9d654c26c"
+  },
+  "finished_at": "2026-11-14T16:00:17.231441+00:00",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "inputs_before_after_valid": true,
+  "job_id": 132481412290,
+  "manifest_outcome": {
+    "all_named_tests_passed": true,
+    "confirmation_report": null,
+    "execution_finished": false,
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "format_passed": true,
+    "independent_wan_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "service_report": {
+      "phases": 2,
+      "schema": "public-v3-local-from-zero-service-v2",
+      "scope": "retained finite native report consistency; no independent work or state oracle",
+      "sha256": "fdecb7c2890f74dd4e27dde0f729d34845c16dec43740fe35e68d0635f59437b"
+    },
+    "source_recompiled": true,
+    "sustained_report": {
+      "phases": [
+        {
+          "attacks": 381,
+          "connections": 411,
+          "honest_reads": 28,
+          "honest_submissions": 1,
+          "late_rejections": 381,
+          "minimum_sampled_stored_credit_ns": 1793065520,
+          "mutation_cpu_refusals": 0,
+          "phase": 0
+        },
+        {
+          "attacks": 410,
+          "connections": 443,
+          "honest_reads": 31,
+          "honest_submissions": 1,
+          "late_rejections": 410,
+          "minimum_sampled_stored_credit_ns": 1794161027,
+          "mutation_cpu_refusals": 0,
+          "phase": 1
+        }
+      ],
+      "schema": "public-v3-sustained-local-from-zero-v1",
+      "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification",
+      "sha256": "6189308835ff8f02dd18600ce442b0b5a4a4b1a87d06f5f613d54aad70f45108"
+    },
+    "work_hardness_accepted": false
+  },
+  "maximum_concurrent_GETs": 3,
+  "new_GETs": 3,
+  "no_inner_code_or_test_executed": true,
+  "original_native_runs": [
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1712000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 0,
+        "major_faults": 0,
+        "max_rss_kib": 52164,
+        "minor_faults": 159,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+        "system_cpu_ns": 1712000,
+        "timed_out": false,
+        "user_cpu_ns": 0,
+        "voluntary_switches": 3,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 5543880
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 4274000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 0,
+        "major_faults": 0,
+        "max_rss_kib": 52164,
+        "minor_faults": 253,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+        "system_cpu_ns": 1068000,
+        "timed_out": false,
+        "user_cpu_ns": 3206000,
+        "voluntary_switches": 3,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 5439646
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 22985000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 3,
+        "major_faults": 0,
+        "max_rss_kib": 52164,
+        "minor_faults": 539,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "00ba255d478c72202b5f7a80a64581120f6559ac6e4d2271aca507af502a2ae4",
+        "system_cpu_ns": 5996000,
+        "timed_out": false,
+        "user_cpu_ns": 16989000,
+        "voluntary_switches": 30,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 99120264
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 2552338000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 1582,
+        "major_faults": 0,
+        "max_rss_kib": 161884,
+        "minor_faults": 40084,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "f2b3a113492654ef9dc9b82e8daefc25b3f6ef82f657cd2bfaa8c94d53354e40",
+        "system_cpu_ns": 631164000,
+        "timed_out": false,
+        "user_cpu_ns": 1921174000,
+        "voluntary_switches": 10417,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 10384063085
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 2062577000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 913,
+        "major_faults": 0,
+        "max_rss_kib": 94536,
+        "minor_faults": 22924,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689",
+        "system_cpu_ns": 1003261000,
+        "timed_out": false,
+        "user_cpu_ns": 1059316000,
+        "voluntary_switches": 13951,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 9104449808
+      }
+    }
+  ],
+  "per_GET_timeout_seconds": 180,
+  "ranges": [
+    {
+      "body": {
+        "bytes": 1066,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body",
+        "sha256": "467b84c632056e0901d2e5d5cdc95cfd8ebc81a6c21e5c104f2f317d5237b195"
+      },
+      "bytes": 1066,
+      "end": 10106,
+      "label": "caller-records",
+      "start": 9041,
+      "step": {
+        "GH_DEBUG_removed": true,
+        "GH_HOST": "github.com",
+        "accepted_body_bytes": 1066,
+        "argv": [
+          "/opt/homebrew/bin/gh",
+          "api",
+          "--hostname",
+          "github.com",
+          "--method",
+          "GET",
+          "--include",
+          "--header",
+          "Range: bytes=9041-10106",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+        ],
+        "automatic_retry": false,
+        "body_retained_bytes": 1066,
+        "complete_transport": true,
+        "cwd": "/private/tmp",
+        "error": null,
+        "exit": 0,
+        "finished_at": "2026-11-14T15:59:47.584433+00:00",
+        "headers_raw_saved": false,
+        "http_status": 206,
+        "label": "caller-records",
+        "method": "GET",
+        "owned_pid": 57226,
+        "per_GET_budget_seconds": 180,
+        "raw_header_bytes": 1142,
+        "raw_header_sha256": "b619ab5c5b89f795045144ae6889c0fc309a4f6aad455618e60f73c8f054b25e",
+        "safe_response_headers": {
+          "accept-ranges": "bytes",
+          "content-length": "1066",
+          "content-range": "bytes 9041-10106/7001798",
+          "content-type": "application/zip"
+        },
+        "started_at": "2026-11-14T15:59:41.916054+00:00",
+        "stderr_consumed_bytes": 0,
+        "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_eof": true,
+        "stderr_raw_saved": false,
+        "stdout_consumed_bytes": 2208,
+        "stdout_consumed_sha256": "a42b82fea98c62de8519e4e3485b1fdfd967cbabc13e53e426b419b441e04cd9",
+        "stdout_eof": true,
+        "step_receipt": {
+          "bytes": 1392,
+          "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json",
+          "sha256": "054eb27b8b4a48a45ea2844576909f409d119a2a015fe9d8bfdd607c66a9b6e6"
+        }
+      }
+    },
+    {
+      "body": {
+        "bytes": 525935,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body",
+        "sha256": "9055907e6728bcc52b85498c3349d7932e48ad449f21cd5142b5d334530fcf49"
+      },
+      "bytes": 525935,
+      "end": 681123,
+      "label": "confirmation-report",
+      "start": 155189,
+      "step": {
+        "GH_DEBUG_removed": true,
+        "GH_HOST": "github.com",
+        "accepted_body_bytes": 525935,
+        "argv": [
+          "/opt/homebrew/bin/gh",
+          "api",
+          "--hostname",
+          "github.com",
+          "--method",
+          "GET",
+          "--include",
+          "--header",
+          "Range: bytes=155189-681123",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+        ],
+        "automatic_retry": false,
+        "body_retained_bytes": 525935,
+        "complete_transport": true,
+        "cwd": "/private/tmp",
+        "error": null,
+        "exit": 0,
+        "finished_at": "2026-11-14T16:00:17.166480+00:00",
+        "headers_raw_saved": false,
+        "http_status": 206,
+        "label": "confirmation-report",
+        "method": "GET",
+        "owned_pid": 57224,
+        "per_GET_budget_seconds": 180,
+        "raw_header_bytes": 1147,
+        "raw_header_sha256": "9006fe3fd9470931b00fef300d5599040746586bd9f45b955466637910edd8c0",
+        "safe_response_headers": {
+          "accept-ranges": "bytes",
+          "content-length": "525935",
+          "content-range": "bytes 155189-681123/7001798",
+          "content-type": "application/zip"
+        },
+        "started_at": "2026-11-14T15:59:41.909296+00:00",
+        "stderr_consumed_bytes": 0,
+        "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_eof": true,
+        "stderr_raw_saved": false,
+        "stdout_consumed_bytes": 527082,
+        "stdout_consumed_sha256": "106e29b0cfbb52f2e54bb381eaba59b0bcba9735161cc49ec15c0bd27ea4e6ba",
+        "stdout_eof": true,
+        "step_receipt": {
+          "bytes": 1411,
+          "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+          "sha256": "e9afebba9747d0edc4ecf3db96d430cb9a2bfc7972a549f0a65669bfbcf35fa0"
+        }
+      }
+    },
+    {
+      "body": {
+        "bytes": 17482,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+        "sha256": "11c81a06432758d26b92b52db23b7b385f348b5e5a9f686dfa5c2a1a91b2817a"
+      },
+      "bytes": 17482,
+      "end": 765048,
+      "label": "remaining-selectors-and-manifest",
+      "start": 747567,
+      "step": {
+        "GH_DEBUG_removed": true,
+        "GH_HOST": "github.com",
+        "accepted_body_bytes": 17482,
+        "argv": [
+          "/opt/homebrew/bin/gh",
+          "api",
+          "--hostname",
+          "github.com",
+          "--method",
+          "GET",
+          "--include",
+          "--header",
+          "Range: bytes=747567-765048",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+        ],
+        "automatic_retry": false,
+        "body_retained_bytes": 17482,
+        "complete_transport": true,
+        "cwd": "/private/tmp",
+        "error": null,
+        "exit": 0,
+        "finished_at": "2026-11-14T15:59:52.381884+00:00",
+        "headers_raw_saved": false,
+        "http_status": 206,
+        "label": "remaining-selectors-and-manifest",
+        "method": "GET",
+        "owned_pid": 57225,
+        "per_GET_budget_seconds": 180,
+        "raw_header_bytes": 1146,
+        "raw_header_sha256": "767821d9411516712124ad3a6f85e48c215de43e3d9b864dd149945667243c18",
+        "safe_response_headers": {
+          "accept-ranges": "bytes",
+          "content-length": "17482",
+          "content-range": "bytes 747567-765048/7001798",
+          "content-type": "application/zip"
+        },
+        "started_at": "2026-11-14T15:59:41.911516+00:00",
+        "stderr_consumed_bytes": 0,
+        "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_eof": true,
+        "stderr_raw_saved": false,
+        "stdout_consumed_bytes": 18628,
+        "stdout_consumed_sha256": "d62818d415b430a0b0d77624e4897a771a890348cab5d0182d7387a635255534",
+        "stdout_eof": true,
+        "step_receipt": {
+          "bytes": 1420,
+          "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+          "sha256": "cb64a9cd96cbe125738035f6814d34b51f75500b1f08058c5469d505395a04ec"
+        }
+      }
+    }
+  ],
+  "request_plan": {
+    "bytes": 2464,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/request-plan.json",
+    "sha256": "135e119d329b142f9b44e67ef137cfc4bee31158646438328261b1640021af91"
+  },
+  "run_attempt": 1,
+  "run_id": 43604217412,
+  "schema": "trnm-r1-required-protocol-selected-member-inspection-v1",
+  "selected_member_crc_sha_verified": true,
+  "selected_member_index": {
+    "bytes": 13545,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-member-index.json",
+    "sha256": "831073e7488fc5c82ca7b85735f792f8ea223111cbcfc6f327229e9ee353926b"
+  },
+  "source_identity": {
+    "bytes": 2155,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/source-before-after-extracted.json",
+    "sha256": "fd2e27413602802d0ec163fb4af655b327a8ad9b73a1c957f8f817cf04cb5e23"
+  },
+  "source_refs_config_CI_stage_modified": false,
+  "started_at": "2026-11-14T15:59:41.893887+00:00",
+  "status": "SELECTED_ORIGINAL_MEMBERS_VERIFIED",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "whole_artifact_sha256_verified": false
+}

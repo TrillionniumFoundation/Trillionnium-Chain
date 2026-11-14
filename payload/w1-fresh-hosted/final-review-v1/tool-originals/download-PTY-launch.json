@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "text": "{\"audit_recorded\":true,\"automatic_retry\":false,\"host\":\"mac\",\"persistent_across_runtime_restart\":true,\"reused\":false,\"session_id\":\"dpty-f8c43dfa10b208f1b9d9504ce144bf01ea21e695fda3410247f8468d1e338c70\",\"status\":{\"boot\":\"{ sec = 1794536756, usec = 308990 } Fri Nov 13 10:25:56 2026\",\"bytes_seen\":0,\"bytes_stored\":0,\"capture_error\":null,\"created_unix_ms\":1794667251023,\"output_complete\":false,\"owner_pid\":84900,\"pid\":84901,\"state\":\"running\"}}",
+      "type": "text"
+    }
+  ],
+  "isError": false,
+  "structuredContent": null
+}

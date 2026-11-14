@@ -1,5 +1,0 @@
-import hashlib,pathlib,sys
-p=pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root/import_external_evidence_source_capsule_v2.py")
-b=p.read_bytes();assert len(b)==28961 and hashlib.sha256(b).hexdigest()=="b691bdc0542b2a335283e59bb75954d6d7b996e42b86d4aa8db6b0af9c2c3faa"
-sys.argv=[str(p),"--expected-head","1a7afcdb820b051d1e4bfde3d436f96fc050c487","--expected-tree","18c3d20df915f5c31ee38c7037775c61e5c12e3f","--pack-path","/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-input-v1/source-objects-c58cdc5b6d8ceb69d2550e44e1e25f0154c91371.pack","--manifest-path","/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-capsule-input-v1/manifest.json","--evidence-dir","/home/qian-qi/chain-final-consolidation-20261114-root/external-evidence-object-import-1a7afc-v2"]
-exec(compile(b,str(p),"exec"),{"__name__":"__main__","__file__":str(p)})

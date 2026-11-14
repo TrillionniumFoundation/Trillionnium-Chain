@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "bytes": 40413,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/.github--workflows--pon-w1-work-security.yml",
+      "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "git_blob": "ce94e0a5423d91840849d91579ec541081117274",
+      "lines": 655,
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+    },
+    {
+      "bytes": 28612,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/scripts--ci--run_w1_fresh_service_v1.py",
+      "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "git_blob": "5da74ae0ebee18ef19e6b849d5ddfa8f4add7a90",
+      "lines": 495,
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "sha256": "b6850cecbd4d6fec1911b0b237c7cbdaf8888fc9c5f67baf7836d5adca058519"
+    },
+    {
+      "bytes": 11911,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero--fresh_challenge.rs",
+      "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "git_blob": "ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c",
+      "lines": 245,
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "sha256": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9"
+    },
+    {
+      "bytes": 79324,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--tests--public_v3_from_zero.rs",
+      "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "lines": 1792,
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    }
+  ],
+  "git_read_only": true,
+  "network_or_tests_executed": false,
+  "schema": "trnm-R1-fresh-service-source-captures-v1",
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

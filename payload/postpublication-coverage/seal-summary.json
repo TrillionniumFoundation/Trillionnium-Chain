@@ -1,0 +1,28 @@
+{
+  "archive_execution": false,
+  "attachment_bytes": 59573,
+  "cached_actual_terminal_records_saved": 3,
+  "manifest": {
+    "bytes": 220035,
+    "path": "/private/tmp/chain-prci-postpublication-evidence-coverage-20261114-v1/coverage-manifest.json",
+    "sha256": "422310adeb2786c2206205dbf071962f8e6cf6d982956ef45123355ac4969488"
+  },
+  "new_attachments": 12,
+  "readme": {
+    "bytes": 1217,
+    "path": "/private/tmp/chain-prci-postpublication-evidence-coverage-20261114-v1/README.txt",
+    "sha256": "8c3d48895953366358f363cd790def2f94a0d8afdec735932ea625141f08019c"
+  },
+  "remaining_auxiliary_provenance_gaps": [
+    {
+      "blocks_raw_job_log_integrity": false,
+      "item": "History outer log acquisition owner PTY terminal",
+      "scope": "The 13 original acquisition files include raw GET responses, exact argv/exit/timestamps, original producer and launch.json. An owner PTY terminal object was not located in those files or the currently supplied cache. Do not synthesize one from acquisition-summary."
+    }
+  ],
+  "schema": "trnm-prci-postpublication-coverage-seal-v1",
+  "source_bytes": 6492197,
+  "source_files": 260,
+  "status": "CLOSED_PREPARATION_ONLY",
+  "validated_history_terminal_records": 4
+}

@@ -1,0 +1,441 @@
+{
+  "actual_tested_source_verified": false,
+  "allowed_job_ids": [
+    132475258347
+  ],
+  "automatic_retry": false,
+  "check_head_is_not_tested_source_proof": true,
+  "ci_actions": false,
+  "elapsed_seconds": 26.191393,
+  "errors": [],
+  "finished_at": "2026-11-14T15:20:44.794199+00:00",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "jobs": [
+    {
+      "error": null,
+      "expected_name": "native priorities (ubuntu-24.04, head, history)",
+      "identity_valid": true,
+      "job_id": 132475258347,
+      "log_complete": true,
+      "observed_job": {
+        "completed_at": "2026-11-14T15:10:56Z",
+        "conclusion": "failure",
+        "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+        "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258347",
+        "id": 132475258347,
+        "name": "native priorities (ubuntu-24.04, head, history)",
+        "run_attempt": 1,
+        "run_id": 43604217565,
+        "started_at": "2026-11-14T14:19:05Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completed_at": "2026-11-14T14:19:06Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "started_at": "2026-11-14T14:19:06Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:19:59Z",
+            "conclusion": "success",
+            "name": "Checkout the exact candidate or the actual PR target merge",
+            "number": 2,
+            "started_at": "2026-11-14T14:19:06Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:19:59Z",
+            "conclusion": "skipped",
+            "name": "Reproduce the frozen integration-push source",
+            "number": 3,
+            "started_at": "2026-11-14T14:19:59Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:03Z",
+            "conclusion": "success",
+            "name": "Verify source and original project boundary",
+            "number": 4,
+            "started_at": "2026-11-14T14:19:59Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "success",
+            "name": "Install the source-pinned native toolchain",
+            "number": 5,
+            "started_at": "2026-11-14T14:20:03Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original window owner and context-bound consumer controls",
+            "number": 6,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original release from-zero controls",
+            "number": 7,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute actual CLI observation boundaries and retain every child result",
+            "number": 8,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute isolated original debug pressure regression",
+            "number": 9,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original public service cancellation and actual CPU accounting controls",
+            "number": 10,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Reject valid W1 state-root replay without durable admission",
+            "number": 11,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Require actual shared CPU depletion and native public recovery",
+            "number": 12,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute real native model lifecycle and adverse decisions",
+            "number": 13,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Require native replay, packet encoding and admissible DAA controls",
+            "number": 14,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Observe complete native history and packet response cost",
+            "number": 15,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original large-state CPU-budget tests",
+            "number": 16,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original native full-capacity test",
+            "number": 17,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute original source-preserving migration tests",
+            "number": 18,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:20:11Z",
+            "conclusion": "skipped",
+            "name": "Execute actual obligation ranges and native reorganization regressions",
+            "number": 19,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T14:23:16Z",
+            "conclusion": "success",
+            "name": "Build the original long-history test separately from measurement",
+            "number": 20,
+            "started_at": "2026-11-14T14:20:11Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:45Z",
+            "conclusion": "failure",
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "number": 21,
+            "started_at": "2026-11-14T14:23:16Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:48Z",
+            "conclusion": "success",
+            "name": "Reverify exact unchanged source",
+            "number": 22,
+            "started_at": "2026-11-14T15:10:45Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:48Z",
+            "conclusion": "skipped",
+            "name": "Preserve this lane's actual push source context",
+            "number": 23,
+            "started_at": "2026-11-14T15:10:48Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:54Z",
+            "conclusion": "success",
+            "name": "Retain successes, failures and unqualified external boundaries",
+            "number": 24,
+            "started_at": "2026-11-14T15:10:48Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:54Z",
+            "conclusion": "success",
+            "name": "Post Checkout the exact candidate or the actual PR target merge",
+            "number": 48,
+            "started_at": "2026-11-14T15:10:54Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T15:10:54Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 49,
+            "started_at": "2026-11-14T15:10:54Z",
+            "status": "completed"
+          }
+        ],
+        "workflow_name": "PoN priority acceptance"
+      },
+      "steps": [
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "HTTP_status_unparsed": true,
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 2.453372,
+          "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347",
+          "exit": 0,
+          "finished_at": "2026-11-14T15:20:24.488412+00:00",
+          "label": "job-132475258347-metadata",
+          "method": "GET",
+          "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347",
+          "overall_deadline_seconds": 300,
+          "started_at": "2026-11-14T15:20:22.035046+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_cap_bytes": 2097152,
+          "stdout": {
+            "bytes": 6097,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stdout",
+            "sha256": "f58d644a9fd4cc596c5d62af6f9df8aab94e2e8beebe49594b486b7f97fa9068"
+          },
+          "stdout_cap_bytes": 2097152,
+          "step_receipt": {
+            "bytes": 1409,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.step.json",
+            "sha256": "6d9f6ff1db9560148a65e8677a2fb60a88a747e617dbfc9373bcf3bc6f8454ef"
+          },
+          "termination_reason": null,
+          "timeout_seconds": 300
+        },
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "HTTP_status_unparsed": true,
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347/logs"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 20.301249,
+          "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347/logs",
+          "exit": 0,
+          "finished_at": "2026-11-14T15:20:44.791794+00:00",
+          "label": "job-132475258347-original-log",
+          "method": "GET",
+          "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347/logs",
+          "overall_deadline_seconds": 300,
+          "started_at": "2026-11-14T15:20:24.490475+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_cap_bytes": 2097152,
+          "stdout": {
+            "bytes": 178249,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stdout",
+            "sha256": "3ba328053189e7e8a25c8fb5cfc5780941dc21d96afba56808fe61bc1a7e536e"
+          },
+          "stdout_cap_bytes": 20971520,
+          "step_receipt": {
+            "bytes": 1440,
+            "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.step.json",
+            "sha256": "6eb0f9bed5863373f25ca3cf3a67618fb2fb99809f8d02802192c192aeabece7"
+          },
+          "termination_reason": null,
+          "timeout_seconds": 300
+        }
+      ]
+    }
+  ],
+  "native_tests_executed": false,
+  "network_methods": [
+    "GET"
+  ],
+  "observed_run": {
+    "conclusion": null,
+    "created_at": "2026-11-14T14:19:01Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "id": 43604217565,
+    "path": ".github/workflows/pon-priority-acceptance.yml",
+    "pull_requests": [
+      {
+        "base": {
+          "ref": "main",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        },
+        "head": {
+          "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+        },
+        "id": 5225636007,
+        "number": 847,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      }
+    ],
+    "run_attempt": 1,
+    "status": "in_progress",
+    "updated_at": "2026-11-14T14:19:11Z",
+    "workflow_id": 378180520
+  },
+  "overall_budget_seconds": 300,
+  "producer": {
+    "bytes": 7331,
+    "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/producer.py",
+    "sha256": "fadc44ad0a758ef5cf9e97ee6b0da0ded2a0dc25e055e3844e3f1c837be312f7"
+  },
+  "qualification": false,
+  "read_only": true,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_attempt": 1,
+  "run_id": 43604217565,
+  "run_identity_valid": true,
+  "run_metadata": {
+    "GH_DEBUG_removed": true,
+    "GH_HOST": "github.com",
+    "HTTP_status_unparsed": true,
+    "argv": [
+      "/opt/homebrew/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565"
+    ],
+    "automatic_retry": false,
+    "complete_transport": true,
+    "cwd": "/private/tmp",
+    "elapsed_seconds": 3.42418,
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565",
+    "exit": 0,
+    "finished_at": "2026-11-14T15:20:22.026879+00:00",
+    "label": "run-43604217565-metadata",
+    "method": "GET",
+    "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565",
+    "overall_deadline_seconds": 300,
+    "started_at": "2026-11-14T15:20:18.602731+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr_cap_bytes": 2097152,
+    "stdout": {
+      "bytes": 15155,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.stdout",
+      "sha256": "87af81915052f6a1f04effef72fb362e5f9edb771a49602d6a7871bb38402061"
+    },
+    "stdout_cap_bytes": 2097152,
+    "step_receipt": {
+      "bytes": 1403,
+      "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/run-43604217565-metadata.step.json",
+      "sha256": "4ae441f901f46dfcce346b0f0caedf7b1b042d6af83e77ef105229de167b5053"
+    },
+    "termination_reason": null,
+    "timeout_seconds": 300
+  },
+  "schema": "trnm-r1-native-priorities-history-original-log-acquisition-v1",
+  "started_at": "2026-11-14T15:20:18.602632+00:00",
+  "status": "ACQUIRED",
+  "workflow_path": ".github/workflows/pon-priority-acceptance.yml"
+}

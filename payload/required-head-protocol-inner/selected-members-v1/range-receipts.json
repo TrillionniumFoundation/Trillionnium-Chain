@@ -1,0 +1,188 @@
+[
+  {
+    "body": {
+      "bytes": 1066,
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body",
+      "sha256": "467b84c632056e0901d2e5d5cdc95cfd8ebc81a6c21e5c104f2f317d5237b195"
+    },
+    "bytes": 1066,
+    "end": 10106,
+    "label": "caller-records",
+    "start": 9041,
+    "step": {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "accepted_body_bytes": 1066,
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=9041-10106",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+      ],
+      "automatic_retry": false,
+      "body_retained_bytes": 1066,
+      "complete_transport": true,
+      "cwd": "/private/tmp",
+      "error": null,
+      "exit": 0,
+      "finished_at": "2026-11-14T15:59:47.584433+00:00",
+      "headers_raw_saved": false,
+      "http_status": 206,
+      "label": "caller-records",
+      "method": "GET",
+      "owned_pid": 57226,
+      "per_GET_budget_seconds": 180,
+      "raw_header_bytes": 1142,
+      "raw_header_sha256": "b619ab5c5b89f795045144ae6889c0fc309a4f6aad455618e60f73c8f054b25e",
+      "safe_response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "1066",
+        "content-range": "bytes 9041-10106/7001798",
+        "content-type": "application/zip"
+      },
+      "started_at": "2026-11-14T15:59:41.916054+00:00",
+      "stderr_consumed_bytes": 0,
+      "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_eof": true,
+      "stderr_raw_saved": false,
+      "stdout_consumed_bytes": 2208,
+      "stdout_consumed_sha256": "a42b82fea98c62de8519e4e3485b1fdfd967cbabc13e53e426b419b441e04cd9",
+      "stdout_eof": true,
+      "step_receipt": {
+        "bytes": 1392,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json",
+        "sha256": "054eb27b8b4a48a45ea2844576909f409d119a2a015fe9d8bfdd607c66a9b6e6"
+      }
+    }
+  },
+  {
+    "body": {
+      "bytes": 525935,
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body",
+      "sha256": "9055907e6728bcc52b85498c3349d7932e48ad449f21cd5142b5d334530fcf49"
+    },
+    "bytes": 525935,
+    "end": 681123,
+    "label": "confirmation-report",
+    "start": 155189,
+    "step": {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "accepted_body_bytes": 525935,
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=155189-681123",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+      ],
+      "automatic_retry": false,
+      "body_retained_bytes": 525935,
+      "complete_transport": true,
+      "cwd": "/private/tmp",
+      "error": null,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:00:17.166480+00:00",
+      "headers_raw_saved": false,
+      "http_status": 206,
+      "label": "confirmation-report",
+      "method": "GET",
+      "owned_pid": 57224,
+      "per_GET_budget_seconds": 180,
+      "raw_header_bytes": 1147,
+      "raw_header_sha256": "9006fe3fd9470931b00fef300d5599040746586bd9f45b955466637910edd8c0",
+      "safe_response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "525935",
+        "content-range": "bytes 155189-681123/7001798",
+        "content-type": "application/zip"
+      },
+      "started_at": "2026-11-14T15:59:41.909296+00:00",
+      "stderr_consumed_bytes": 0,
+      "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_eof": true,
+      "stderr_raw_saved": false,
+      "stdout_consumed_bytes": 527082,
+      "stdout_consumed_sha256": "106e29b0cfbb52f2e54bb381eaba59b0bcba9735161cc49ec15c0bd27ea4e6ba",
+      "stdout_eof": true,
+      "step_receipt": {
+        "bytes": 1411,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+        "sha256": "e9afebba9747d0edc4ecf3db96d430cb9a2bfc7972a549f0a65669bfbcf35fa0"
+      }
+    }
+  },
+  {
+    "body": {
+      "bytes": 17482,
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+      "sha256": "11c81a06432758d26b92b52db23b7b385f348b5e5a9f686dfa5c2a1a91b2817a"
+    },
+    "bytes": 17482,
+    "end": 765048,
+    "label": "remaining-selectors-and-manifest",
+    "start": 747567,
+    "step": {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "accepted_body_bytes": 17482,
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=747567-765048",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14120622057/zip"
+      ],
+      "automatic_retry": false,
+      "body_retained_bytes": 17482,
+      "complete_transport": true,
+      "cwd": "/private/tmp",
+      "error": null,
+      "exit": 0,
+      "finished_at": "2026-11-14T15:59:52.381884+00:00",
+      "headers_raw_saved": false,
+      "http_status": 206,
+      "label": "remaining-selectors-and-manifest",
+      "method": "GET",
+      "owned_pid": 57225,
+      "per_GET_budget_seconds": 180,
+      "raw_header_bytes": 1146,
+      "raw_header_sha256": "767821d9411516712124ad3a6f85e48c215de43e3d9b864dd149945667243c18",
+      "safe_response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "17482",
+        "content-range": "bytes 747567-765048/7001798",
+        "content-type": "application/zip"
+      },
+      "started_at": "2026-11-14T15:59:41.911516+00:00",
+      "stderr_consumed_bytes": 0,
+      "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_eof": true,
+      "stderr_raw_saved": false,
+      "stdout_consumed_bytes": 18628,
+      "stdout_consumed_sha256": "d62818d415b430a0b0d77624e4897a771a890348cab5d0182d7387a635255534",
+      "stdout_eof": true,
+      "step_receipt": {
+        "bytes": 1420,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+        "sha256": "cb64a9cd96cbe125738035f6814d34b51f75500b1f08058c5469d505395a04ec"
+      }
+    }
+  }
+]

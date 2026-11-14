@@ -1,0 +1,11 @@
+--- /private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py
++++ corrected-in-memory-inspector
+@@ -265,7 +265,7 @@
+             need(normalized not in seen, "DUPLICATE_ZIP_MEMBER")
+             seen.add(normalized)
+             kind = stat.S_IFMT(info.external_attr >> 16)
+-            need(kind in (0, stat.S_ISREG, stat.S_IFDIR) and not info.flag_bits & 0x41,
++            need(kind in (0, stat.S_IFREG, stat.S_IFDIR) and not info.flag_bits & 0x41,
+                  "LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER")
+             need(info.compress_type in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED),
+                  "UNSUPPORTED_ZIP_COMPRESSION")

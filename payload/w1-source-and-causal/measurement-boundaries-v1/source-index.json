@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "bytes": 12068,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/measurement-boundaries-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import--attribution.rs",
+      "git_blob": "3e8efc8b5a5f706eba53ebd79c2f7280983f3474",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution.rs",
+      "sha256": "2976a37d543af41d5d3db443a14b4bbdc012f9dfa22cc073cf3da096195b7811"
+    },
+    {
+      "bytes": 32240,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/measurement-boundaries-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import--observation.rs",
+      "git_blob": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+      "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed"
+    },
+    {
+      "bytes": 114097,
+      "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/measurement-boundaries-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--request_observation.rs",
+      "git_blob": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+    }
+  ],
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

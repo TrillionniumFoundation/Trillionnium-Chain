@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "git",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "grep",
+    "-n",
+    "-I",
+    "-i",
+    "-e",
+    "loopback",
+    "-e",
+    "\u56de\u73af",
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "--",
+    "docs",
+    "trillionnium/crates/trnm-pon-node/README.md"
+  ],
+  "exit_code": 0,
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "source_changed": false,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 32526,
+  "stdout_sha256": "e5d75a85725f384d44a80bf4bb38f0184718b67cf4a71696302773a6b494285f",
+  "tests_executed": false
+}

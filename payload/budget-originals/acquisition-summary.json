@@ -1,0 +1,442 @@
+{
+  "artifacts": [
+    {
+      "all_member_crc_verified": true,
+      "artifact": 14117367614,
+      "artifact_name": "pon-budget-controls-pool-scan-before-ae657e262278ae4a058220f66a6a0495721eb9ad-1",
+      "errors": [],
+      "finished_at": "2026-11-14T15:50:28.403086+00:00",
+      "fresh_artifact_metadata": {
+        "bytes": 832,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stdout",
+        "sha256": "7f3e93317870970a2d90e25634c15b3c4a129d8a17a00a27a52a58ba748501ac"
+      },
+      "historical_test_subject": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/EVIDENCE_INDEX.json",
+        "sha256": "f643179f5619ac00f2d50771ba6d65d43bb5859b9e3e90be23ed1246f468b44c"
+      },
+      "job": 132475258169,
+      "native_or_tests_executed_here": false,
+      "original_job_log": {
+        "bytes": 323275,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-original-log.stdout",
+        "sha256": "24a5a568afc63d5135c485e9c61312fddbaf05696c5b678a87978b131d1f515b"
+      },
+      "original_job_metadata": {
+        "bytes": 3038,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-metadata.stdout",
+        "sha256": "7c0c25705570c65aa2b4b51279e86d4e84eba6ed04ce3097264112df42730054"
+      },
+      "qualification": false,
+      "run": 43604217513,
+      "run_attempt": 1,
+      "schema": "trnm-r1-budget-original-artifact-acquisition-v1",
+      "source_refs_stage_modified": false,
+      "started_at": "2026-11-14T15:50:18.613810+00:00",
+      "status": "ORIGINAL_ZIP_VERIFIED",
+      "steps": [
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117367614"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 2.5326352920092177,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:21.147010+00:00",
+          "label": "fresh-artifact-metadata",
+          "method": "GET",
+          "pid": 50447,
+          "started_at": "2026-11-14T15:50:18.614376+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 832,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stdout",
+            "sha256": "7f3e93317870970a2d90e25634c15b3c4a129d8a17a00a27a52a58ba748501ac"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1309,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.step.json",
+            "sha256": "a2375e40fc8939c66ed6c35c8d84b68a34fcfe325e45a717fa39f5b3b3b2bdb6"
+          },
+          "timeout_seconds": 120
+        },
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117367614/zip"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 7.2540358749974985,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:28.402054+00:00",
+          "label": "original-zip",
+          "method": "GET",
+          "pid": 50485,
+          "started_at": "2026-11-14T15:50:21.147973+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 6927,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.stdout",
+            "sha256": "7c05f187fb5395fcddf250f6e772f366d7de7636824a9546cf4ca7b050ad22ed"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1281,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/original-zip.step.json",
+            "sha256": "0e31e75fc69df8f20095733aa61c6d02e354e3eb245e941f687c4322ad1db50d"
+          },
+          "timeout_seconds": 120
+        }
+      ],
+      "summary": {
+        "bytes": 5468,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/summary.json",
+        "sha256": "bfb2bc52d4664e242357ce9b119d2b2756a1230e583fd73d2e6e47abf82f16a3"
+      },
+      "whole_zip_sha256_verified": true,
+      "workflow_current_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "zip": {
+        "bytes": 6927,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/14117367614.zip",
+        "sha256": "7c05f187fb5395fcddf250f6e772f366d7de7636824a9546cf4ca7b050ad22ed"
+      }
+    },
+    {
+      "all_member_crc_verified": true,
+      "artifact": 14117727292,
+      "artifact_name": "pon-budget-controls-budget-before-v2-89fb2269b0dd306fbd32c36f464842c3d7daee2b-1",
+      "errors": [],
+      "finished_at": "2026-11-14T15:50:28.039185+00:00",
+      "fresh_artifact_metadata": {
+        "bytes": 832,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stdout",
+        "sha256": "d60a9e28a740cc92d223a9aac7ec0976d1d120571c1547a3bd30919aebba3313"
+      },
+      "historical_test_subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/EVIDENCE_INDEX.json",
+        "sha256": "797e08926915f3c7493d29e680ccc303cd6c22c7789223acf8e67bb8d60012f6"
+      },
+      "job": 132475258063,
+      "native_or_tests_executed_here": false,
+      "original_job_log": {
+        "bytes": 323222,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-original-log.stdout",
+        "sha256": "eed776ed4458c1410f4d264576cfa6aab417a8159db985226756252f202a8f80"
+      },
+      "original_job_metadata": {
+        "bytes": 3038,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258063-metadata.stdout",
+        "sha256": "f32a5190e5e7bd17daae21f0c958d910dd304479a2b4b28f4d96ca6085f83b19"
+      },
+      "qualification": false,
+      "run": 43604217513,
+      "run_attempt": 1,
+      "schema": "trnm-r1-budget-original-artifact-acquisition-v1",
+      "source_refs_stage_modified": false,
+      "started_at": "2026-11-14T15:50:18.613948+00:00",
+      "status": "ORIGINAL_ZIP_VERIFIED",
+      "steps": [
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117727292"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 2.536541292007314,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:21.152331+00:00",
+          "label": "fresh-artifact-metadata",
+          "method": "GET",
+          "pid": 50448,
+          "started_at": "2026-11-14T15:50:18.615791+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 832,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.stdout",
+            "sha256": "d60a9e28a740cc92d223a9aac7ec0976d1d120571c1547a3bd30919aebba3313"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1308,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/fresh-artifact-metadata.step.json",
+            "sha256": "d767034cac99ae456b05d4e0f30a92f930a7cb8eb2da7d659018d3193b909510"
+          },
+          "timeout_seconds": 120
+        },
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117727292/zip"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 6.885315041989088,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:28.038152+00:00",
+          "label": "original-zip",
+          "method": "GET",
+          "pid": 50486,
+          "started_at": "2026-11-14T15:50:21.152796+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 7142,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.stdout",
+            "sha256": "6001cd25a2166e59a314a89d2d04c426dadbc083182922c9f443cbb8359db77f"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1280,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/original-zip.step.json",
+            "sha256": "0c9441c84ed50a19f3139bb5fc79ddd1175e11e7c2a02002f9b85c8843c9c8fe"
+          },
+          "timeout_seconds": 120
+        }
+      ],
+      "summary": {
+        "bytes": 5466,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/summary.json",
+        "sha256": "975ed97cfb2ec24c978e5680cb7d53c4c7e06d138ba20d07f4a4adabf0538507"
+      },
+      "whole_zip_sha256_verified": true,
+      "workflow_current_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "zip": {
+        "bytes": 7142,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117727292/14117727292.zip",
+        "sha256": "6001cd25a2166e59a314a89d2d04c426dadbc083182922c9f443cbb8359db77f"
+      }
+    },
+    {
+      "all_member_crc_verified": true,
+      "artifact": 14118225390,
+      "artifact_name": "pon-budget-controls-pool-before-v2-84e68b4f7a9b2f48f9c47ed05c9a44229d186e30-1",
+      "errors": [],
+      "finished_at": "2026-11-14T15:50:27.733213+00:00",
+      "fresh_artifact_metadata": {
+        "bytes": 830,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stdout",
+        "sha256": "f3d1f2e6c0836001e89b8a332d89942f5a50a54008d0987e0d6630e75b436bfd"
+      },
+      "historical_test_subject": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "index": {
+        "bytes": 4653,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/EVIDENCE_INDEX.json",
+        "sha256": "28786ec186839031dc442738d723edc7ff39481b001fd86cdf0be00d539da478"
+      },
+      "job": 132475257835,
+      "native_or_tests_executed_here": false,
+      "original_job_log": {
+        "bytes": 323305,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-original-log.stdout",
+        "sha256": "fc18f5f6f31c65825fd327a3d13f4b121089ad01a4f651fa32a3a52b2270c5f3"
+      },
+      "original_job_metadata": {
+        "bytes": 3036,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475257835-metadata.stdout",
+        "sha256": "3a8a8946caa39e707f7503e012bff9d18ebab51f234b7dbcec6d2176fb8c0497"
+      },
+      "qualification": false,
+      "run": 43604217513,
+      "run_attempt": 1,
+      "schema": "trnm-r1-budget-original-artifact-acquisition-v1",
+      "source_refs_stage_modified": false,
+      "started_at": "2026-11-14T15:50:18.613998+00:00",
+      "status": "ORIGINAL_ZIP_VERIFIED",
+      "steps": [
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14118225390"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 4.558472666976741,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:23.174547+00:00",
+          "label": "fresh-artifact-metadata",
+          "method": "GET",
+          "pid": 50449,
+          "started_at": "2026-11-14T15:50:18.616059+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 830,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.stdout",
+            "sha256": "f3d1f2e6c0836001e89b8a332d89942f5a50a54008d0987e0d6630e75b436bfd"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1308,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/fresh-artifact-metadata.step.json",
+            "sha256": "f5f2068805affcd464ecda21f272507a0c05015ab5b09a6862d2a42c51c8b7d3"
+          },
+          "timeout_seconds": 120
+        },
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14118225390/zip"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 4.5535177499987185,
+          "error": null,
+          "exit": 0,
+          "finished_at": "2026-11-14T15:50:27.728523+00:00",
+          "label": "original-zip",
+          "method": "GET",
+          "pid": 50517,
+          "started_at": "2026-11-14T15:50:23.175001+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_consumed_bytes": 0,
+          "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_eof": true,
+          "stderr_redacted": false,
+          "stdout": {
+            "bytes": 7065,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.stdout",
+            "sha256": "ff20fd1ec49332453151a25d9481eae8e1a34cb81f57947b15ce969b73ba3a9a"
+          },
+          "stdout_eof": true,
+          "step_receipt": {
+            "bytes": 1281,
+            "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/original-zip.step.json",
+            "sha256": "083c566bbdeaca68bcbb3d191406979df8261388dea94f5f8762ebe2a37c9512"
+          },
+          "timeout_seconds": 120
+        }
+      ],
+      "summary": {
+        "bytes": 5465,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/summary.json",
+        "sha256": "cbc23c39f211e6e0b1634e54de15f320f6c48345cc046d63efbb97b31b8aad51"
+      },
+      "whole_zip_sha256_verified": true,
+      "workflow_current_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "zip": {
+        "bytes": 7065,
+        "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14118225390/14118225390.zip",
+        "sha256": "ff20fd1ec49332453151a25d9481eae8e1a34cb81f57947b15ce969b73ba3a9a"
+      }
+    }
+  ],
+  "automatic_retry": false,
+  "finished_at": "2026-11-14T15:50:28.403355+00:00",
+  "maximum_GETs": 6,
+  "maximum_parallel_requests": 3,
+  "per_request_timeout_seconds": 120,
+  "producer": {
+    "bytes": 12789,
+    "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/producer.py",
+    "sha256": "b89b78f0765e988f4268c104e9b08b97c1d680e46eb834db2d2e8300282e25e2"
+  },
+  "qualification": false,
+  "schema": "trnm-r1-budget-three-artifacts-v1",
+  "stage_source_refs_modified": false,
+  "started_at": "2026-11-14T15:50:18.609987+00:00",
+  "status": "ORIGINAL_ZIPS_VERIFIED"
+}

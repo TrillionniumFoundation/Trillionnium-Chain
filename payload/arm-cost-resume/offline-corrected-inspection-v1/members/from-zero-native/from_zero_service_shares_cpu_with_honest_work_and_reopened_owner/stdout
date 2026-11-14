@@ -1,0 +1,8 @@
+
+running 1 test
+test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {"finite_target_met":true,"public_network_ready":false,"schema":"public-v3-local-from-zero-service-v2"}
+{"finite_service_target_met":true,"phases":[{"accounting_closed":true,"full_native_state_equal":true,"invariant_target_met":true,"measurement_failures":0,"phase":0,"reads_on_time":66,"records_not_retained":0,"requested_reads":66,"service_target_met":true},{"accounting_closed":true,"full_native_state_equal":true,"invariant_target_met":true,"measurement_failures":0,"phase":1,"reads_on_time":78,"records_not_retained":0,"requested_reads":78,"service_target_met":true}],"report_path":"/home/runner/work/_temp/ci-observations/from-zero-native/native/sustained/report.json","schema":"public-v3-sustained-local-from-zero-v1"}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 9.90s
+

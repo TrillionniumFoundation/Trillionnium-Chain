@@ -1,6 +1,0 @@
-tree f2301d62786c8cca73d16c52ae24a2a2dc82e65d
-parent 08c9becab740ab2c375b970f376a7638f44c9e8e
-author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794648214 +0800
-committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794648214 +0800
-
-fix(ci): require all 16 owned collector controls

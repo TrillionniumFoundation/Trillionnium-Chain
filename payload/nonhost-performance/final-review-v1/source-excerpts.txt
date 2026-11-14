@@ -1,0 +1,924 @@
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs:967-1140
+967:     }
+968: }
+969: #[derive(Serialize, Deserialize)]
+970: #[serde(deny_unknown_fields)]
+971: struct Response {
+972:     schema: String,
+973:     profile: String,
+974:     network: String,
+975:     parameters: String,
+976:     genesis: String,
+977:     server: String,
+978:     cookie_digest: String,
+979:     request_digest: String,
+980:     ok: bool,
+981:     value: Value,
+982:     signature: String,
+983: }
+984: impl Response {
+985:     fn message(&self) -> Result<Vec<u8>> {
+986:         let mut r = Self {
+987:             schema: self.schema.clone(),
+988:             profile: self.profile.clone(),
+989:             network: self.network.clone(),
+990:             parameters: self.parameters.clone(),
+991:             genesis: self.genesis.clone(),
+992:             server: self.server.clone(),
+993:             cookie_digest: self.cookie_digest.clone(),
+994:             request_digest: self.request_digest.clone(),
+995:             ok: self.ok,
+996:             value: self.value.clone(),
+997:             signature: String::new(),
+998:         };
+999:         r.signature.clear();
+1000:         let raw = serde_json::to_vec(&r)?;
+1001:         if self.schema == "public-protected-response-pq-v4" {
+1002:             let mut out = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
+1003:             out.extend_from_slice(&sha2::Sha384::digest(&raw));
+1004:             Ok(out)
+1005:         } else {
+1006:             Ok(hash(b"public-response-sign-v3", &[&raw]).to_vec())
+1007:         }
+1008:     }
+1009: }
+1010: fn framed(bytes: Vec<u8>, maximum: usize) -> Result<Vec<u8>> {
+1011:     ensure(
+1012:         !bytes.is_empty() && bytes.len() <= maximum,
+1013:         "PUBLIC_OUTPUT_LIMIT",
+1014:     )?;
+1015:     let mut xs = (bytes.len() as u32).to_be_bytes().to_vec();
+1016:     xs.extend(bytes);
+1017:     Ok(xs)
+1018: }
+1019: fn response(
+1020:     server: &PublicServer,
+1021:     s: &Settings,
+1022:     c: &Cookie,
+1023:     outcome: Result<Value>,
+1024:     progress: &dyn Fn() -> Result<()>,
+1025: ) -> Result<Vec<u8>> {
+1026:     progress()?;
+1027:     let (ok, value) = match outcome {
+1028:         Ok(v) => (true, v),
+1029:         Err(e) => (
+1030:             false,
+1031:             json!({"error":e.to_string().chars().take(128).collect::<String>()}),
+1032:         ),
+1033:     };
+1034:     let mut r = Response {
+1035:         schema: pq_identity::schema(
+1036:             server.identity.is_pq(),
+1037:             "public-protected-response-v3",
+1038:             "public-protected-response-pq-v4",
+1039:         )
+1040:         .into(),
+1041:         profile: hex::encode(server.resource_profile()),
+1042:         network: hex::encode(s.network()),
+1043:         parameters: hex::encode(s.parameters()),
+1044:         genesis: hex::encode(s.genesis()),
+1045:         server: server.identity.public_key().into(),
+1046:         cookie_digest: hex::encode(c.id()?),
+1047:         request_digest: c.body_digest.clone(),
+1048:         ok,
+1049:         value,
+1050:         signature: String::new(),
+1051:     };
+1052:     let message = r.message()?;
+1053:     // Hashing/serializing the bounded value can outlive its original operation.
+1054:     // Do not start a fresh signature after that deadline or cancellation.
+1055:     progress()?;
+1056:     r.signature = server.sign_authentication(&message)?;
+1057:     // One signature is nonpreemptible, but its return must not start another
+1058:     // allocation/serialization phase for an operation that has already ended.
+1059:     progress()?;
+1060:     let bytes = framed(
+1061:         serde_json::to_vec(&r)?,
+1062:         pq_identity::response_maximum_for(c.op, server.identity.is_pq()),
+1063:     )?;
+1064:     progress()?;
+1065:     Ok(bytes)
+1066: }
+1067: /// Streaming canonical equality avoids another body-sized serialization Vec.
+1068: struct ExactCanonical<'a> {
+1069:     bytes: &'a [u8],
+1070:     cursor: usize,
+1071: }
+1072: impl Write for ExactCanonical<'_> {
+1073:     fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+1074:         let end = self
+1075:             .cursor
+1076:             .checked_add(bytes.len())
+1077:             .ok_or_else(|| std::io::Error::other("canonical overflow"))?;
+1078:         if self.bytes.get(self.cursor..end) != Some(bytes) {
+1079:             return Err(std::io::Error::other("noncanonical request"));
+1080:         }
+1081:         self.cursor = end;
+1082:         Ok(bytes.len())
+1083:     }
+1084:     fn flush(&mut self) -> std::io::Result<()> {
+1085:         Ok(())
+1086:     }
+1087: }
+1088: fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
+1089:     ensure(
+1090:         !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+1091:         "PUBLIC_BODY_LIMIT",
+1092:     )?;
+1093:     if op == 4 {
+1094:         pool_bundle_body_guard(bytes)?;
+1095:     }
+1096:     if matches!(op, 1 | 6 | 7) {
+1097:         // Every packet-bearing profile rejects noncanonical hex before allocation.
+1098:         let prefix: &[u8] = match op {
+1099:             1 => br#"{"op":"submit","packet":""#,
+1100:             6 => br#"{"op":"growth_submit_v1","packet":""#,
+1101:             7 => br#"{"op":"growth_packet_status_v1","packet":""#,
+1102:             _ => unreachable!(),
+1103:         };
+1104:         let text = bytes
+1105:             .strip_prefix(prefix)
+1106:             .and_then(|b| b.strip_suffix(br#""}"#))
+1107:             .ok_or("PUBLIC_REQUEST_CANONICAL")?;
+1108:         ensure(
+1109:             text.len() <= 2 * MAX_PACKET && text.len().is_multiple_of(2) && lower_hex(text),
+1110:             "PUBLIC_PACKET_TEXT",
+1111:         )?;
+1112:         // The exact envelope and complete lowercase ASCII grammar already
+1113:         // establish the same serde representation. Avoid a second JSON parse
+1114:         // and streaming re-serialization of this potentially 2-MiB string.
+1115:         // Nothing has established Packet, Work, current owner or State validity;
+1116:         // those original checks still execute after this transport-only decode.
+1117:         let packet = std::str::from_utf8(text)
+1118:             .map_err(|_| "PUBLIC_PACKET_TEXT")?
+1119:             .to_owned();
+1120:         return Ok(match op {
+1121:             1 => Request::Submit { packet },
+1122:             6 => Request::GrowthSubmitV1 { packet },
+1123:             7 => Request::GrowthPacketStatusV1 { packet },
+1124:             _ => unreachable!(),
+1125:         });
+1126:     }
+1127:     let request: Request = serde_json::from_slice(bytes)?;
+1128:     let mut writer = ExactCanonical { bytes, cursor: 0 };
+1129:     serde_json::to_writer(&mut writer, &request).map_err(|_| "PUBLIC_REQUEST_CANONICAL")?;
+1130:     ensure(
+1131:         writer.cursor == bytes.len() && request_op(&request)? == op,
+1132:         "PUBLIC_REQUEST_CANONICAL",
+1133:     )?;
+1134:     Ok(request)
+1135: }
+1136: struct BufferPermit {
+1137:     pool: Arc<Mutex<usize>>,
+1138:     bytes: usize,
+1139: }
+1140: impl BufferPermit {
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs:1877-1915
+1877: fn decode_task_body<'a>(
+1878:     task: &'a Task,
+1879:     server: &PublicServer,
+1880:     settings: &Settings,
+1881:     mutation_cpu: Option<&MutationCpuMeasurement>,
+1882: ) -> Result<DecodedTaskBody<'a>> {
+1883:     let stamp = mutation_cpu.and_then(|_| ThreadCpuStamp::start());
+1884:     if let Some(cpu) = mutation_cpu {
+1885:         if stamp.is_none() {
+1886:             cpu.record_phase(&cpu.body_decode_ns, None);
+1887:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+1888:         }
+1889:     }
+1890:     let decoded = (|| {
+1891:         ensure(
+1892:             task.raw_body.len() == task.cookie.body_len as usize,
+1893:             "PUBLIC_BODY_LIMIT",
+1894:         )?;
+1895:         ensure(
+1896:             task.cookie.body_digest
+1897:                 == hex::encode(hash(b"public-request-body-v3", &[&task.raw_body])),
+1898:             "PUBLIC_BODY_DIGEST",
+1899:         )?;
+1900:         let request = if task.cookie.op == 1 && !server.identity.is_pq() && !server.native_growth {
+1901:             // This borrow cannot outlive or mutate the original paid body.
+1902:             // It proves transport grammar only; Packet decoding stays after
+1903:             // the original cookie checks, inside the original Decode phase.
+1904:             DecodedTaskBody::CanonicalSubmit(CanonicalPacketText::from_body(&task.raw_body)?)
+1905:         } else {
+1906:             DecodedTaskBody::Owned(canonical_request(&task.raw_body, task.cookie.op)?)
+1907:         };
+1908:         server.validate(&task.cookie, settings, false)?;
+1909:         Ok(request)
+1910:     })();
+1911:     if let Some(cpu) = mutation_cpu {
+1912:         cpu.record_phase(&cpu.body_decode_ns, stamp.and_then(ThreadCpuStamp::finish));
+1913:         ensure(!cpu.unavailable.get(), "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+1914:     }
+1915:     decoded
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs:2376-2483
+2376: fn serve_public_protected_v3_inner(
+2377:     listener: TcpListener,
+2378:     node: Arc<Mutex<Node>>,
+2379:     lifetime: Duration,
+2380:     stop: Arc<AtomicBool>,
+2381:     mut server: PublicServer,
+2382:     observations: (Arc<Mutex<PublicMetrics>>, Option<PublicRequestObserver>),
+2383: ) -> Result<PublicMetrics> {
+2384:     let (metrics, observer) = observations;
+2385:     ensure(
+2386:         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
+2387:         "PUBLIC_LIFETIME",
+2388:     )?;
+2389:     // This guard must be in the exported library service itself, not only the
+2390:     // CLI. Direct embedders with a wildcard/nonloopback listener cannot bypass
+2391:     // the one fixed kernel parent by avoiding binary argument parsing.
+2392:     let host_kernel = crate::host_kernel_parent::require_for_listener(listener.local_addr()?)?;
+2393:     listener.set_nonblocking(true)?;
+2394:     let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
+2395:     let intake = server.listener_intake()?;
+2396:     // Reserve the existing whole-service slot before waiting for the Node or
+2397:     // allocating its queues. A fifth listener cannot contend with an admitted
+2398:     // service's profile/State work before discovering that its domain is full.
+2399:     // RAII returns this slot on every pre-worker error; no new budget is made.
+2400:     let _listener_permit =
+2401:         BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
+2402:             .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
+2403:     let settings = {
+2404:         let mut progress = |_: u64| public_startup_alive(startup_deadline, &stop);
+2405:         let mut owner = lock_owner(&node, &mut progress)?;
+2406:         owner.require_continuous_public_authentication(server.identity.is_pq())?;
+2407:         if server.identity.is_pq() {
+2408:             owner.require_pq_history_transport()?;
+2409:         } else {
+2410:             owner.require_classical_network_profile()?;
+2411:         }
+2412:         if server.native_growth {
+2413:             owner.growth_head_observation_with_progress(&|_| {
+2414:                 public_startup_alive(startup_deadline, &stop)
+2415:             })?;
+2416:             ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
+2417:         } else if !owner.is_continuous() && !server.identity.is_pq() {
+2418:             owner.pool_status_snapshot()?;
+2419:         } // Never enable a pool from the guest listener.
+2420:         progress(0)?;
+2421:         // The first trusted service binds this actual Node owner. A second
+2422:         // independent PublicServer cannot mint new CPU or intake budgets.
+2423:         owner.bind_public_service_cpu_domain(&server.mutation_cpu_domain())?;
+2424:         owner.settings().clone()
+2425:     };
+2426:     server.install_default_w1_rejection_cache()?;
+2427:     let end = Instant::now() + lifetime;
+2428:     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
+2429:     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
+2430:     let proof_rx = Arc::new(Mutex::new(proof_rx));
+2431:     let read_rx = Arc::new(Mutex::new(read_rx));
+2432:     let (finished_tx, finished_rx) = mpsc::sync_channel::<Finished>(8);
+2433:     let mut connections = BTreeMap::<u64, Connection>::new();
+2434:     let mut next_id = 0u64;
+2435:     let mut spent = Spent::new();
+2436:     let body_pool = intake.body_pool.clone();
+2437:     let output_pool = intake.output_pool.clone();
+2438:     let mutating_grants = intake.mutating_grants.clone();
+2439:     let read_grants = intake.read_grants.clone();
+2440:     // Persistent local crash fence before the first V3 worker starts. This
+2441:     // is a single metadata row in the original Node store, not a parallel
+2442:     // per-request or reward journal. A previously unclean plain-Node process
+2443:     // cannot reset CPU debt by opening a new PublicServer/process.
+2444:     let mut epoch_fence =
+2445:         OrdinaryPublicServiceCrashFence::begin(node.clone(), startup_deadline, &stop)?;
+2446:     let mut next_pending_order = 0u64;
+2447:     let mut last_cleanup = Instant::now();
+2448:     let mut last_kernel_check = Instant::now();
+2449:     thread::scope(|scope| -> Result<()> {
+2450:         let mut workers = Vec::new();
+2451:         let reactor_thread = thread::current();
+2452:         for index in 0..3 {
+2453:             let queue = if index < 2 {
+2454:                 proof_rx.clone()
+2455:             } else {
+2456:                 read_rx.clone()
+2457:             };
+2458:             let finished = finished_tx.clone();
+2459:             let node = node.clone();
+2460:             let metrics = metrics.clone();
+2461:             let stop = stop.clone();
+2462:             let output_pool = output_pool.clone();
+2463:             let server = &server;
+2464:             let settings = &settings;
+2465:             let kernel_for_worker = host_kernel.as_ref();
+2466:             let reactor_thread = reactor_thread.clone();
+2467:             workers.push(scope.spawn(move || -> Result<()> {
+2468:                 loop {
+2469:                     // Its drop is last in this iteration, after the dequeued
+2470:                     // Task, scoped native work, CPU settlement and output handoff.
+2471:                     // It measures this request's worker return, not process exit.
+2472:                     let mut _worker_observation = None;
+2473:                     // Retain FIFO admission order while an already-dequeued
+2474:                     // task awaits CPU. Release before any native dispatch. The
+2475:                     // separate read queue and active workers remain independent.
+2476:                     let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
+2477:                     // Wake on the bounded queue while retaining the original
+2478:                     // one-millisecond stop/deadline poll and FIFO CPU admission.
+2479:                     let task = dequeue_order
+2480:                         .as_ref()
+2481:                         .unwrap()
+2482:                         .recv_timeout(Duration::from_millis(1));
+2483:                     match task {
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs:3776-3940
+3776:             pq == server_pin.is_pq() && pq == matches!(client_profile, ClientProfile::PqHistoryV4),
+3777:             "PUBLIC_OPERATION_PROFILE",
+3778:         )?;
+3779:         // Server-side profile isolation already refuses classical V3 under a
+3780:         // PQ-only Node. Apply the same rule in the exported client *before*
+3781:         // generating a challenge or opening a TCP connection. Otherwise a
+3782:         // caller can transmit classical credentials using PQ account settings.
+3783:         ensure(
+3784:             pq || !settings.app.is_pq_account_profile(),
+3785:             "PUBLIC_CLASSICAL_FOR_PQ_PROFILE",
+3786:         )?;
+3787:         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+3788:         let raw = serde_json::to_vec(request)?;
+3789:         let op = request_op(request)?;
+3790:         ensure(
+3791:             client_profile.operation_allowed(op),
+3792:             "PUBLIC_OPERATION_PROFILE",
+3793:         )?;
+3794:         canonical_request(&raw, op)?;
+3795:         let hello = Hello {
+3796:             op,
+3797:             len: raw.len(),
+3798:             caller: digest(caller.public_key())?,
+3799:             digest: hash(b"public-request-body-v3", &[&raw]),
+3800:             client_nonce: entropy()?,
+3801:         };
+3802:         Hello::parse_for(&hello.encode_for(pq), pq)?;
+3803:         metrics.construction_ns = elapsed_ns(phase_start);
+3804:         phase = PublicClientStage::Challenge;
+3805:         phase_start = Instant::now();
+3806:         let original_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
+3807:         let total_deadline = outer_deadline
+3808:             .map(|deadline| deadline.min(original_deadline))
+3809:             .unwrap_or(original_deadline);
+3810:         let connect_budget = if outer_deadline.is_some() {
+3811:             total_deadline
+3812:                 .checked_duration_since(Instant::now())
+3813:                 .filter(|duration| !duration.is_zero())
+3814:                 .ok_or("PUBLIC_CLIENT_DEADLINE")?
+3815:                 .min(Duration::from_secs(2))
+3816:         } else {
+3817:             Duration::from_secs(2)
+3818:         };
+3819:         let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
+3820:         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+3821:         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+3822:         client_write(
+3823:             &mut stream,
+3824:             &hello.encode_for(pq),
+3825:             total_deadline.min(Instant::now() + Duration::from_millis(PREFIX_MS)),
+3826:         )?;
+3827:         let bytes = client_frame(
+3828:             &mut stream,
+3829:             pq_identity::challenge_maximum(pq),
+3830:             total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
+3831:         )?;
+3832:         let cookie: Cookie = serde_json::from_slice(&bytes)?;
+3833:         validate_challenge_context_authenticated(
+3834:             &bytes,
+3835:             &cookie,
+3836:             &hello,
+3837:             settings,
+3838:             &server_pin,
+3839:             policy,
+3840:             expected_profile,
+3841:         )?;
+3842:         metrics.challenge_ns = elapsed_ns(phase_start);
+3843:         phase = PublicClientStage::SolutionSearch;
+3844:         phase_start = Instant::now();
+3845:         let started = Instant::now();
+3846:         // Retain the original deadline origin, and close the actual CPU
+3847:         // interval before propagating either success or the original error.
+3848:         let (id, nonce, solve_elapsed_ns) = metrics.measure_solution_search(|metrics| {
+3849:             let id = cookie.id()?;
+3850:             let mut solved = None;
+3851:             for nonce in 0..1_048_576u64 {
+3852:                 if nonce % 256 == 0 {
+3853:                     if outer_deadline.is_some() {
+3854:                         ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+3855:                     }
+3856:                     ensure(
+3857:                         started.elapsed() < Duration::from_millis(policy.lifetime_ms),
+3858:                         "PUBLIC_SOLVE_EXPIRED",
+3859:                     )?;
+3860:                 }
+3861:                 metrics.solution_trials = nonce + 1;
+3862:                 if winner(id, nonce, policy.bits) {
+3863:                     solved = Some(nonce);
+3864:                     break;
+3865:                 }
+3866:             }
+3867:             let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
+3868:             Ok((id, nonce, elapsed_ns(started)))
+3869:         })?;
+3870:         metrics.solution_search_ns = elapsed_ns(phase_start);
+3871:         metrics.solution_found = true;
+3872:         phase = PublicClientStage::SolutionBodyResponse;
+3873:         phase_start = Instant::now();
+3874:         let mut solution = pq_identity::solution_magic(pq).to_vec();
+3875:         solution.extend(id);
+3876:         solution.extend(nonce.to_le_bytes());
+3877:         caller.append_spki(&mut solution);
+3878:         solution.extend(
+3879:             hex::decode(caller.sign(&pq_identity::caller_message(&cookie, nonce, pq)?)?)
+3880:                 .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?,
+3881:         );
+3882:         client_write(
+3883:             &mut stream,
+3884:             &solution,
+3885:             total_deadline.min(started + Duration::from_millis(policy.lifetime_ms)),
+3886:         )?;
+3887:         let ready: Value = serde_json::from_slice(&client_frame(
+3888:             &mut stream,
+3889:             256,
+3890:             total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
+3891:         )?)?;
+3892:         ensure(
+3893:             ready["schema"]
+3894:                 == pq_identity::schema(pq, "public-body-ready-v3", "public-body-ready-pq-v4")
+3895:                 && ready["cookie_digest"] == hex::encode(id),
+3896:             "PUBLIC_READY",
+3897:         )?;
+3898:         client_write(
+3899:             &mut stream,
+3900:             &raw,
+3901:             total_deadline.min(Instant::now() + Duration::from_millis(BODY_MS)),
+3902:         )?;
+3903:         let bytes = client_frame(
+3904:             &mut stream,
+3905:             pq_identity::response_maximum_for(op, pq),
+3906:             total_deadline.min(Instant::now() + Duration::from_millis(WORK_MS + OUTPUT_MS)),
+3907:         )?;
+3908:         let r: Response = serde_json::from_slice(&bytes)?;
+3909:         ensure(
+3910:             serde_json::to_vec(&r)? == bytes
+3911:                 && r.schema
+3912:                     == pq_identity::schema(
+3913:                         pq,
+3914:                         "public-protected-response-v3",
+3915:                         "public-protected-response-pq-v4",
+3916:                     )
+3917:                 && r.profile == hex::encode(expected_profile)
+3918:                 && r.network == hex::encode(settings.network())
+3919:                 && r.parameters == hex::encode(settings.parameters())
+3920:                 && r.genesis == hex::encode(settings.genesis())
+3921:                 && r.server == pinned_server
+3922:                 && r.cookie_digest == hex::encode(id)
+3923:                 && r.request_digest == hex::encode(hello.digest),
+3924:             "PUBLIC_RESPONSE_CONTEXT",
+3925:         )?;
+3926:         server_pin
+3927:             .verify(&r.message()?, &r.signature)
+3928:             .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
+3929:         if outer_deadline.is_some() {
+3930:             ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+3931:         }
+3932:         metrics.solution_body_response_ns = elapsed_ns(phase_start);
+3933:         phase = PublicClientStage::Complete;
+3934:         Ok(PublicReply {
+3935:             ok: r.ok,
+3936:             value: r.value,
+3937:             solve_trials: nonce + 1,
+3938:             solve_elapsed_ns,
+3939:             body_bytes_sent: raw.len(),
+3940:             public_network_ready: false,
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs:4010-4034
+4010: fn client_frame(stream: &mut TcpStream, maximum: usize, deadline: Instant) -> Result<Vec<u8>> {
+4011:     let mut prefix = [0; 4];
+4012:     super::read_exact_deadline(stream, &mut prefix, deadline)?;
+4013:     let n = u32::from_be_bytes(prefix) as usize;
+4014:     ensure(n > 0 && n <= maximum, "PUBLIC_CLIENT_FRAME_LIMIT")?;
+4015:     let mut bytes = vec![0; n];
+4016:     super::read_exact_deadline(stream, &mut bytes, deadline)?;
+4017:     Ok(bytes)
+4018: }
+4019: 
+4020: fn client_write(stream: &mut TcpStream, mut bytes: &[u8], deadline: Instant) -> Result<()> {
+4021:     while !bytes.is_empty() {
+4022:         let remaining = deadline
+4023:             .checked_duration_since(Instant::now())
+4024:             .filter(|d| !d.is_zero())
+4025:             .ok_or("PUBLIC_CLIENT_DEADLINE")?;
+4026:         stream.set_write_timeout(Some(remaining))?;
+4027:         match stream.write(bytes) {
+4028:             Ok(0) => return Err("PUBLIC_EOF".into()),
+4029:             Ok(n) => bytes = &bytes[n..],
+4030:             Err(e) if e.kind() == std::io::ErrorKind::Interrupted => continue,
+4031:             Err(e) => return Err(e.into()),
+4032:         }
+4033:     }
+4034:     ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/immutable-w1-kernel-source-v1/trillionnium--crates--trnm-pon-node--src--store.rs:1200-1220
+1200:     pub(crate) fn verify_with_progress(
+1201:         packet: Packet,
+1202:         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+1203:     ) -> Result<Self> {
+1204:         let h = &packet.header;
+1205:         let work = pon_work::verify_with_progress(
+1206:             h.challenge(),
+1207:             h.work_task,
+1208:             h.target,
+1209:             &packet.proof,
+1210:             progress,
+1211:         )
+1212:         .map_err(|error| match error {
+1213:             pon_work::VerificationError::Relation(error) => Error::from(format!("WORK:{error:?}")),
+1214:             pon_work::VerificationError::Cancelled(error) => error,
+1215:         })?;
+1216:         Ok(Self {
+1217:             packet,
+1218:             work,
+1219:             owner_permit: None,
+1220:         })
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/immutable-w1-kernel-source-v1/trillionnium--crates--trnm-pon-node--src--store.rs:4974-5148
+4974:     /// Reuse the caller's original paid operation. Only complete native output
+4975:     /// may acquire completion priority; this does not add a permit or replay.
+4976:     pub(crate) fn admit_work_checked_with_completion(
+4977:         &mut self,
+4978:         checked: WorkCheckedPacket,
+4979:         observed_now: u64,
+4980:         control: &ExecutionControl<'_, Error>,
+4981:         completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+4982:     ) -> Result<Hash> {
+4983:         self.admit_work_checked_with_parent(checked, observed_now, control, None, completion_cpu)
+4984:     }
+4985: 
+4986:     fn admit_work_checked_with_parent(
+4987:         &mut self,
+4988:         checked: WorkCheckedPacket,
+4989:         observed_now: u64,
+4990:         control: &ExecutionControl<'_, Error>,
+4991:         prepared_parent: Option<CheckedAdmissionParent>,
+4992:         completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+4993:     ) -> Result<Hash> {
+4994:         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+4995:             self.authenticated_arithmetic
+4996:                 .history
+4997:                 .observe(native_authenticated::HistoryStage::Admission)
+4998:         });
+4999:         let WorkCheckedPacket {
+5000:             packet,
+5001:             work: verified_work,
+5002:             owner_permit,
+5003:         } = checked;
+5004:         // Recheck every header/owner predicate even when this same-owner,
+5005:         // same-epoch private continuation can retain its validated parent.
+5006:         if let Some(id) = self.check_admission_header_context(
+5007:             &packet,
+5008:             observed_now,
+5009:             owner_permit.as_ref(),
+5010:             &mut || (control.progress)(ExecutionProgress::BeforeHeaderContext),
+5011:         )? {
+5012:             return Ok(id);
+5013:         }
+5014:         let checked_parent = match prepared_parent {
+5015:             Some(parent) if parent.epoch == Some(self.admission_state_epoch()?) => parent,
+5016:             _ => self.check_admission_parent(&packet, &mut || {
+5017:                 (control.progress)(ExecutionProgress::BeforeParentBinding)
+5018:             })?,
+5019:         };
+5020:         ensure(
+5021:             self.owner_policy.is_some() == owner_permit.is_some(),
+5022:             "OWNER_TASK_PERMIT_REQUIRED",
+5023:         )?;
+5024:         if let (Some(owner), Some(permit)) = (&self.owner_policy, &owner_permit) {
+5025:             ensure(
+5026:                 std::sync::Arc::ptr_eq(&owner.policy, &permit.policy),
+5027:                 "OWNER_TASK_STALE_POLICY",
+5028:             )?;
+5029:             ensure(
+5030:                 permit.facts.packet_sha256
+5031:                     == crate::operator_task_policy::digest_bytes(
+5032:                         &packet.encode_for_settings(&self.settings)?,
+5033:                     ),
+5034:                 "OWNER_TASK_PACKET_CHANGED",
+5035:             )?;
+5036:             owner
+5037:                 .journal
+5038:                 .borrow()
+5039:                 .recheck_before_commit(
+5040:                     &owner.policy,
+5041:                     &permit.reservation,
+5042:                     &permit.facts,
+5043:                     crate::operator_task_policy::now_ns().map_err(owner_error)?,
+5044:                 )
+5045:                 .map_err(owner_error)?;
+5046:         }
+5047:         // Only immutable permit/atomic flags are consulted while M06 or SQL run.
+5048:         // No journal mutex/RefCell guard or filesystem write is held across either.
+5049:         let mining_progress = self.mining_progress_snapshot()?;
+5050:         let continuous_progress = self.continuous_progress_snapshot()?;
+5051:         let guarded_progress = |point: ExecutionProgress| -> Result<()> {
+5052:             (control.progress)(point)?;
+5053:             if let Some(p) = &continuous_progress {
+5054:                 p.check()?;
+5055:             }
+5056:             if let Some(p) = &mining_progress {
+5057:                 p.check()?;
+5058:             }
+5059:             if let Some(permit) = &owner_permit {
+5060:                 permit.progress()?;
+5061:             }
+5062:             Ok(())
+5063:         };
+5064:         let guarded_control = ExecutionControl::new(&guarded_progress, control.worker_accounting);
+5065:         let control = &guarded_control;
+5066:         let progress = control.progress;
+5067:         let bytes = packet.encode_for_settings(&self.settings)?;
+5068:         let h = &packet.header;
+5069:         let parent = self.record(h.parent)?;
+5070:         // Keep the original second parent-read cancellation/CPU boundary. The
+5071:         // first full State/root/account/task/material validation was in this
+5072:         // same admission, while holding this same owner. No new ledger writes
+5073:         // have run. A changed or unstable SQL epoch retains full fresh checks.
+5074:         progress(ExecutionProgress::BeforeParentBinding)?;
+5075:         let checked_parent = if checked_parent.epoch == Some(self.admission_state_epoch()?) {
+5076:             checked_parent
+5077:         } else {
+5078:             drop(checked_parent);
+5079:             self.check_admission_parent(&packet, &mut || {
+5080:                 progress(ExecutionProgress::BeforeParentBinding)
+5081:             })?
+5082:         };
+5083:         let CheckedAdmissionParent {
+5084:             state: prior,
+5085:             eligibility: registered_task,
+5086:             ..
+5087:         } = checked_parent;
+5088:         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
+5089:             &prior,
+5090:             ExecutionRequest {
+5091:                 timestamp: Some(h.timestamp),
+5092:                 transactions: &packet.transactions,
+5093:                 height: h.height,
+5094:                 miner: h.miner,
+5095:                 parent_id: h.parent,
+5096:                 workers: self.workers,
+5097:             },
+5098:             control,
+5099:             owner_permit.as_ref(),
+5100:             Some((h, &bytes)),
+5101:         )?;
+5102:         let mut output = executed.output;
+5103:         let mut commitment = executed.commitment;
+5104:         if registered_task.manifest().is_some() {
+5105:             let product: Vec<u8> = verified_work
+5106:                 .product()
+5107:                 .iter()
+5108:                 .flat_map(|value| value.to_le_bytes())
+5109:                 .collect();
+5110:             if self.record_task_output(h.height, &mut output.state, &registered_task, &product)? {
+5111:                 commitment = self.derive_successor(&output.state, commitment.snapshot.as_ref())?;
+5112:                 output.root = commitment.root;
+5113:             }
+5114:         }
+5115:         let receipts_root = sequence_root("receipts", &output.receipts);
+5116:         if h.state != output.root || h.receipts != receipts_root {
+5117:             // This private fact is constructed only after successful full M06
+5118:             // and task-output derivation. No arbitrary Err(ROOT) is retained.
+5119:             if let Some(scope) = rejection_scope {
+5120:                 progress(ExecutionProgress::BeforeOutput)?;
+5121:                 if let Some(cache) = self.root_rejection_cache.borrow_mut().as_mut() {
+5122:                     cache.retain(
+5123:                         scope,
+5124:                         bytes,
+5125:                         root_rejection_cache::FinalMismatch {
+5126:                             state: output.root,
+5127:                             receipts: receipts_root,
+5128:                         },
+5129:                         root_rejection_cache::now_ns(),
+5130:                     );
+5131:                 }
+5132:             }
+5133:             return Err("ROOT".into());
+5134:         }
+5135:         self.persist_admission_execution(
+5136:             AdmissionPersistence {
+5137:                 packet,
+5138:                 bytes,
+5139:                 parent,
+5140:                 prior,
+5141:                 output,
+5142:                 commitment,
+5143:             },
+5144:             control,
+5145:             None,
+5146:             completion_cpu,
+5147:         )
+5148:     }
+
+/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--scalar_cpu.rs:678-879
+678:     fn observe_with_control(
+679:         &self,
+680:         remove: bool,
+681:         enforce: bool,
+682:         may_wait: bool,
+683:         resource: &dyn Fn() -> Result<()>,
+684:     ) -> Result<()> {
+685:         loop {
+686:             resource()?;
+687:             let Some(request) = self.observe_sample(remove, enforce)? else {
+688:                 return Ok(());
+689:             };
+690:             // Shared History cannot suspend while owning the Node mutex.
+691:             // A long indivisible phase still fails under the original budget.
+692:             if !may_wait {
+693:                 self.state
+694:                     .lock()
+695:                     .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+696:                     .refused = true;
+697:                 return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
+698:             }
+699:             // An exclusive embedding has no Node mutex. Keep its exact paid
+700:             // continuation, original absolute deadline AND caller resource
+701:             // cancellation throughout every actual refill wait. No stored
+702:             // callback, detached lifetime or new reservation is introduced.
+703:             resource()?;
+704:             request.check()?;
+705:             thread::sleep(
+706:                 Duration::from_millis(5)
+707:                     .min(request.deadline.saturating_duration_since(Instant::now())),
+708:             );
+709:         }
+710:     }
+711: 
+712:     /// The same settled-worker History continuation may prepare to reacquire
+713:     /// its Node writer or finish after native admission. This earns free credit
+714:     /// through the ORIGINAL refill;
+715:     /// it does not reserve another start quantum or predict commit cost.
+716:     /// Another live owner may consume that headroom before the held checks,
+717:     /// which must still refuse rather than wait under the writer.
+718:     fn prepare_history_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+719:         loop {
+720:             resource()?;
+721:             // Charge this exact owner's new interval once. The sampler keeps
+722:             // unknown/refused and verified native-completion scheduling rules.
+723:             self.observe_sample(false, true)?;
+724:             let (request, ready) = {
+725:                 let mut state = match self.state.lock() {
+726:                     Ok(state) => state,
+727:                     Err(error) => {
+728:                         drop(error);
+729:                         self.unknown();
+730:                         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+731:                     }
+732:                 };
+733:                 let mut budget = match self.budget.lock() {
+734:                     Ok(budget) => budget,
+735:                     Err(error) => {
+736:                         state.unavailable = true;
+737:                         drop(state);
+738:                         drop(error);
+739:                         self.unknown();
+740:                         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+741:                     }
+742:                 };
+743:                 if state.unavailable
+744:                     || budget.unavailable
+745:                     || state.owner_thread != thread::current().id()
+746:                     || state.threads.len() != 1
+747:                     || !state.threads.contains_key(&state.owner_thread)
+748:                     || budget.in_flight == 0
+749:                     || budget.in_flight > MUTATION_CPU_WORKERS
+750:                     || (state.verified_completion
+751:                         && (budget.verified_completions == 0
+752:                             || budget.verified_completions > budget.in_flight))
+753:                 {
+754:                     state.unavailable = true;
+755:                     budget.unavailable = true;
+756:                     return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+757:                 }
+758:                 ensure(!state.refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+759:                 let Some(request) = state.public_request.clone() else {
+760:                     state.unavailable = true;
+761:                     budget.unavailable = true;
+762:                     return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+763:                 };
+764:                 // Stored free credit excludes EVERY outstanding start reserve.
+765:                 // Reaching zero leaves the original principals intact; this
+766:                 // operation cannot borrow another owner's purchased quantum.
+767:                 // Nonpromoted work retains its original sampler verdict,
+768:                 // including its own already purchased allowance when stored
+769:                 // free credit is negative. It never receives this extra wait.
+770:                 let ready = !state.verified_completion || budget.credit_ns >= 0;
+771:                 (request, ready)
+772:             };
+773:             // No request/global mutex or Node writer is held across any caller
+774:             // resource observation, original deadline check or actual sleep.
+775:             request.check()?;
+776:             if ready {
+777:                 return Ok(());
+778:             }
+779:             resource()?;
+780:             request.check()?;
+781:             thread::sleep(
+782:                 Duration::from_millis(5)
+783:                     .min(request.deadline.saturating_duration_since(Instant::now())),
+784:             );
+785:         }
+786:     }
+787:     fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
+788:         // All two-lock paths use request -> global. Neither is held across a
+789:         // Work replay, envelope, State/root calculation, join or SQL call.
+790:         let mut state = match self.state.lock() {
+791:             Ok(state) => state,
+792:             Err(error) => {
+793:                 // A PoisonError owns the failed lock guard; release it before
+794:                 // marking request/global accounting unavailable.
+795:                 drop(error);
+796:                 self.unknown();
+797:                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+798:             }
+799:         };
+800:         if enforce && state.verified_completion {
+801:             state
+802:                 .public_request
+803:                 .as_ref()
+804:                 .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+805:                 .check()?;
+806:         }
+807:         let id = thread::current().id();
+808:         let measured = state
+809:             .threads
+810:             .get_mut(&id)
+811:             .and_then(ThreadCpuStamp::checkpoint);
+812:         #[cfg(test)]
+813:         let measured = if self.fail_next_sample.swap(false, Ordering::AcqRel) {
+814:             None
+815:         } else {
+816:             measured
+817:         };
+818:         if remove {
+819:             state.threads.remove(&id);
+820:         }
+821:         let Some(measured) = measured else {
+822:             drop(state);
+823:             self.unknown();
+824:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+825:         };
+826:         let Some(total) = state.charged_ns.checked_add(measured) else {
+827:             drop(state);
+828:             self.unknown();
+829:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+830:         };
+831:         state.charged_ns = total;
+832:         let result: Result<()> = (|| {
+833:             let mut budget = self
+834:                 .budget
+835:                 .lock()
+836:                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+837:             if enforce {
+838:                 budget.charge_request_live(Instant::now(), measured, total)?;
+839:                 // A probe already running when another request finishes W1
+840:                 // keeps only its already purchased original start quantum.
+841:                 // It cannot consume successive future completion refills.
+842:                 ensure(
+843:                     state.verified_completion
+844:                         || !budget.completion_pending()
+845:                         || total <= MUTATION_CPU_START_RESERVE_NS,
+846:                     "PUBLIC_MUTATION_CPU_BUDGET",
+847:                 )
+848:             } else {
+849:                 budget.record_final_live(Instant::now(), measured)
+850:             }
+851:         })();
+852:         let mut wait = None;
+853:         if let Err(error) = &result {
+854:             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
+855:                 if enforce && state.verified_completion && !state.refused {
+856:                     wait = state.public_request.clone();
+857:                     if wait.is_none() {
+858:                         state.unavailable = true;
+859:                     }
+860:                 } else {
+861:                     state.refused |= enforce;
+862:                 }
+863:             } else {
+864:                 state.unavailable = true;
+865:             }
+866:         }
+867:         let unavailable = state.unavailable;
+868:         let refused = state.refused;
+869:         drop(state);
+870:         if unavailable {
+871:             self.unknown();
+872:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+873:         }
+874:         // Final samples still charge after cancellation/debt. They never
+875:         // replace an already completed native outcome with a new refusal.
+876:         if enforce {
+877:             ensure(!refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+878:         }
+879:         Ok(wait)

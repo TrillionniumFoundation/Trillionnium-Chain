@@ -1,0 +1,147 @@
+{
+  "conclusion": "No adequately supported production change has been identified as a remedy for the original four-second failure. No patch or test was performed.",
+  "history_4105": "Actual inner cause remains owned by pr_ci_audit; current entry map has no failure-cause inference.",
+  "measured_same_field_aggregates": {
+    "bytes": 95914,
+    "challenge_wall_ms": [
+      101.381,
+      189.847,
+      198.14,
+      380.498
+    ],
+    "cpu_permit_wait_wall_ms": [
+      0.018,
+      0.019,
+      0.021,
+      0.024
+    ],
+    "order": [
+      "head/original",
+      "head/fresh",
+      "prospective/original",
+      "prospective/fresh"
+    ],
+    "paid_task_queue_wait_wall_ms": [
+      105.413,
+      505.683,
+      203.432,
+      693.972
+    ],
+    "path": "/private/tmp/chain-R1-nonhost-performance-review-20261114-v1/stage-evidence-v1/matched-stage-aggregates.json",
+    "scope": "Each sum uses only the same named field over matched disjoint requests. Nested stages and different clock/thread domains are not added.",
+    "service_work_cpu_ms": [
+      12.806,
+      11.833,
+      12.252,
+      12.142
+    ],
+    "seven_honest_submit_client_cpu_ms": [
+      5.962,
+      5.887,
+      6.327,
+      6.37
+    ],
+    "sha256": "edf63be28dca5ae9558231aa9a12f34bd9976a3d2d1a24a59ae8d6ae98d4a5f4"
+  },
+  "next_measurement_boundary": "Only a separately authorized observation-capable real Host could supply task scheduling/on-CPU and bounded syscall/I/O attribution for the existing original binary and fixed constraints. The existing ROG perf permission probe failed. No additional profiling probe/run or privilege change is authorized or performed; no test-only fixture optimization is proposed.",
+  "no_new_test_native_host_network_or_git_mutation": true,
+  "qualified_or_four_second_fix": false,
+  "remaining_causal_gap": "Queue wall and portions of SolutionBodyResponse contain no per-TID off-CPU reason or syscall blocking duration. In-progress Exclusive W1 has no source-level owner wait, but its wall/CPU gap cannot identify CFS as a sole cause. Whole-job cpu.stat does not close this phase-local gap.",
+  "schema": "trnm-r1-nonhost-performance-static-review-v1",
+  "source_findings": [
+    {
+      "conclusion": "Actual Exclusive History verifies W1 once, moves packet and VerifiedWork into checked admission, then rechecks current header/parent/owner/epoch and executes M06. No second W1 call or shared Node owner-wait in this route. These current-context rechecks are not redundant trust checks to remove.",
+      "functions": [
+        "verify_history_work",
+        "WorkCheckedPacket::verify_with_progress",
+        "Node::admit_work_checked_with_completion",
+        "Node::admit_work_checked_with_parent"
+      ],
+      "id": "one-w1",
+      "paths": [
+        "ingress/history_import.rs",
+        "store.rs"
+      ]
+    },
+    {
+      "conclusion": "The five-millisecond verified-completion wait requires completed native work and cannot explain in-progress W1. CPU reserve polling and final writer debt waiting remain separate measured stages; request/global budget locks are not held across the W1 computation or fresh resource callback.",
+      "id": "no-hidden-w1-sleep",
+      "paths": [
+        "ingress/public_v3/scalar_cpu.rs",
+        "ingress/history_import.rs"
+      ]
+    },
+    {
+      "conclusion": "Original classical Submit server already validates a borrowed canonical body and decodes without an owned hexadecimal copy. History packet material is read under its original owner, then encoding occurs after releasing the Node mutex. Do not propose these existing changes again.",
+      "id": "already-borrowed-server",
+      "paths": [
+        "ingress/public_v3.rs",
+        "ingress/public_v3/canonical_packet.rs",
+        "ingress/public_v3/history_response.rs"
+      ]
+    },
+    {
+      "conclusion": "Client total deadline is min(original per-call deadline, original outer deadline). All actual four-second fixture calls provide that outer deadline. History Control checks it before and after every fresh resource observation. No renewed-budget bug found in these reviewed paths.",
+      "id": "correct-absolute-clock",
+      "paths": [
+        "ingress/public_v3.rs",
+        "ingress/history_import.rs"
+      ]
+    },
+    {
+      "conclusion": "The production client's canonical_request returns an owned packet String for ops 1/6/7 which the client immediately discards. A validate-only borrowed internal helper could preserve the exact length/envelope/hex/UTF8/error order and avoid one temporary owned copy. Server's owned fallback and full Packet decoding must remain. The allocation has no isolated CPU observation; honest seven-request construction wall totals are only 2.129\u20132.907 ms in these pressure traces. Attacker per-call construction CPU is not separated. This is an unimplemented small candidate, not a demonstrated four-second remedy.",
+      "id": "small-discarded-allocation",
+      "lines": [
+        1088,
+        1135,
+        3788,
+        3794
+      ],
+      "paths": [
+        "ingress/public_v3.rs"
+      ]
+    },
+    {
+      "conclusion": "Response::message clones strings and the JSON Value before clearing signature and serializing. A private borrowed unsigned serialization view could remove that copy with golden-byte equivalence controls, but current successful History response-encoding CPU totals are only 0.454\u20130.921 ms for the one/two pressure replies. This does not support claiming a material four-second fix. Signature checks and both canonical encodings remain required.",
+      "id": "unsigned-response-clone",
+      "lines": [
+        967,
+        1065,
+        3926,
+        3928
+      ],
+      "paths": [
+        "ingress/public_v3.rs",
+        "ingress/public_v3/history_response.rs"
+      ]
+    },
+    {
+      "conclusion": "The accepted server socket sets TCP_NODELAY, while the reviewed production V3 client connect/write path does not. Existing reports have no TCP ACK/unacked/timing evidence separating any effect from scheduling and server work. No Nagle/delayed-ACK cause is established, and no socket-option patch is proposed as a fix. Earlier unrelated ingress transport sets the option; that does not prove equivalence or causal benefit here.",
+      "id": "socket-option-observation",
+      "lines": [
+        1458,
+        3819,
+        3821,
+        4020,
+        4034
+      ],
+      "paths": [
+        "ingress/public_v3.rs",
+        "ingress.rs"
+      ]
+    }
+  ],
+  "source_revision": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "source_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "unchanged_constraints": {
+    "confirmation_depth": 6,
+    "cpu_fraction": 0.25,
+    "cpu_max": "25000 100000",
+    "fresh_host_callbacks": "all original calls retained",
+    "honest_packets": 7,
+    "pressure_workers": 16,
+    "rpc_policy_seconds": 2,
+    "strict_history_entrypoints": 4,
+    "window_seconds": 4
+  }
+}

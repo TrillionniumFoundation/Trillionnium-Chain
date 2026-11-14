@@ -1,0 +1,9 @@
+{
+  "bytes": 10762,
+  "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--growth.rs",
+  "git_blob": "c3ff122d03708dc472dfa9ce21ce3729014aff08",
+  "lines": 235,
+  "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+  "sha256": "2799bd30b73fae3b89b894e2c55f2dcb4c3231b670eb40f4f79a6e29d8362dbd",
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

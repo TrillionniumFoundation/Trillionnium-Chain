@@ -1,0 +1,612 @@
+{
+  "files": [
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push"
+      ],
+      "git_blob": "df1868da3fddd27335e8230be106a2e00b15620b",
+      "path": ".github/workflows/cell-learning-business-readback.yml",
+      "push": {
+        "branches": [
+          "fix/chain-learning-business-closure-20261109-1a404f66"
+        ]
+      },
+      "release": null,
+      "sha256": "2d949cb562ce3358a24a0cfda90602a703eed6c9972b2413efe42a965ab924d8",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "a75e1609ff0a07e8dea5b83990e22d08035f0769",
+      "path": ".github/workflows/cell-learning-local-decision-readback.yml",
+      "push": null,
+      "release": null,
+      "sha256": "49cd83d42f7405ad3f79e63ca9345f662db61fecd0003d182517fb44575d8a10",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "15454b5322f118b52458adebf54cf00652107240",
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "push": null,
+      "release": null,
+      "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc",
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "push": null,
+      "release": null,
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push"
+      ],
+      "git_blob": "9cea88c15ec764ed5627c70dcab73416e96d6b6d",
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "push": {
+        "branches": [
+          "main",
+          "fix/chain-six-axis-performance-20261103",
+          "fix/chain-native-codeql-source-scan-20261106-gpt6"
+        ]
+      },
+      "release": null,
+      "sha256": "9d65b79ee632c3490a84bb55e7015a78d468b6b5ff6ed74d01f2179831c00c32",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push"
+      ],
+      "git_blob": "d942705a245ed392e1dcb186bd2c1899f04b9d4f",
+      "path": ".github/workflows/cpq1-full-content.yml",
+      "push": {
+        "branches": [
+          "feature/chain-cpq1-content-commitments-20261108"
+        ]
+      },
+      "release": null,
+      "sha256": "e4c3280253162f9d999845fe94632c7ab16b3dfbfdf74c74ea380cb52ee4488e",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "c758f5d0e10be8972e9b9fcc250e07d3a852877d",
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "push": null,
+      "release": null,
+      "sha256": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "45b9594701a408974303c0e4d135e1c7231f51d6",
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "push": null,
+      "release": null,
+      "sha256": "11fa74a841c9db70ccfebd50f414a56a18585a6b1552d029a3c6f61b67542704",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "d9e7e2141ef26833deba030cb8b70d80c22274b6",
+      "path": ".github/workflows/pon-budget-controls.yml",
+      "push": null,
+      "release": null,
+      "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "36d0cdef797a21aca7e6884082ffb2a8d861b8a6",
+      "path": ".github/workflows/pon-cloud-build-inputs.yml",
+      "push": null,
+      "release": null,
+      "sha256": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "a54e2492abbef92685af3ea9c654bb6720511e95",
+      "path": ".github/workflows/pon-credit-envelope.yml",
+      "push": null,
+      "release": null,
+      "sha256": "a4e9debdf960431ce37e4799543aa658e3b10faa16d083a8e1989911d0e3a55c",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "workflow_dispatch"
+      ],
+      "git_blob": "19979c73dea632842eb8edf5c7098703e4387e8a",
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "push": null,
+      "release": null,
+      "sha256": "bcc790adee96acb233385c37c5391e3f18244cce95292fd89e57860d253b199d",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "push"
+      ],
+      "git_blob": "88b0ed45d65aff17d5cf5e0e14f7516efee24746",
+      "path": ".github/workflows/pon-history-stage-diagnostic.yml",
+      "push": {
+        "branches": [
+          "fix/chain-six-axis-performance-20261103"
+        ],
+        "paths": [
+          ".github/workflows/pon-history-stage-diagnostic.yml",
+          "scripts/ci/run_history_diagnostic.py",
+          "scripts/ci/test_history_stage_diagnostic.py",
+          "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+          "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/**",
+          "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/**",
+          "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+          "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+          "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+          "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+          "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+          "scripts/ci/run_from_zero_host.py",
+          "scripts/ci/public_host_ci_observation.py",
+          "scripts/ci/public_fixture_host_lease.py",
+          "config/systemd/trnmponpublic.slice"
+        ]
+      },
+      "release": null,
+      "sha256": "bf88e21b12c120f73b09bd1daca562c41b20d8223392430f95950b62f70c71b7",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "6a183a6add41884730b202a402a934c9dbbcca65",
+      "path": ".github/workflows/pon-learning-outcome-composition.yml",
+      "push": null,
+      "release": null,
+      "sha256": "9d9b9cb19054cf6801ffafc14d4ed9da00f44026bb9bb7c80f62af1f988156a2",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "push"
+      ],
+      "git_blob": "c58bf49b7be97e747314e2814fa5c4cc9295e891",
+      "path": ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+      "push": {
+        "branches": [
+          "fix/chain-legacy-reorg-cost-20261104"
+        ]
+      },
+      "release": null,
+      "sha256": "ca241d78af9f5cf1c018db78b6688e1b5d57ed124e54b24b573ce17e8fc10469",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c",
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "push": null,
+      "release": null,
+      "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "workflow_dispatch"
+      ],
+      "git_blob": "a11dbcd8476d149fa89aeac7979c5ddefad9108c",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "push": null,
+      "release": null,
+      "sha256": "65ae89b813cfadda98cc7fedececb1ad5aa05d6d34d660fa2746a10281b1658d",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "f6791e25103f95067d9fe3de46018c41460dd668",
+      "path": ".github/workflows/pon-native-fullpath.yml",
+      "push": null,
+      "release": null,
+      "sha256": "8f5dc92659cb6c731a4d53e09b439179e5537851af1572e7db44d51174ca7ec6",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "a2c1d0fc734b10b50fd3a71b0644e24898f35c06",
+      "path": ".github/workflows/pon-next-architecture-security.yml",
+      "push": null,
+      "release": null,
+      "sha256": "0bab9026c4498fb2a361edeece98ef8c88b1d8d5ff31e8b340d8906deeb146b2",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "b304444ad20e6341fae8f977fac8536da78c7eca",
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "push": null,
+      "release": null,
+      "sha256": "b24118d008c44a7c1bafc84683943ef57a39588f674ab3c8687f0369d52a34c2",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "3167d5b6a04a72bc7b5b0b8b9bc2e07ccbf55567",
+      "path": ".github/workflows/pon-original-quarter-core-feasibility.yml",
+      "push": null,
+      "release": null,
+      "sha256": "f36624c4cd832f066dc31091f7325852a28ea544182a15c9b3b389293c8ea9c9",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "5092acc212fd3429d607276a53f0b7d7097e774e",
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "push": null,
+      "release": null,
+      "sha256": "4656a4ba72eb3187e5fef3d648532a12e95d2fc776e5980a0af70fdff39df3c0",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5",
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "push": null,
+      "release": null,
+      "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "push": null,
+      "release": null,
+      "sha256": "80fe3c87a0018e3df86236c1c2f997861b3a6a4c26bb6c7816fd114a8b2e0c32",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [
+        {
+          "line": 181,
+          "text": "            retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion \\"
+        }
+      ],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push"
+      ],
+      "git_blob": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "push": {
+        "branches": [
+          "fix/chain-six-axis-performance-20261103"
+        ]
+      },
+      "release": null,
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "push": null,
+      "release": null,
+      "sha256": "993298ead6b3de0a2157eea6e5060238f8c3459d24c5e15bfcb6889731430c3d",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [
+        {
+          "line": 27,
+          "text": "      - name: Validate published intent before setup or downloads"
+        }
+      ],
+      "create": null,
+      "events": [
+        "push"
+      ],
+      "git_blob": "15638b7be5eb2448f56a434fd99fe944febb71aa",
+      "path": ".github/workflows/pon-smollm-hosted-once.yml",
+      "push": {
+        "branches": [
+          "fix/chain-model-owner-hosted-once-20261105"
+        ],
+        "paths": [
+          "config/pon/hosted-model-intents-v1/*.json"
+        ]
+      },
+      "release": null,
+      "sha256": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "git_blob": "069392f0ab0d7607fc72da1d3689ccbe47813274",
+      "path": ".github/workflows/pon-throughput-evidence.yml",
+      "push": null,
+      "release": null,
+      "sha256": "dc2e58b148804dd668b9798d5c3bddd722b775bff9614d76d799f164d8e5cb3b",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "fe0a830ee9b120bdc1928f044bfe8384243b2f38",
+      "path": ".github/workflows/pon-w1-qrom-closure.yml",
+      "push": null,
+      "release": null,
+      "sha256": "6e101deb0b31ea1d0b79fcffd3133fbcb0f30efb38edd79a623ed012bbf77921",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "eca8b1d4733f452a685894e8e942461f64f74a1e",
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "push": null,
+      "release": null,
+      "sha256": "8863db7c7c997cf8f5aa2cfc382bc27ac4b97ba31f56e7c1b1a6b10cbab7d38a",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [
+        {
+          "line": 189,
+          "text": "                      'missing, promoted or mistyped qualification')"
+        }
+      ],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "11db1f8c113d24d711531b4340972af79da0f186",
+      "path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+      "push": null,
+      "release": null,
+      "sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [
+        {
+          "line": 19,
+          "text": "      - scripts/run_w1_deployment_comparison.py"
+        },
+        {
+          "line": 20,
+          "text": "      - scripts/audit_w1_deployment_comparison.py"
+        }
+      ],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "push": null,
+      "release": null,
+      "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push"
+      ],
+      "git_blob": "ce94e0a5423d91840849d91579ec541081117274",
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "push": {
+        "branches": [
+          "fix/chain-six-axis-performance-20261103"
+        ]
+      },
+      "release": null,
+      "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "edf52aa66d2b46cd8795420ef7c508ea0a3357e9",
+      "path": ".github/workflows/pon-work-time-contract-v1.yml",
+      "push": null,
+      "release": null,
+      "sha256": "46ef9667b09d695d0dd247c39c3fc0a6411a70abecbe6c757b7162ddd102570e",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request"
+      ],
+      "git_blob": "53be8e4d1ee721831662e64d483a1a958d5de041",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "push": null,
+      "release": null,
+      "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f",
+      "workflow_call": null,
+      "workflow_run": null
+    },
+    {
+      "action_keyword_locations": [],
+      "create": null,
+      "events": [
+        "pull_request",
+        "push",
+        "workflow_dispatch"
+      ],
+      "git_blob": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "push": {
+        "branches": [
+          "main"
+        ]
+      },
+      "release": null,
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+      "workflow_call": null,
+      "workflow_run": null
+    }
+  ],
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "schema": "trnm-r1-archive-tag-trigger-compact-inventory-v1",
+  "tag": "archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "yaml_parser_available": true
+}

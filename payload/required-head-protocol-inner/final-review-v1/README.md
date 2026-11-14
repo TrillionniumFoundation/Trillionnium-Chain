@@ -1,0 +1,11 @@
+# R1 required head protocol: retained actual failure
+
+The exact required job 132481412290 in run 43604217412 attempt 1 tested R1 2a86462a1ab20c68151719ba4635e3c294391e64, tree 5c26776f96f15fd131e85a5c2d7c5e895ad7fab4. Its original source checks and native manifest agree before/after. All five original named Rust selectors passed with exit 0. The native runner separately rejected the finite signed-confirmation outcome with CONFIRMATION_TARGET.
+
+Baseline confirmed one transaction in 3.196635249 s. Pressure retained exactly 16 workers and the original 4 s window: seven submissions, two History attempts, one accepted independent replay, zero completed confirmations. The accepted replay ran from 1.993352783 s to 3.999257347 s. The next History started at 3.999364226 s and ended at 4.092303244 s, failing during challenge with IO: Resource temporarily unavailable (os error 11). There is no second replay; verification_errors is empty. This is not the cross-cost sample's replay PUBLIC_REQUEST_DEADLINE.
+
+Acquisition used one fresh metadata GET, one explicit positive 65,557-byte tail GET, and exactly three bounded selected-record GETs. All ended naturally with exit 0. All four byte ranges returned exact 206 Content-Range and body sizes. No retries or whole-ZIP download occurred. The full central directory contains 109 entries. Eighteen selected members passed CRC, size and SHA checks; sixteen native members also match the manifest's declared digests. All 54 native filenames match the directory, but unselected member contents were not checked.
+
+The 11,707,964-byte original confirmation report is reconstructable from its retained exact compressed record. Only its necessary decoded fields are saved separately; the original packet strings in the first boundary extraction remain preserved. Compact boundary pointers address that extracted boundary document, while review.json identifies the original report pointers.
+
+Original raw GET bodies, typed response headers, process receipts, source checks, selector streams and exact terminal archive copies are retained. Raw redirect/auth headers are not retained. No inner code, tests, source/Git/stage mutations or CI changes were performed.

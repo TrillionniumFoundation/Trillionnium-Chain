@@ -1,0 +1,10 @@
+{
+  "cause": "unescaped dollar-brace workflow expressions in an outer JavaScript template; no target producer was started by either failed call",
+  "errors": [
+    "SyntaxError: Unexpected token '.'",
+    "SyntaxError: Unexpected token '.'"
+  ],
+  "old_raw_evidence_unchanged": true,
+  "scope": "Two functions.exec JavaScript parse failures before any target invocation",
+  "target_or_network_or_ci_action": false
+}

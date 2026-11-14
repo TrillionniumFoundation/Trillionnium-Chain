@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117367614"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 2.5326352920092177,
+  "error": null,
+  "exit": 0,
+  "finished_at": "2026-11-14T15:50:21.147010+00:00",
+  "label": "fresh-artifact-metadata",
+  "method": "GET",
+  "pid": 50447,
+  "started_at": "2026-11-14T15:50:18.614376+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_consumed_bytes": 0,
+  "stderr_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_eof": true,
+  "stderr_redacted": false,
+  "stdout": {
+    "bytes": 832,
+    "path": "/private/tmp/chain-prci-R1-budget-three-artifact-originals-20261114-v1/14117367614/fresh-artifact-metadata.stdout",
+    "sha256": "7f3e93317870970a2d90e25634c15b3c4a129d8a17a00a27a52a58ba748501ac"
+  },
+  "stdout_eof": true,
+  "timeout_seconds": 120
+}

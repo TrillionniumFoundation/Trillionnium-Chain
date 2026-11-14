@@ -1,0 +1,28 @@
+{
+  "all_secrets_absence_proved": false,
+  "branches_deleted": false,
+  "credential_scan_scope": "Only payload manifest files; metadata, scanner receipts and this publication outcome are not claimed self-scanned.",
+  "current_publication_result_included": false,
+  "exact_ordered_parents": [
+    "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9"
+  ],
+  "hosted_ci_qualification": false,
+  "incremental_tree_only": true,
+  "main_merged": false,
+  "main_snapshot": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "new_full_history_fsck_claimed": false,
+  "original_failures_and_unknowns_preserved": true,
+  "payload_bytes": 155797310,
+  "payload_files": 1880,
+  "payload_manifest": {
+    "bytes": 719021,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-postpublication-r1-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "f39f2a27975982ec6806ff319fd15a3e902e29d92af4653d770acc1b470e9777"
+  },
+  "qualification_granted": false,
+  "retains_prior_execution_and_history_by_parent": true,
+  "schema": "trnm-postpublication-diagnostic-archive-scope-v1",
+  "source_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "source_runtime_changed": false,
+  "source_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+}

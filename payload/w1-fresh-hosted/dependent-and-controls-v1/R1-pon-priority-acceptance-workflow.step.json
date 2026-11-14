@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "cat-file",
+    "blob",
+    "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/pon-priority-acceptance.yml"
+  ],
+  "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+  "elapsed_seconds": 0.01,
+  "exit": 0,
+  "finished_at": "2026-11-14T14:31:21.818651+00:00",
+  "label": "R1-pon-priority-acceptance-workflow",
+  "started_at": "2026-11-14T14:31:21.808546+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/dependent-and-controls-v1/R1-pon-priority-acceptance-workflow.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 24989,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/dependent-and-controls-v1/R1-pon-priority-acceptance-workflow.stdout",
+    "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb"
+  },
+  "timed_out": false,
+  "timeout_seconds": 30
+}

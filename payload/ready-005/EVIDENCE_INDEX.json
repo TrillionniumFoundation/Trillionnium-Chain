@@ -1,0 +1,91 @@
+{
+  "files": [
+    {
+      "bytes": 133557,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-latest-checks-normalized.json",
+      "sha256": "8eae8898994532a169c32e40df2d0c09f127277e04493c411042ddbcbc6b763d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-latest-checks-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 373659,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-latest-checks-page-001.stdout",
+      "sha256": "84cd8c0c7db60de43f46ada55ae05bed63541269910168784e78e574ff827c67"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-latest-checks-page-002.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 237780,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-latest-checks-page-002.stdout",
+      "sha256": "450408d9d6e7e7bf9993f250e761fb3ab770d598c3b93003956ce5ca1651048c"
+    },
+    {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-required-runs-normalized.json",
+      "sha256": "5929317deaca0e94e238f789380b85d243abbe539bfecc5595ae056816dcdd99"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-required-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15189,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-required-runs-page-001.stdout",
+      "sha256": "c76f8a761d4fb2c24a0238b2e99bdf9e11f8705b70ad0148730df328760918ca"
+    },
+    {
+      "bytes": 72250,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-run-43604217412-jobs-normalized.json",
+      "sha256": "0cb62827026f359aa794917543b18a15783fe7faa350e596971072c24750e2f5"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-run-43604217412-jobs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 55832,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-run-43604217412-jobs-page-001.stdout",
+      "sha256": "7825a24723ed6739d3387d4fb5d46b54fcc8e4a36d77c5c4e1714e209d9b25a8"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-run-43604217412-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15153,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/R1-run-43604217412-metadata.stdout",
+      "sha256": "31ba887bc2ce740138f34d69c09bbec5dff820468c6d31be301313cbf875e39b"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/pr847.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 27631,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/pr847.stdout",
+      "sha256": "676b7193b9f1845c376348526c096c0dba91b9b38aab9a5948581933e38b2197"
+    },
+    {
+      "bytes": 19408,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/producer.py",
+      "sha256": "8d3a5cba653cd53caa4144d71193e4b7ff3faf49f4a10a1ebce45940eb072503"
+    },
+    {
+      "bytes": 14103,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-005/summary.json",
+      "sha256": "831c82ddf0c1739839c9a0bd950102a898454d4b851cd65f05ef2da4da683bd4"
+    }
+  ],
+  "schema": "trnm-readonly-progress-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

@@ -1,0 +1,191 @@
+{
+  "artifacts": [
+    {
+      "archive_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+      "artifact": 14117751904,
+      "members": [
+        {
+          "bytes": 1701,
+          "counter_fields": [
+            {
+              "pointer": "/counters",
+              "value": {
+                "cgroup.events": "populated 1\nfrozen 0",
+                "cpu.stat": "usage_usec 132810\nuser_usec 118162\nsystem_usec 14648\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 8\nnr_throttled 5\nthrottled_usec 375351\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "18010112",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "pids.current": "1"
+              }
+            },
+            {
+              "pointer": "/limits/cpu.max",
+              "value": "25000 100000"
+            }
+          ],
+          "keys": [
+            "boot_id",
+            "cgroup_controllers",
+            "consensus_or_model_authority",
+            "counters",
+            "cwd",
+            "gid",
+            "host_readiness_only",
+            "installed_unit_sha256",
+            "limits",
+            "observed_utc",
+            "parent",
+            "parent_path",
+            "phase",
+            "pid",
+            "read_errors",
+            "schema",
+            "service",
+            "thread_cgroup",
+            "thread_privileges",
+            "uid"
+          ],
+          "name": "fresh-service-host/inside-before.json",
+          "sha256": "29155e6e605541d675d150495b58898bbed92b1d646a8d080d50234f8092dc3b"
+        },
+        {
+          "bytes": 1716,
+          "counter_fields": [
+            {
+              "pointer": "/counters",
+              "value": {
+                "cgroup.events": "populated 1\nfrozen 0",
+                "cpu.stat": "usage_usec 43737701\nuser_usec 29848460\nsystem_usec 13889241\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1766\nnr_throttled 1741\nthrottled_usec 172575218\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "57470976",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "pids.current": "1"
+              }
+            },
+            {
+              "pointer": "/limits/cpu.max",
+              "value": "25000 100000"
+            }
+          ],
+          "keys": [
+            "boot_id",
+            "cgroup_controllers",
+            "consensus_or_model_authority",
+            "counters",
+            "cwd",
+            "gid",
+            "host_readiness_only",
+            "installed_unit_sha256",
+            "limits",
+            "observed_utc",
+            "parent",
+            "parent_path",
+            "phase",
+            "pid",
+            "read_errors",
+            "schema",
+            "service",
+            "thread_cgroup",
+            "thread_privileges",
+            "uid"
+          ],
+          "name": "fresh-service-host/inside-after.json",
+          "sha256": "704e07acd44d66f41493e859ee46801a6eb54202cb6a2459d1c189777215f3f8"
+        }
+      ],
+      "scope": "Whole child runner, including both original and fresh selectors and its source checks; NOT the isolated four-second phase or a single W1 work interval."
+    },
+    {
+      "archive_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a",
+      "artifact": 14117403147,
+      "members": [
+        {
+          "bytes": 1701,
+          "counter_fields": [
+            {
+              "pointer": "/counters",
+              "value": {
+                "cgroup.events": "populated 1\nfrozen 0",
+                "cpu.stat": "usage_usec 141635\nuser_usec 122816\nsystem_usec 18818\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 7\nnr_throttled 5\nthrottled_usec 309391\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "17788928",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "pids.current": "1"
+              }
+            },
+            {
+              "pointer": "/limits/cpu.max",
+              "value": "25000 100000"
+            }
+          ],
+          "keys": [
+            "boot_id",
+            "cgroup_controllers",
+            "consensus_or_model_authority",
+            "counters",
+            "cwd",
+            "gid",
+            "host_readiness_only",
+            "installed_unit_sha256",
+            "limits",
+            "observed_utc",
+            "parent",
+            "parent_path",
+            "phase",
+            "pid",
+            "read_errors",
+            "schema",
+            "service",
+            "thread_cgroup",
+            "thread_privileges",
+            "uid"
+          ],
+          "name": "fresh-service-host/inside-before.json",
+          "sha256": "422ed983ee634bcf15da5f76fc2889587f592b229c39f3d19cee56ab3a22b602"
+        },
+        {
+          "bytes": 1716,
+          "counter_fields": [
+            {
+              "pointer": "/counters",
+              "value": {
+                "cgroup.events": "populated 1\nfrozen 0",
+                "cpu.stat": "usage_usec 44696886\nuser_usec 30534427\nsystem_usec 14162459\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1803\nnr_throttled 1780\nthrottled_usec 175623027\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "57122816",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "pids.current": "1"
+              }
+            },
+            {
+              "pointer": "/limits/cpu.max",
+              "value": "25000 100000"
+            }
+          ],
+          "keys": [
+            "boot_id",
+            "cgroup_controllers",
+            "consensus_or_model_authority",
+            "counters",
+            "cwd",
+            "gid",
+            "host_readiness_only",
+            "installed_unit_sha256",
+            "limits",
+            "observed_utc",
+            "parent",
+            "parent_path",
+            "phase",
+            "pid",
+            "read_errors",
+            "schema",
+            "service",
+            "thread_cgroup",
+            "thread_privileges",
+            "uid"
+          ],
+          "name": "fresh-service-host/inside-after.json",
+          "sha256": "87c57fca36ff6cf9dcc5f6a797e6d0d75bd10eefafcc69d02734d3631942b502"
+        }
+      ],
+      "scope": "Whole child runner, including both original and fresh selectors and its source checks; NOT the isolated four-second phase or a single W1 work interval."
+    }
+  ],
+  "schema": "trnm-R1-W1-whole-child-host-counter-references-v1"
+}

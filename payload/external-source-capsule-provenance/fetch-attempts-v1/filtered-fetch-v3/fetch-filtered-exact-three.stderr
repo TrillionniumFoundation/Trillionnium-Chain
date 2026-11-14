@@ -1,3 +1,0 @@
-fatal: Unable to create '/private/tmp/chain-external-evidence-three-sources-20261114-v1/repository.git/shallow.lock': File exists.
-
-Another git process seems to be running in this repository, or the lock file may be stale

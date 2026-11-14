@@ -1,0 +1,5 @@
+{
+  "error": "ReferenceError: TextEncoder is not defined",
+  "stage": "before h_pty_start",
+  "target_started": false
+}

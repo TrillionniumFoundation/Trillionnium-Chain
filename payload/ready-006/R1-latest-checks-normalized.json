@@ -1,0 +1,3610 @@
+[
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413128",
+    "external_id": "a37d0437-a5b3-50ce-860d-56a620ca2126",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413128",
+    "id": 132481413128,
+    "name": "prospective-merge (external-evidence-contract)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413062",
+    "external_id": "51d60871-c121-56d2-9d36-6457d13f0e1c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413062",
+    "id": 132481413062,
+    "name": "prospective Rust shard (quality)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412473",
+    "external_id": "ee32a0e9-757f-5358-8760-9786e3100a15",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412473",
+    "id": 132481412473,
+    "name": "prospective-merge (protocol-contract)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412405",
+    "external_id": "817fa13c-2886-5ebd-8056-39dae77428ce",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412405",
+    "id": 132481412405,
+    "name": "cross-arch-cost (x64)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412396",
+    "external_id": "12ea1639-2732-59f8-a16b-62e08b239ac9",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412396",
+    "id": 132481412396,
+    "name": "repository-truth",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412373",
+    "external_id": "842fdfe1-dc7d-5747-88f4-ee4cc470f4d4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412373",
+    "id": 132481412373,
+    "name": "external-evidence-contract",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412365",
+    "external_id": "71b5f373-15ec-5ae9-b45b-8f2ed0e22956",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412365",
+    "id": 132481412365,
+    "name": "prospective-merge (repository-truth)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": "2026-11-14T14:47:24Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412339",
+    "external_id": "c8ca0e83-fb71-59e1-9234-47cfe34aa324",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412339",
+    "id": 132481412339,
+    "name": "W1 actual reuse V3 (x64, prospective-merge)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412337",
+    "external_id": "3f2eaa98-3ced-57d7-a00d-1797bce4c1e8",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412337",
+    "id": 132481412337,
+    "name": "prospective-merge (fuzz-smoke)",
+    "started_at": "2026-11-14T14:42:28Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": "2026-11-14T14:47:35Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412329",
+    "external_id": "048e8003-c9ef-5f30-9df3-46fa9f438373",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412329",
+    "id": 132481412329,
+    "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:42:30Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": "2026-11-14T14:47:58Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412314",
+    "external_id": "41f4b9c6-f4e9-54a5-a428-5696e8edde07",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412314",
+    "id": 132481412314,
+    "name": "W1 actual reuse V3 (arm64, head)",
+    "started_at": "2026-11-14T14:42:29Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412294",
+    "external_id": "122977ac-4a67-58e2-b19e-61d73ddc001e",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412294",
+    "id": 132481412294,
+    "name": "rust-baseline shard (runtime)",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412290",
+    "external_id": "53b3bb3f-f73b-593d-890c-c1111e82c236",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412290",
+    "id": 132481412290,
+    "name": "protocol-contract",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": "2026-11-14T14:46:40Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412277",
+    "external_id": "b2970ba2-d11a-5aed-a3d5-2b5599588dd8",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412277",
+    "id": 132481412277,
+    "name": "W1 actual reuse V3 (x64, head)",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412245",
+    "external_id": "b54e7c8f-2eef-53ac-adf0-ab74afef1350",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412245",
+    "id": 132481412245,
+    "name": "cross-arch-cost (arm64)",
+    "started_at": "2026-11-14T14:42:29Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412235",
+    "external_id": "ee0cc7c8-66c5-50e6-a0e3-fc7111f6090c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412235",
+    "id": 132481412235,
+    "name": "prospective Rust shard (runtime)",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412227",
+    "external_id": "7cd1f2a5-856d-52e2-b89c-729bfddb2724",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412227",
+    "id": 132481412227,
+    "name": "fuzz-smoke",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997779
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412104",
+    "external_id": "4d4b820a-1bd9-5ce8-9a0f-4627adcb780f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412104",
+    "id": 132481412104,
+    "name": "rust-baseline shard (quality)",
+    "started_at": "2026-11-14T14:42:27Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 57789,
+      "name": "GitHub Advanced Security",
+      "slug": "github-advanced-security"
+    },
+    "app15368": false,
+    "check_suite": {
+      "id": 118065447276
+    },
+    "completed_at": "2026-11-14T14:20:59Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/132475772358",
+    "external_id": "",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/132475772358",
+    "id": 132475772358,
+    "name": "CodeQL",
+    "started_at": "2026-11-14T14:20:54Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:19:02Z",
+    "conclusion": "skipped",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475289650",
+    "external_id": "93875dd7-5be7-5d00-b436-d8dd08ae11a3",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475289650",
+    "id": 132475289650,
+    "name": "Freeze actual integration push source",
+    "started_at": "2026-11-14T14:19:09Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064999854
+    },
+    "completed_at": "2026-11-14T14:20:35Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604218195/job/132475260667",
+    "external_id": "c997052e-7916-5021-94b0-51203fdb5924",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604218195/job/132475260667",
+    "id": 132475260667,
+    "name": "W1 proof-chain (head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064999854
+    },
+    "completed_at": "2026-11-14T14:20:33Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604218195/job/132475260367",
+    "external_id": "9fe35010-2732-5c7c-a386-7b3bbbf1f3e4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604218195/job/132475260367",
+    "id": 132475260367,
+    "name": "W1 proof-chain (prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:29:44Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259395",
+    "external_id": "1a29b87b-d8e4-56b1-be51-2c537217a13f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259395",
+    "id": 132475259395,
+    "name": "W1 false trace reuse (arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:42:50Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259358",
+    "external_id": "562dc447-5524-54c7-91f2-bfeb4f780627",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259358",
+    "id": 132475259358,
+    "name": "W1 factorial legal strategies v3 (arm64, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:36:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259349",
+    "external_id": "404f2799-7b48-5122-bae0-975732eeee3c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259349",
+    "id": 132475259349,
+    "name": "W1 factorial legal strategies v3 (x64, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:29:58Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259341",
+    "external_id": "02cd69c0-9b73-5a6f-a06d-4d0f875614bc",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259341",
+    "id": 132475259341,
+    "name": "W1 complete legal strategies (v1, arm64, head)",
+    "started_at": "2026-11-14T14:19:09Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:28:08Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259337",
+    "external_id": "83bd1eb8-c236-5904-97bb-fbc418041af3",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259337",
+    "id": 132475259337,
+    "name": "W1 fresh challenge service (x64, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:31:50Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259332",
+    "external_id": "d89dd577-17a8-571b-b08c-a6f22b925766",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259332",
+    "id": 132475259332,
+    "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:30:14Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259318",
+    "external_id": "5cb21ba7-9bf7-5846-941e-fd0c26f09ef2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259318",
+    "id": 132475259318,
+    "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:43:02Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259306",
+    "external_id": "5ae2e851-5169-5eae-ab8f-4bd5aabfbcf4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259306",
+    "id": 132475259306,
+    "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:19:02Z",
+    "conclusion": "skipped",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475259302",
+    "external_id": "253972ec-f04d-53fe-8439-77834d2fc25c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475259302",
+    "id": 132475259302,
+    "name": "Freeze actual integration push source",
+    "started_at": "2026-11-14T14:19:02Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:30:57Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259299",
+    "external_id": "4bc85fe5-c938-58f9-b028-b6e08b5705c3",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259299",
+    "id": 132475259299,
+    "name": "W1 complete legal strategies (v1, x64, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:31:55Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259292",
+    "external_id": "d06816c4-128a-5d69-9073-724b26ea4677",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259292",
+    "id": 132475259292,
+    "name": "W1 false trace reuse (x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:28:23Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259275",
+    "external_id": "ad15482c-f899-59f5-a152-79558f42034e",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259275",
+    "id": 132475259275,
+    "name": "W1 complete legal strategies (v2, x64, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:30:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259270",
+    "external_id": "cd0cd5a9-5525-54a7-9e68-211724345efa",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259270",
+    "id": 132475259270,
+    "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:31:51Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259255",
+    "external_id": "2ea2f2bf-5e1e-5e5a-9350-9908dfca1fbb",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259255",
+    "id": 132475259255,
+    "name": "W1 complete legal strategies (v2, arm64, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:30:39Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259252",
+    "external_id": "1c233821-f9f1-5f8e-860d-54b37b64aaca",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259252",
+    "id": 132475259252,
+    "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:29:56Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259250",
+    "external_id": "8a36d871-5bba-5828-bc5c-9fe716e72c5d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259250",
+    "id": 132475259250,
+    "name": "W1 false trace reuse (arm64, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:39:07Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259231",
+    "external_id": "a4c1c921-9105-50bf-9181-f0c2e020fe06",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259231",
+    "id": 132475259231,
+    "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:31:41Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259220",
+    "external_id": "ec4eab0b-51c1-524a-9ca8-9db1962e8ff1",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259220",
+    "id": 132475259220,
+    "name": "W1 paid rank and batch v5 (x64, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:30:08Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259175",
+    "external_id": "6c0b344e-cfc3-574e-9044-f05506c25d93",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259175",
+    "id": 132475259175,
+    "name": "W1 false trace reuse (x64, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:34:04Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259160",
+    "external_id": "5214ccb6-2da1-55ab-b513-57184da8b2bc",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259160",
+    "id": 132475259160,
+    "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:09Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:34:07Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259149",
+    "external_id": "e0900c91-059f-53ec-a0c1-49acdc40fc50",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259149",
+    "id": 132475259149,
+    "name": "W1 paid rank and batch v5 (arm64, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:39:42Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259144",
+    "external_id": "8036af18-a2a7-5370-b281-3506de8b6288",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475259144",
+    "id": 132475259144,
+    "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998346
+    },
+    "completed_at": "2026-11-14T14:28:27Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475258996",
+    "external_id": "775cbc5d-406d-5631-8ef5-afff298983bc",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217632/job/132475258996",
+    "id": 132475258996,
+    "name": "W1 fresh challenge service (x64, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:45:18Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258857",
+    "external_id": "a7eb413c-d4f7-51e7-bb8d-ab2a0c85ff90",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258857",
+    "id": 132475258857,
+    "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:19:02Z",
+    "conclusion": "skipped",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258824",
+    "external_id": "2bef7362-9ff9-52c2-81ae-9010177dbb95",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258824",
+    "id": 132475258824,
+    "name": "Retained complete-cost failure readback",
+    "started_at": "2026-11-14T14:19:02Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:44:37Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258745",
+    "external_id": "2029773a-85d0-54f5-89af-a9e2bfbd6ee1",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258745",
+    "id": 132475258745,
+    "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+    "started_at": "2026-11-14T14:19:09Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258743",
+    "external_id": "513c6f85-6d63-5b17-bf77-8d7e484190a0",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258743",
+    "id": 132475258743,
+    "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998463
+    },
+    "completed_at": "2026-11-14T14:40:08Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217675/job/132475258737",
+    "external_id": "7d952d2e-5acf-551d-b1a6-2d5aec177e18",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217675/job/132475258737",
+    "id": 132475258737,
+    "name": "Native component observations (not business TPS)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:21:23Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258664",
+    "external_id": "604a96b6-3993-5798-9004-308eb3595327",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258664",
+    "id": 132475258664,
+    "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998463
+    },
+    "completed_at": "2026-11-14T14:20:41Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217675/job/132475258593",
+    "external_id": "aaffb81f-99b9-52c1-82d0-1c22a8e98adc",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217675/job/132475258593",
+    "id": 132475258593,
+    "name": "evidence-controls",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998428
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258578",
+    "external_id": "59220af0-2ed9-546f-aace-684beb3d7fb5",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258578",
+    "id": 132475258578,
+    "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998428
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258561",
+    "external_id": "c1529168-9a61-53ed-8040-7c15d1a8d8e8",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258561",
+    "id": 132475258561,
+    "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998287
+    },
+    "completed_at": "2026-11-14T14:20:08Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258547",
+    "external_id": "eb52d50e-68c3-5b1e-a5dd-17986fe7c572",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258547",
+    "id": 132475258547,
+    "name": "W1 QROM historical closure (fixed 1a14f7d, x64)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:21:21Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258543",
+    "external_id": "fec41b0d-ae8b-5996-8e35-4174be89df67",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258543",
+    "id": 132475258543,
+    "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:09Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998428
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258526",
+    "external_id": "a5c272e9-2440-54a1-b0d2-4591e38f2e3f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258526",
+    "id": 132475258526,
+    "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:40:42Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258512",
+    "external_id": "af0ee1f7-edd0-5bf6-a605-bb4e8fe05fa3",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258512",
+    "id": 132475258512,
+    "name": "native priorities (ubuntu-24.04, head, service-model)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998099
+    },
+    "completed_at": "2026-11-14T14:25:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258504",
+    "external_id": "a25c60cc-e8c8-548a-86bb-c86138fc90cc",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258504",
+    "id": 132475258504,
+    "name": "reference (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998099
+    },
+    "completed_at": "2026-11-14T14:24:55Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258489",
+    "external_id": "59d280db-11c4-520b-a69f-c63d1dac70bd",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258489",
+    "id": 132475258489,
+    "name": "reference (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998249
+    },
+    "completed_at": "2026-11-14T14:20:42Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217592/job/132475258479",
+    "external_id": "c8a3f5f9-0054-571b-8027-1453c188bad2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217592/job/132475258479",
+    "id": 132475258479,
+    "name": "Cell learning business readback (head, unqualified)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:23:56Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258478",
+    "external_id": "6cee60a3-b145-5e2e-92c7-1290ca60fa31",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258478",
+    "id": 132475258478,
+    "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998085
+    },
+    "completed_at": "2026-11-14T14:20:31Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258472",
+    "external_id": "bbcf379f-56be-5aaf-8326-ab4aa51c9c34",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258472",
+    "id": 132475258472,
+    "name": "parent evidence (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:22:06Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258464",
+    "external_id": "0d842755-cc03-547d-8022-3d6b2a2d034f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258464",
+    "id": 132475258464,
+    "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998287
+    },
+    "completed_at": "2026-11-14T14:20:29Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258452",
+    "external_id": "ca447124-588c-5bf1-ac34-b74a7c7aaa27",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258452",
+    "id": 132475258452,
+    "name": "W1 QROM current closure (prospective-merge, x64)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258442",
+    "external_id": "d31e5220-42ae-55ef-b295-fbfd20b3241e",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258442",
+    "id": 132475258442,
+    "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998099
+    },
+    "completed_at": "2026-11-14T14:25:14Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258434",
+    "external_id": "83419faf-fb75-5681-b3ae-470d89199f1d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258434",
+    "id": 132475258434,
+    "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:21:29Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258403",
+    "external_id": "2138c64a-db55-5c25-a0ed-d5af1515d28a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258403",
+    "id": 132475258403,
+    "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998150
+    },
+    "completed_at": "2026-11-14T14:35:57Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258398",
+    "external_id": "ba6c9d8b-139e-524c-b739-61ce29193e74",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258398",
+    "id": 132475258398,
+    "name": "next architecture (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258388",
+    "external_id": "5529a469-9d65-50d2-a85f-2ec660c42bca",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258388",
+    "id": 132475258388,
+    "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998150
+    },
+    "completed_at": "2026-11-14T14:39:36Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258387",
+    "external_id": "bff66e7b-6fa2-5a09-b3b4-f39f4d1296b4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258387",
+    "id": 132475258387,
+    "name": "next architecture (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:27:38Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258386",
+    "external_id": "a3f262b9-9aad-588b-8b39-2be361cd868f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258386",
+    "id": 132475258386,
+    "name": "original state and exit (ubuntu-24.04-arm, prospective-merge, release)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:27:41Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258380",
+    "external_id": "8abfd320-61e0-534d-9171-76f7859d6f0c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258380",
+    "id": 132475258380,
+    "name": "original state and exit (ubuntu-24.04, prospective-merge, release)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:23:45Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258377",
+    "external_id": "758389ae-0799-5d1c-8c91-a8f7e14e14d5",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258377",
+    "id": 132475258377,
+    "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258376",
+    "external_id": "7f52f436-ca7c-5f00-a5d3-03f89ead101b",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258376",
+    "id": 132475258376,
+    "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:29:36Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258375",
+    "external_id": "12539bd4-0937-5ea6-8a49-6184ea46212e",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258375",
+    "id": 132475258375,
+    "name": "original state and exit (ubuntu-24.04-arm, prospective-merge, test)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998150
+    },
+    "completed_at": "2026-11-14T14:39:14Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258372",
+    "external_id": "3a12e9cb-960d-53f2-8f90-25f387690444",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258372",
+    "id": 132475258372,
+    "name": "next architecture (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:28:20Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258371",
+    "external_id": "3c5a9ed2-6c67-5d20-8d4f-dd5fe15b20bb",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258371",
+    "id": 132475258371,
+    "name": "original state and exit (ubuntu-24.04, head, release)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:32:31Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258369",
+    "external_id": "555b92ae-4142-5e1b-9a1b-804896acbf61",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258369",
+    "id": 132475258369,
+    "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998085
+    },
+    "completed_at": "2026-11-14T14:20:32Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258368",
+    "external_id": "163cdf32-3355-5ae9-9dd3-bdce9bcb0e8c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258368",
+    "id": 132475258368,
+    "name": "parent evidence (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998085
+    },
+    "completed_at": "2026-11-14T14:20:38Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258364",
+    "external_id": "648409c3-d25f-5e67-8b87-9c17143ea2ca",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258364",
+    "id": 132475258364,
+    "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:22:26Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258363",
+    "external_id": "b3489602-8f69-50e6-9095-e48abd5f77b2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258363",
+    "id": 132475258363,
+    "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998065
+    },
+    "completed_at": "2026-11-14T14:20:07Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258358",
+    "external_id": "200f097d-2f95-5687-92ad-609205c5ca68",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258358",
+    "id": 132475258358,
+    "name": "W1 QROM historical V1 (fixed 0c830e0, x64)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258349",
+    "external_id": "0c8fc90d-eab2-55f7-88ef-dad52157a424",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258349",
+    "id": 132475258349,
+    "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258347",
+    "external_id": "14c9ad89-63ef-5bb5-8a71-22a226aa1d0a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258347",
+    "id": 132475258347,
+    "name": "native priorities (ubuntu-24.04, head, history)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998428
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258343",
+    "external_id": "f4829e18-7de4-5e98-93d7-cb4d9b30eba9",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217660/job/132475258343",
+    "id": 132475258343,
+    "name": "original workspace test CPU (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:32:04Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258331",
+    "external_id": "11115bd0-7e73-51bf-a991-c896364176cb",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258331",
+    "id": 132475258331,
+    "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998326
+    },
+    "completed_at": "2026-11-14T14:33:51Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217622/job/132475258327",
+    "external_id": "fd953c4a-e147-5974-b78e-99a71b54ff52",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217622/job/132475258327",
+    "id": 132475258327,
+    "name": "export",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:45:57Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258322",
+    "external_id": "85109c20-4493-5390-a436-d170d8a438e1",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258322",
+    "id": 132475258322,
+    "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258321",
+    "external_id": "71362c47-d458-5afc-9700-a5a0087f9c7d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258321",
+    "id": 132475258321,
+    "name": "native priorities (ubuntu-24.04-arm, head, history)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:27:34Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258317",
+    "external_id": "912b4c1c-e704-5caa-97f8-b63ad4618dba",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258317",
+    "id": 132475258317,
+    "name": "original state and exit (ubuntu-24.04-arm, head, release)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258310",
+    "external_id": "dc495be9-8269-57a8-957e-286af9a91474",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258310",
+    "id": 132475258310,
+    "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258307",
+    "external_id": "2b7de680-2d0a-5120-a402-faec481a5bf6",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258307",
+    "id": 132475258307,
+    "name": "native priorities (ubuntu-24.04, head, state)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258283",
+    "external_id": "7ce3adae-ea8b-5e09-a331-637788b3ca04",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258283",
+    "id": 132475258283,
+    "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998254
+    },
+    "completed_at": "2026-11-14T14:42:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258278",
+    "external_id": "97bd2092-af27-50a7-a394-a329980ddfc2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258278",
+    "id": 132475258278,
+    "name": "branch encoding (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:29:09Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258273",
+    "external_id": "bdd00550-5714-5578-b879-209f3db9a4bb",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258273",
+    "id": 132475258273,
+    "name": "original state and exit (ubuntu-24.04-arm, head, test)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:32:14Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258270",
+    "external_id": "7e492a70-4cc8-5f99-a039-d449a1112c42",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258270",
+    "id": 132475258270,
+    "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998065
+    },
+    "completed_at": "2026-11-14T14:20:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258269",
+    "external_id": "1163c79f-ff84-534d-97ee-4f9051a94a60",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258269",
+    "id": 132475258269,
+    "name": "W1 QROM current V2 (head, x64)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258267",
+    "external_id": "03f84b10-94cd-59ec-8d56-12cd1707ccfa",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258267",
+    "id": 132475258267,
+    "name": "native priorities (ubuntu-24.04-arm, head, state)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998186
+    },
+    "completed_at": "2026-11-14T14:19:08Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258264",
+    "external_id": "601faf9b-1205-5ddc-b9ff-5f3096f30eb8",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258264",
+    "id": 132475258264,
+    "name": "retained-pressure-failure",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998254
+    },
+    "completed_at": "2026-11-14T14:42:51Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258261",
+    "external_id": "360e487b-6593-598d-8799-9ae948ff22f4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258261",
+    "id": 132475258261,
+    "name": "branch encoding (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:21:16Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258253",
+    "external_id": "3516f3c7-c4d5-539d-8570-7c14d4dd79a7",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258253",
+    "id": 132475258253,
+    "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998287
+    },
+    "completed_at": "2026-11-14T14:20:45Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258251",
+    "external_id": "92056e1b-5994-57fe-b523-fb5bb57c32e2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217606/job/132475258251",
+    "id": 132475258251,
+    "name": "W1 QROM current closure (head, x64)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998254
+    },
+    "completed_at": "2026-11-14T14:39:06Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258238",
+    "external_id": "4f6fa4a4-7c69-5d27-bcd5-230984d88223",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258238",
+    "id": 132475258238,
+    "name": "branch encoding (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:29:21Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258226",
+    "external_id": "907ce951-0dd1-5a6d-b1b3-5a5f0aae0964",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258226",
+    "id": 132475258226,
+    "name": "original state and exit (ubuntu-24.04, head, test)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998150
+    },
+    "completed_at": "2026-11-14T14:39:23Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258208",
+    "external_id": "63ce5660-0894-54f7-b5f5-0794491f0c42",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217558/job/132475258208",
+    "id": 132475258208,
+    "name": "next architecture (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": "2026-11-14T14:34:18Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258206",
+    "external_id": "2010fa85-cbd4-55aa-9004-b565e5e67269",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258206",
+    "id": 132475258206,
+    "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998046
+    },
+    "completed_at": "2026-11-14T14:22:47Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258169",
+    "external_id": "e5fdb3d9-98a1-5711-ae26-b563eeaf5308",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258169",
+    "id": 132475258169,
+    "name": "Original budget controls (pool-scan-before)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998099
+    },
+    "completed_at": "2026-11-14T14:25:10Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258160",
+    "external_id": "59043a2b-c8e1-5b34-85c0-dd263bebbb45",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217532/job/132475258160",
+    "id": 132475258160,
+    "name": "reference (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997992
+    },
+    "completed_at": "2026-11-14T14:20:32Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217493/job/132475258142",
+    "external_id": "9aa42de2-3438-551a-ba70-a48801885f14",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217493/job/132475258142",
+    "id": 132475258142,
+    "name": "structural-readback (head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998085
+    },
+    "completed_at": "2026-11-14T14:20:38Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258119",
+    "external_id": "894b09c8-a5f4-5c67-a546-d7475113a7bd",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217531/job/132475258119",
+    "id": 132475258119,
+    "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998023
+    },
+    "completed_at": "2026-11-14T14:23:58Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217506/job/132475258113",
+    "external_id": "4e726fd4-d282-51e1-98f2-5782d7efbaed",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217506/job/132475258113",
+    "id": 132475258113,
+    "name": "W1 transparent candidate (head, x64)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998046
+    },
+    "completed_at": "2026-11-14T14:39:49Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258097",
+    "external_id": "e424ffc5-f8d9-55c4-a717-87954ab8f931",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258097",
+    "id": 132475258097,
+    "name": "Original budget controls (fixed)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997776
+    },
+    "completed_at": "2026-11-14T14:27:57Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258089",
+    "external_id": "7379943a-3413-565e-b1a7-4b0f18ba9d7a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217416/job/132475258089",
+    "id": 132475258089,
+    "name": "original state and exit (ubuntu-24.04, prospective-merge, test)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:19:15Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258082",
+    "external_id": "b395621c-8d31-5f10-a0ca-41931aebce24",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258082",
+    "id": 132475258082,
+    "name": "retained-failure",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998254
+    },
+    "completed_at": "2026-11-14T14:42:48Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258066",
+    "external_id": "4bc87798-09f7-5aaa-b500-90ce9f61df49",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217593/job/132475258066",
+    "id": 132475258066,
+    "name": "branch encoding (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998046
+    },
+    "completed_at": "2026-11-14T14:22:46Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258063",
+    "external_id": "0132a467-9a12-5f76-9a53-2c8cb0697079",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475258063",
+    "id": 132475258063,
+    "name": "Original budget controls (budget-before-v2)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998116
+    },
+    "completed_at": "2026-11-14T14:26:05Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217549/job/132475258052",
+    "external_id": "5eb8ea58-e881-5874-a3ee-ef299b1bf037",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217549/job/132475258052",
+    "id": 132475258052,
+    "name": "native-fullpath-controls",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998260
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258045",
+    "external_id": "d6693383-888a-52a4-b4cc-a5fece10e01b",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217597/job/132475258045",
+    "id": 132475258045,
+    "name": "PQ network and witness (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998065
+    },
+    "completed_at": "2026-11-14T14:20:42Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258040",
+    "external_id": "c4d195ef-4dfe-50a0-a972-4ad8dd44c22f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217520/job/132475258040",
+    "id": 132475258040,
+    "name": "W1 QROM current V2 (prospective-merge, x64)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:27:48Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258038",
+    "external_id": "9898993a-b0dd-5e42-ae09-c44a50667535",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258038",
+    "id": 132475258038,
+    "name": "native boundary (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998223
+    },
+    "completed_at": "2026-11-14T14:20:29Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217581/job/132475258036",
+    "external_id": "5ac63633-dc4a-5450-aced-e9877542f303",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217581/job/132475258036",
+    "id": 132475258036,
+    "name": "source-head-observation",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:28:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258032",
+    "external_id": "ebdf6ff7-d9d2-5364-a7f0-58b10ef64d29",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258032",
+    "id": 132475258032,
+    "name": "native boundary (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:26:36Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258010",
+    "external_id": "65dbb5dd-2dd3-5c20-b7ee-d89567e1264a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475258010",
+    "id": 132475258010,
+    "name": "native boundary (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998025
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217504/job/132475257978",
+    "external_id": "a0778b48-63e2-52ef-b7b3-85655d5a1a0a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217504/job/132475257978",
+    "id": 132475257978,
+    "name": "native-components (ubuntu-24.04)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998023
+    },
+    "completed_at": "2026-11-14T14:23:46Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217506/job/132475257953",
+    "external_id": "64b7b914-0671-52ad-8fc7-2d5a50df4185",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217506/job/132475257953",
+    "id": 132475257953,
+    "name": "W1 transparent candidate (prospective-merge, x64)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998022
+    },
+    "completed_at": "2026-11-14T14:21:23Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217502/job/132475257919",
+    "external_id": "f86fd85a-2bc5-54e6-bd47-bdb2bd23adf9",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217502/job/132475257919",
+    "id": 132475257919,
+    "name": "Finite credit contract (prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998000
+    },
+    "completed_at": "2026-11-14T14:21:20Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217494/job/132475257866",
+    "external_id": "3bf9e852-23bf-5e1a-a041-9b0f0af62eb0",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217494/job/132475257866",
+    "id": 132475257866,
+    "name": "Work and time contract (prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997992
+    },
+    "completed_at": "2026-11-14T14:20:21Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217493/job/132475257860",
+    "external_id": "653ddc83-18ff-5fe9-b70b-d26c70a1620d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217493/job/132475257860",
+    "id": 132475257860,
+    "name": "structural-readback (prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:21:01Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257847",
+    "external_id": "467d23ae-6ec4-5b30-b250-a25aa67c6af6",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257847",
+    "id": 132475257847,
+    "name": "CodeQL local SARIF (actions, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998046
+    },
+    "completed_at": "2026-11-14T14:21:41Z",
+    "conclusion": "failure",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475257835",
+    "external_id": "f9732ccf-7669-5f2a-9039-ce7d16b2e6c0",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217513/job/132475257835",
+    "id": 132475257835,
+    "name": "Original budget controls (pool-before-v2)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:38:37Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257822",
+    "external_id": "1be14120-b9d1-5c8a-a4a0-4025dd841a81",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257822",
+    "id": 132475257822,
+    "name": "CodeQL local SARIF (rust, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:27:27Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257818",
+    "external_id": "ec22dd31-22fe-5377-8c19-223764f80a6e",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257818",
+    "id": 132475257818,
+    "name": "CodeQL local SARIF (python, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998022
+    },
+    "completed_at": "2026-11-14T14:22:00Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217502/job/132475257810",
+    "external_id": "8036ea6e-cae8-5662-9da7-a64579931431",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217502/job/132475257810",
+    "id": 132475257810,
+    "name": "Finite credit contract (head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997788
+    },
+    "completed_at": "2026-11-14T14:20:12Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217417/job/132475257790",
+    "external_id": "365f3901-6cad-5859-81b4-045cd0eb03d2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217417/job/132475257790",
+    "id": 132475257790,
+    "name": "native-use-readback (head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:35:48Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257776",
+    "external_id": "6b851326-07da-5ab5-882b-a8302abb6ad5",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257776",
+    "id": 132475257776,
+    "name": "CodeQL local SARIF (rust, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998025
+    },
+    "completed_at": null,
+    "conclusion": null,
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217504/job/132475257771",
+    "external_id": "9f47aabb-2592-5a44-be8e-cbaf98821921",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217504/job/132475257771",
+    "id": 132475257771,
+    "name": "native-components (ubuntu-24.04-arm)",
+    "started_at": "2026-11-14T14:19:10Z",
+    "status": "in_progress"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:20:56Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257756",
+    "external_id": "60a226eb-f834-5639-93de-a6ee854280ce",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257756",
+    "id": 132475257756,
+    "name": "CodeQL local SARIF (actions, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998036
+    },
+    "completed_at": "2026-11-14T14:27:42Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475257740",
+    "external_id": "6b43caa8-35ae-5def-a9e2-5cb35904661d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217514/job/132475257740",
+    "id": 132475257740,
+    "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997730
+    },
+    "completed_at": "2026-11-14T14:24:24Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257610",
+    "external_id": "8911a680-e052-5000-9b65-835c73d0d9e4",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217396/job/132475257610",
+    "id": 132475257610,
+    "name": "CodeQL local SARIF (python, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:20:10Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257588",
+    "external_id": "22405899-1396-560c-aa59-745cb69501c2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257588",
+    "id": 132475257588,
+    "name": "contracts (proof-profile, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:20:28Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257584",
+    "external_id": "6875e72a-0120-5523-bd7f-d7288857819b",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257584",
+    "id": 132475257584,
+    "name": "contracts (scope, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:34:05Z",
+    "conclusion": "cancelled",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257564",
+    "external_id": "3417d0df-2e3f-5b30-8c63-02e18e85a489",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257564",
+    "id": 132475257564,
+    "name": "cleanup (macos-15, prospective-merge)",
+    "started_at": "2026-11-14T14:19:02Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:20:13Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257553",
+    "external_id": "483c4cb8-0296-53df-b66b-d3cb40644ff2",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257553",
+    "id": 132475257553,
+    "name": "cleanup (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:20:26Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257550",
+    "external_id": "c40c9cff-982b-5bea-8c16-0490a2a04ee7",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257550",
+    "id": 132475257550,
+    "name": "contracts (scope, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:20:16Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257547",
+    "external_id": "3b1f0d9a-dc6c-597b-8c4f-de83c3e09b99",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257547",
+    "id": 132475257547,
+    "name": "cleanup (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:06Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997788
+    },
+    "completed_at": "2026-11-14T14:20:18Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217417/job/132475257541",
+    "external_id": "2b351383-4eac-5b02-922e-272cd832414f",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217417/job/132475257541",
+    "id": 132475257541,
+    "name": "native-use-readback (prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997701
+    },
+    "completed_at": "2026-11-14T14:34:39Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257540",
+    "external_id": "cff649e0-fa82-5151-ac5b-ae2ee9147d10",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257540",
+    "id": 132475257540,
+    "name": "recent batch (ubuntu-24.04-arm, head)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:21:27Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257506",
+    "external_id": "25669dd6-32f3-5562-82fb-87e6fbcc0fe6",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257506",
+    "id": 132475257506,
+    "name": "contracts (proof-profile, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997701
+    },
+    "completed_at": "2026-11-14T14:35:33Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257502",
+    "external_id": "6ea4201e-8155-5bd0-91b5-4a03f55692c3",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257502",
+    "id": 132475257502,
+    "name": "recent batch (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:20:10Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257501",
+    "external_id": "3457c003-42ae-5409-b875-e8546475284c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257501",
+    "id": 132475257501,
+    "name": "cleanup (ubuntu-24.04, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064998000
+    },
+    "completed_at": "2026-11-14T14:21:19Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217494/job/132475257498",
+    "external_id": "21eca989-69ad-5ffb-b016-c52e444e88d1",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217494/job/132475257498",
+    "id": 132475257498,
+    "name": "Work and time contract (head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:20:16Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257495",
+    "external_id": "eeed3111-22e8-5791-9891-a35f539b45be",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257495",
+    "id": 132475257495,
+    "name": "contracts (campaign-reader, head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997701
+    },
+    "completed_at": "2026-11-14T14:34:30Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257490",
+    "external_id": "3a5eda52-5e80-538d-be20-dc92609481d5",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257490",
+    "id": 132475257490,
+    "name": "recent batch (ubuntu-24.04, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:22:05Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257400",
+    "external_id": "9b337cf3-f075-5930-8ba1-bd7cf27b8c0a",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257400",
+    "id": 132475257400,
+    "name": "aggregate-owner-controls (head)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:34:04Z",
+    "conclusion": "cancelled",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257368",
+    "external_id": "8017bb0e-0295-56f6-88cd-2fda2b81fa54",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257368",
+    "id": 132475257368,
+    "name": "cleanup (macos-15, head)",
+    "started_at": "2026-11-14T14:19:02Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997642
+    },
+    "completed_at": "2026-11-14T14:21:03Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217363/job/132475257353",
+    "external_id": "a475f3ab-a4b8-53e4-bd5e-916638fc7e31",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217363/job/132475257353",
+    "id": 132475257353,
+    "name": "build-inputs",
+    "started_at": "2026-11-14T14:19:04Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997701
+    },
+    "completed_at": "2026-11-14T14:35:42Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257337",
+    "external_id": "6b49341f-24bc-59ba-aa44-0c6842a1943c",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217384/job/132475257337",
+    "id": 132475257337,
+    "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:08Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:20:17Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257316",
+    "external_id": "6c2a16ab-0885-5ace-af25-dd2f1eac4421",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257316",
+    "id": 132475257316,
+    "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+    "started_at": "2026-11-14T14:19:07Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997679
+    },
+    "completed_at": "2026-11-14T14:20:39Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257308",
+    "external_id": "fcb21566-203b-53be-8c81-7da6143f7baf",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217375/job/132475257308",
+    "id": 132475257308,
+    "name": "contracts (campaign-reader, prospective-merge)",
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064997608
+    },
+    "completed_at": "2026-11-14T14:22:04Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257208",
+    "external_id": "f1a51212-037c-50b1-8522-399bbc486092",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217351/job/132475257208",
+    "id": 132475257208,
+    "name": "aggregate-owner-controls (prospective-merge)",
+    "started_at": "2026-11-14T14:19:04Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064980488
+    },
+    "completed_at": "2026-11-14T14:32:39Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475241299",
+    "external_id": "8cd1b89e-553e-5c15-a54d-50860b17484d",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475241299",
+    "id": 132475241299,
+    "name": "Analyze (rust)",
+    "started_at": "2026-11-14T14:19:01Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064980488
+    },
+    "completed_at": "2026-11-14T14:27:34Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475241078",
+    "external_id": "d94daea9-74f8-5f95-90dc-2ab375d58fea",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475241078",
+    "id": 132475241078,
+    "name": "Analyze (python)",
+    "started_at": "2026-11-14T14:19:02Z",
+    "status": "completed"
+  },
+  {
+    "actual_tested_source_verified": false,
+    "app": {
+      "id": 15368,
+      "name": "GitHub Actions",
+      "slug": "github-actions"
+    },
+    "app15368": true,
+    "check_suite": {
+      "id": 118064980488
+    },
+    "completed_at": "2026-11-14T14:21:03Z",
+    "conclusion": "success",
+    "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475240744",
+    "external_id": "ddb05036-cb62-50ba-be6b-ff4bd7b9e006",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604210763/job/132475240744",
+    "id": 132475240744,
+    "name": "Analyze (actions)",
+    "started_at": "2026-11-14T14:19:01Z",
+    "status": "completed"
+  }
+]

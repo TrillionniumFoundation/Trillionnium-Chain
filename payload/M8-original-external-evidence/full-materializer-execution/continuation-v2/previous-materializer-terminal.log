@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File [35m"<string>"[0m, line [35m87[0m, in [35m<module>[0m
-    out=save(S/row["path"],cache[row["path"]]);assert out["bytes"]==row["bytes"] and out["sha256"]==row["sha256"]
-  File [35m"<string>"[0m, line [35m23[0m, in [35msave[0m
-    r=read(p);assert r==raw
-  File [35m"<string>"[0m, line [35m12[0m, in [35mread[0m
-    nxt=os.open(n,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=dr);os.close(dr);dr=nxt
-[1;35mOSError[0m: [35m[Errno 24] Too many open files: 'private'[0m

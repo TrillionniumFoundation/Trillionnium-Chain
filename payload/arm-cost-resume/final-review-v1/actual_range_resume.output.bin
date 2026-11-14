@@ -1,0 +1,6 @@
+{"event": "request-started", "label": "artifact-metadata", "pid": 43153, "time": "2026-11-14T15:44:38.002737+00:00", "automatic_retry": false}
+{"event": "request-started", "label": "remaining-range", "pid": 43157, "time": "2026-11-14T15:44:40.578428+00:00", "automatic_retry": false}
+{"event": "request-progress", "label": "remaining-range", "pid": 43157, "elapsed_seconds": 30.089437082991935, "accepted_body_bytes": 179086, "http_status": 206}
+{"event": "request-progress", "label": "remaining-range", "pid": 43157, "elapsed_seconds": 60.08141241699923, "accepted_body_bytes": 392078, "http_status": 206}
+{"event": "request-progress", "label": "remaining-range", "pid": 43157, "elapsed_seconds": 90.05542483300087, "accepted_body_bytes": 654222, "http_status": 206}
+{"status": "HOLD", "summary": {"path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/summary.json", "bytes": 6660, "sha256": "a8bc3bb1da7b0e049185f0846efd4e71da29cb255fa21b00462a739a57679889"}, "whole_artifact_sha256_verified": true, "all_member_crc_verified": false, "original_inputs_before_after_valid": true, "qualification": false}

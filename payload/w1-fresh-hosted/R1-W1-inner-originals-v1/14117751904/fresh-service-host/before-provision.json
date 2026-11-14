@@ -1,0 +1,50 @@
+{
+  "boot_id": "c74dcc33-7fd8-4881-9f8e-1c0933eadacd",
+  "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+  "consensus_or_model_authority": false,
+  "counters": {
+    "cgroup.events": null,
+    "cpu.stat": null,
+    "memory.current": null,
+    "memory.events": null,
+    "pids.current": null
+  },
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "gid": 1001,
+  "host_readiness_only": true,
+  "installed_unit_sha256": null,
+  "limits": {
+    "cpu.max": null,
+    "cpu.max.burst": null,
+    "memory.max": null,
+    "memory.swap.max": null,
+    "pids.max": null
+  },
+  "observed_utc": "2026-11-14T14:20:47.005738+00:00",
+  "parent": null,
+  "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+  "phase": "before-provision",
+  "pid": 2577,
+  "read_errors": {
+    "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+    "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+    "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+  },
+  "schema": "trnm-ci-original-public-host-observation-v1",
+  "service": "trnm-from-zero-43604217632-1-fresh-challenge-service-2577.service",
+  "thread_cgroup": "0::/system.slice/hosted-compute-agent.service",
+  "thread_privileges": {
+    "CapBnd": "000001ffffffffff",
+    "NoNewPrivs": "0"
+  },
+  "uid": 1001
+}

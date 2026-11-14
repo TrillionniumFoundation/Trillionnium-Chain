@@ -1,0 +1,17 @@
+{"event":"target_resolved","since_capture_ms":23.837}
+{"addresses":[],"event":"resolved_addresses","family":"IPv6","since_capture_ms":23.88}
+{"addresses":["140.82.121.4"],"event":"resolved_addresses","family":"IPv4","since_capture_ms":23.939}
+{"event":"tcp_connect_attempt","ip":"140.82.121.4","port":443,"since_capture_ms":23.963}
+{"connection":null,"event":"tcp_connected","ip":"140.82.121.4","port":443,"since_capture_ms":297.173}
+{"event":"alpn_offered","protocols":["h2","http/1.1"],"since_capture_ms":297.378}
+{"event":"tls_negotiated","since_capture_ms":929.483,"version":"TLSv1.3"}
+{"event":"alpn_accepted","protocol":"h2","since_capture_ms":929.644}
+{"event":"tls_certificate_verified","since_capture_ms":929.881}
+{"event":"http_version","since_capture_ms":929.93,"version":"2"}
+{"connection":0,"event":"connection_kept","since_capture_ms":2474.537}
+{"event":"connection_reused","since_capture_ms":2525.474}
+{"connection":0,"event":"connection_kept","since_capture_ms":9682.211}
+{"event":"connection_reused","since_capture_ms":30977.104}
+{"connection":0,"event":"connection_kept","since_capture_ms":32313.065}
+{"event":"connection_reused","since_capture_ms":32313.5}
+{"connection":0,"event":"connection_kept","since_capture_ms":2122293.349}

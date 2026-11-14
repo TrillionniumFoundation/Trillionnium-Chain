@@ -1,0 +1,518 @@
+{
+  "architecture": "x64",
+  "artifact_id": 14119380013,
+  "completion": {
+    "bytes": 5126,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119380013.completion.json",
+    "sha256": "83129874a70e5b07873296ee2c81b2bf0b00273ee25b07eeab61bbad3192580f"
+  },
+  "extracted_files": [
+    {
+      "artifact_id": 14119380013,
+      "bytes": 73776,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/manifest.json",
+      "sha256": "1a4046711738a0d9d09bc9f1ccbe6be568d31f8decb6b59074119d0c8b61f6bd",
+      "zip_member": "from-zero-native/manifest.json"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 190,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 885,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "5b54ebf82b75647fb8efbecd4084bba3596fcb4ced331e2264f95ba914c5c755",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 196,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 896,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "c5ad1d058b1134ef7d07d112f301f43207462469b56651596569063b767cc344",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 3365,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "2d20233d85841bc47942cd0bde02542f59ed30704f7bcd4f3acb84d2c915bf7e",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 897,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "6b604ab85bae302e96a62ae66d8361bb68738c6710a6d8e25d6fd82e00896d5d",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 917,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "6ac65deffbd8a82a65b7804537d3bd4e69e736940c435ad340dc5666b411eba0",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 912,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "db8aa10668b764356d945c5af149e72c2171a9051b3bb99a4b8b8169683167b6",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 408,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "55ed22d9dbe4494472fb7a1c94313649e900a718b53a950d0093f79c17e6a035",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 0,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "artifact_id": 14119380013,
+      "bytes": 949,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "10d9ab88301145c5b9cc541530c5510934983b5bacaba630319de34c81fd253f",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    }
+  ],
+  "filemap": {
+    "actual_non_manifest_files_under_prefix": 54,
+    "all_declared_hashes_match": true,
+    "declared_files": 54,
+    "exact_prefix_closure": true,
+    "extra_non_manifest_files_under_prefix": [],
+    "hash_mismatches": [],
+    "missing": []
+  },
+  "manifest": {
+    "bytes": 73776,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/manifest.json",
+    "sha256": "1a4046711738a0d9d09bc9f1ccbe6be568d31f8decb6b59074119d0c8b61f6bd"
+  },
+  "manifest_outcome": {
+    "all_named_tests_passed": true,
+    "binary_sha256_after": "2e04ae64a9c510f56d322fc79478ce8390dfa95d39b07bdd3798ae26e2be3040",
+    "binary_sha256_before": "2e04ae64a9c510f56d322fc79478ce8390dfa95d39b07bdd3798ae26e2be3040",
+    "confirmation_report": null,
+    "execution_finished": false,
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "format_passed": true,
+    "independent_wan_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "service_report": {
+      "phases": 2,
+      "schema": "public-v3-local-from-zero-service-v2",
+      "scope": "retained finite native report consistency; no independent work or state oracle",
+      "sha256": "5a2a111aa7d4a8398e79305ef910e5ede55f49e4ec532bdaa8fabf2f4ade07c6"
+    },
+    "source_recompiled": true,
+    "sustained_report": {
+      "phases": [
+        {
+          "attacks": 372,
+          "connections": 400,
+          "honest_reads": 26,
+          "honest_submissions": 1,
+          "late_rejections": 372,
+          "minimum_sampled_stored_credit_ns": 1792370244,
+          "mutation_cpu_refusals": 0,
+          "phase": 0
+        },
+        {
+          "attacks": 403,
+          "connections": 433,
+          "honest_reads": 28,
+          "honest_submissions": 1,
+          "late_rejections": 403,
+          "minimum_sampled_stored_credit_ns": 1794238612,
+          "mutation_cpu_refusals": 0,
+          "phase": 1
+        }
+      ],
+      "schema": "public-v3-sustained-local-from-zero-v1",
+      "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification",
+      "sha256": "0f1654cb3a2249f684b34a71e01f0c5b85a7809681b578f415787718601bace0"
+    },
+    "work_hardness_accepted": false
+  },
+  "manifest_schema": "trnm-from-zero-native-execution-v3",
+  "member_index": {
+    "bytes": 42637,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119380013.index.json",
+    "sha256": "2f0d752cae4e3bec48ac74c7df2b6a1f4cc0fad4300548ed1cd4e812bb8f2b87"
+  },
+  "no_inner_code_executed": true,
+  "no_retest": true,
+  "report_kept_in_original_ZIP": true,
+  "report_member": {
+    "bytes": 11533430,
+    "compressed_bytes": 523301,
+    "crc32": "a83834c7",
+    "mode": 33188,
+    "path": "from-zero-native/confirmation/report.json",
+    "sha256": "76c781dd78518e8287e6d8ff28462c5d35d05c0b4ce29a96147ac232983d1188"
+  },
+  "runs": [
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+      },
+      "originals": {
+        "process.json": {
+          "bytes": 885,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+          "sha256": "5b54ebf82b75647fb8efbecd4084bba3596fcb4ced331e2264f95ba914c5c755"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 190,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+          "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+        }
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1940000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 0,
+        "major_faults": 0,
+        "max_rss_kib": 54328,
+        "minor_faults": 159,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+        "system_cpu_ns": 1940000,
+        "timed_out": false,
+        "user_cpu_ns": 0,
+        "voluntary_switches": 4,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 5552074
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+      },
+      "originals": {
+        "process.json": {
+          "bytes": 896,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+          "sha256": "c5ad1d058b1134ef7d07d112f301f43207462469b56651596569063b767cc344"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 196,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+          "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda"
+        }
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 3933000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 0,
+        "major_faults": 0,
+        "max_rss_kib": 54328,
+        "minor_faults": 254,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda",
+        "system_cpu_ns": 983000,
+        "timed_out": false,
+        "user_cpu_ns": 2950000,
+        "voluntary_switches": 3,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 5478508
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+      },
+      "originals": {
+        "process.json": {
+          "bytes": 897,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+          "sha256": "6b604ab85bae302e96a62ae66d8361bb68738c6710a6d8e25d6fd82e00896d5d"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3365,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+          "sha256": "2d20233d85841bc47942cd0bde02542f59ed30704f7bcd4f3acb84d2c915bf7e"
+        }
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 23442000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 1,
+        "major_faults": 0,
+        "max_rss_kib": 54328,
+        "minor_faults": 535,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "2d20233d85841bc47942cd0bde02542f59ed30704f7bcd4f3acb84d2c915bf7e",
+        "system_cpu_ns": 6837000,
+        "timed_out": false,
+        "user_cpu_ns": 16605000,
+        "voluntary_switches": 31,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 99088147
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+      },
+      "originals": {
+        "process.json": {
+          "bytes": 912,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+          "sha256": "db8aa10668b764356d945c5af149e72c2171a9051b3bb99a4b8b8169683167b6"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 917,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+          "sha256": "6ac65deffbd8a82a65b7804537d3bd4e69e736940c435ad340dc5666b411eba0"
+        }
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 2531462000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 1540,
+        "major_faults": 0,
+        "max_rss_kib": 159608,
+        "minor_faults": 39269,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6ac65deffbd8a82a65b7804537d3bd4e69e736940c435ad340dc5666b411eba0",
+        "system_cpu_ns": 667673000,
+        "timed_out": false,
+        "user_cpu_ns": 1863789000,
+        "voluntary_switches": 9571,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 10302040907
+      }
+    },
+    {
+      "failure": null,
+      "failure_diagnostic": null,
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+      },
+      "originals": {
+        "process.json": {
+          "bytes": 949,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "sha256": "10d9ab88301145c5b9cc541530c5510934983b5bacaba630319de34c81fd253f"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 408,
+          "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/inner-originals-v1/14119380013/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+          "sha256": "55ed22d9dbe4494472fb7a1c94313649e900a718b53a950d0093f79c17e6a035"
+        }
+      },
+      "passed": true,
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 2086087000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 904,
+        "major_faults": 0,
+        "max_rss_kib": 92096,
+        "minor_faults": 22586,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "55ed22d9dbe4494472fb7a1c94313649e900a718b53a950d0093f79c17e6a035",
+        "system_cpu_ns": 984633000,
+        "timed_out": false,
+        "user_cpu_ns": 1101454000,
+        "voluntary_switches": 13069,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 9086552917
+      }
+    }
+  ],
+  "schema": "trnm-R1-cross-arch-native-original-inspection-v1",
+  "source_after": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "source_before": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "source_before_after_equal": true,
+  "zip": {
+    "bytes": 9851618,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/14119380013.zip",
+    "sha256": "d46ce31d5db37912f19115160d8b46e0bf32597fb3c4976a9c80b70bcc3df456"
+  }
+}

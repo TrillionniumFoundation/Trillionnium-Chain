@@ -1,0 +1,97 @@
+{
+  "excerpt_is_not_complete_log": true,
+  "long_matching_lines_omitted": 0,
+  "matching_lines": 21,
+  "original": {
+    "bytes": 323275,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258169-original-log.stdout",
+    "sha256": "24a5a568afc63d5135c485e9c61312fddbaf05696c5b678a87978b131d1f515b"
+  },
+  "selected_last_matching_lines": [
+    {
+      "line": 19,
+      "text": "2026-11-14T14:19:08.1954545Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md"
+    },
+    {
+      "line": 32,
+      "text": "2026-11-14T14:19:08.7866191Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)"
+    },
+    {
+      "line": 167,
+      "text": "2026-11-14T14:20:23.7404521Z  * [new branch]          audit/pq-consensus-unqualified-schema-and-null-provenance-20261030 -> origin/audit/pq-consensus-unqualified-schema-and-null-provenance-20261030"
+    },
+    {
+      "line": 489,
+      "text": "2026-11-14T14:20:23.7799747Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 703,
+      "text": "2026-11-14T14:20:23.8040446Z  * [new branch]          fix/chain-w1-frozen-inventory-20261028 -> origin/fix/chain-w1-frozen-inventory-20261028"
+    },
+    {
+      "line": 780,
+      "text": "2026-11-14T14:20:23.8110404Z  * [new branch]          fix/pon-receipt-input-owner-20261010 -> origin/fix/pon-receipt-input-owner-20261010"
+    },
+    {
+      "line": 831,
+      "text": "2026-11-14T14:20:23.8159404Z  * [new branch]          fix/pq-root-v4-floor-nine-test-roster-20261110 -> origin/fix/pq-root-v4-floor-nine-test-roster-20261110"
+    },
+    {
+      "line": 1133,
+      "text": "2026-11-14T14:20:33.4046532Z Updating files:  86% (35843/41677)"
+    },
+    {
+      "line": 1145,
+      "text": "2026-11-14T14:20:34.0629052Z Updating files:  97% (40427/41677)"
+    },
+    {
+      "line": 1481,
+      "text": "2026-11-14T14:22:10.4362404Z  * [new branch]          evidence/runtime-decode-54467f9-20261022 -> origin/evidence/runtime-decode-54467f9-20261022"
+    },
+    {
+      "line": 1526,
+      "text": "2026-11-14T14:22:10.4404940Z  * [new branch]          fix/chain-cell-inventory-20261104 -> origin/fix/chain-cell-inventory-20261104"
+    },
+    {
+      "line": 1615,
+      "text": "2026-11-14T14:22:10.4483519Z  * [new branch]          fix/chain-learning-business-closure-20261109-1a404f66 -> origin/fix/chain-learning-business-closure-20261109-1a404f66"
+    },
+    {
+      "line": 1631,
+      "text": "2026-11-14T14:22:10.4496404Z  * [new branch]          fix/chain-main-pair-source-repair-20261024 -> origin/fix/chain-main-pair-source-repair-20261024"
+    },
+    {
+      "line": 2192,
+      "text": "2026-11-14T14:22:13.4041103Z Updating files:  31% (8676/27987)"
+    },
+    {
+      "line": 2283,
+      "text": "2026-11-14T14:22:17.4040417Z "
+    },
+    {
+      "line": 2284,
+      "text": "2026-11-14T14:22:17.4040791Z HEAD is now at ae657e262 test(pon): expose missed original pool reconciliation stop checks"
+    },
+    {
+      "line": 2358,
+      "text": "2026-11-14T14:22:42.8008987Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 2359,
+      "text": "2026-11-14T14:22:42.8105151Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 2381,
+      "text": "2026-11-14T14:22:42.9970404Z (node:2938) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead."
+    },
+    {
+      "line": 2398,
+      "text": "2026-11-14T14:22:44.3285498Z Temporarily overriding HOME='/home/runner/work/_temp/2ee0dd81-0d2c-4888-a404-4d4289d4577b' before making global git config changes"
+    },
+    {
+      "line": 2420,
+      "text": "2026-11-14T14:22:44.7831721Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ],
+  "total_lines": 2420
+}

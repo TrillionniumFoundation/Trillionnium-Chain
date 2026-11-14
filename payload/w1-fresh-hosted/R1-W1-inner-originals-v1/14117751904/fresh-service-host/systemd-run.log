@@ -1,0 +1,8 @@
+Running as unit: trnm-from-zero-43604217632-1-fresh-challenge-service-2577.service
+{"passed": false, "failures": ["from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET", "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"]}
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 2min 56.411s
+CPU time consumed: 43.748s
+Memory peak: 4.0M
+Memory swap peak: 0B

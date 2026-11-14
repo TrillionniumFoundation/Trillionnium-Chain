@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "-H",
+    "X-GitHub-Api-Version: 2026-03-10",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132481412290"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "elapsed_seconds": 2.975662790995557,
+  "errors": [],
+  "finished_at": "2026-11-14T15:52:29.825675+00:00",
+  "label": "132481412290-metadata",
+  "method": "GET",
+  "pid": 52281,
+  "process_returncode": 0,
+  "size_exceeded": false,
+  "started_at": "2026-11-14T15:52:26.850100+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/132481412290-metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 3144,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/132481412290-metadata.stdout",
+    "sha256": "1abc69cc11b69076fd887b2933854a32e99dce522dfd82b24cb16133883b64d3"
+  },
+  "timeout_reached": false,
+  "timeout_seconds": 90
+}

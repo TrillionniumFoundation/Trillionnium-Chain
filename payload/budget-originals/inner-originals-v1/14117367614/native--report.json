@@ -1,0 +1,139 @@
+{
+  "cases": [],
+  "commands": [
+    {
+      "cleanup_errors": [],
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+      "elapsed_wall_ns": 57745852,
+      "exit_code": 0,
+      "failure": null,
+      "pid": 2767,
+      "started": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/driver-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 133,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/driver-preflight.stdout",
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+      }
+    },
+    {
+      "cleanup_errors": [],
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+      "elapsed_wall_ns": 55127392,
+      "exit_code": 0,
+      "failure": null,
+      "pid": 2825,
+      "started": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/subject-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 133,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43604217513-1/native/subject-preflight.stdout",
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+      }
+    }
+  ],
+  "errors": [
+    "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+  ],
+  "executables": {},
+  "expected_driver": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "expected_failures": 2,
+  "expected_integration_passes": 0,
+  "expected_passes": 0,
+  "expected_source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+  "groups": [
+    "pool-scan"
+  ],
+  "matched_failure_controls": 0,
+  "matched_pass_controls": 0,
+  "mode": "pool-scan-before",
+  "native_campaign_executed": false,
+  "native_control_processes_started": 0,
+  "native_pool_integration_process_started": false,
+  "old_source_current_corpus_qualification": false,
+  "pool_integration": null,
+  "production_activation": false,
+  "required_lib_tests": [
+    "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+    "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows"
+  ],
+  "result": "FAIL",
+  "schema": "pon-original-budget-component-controls-v2",
+  "scope": "assigned-native-component-controls-only",
+  "source_after": {
+    "driver": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555020399,
+      "tracked_entries": 27987,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_before": {
+    "driver": {
+      "base": null,
+      "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "tested_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3994964901,
+      "tracked_entries": 41677,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555020399,
+      "tracked_entries": 27987,
+      "tracked_worktree_verified": true
+    }
+  },
+  "throughput_measured": false,
+  "whole_business_liveness_qualified": false
+}

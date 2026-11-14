@@ -1,0 +1,384 @@
+{
+  "error": null,
+  "frames": [],
+  "network_or_native_calls": 0,
+  "only_original_offline_inspector_called": true,
+  "original_HOLD_preserved": true,
+  "result": {
+    "confirmation_facts": {
+      "bytes": 39024,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/bounded-confirmation-report-facts.json",
+      "sha256": "2c95158ab4e84bb7bb87a3713f7b819f1e8711ced3c8e00d868e505c5cf66747"
+    },
+    "manifest": {
+      "bytes": 73771,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/manifest.json",
+      "sha256": "bf9d42534a15fea4c68a3f1298a91b2a9032c10b5f34f2cc0436b445d1fa69a8"
+    },
+    "manifest_outcome": {
+      "all_named_tests_passed": true,
+      "confirmation_report": null,
+      "execution_finished": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "independent_wan_accepted": false,
+      "passed": false,
+      "production_activation": false,
+      "service_report": {
+        "phases": 2,
+        "schema": "public-v3-local-from-zero-service-v2",
+        "scope": "retained finite native report consistency; no independent work or state oracle",
+        "sha256": "1ad0ec90121f837b093fc2aa9672ea0421a877beebbe2a093339c72c5626648e"
+      },
+      "source_recompiled": true,
+      "sustained_report": {
+        "phases": [
+          {
+            "attacks": 483,
+            "connections": 551,
+            "honest_reads": 66,
+            "honest_submissions": 1,
+            "late_rejections": 483,
+            "minimum_sampled_stored_credit_ns": 1791215214,
+            "mutation_cpu_refusals": 0,
+            "phase": 0
+          },
+          {
+            "attacks": 471,
+            "connections": 551,
+            "honest_reads": 78,
+            "honest_submissions": 1,
+            "late_rejections": 471,
+            "minimum_sampled_stored_credit_ns": 1796684780,
+            "mutation_cpu_refusals": 0,
+            "phase": 1
+          }
+        ],
+        "schema": "public-v3-sustained-local-from-zero-v1",
+        "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification",
+        "sha256": "a773a251c75e6075c0736c8b759aa2c57f2b9b86123fc7b930ce124f3b36080c"
+      },
+      "work_hardness_accepted": false
+    },
+    "member_index": {
+      "bytes": 42578,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/complete-zip-member-index.json",
+      "sha256": "a6f9cb3ca38caabd40f12bffc6bf1400fe65226ee7be29d405fbf0ec075633ef"
+    },
+    "native_filemap": {
+      "bytes": 118,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/native-manifest-filemap-verification.json",
+      "sha256": "c39fce6d767f091aef7d68aac5c2a489b525a9880aff4cb611a9f11d01c5dd24"
+    },
+    "no_inner_code_or_test_executed": true,
+    "runs": [
+      {
+        "failure": null,
+        "failure_diagnostic": null,
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+        },
+        "originals": {
+          "process.json": {
+            "bytes": 885,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+            "sha256": "cb5e789d60bcfd9e730804dab7602bfc5ea1789fb1ac1afe62cf8da09a0a9ff5"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 190,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+            "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+          }
+        },
+        "passed": true,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cpu_ns": 1708000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 0,
+          "major_faults": 0,
+          "max_rss_kib": 51028,
+          "minor_faults": 140,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e",
+          "system_cpu_ns": 0,
+          "timed_out": false,
+          "user_cpu_ns": 1708000,
+          "voluntary_switches": 4,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 5585441
+        }
+      },
+      {
+        "failure": null,
+        "failure_diagnostic": null,
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+        },
+        "originals": {
+          "process.json": {
+            "bytes": 898,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+            "sha256": "2aab18a1ef0419b444e678896a871b917c0ab4c66cafe1de5afe0d6ea36ca332"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 196,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+            "sha256": "39ee1b2fb59f9b43a9ad42273d5b96922b727fd9332645d734ad36909310fbaa"
+          }
+        },
+        "passed": true,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cpu_ns": 3706000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 2,
+          "major_faults": 0,
+          "max_rss_kib": 51028,
+          "minor_faults": 232,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "39ee1b2fb59f9b43a9ad42273d5b96922b727fd9332645d734ad36909310fbaa",
+          "system_cpu_ns": 1235000,
+          "timed_out": false,
+          "user_cpu_ns": 2471000,
+          "voluntary_switches": 3,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 79143562
+        }
+      },
+      {
+        "failure": null,
+        "failure_diagnostic": null,
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+        },
+        "originals": {
+          "process.json": {
+            "bytes": 897,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+            "sha256": "a40e3d5fb02852105ad4b63ba27c0ea8ba774c312e0091d8a88f88496ef71a9b"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 3364,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+            "sha256": "0e40a9d1a1363d1c54796f95d3f02ed5cffee10dd298724d3cfec9a8cf4d9fe7"
+          }
+        },
+        "passed": true,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cpu_ns": 19975000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 0,
+          "major_faults": 0,
+          "max_rss_kib": 51028,
+          "minor_faults": 520,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "0e40a9d1a1363d1c54796f95d3f02ed5cffee10dd298724d3cfec9a8cf4d9fe7",
+          "system_cpu_ns": 2219000,
+          "timed_out": false,
+          "user_cpu_ns": 17756000,
+          "voluntary_switches": 30,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 25759170
+        }
+      },
+      {
+        "failure": null,
+        "failure_diagnostic": null,
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+        },
+        "originals": {
+          "process.json": {
+            "bytes": 911,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+            "sha256": "3231442fa09e2424867b1cd166c21d8b59e1ab6dcfe17ac2db0483a607a3e152"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 916,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+            "sha256": "8afb053d4bdff30496d64b7805eebce3607229dfb1da4797cb9a928aaf8815f0"
+          }
+        },
+        "passed": true,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cpu_ns": 2432932000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 637,
+          "major_faults": 0,
+          "max_rss_kib": 196176,
+          "minor_faults": 48940,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "8afb053d4bdff30496d64b7805eebce3607229dfb1da4797cb9a928aaf8815f0",
+          "system_cpu_ns": 883173000,
+          "timed_out": false,
+          "user_cpu_ns": 1549759000,
+          "voluntary_switches": 28210,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 9910089626
+        }
+      },
+      {
+        "failure": null,
+        "failure_diagnostic": null,
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "named_execution": {
+          "executed_tests": 1,
+          "result": "PASS",
+          "scope": "named-libtest-execution-only",
+          "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+        },
+        "originals": {
+          "process.json": {
+            "bytes": 949,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+            "sha256": "1a759605ac0752fae80e2d736d85c24321b67abf19b3367c0450fec4e62473bb"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 408,
+            "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+            "sha256": "88aa55ff7a87ddc8b7fff5e95a67a89a35b865c3ee851139c21f2a0a3f1a009c"
+          }
+        },
+        "passed": true,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cpu_ns": 1750567000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "involuntary_switches": 900,
+          "major_faults": 0,
+          "max_rss_kib": 123188,
+          "minor_faults": 30718,
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "88aa55ff7a87ddc8b7fff5e95a67a89a35b865c3ee851139c21f2a0a3f1a009c",
+          "system_cpu_ns": 775312000,
+          "timed_out": false,
+          "user_cpu_ns": 975255000,
+          "voluntary_switches": 19181,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 9007739013
+        }
+      }
+    ],
+    "source_identity": {
+      "bytes": 1647,
+      "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1/source-before-after-extracted.json",
+      "sha256": "64c32fcc12cc92bae60dd65dc224130df08e1772bba3dd4c403ee47ec3d9e707"
+    }
+  },
+  "runtime": {
+    "capture_not_called": true,
+    "compiled_source_sha256": "89643383cab36c98575064c45ff0029693b3dd987ef7b453377c04e2a2dad34d",
+    "constants": {
+      "S_IFDIR": 16384,
+      "S_IFREG": 32768
+    },
+    "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "function_source_sha256": "fac31b68cf255ea209ff5e0faa5b42a4dbd2255098d8eb6b20f202ab53a8ba95",
+    "main_not_loaded_as_call": true,
+    "new_OUT_only": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-corrected-inspection-v1",
+    "stat_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py",
+    "version": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "zipfile_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/zipfile/__init__.py"
+  },
+  "schema": "trnm-arm-original-inspector-independent-observation-v1",
+  "source_correction": {
+    "corrected": {
+      "bytes": 29683,
+      "sha256": "89643383cab36c98575064c45ff0029693b3dd987ef7b453377c04e2a2dad34d"
+    },
+    "exact_changed_identifier": "stat.S_ISREG function to stat.S_IFREG regular-file type constant",
+    "link_special_and_encryption_guards_unchanged": true,
+    "original": {
+      "bytes": 29683,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py",
+      "sha256": "6aec3684388395ae38f6d871f5d764dce419a41ba1c62d425c81dabcb415b3f9"
+    },
+    "source_file_not_modified": true
+  }
+}

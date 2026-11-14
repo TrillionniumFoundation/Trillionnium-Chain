@@ -1,0 +1,20 @@
+{
+  "actual_terminal_exit": 0,
+  "actual_terminal_output_complete": true,
+  "automatic_polling": false,
+  "index": {
+    "bytes": 6184,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/closed-snapshot-v1/EVIDENCE_INDEX.json",
+    "sha256": "791679efc5a0de27c05267f7aff9d6d27559e5d4a5dfeef891751193372b7fea"
+  },
+  "indexed_bytes": 1032805,
+  "indexed_files": 24,
+  "progress": {
+    "bytes": 13659,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/closed-snapshot-v1/progress-delta.json",
+    "sha256": "78cda3c1f1b0eae6b90a7a5f783083a14c11cac208219944742c997424b82087"
+  },
+  "schema": "trnm-r1-ready019-snapshot-seal-v1",
+  "snapshot_scope": "metadata only; no qualification",
+  "status": "CLOSED"
+}

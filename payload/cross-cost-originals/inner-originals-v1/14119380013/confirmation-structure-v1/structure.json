@@ -1,0 +1,138 @@
+{
+  "artifact_id": 14119380013,
+  "no_code_executed": true,
+  "outline": {
+    "attacker_construction_cpu_ns": 6234822,
+    "attacker_construction_wall_ns": 6233987,
+    "finite_target_met": false,
+    "from_zero_construction": {
+      "first_element": {
+        "keys": [
+          "attacker_cpu_ns",
+          "attempt_budget",
+          "attempts",
+          "challenge",
+          "cpu_clock",
+          "header",
+          "packet",
+          "packet_encoding_cpu_ns",
+          "packet_encoding_ns",
+          "phase_intervals_nested_in_total",
+          "scope",
+          "search_cpu_ns",
+          "search_ns",
+          "setup_calls",
+          "setup_cpu_ns",
+          "setup_ns",
+          "status",
+          "total_wall_ns",
+          "winner_nonce"
+        ],
+        "type": "object"
+      },
+      "length": 16,
+      "type": "array"
+    },
+    "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+    "honest_chain_acquisition_wall_ns": 193592510,
+    "honest_chain_aggregate_cpu_ns": null,
+    "honest_chain_process_cpu_ns": 39768194,
+    "honest_chain_process_cpu_scope": {
+      "length": 202,
+      "prefix": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not p",
+      "type": "string"
+    },
+    "invariant_target_met": true,
+    "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+    "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+    "phases": {
+      "first_element": {
+        "keys": [
+          "accounting_closed",
+          "attacker_workers_cpu_ns",
+          "attacker_workers_cpu_scope",
+          "attacks",
+          "business_receive_clock",
+          "business_started_ns",
+          "client_confirmation_latency_ns",
+          "client_confirmed_before_original_window_end",
+          "client_confirmed_transactions",
+          "completed_false_calls_at_confirmation",
+          "completed_false_calls_before_business",
+          "confirmation_ended_ns",
+          "final_meter",
+          "finite_business_target_met",
+          "full_native_state_equal",
+          "honest_head_successes_in_window",
+          "honest_heads",
+          "honest_history",
+          "honest_submissions",
+          "independent_client_confirmation",
+          "independent_final_confirmation_stage",
+          "independent_history_page_replay",
+          "independent_operator_accepted",
+          "independent_replay_and_confirmation_cpu_ns",
+          "independent_replay_and_confirmation_wall_ns",
+          "initial_meter",
+          "initial_state_root",
+          "initial_tip",
+          "invariant_target_met",
+          "maximum_honest_head_gap_ns",
+          "mode",
+          "no_attack_accepted",
+          "observations",
+          "overlap_demonstrated",
+          "overlapping_false_calls",
+          "production_activation",
+          "public_network_ready",
+          "reader_cpu_ns",
+          "receiver_matches_valid_honest_prefix",
+          "requested_window_ns",
+          "resource_fairness_qualified",
+          "scope",
+          "service",
+          "target",
+          "task",
+          "verification_errors",
+          "work_profile_qualified",
+          "workers"
+        ],
+        "type": "object"
+      },
+      "length": 2,
+      "type": "array"
+    },
+    "policy_id": "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
+    "production_activation": false,
+    "public_network_ready": false,
+    "same_packet_sequence_in_both_runs": true,
+    "schema": "public-v3-signed-confirmation-pressure-v1",
+    "scope": {
+      "length": 185,
+      "prefix": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or ",
+      "type": "string"
+    },
+    "signed_honest_packets": {
+      "first_element": {
+        "length": 99418,
+        "prefix": "504e48310100df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4ef9c79ade09c69ab83c02",
+        "type": "string"
+      },
+      "length": 7,
+      "type": "array"
+    },
+    "strongest_honest_producer_used": false,
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+    "work_profile_qualified": false
+  },
+  "report": {
+    "bytes": 11533430,
+    "compressed_bytes": 523301,
+    "crc32": "a83834c7",
+    "mode": 33188,
+    "path": "from-zero-native/confirmation/report.json",
+    "sha256": "76c781dd78518e8287e6d8ff28462c5d35d05c0b4ce29a96147ac232983d1188"
+  }
+}

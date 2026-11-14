@@ -1,0 +1,807 @@
+{
+  "all_original_directory_device_inode_mode_unchanged": true,
+  "all_original_files_bytes_sha_identity_unchanged": true,
+  "files": [
+    {
+      "identity": [
+        16777233,
+        607232970,
+        33152,
+        1,
+        17851,
+        1794671981879556446,
+        1794671981879556446
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py",
+      "pin": {
+        "bytes": 17851,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-selected-members-v1.py",
+        "sha256": "812dca7d473b326cb052fa3455e385ebcef3b49b158f7a15c9ab710540c837d9"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231685,
+        33152,
+        1,
+        19563,
+        1794671848009497865,
+        1794671848009497865
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py",
+      "pin": {
+        "bytes": 19563,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py",
+        "sha256": "34f629cbbfabfd76f733a013d1349b631c75cc14bda59d64b69401d902d3d9f1"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233645,
+        33152,
+        1,
+        842707,
+        1794672061302918893,
+        1794672061302918893
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/business-boundaries.json",
+      "pin": {
+        "bytes": 842707,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/business-boundaries.json",
+        "sha256": "13b5399bfd017a776aaf9b21f0aae7911cfaf18b6aafddbcff097622ffda4660"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233955,
+        33152,
+        1,
+        1987,
+        1794672092320707732,
+        1794672092320707732
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-boundaries.py",
+      "pin": {
+        "bytes": 1987,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-boundaries.py",
+        "sha256": "b7e8f44fac6b368208c9f9f5f68153c20902a494a27d0a05b583fbbae5c59e68"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233954,
+        33152,
+        1,
+        51030,
+        1794672092320643815,
+        1794672092320643815
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-business-boundaries.json",
+      "pin": {
+        "bytes": 51030,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/compact-business-boundaries.json",
+        "sha256": "4c43e80ec62a42ed56a9d224ee256b5d78a0040523413b70385dbec72633be6d"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233646,
+        33152,
+        1,
+        2321,
+        1794672061303882942,
+        1794672061303882942
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/extract-boundaries.py",
+      "pin": {
+        "bytes": 2321,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/confirmation-boundary-v1/extract-boundaries.py",
+        "sha256": "c7349ed18e10cb069ffe3cca31fe9f52d1d5d024ad6e2f433cb67585a79fe5e2"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607230927,
+        33152,
+        1,
+        219457,
+        1794671800999211344,
+        1794671800999211344
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-job-log.stdout",
+      "pin": {
+        "bytes": 219457,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-job-log.stdout",
+        "sha256": "a2abb8f09485c32739ca970ac1aa8ab12d3cfee01f53a954e9c9d2dded0ae935"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607230928,
+        33152,
+        1,
+        32154,
+        1794671800999982725,
+        1794671800999982725
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-log-review.json",
+      "pin": {
+        "bytes": 32154,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/original-log-review.json",
+        "sha256": "cf68e60f3f80e33d711fe706807cb4a226cf8333885a8e453b1b60ae3ae3ad5a"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607230929,
+        33152,
+        1,
+        2845,
+        1794671801000058809,
+        1794671801000058809
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/review-original-log.py",
+      "pin": {
+        "bytes": 2845,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/review-original-log.py",
+        "sha256": "2d4130f239ced55df8bcd8b6b6302717c36efe59fc9f67c0114b9cdde3cc434c"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233369,
+        33152,
+        1,
+        30406,
+        1794672017231108571,
+        1794672017231108571
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/bounded-confirmation-report-facts.json",
+      "pin": {
+        "bytes": 30406,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/bounded-confirmation-report-facts.json",
+        "sha256": "6fff7c709de8039572ec0c210994ac4ae8059c0d6dea3a3ac73a3a6d3df2c3ac"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607232972,
+        33152,
+        1,
+        19553,
+        1794671981902995239,
+        1794671981902995239
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/derived-capture-definitions-source.py",
+      "pin": {
+        "bytes": 19553,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/derived-capture-definitions-source.py",
+        "sha256": "154e9c1f7d441c5a7f3696853c6e589fca6c31d06913a36ff638ea13c3a15b5c"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233345,
+        33152,
+        1,
+        887,
+        1794672017173279073,
+        1794672017173279073
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "pin": {
+        "bytes": 887,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+        "sha256": "6ca84d3cfc3dd46054c8ab70318c3945f651e4db520490148a00f7dc920549b8"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233346,
+        33152,
+        1,
+        0,
+        1794672017173624533,
+        1794672017173624533
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "pin": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233347,
+        33152,
+        1,
+        190,
+        1794672017174214121,
+        1794672017174214121
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "pin": {
+        "bytes": 190,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233349,
+        33152,
+        1,
+        899,
+        1794672017190422029,
+        1794672017190422029
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "pin": {
+        "bytes": 899,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+        "sha256": "3251366c661a1949c22cafd9b29f67c545f2e509c7b029b4bbd5a6a6845080d3"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233350,
+        33152,
+        1,
+        0,
+        1794672017190601364,
+        1794672017190601364
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "pin": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233351,
+        33152,
+        1,
+        3364,
+        1794672017190982825,
+        1794672017190982825
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "pin": {
+        "bytes": 3364,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "sha256": "00ba255d478c72202b5f7a80a64581120f6559ac6e4d2271aca507af502a2ae4"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233353,
+        33152,
+        1,
+        899,
+        1794672017191335910,
+        1794672017191335910
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "pin": {
+        "bytes": 899,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+        "sha256": "bc1f05a85e19d3a1c283e0e362394377dc26a6c4b0f7b9420264a7d04d328a00"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233354,
+        33152,
+        1,
+        0,
+        1794672017191539454,
+        1794672017191539454
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "pin": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233357,
+        33152,
+        1,
+        196,
+        1794672017192117708,
+        1794672017192117708
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "pin": {
+        "bytes": 196,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233356,
+        33152,
+        1,
+        915,
+        1794672017191877664,
+        1794672017191877664
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "pin": {
+        "bytes": 915,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+        "sha256": "5b9a4eb36c917045471263656e0200f9c97b9a27dcd316a541f62a15da69c63d"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233358,
+        33152,
+        1,
+        0,
+        1794672017192271209,
+        1794672017192271209
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "pin": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233359,
+        33152,
+        1,
+        917,
+        1794672017192498710,
+        1794672017192498710
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "pin": {
+        "bytes": 917,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "sha256": "f2b3a113492654ef9dc9b82e8daefc25b3f6ef82f657cd2bfaa8c94d53354e40"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233361,
+        33152,
+        1,
+        952,
+        1794672017192768546,
+        1794672017192768546
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "pin": {
+        "bytes": 952,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+        "sha256": "431c19ff25820720459ae01479293ee3d2c3739e420206f765bcffd39a444e46"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233362,
+        33152,
+        1,
+        0,
+        1794672017192924630,
+        1794672017192924630
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "pin": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233363,
+        33152,
+        1,
+        408,
+        1794672017193144798,
+        1794672017193144798
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "pin": {
+        "bytes": 408,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "sha256": "6b7c2bdc8601eb088bfc3825b26d50cc7f112de1a2f505c4c3e79384b0d27689"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233364,
+        33152,
+        1,
+        73892,
+        1794672017193650802,
+        1794672017193650802
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/manifest.json",
+      "pin": {
+        "bytes": 73892,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/from-zero-native/manifest.json",
+        "sha256": "99f54304398fdf2df2762ae079e60453b8b801724480c75b7afc3b7c0b13aa50"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233365,
+        33152,
+        1,
+        423,
+        1794672017193925346,
+        1794672017193925346
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/source.json",
+      "pin": {
+        "bytes": 423,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/members/source.json",
+        "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233341,
+        33152,
+        1,
+        6880,
+        1794672017171031306,
+        1794672017171031306
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/range-receipts.json",
+      "pin": {
+        "bytes": 6880,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/range-receipts.json",
+        "sha256": "0697024abf81937f7e59db95142a31c6b02bcc3f0f2e8a70089665e5b27e6842"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233047,
+        33152,
+        1,
+        1066,
+        1794671987586314701,
+        1794671987586314701
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body",
+      "pin": {
+        "bytes": 1066,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/body",
+        "sha256": "467b84c632056e0901d2e5d5cdc95cfd8ebc81a6c21e5c104f2f317d5237b195"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233046,
+        33152,
+        1,
+        1392,
+        1794671987585803364,
+        1794671987585803364
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json",
+      "pin": {
+        "bytes": 1392,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/caller-records/caller-records.step.json",
+        "sha256": "054eb27b8b4a48a45ea2844576909f409d119a2a015fe9d8bfdd607c66a9b6e6"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233340,
+        33152,
+        1,
+        525935,
+        1794672017167874117,
+        1794672017167874117
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body",
+      "pin": {
+        "bytes": 525935,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/body",
+        "sha256": "9055907e6728bcc52b85498c3349d7932e48ad449f21cd5142b5d334530fcf49"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233339,
+        33152,
+        1,
+        1411,
+        1794672017167077570,
+        1794672017167077570
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+      "pin": {
+        "bytes": 1411,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/confirmation-report/confirmation-report.step.json",
+        "sha256": "e9afebba9747d0edc4ecf3db96d430cb9a2bfc7972a549f0a65669bfbcf35fa0"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233088,
+        33152,
+        1,
+        17482,
+        1794671992382542511,
+        1794671992382542511
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+      "pin": {
+        "bytes": 17482,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/body",
+        "sha256": "11c81a06432758d26b92b52db23b7b385f348b5e5a9f686dfa5c2a1a91b2817a"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233087,
+        33152,
+        1,
+        1420,
+        1794671992382129800,
+        1794671992382129800
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+      "pin": {
+        "bytes": 1420,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/ranges/remaining-selectors-and-manifest/remaining-selectors-and-manifest.step.json",
+        "sha256": "cb64a9cd96cbe125738035f6814d34b51f75500b1f08058c5469d505395a04ec"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607232973,
+        33152,
+        1,
+        2464,
+        1794671981903184949,
+        1794671981903184949
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/request-plan.json",
+      "pin": {
+        "bytes": 2464,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/request-plan.json",
+        "sha256": "135e119d329b142f9b44e67ef137cfc4bee31158646438328261b1640021af91"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233367,
+        33152,
+        1,
+        4268,
+        1794672017200561727,
+        1794672017200561727
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-filemap-verification.json",
+      "pin": {
+        "bytes": 4268,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-filemap-verification.json",
+        "sha256": "154ac6658274ca971af00ab6c539c1b5766cd32dcfdf95c73c11c0b9d654c26c"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233366,
+        33152,
+        1,
+        13545,
+        1794672017194937936,
+        1794672017194937936
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-member-index.json",
+      "pin": {
+        "bytes": 13545,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/selected-member-index.json",
+        "sha256": "831073e7488fc5c82ca7b85735f792f8ea223111cbcfc6f327229e9ee353926b"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233368,
+        33152,
+        1,
+        2155,
+        1794672017200794520,
+        1794672017200794520
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/source-before-after-extracted.json",
+      "pin": {
+        "bytes": 2155,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/source-before-after-extracted.json",
+        "sha256": "fd2e27413602802d0ec163fb4af655b327a8ad9b73a1c957f8f817cf04cb5e23"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607233370,
+        33152,
+        1,
+        18874,
+        1794672017231760159,
+        1794672017231760159
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json",
+      "pin": {
+        "bytes": 18874,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/selected-members-v1/summary.json",
+        "sha256": "866b1ef149a2299538ae14449f912df1a73746af689508a08ba7aab43f28282a"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231723,
+        33152,
+        1,
+        821,
+        1794671850898341997,
+        1794671850898341997
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.json",
+      "pin": {
+        "bytes": 821,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.json",
+        "sha256": "44b83b461a6f5a346d2e45eba77fc0b6e65f46b91891cd5ad900b1f89239379f"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231722,
+        33152,
+        1,
+        1111,
+        1794671850897757159,
+        1794671850897757159
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.step.json",
+      "pin": {
+        "bytes": 1111,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/artifact-metadata.step.json",
+        "sha256": "a0ce74820efa30fde9562d28a3a337f4a7ad354f5309a0a7806c32343fc20c8c"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231830,
+        33152,
+        1,
+        46153,
+        1794671868902740894,
+        1794671868902740894
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/central-directory.json",
+      "pin": {
+        "bytes": 46153,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/central-directory.json",
+        "sha256": "6b9b809e2c65ad5540603dc16246f67c9eac158d988dedbb1966ba8a4c1c762a"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231687,
+        33152,
+        1,
+        10979,
+        1794671848019156517,
+        1794671848019156517
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/outer-source-and-host.json",
+      "pin": {
+        "bytes": 10979,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/outer-source-and-host.json",
+        "sha256": "dab4d22d6f0d80f0c6ed4469eebfc8c6fc4152f8d7aa164d626207a8e405bac1"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231831,
+        33152,
+        1,
+        5929,
+        1794671868903365941,
+        1794671868903365941
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json",
+      "pin": {
+        "bytes": 5929,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json",
+        "sha256": "c38a2d565cc1138d9aa543108223e3d1495b6b13412fa9f9ec8bce09da7c3431"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231829,
+        33152,
+        1,
+        65557,
+        1794671868884366138,
+        1794671868884366138
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.body",
+      "pin": {
+        "bytes": 65557,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.body",
+        "sha256": "476359df8fcc3c38b09623fa66807cce0c6f1c17c008a7738fda798e0b104b4a"
+      }
+    },
+    {
+      "identity": [
+        16777233,
+        607231828,
+        33152,
+        1,
+        1402,
+        1794671868883346422,
+        1794671868883346422
+      ],
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.step.json",
+      "pin": {
+        "bytes": 1402,
+        "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/tail-range.step.json",
+        "sha256": "4a2959793e99f97ab92f60b8400ffbb375ce8e414bfeb04c6c049189e34c2c22"
+      }
+    }
+  ],
+  "files_before": 47,
+  "schema": "trnm-evidence-originals-preservation-v1"
+}

@@ -1,0 +1,125 @@
+{
+  "artifact_downloaded": false,
+  "error_candidate_excerpt": {
+    "bytes": 775,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-error-candidate-lines.json",
+    "sha256": "a6368ef4a9142945a665af14cb5654edc5b6eee8bd4746ac0490d6c35a34f4ae"
+  },
+  "errors": [],
+  "expected_current_run_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "expected_label_hint": "retained-pressure-failure",
+  "failed_steps": [
+    {
+      "completed_at": "2026-11-14T14:19:07Z",
+      "conclusion": "failure",
+      "name": "Retrieve exact historical failed artifact without reclassifying it",
+      "number": 2,
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed"
+    }
+  ],
+  "inner_cause": "UNKNOWN",
+  "job": {
+    "completed_at": "2026-11-14T14:19:08Z",
+    "conclusion": "failure",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217565/job/132475258264",
+    "id": 132475258264,
+    "name": "retained-pressure-failure",
+    "run_attempt": 1,
+    "run_id": 43604217565,
+    "started_at": "2026-11-14T14:19:05Z",
+    "status": "completed",
+    "workflow_name": "PoN priority acceptance"
+  },
+  "job_id": 132475258264,
+  "run_attempt": 1,
+  "run_id": 43604217565,
+  "source_proof_not_inferred_from_job_name": true,
+  "status": "ORIGINAL_JOB_LOG_CAPTURED",
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258264"
+      ],
+      "automatic_retry": false,
+      "complete_transport": true,
+      "elapsed_seconds": 3.4641215410083532,
+      "errors": [],
+      "finished_at": "2026-11-14T15:43:50.633594+00:00",
+      "label": "132475258264-metadata",
+      "method": "GET",
+      "pid": 38948,
+      "process_returncode": 0,
+      "size_exceeded": false,
+      "started_at": "2026-11-14T15:43:47.169552+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1756,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-metadata.stdout",
+        "sha256": "60daea27a519b12f2c4d9a145d8a889f2a4c8a52d644493bd211ccbd4eb0b26a"
+      },
+      "step_receipt": {
+        "bytes": 1140,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-metadata.step.json",
+        "sha256": "f9073c7db03f5739e9e8ca1dec8612d15c4dbca4a836cf6802928fe3d8033835"
+      },
+      "timeout_reached": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258264/logs"
+      ],
+      "automatic_retry": false,
+      "complete_transport": true,
+      "elapsed_seconds": 6.16755816701334,
+      "errors": [],
+      "finished_at": "2026-11-14T15:43:56.802862+00:00",
+      "label": "132475258264-original-log",
+      "method": "GET",
+      "pid": 38961,
+      "process_returncode": 0,
+      "size_exceeded": false,
+      "started_at": "2026-11-14T15:43:50.635244+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-original-log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4110,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-original-log.stdout",
+        "sha256": "6c91925ad9c38eb9f09198b4e1f85a125142614cd9da3ad7cce51bfe7bb8f502"
+      },
+      "step_receipt": {
+        "bytes": 1156,
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258264-original-log.step.json",
+        "sha256": "54e6e504ed505dac24a5f3a53b8c6195a2051f2e7a5d3825b530ca1797e1c745"
+      },
+      "timeout_reached": false,
+      "timeout_seconds": 300
+    }
+  ]
+}

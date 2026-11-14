@@ -1,0 +1,2 @@
+{"producer": {"path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py", "bytes": 19563, "sha256": "34f629cbbfabfd76f733a013d1349b631c75cc14bda59d64b69401d902d3d9f1"}}
+{"status": "TAIL_AND_CENTRAL_DIRECTORY_OBSERVED", "summary": {"path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json", "bytes": 5929, "sha256": "c38a2d565cc1138d9aa543108223e3d1495b6b13412fa9f9ec8bce09da7c3431"}, "whole_artifact_sha256_verified": false, "qualification": false}

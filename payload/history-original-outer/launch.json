@@ -1,0 +1,14 @@
+{
+  "producer": {
+    "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/producer.py",
+    "bytes": 7331,
+    "sha256": "fadc44ad0a758ef5cf9e97ee6b0da0ded2a0dc25e055e3844e3f1c837be312f7"
+  },
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/producer.py"
+  ],
+  "mode": "one bounded GET acquisition of one completed history job",
+  "automatic_retry": false
+}

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "git",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "grep",
+    "-n",
+    "-I",
+    "-e",
+    "receive_public_page_from",
+    "-e",
+    "public_loopback_history",
+    "-e",
+    "loopback.*[Hh]istory",
+    "-e",
+    "[Hh]istory.*loopback",
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "--",
+    "docs/security",
+    "docs/development"
+  ],
+  "exit_code": 1,
+  "files": []
+}

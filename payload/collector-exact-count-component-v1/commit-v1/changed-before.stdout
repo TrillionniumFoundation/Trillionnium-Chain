@@ -1,3 +1,0 @@
-scripts/ci/check_ci_contract.py
-scripts/ci/ci_job.sh
-scripts/ci/test_ci_contract.py

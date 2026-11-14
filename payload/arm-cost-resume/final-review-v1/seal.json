@@ -1,0 +1,16 @@
+{
+  "all_originals_stable": true,
+  "index": {
+    "bytes": 24685,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "c089079e9c5348e6c92ffcc34fd8f0eea859ff45c0e840f34cded419625fd948"
+  },
+  "indexed_bytes": 11235487,
+  "indexed_files": 59,
+  "original_HOLD_preserved": true,
+  "review": {
+    "bytes": 56932,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/final-review-v1/review.json",
+    "sha256": "dd1f663266a98243d0b6f4d4ef84d3a12c31e5f39a954e5f079f26ccbc4884cd"
+  }
+}

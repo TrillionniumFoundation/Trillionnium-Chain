@@ -1,0 +1,22 @@
+[
+  {
+    "length": 119,
+    "line": 1211,
+    "text": "2026-11-14T14:20:12.5396995Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\u001b[0m"
+  },
+  {
+    "length": 89,
+    "line": 1231,
+    "text": "2026-11-14T14:20:16.8875426Z   \"tested_tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\","
+  },
+  {
+    "length": 64,
+    "line": 1235,
+    "text": "2026-11-14T14:20:16.8876971Z   \"tracked_worktree_verified\": true"
+  },
+  {
+    "length": 297613,
+    "line": 2176,
+    "text": "2026-11-14T15:36:08.6862518Z {\"all_bytes_progress_and_checks_equal\":true,\"build_profile\":\"debug\",\"confirmed_tps\":null,\"full_pagination_asymptotic\":\"O(H^2/p)\",\"history_page_asymptotic\":\"O(H)\",\"observations\":[{\"ancestor_links\":1,\"ancestor_selects\":1,\"codec\":\"vec\",\"elapsed_ns\":364018,\"fixed_record_nonempty_vec_values\":5,\"height\":1,\"pair\":0,\"reference_first\":true,\"value_count_scope\":\"child/parent parent, work and root columns only; excludes locator IDs, SQLite, packets and allocator traffic\"},{\"ancestor_links\":1,\"ancestor_selects\":1,\"codec\":\"inline\",\"elapsed_ns\":212484,\"fixed_record_nonempty_vec_values\":0,\"height\":1,\"pair\":0,\"reference_first\":true,\"value_count_scope\":\"child/parent parent, work and root columns only; excludes locator IDs, SQLite, packets and allocator traffic\"},{\"ancestor_links\":1,\"ancestor_selects\":1,\"codec\":\"inline\",\"elapsed_ns\":200397,\"fixed_record_nonempty_vec_values\":0,\"height\":1,\"pair\":1,\"reference_first\":false,\"value_count_scope\":\"child/parent parent, work and root columns only; excludes locator IDs, SQLite, packets and allocator traffic\"},{\"ancestor_links\":1,\"ancestor_selects\":1,\"codec\":\"vec\",\"elapsed_ns\":195509,\"fixed_record_nonempty_vec_values\":5,\"height\":1,\"pair\":1,\"reference_first\":false,\"value_count_scope\":\"child/parent parent, work and root columns only; excludes locator IDs, SQLite, packets and allocator traffic\"},{\"ancestor_links\":1,\"ancestor_selects\":1,\"codec\":\"vec\",\"elapsed_ns\":217401,\"fixed_record_nonempty_vec_values\":5,\"height\":1,\"pair\":2,\"reference_first\":true,\"value_count_scope\":\"child/parent parent, work and root columns only; excludes loc"
+  }
+]

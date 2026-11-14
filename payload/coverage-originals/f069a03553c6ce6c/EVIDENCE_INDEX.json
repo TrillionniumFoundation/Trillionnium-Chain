@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "bytes": 17734,
+      "path": "/private/tmp/chain-prci-R1-history-tail-range-probe-preparation-20261114-v1/probe_history_artifact_tail_v1.py",
+      "sha256": "f2f39b72566bce27a29791fc367bf8d6f775ba90de56f11ce51471d2f1f3fdf9"
+    },
+    {
+      "bytes": 2017,
+      "path": "/private/tmp/chain-prci-R1-history-tail-range-probe-preparation-20261114-v1/preparation.json",
+      "sha256": "4ed7b5acab7b05ddd110c3a442b1ac837d03eb1d23b1d23be5eed92e0b1bd7f2"
+    }
+  ],
+  "schema": "trnm-prepared-only-files-v1",
+  "target_executed": false
+}

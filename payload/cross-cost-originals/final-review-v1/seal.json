@@ -1,0 +1,16 @@
+{
+  "closed": true,
+  "index": {
+    "bytes": 28756,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "f220677f5422c3e171693b94ae2f7364db369bf6a739f06a85450cadf940e79e"
+  },
+  "indexed_bytes": 19994432,
+  "indexed_files": 70,
+  "old_files_stat_identity_preserved": true,
+  "review": {
+    "bytes": 47156,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/final-review-v1/review.json",
+    "sha256": "e0bc38e914a852d10509a21edb9646bac1361ef2781087676227a1ba7f9cbc98"
+  }
+}

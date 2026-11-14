@@ -1,7 +1,0 @@
-.github/workflows/pon-w1-work-security.yml
-config/pon/hash-use-contract-v1.json
-config/pon/pq-cross-branch-corpus-v1.json
-scripts/ci/hash_use_contract.py
-scripts/ci/test_w1_v2_controls_gate.py
-scripts/ci/w1_v2_controls_gate.py
-trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs

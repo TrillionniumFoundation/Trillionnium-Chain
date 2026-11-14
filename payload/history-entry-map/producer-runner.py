@@ -1,0 +1,15 @@
+import os,sys,pathlib,subprocess,json,hashlib
+D=pathlib.Path('/private/tmp/chain-R1-history-4105-entry-map-20261114-v1')
+with(D/'producer-runner.py').open('x')as f:f.write(sys.argv[1])
+H='2a86462a1ab20c68151719ba4635e3c294391e64';G='/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git';p='scripts/ci/run_history_native.py'
+e=os.environ.copy();e.update(GIT_NO_LAZY_FETCH='1',GIT_OPTIONAL_LOCKS='0',GIT_NO_REPLACE_OBJECTS='1')
+r=subprocess.run(['/usr/bin/git','--git-dir='+G,'ls-tree',H,'--',p],env=e,capture_output=True,check=True,timeout=30)
+line=r.stdout.decode().strip();fields,name=line.split('\t',1);mode,typ,oid=fields.split()
+if name!=p or typ!='blob':raise RuntimeError('tree')
+q=subprocess.run(['/usr/bin/git','--git-dir='+G,'cat-file','blob',oid],env=e,capture_output=True,check=True,timeout=30)
+if len(q.stdout)>1024*1024 or hashlib.sha1(b'blob '+str(len(q.stdout)).encode()+b'\0'+q.stdout).hexdigest()!=oid:raise RuntimeError('blob')
+for n,b in [('runner-ls-tree.stdout',r.stdout),('runner-ls-tree.stderr',r.stderr),('runner-cat-file.stderr',q.stderr),('run_history_native.py.original',q.stdout)]:
+ with(D/n).open('xb')as f:f.write(b)
+v={'source':H,'path':p,'git_blob':oid,'bytes':len(q.stdout),'sha256':hashlib.sha256(q.stdout).hexdigest(),'capture':str(D/'run_history_native.py.original'),'executed':False}
+with(D/'runner-source.json').open('x')as f:f.write(json.dumps(v,indent=2,sort_keys=True)+'\n')
+print(json.dumps(v))

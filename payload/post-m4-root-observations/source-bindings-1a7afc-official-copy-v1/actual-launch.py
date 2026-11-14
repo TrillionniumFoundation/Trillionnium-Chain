@@ -1,5 +1,0 @@
-import hashlib,pathlib,sys
-p=pathlib.Path("/home/qian-qi/chain-final-consolidation-20261114-root/run_final_rog_repository_truth_offline_v4.py")
-b=p.read_bytes();assert len(b)==15187 and hashlib.sha256(b).hexdigest()=="bbc62032fcb58443ee36cd59408c49d2d9694c5f709c48a30b6daf714a5ddd38"
-sys.argv=[str(p),"--head","1a7afcdb820b051d1e4bfde3d436f96fc050c487","--tree","18c3d20df915f5c31ee38c7037775c61e5c12e3f","--evidence-dir","/home/qian-qi/chain-final-consolidation-20261114-root/final-repository-truth-offline-1a7afc-v1","--expected-start-head","7d8d4c59fcd01480a12e1c64835b202079091800","--bundle-path","/home/qian-qi/chain-final-consolidation-20261114-root/offline-source-bundles-v3/source-bindings-1a7afcdb-after-7d8d4c59.bundle","--bundle-bytes","674736","--bundle-sha256","18d9b1266d3c16b3bfaa8eeefb1a717a27d0ca7a2999328f7f79ae85cfb62f74"]
-exec(compile(b,str(p),"exec"),{"__name__":"__main__","__file__":str(p)})

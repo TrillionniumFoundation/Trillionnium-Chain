@@ -1,0 +1,6 @@
+object 0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9
+type commit
+tag archive/execution-receipts-20261114-2a86462a1ab2-v1
+tagger Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794659107 +0800
+
+Frozen follow-up execution receipts; original history archive 5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b; candidate 2a86462a1ab20c68151719ba4635e3c294391e64. No main merge, deletion, hosted or protocol qualification.

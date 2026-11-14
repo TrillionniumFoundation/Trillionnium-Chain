@@ -1,0 +1,4420 @@
+{
+  "no_four_second_cpu_fraction_claim": true,
+  "no_new_execution": true,
+  "rows": [
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 0,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 172231,
+      "confirmation_ended_ns": 3190078265,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1995405472,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": true,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 28535173,
+          "unknown_count": 0
+        },
+        "count": 57,
+        "first_started_ns": 167254,
+        "last_ended_ns": 3997773474,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 2540438,
+          "unknown_count": 0
+        },
+        "solution_trials": 16329
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6009117,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 284687421,
+        "last_ended_ns": 2779684996,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 251120,
+          "unknown_count": 0
+        },
+        "solution_trials": 1700
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5871856,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 574230,
+        "last_ended_ns": 284437164,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 311481,
+          "unknown_count": 0
+        },
+        "solution_trials": 2051
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3190074929,
+        "confirmation_started_ns": 3189105852,
+        "confirmation_thread_cpu_ns": 970130,
+        "confirmation_wall_ns": 969077,
+        "observation_returned": true
+      },
+      "independent_page_cpu": {
+        "count": 7,
+        "known_count": 7,
+        "known_sum_ns": 555405457,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 289538225,
+          "pointer": "/phases/0/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 979578332,
+          "replay_error": null,
+          "replay_started_ns": 289557290,
+          "replay_thread_cpu_ns": 87295437,
+          "replay_wall_ns": 690021042
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 984470323,
+          "pointer": "/phases/0/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 1290647671,
+          "replay_error": null,
+          "replay_started_ns": 984489028,
+          "replay_thread_cpu_ns": 72624098,
+          "replay_wall_ns": 306158643
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 2,
+          "history_request_ended_ns": 1294861517,
+          "pointer": "/phases/0/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 1681291956,
+          "replay_error": null,
+          "replay_started_ns": 1294881394,
+          "replay_thread_cpu_ns": 73820897,
+          "replay_wall_ns": 386410562
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 3,
+          "history_request_ended_ns": 1686391704,
+          "pointer": "/phases/0/independent_history_page_replay/3",
+          "replay_accepted": true,
+          "replay_ended_ns": 1993543011,
+          "replay_error": null,
+          "replay_started_ns": 1686412282,
+          "replay_thread_cpu_ns": 74418833,
+          "replay_wall_ns": 307130729
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 2073505901,
+          "pointer": "/phases/0/independent_history_page_replay/4",
+          "replay_accepted": true,
+          "replay_ended_ns": 2384399225,
+          "replay_error": null,
+          "replay_started_ns": 2073526941,
+          "replay_thread_cpu_ns": 76199545,
+          "replay_wall_ns": 310872284
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 5,
+          "history_request_ended_ns": 2388777037,
+          "pointer": "/phases/0/independent_history_page_replay/5",
+          "replay_accepted": true,
+          "replay_ended_ns": 2774675859,
+          "replay_error": null,
+          "replay_started_ns": 2388796303,
+          "replay_thread_cpu_ns": 74831936,
+          "replay_wall_ns": 385879556
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2779684996,
+          "pointer": "/phases/0/independent_history_page_replay/6",
+          "replay_accepted": true,
+          "replay_ended_ns": 3189000155,
+          "replay_error": null,
+          "replay_started_ns": 2779703490,
+          "replay_thread_cpu_ns": 96214711,
+          "replay_wall_ns": 409296665
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 563313005,
+      "independent_replay_and_confirmation_wall_ns": 2905395544,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/original/report.json",
+      "mode": "head",
+      "observation_scope": {
+        "accepted_connections_seen": 71,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 41533268,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 7,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41526185,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41533268,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 7083,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41533268,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 57,
+            "known_count": 57,
+            "known_sum_ns": 7352050,
+            "unknown_count": 0
+          },
+          "record_count": 57,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 6182947,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "phase": "attack-free-baseline",
+      "phase_index": 0,
+      "pointer": "/phases/0",
+      "reader_cpu_ns": 30113731,
+      "report_bytes": 12003417,
+      "report_sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 1200028,
+        "mutation_cpu_charged_ns": 41533268,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1995405472,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 7,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 31152439,
+        "mutation_full_work_cpu_ns": 10380829,
+        "mutation_response_cpu_ns": 276957,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 71,
+        "completed_read": 64,
+        "completed_submit": 7,
+        "issued_challenges": 71,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 71,
+        "tasks_enqueued": 71,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 0,
+        "work_finished": 7,
+        "work_started": 7
+      },
+      "variant": "original",
+      "workers": [],
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 382272415,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 94063642,
+      "confirmation_ended_ns": null,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1999955311,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": false,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 28,
+          "known_count": 28,
+          "known_sum_ns": 15815905,
+          "unknown_count": 0
+        },
+        "count": 28,
+        "first_started_ns": 1268683,
+        "last_ended_ns": 3994734449,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 28,
+          "known_count": 28,
+          "known_sum_ns": 828506,
+          "unknown_count": 0
+        },
+        "solution_trials": 4753
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 908694,
+          "unknown_count": 0
+        },
+        "count": 1,
+        "first_started_ns": 1697842346,
+        "last_ended_ns": 1792796662,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 38010,
+          "unknown_count": 0
+        },
+        "solution_trials": 237
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5961605,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 94305693,
+        "last_ended_ns": 1697580798,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 300701,
+          "unknown_count": 0
+        },
+        "solution_trials": 1870
+      },
+      "independent_final_confirmation_stage": null,
+      "independent_page_cpu": {
+        "count": 1,
+        "known_count": 1,
+        "known_sum_ns": 92200062,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 1792796662,
+          "pointer": "/phases/1/independent_history_page_replay/0",
+          "replay_accepted": false,
+          "replay_ended_ns": 4091682299,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 1792816258,
+          "replay_thread_cpu_ns": 92200062,
+          "replay_wall_ns": 2298866041
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 93291067,
+      "independent_replay_and_confirmation_wall_ns": 2394004791,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/original/report.json",
+      "mode": "head",
+      "observation_scope": {
+        "accepted_connections_seen": 367,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 338,
+            "known_count": 329,
+            "known_sum_ns": 309457652,
+            "unknown_count": 9
+          },
+          "record_count": 338,
+          "settlement_count": 329,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 329,
+              "known_count": 329,
+              "known_sum_ns": 309106964,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 329,
+              "known_count": 329,
+              "known_sum_ns": 309457652,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 329,
+              "known_count": 329,
+              "known_sum_ns": 350688,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 329,
+              "known_count": 329,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 329,
+              "known_count": 329,
+              "known_sum_ns": 309457652,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 28,
+            "known_count": 28,
+            "known_sum_ns": 4517956,
+            "unknown_count": 0
+          },
+          "record_count": 28,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 1,
+            "known_count": 1,
+            "known_sum_ns": 1759463,
+            "unknown_count": 0
+          },
+          "record_count": 1,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "phase": "from-zero-pressure",
+      "phase_index": 1,
+      "pointer": "/phases/1",
+      "reader_cpu_ns": 16895238,
+      "report_bytes": 12003417,
+      "report_sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 64950390,
+        "mutation_cpu_charged_ns": 309457652,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1999955311,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 329,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 209006788,
+        "mutation_full_work_cpu_ns": 100450864,
+        "mutation_response_cpu_ns": 16023309,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 367,
+        "completed_read": 29,
+        "completed_submit": 7,
+        "issued_challenges": 367,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 358,
+        "tasks_enqueued": 358,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 320,
+        "work_finished": 327,
+        "work_started": 327
+      },
+      "variant": "original",
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 26627503,
+          "calls": {
+            "client_cpu": {
+              "count": 23,
+              "known_count": 23,
+              "known_sum_ns": 20905917,
+              "unknown_count": 0
+            },
+            "count": 23,
+            "first_started_ns": 1460841,
+            "last_ended_ns": 4089909391,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 23,
+              "known_count": 23,
+              "known_sum_ns": 909548,
+              "unknown_count": 0
+            },
+            "solution_trials": 5471
+          },
+          "pointer": "/phases/1/attacks/0",
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24865224,
+          "calls": {
+            "client_cpu": {
+              "count": 22,
+              "known_count": 22,
+              "known_sum_ns": 19522656,
+              "unknown_count": 0
+            },
+            "count": 22,
+            "first_started_ns": 1479680,
+            "last_ended_ns": 4090415389,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 22,
+              "known_count": 22,
+              "known_sum_ns": 957316,
+              "unknown_count": 0
+            },
+            "solution_trials": 5999
+          },
+          "pointer": "/phases/1/attacks/1",
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24590104,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19109239,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 1874725,
+            "last_ended_ns": 4090998469,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 809801,
+              "unknown_count": 0
+            },
+            "solution_trials": 4924
+          },
+          "pointer": "/phases/1/attacks/2",
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23150118,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 18066768,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 2488349,
+            "last_ended_ns": 4089223945,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 578057,
+              "unknown_count": 0
+            },
+            "solution_trials": 2959
+          },
+          "pointer": "/phases/1/attacks/3",
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23748728,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 18684752,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 2044223,
+            "last_ended_ns": 4090346939,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 1034761,
+              "unknown_count": 0
+            },
+            "solution_trials": 6162
+          },
+          "pointer": "/phases/1/attacks/4",
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24139528,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18799445,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 2827469,
+            "last_ended_ns": 4089981580,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 805786,
+              "unknown_count": 0
+            },
+            "solution_trials": 5043
+          },
+          "pointer": "/phases/1/attacks/5",
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24949798,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19283759,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 2769515,
+            "last_ended_ns": 4089223973,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 730306,
+              "unknown_count": 0
+            },
+            "solution_trials": 4375
+          },
+          "pointer": "/phases/1/attacks/6",
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24535066,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 18933541,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 3812826,
+            "last_ended_ns": 4090923557,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 1085665,
+              "unknown_count": 0
+            },
+            "solution_trials": 6409
+          },
+          "pointer": "/phases/1/attacks/7",
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22829078,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 17827389,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 3191808,
+            "last_ended_ns": 4091542566,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 851760,
+              "unknown_count": 0
+            },
+            "solution_trials": 5135
+          },
+          "pointer": "/phases/1/attacks/8",
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21267234,
+          "calls": {
+            "client_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 16529913,
+              "unknown_count": 0
+            },
+            "count": 18,
+            "first_started_ns": 5248001,
+            "last_ended_ns": 4091106994,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 792597,
+              "unknown_count": 0
+            },
+            "solution_trials": 4569
+          },
+          "pointer": "/phases/1/attacks/9",
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22830611,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 17880674,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 5276427,
+            "last_ended_ns": 4091727589,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 19,
+              "known_sum_ns": 624264,
+              "unknown_count": 1
+            },
+            "solution_trials": 3805
+          },
+          "pointer": "/phases/1/attacks/10",
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24805980,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19228885,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 4502361,
+            "last_ended_ns": 4089932602,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 884661,
+              "unknown_count": 0
+            },
+            "solution_trials": 4938
+          },
+          "pointer": "/phases/1/attacks/11",
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22747709,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 17706569,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 5272782,
+            "last_ended_ns": 4089240588,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 760182,
+              "unknown_count": 0
+            },
+            "solution_trials": 4490
+          },
+          "pointer": "/phases/1/attacks/12",
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24367151,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 18799699,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 1339141,
+            "last_ended_ns": 4090426583,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 963569,
+              "unknown_count": 0
+            },
+            "solution_trials": 5883
+          },
+          "pointer": "/phases/1/attacks/13",
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21229027,
+          "calls": {
+            "client_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 16696452,
+              "unknown_count": 0
+            },
+            "count": 19,
+            "first_started_ns": 6017371,
+            "last_ended_ns": 4090724050,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 791778,
+              "unknown_count": 0
+            },
+            "solution_trials": 4646
+          },
+          "pointer": "/phases/1/attacks/14",
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 25589556,
+          "calls": {
+            "client_cpu": {
+              "count": 22,
+              "known_count": 22,
+              "known_sum_ns": 19674373,
+              "unknown_count": 0
+            },
+            "count": 22,
+            "first_started_ns": 1317165,
+            "last_ended_ns": 4089240601,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 22,
+              "known_count": 22,
+              "known_sum_ns": 516095,
+              "unknown_count": 0
+            },
+            "solution_trials": 2876
+          },
+          "pointer": "/phases/1/attacks/15",
+          "worker": 15
+        }
+      ],
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 0,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 143547,
+      "confirmation_ended_ns": 3189859278,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1994375750,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": true,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 28596776,
+          "unknown_count": 0
+        },
+        "count": 57,
+        "first_started_ns": 139598,
+        "last_ended_ns": 3965359044,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 2641810,
+          "unknown_count": 0
+        },
+        "solution_trials": 15966
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5726746,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 283982784,
+        "last_ended_ns": 2777959097,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 112621,
+          "unknown_count": 0
+        },
+        "solution_trials": 618
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5777767,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 524578,
+        "last_ended_ns": 283719153,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 220622,
+          "unknown_count": 0
+        },
+        "solution_trials": 1340
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3189856102,
+        "confirmation_started_ns": 3188923644,
+        "confirmation_thread_cpu_ns": 933441,
+        "confirmation_wall_ns": 932458,
+        "observation_returned": true
+      },
+      "independent_page_cpu": {
+        "count": 7,
+        "known_count": 7,
+        "known_sum_ns": 557538176,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 288881045,
+          "pointer": "/phases/0/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 976989081,
+          "replay_error": null,
+          "replay_started_ns": 288900702,
+          "replay_thread_cpu_ns": 86243472,
+          "replay_wall_ns": 688088379
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 981203658,
+          "pointer": "/phases/0/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 1287509115,
+          "replay_error": null,
+          "replay_started_ns": 981223515,
+          "replay_thread_cpu_ns": 72152848,
+          "replay_wall_ns": 306285600
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 2,
+          "history_request_ended_ns": 1291954973,
+          "pointer": "/phases/0/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 1677674673,
+          "replay_error": null,
+          "replay_started_ns": 1291974329,
+          "replay_thread_cpu_ns": 74577231,
+          "replay_wall_ns": 385700344
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 3,
+          "history_request_ended_ns": 1682378966,
+          "pointer": "/phases/0/independent_history_page_replay/3",
+          "replay_accepted": true,
+          "replay_ended_ns": 1989798689,
+          "replay_error": null,
+          "replay_started_ns": 1682399774,
+          "replay_thread_cpu_ns": 74442305,
+          "replay_wall_ns": 307398915
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 2069418901,
+          "pointer": "/phases/0/independent_history_page_replay/4",
+          "replay_accepted": true,
+          "replay_ended_ns": 2381921228,
+          "replay_error": null,
+          "replay_started_ns": 2069446973,
+          "replay_thread_cpu_ns": 76353712,
+          "replay_wall_ns": 312474255
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 5,
+          "history_request_ended_ns": 2386391061,
+          "pointer": "/phases/0/independent_history_page_replay/5",
+          "replay_accepted": true,
+          "replay_ended_ns": 2773356327,
+          "replay_error": null,
+          "replay_started_ns": 2386409906,
+          "replay_thread_cpu_ns": 76528886,
+          "replay_wall_ns": 386946421
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2777959097,
+          "pointer": "/phases/0/independent_history_page_replay/6",
+          "replay_accepted": true,
+          "replay_ended_ns": 3188817846,
+          "replay_error": null,
+          "replay_started_ns": 2777978273,
+          "replay_thread_cpu_ns": 97239722,
+          "replay_wall_ns": 410839573
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 565145972,
+      "independent_replay_and_confirmation_wall_ns": 2905881453,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/fresh/report.json",
+      "mode": "head",
+      "observation_scope": {
+        "accepted_connections_seen": 71,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 41532194,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 7,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41525161,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41532194,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 7033,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 41532194,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 57,
+            "known_count": 57,
+            "known_sum_ns": 7454038,
+            "unknown_count": 0
+          },
+          "record_count": 57,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 6009070,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "phase": "attack-free-baseline",
+      "phase_index": 0,
+      "pointer": "/phases/0",
+      "reader_cpu_ns": 30207797,
+      "report_bytes": 8528638,
+      "report_sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 1212934,
+        "mutation_cpu_charged_ns": 41532194,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1994375750,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 7,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 31293030,
+        "mutation_full_work_cpu_ns": 10239164,
+        "mutation_response_cpu_ns": 316529,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 71,
+        "completed_read": 64,
+        "completed_submit": 7,
+        "issued_challenges": 71,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 71,
+        "tasks_enqueued": 71,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 0,
+        "work_finished": 7,
+        "work_started": 7
+      },
+      "variant": "fresh",
+      "workers": [],
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 355550457,
+      "attacker_workers_cpu_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "business_started_ns": 192137718,
+      "confirmation_ended_ns": null,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1998541343,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": false,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 29,
+          "known_count": 29,
+          "known_sum_ns": 16805672,
+          "unknown_count": 0
+        },
+        "count": 29,
+        "first_started_ns": 1330388,
+        "last_ended_ns": 3997331131,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 29,
+          "known_count": 29,
+          "known_sum_ns": 1190933,
+          "unknown_count": 0
+        },
+        "solution_trials": 6779
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 950383,
+          "unknown_count": 0
+        },
+        "count": 1,
+        "first_started_ns": 2498273887,
+        "last_ended_ns": 2596897988,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 71252,
+          "unknown_count": 0
+        },
+        "solution_trials": 505
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5887384,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 192551670,
+        "last_ended_ns": 2498053967,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 143347,
+          "unknown_count": 0
+        },
+        "solution_trials": 545
+      },
+      "independent_final_confirmation_stage": null,
+      "independent_page_cpu": {
+        "count": 1,
+        "known_count": 1,
+        "known_sum_ns": 51285993,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 2596897988,
+          "pointer": "/phases/1/independent_history_page_replay/0",
+          "replay_accepted": false,
+          "replay_ended_ns": 4093243028,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 2596921943,
+          "replay_thread_cpu_ns": 51285993,
+          "replay_wall_ns": 1496321085
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 52397187,
+      "independent_replay_and_confirmation_wall_ns": 1595107149,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/fresh/report.json",
+      "mode": "head",
+      "observation_scope": {
+        "accepted_connections_seen": 246,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 216,
+            "known_count": 203,
+            "known_sum_ns": 439701684,
+            "unknown_count": 13
+          },
+          "record_count": 216,
+          "settlement_count": 203,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 203,
+              "known_count": 203,
+              "known_sum_ns": 439475788,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 203,
+              "known_count": 203,
+              "known_sum_ns": 439701684,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 203,
+              "known_count": 203,
+              "known_sum_ns": 225896,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 203,
+              "known_count": 203,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 203,
+              "known_count": 203,
+              "known_sum_ns": 439701684,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 29,
+            "known_count": 29,
+            "known_sum_ns": 4476978,
+            "unknown_count": 0
+          },
+          "record_count": 29,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 1,
+            "known_count": 1,
+            "known_sum_ns": 1612058,
+            "unknown_count": 0
+          },
+          "record_count": 1,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+      "phase": "from-zero-pressure",
+      "phase_index": 1,
+      "pointer": "/phases/1",
+      "reader_cpu_ns": 17964180,
+      "report_bytes": 8528638,
+      "report_sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 39930116,
+        "mutation_cpu_charged_ns": 439701684,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1998541343,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 203,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 143970233,
+        "mutation_full_work_cpu_ns": 295731451,
+        "mutation_response_cpu_ns": 9717298,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 246,
+        "completed_read": 30,
+        "completed_submit": 7,
+        "issued_challenges": 246,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 234,
+        "tasks_enqueued": 234,
+        "tasks_skipped_before_dispatch": 1,
+        "ticket_refusals": 0,
+        "work_failed": 195,
+        "work_finished": 202,
+        "work_started": 202
+      },
+      "variant": "fresh",
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22056093,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11883966,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 3264606,
+            "last_ended_ns": 4002229226,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 820108,
+              "unknown_count": 0
+            },
+            "solution_trials": 5092
+          },
+          "pointer": "/phases/1/attacks/0",
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22948157,
+          "calls": {
+            "client_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 12296195,
+              "unknown_count": 0
+            },
+            "count": 14,
+            "first_started_ns": 3077302,
+            "last_ended_ns": 4091458303,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 396160,
+              "unknown_count": 0
+            },
+            "solution_trials": 2304
+          },
+          "pointer": "/phases/1/attacks/1",
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21204122,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11387426,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 5501103,
+            "last_ended_ns": 4090749602,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 523046,
+              "unknown_count": 0
+            },
+            "solution_trials": 3158
+          },
+          "pointer": "/phases/1/attacks/2",
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22414942,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11827369,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 92762194,
+            "last_ended_ns": 4090749600,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 527124,
+              "unknown_count": 0
+            },
+            "solution_trials": 3075
+          },
+          "pointer": "/phases/1/attacks/3",
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22279874,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11989023,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 2072133,
+            "last_ended_ns": 4092849372,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 473563,
+              "unknown_count": 0
+            },
+            "solution_trials": 2972
+          },
+          "pointer": "/phases/1/attacks/4",
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23140707,
+          "calls": {
+            "client_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 12121849,
+              "unknown_count": 0
+            },
+            "count": 14,
+            "first_started_ns": 4285084,
+            "last_ended_ns": 4093312122,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 14,
+              "known_count": 13,
+              "known_sum_ns": 573580,
+              "unknown_count": 1
+            },
+            "solution_trials": 3171
+          },
+          "pointer": "/phases/1/attacks/5",
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23956622,
+          "calls": {
+            "client_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 12572405,
+              "unknown_count": 0
+            },
+            "count": 14,
+            "first_started_ns": 2309223,
+            "last_ended_ns": 4002561361,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 734871,
+              "unknown_count": 0
+            },
+            "solution_trials": 4595
+          },
+          "pointer": "/phases/1/attacks/6",
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22866797,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12060423,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 5462408,
+            "last_ended_ns": 4002617971,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 940787,
+              "unknown_count": 0
+            },
+            "solution_trials": 6002
+          },
+          "pointer": "/phases/1/attacks/7",
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22466970,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11930801,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 91630486,
+            "last_ended_ns": 4092737428,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 642297,
+              "unknown_count": 0
+            },
+            "solution_trials": 3970
+          },
+          "pointer": "/phases/1/attacks/8",
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21012431,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11119372,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 3653930,
+            "last_ended_ns": 4091241595,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 648318,
+              "unknown_count": 0
+            },
+            "solution_trials": 3819
+          },
+          "pointer": "/phases/1/attacks/9",
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21357811,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11065487,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 5920006,
+            "last_ended_ns": 4091452129,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 11,
+              "known_sum_ns": 397030,
+              "unknown_count": 1
+            },
+            "solution_trials": 2309
+          },
+          "pointer": "/phases/1/attacks/10",
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22795093,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12279297,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 91426491,
+            "last_ended_ns": 4001220982,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 837049,
+              "unknown_count": 0
+            },
+            "solution_trials": 4670
+          },
+          "pointer": "/phases/1/attacks/11",
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21719936,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11709090,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 91647271,
+            "last_ended_ns": 4002222469,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 489643,
+              "unknown_count": 0
+            },
+            "solution_trials": 2439
+          },
+          "pointer": "/phases/1/attacks/12",
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 19642968,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 10654236,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 93034306,
+            "last_ended_ns": 4091785488,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 711497,
+              "unknown_count": 0
+            },
+            "solution_trials": 4214
+          },
+          "pointer": "/phases/1/attacks/13",
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21637245,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11303497,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 4706785,
+            "last_ended_ns": 4092011011,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 523386,
+              "unknown_count": 0
+            },
+            "solution_trials": 3330
+          },
+          "pointer": "/phases/1/attacks/14",
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24050689,
+          "calls": {
+            "client_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 12864908,
+              "unknown_count": 0
+            },
+            "count": 14,
+            "first_started_ns": 1871020,
+            "last_ended_ns": 4092226275,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 14,
+              "known_count": 14,
+              "known_sum_ns": 607736,
+              "unknown_count": 0
+            },
+            "solution_trials": 3734
+          },
+          "pointer": "/phases/1/attacks/15",
+          "worker": 15
+        }
+      ],
+      "zip_sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 0,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 167062,
+      "confirmation_ended_ns": 3218165389,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1992857150,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": true,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 35384034,
+          "unknown_count": 0
+        },
+        "count": 57,
+        "first_started_ns": 162517,
+        "last_ended_ns": 3995179926,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 57,
+          "known_count": 57,
+          "known_sum_ns": 2606388,
+          "unknown_count": 0
+        },
+        "solution_trials": 15215
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6521242,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 218263820,
+        "last_ended_ns": 2805783811,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 293798,
+          "unknown_count": 0
+        },
+        "solution_trials": 2012
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 5772092,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 589934,
+        "last_ended_ns": 218029611,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 177771,
+          "unknown_count": 0
+        },
+        "solution_trials": 1130
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3218161972,
+        "confirmation_started_ns": 3217177420,
+        "confirmation_thread_cpu_ns": 985448,
+        "confirmation_wall_ns": 984552,
+        "observation_returned": true
+      },
+      "independent_page_cpu": {
+        "count": 7,
+        "known_count": 7,
+        "known_sum_ns": 571142817,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 223131949,
+          "pointer": "/phases/0/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 917103635,
+          "replay_error": null,
+          "replay_started_ns": 223154672,
+          "replay_thread_cpu_ns": 86913674,
+          "replay_wall_ns": 693948963
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 922405056,
+          "pointer": "/phases/0/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 1218828218,
+          "replay_error": null,
+          "replay_started_ns": 922428840,
+          "replay_thread_cpu_ns": 72698623,
+          "replay_wall_ns": 296399378
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 2,
+          "history_request_ended_ns": 1298639546,
+          "pointer": "/phases/0/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 1616839508,
+          "replay_error": null,
+          "replay_started_ns": 1298664523,
+          "replay_thread_cpu_ns": 81131641,
+          "replay_wall_ns": 318174985
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 3,
+          "history_request_ended_ns": 1622105532,
+          "pointer": "/phases/0/independent_history_page_replay/3",
+          "replay_accepted": true,
+          "replay_ended_ns": 2008783043,
+          "replay_error": null,
+          "replay_started_ns": 1622125509,
+          "replay_thread_cpu_ns": 75851041,
+          "replay_wall_ns": 386657534
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 2013269499,
+          "pointer": "/phases/0/independent_history_page_replay/4",
+          "replay_accepted": true,
+          "replay_ended_ns": 2407465439,
+          "replay_error": null,
+          "replay_started_ns": 2013290849,
+          "replay_thread_cpu_ns": 80637583,
+          "replay_wall_ns": 394174590
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 5,
+          "history_request_ended_ns": 2412302851,
+          "pointer": "/phases/0/independent_history_page_replay/5",
+          "replay_accepted": true,
+          "replay_ended_ns": 2801196517,
+          "replay_error": null,
+          "replay_started_ns": 2412324863,
+          "replay_thread_cpu_ns": 77799698,
+          "replay_wall_ns": 388871654
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2805783811,
+          "pointer": "/phases/0/independent_history_page_replay/6",
+          "replay_accepted": true,
+          "replay_ended_ns": 3217069067,
+          "replay_error": null,
+          "replay_started_ns": 2805805131,
+          "replay_thread_cpu_ns": 96110557,
+          "replay_wall_ns": 411263936
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 579608133,
+      "independent_replay_and_confirmation_wall_ns": 2999906378,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/original/report.json",
+      "mode": "prospective",
+      "observation_scope": {
+        "accepted_connections_seen": 71,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 42288342,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 7,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 42281099,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 42288342,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 7243,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 42288342,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 57,
+            "known_count": 57,
+            "known_sum_ns": 9991193,
+            "unknown_count": 0
+          },
+          "record_count": 57,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 6593977,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "phase": "attack-free-baseline",
+      "phase_index": 0,
+      "pointer": "/phases/0",
+      "reader_cpu_ns": 37522888,
+      "report_bytes": 11774935,
+      "report_sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 1219926,
+        "mutation_cpu_charged_ns": 42288342,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1992857150,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 7,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 32049969,
+        "mutation_full_work_cpu_ns": 10238373,
+        "mutation_response_cpu_ns": 305770,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 71,
+        "completed_read": 64,
+        "completed_submit": 7,
+        "issued_challenges": 71,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 71,
+        "tasks_enqueued": 71,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 0,
+        "work_finished": 7,
+        "work_started": 7
+      },
+      "variant": "original",
+      "workers": [],
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 375937894,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 92558995,
+      "confirmation_ended_ns": null,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1999363286,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": false,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 23,
+          "known_count": 23,
+          "known_sum_ns": 13943379,
+          "unknown_count": 0
+        },
+        "count": 23,
+        "first_started_ns": 1413229,
+        "last_ended_ns": 3992444497,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 23,
+          "known_count": 23,
+          "known_sum_ns": 744628,
+          "unknown_count": 0
+        },
+        "solution_trials": 4265
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 2,
+          "known_count": 2,
+          "known_sum_ns": 1986754,
+          "unknown_count": 0
+        },
+        "count": 2,
+        "first_started_ns": 1800413855,
+        "last_ended_ns": 3991610327,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 2,
+          "known_count": 2,
+          "known_sum_ns": 121606,
+          "unknown_count": 0
+        },
+        "solution_trials": 843
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6327018,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 92963212,
+        "last_ended_ns": 1800221855,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 206966,
+          "unknown_count": 0
+        },
+        "solution_trials": 1202
+      },
+      "independent_final_confirmation_stage": null,
+      "independent_page_cpu": {
+        "count": 2,
+        "known_count": 2,
+        "known_sum_ns": 97861353,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 1895747752,
+          "pointer": "/phases/1/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 3798848833,
+          "replay_error": null,
+          "replay_started_ns": 1895773240,
+          "replay_thread_cpu_ns": 91293055,
+          "replay_wall_ns": 1903075593
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 3991610327,
+          "pointer": "/phases/1/independent_history_page_replay/1",
+          "replay_accepted": false,
+          "replay_ended_ns": 4090484524,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3991634532,
+          "replay_thread_cpu_ns": 6568298,
+          "replay_wall_ns": 98849992
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 100211125,
+      "independent_replay_and_confirmation_wall_ns": 2290242902,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/original/report.json",
+      "mode": "prospective",
+      "observation_scope": {
+        "accepted_connections_seen": 348,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 323,
+            "known_count": 314,
+            "known_sum_ns": 307722449,
+            "unknown_count": 9
+          },
+          "record_count": 323,
+          "settlement_count": 314,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 314,
+              "known_count": 314,
+              "known_sum_ns": 307373429,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 314,
+              "known_count": 314,
+              "known_sum_ns": 307722449,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 314,
+              "known_count": 314,
+              "known_sum_ns": 349020,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 314,
+              "known_count": 314,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 314,
+              "known_count": 314,
+              "known_sum_ns": 307722449,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 23,
+            "known_count": 23,
+            "known_sum_ns": 4610156,
+            "unknown_count": 0
+          },
+          "record_count": 23,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 2,
+            "known_count": 2,
+            "known_sum_ns": 3104668,
+            "unknown_count": 0
+          },
+          "record_count": 2,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "phase": "from-zero-pressure",
+      "phase_index": 1,
+      "pointer": "/phases/1",
+      "reader_cpu_ns": 14921676,
+      "report_bytes": 11774935,
+      "report_sha256": "aa92602d87c2a1318362338e0f4f0efa3e202b2a7e47eca36ab4ca99f9b55686",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 62833114,
+        "mutation_cpu_charged_ns": 307722449,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1999363286,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 314,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 211248430,
+        "mutation_full_work_cpu_ns": 96474019,
+        "mutation_response_cpu_ns": 15994376,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 348,
+        "completed_read": 25,
+        "completed_submit": 7,
+        "issued_challenges": 348,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 341,
+        "tasks_enqueued": 341,
+        "tasks_skipped_before_dispatch": 2,
+        "ticket_refusals": 0,
+        "work_failed": 306,
+        "work_finished": 313,
+        "work_started": 313
+      },
+      "variant": "original",
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24642480,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19281442,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 2365940,
+            "last_ended_ns": 4089179911,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 764468,
+              "unknown_count": 0
+            },
+            "solution_trials": 4525
+          },
+          "pointer": "/phases/1/attacks/0",
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24910130,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19369605,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 1965390,
+            "last_ended_ns": 4089179771,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 20,
+              "known_sum_ns": 896492,
+              "unknown_count": 1
+            },
+            "solution_trials": 5688
+          },
+          "pointer": "/phases/1/attacks/1",
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24509506,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19129763,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 1607032,
+            "last_ended_ns": 4089762110,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 1010527,
+              "unknown_count": 0
+            },
+            "solution_trials": 5796
+          },
+          "pointer": "/phases/1/attacks/2",
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22722729,
+          "calls": {
+            "client_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 17740515,
+              "unknown_count": 0
+            },
+            "count": 19,
+            "first_started_ns": 2137372,
+            "last_ended_ns": 4089746281,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 833124,
+              "unknown_count": 0
+            },
+            "solution_trials": 5064
+          },
+          "pointer": "/phases/1/attacks/3",
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 20827772,
+          "calls": {
+            "client_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 16137092,
+              "unknown_count": 0
+            },
+            "count": 18,
+            "first_started_ns": 2796806,
+            "last_ended_ns": 4091190203,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 650962,
+              "unknown_count": 0
+            },
+            "solution_trials": 3620
+          },
+          "pointer": "/phases/1/attacks/4",
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23750094,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18577464,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 4102990,
+            "last_ended_ns": 4089179989,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 864070,
+              "unknown_count": 0
+            },
+            "solution_trials": 5041
+          },
+          "pointer": "/phases/1/attacks/5",
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21561010,
+          "calls": {
+            "client_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 16809527,
+              "unknown_count": 0
+            },
+            "count": 19,
+            "first_started_ns": 4129089,
+            "last_ended_ns": 4092374390,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 734499,
+              "unknown_count": 0
+            },
+            "solution_trials": 4537
+          },
+          "pointer": "/phases/1/attacks/6",
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 25030740,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19568323,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 6738278,
+            "last_ended_ns": 4091449886,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 777589,
+              "unknown_count": 0
+            },
+            "solution_trials": 4758
+          },
+          "pointer": "/phases/1/attacks/7",
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23906139,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18836493,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 89407265,
+            "last_ended_ns": 4092164183,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 1015734,
+              "unknown_count": 0
+            },
+            "solution_trials": 6000
+          },
+          "pointer": "/phases/1/attacks/8",
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24211011,
+          "calls": {
+            "client_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 18280359,
+              "unknown_count": 0
+            },
+            "count": 19,
+            "first_started_ns": 3497848,
+            "last_ended_ns": 4091636808,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 19,
+              "known_count": 19,
+              "known_sum_ns": 1039423,
+              "unknown_count": 0
+            },
+            "solution_trials": 6393
+          },
+          "pointer": "/phases/1/attacks/9",
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23585342,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18206872,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 91229232,
+            "last_ended_ns": 4091470319,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 697972,
+              "unknown_count": 0
+            },
+            "solution_trials": 4221
+          },
+          "pointer": "/phases/1/attacks/10",
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23625529,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18440579,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 5028133,
+            "last_ended_ns": 4091922805,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 731402,
+              "unknown_count": 0
+            },
+            "solution_trials": 4187
+          },
+          "pointer": "/phases/1/attacks/11",
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22407662,
+          "calls": {
+            "client_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 17529783,
+              "unknown_count": 0
+            },
+            "count": 18,
+            "first_started_ns": 91235506,
+            "last_ended_ns": 4090984670,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 789062,
+              "unknown_count": 0
+            },
+            "solution_trials": 4636
+          },
+          "pointer": "/phases/1/attacks/12",
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23638731,
+          "calls": {
+            "client_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 18599713,
+              "unknown_count": 0
+            },
+            "count": 20,
+            "first_started_ns": 2125702,
+            "last_ended_ns": 4089179893,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 20,
+              "known_count": 20,
+              "known_sum_ns": 1195243,
+              "unknown_count": 0
+            },
+            "solution_trials": 7336
+          },
+          "pointer": "/phases/1/attacks/13",
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 24823576,
+          "calls": {
+            "client_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 19407514,
+              "unknown_count": 0
+            },
+            "count": 21,
+            "first_started_ns": 1474889,
+            "last_ended_ns": 4090754878,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 21,
+              "known_count": 21,
+              "known_sum_ns": 893187,
+              "unknown_count": 0
+            },
+            "solution_trials": 5667
+          },
+          "pointer": "/phases/1/attacks/14",
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21785443,
+          "calls": {
+            "client_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 17197671,
+              "unknown_count": 0
+            },
+            "count": 18,
+            "first_started_ns": 91564382,
+            "last_ended_ns": 4090276202,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 18,
+              "known_count": 18,
+              "known_sum_ns": 880248,
+              "unknown_count": 0
+            },
+            "solution_trials": 5428
+          },
+          "pointer": "/phases/1/attacks/15",
+          "worker": 15
+        }
+      ],
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 0,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 183301,
+      "confirmation_ended_ns": 3290665022,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1988999449,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": true,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 55,
+          "known_count": 55,
+          "known_sum_ns": 34577700,
+          "unknown_count": 0
+        },
+        "count": 55,
+        "first_started_ns": 177682,
+        "last_ended_ns": 3985547401,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 55,
+          "known_count": 55,
+          "known_sum_ns": 3031851,
+          "unknown_count": 0
+        },
+        "solution_trials": 19777
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6018202,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 211867651,
+        "last_ended_ns": 2799783049,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 196547,
+          "unknown_count": 0
+        },
+        "solution_trials": 1243
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6108470,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 580334,
+        "last_ended_ns": 211588940,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 196407,
+          "unknown_count": 0
+        },
+        "solution_trials": 1205
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 3290661807,
+        "confirmation_started_ns": 3289624596,
+        "confirmation_thread_cpu_ns": 1033336,
+        "confirmation_wall_ns": 1037211,
+        "observation_returned": true
+      },
+      "independent_page_cpu": {
+        "count": 7,
+        "known_count": 7,
+        "known_sum_ns": 560439701,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 290138755,
+          "pointer": "/phases/0/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 992965388,
+          "replay_error": null,
+          "replay_started_ns": 290165595,
+          "replay_thread_cpu_ns": 88022733,
+          "replay_wall_ns": 702799793
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 997544526,
+          "pointer": "/phases/0/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 1304296141,
+          "replay_error": null,
+          "replay_started_ns": 997564674,
+          "replay_thread_cpu_ns": 73409492,
+          "replay_wall_ns": 306731467
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 2,
+          "history_request_ended_ns": 1308539241,
+          "pointer": "/phases/0/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 1695996966,
+          "replay_error": null,
+          "replay_started_ns": 1308561071,
+          "replay_thread_cpu_ns": 73992958,
+          "replay_wall_ns": 387435895
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 3,
+          "history_request_ended_ns": 1701130481,
+          "pointer": "/phases/0/independent_history_page_replay/3",
+          "replay_accepted": true,
+          "replay_ended_ns": 2007435291,
+          "replay_error": null,
+          "replay_started_ns": 1701151030,
+          "replay_thread_cpu_ns": 74001407,
+          "replay_wall_ns": 306284261
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 2088799662,
+          "pointer": "/phases/0/independent_history_page_replay/4",
+          "replay_accepted": true,
+          "replay_ended_ns": 2400835425,
+          "replay_error": null,
+          "replay_started_ns": 2088826072,
+          "replay_thread_cpu_ns": 76055034,
+          "replay_wall_ns": 312009353
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 5,
+          "history_request_ended_ns": 2405145119,
+          "pointer": "/phases/0/independent_history_page_replay/5",
+          "replay_accepted": true,
+          "replay_ended_ns": 2795431026,
+          "replay_error": null,
+          "replay_started_ns": 2405166639,
+          "replay_thread_cpu_ns": 77173240,
+          "replay_wall_ns": 390264387
+        },
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2799783049,
+          "pointer": "/phases/0/independent_history_page_replay/6",
+          "replay_accepted": true,
+          "replay_ended_ns": 3289505172,
+          "replay_error": null,
+          "replay_started_ns": 2799804429,
+          "replay_thread_cpu_ns": 97784837,
+          "replay_wall_ns": 489700743
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 568429683,
+      "independent_replay_and_confirmation_wall_ns": 3078802752,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/fresh/report.json",
+      "mode": "prospective",
+      "observation_scope": {
+        "accepted_connections_seen": 69,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 43089300,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 7,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 43081916,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 43089300,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 7384,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 7,
+              "known_count": 7,
+              "known_sum_ns": 43089300,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 55,
+            "known_count": 55,
+            "known_sum_ns": 10116354,
+            "unknown_count": 0
+          },
+          "record_count": 55,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 7,
+            "known_count": 7,
+            "known_sum_ns": 6737846,
+            "unknown_count": 0
+          },
+          "record_count": 7,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "phase": "attack-free-baseline",
+      "phase_index": 0,
+      "pointer": "/phases/0",
+      "reader_cpu_ns": 36735656,
+      "report_bytes": 8177939,
+      "report_sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 1195870,
+        "mutation_cpu_charged_ns": 43089300,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1988999449,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 7,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 32750608,
+        "mutation_full_work_cpu_ns": 10338692,
+        "mutation_response_cpu_ns": 316319,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 69,
+        "completed_read": 62,
+        "completed_submit": 7,
+        "issued_challenges": 69,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 69,
+        "tasks_enqueued": 69,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 0,
+        "work_finished": 7,
+        "work_started": 7
+      },
+      "variant": "fresh",
+      "workers": [],
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    },
+    {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 351309889,
+      "attacker_workers_cpu_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "business_started_ns": 91398476,
+      "confirmation_ended_ns": null,
+      "final_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1997075334,
+        "worker_limit": 2
+      },
+      "finite_business_target_met": false,
+      "honest_head_calls": {
+        "client_cpu": {
+          "count": 26,
+          "known_count": 26,
+          "known_sum_ns": 16510627,
+          "unknown_count": 0
+        },
+        "count": 26,
+        "first_started_ns": 1540355,
+        "last_ended_ns": 4089758605,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 1,
+        "solution_search_cpu": {
+          "count": 26,
+          "known_count": 26,
+          "known_sum_ns": 1055971,
+          "unknown_count": 0
+        },
+        "solution_trials": 6642
+      },
+      "honest_history_calls": {
+        "client_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 1011828,
+          "unknown_count": 0
+        },
+        "count": 1,
+        "first_started_ns": 2690501513,
+        "last_ended_ns": 2792741606,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 1,
+          "known_count": 1,
+          "known_sum_ns": 19086,
+          "unknown_count": 0
+        },
+        "solution_trials": 87
+      },
+      "honest_submit_calls": {
+        "client_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 6369927,
+          "unknown_count": 0
+        },
+        "count": 7,
+        "first_started_ns": 91747539,
+        "last_ended_ns": 2690236357,
+        "returned_after_deadline_count": 0,
+        "returned_after_window_count": 0,
+        "solution_search_cpu": {
+          "count": 7,
+          "known_count": 7,
+          "known_sum_ns": 268061,
+          "unknown_count": 0
+        },
+        "solution_trials": 1561
+      },
+      "independent_final_confirmation_stage": null,
+      "independent_page_cpu": {
+        "count": 1,
+        "known_count": 1,
+        "known_sum_ns": 45243829,
+        "unknown_count": 0
+      },
+      "independent_pages": [
+        {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 2792741606,
+          "pointer": "/phases/1/independent_history_page_replay/0",
+          "replay_accepted": false,
+          "replay_ended_ns": 4092961096,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 2792769569,
+          "replay_thread_cpu_ns": 45243829,
+          "replay_wall_ns": 1300191527
+        }
+      ],
+      "independent_replay_and_confirmation_cpu_ns": 46468084,
+      "independent_replay_and_confirmation_wall_ns": 1402704602,
+      "initial_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "member": "fresh-service/fresh/report.json",
+      "mode": "prospective",
+      "observation_scope": {
+        "accepted_connections_seen": 231,
+        "capacity": 16384,
+        "counter_overflow": false,
+        "cpu_includes_reactor_authentication": false,
+        "cpu_includes_reactor_authentication_or_response_signing": true,
+        "cpu_intervals_are_nested_not_additive": true,
+        "cpu_wait_is_outside_dispatch": true,
+        "dispatch_cpu_includes_paid_body_decode": true,
+        "dispatch_cpu_includes_response_signing": true,
+        "measurement_failures": 0,
+        "monotonic_epoch_is_observer_local": true,
+        "observation_has_consensus_authority": false,
+        "phase_parent_links_are_inclusive": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v4",
+        "stream_bytes_are_physical_network_bytes": false,
+        "submit_phase_cpu_excludes_scoped_workers": true
+      },
+      "observed_operation_cpu": {
+        "1": {
+          "dispatch_thread_cpu": {
+            "count": 204,
+            "known_count": 196,
+            "known_sum_ns": 436987617,
+            "unknown_count": 8
+          },
+          "record_count": 204,
+          "settlement_count": 196,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 196,
+              "known_count": 196,
+              "known_sum_ns": 436771773,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 196,
+              "known_count": 196,
+              "known_sum_ns": 436987617,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 196,
+              "known_count": 196,
+              "known_sum_ns": 215844,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 196,
+              "known_count": 196,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 196,
+              "known_count": 196,
+              "known_sum_ns": 436987617,
+              "unknown_count": 0
+            }
+          }
+        },
+        "2": {
+          "dispatch_thread_cpu": {
+            "count": 26,
+            "known_count": 26,
+            "known_sum_ns": 4892602,
+            "unknown_count": 0
+          },
+          "record_count": 26,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        },
+        "3": {
+          "dispatch_thread_cpu": {
+            "count": 1,
+            "known_count": 1,
+            "known_sum_ns": 1670635,
+            "unknown_count": 0
+          },
+          "record_count": 1,
+          "settlement_count": 0,
+          "settlement_fields": {
+            "live_paid_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "owner_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "residual_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "scoped_worker_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            },
+            "total_cpu_ns": {
+              "count": 0,
+              "known_count": 0,
+              "known_sum_ns": 0,
+              "unknown_count": 0
+            }
+          }
+        }
+      },
+      "original_zip": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117403147.zip",
+      "phase": "from-zero-pressure",
+      "phase_index": 1,
+      "pointer": "/phases/1",
+      "reader_cpu_ns": 17757354,
+      "report_bytes": 8177939,
+      "report_sha256": "fa442db264bc7ade636fb3c0805bf1d031413c554d75b07c8afbaf4cdeccdc71",
+      "requested_window_ns": 4000000000,
+      "service_cpu_fields": {
+        "mutation_body_decode_cpu_ns": 38784783,
+        "mutation_cpu_charged_ns": 436987617,
+        "mutation_cpu_clock_failures": 0,
+        "mutation_cpu_credit_ns_after_shutdown": 1997075334,
+        "mutation_cpu_debt_ns_after_shutdown": 0,
+        "mutation_cpu_in_flight_after_shutdown": 0,
+        "mutation_cpu_refusals": 0,
+        "mutation_cpu_reservations": 196,
+        "mutation_cpu_unavailable_after_shutdown": false,
+        "mutation_dispatch_excluding_work_cpu_ns": 146578467,
+        "mutation_full_work_cpu_ns": 290409150,
+        "mutation_response_cpu_ns": 10090542,
+        "pq_authentication_thread_cpu_ns": 0
+      },
+      "service_error": null,
+      "service_selected_counts": {
+        "accepted_connections": 231,
+        "completed_read": 27,
+        "completed_submit": 7,
+        "issued_challenges": 231,
+        "replay_refusals": 0,
+        "signature_refusals": 0,
+        "tasks_dequeued": 223,
+        "tasks_enqueued": 223,
+        "tasks_skipped_before_dispatch": 0,
+        "ticket_refusals": 0,
+        "work_failed": 189,
+        "work_finished": 196,
+        "work_started": 196
+      },
+      "variant": "fresh",
+      "workers": [
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22964666,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12300028,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 2205825,
+            "last_ended_ns": 4090286058,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 530902,
+              "unknown_count": 0
+            },
+            "solution_trials": 3283
+          },
+          "pointer": "/phases/1/attacks/0",
+          "worker": 0
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22205293,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11795401,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 3160274,
+            "last_ended_ns": 4089126599,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 675699,
+              "unknown_count": 0
+            },
+            "solution_trials": 3910
+          },
+          "pointer": "/phases/1/attacks/1",
+          "worker": 1
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 23414835,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12575321,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 2205807,
+            "last_ended_ns": 4089126963,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 772731,
+              "unknown_count": 0
+            },
+            "solution_trials": 4869
+          },
+          "pointer": "/phases/1/attacks/2",
+          "worker": 2
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21080829,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11333340,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 10069721,
+            "last_ended_ns": 4093793431,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 584351,
+              "unknown_count": 0
+            },
+            "solution_trials": 3477
+          },
+          "pointer": "/phases/1/attacks/3",
+          "worker": 3
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22032106,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11722010,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 89990495,
+            "last_ended_ns": 4089798516,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 483040,
+              "unknown_count": 0
+            },
+            "solution_trials": 2608
+          },
+          "pointer": "/phases/1/attacks/4",
+          "worker": 4
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21072606,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11207029,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 10658356,
+            "last_ended_ns": 4089758591,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 350242,
+              "unknown_count": 0
+            },
+            "solution_trials": 1788
+          },
+          "pointer": "/phases/1/attacks/5",
+          "worker": 5
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21721040,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11172939,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 92890290,
+            "last_ended_ns": 4091972554,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 505841,
+              "unknown_count": 0
+            },
+            "solution_trials": 3147
+          },
+          "pointer": "/phases/1/attacks/6",
+          "worker": 6
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21699772,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11696778,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 91415080,
+            "last_ended_ns": 4092977193,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 386973,
+              "unknown_count": 0
+            },
+            "solution_trials": 2286
+          },
+          "pointer": "/phases/1/attacks/7",
+          "worker": 7
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22352438,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11660189,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 190152358,
+            "last_ended_ns": 4089126979,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 413752,
+              "unknown_count": 0
+            },
+            "solution_trials": 2530
+          },
+          "pointer": "/phases/1/attacks/8",
+          "worker": 8
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21043256,
+          "calls": {
+            "client_cpu": {
+              "count": 11,
+              "known_count": 11,
+              "known_sum_ns": 10979559,
+              "unknown_count": 0
+            },
+            "count": 11,
+            "first_started_ns": 195117036,
+            "last_ended_ns": 4093458494,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 11,
+              "known_count": 11,
+              "known_sum_ns": 386599,
+              "unknown_count": 0
+            },
+            "solution_trials": 2311
+          },
+          "pointer": "/phases/1/attacks/9",
+          "worker": 9
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22199319,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11783441,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 92827794,
+            "last_ended_ns": 4091460379,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 12,
+              "known_sum_ns": 633362,
+              "unknown_count": 1
+            },
+            "solution_trials": 4148
+          },
+          "pointer": "/phases/1/attacks/10",
+          "worker": 10
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21097264,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11026682,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 193138848,
+            "last_ended_ns": 4090427867,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 11,
+              "known_sum_ns": 536171,
+              "unknown_count": 1
+            },
+            "solution_trials": 3203
+          },
+          "pointer": "/phases/1/attacks/11",
+          "worker": 11
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22455908,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12381471,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 9564930,
+            "last_ended_ns": 4090369985,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 640150,
+              "unknown_count": 0
+            },
+            "solution_trials": 4206
+          },
+          "pointer": "/phases/1/attacks/12",
+          "worker": 12
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 22517163,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 12396830,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 8467527,
+            "last_ended_ns": 4089126602,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 619726,
+              "unknown_count": 0
+            },
+            "solution_trials": 3961
+          },
+          "pointer": "/phases/1/attacks/13",
+          "worker": 13
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21946777,
+          "calls": {
+            "client_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 11491908,
+              "unknown_count": 0
+            },
+            "count": 12,
+            "first_started_ns": 190676180,
+            "last_ended_ns": 4092508456,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 12,
+              "known_count": 12,
+              "known_sum_ns": 503837,
+              "unknown_count": 0
+            },
+            "solution_trials": 2814
+          },
+          "pointer": "/phases/1/attacks/14",
+          "worker": 14
+        },
+        {
+          "attempt_cap_reached": false,
+          "calling_thread_cpu_ns": 21506617,
+          "calls": {
+            "client_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 11634618,
+              "unknown_count": 0
+            },
+            "count": 13,
+            "first_started_ns": 2280939,
+            "last_ended_ns": 4090619635,
+            "returned_after_deadline_count": 0,
+            "returned_after_window_count": 1,
+            "solution_search_cpu": {
+              "count": 13,
+              "known_count": 13,
+              "known_sum_ns": 733195,
+              "unknown_count": 0
+            },
+            "solution_trials": 4294
+          },
+          "pointer": "/phases/1/attacks/15",
+          "worker": 15
+        }
+      ],
+      "zip_sha256": "2f13596450302835bcaf325d3b2364b95d1eeb6abe9f25dbc353a1efc4f2802a"
+    }
+  ],
+  "schema": "trnm-r1-original-cpu-distribution-readonly-v1",
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+}

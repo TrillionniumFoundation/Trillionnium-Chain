@@ -1,0 +1,101 @@
+2026-11-14T15:02:57.0604510Z [36;1mif (not isinstance(manifest, dict)[0m
+2026-11-14T15:02:57.0604869Z [36;1m        or manifest.get('schema') != 'trnm-pq-native-tls-witness-required-tests-v1'[0m
+2026-11-14T15:02:57.0605306Z [36;1m        or manifest.get('harness') != 'pq_tls_witness_cli'[0m
+2026-11-14T15:02:57.0605635Z [36;1m        or not isinstance(manifest.get('expected_controls'), dict)[0m
+2026-11-14T15:02:57.0605966Z [36;1m        or manifest['expected_controls'] != {'cli': 5}[0m
+2026-11-14T15:02:57.0606271Z [36;1m        or type(manifest['expected_controls']['cli']) is not int[0m
+2026-11-14T15:02:57.0606582Z [36;1m        or not isinstance(manifest.get('scopes'), dict)[0m
+2026-11-14T15:02:57.0606871Z [36;1m        or set(manifest['scopes']) != {'cli'}[0m
+2026-11-14T15:02:57.0607208Z [36;1m        or any(manifest.get(key) is not False for key in ('production_activation',[0m
+2026-11-14T15:02:57.0607658Z [36;1m            'consensus_authority', 'public_wan_accepted', 'whole_chain_quantum_security_qualified',[0m
+2026-11-14T15:02:57.0608046Z [36;1m            'whole_node_rollback_protection'))):[0m
+2026-11-14T15:02:57.0608375Z [36;1m    raise SystemExit('TLS witness required-control manifest invalid')[0m
+2026-11-14T15:02:57.0608696Z [36;1mrequired = manifest['scopes']['cli'][0m
+2026-11-14T15:02:57.0608981Z [36;1mif (not isinstance(required, list) or len(required) != 5[0m
+2026-11-14T15:02:57.0609416Z [36;1m        or any(not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name) for name in required)[0m
+2026-11-14T15:02:57.0609816Z [36;1m        or len(set(required)) != 5):[0m
+2026-11-14T15:02:57.0610106Z [36;1m    raise SystemExit('TLS witness required-control names invalid')[0m
+2026-11-14T15:02:57.0610403Z [36;1mroot = Path(sys.argv[2])[0m
+2026-11-14T15:02:57.0610665Z [36;1mlog = (root / 'tls-witness-cli-registry.log').read_text()[0m
+2026-11-14T15:02:57.0610987Z [36;1mnames = re.findall(r'^([A-Za-z0-9_:]+): test$', log, re.M)[0m
+2026-11-14T15:02:57.0611330Z [36;1mif len(names) != 5 or len(set(names)) != 5 or set(names) != set(required):[0m
+2026-11-14T15:02:57.0611768Z [36;1m    raise SystemExit('TLS witness actual binary registry differs from the five required controls')[0m
+2026-11-14T15:02:57.0612189Z [36;1m(root / 'tls-witness-required.tsv').write_text(''.join([0m
+2026-11-14T15:02:57.0612567Z [36;1m    f'tls-witness-cli-{index:02d}\t{name}\n' for index, name in enumerate(required)))[0m
+2026-11-14T15:02:57.0613283Z [36;1mprint(json.dumps({'scope':'registry-presence-only','required_controls':5,'production_activation':False},sort_keys=True))[0m
+2026-11-14T15:02:57.0613707Z [36;1mPY[0m
+2026-11-14T15:02:57.0613866Z [36;1mfailed=0[0m
+2026-11-14T15:02:57.0614230Z [36;1mwhile IFS=$'\t' read -r label selector; do[0m
+2026-11-14T15:02:57.0614960Z [36;1m  if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_witness_cli --all-features "$selector" -- --exact --show-output --test-threads=1; then[0m
+2026-11-14T15:02:57.0615635Z [36;1m    failed=1[0m
+2026-11-14T15:02:57.0616055Z [36;1m  elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then[0m
+2026-11-14T15:02:57.0616651Z [36;1m    failed=1[0m
+2026-11-14T15:02:57.0616835Z [36;1m  fi[0m
+2026-11-14T15:02:57.0617043Z [36;1mdone < "$PQ_OUT/tls-witness-required.tsv"[0m
+2026-11-14T15:02:57.0617286Z [36;1mtest "$failed" = 0[0m
+2026-11-14T15:02:57.0634597Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-14T15:02:57.0634867Z env:
+2026-11-14T15:02:57.0635032Z   CARGO_BUILD_JOBS: 2
+2026-11-14T15:02:57.0635214Z   CARGO_INCREMENTAL: 0
+2026-11-14T15:02:57.0635388Z   RUST_TEST_THREADS: 1
+2026-11-14T15:02:57.0635571Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-14T15:02:57.0635783Z   SOURCE_KIND: head
+2026-11-14T15:02:57.0636010Z   EXPECTED_HEAD: 2a86462a1ab20c68151719ba4635e3c294391e64
+2026-11-14T15:02:57.0636305Z   EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0
+2026-11-14T15:02:57.0636592Z   EXPECTED_TESTED: 2a86462a1ab20c68151719ba4635e3c294391e64
+2026-11-14T15:02:57.0636880Z   PQ_OUT: /home/runner/work/_temp/pq-system-records
+2026-11-14T15:02:57.0637178Z   CARGO_TARGET_DIR: /home/runner/work/_temp/pq-system-target
+2026-11-14T15:02:57.0637538Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.IgQnNpSw/install
+2026-11-14T15:02:57.0637856Z   OPENSSL_STATIC: 1
+2026-11-14T15:02:57.0638157Z   TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.IgQnNpSw/install/bin/openssl
+2026-11-14T15:02:57.0638630Z   TRNM_PQ_OPENSSL_SHA256: d8d2e1532093fe6fd690334370ce1f89c5e97acf26f303eea591b13a1afb94ce
+2026-11-14T15:02:57.0638970Z   TRNM_PQ_OPENSSL_VERSION: 3.5.9
+2026-11-14T15:02:57.0639176Z   OPENSSL_CONF: /dev/null
+2026-11-14T15:02:57.0639502Z   OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.IgQnNpSw/install/lib/ossl-modules
+2026-11-14T15:02:57.0639862Z ##[endgroup]
+2026-11-14T15:03:09.1839400Z {"exit_code": 0, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-registry.json", "status": "command_succeeded"}
+2026-11-14T15:03:09.2145332Z {"production_activation": false, "required_controls": 5, "scope": "registry-presence-only"}
+2026-11-14T15:03:22.2777220Z {"exit_code": 101, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-00.json", "status": "command_failed"}
+2026-11-14T15:03:22.2876330Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+2026-11-14T15:03:22.2876993Z      Running tests/pq_tls_witness_cli.rs (/home/runner/work/_temp/pq-system-target/debug/deps/pq_tls_witness_cli-b8a3faf86b9bebb0)
+2026-11-14T15:03:22.2877357Z 
+2026-11-14T15:03:22.2877438Z running 1 test
+2026-11-14T15:03:22.2881834Z test witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database ... TRNM_PQ_TLS_CLI_DIAGNOSTIC {"child_after_cleanup":{"exit_code":null,"signal":9,"state":"exited","success":false},"child_before_cleanup":{"state":"running"},"cleanup_elapsed_us":952,"failure_since_spawn_start_us":340580,"pid":32415,"ready_received_us":76903,"request_stages":[],"request_stages_truncated":false,"schema":"trnm-pq-tls-cli-failure-v1","stderr":{"connection_refusals":[{"bio_error_code":null,"bio_error_kind":null,"deadline_elapsed":false,"elapsed_us":261315,"error_code":"PQ_WITNESS_DEADLINE","error_kind":"Unclassified","ingress_charge_calls":0,"ingress_charge_us":0,"schema":"pq-tls-connection-refusal-v1","stage":"ingress_admission","stage_elapsed_us":261316}],"known_markers":["PQ_WITNESS_DEADLINE","PQ_TLS"],"marker_scan_bytes":326,"marker_scan_truncated":false,"observed_bytes":326,"observed_sha256":"7ab2d1b5132c7095e4d2a4a8600f9d6c47c97cb651a42570ca5498eb96784681","raw_text_redacted":true,"read_error_kind":null},"stdout":[{"accepted":null,"pnq2_rollback_witness_selected":true,"production_activation":false,"public_wan_qualification":false,"ready_event":true,"refused":null,"valid_json":true,"whole_node_rollback_protection":false}],"stdout_capture":"first_and_last_only"}
+2026-11-14T15:03:22.2885922Z FAILED
+2026-11-14T15:03:22.2886014Z 
+2026-11-14T15:03:22.2886088Z successes:
+2026-11-14T15:03:22.2886183Z 
+2026-11-14T15:03:22.2886247Z successes:
+2026-11-14T15:03:22.2886331Z 
+2026-11-14T15:03:22.2886392Z failures:
+2026-11-14T15:03:22.2886649Z 
+2026-11-14T15:03:22.2886869Z ---- witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database stdout ----
+2026-11-14T15:03:22.2887176Z 
+2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:
+2026-11-14T15:03:22.2894470Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PQ_NETWORK_CRYPTO:Error { code: ErrorCode(5), cause: Some(Io(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" })) }", source: None, request_history_budget: false }
+2026-11-14T15:03:22.2895362Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+2026-11-14T15:03:22.2895605Z 
+2026-11-14T15:03:22.2895608Z 
+2026-11-14T15:03:22.2895680Z failures:
+2026-11-14T15:03:22.2895942Z     witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database
+2026-11-14T15:03:22.2896188Z 
+2026-11-14T15:03:22.2896399Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 4.91s
+2026-11-14T15:03:22.2896687Z 
+2026-11-14T15:03:22.2896865Z error: test failed, to rerun pass `-p trnm-pon-node --test pq_tls_witness_cli`
+2026-11-14T15:03:30.7734429Z {"exit_code": 0, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-01.json", "status": "command_succeeded"}
+2026-11-14T15:03:41.3108337Z {"exit_code": 0, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-02.json", "status": "command_succeeded"}
+2026-11-14T15:03:49.7819107Z {"exit_code": 0, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-03.json", "status": "command_succeeded"}
+2026-11-14T15:03:58.1322395Z {"exit_code": 0, "receipt": "/home/runner/work/_temp/pq-system-records/tls-witness-cli-04.json", "status": "command_succeeded"}
+2026-11-14T15:03:58.1700727Z ##[error]Process completed with exit code 1.
+2026-11-14T15:03:58.1746359Z ##[group]Run set -euo pipefail
+2026-11-14T15:03:58.1746663Z [36;1mset -euo pipefail[0m
+2026-11-14T15:03:58.1746973Z [36;1mmanifest=config/pon/pq-native-tls-endpoint-required-tests-v1.json[0m
+2026-11-14T15:03:58.1747721Z [36;1mbash "$PQ_OUT/run-command.sh" tls-endpoint-lib-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --list[0m
+2026-11-14T15:03:58.1748703Z [36;1mbash "$PQ_OUT/run-command.sh" tls-endpoint-cli-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_endpoint_cli --all-features -- --list[0m
+2026-11-14T15:03:58.1749317Z [36;1mpython3 - "$manifest" "$PQ_OUT" <<'PY'[0m
+2026-11-14T15:03:58.1749561Z [36;1mimport json, re, sys[0m
+2026-11-14T15:03:58.1749777Z [36;1mfrom pathlib import Path[0m
+2026-11-14T15:03:58.1750030Z [36;1mmanifest = json.loads(Path(sys.argv[1]).read_text())[0m
+2026-11-14T15:03:58.1750347Z [36;1mcounts = {'lib': 8, 'cli': 3}[0m
+2026-11-14T15:03:58.1750580Z [36;1mif (not isinstance(manifest, dict)[0m
+2026-11-14T15:03:58.1750921Z [36;1m        or manifest.get('schema') != 'trnm-pq-native-tls-endpoint-required-tests-v1'[0m

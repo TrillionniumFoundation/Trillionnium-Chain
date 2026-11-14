@@ -1,0 +1,422 @@
+--- /private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/read_history_artifact_central_directory_v1.py
++++ /private/tmp/chain-prci-R1-history-selected-member-reader-preparation-20261114-v1/read_history_artifact_selected_members_v1.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Fixed read-only central-directory GET after the closed tail probe; no member GETs."""
++"""Read six fixed diagnostic members using four explicit ranges. Never execute members."""
+ import datetime
+ import hashlib
+ import json
+@@ -12,8 +12,9 @@
+ import subprocess
+ import sys
+ import time
+-
+-OUT = Path("/private/tmp/chain-prci-R1-history-artifact-central-directory-20261114-v1")
++import zlib
++
++OUT = Path("/private/tmp/chain-prci-R1-history-artifact-selected-members-20261114-v1")
+ GH = "/opt/homebrew/bin/gh"
+ REPO = "TrillionniumFoundation/Trillionnium-Chain"
+ ARTIFACT = 14118769328
+@@ -22,15 +23,125 @@
+ NAME = "priority-ubuntu-24.04-head-history-" + HEAD + "-1"
+ SIZE = 59887660
+ DIGEST = "cf934b39339e2039beb285ade75473b9bb1035b0a69441c13ce08d3b47e376dc"
+-RANGE_BYTES = 376516
+-START = 59511122
+-END = 59887637
+-ENTRY_COUNT = 4140
+-EOCD_OFFSET = 59887638
+-EXISTING_TAIL = Path("/private/tmp/chain-prci-R1-history-artifact-explicit-tail-probe-20261114-v2/tail-range.body")
+-EXISTING_TAIL_BYTES = 65557
+-EXISTING_TAIL_START = 59822103
+-EXISTING_TAIL_SHA = "f140bd7c067a6448800914fbccc9ed06b982fbde5485f5b6d1249681df39f559"
++DIRECTORY = Path("/private/tmp/chain-prci-R1-history-artifact-central-directory-20261114-v1/central-directory.json")
++DIRECTORY_BYTES = 1733699
++DIRECTORY_SHA = "0efa6871c0fb1b509d285bdaf54a9970aeeca7e18182be67eaacbcd0fa041e68"
++MEMBERS = [
++    {
++        "path": "history-native/history-resources.txt",
++        "index": 3,
++        "offset": 10011,
++        "end": 10624,
++        "compressed": 531,
++        "expanded": 972,
++        "crc32": "5e13cf8a",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "history-resources.txt"
++    },
++    {
++        "path": "history-native/history.log",
++        "index": 4,
++        "offset": 10624,
++        "end": 13254,
++        "compressed": 2558,
++        "expanded": 11359,
++        "crc32": "7f9502ac",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "history.log"
++    },
++    {
++        "path": "history-native/long-history/source.json",
++        "index": 4113,
++        "offset": 36548239,
++        "end": 36548644,
++        "compressed": 320,
++        "expanded": 514,
++        "crc32": "d998eb9b",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "long-history-source.json"
++    },
++    {
++        "path": "history-native/long-history/summary.json",
++        "index": 4114,
++        "offset": 36548644,
++        "end": 36548890,
++        "compressed": 160,
++        "expanded": 259,
++        "crc32": "c3eab677",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "long-history-summary.json"
++    },
++    {
++        "path": "history-native/manifest.json",
++        "index": 4117,
++        "offset": 59498008,
++        "end": 59499532,
++        "compressed": 1450,
++        "expanded": 4907,
++        "crc32": "b859bbaf",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "manifest.json"
++    },
++    {
++        "path": "source.json",
++        "index": 4139,
++        "offset": 59510826,
++        "end": 59511122,
++        "compressed": 239,
++        "expanded": 423,
++        "crc32": "63111cae",
++        "method": 8,
++        "flags": 8,
++        "version": 20,
++        "output": "source.json"
++    }
++]
++RANGES = [
++    {
++        "label": "resources-and-history-log",
++        "start": 10011,
++        "end": 13253,
++        "members": [
++            0,
++            1
++        ]
++    },
++    {
++        "label": "long-history-source-and-summary",
++        "start": 36548239,
++        "end": 36548889,
++        "members": [
++            2,
++            3
++        ]
++    },
++    {
++        "label": "native-manifest",
++        "start": 59498008,
++        "end": 59499531,
++        "members": [
++            4
++        ]
++    },
++    {
++        "label": "top-level-source",
++        "start": 59510826,
++        "end": 59511121,
++        "members": [
++            5
++        ]
++    }
++]
+ SOURCE_LOG = Path("/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-original-log.stdout")
+ SOURCE_BYTES = 178249
+ SOURCE_SHA = "3ba328053189e7e8a25c8fb5cfc5780941dc21d96afba56808fe61bc1a7e536e"
+@@ -113,10 +224,15 @@
+         safe[key] = value.decode("ascii")
+     return status, safe
+ 
+-def capture(label, endpoint, deadline, range_probe=False):
++def capture(label, endpoint, deadline, exact_range=None):
++    range_probe = exact_range is not None
++    if range_probe:
++        start, end = exact_range
++        expected_bytes = end - start + 1
++        need((start, end) in {(g["start"], g["end"]) for g in RANGES}, "UNAPPROVED_RANGE")
+     argv = [GH, "api", "--hostname", "github.com", "--method", "GET"]
+     if range_probe:
+-        argv += ["--include", "--header", f"Range: bytes={START}-{END}"]
++        argv += ["--include", "--header", f"Range: bytes={start}-{end}"]
+     argv += [endpoint]
+     env = os.environ.copy()
+     env.pop("GH_DEBUG", None)
+@@ -176,17 +292,17 @@
+                     headers.clear()
+                     if status != 206:
+                         raise ValueError("RANGE_UNSUPPORTED_HTTP_STATUS")
+-                    need(safe.get("content-range") == f"bytes {START}-{END}/{SIZE}", "EXACT_CD_CONTENT_RANGE_REQUIRED")
+-                    need("content-length" not in safe or safe["content-length"] == str(RANGE_BYTES), "EXACT_CD_CONTENT_LENGTH")
++                    need(safe.get("content-range") == f"bytes {start}-{end}/{SIZE}", "EXACT_SELECTED_CONTENT_RANGE_REQUIRED")
++                    need("content-length" not in safe or safe["content-length"] == str(expected_bytes), "EXACT_SELECTED_CONTENT_LENGTH")
+                     need(safe.get("content-encoding", "identity") == "identity", "ENCODED_RANGE_REFUSED")
+                     got_headers = True
+-                cap = RANGE_BYTES if range_probe else 65536
++                cap = expected_bytes if range_probe else 65536
+                 need(len(body) + len(chunk) <= cap, "BODY_BYTE_BOUND")
+                 body.extend(chunk)
+         rec["exit"] = process.wait(timeout=max(0.01, deadline - time.monotonic()))
+         need(rec["exit"] == 0, "GH_GET_NONZERO")
+         if range_probe:
+-            need(got_headers and rec["http_status"] == 206 and len(body) == RANGE_BYTES, "COMPLETE_EXACT_CD_REQUIRED")
++            need(got_headers and rec["http_status"] == 206 and len(body) == expected_bytes, "COMPLETE_EXACT_SELECTED_RANGE_REQUIRED")
+         rec["accepted_body_bytes"] = len(body)
+     except Exception as error:
+         # All ValueError messages above are fixed codes, never server strings.
+@@ -214,64 +330,90 @@
+         rec["step_receipt"] = save_json(label + ".step.json", rec)
+     return rec, bytes(body)
+ 
+-def validate_existing_tail():
+-    raw = stable_bytes(EXISTING_TAIL, EXISTING_TAIL_BYTES, EXISTING_TAIL_SHA)
+-    position = EOCD_OFFSET - EXISTING_TAIL_START
+-    need(len(raw) == position + 22, "FIXED_EOCD_TERMINAL_OFFSET")
+-    fields = struct.unpack_from("<4s4H2IH", raw, position)
+-    need(fields == (b"PK\x05\x06", 0, 0, ENTRY_COUNT, ENTRY_COUNT,
+-                    RANGE_BYTES, START, 0), "FIXED_ACTUAL_EOCD")
+-    need(raw[position - 20:position - 16] != b"PK\x06\x07", "UNEXPECTED_ZIP64_LOCATOR")
+-    need(START + RANGE_BYTES == END + 1 == EOCD_OFFSET
+-         and EOCD_OFFSET + 22 == SIZE, "EXACT_DIRECTORY_ARCHIVE_BOUND")
++def validate_directory():
++    raw = stable_bytes(DIRECTORY, DIRECTORY_BYTES, DIRECTORY_SHA)
++    data = parse_json(raw)
++    need(data.get("schema") == "trnm-r1-history-central-directory-observation-v1"
++         and data.get("artifact_id") == ARTIFACT
++         and data.get("entries") == 4140
++         and data.get("central_directory_offset") == 59511122
++         and data.get("central_directory_bytes") == 376516
++         and data.get("complete_central_directory_observed") is True
++         and data.get("existing_tail_overlap_verified") is True, "CLOSED_CD_IDENTITY")
++    rows = data["members"]
++    need(type(rows) is list and len(rows) == 4140, "CD_COUNT")
++    need(len({r["path"] for r in rows}) == len(rows)
++         and len({r["local_header_offset"] for r in rows}) == len(rows), "CD_DUPLICATE")
++    ordered = sorted(rows, key=lambda r: r["local_header_offset"])
++    ends = {r["path"]: (ordered[i + 1]["local_header_offset"] if i + 1 < len(ordered)
++                        else 59511122) for i, r in enumerate(ordered)}
++    for selected in MEMBERS:
++        row = rows[selected["index"]]
++        actual = {key: row[field] for key, field in (
++            ("path", "path"), ("index", "index"), ("offset", "local_header_offset"),
++            ("compressed", "compressed_bytes"), ("expanded", "uncompressed_bytes"),
++            ("crc32", "crc32_declared_hex"), ("method", "compression_method"),
++            ("flags", "flags"), ("version", "version_needed"))}
++        expected = {key: selected[key] for key in actual}
++        need(actual == expected and row["directory"] is False
++             and ends[selected["path"]] == selected["end"], "EXACT_SELECTED_CD_RECORD")
++        need(selected["end"] - selected["offset"] <= 4096
++             and 0 <= selected["compressed"] <= 4096
++             and 0 <= selected["expanded"] <= 16384, "FIXED_SMALL_MEMBER_BOUNDS")
++    need(len(MEMBERS) == 6 and len(RANGES) == 4
++         and sum(g["end"] - g["start"] + 1 for g in RANGES) == 5714
++         and sum(r["expanded"] for r in MEMBERS) == 18434, "EXACT_SELECTION_TOTAL")
++    seen = []
++    for group in RANGES:
++        selected = [MEMBERS[i] for i in group["members"]]
++        need(selected[0]["offset"] == group["start"]
++             and selected[-1]["end"] == group["end"] + 1, "GROUP_RANGE_BOUND")
++        need(all(selected[i]["end"] == selected[i + 1]["offset"]
++                 for i in range(len(selected) - 1)), "GROUP_GAP_REFUSED")
++        seen.extend(group["members"])
++    need(seen == list(range(6)), "EXACT_MEMBER_COVERAGE")
++    return {"path": str(DIRECTORY), "bytes": DIRECTORY_BYTES, "sha256": DIRECTORY_SHA}
++
++def decode_member(record, selected):
++    """Decode an explicitly selected regular member, with exact framing/length/CRC."""
++    need(len(record) == selected["end"] - selected["offset"]
++         and len(record) >= 30, "EXACT_MEMBER_RECORD_LENGTH")
++    fields = struct.unpack_from("<4s5H3I2H", record)
++    sig, version, flags, method, mtime, mdate, crc, csize, usize, nlen, xlen = fields
++    need(sig == b"PK\x03\x04" and version == selected["version"] == 20
++         and flags == selected["flags"] == 8
++         and method == selected["method"] == 8, "LOCAL_HEADER_CONTRACT")
++    expected_name = selected["path"].encode("ascii")
++    need(nlen == len(expected_name) and 0 <= xlen <= 1024
++         and record[30:30 + nlen] == expected_name, "LOCAL_NAME_EXTRA_BOUND")
++    expected_crc = int(selected["crc32"], 16)
++    need(crc in (0, expected_crc) and csize in (0, selected["compressed"])
++         and usize in (0, selected["expanded"]), "LOCAL_DEFERRED_SIZE_OR_CRC")
++    data_start = 30 + nlen + xlen
++    data_end = data_start + selected["compressed"]
++    need(data_start <= len(record) and data_end <= len(record), "COMPRESSED_DATA_BOUND")
++    extras = record[30 + nlen:data_start]
++    cursor = 0
++    while cursor < len(extras):
++        need(cursor + 4 <= len(extras), "LOCAL_EXTRA_HEADER_BOUND")
++        kind, length = struct.unpack_from("<HH", extras, cursor)
++        need(kind != 1 and cursor + 4 + length <= len(extras), "ZIP64_OR_EXTRA_BOUND")
++        cursor += 4 + length
++    descriptor = record[data_end:]
++    if len(descriptor) == 16:
++        need(descriptor[:4] == b"PK\x07\x08", "DATA_DESCRIPTOR_SIGNATURE")
++        values = struct.unpack("<3I", descriptor[4:])
++    else:
++        need(len(descriptor) == 12, "DATA_DESCRIPTOR_LENGTH")
++        values = struct.unpack("<3I", descriptor)
++    need(values == (expected_crc, selected["compressed"], selected["expanded"]),
++         "DATA_DESCRIPTOR_CD_MISMATCH")
++    decoder = zlib.decompressobj(-15)
++    raw = decoder.decompress(record[data_start:data_end], selected["expanded"] + 1)
++    need(len(raw) == selected["expanded"] and decoder.eof
++         and not decoder.unused_data and not decoder.unconsumed_tail, "EXACT_DEFLATE_EOF")
++    need(zlib.crc32(raw) & 0xffffffff == expected_crc, "SELECTED_MEMBER_CRC_MISMATCH")
+     return raw
+-
+-def central_directory(body, existing_tail):
+-    """Inventory exactly the observed 4,140 entries; never fetch or execute members."""
+-    need(len(body) == RANGE_BYTES, "EXACT_CD_BYTES")
+-    overlap = EOCD_OFFSET - EXISTING_TAIL_START
+-    need(body[-overlap:] == existing_tail[:overlap], "EXISTING_TAIL_OVERLAP_MISMATCH")
+-    count, cd_size, cd_offset, comment_size = ENTRY_COUNT, RANGE_BYTES, START, 0
+-    cursor, end = 0, len(body)
+-    rows, seen = [], set()
+-    for number in range(count):
+-        need(cursor + 46 <= end, "CENTRAL_HEADER_BOUND")
+-        fields = struct.unpack_from("<4s6H3I5H2I", body, cursor)
+-        sig, made, version, flags, method, mtime, mdate, crc, compressed, expanded, nlen, xlen, clen, member_disk, iattr, eattr, local_offset = fields
+-        need(sig == b"PK\x01\x02" and member_disk == 0, "CENTRAL_ENTRY_FRAMING")
+-        need(0 < nlen <= 1024 and cursor + 46 + nlen + xlen + clen <= end, "CENTRAL_ENTRY_LENGTH")
+-        need(compressed != 0xffffffff and expanded != 0xffffffff and local_offset != 0xffffffff, "ZIP64_ENTRY_REFUSED")
+-        need(local_offset < cd_offset and not flags & 0x41, "LOCAL_OFFSET_OR_ENCRYPTION_REFUSED")
+-        name_bytes = body[cursor + 46:cursor + 46 + nlen]
+-        name = name_bytes.decode("utf-8" if flags & 0x800 else "cp437")
+-        need(not any(ord(c) < 32 or ord(c) == 127 for c in name), "CONTROL_CHARACTER_PATH")
+-        need("\\" not in name and ":" not in name and "\x00" not in name, "UNSAFE_MEMBER_PATH")
+-        normalized = name[:-1] if name.endswith("/") else name
+-        path = PurePosixPath(normalized)
+-        need(normalized and not path.is_absolute() and path.as_posix() == normalized
+-             and all(part not in ("", ".", "..") for part in path.parts), "TRAVERSAL_MEMBER_PATH")
+-        need(normalized not in seen, "DUPLICATE_MEMBER_PATH")
+-        seen.add(normalized)
+-        filetype = stat.S_IFMT(eattr >> 16)
+-        need(filetype in (0, stat.S_IFREG, stat.S_IFDIR), "LINK_OR_SPECIAL_MEMBER_REFUSED")
+-        is_directory = name.endswith("/") or filetype == stat.S_IFDIR
+-        rows.append({"index": number, "path": name, "compressed_bytes": compressed,
+-                     "uncompressed_bytes": expanded, "compression_method": method,
+-                     "crc32_declared_hex": f"{crc:08x}", "crc32_verified": False,
+-                     "local_header_offset": local_offset, "flags": flags,
+-                     "directory": is_directory, "version_needed": version,
+-                     "small_member_candidate_only": (not is_directory and expanded <= 32 * 1024 * 1024
+-                                                      and compressed <= 16 * 1024 * 1024 and method in (0, 8))})
+-        cursor += 46 + nlen + xlen + clen
+-    need(cursor == end, "CENTRAL_DIRECTORY_COUNT_OR_TRAILING_BYTES")
+-    return {"schema": "trnm-r1-history-central-directory-observation-v1",
+-            "artifact_id": ARTIFACT, "complete_central_directory_observed": True,
+-            "existing_tail_overlap_verified": True,
+-            "entries": count, "central_directory_offset": cd_offset,
+-            "central_directory_bytes": cd_size, "eocd_absolute_offset": EOCD_OFFSET,
+-            "zip_comment_bytes": comment_size, "members": rows,
+-            "whole_artifact_sha256_verified": False, "all_member_crc_verified": False,
+-            "member_contents_downloaded_or_executed": False}
+ 
+ def main():
+     need(sys.flags.optimize == 0, "OPTIMIZATION_FORBIDDEN")
+@@ -279,22 +421,21 @@
+     OUT.mkdir(mode=0o700)
+     started = now()
+     deadline = time.monotonic() + BUDGET
+-    result = {"schema": "trnm-r1-history-artifact-central-directory-read-v1", "status": "HOLD",
++    result = {"schema": "trnm-r1-history-artifact-selected-member-read-v1", "status": "HOLD",
+               "started_at": started, "finished_at": None, "errors": [], "steps": [],
+               "artifact_id": ARTIFACT, "run_id": RUN, "head": HEAD,
+               "expected_artifact_name": NAME, "expected_archive_bytes": SIZE,
+               "expected_whole_archive_sha256": DIGEST, "network_methods": ["GET"],
+-              "maximum_GETs": 2, "manual_redirect_following": False,
++              "maximum_GETs": 5, "manual_redirect_following": False,
+               "signed_URL_headers_auth_cookies_saved": False,
+               "whole_artifact_sha256_verified": False, "all_member_crc_verified": False,
+               "source_refs_config_CI_modified": False, "qualification": False,
+-              "automatic_other_ranges_or_retries": False}
++              "automatic_other_ranges_or_retries": False, "members": [],
++              "original_business_failure_preserved": True, "member_contents_executed": False}
+     try:
+-        existing_tail = validate_existing_tail()
+-        result["existing_tail"] = {"path": str(EXISTING_TAIL), "bytes": EXISTING_TAIL_BYTES,
+-                                   "sha256": EXISTING_TAIL_SHA}
+-        result["exact_directory_scope"] = {"start": START, "end": END, "bytes": RANGE_BYTES,
+-                                           "entries": ENTRY_COUNT, "zip64": False}
++        result["closed_directory"] = validate_directory()
++        result["selected_member_records"] = MEMBERS
++        result["explicit_range_groups"] = RANGES
+         raw = stable_bytes(SOURCE_LOG, SOURCE_BYTES, SOURCE_SHA)
+         need((f"Artifact ID is {ARTIFACT}").encode() in raw and DIGEST.encode() in raw
+              and (f"Final size is {SIZE} bytes").encode() in raw, "ORIGINAL_UPLOAD_ANCHOR")
+@@ -313,15 +454,29 @@
+         # Preserve only the successfully validated API metadata body; no response headers.
+         result["metadata"] = save("artifact-metadata.json", metadata_raw)
+         result["metadata_identity_verified"] = True
+-        step, body = capture("central-directory-range", endpoint + "/zip", deadline, range_probe=True)
+-        result["steps"].append(step)
+-        if step["http_status"] == 206 and body:
+-            result["central_directory_body"] = save("central-directory.body" if step["complete_transport"] else "central-directory.body.partial", body)
+-        if step["error"] == "RANGE_UNSUPPORTED_HTTP_STATUS":
+-            result["status"] = "RANGE_UNSUPPORTED"
+-        need(step["complete_transport"], "EXACT_206_CD_NOT_COMPLETE")
+-        result["central_directory"] = save_json("central-directory.json", central_directory(body, existing_tail))
+-        result["status"] = "CENTRAL_DIRECTORY_OBSERVED"
++        for group in RANGES:
++            step, body = capture(group["label"], endpoint + "/zip", deadline,
++                                 exact_range=(group["start"], group["end"]))
++            result["steps"].append(step)
++            if step["http_status"] == 206 and body:
++                step["range_body"] = save(group["label"] + (".body" if step["complete_transport"] else ".body.partial"), body)
++            if step["error"] == "RANGE_UNSUPPORTED_HTTP_STATUS":
++                result["status"] = "RANGE_UNSUPPORTED"
++            need(step["complete_transport"], "EXACT_206_SELECTED_RANGE_NOT_COMPLETE")
++            for number in group["members"]:
++                selected = MEMBERS[number]
++                offset = selected["offset"] - group["start"]
++                record = body[offset:offset + selected["end"] - selected["offset"]]
++                raw = decode_member(record, selected)
++                pin = save(selected["output"], raw)
++                result["members"].append({"member": selected["path"], "zip_artifact_id": ARTIFACT,
++                                          "range_label": group["label"], "raw": pin,
++                                          "crc32_declared_hex": selected["crc32"],
++                                          "crc32_verified": True, "exact_deflate_eof": True,
++                                          "member_execution": False})
++        need(len(result["members"]) == 6, "ALL_SELECTED_MEMBERS_REQUIRED")
++        result["selected_member_crc_verified"] = True
++        result["status"] = "SELECTED_MEMBERS_OBSERVED"
+     except Exception as error:
+         result["errors"].append(str(error) if isinstance(error, ValueError) else type(error).__name__)
+     finally:
+@@ -332,7 +487,7 @@
+         summary = save_json("summary.json", result)
+         print(json.dumps({"status": result["status"], "summary": summary,
+                           "whole_artifact_sha256_verified": False, "qualification": False}), flush=True)
+-    return 0 if result["status"] == "CENTRAL_DIRECTORY_OBSERVED" else 1
++    return 0 if result["status"] == "SELECTED_MEMBERS_OBSERVED" else 1
+ 
+ if __name__ == "__main__":
+     raise SystemExit(main())

@@ -1,0 +1,98 @@
+{
+  "actual_tool_readbacks": [
+    {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878/output.log",
+      "available_end": 213,
+      "bytes_hex": "7b2270726f6475636572223a207b2270617468223a20222f707269766174652f746d702f636861696e2d52312d72657175697265642d686561642d70726f746f636f6c2d61727469666163742d7265766965772d32303236313131342d76312f616371756972652d7461696c2d76312e7079222c20226279746573223a2031393536332c2022736861323536223a202233346636323963626266616266643736663733336130313364313334396236333163373563633134626461353964363462363934303164393032643364396631227d7d0d0a",
+      "chunk_sha256": "7c700b6f7a4e17c151b4d8b082e7085b884bf027c51f7c3d97b6fab798831d0e",
+      "host": "mac",
+      "next_offset": 213,
+      "offset": 0,
+      "output_complete": false,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 213,
+        "bytes_stored": 213,
+        "capture_error": null,
+        "created_unix_ms": 1794671847984,
+        "output_complete": false,
+        "owner_pid": 55829,
+        "pid": 55830,
+        "state": "running"
+      },
+      "storage": "target_archive",
+      "text": "{\"producer\": {\"path\": \"/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/acquire-tail-v1.py\", \"bytes\": 19563, \"sha256\": \"34f629cbbfabfd76f733a013d1349b631c75cc14bda59d64b69401d902d3d9f1\"}}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    },
+    {
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878/output.log",
+      "available_end": 552,
+      "bytes_hex": "7b22737461747573223a20225441494c5f414e445f43454e5452414c5f4449524543544f52595f4f42534552564544222c202273756d6d617279223a207b2270617468223a20222f707269766174652f746d702f636861696e2d52312d72657175697265642d686561642d70726f746f636f6c2d61727469666163742d7265766965772d32303236313131342d76312f7461696c2d6163717569736974696f6e2d76312f73756d6d6172792e6a736f6e222c20226279746573223a20353932392c2022736861323536223a202263333861326435363563633131333864396161353433313038323233653364313439356236623133343132666139663965633862636530396461376333343331227d2c202277686f6c655f61727469666163745f7368613235365f7665726966696564223a2066616c73652c20227175616c696669636174696f6e223a2066616c73657d0d0a",
+      "chunk_sha256": "216468a431f313bf0cd61ceaec0cf0d2eda1301f49f1d3918e658204eae5ff76",
+      "host": "mac",
+      "next_offset": 552,
+      "offset": 213,
+      "output_complete": true,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878",
+      "status": {
+        "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+        "bytes_seen": 552,
+        "bytes_stored": 552,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794671847984,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 55829,
+        "pid": 55830,
+        "state": "exited"
+      },
+      "storage": "target_archive",
+      "text": "{\"status\": \"TAIL_AND_CENTRAL_DIRECTORY_OBSERVED\", \"summary\": {\"path\": \"/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/tail-acquisition-v1/summary.json\", \"bytes\": 5929, \"sha256\": \"c38a2d565cc1138d9aa543108223e3d1495b6b13412fa9f9ec8bce09da7c3431\"}, \"whole_artifact_sha256_verified\": false, \"qualification\": false}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    }
+  ],
+  "raw_archive_complete": true,
+  "schema": "trnm-actual-terminal-archive-readback-v1",
+  "session_id": "dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 552,
+    "bytes_stored": 552,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794671847984,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 55829,
+    "pid": 55830,
+    "state": "exited"
+  },
+  "whole_archive": {
+    "origin": {
+      "host": "mac",
+      "path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-383532b0b3cd2953ab07fffe37ecd2b788634f5bd295e97c6495b7d2a0fcb878/output.log"
+    },
+    "preserved": {
+      "bytes": 552,
+      "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/terminals/metadata-and-tail.stdout",
+      "sha256": "b6901cb3be471bb1c86ae6d567bfb9102b7741331fd756d2ec47411ffa98d76e"
+    },
+    "version": [
+      16777233,
+      607231683,
+      33152,
+      1,
+      552,
+      1794671868903644901,
+      1794671868903644901
+    ]
+  }
+}

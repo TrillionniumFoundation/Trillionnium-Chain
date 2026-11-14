@@ -1,0 +1,1562 @@
+{
+  "schema": "trnm-pr847-audit-metadata-ready-v8",
+  "status": "confirmed",
+  "started_at": "2026-11-14T14:22:30.689604+00:00",
+  "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "pr_number": 847,
+  "driver": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/apply_pr847_audit_update_and_ready_v8.py",
+    "sha256": "e33ed1a30550585ee26b1f175311e10805693ddf0b3f8cd2a3f9a99c7587fe81"
+  },
+  "inputs": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/pr847-final-audit-inputs-2a8646-parallel-hook-v1.json",
+    "bytes": 2431,
+    "sha256": "f48d98f3a21b92b463800bffca05c0b3266acda85ac05de779789c77aecf7b37"
+  },
+  "validated_facts": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "pr_number": 847,
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "previous_own_published_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+    "expected_remote_head": "096c6b5f9b952c49389fd975515744074ba61317",
+    "publication_spec": {
+      "bytes": 1847,
+      "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+      "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+    },
+    "publication_receipt": {
+      "bytes": 6458208,
+      "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    "publication_status": "UNKNOWN",
+    "publication_transport_exit": 124,
+    "publication_observation_phase": "after",
+    "publication_resume_spec": {
+      "bytes": 2428,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    "publication_resume_receipt": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+      "bytes": 231108,
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    "publication_resume_terminal": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+      "bytes": 22383,
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    "publication_resume_status": "confirmed",
+    "publication_resume_transport_exit": 0,
+    "publication_completion": {
+      "kind": "resume-executor",
+      "receipt": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+        "bytes": 231108,
+        "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+      },
+      "original_receipt": {
+        "bytes": 6458208,
+        "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+        "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+      },
+      "resume_spec": {
+        "bytes": 2428,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+        "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+      },
+      "actual_terminal": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+        "bytes": 22383,
+        "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+      },
+      "status": "confirmed",
+      "observation_phase": "after",
+      "transport_exit": 0,
+      "terminal_proof": {
+        "session_id": "dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589",
+        "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589/output.log",
+        "exit_code": 0,
+        "output_complete": true,
+        "page_count": 1,
+        "bytes": 3185,
+        "sha256": "3eeb44f50d42b8826f766dd4e19cc00daf2031de58cde07a088f9f39a9e3012b"
+      },
+      "previous_resume_attempts": [
+        {
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+            "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+          },
+          "terminal_pages": {
+            "bytes": 19706,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+            "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+          }
+        },
+        {
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+            "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+          },
+          "terminal_pages": {
+            "bytes": 19710,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+            "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+          }
+        }
+      ],
+      "previous_resume_failures": [
+        {
+          "number": 1,
+          "push_exit": 1,
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+            "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+          },
+          "status": "UNKNOWN",
+          "terminal_pages": {
+            "bytes": 19706,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+            "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+          },
+          "terminal_proof": {
+            "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7/output.log",
+            "bytes": 2824,
+            "exit_code": 1,
+            "output_complete": true,
+            "page_count": 1,
+            "session_id": "dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7",
+            "sha256": "67aa8d5c3f62c62a59ce6ab6e8ea15cdb4ad62bddcdbaf012ab1cbd70ee5ca4e"
+          },
+          "transport_stderr": {
+            "bytes": 13318,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/atomic-publish-resume.stderr",
+            "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+          }
+        },
+        {
+          "number": 2,
+          "push_exit": 1,
+          "receipt": {
+            "bytes": 223986,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+            "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+          },
+          "status": "UNKNOWN",
+          "terminal_pages": {
+            "bytes": 19710,
+            "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+            "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+          },
+          "terminal_proof": {
+            "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c/output.log",
+            "bytes": 2824,
+            "exit_code": 1,
+            "output_complete": true,
+            "page_count": 1,
+            "session_id": "dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c",
+            "sha256": "e37edca34ed8fe412f2ed640bbe2fea91c32720a72accd1ad8d692f6b63835f5"
+          },
+          "transport_stderr": {
+            "bytes": 13318,
+            "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/atomic-publish-resume.stderr",
+            "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+          }
+        }
+      ],
+      "transport_trace": {
+        "NO_DATA": true,
+        "REDACT": true,
+        "bounds": {
+          "events": 4096,
+          "line": 8192,
+          "parsed_input": 16777216,
+          "postprocess_EOF_seconds": 5,
+          "retained_bytes": 524288
+        },
+        "complete": true,
+        "eof": true,
+        "errors": [],
+        "events": {
+          "bytes": 1250,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+          "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+        },
+        "events_retained": 17,
+        "header_auth_cookie_URL_or_body_retained": false,
+        "input_bytes_seen": 20483,
+        "lines_seen": 227,
+        "overlong_lines_discarded": 0,
+        "raw_trace_written": false,
+        "schema": "trnm-redacted-git-curl-info-v1",
+        "scope": "Strict typed connection/DNS/ALPN/TLS events; not a complete HTTP trace.",
+        "summary": {
+          "bytes": 919,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/summary.json",
+          "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+        },
+        "trace_fd": 4,
+        "unrecognized_or_header_lines_discarded": 210
+      },
+      "effective_hook_plan": {
+        "effective_hook_bytes": 7522,
+        "effective_hook_sha256": "5351fbd3ccaece41da37e7c779431b7c310f085fc98195ec244b8d78ae76fe6e",
+        "original_hook_sha256": "7a2b1d50bae4957e8b5b8c4a76c7fb07b821e2e31c9714e9ac90459fdce98cd8",
+        "parallel_capture_labels": [
+          "heads",
+          "tags"
+        ],
+        "receipt_command_order": [
+          "push-url",
+          "fetch-url",
+          "heads",
+          "tags"
+        ],
+        "schema": "trnm-followup-parallel-hook-read-plan-v1"
+      }
+    },
+    "archive": {
+      "archive_bytes": 272975787,
+      "archive_files": 5670,
+      "candidate_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "commit": "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9",
+      "direct_parents": [
+        "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "file_index_sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a",
+      "payload_manifest_sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223",
+      "tag": "archive/execution-receipts-20261114-2a86462a1ab2-v1",
+      "tag_oid": "454761ef276433740453b5b80ce886c1d251c6d3",
+      "tree": "e7c0cdcc71af648f430acd323d33dedfaf1ed63b"
+    },
+    "original_branch_names": 908,
+    "original_distinct_tips": 892,
+    "original_archive_direct_parents": 893,
+    "execution_manifest": {
+      "bytes": 2329620,
+      "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-2a8646-publication-v1/frozen-execution-payload-manifest-v1.json",
+      "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+    },
+    "seven_gate_receipt": {
+      "bytes": 9143,
+      "path": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-2a8646-v1/receipt.json",
+      "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+    },
+    "seven_gate_commands": 7,
+    "full_linux_receipt": {
+      "bytes": 21354,
+      "path": "/private/tmp/chain-consolidation-20261114-root/execution-receipts-followup-v1/R1-final-original-executions-and-publication-review/full/flat/original/summary.json",
+      "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+    },
+    "original_linux_commands": 18,
+    "hosted_checks": {
+      "state": "not_observed_for_final_candidate"
+    },
+    "collector_disposition": {
+      "exact_excerpt": "B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification.",
+      "payload_path": "post-m5-root-closures/reviewed-collector-disposition-v1.txt",
+      "state": "reviewed"
+    },
+    "template": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/pr847-audit-body-template-v3.md",
+      "bytes": 6355,
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    "qualification_granted": false
+  },
+  "prepared_summary_sha256": "dafaea8ffbc2562f0dd7e258ff842e6e57a4c1129069b7300d51801e3b28190e",
+  "desired_sha256": "0753542bf11813d6e8623e3061bd0a24d810409e53638d6bd84c7737d750c0d3",
+  "prepared_directory": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1",
+  "metadata_attempted": true,
+  "metadata_exit": 0,
+  "metadata_verified": true,
+  "ready_attempted": true,
+  "ready_exit": 0,
+  "ready_skipped_already_nondraft": false,
+  "final_pr_verified": true,
+  "source_before_after_valid": true,
+  "automatic_retry_authorized": false,
+  "rollback_authorized": false,
+  "approval_or_reviewer_or_comment_or_merge_performed": false,
+  "git_push_or_protection_change_performed": false,
+  "hosted_qualification_granted": false,
+  "steps": [
+    {
+      "label": "project-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:30.734338+00:00",
+      "finished_at": "2026-11-14T14:22:30.822453+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/project-preflight.stdout",
+      "stdout_bytes": 163,
+      "stdout_sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/project-preflight.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "verify-source-before",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/source-before.json"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:30.823049+00:00",
+      "finished_at": "2026-11-14T14:22:37.239357+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/verify-source-before.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/verify-source-before.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-before-head",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:22:37.240077+00:00",
+      "finished_at": "2026-11-14T14:22:37.247836+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-head.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-head.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-before-tree",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:22:37.248375+00:00",
+      "finished_at": "2026-11-14T14:22:37.256339+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-tree.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-tree.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-before-status",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:22:37.256892+00:00",
+      "finished_at": "2026-11-14T14:22:37.372006+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-status.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-before-status.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "actor-fresh",
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:37.372847+00:00",
+      "finished_at": "2026-11-14T14:22:39.121279+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/actor-fresh.stdout",
+      "stdout_bytes": 37,
+      "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/actor-fresh.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pr-fresh-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:39.124936+00:00",
+      "finished_at": "2026-11-14T14:22:42.177284+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-fresh-before.stdout",
+      "stdout_bytes": 20182,
+      "stdout_sha256": "c7778a723784e32630f2628c5369ea2d10cdd07ec054c6221f9806bc88dd5d56",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-fresh-before.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "metadata-edit-once",
+      "argv": [
+        "gh",
+        "pr",
+        "edit",
+        "847",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--title",
+        "Consolidate audited branch history and current runtime",
+        "--body-file",
+        "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/pr-body.md"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:42.302273+00:00",
+      "finished_at": "2026-11-14T14:22:46.806630+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/metadata-edit-once.stdout",
+      "stdout_bytes": 70,
+      "stdout_sha256": "bfb4f3480621a0da8cca1c35d44aecd4f687beb3060decd6df9a6a3b850cf3eb",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/metadata-edit-once.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pr-after-edit",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:46.810918+00:00",
+      "finished_at": "2026-11-14T14:22:49.956586+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-after-edit.stdout",
+      "stdout_bytes": 9058,
+      "stdout_sha256": "2c20ec716ce9e73d8852ee32b0aa0fffc680f91797790953ceb27ce3cc043bf5",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-after-edit.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "mark-ready-once",
+      "argv": [
+        "gh",
+        "pr",
+        "ready",
+        "847",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:49.967024+00:00",
+      "finished_at": "2026-11-14T14:22:52.887418+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/mark-ready-once.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/mark-ready-once.stderr",
+      "stderr_bytes": 95,
+      "stderr_sha256": "865cb8a257c92085c41bd93ca0e1baa37d1811dbc46cde2e91399c3d98400d09"
+    },
+    {
+      "label": "pr-final",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--jq",
+        "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:52.891294+00:00",
+      "finished_at": "2026-11-14T14:22:56.515556+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-final.stdout",
+      "stdout_bytes": 9059,
+      "stdout_sha256": "9a19af11c00f65683351a8d0a338bd5e2a6619b635baa069aa7e2bd19bee3f49",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/pr-final.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "verify-source-after",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/source-after.json"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "started_at": "2026-11-14T14:22:56.522182+00:00",
+      "finished_at": "2026-11-14T14:23:03.593134+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/verify-source-after.stdout",
+      "stdout_bytes": 423,
+      "stdout_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/verify-source-after.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-after-head",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:23:03.594385+00:00",
+      "finished_at": "2026-11-14T14:23:03.602778+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-head.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-head.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-after-tree",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:23:03.603576+00:00",
+      "finished_at": "2026-11-14T14:23:03.612070+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-tree.stdout",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-tree.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "identity-after-status",
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "timeout_seconds": 60,
+      "started_at": "2026-11-14T14:23:03.612804+00:00",
+      "finished_at": "2026-11-14T14:23:03.745784+00:00",
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-status.stdout",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/identity-after-status.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "errors": [],
+  "retained_inputs": [
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare_pr847_audit_update_v10.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/preparer-v10.py",
+      "bytes": 53056,
+      "sha256": "af773495a3e27a008377c08c87141af91f741c23a132c3615d57d51413411989"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-summary.json",
+      "bytes": 62446,
+      "sha256": "dafaea8ffbc2562f0dd7e258ff842e6e57a4c1129069b7300d51801e3b28190e"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/dependencies.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-dependencies.json",
+      "bytes": 3100423,
+      "sha256": "ede7c9c2a6091ccdb0190950264953051c31751361c843f81be616c76d7a42d9"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/publication-spec.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-0.raw",
+      "bytes": 1847,
+      "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-publication.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-1.raw",
+      "bytes": 6458208,
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/execution-manifest.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-2.raw",
+      "bytes": 2329620,
+      "sha256": "c013b6e3792dda573728f0b2ea2fb2ece976c8fd7767f83e1c89810d447d9223"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/seven-local-gates.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-3.raw",
+      "bytes": 9143,
+      "sha256": "4f2cbaf26f43477f4d330dab3666380ae36a937469d0e254a88423f293075d33"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/full-linux-lane.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-4.raw",
+      "bytes": 21354,
+      "sha256": "70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/archive-file-index.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-5.raw",
+      "bytes": 1811373,
+      "sha256": "8c61f39f29232da57c218ece13a674ea5868f710d495e9e5464e0891ea86e16a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-1-receipt.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-6.raw",
+      "bytes": 223986,
+      "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-1-terminal-pages.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-7.raw",
+      "bytes": 19706,
+      "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-2-receipt.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-8.raw",
+      "bytes": 223986,
+      "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/previous-resume-2-terminal-pages.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-9.raw",
+      "bytes": 19710,
+      "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-receipt.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-10.raw",
+      "bytes": 231108,
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-typed-trace-summary.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-11.raw",
+      "bytes": 919,
+      "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-typed-trace-events.jsonl",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-12.raw",
+      "bytes": 1250,
+      "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-push-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-13.raw",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-push-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-14.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-fetch-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-15.raw",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-origin-fetch-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-16.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-existing-hook-config.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-17.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-existing-hook-config.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-18.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-default-hook-path.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-19.raw",
+      "bytes": 107,
+      "sha256": "0b4863d62d1ffb4cadd13d668b30eb105c74ecaa4d1e0d07e650b9284582875d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-default-hook-path.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-20.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-tag.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-21.raw",
+      "bytes": 41,
+      "sha256": "507950203ff28b3aec6c5840f025970f3a288cbe1a17b968ee6853e6b12395b9"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-tag.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-22.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-peel.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-23.raw",
+      "bytes": 41,
+      "sha256": "ecfa5835945b5cdddae1eef212115cfd27c4e625ee6b58fa84fbd910b8b3e585"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-local-peel.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-24.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-tag.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-25.raw",
+      "bytes": 41,
+      "sha256": "432650b394eb5116254a165159081c7d7f820bda28ba92886a6d236259590a91"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-tag.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-26.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-peel.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-27.raw",
+      "bytes": 41,
+      "sha256": "1d14af7103a0e727c649cbe610afc49bd0dabf6bc6a32285e611cdf4a3d2685d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-local-peel.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-28.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-29.raw",
+      "bytes": 6,
+      "sha256": "667eb642356d621ebeaec3eba658779ef92e9f5b10ce711ddef7c744fab4dbba"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-30.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-31.raw",
+      "bytes": 43183,
+      "sha256": "2f581bd59d740f3a0b6405ca5ed9db2f36ead80a91acad506bdd5a218eb82a41"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-commit-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-32.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-33.raw",
+      "bytes": 4,
+      "sha256": "19f89deee590664e3f917abb7e8cf9e7d9a71707c875de58b5914b08f5d19de8"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-34.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-35.raw",
+      "bytes": 471,
+      "sha256": "fa23fe34446467989dc3774381ef2dc3dbad8ca794f68e44caaa6263a02defa1"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-old-archive-tag-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-36.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-37.raw",
+      "bytes": 4,
+      "sha256": "f8bf41177a5f5e808a7ccb648b51080b031f15ca8018d91a576263d6cc626eb6"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-38.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-39.raw",
+      "bytes": 404,
+      "sha256": "4b28c4dd961684ed018db2f077a9d050513d2097314ddd40c1708a5281d0ba01"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-commit-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-40.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object-size.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-41.raw",
+      "bytes": 4,
+      "sha256": "9cc6ce83098a2d1c852b990cedc63220f77a3e4cac7e605949da8fde0e4a3191"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object-size.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-42.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-43.raw",
+      "bytes": 411,
+      "sha256": "cc6094fe1a918d96324932ba4346e465966644b94cf2af22ac2b505de58c7dce"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-tag-object.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-44.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-exact-tree-list.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-45.raw",
+      "bytes": 869793,
+      "sha256": "cfa99a498e226b4fecedc95e748c2eaa250da1a37f146620f75d0640a418d705"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-same-archive-exact-tree-list.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-46.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-project-preflight.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-47.raw",
+      "bytes": 163,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-project-preflight.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-48.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-before.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-49.raw",
+      "bytes": 423,
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-before.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-50.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-candidate-fast-forward.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-51.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-candidate-fast-forward.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-52.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-main-ancestry.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-53.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-main-ancestry.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-54.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-semantic-ledger-ancestry.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-55.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-semantic-ledger-ancestry.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-56.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-reviewed-remote.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-57.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-reviewed-remote.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-58.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-reviewed-remote-to-candidate.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-59.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-reviewed-remote-to-candidate.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-60.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-rog-start.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-61.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-published-to-rog-start.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-62.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-rog-start-to-candidate.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-63.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-rog-start-to-candidate.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-64.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-65.raw",
+      "bytes": 37,
+      "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-66.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-before.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-67.raw",
+      "bytes": 242,
+      "sha256": "2193ac1ecbc5e9b4b6dbdae0bda162401fd44248cdb2c7228cb3ce8716a054e4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-before.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-68.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-heads.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-69.raw",
+      "bytes": 87154,
+      "sha256": "c24ac4d1acc2a6f1cd58abb63bec4087abbc878bbd5636b89242c97bb8d0f043"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-heads.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-70.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-tags.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-71.raw",
+      "bytes": 231,
+      "sha256": "524b1d36fdd3c9d9d26856a15715415db3609c8c5a174acc905446dfee05b952"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-before-tags.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-72.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-preflight.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-73.raw",
+      "bytes": 163,
+      "sha256": "f22a08a0823299a246534d74505e090c2a74632b5c363d4f693db2228c20e85c"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-preflight.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-74.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-origin-push-url.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-75.raw",
+      "bytes": 65,
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-origin-push-url.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-76.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-existing-hook-config.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-77.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-prepush-existing-hook-config.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-78.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-prepush.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-79.raw",
+      "bytes": 242,
+      "sha256": "2193ac1ecbc5e9b4b6dbdae0bda162401fd44248cdb2c7228cb3ce8716a054e4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-pr-prepush.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-80.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor-prepush.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-81.raw",
+      "bytes": 37,
+      "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actor-prepush.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-82.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-atomic-publish-resume.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-83.raw",
+      "bytes": 334,
+      "sha256": "ab2487c0e46bd7f0283e3ce9c2df70ac6367d2062f05a1c8e07eb9ce3675b326"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-atomic-publish-resume.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-84.raw",
+      "bytes": 83077,
+      "sha256": "a4b064c1175c52b38b9814535fd8a9502053cada96715a7f743a07dc50924749"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-heads.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-85.raw",
+      "bytes": 87154,
+      "sha256": "66aa7f7e4d5f98bbd1cb0363e40a8c7c105478ea3b2d8eba4f19bb103cdf2e43"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-heads.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-86.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-tags.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-87.raw",
+      "bytes": 440,
+      "sha256": "97cc8ca7c7242e2b6857098b0a152017314a3fa7e6fbaffcc0fd6b5a6146bb50"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-remote-after-tags.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-88.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-after.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-89.raw",
+      "bytes": 423,
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-verify-source-after.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-90.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-actual-terminal-pages.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-91.raw",
+      "bytes": 22383,
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/collector-disposition-original",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-92.raw",
+      "bytes": 873,
+      "sha256": "4c7499eb1563e57b49c26512c6641e3a2e1bfb30bf0c84b293d82ef7cd9e5ae3"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/body-template-v3.md",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-93.raw",
+      "bytes": 6355,
+      "sha256": "0d37a8132e7d9b262eefdb02f1e2968f26b5f8ec17e59a2701343cc9d611073a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-13.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-94.raw",
+      "bytes": 9614,
+      "sha256": "49b43f68b433423cb5af57ce56db18c00d7aa0f320a325740946e6d86bdf8004"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/final-inputs.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-95.raw",
+      "bytes": 2431,
+      "sha256": "f48d98f3a21b92b463800bffca05c0b3266acda85ac05de779789c77aecf7b37"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/preparer-v5.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-96.raw",
+      "bytes": 36663,
+      "sha256": "12776f0a436732589e46ef13548cb8f34180a532ab1ff63671560326c541cd6d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-producer-v3.py",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-97.raw",
+      "bytes": 78875,
+      "sha256": "f4db0552a747f18525a4938510b5768e4852b0a787271762c6e80c204b829627"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/resume-spec.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-98.raw",
+      "bytes": 2428,
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-0.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-99.raw",
+      "bytes": 1925,
+      "sha256": "6cd2ea64417238094d53d34f084e71e8739c40d0b18b535d26b2355146a210ca"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-1.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-100.raw",
+      "bytes": 2426,
+      "sha256": "2381ac94dab56b9016f4cea84442fbde8ddda135ed46592c7708d95a83b58acb"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-2.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-101.raw",
+      "bytes": 5488,
+      "sha256": "2b611845764a6830e47ad05a897961db5c409958e8d2cc06d3165ca30e798376"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-3.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-102.raw",
+      "bytes": 885065,
+      "sha256": "753dbb0b65fa4377a28b705c888dd9319de5707cd569c1cb268759439e66612d"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-8.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-103.raw",
+      "bytes": 73492,
+      "sha256": "0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-9.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-104.raw",
+      "bytes": 13318,
+      "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/inputs/original-read-11.raw",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-input-105.raw",
+      "bytes": 13318,
+      "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/desired.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/desired.json",
+      "bytes": 9084,
+      "sha256": "0753542bf11813d6e8623e3061bd0a24d810409e53638d6bd84c7737d750c0d3"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-body.md",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/pr-body.md",
+      "bytes": 8644,
+      "sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/steps.json",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-steps.json",
+      "bytes": 1841,
+      "sha256": "8d907a7ab7b8f0ea890daeb232c4784c1738842db0c3c2c65672c0dfa2371bd3"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-actor.stdout",
+      "bytes": 37,
+      "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-actor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stdout",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-pr-before.stdout",
+      "bytes": 20182,
+      "sha256": "c7778a723784e32630f2628c5369ea2d10cdd07ec054c6221f9806bc88dd5d56"
+    },
+    {
+      "source_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stderr",
+      "retained_path": "/private/tmp/chain-consolidation-20261114-root/apply-pr847-audit-update-and-ready-v8-r1-parallel-hook-v1/inputs/prepared-pr-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "publication_receipt": {
+    "bytes": 6458208,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+    "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e",
+    "status": "UNKNOWN",
+    "observation_phase": "after"
+  },
+  "publication_completion": {
+    "kind": "resume-executor",
+    "receipt": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+      "bytes": 231108,
+      "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b"
+    },
+    "original_receipt": {
+      "bytes": 6458208,
+      "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+      "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+    },
+    "resume_spec": {
+      "bytes": 2428,
+      "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-spec-2a8646-parallel-hook-v1.json",
+      "sha256": "7959ac71f53c52981a240832e2374e4ac49f08e536534a405a77d4e8b848b1ca"
+    },
+    "actual_terminal": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+      "bytes": 22383,
+      "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+    },
+    "status": "confirmed",
+    "observation_phase": "after",
+    "transport_exit": 0,
+    "terminal_proof": {
+      "session_id": "dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589",
+      "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-ab48705cce7d5c8fbd7f6ab139bb67b17e07a5c975b0d88f64db6a90bc3b6589/output.log",
+      "exit_code": 0,
+      "output_complete": true,
+      "page_count": 1,
+      "bytes": 3185,
+      "sha256": "3eeb44f50d42b8826f766dd4e19cc00daf2031de58cde07a088f9f39a9e3012b"
+    },
+    "previous_resume_attempts": [
+      {
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+          "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+        },
+        "terminal_pages": {
+          "bytes": 19706,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+          "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+        }
+      },
+      {
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+          "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+        },
+        "terminal_pages": {
+          "bytes": 19710,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+          "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+        }
+      }
+    ],
+    "previous_resume_failures": [
+      {
+        "number": 1,
+        "push_exit": 1,
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+          "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+        },
+        "status": "UNKNOWN",
+        "terminal_pages": {
+          "bytes": 19706,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+          "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+        },
+        "terminal_proof": {
+          "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7/output.log",
+          "bytes": 2824,
+          "exit_code": 1,
+          "output_complete": true,
+          "page_count": 1,
+          "session_id": "dpty-1e071a3c6223500afaf12efd6647610752be79f4dd5520dcd77ca0a02a6883a7",
+          "sha256": "67aa8d5c3f62c62a59ce6ab6e8ea15cdb4ad62bddcdbaf012ab1cbd70ee5ca4e"
+        },
+        "transport_stderr": {
+          "bytes": 13318,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/atomic-publish-resume.stderr",
+          "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+        }
+      },
+      {
+        "number": 2,
+        "push_exit": 1,
+        "receipt": {
+          "bytes": 223986,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+          "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+        },
+        "status": "UNKNOWN",
+        "terminal_pages": {
+          "bytes": 19710,
+          "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+          "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+        },
+        "terminal_proof": {
+          "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c/output.log",
+          "bytes": 2824,
+          "exit_code": 1,
+          "output_complete": true,
+          "page_count": 1,
+          "session_id": "dpty-e4cfa015148b54e6302e6fb59a77d16a17b96869bbd25678db7ad4eb6915cd8c",
+          "sha256": "e37edca34ed8fe412f2ed640bbe2fea91c32720a72accd1ad8d692f6b63835f5"
+        },
+        "transport_stderr": {
+          "bytes": 13318,
+          "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/atomic-publish-resume.stderr",
+          "sha256": "d1f31190e22e217374cbba9b2fa0f2ebe85cddaf66524c3fc8bfdeb92e39df8a"
+        }
+      }
+    ],
+    "transport_trace": {
+      "NO_DATA": true,
+      "REDACT": true,
+      "bounds": {
+        "events": 4096,
+        "line": 8192,
+        "parsed_input": 16777216,
+        "postprocess_EOF_seconds": 5,
+        "retained_bytes": 524288
+      },
+      "complete": true,
+      "eof": true,
+      "errors": [],
+      "events": {
+        "bytes": 1250,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+        "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+      },
+      "events_retained": 17,
+      "header_auth_cookie_URL_or_body_retained": false,
+      "input_bytes_seen": 20483,
+      "lines_seen": 227,
+      "overlong_lines_discarded": 0,
+      "raw_trace_written": false,
+      "schema": "trnm-redacted-git-curl-info-v1",
+      "scope": "Strict typed connection/DNS/ALPN/TLS events; not a complete HTTP trace.",
+      "summary": {
+        "bytes": 919,
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/summary.json",
+        "sha256": "7a7e3d2376df4d85b1e362cfbdb107f47b5ea430d653a18b0ff742c34e2fb3a4"
+      },
+      "trace_fd": 4,
+      "unrecognized_or_header_lines_discarded": 210
+    },
+    "effective_hook_plan": {
+      "effective_hook_bytes": 7522,
+      "effective_hook_sha256": "5351fbd3ccaece41da37e7c779431b7c310f085fc98195ec244b8d78ae76fe6e",
+      "original_hook_sha256": "7a2b1d50bae4957e8b5b8c4a76c7fb07b821e2e31c9714e9ac90459fdce98cd8",
+      "parallel_capture_labels": [
+        "heads",
+        "tags"
+      ],
+      "receipt_command_order": [
+        "push-url",
+        "fetch-url",
+        "heads",
+        "tags"
+      ],
+      "schema": "trnm-followup-parallel-hook-read-plan-v1"
+    }
+  },
+  "publication_resume_receipt": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/summary.json",
+    "bytes": 231108,
+    "sha256": "b50fe85416de9efdacf58624236c01a6bd638185ccaae4da7ce9bd198311a04b",
+    "status": "confirmed",
+    "observation_phase": "after"
+  },
+  "publication_resume_terminal": {
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-parallel-hook-terminal-pages-v1.json",
+    "bytes": 22383,
+    "sha256": "8a26b4f28ee50767e78a017c2e52e70e68588e0304a89e6e3e37f03c671693a7"
+  },
+  "desired_title": "Consolidate audited branch history and current runtime",
+  "desired_body_sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4",
+  "pr_node_id": "PR_kwDOTty1_c8AAAABN3jgpw",
+  "identity_before": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "status": ""
+  },
+  "pr_fresh_before": {
+    "auto_merge": null,
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "main",
+    "body": "<!-- chain-original-dag-archive-20261113-5954 -->\n## Original branch-history archive verified; source integration remains in progress\n\nThe complete captured **908-branch / 892-unique-tip** original history is now reachable through the permanent tag [`archive/branches-before-consolidation-20261113-5954`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/archive/branches-before-consolidation-20261113-5954), pointing to **`b9cc24f76617e28015ee890635ece8449b52ee7c`**. Independent GitHub readback verified its exact 892-parent set against the original head inventory, including consumed hosted-once intent `6bdaf9598d72c118798eb51a03db2e1c0e7c8507`. The temporary publication helper branch was removed; all 908 original heads are retained unchanged.\n\nThis commit is a **history archive only**: its tree is captured main plus the exact head manifest under `evidence/branch-consolidation-20261113/archive-5954/`. It is not the reviewed product tree and does not claim semantic integration or CI completion. The previous missing-original-DAG blocker is closed for the captured original heads; later unpublished source commits still need publication and final retention.\n\nThe existing candidate remains at `b683714c`. Work continues in an isolated checkout based on recovered source `147350d4504cb0d70f0314dcd21e54cadf2aca7a`: reconcile compatible remaining source changes, explicit historical alternatives, current source bindings, and exact required CI. **Main merge, deletion of original branches, and source-disposition closure are still pending. Draft and HOLD_NO_GO remain.**\n\nThe preceding audit and all original execution outcomes are retained below.\n\n---\n\n<!-- chain-audit-consolidation-b683714c -->\n## Current consolidation audit checkpoint \u2014 HOLD\n\nPublished candidate: **`b683714cdd5ba241c16c335a81aebc12c1581902`**, tree **`f11a77d95b665207206282f691efc9d1225f26ea`**. The existing PR branch was normally fast-forwarded from `9fcf1233`. Main and all remote branches remain retained.\n\nThe candidate includes reviewed Growth/History ownership and terminal-refusal fixes, optional CPU observations, finite capacity/packed-branch controls, SQLite reserved-name classification and the ordinary DA reopen repair. Binding metadata now refers to the reviewed production source `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, without importing historical runtime qualification.\n\n### Fresh exact-candidate validation\n\n- **478 Python controls passed:** 58 PQ + 18 authority + 35 joint + 65 corpus + 58 repository + 201 CI-contract, plus 43 source-integrity controls.\n- Eight reader/contract/renderer commands preserved their original outcomes: seven exited zero; joint `--require-qualified` refused with exit 3. HOLD/false/null fields and native/ignored rosters remain preserved.\n- The original full source verifier checked **40,749 entries / 3,939,255,543 bytes**, exact raw Git blobs, executable modes and clean tracked state on ROG. The separate publication checkout is explicitly partial; no full-validation claim is made for it.\n- The original pinned **cargo-deny 0.20.2** runner passed advisories, licenses, bans and sources for both locked all-feature workspace/fuzz graphs. RustSec was fixed and archived at commit `af7b3ec33460b8e2de8d422e16d628518891a519`, tree `dfd9cabc64401afcb375811a5a7b0992256b5b10`. Every command retained successful before/after source guards; `acceptance_granted` remains false.\n- Formatting, exact Cargo graph metadata and strict workspace/all-target/all-feature Clippy are being checked separately. Hosted CI retains its own exact-head outcomes; local observations do not replace pending, failed or cancelled jobs.\n\nThe earlier execution environment became unavailable. The source was recovered and verified, and all binding/test results above were newly executed. Missing older raw records and explicitly labelled conversation reconstructions are not represented as freshly recovered execution evidence. Failed recovery/publication attempts remain retained.\n\n### Remaining work\n\nPer-branch semantic reconciliation and the final audit packet are still in progress. Main requires linear history and five strict checks; no protected-main bypass, force push, self-approval or activation is authorized. Before cleanup, the complete original commit DAG and consumed hosted-once intent must remain fetchable and reachable; an archive tag omitting that intent is insufficient.\n\n**The PR stays draft. Final main merge and branch deletion remain pending. Overall qualification stays HOLD_NO_GO.**\n\nPrevious checkpoints are preserved below.\n\n---\n\n<!-- chain-audit-consolidation-9fcf1233 -->\n## Branch composition checkpoint \u2014 HOLD\n\nCurrent source: **9fcf1233b7594c16b36e81eb3ec11978d7d5cc9b**, tree **de7253e25cd07c461cd2027f4ae67a65438871ae**. This real merge commit preserves 37 reviewed parent commits and 9,164 changed paths, including original evidence.\n\nThe combined tree passed locked workspace/all-target/all-feature strict Clippy, formatting, the CI contract, 2,420 source pins and 11 selected normal native controls (RFC8032, research snapshot v2/restart/roundtrip/golden vectors and settlement arithmetic/conservation/cold reopen). The preceding source composition passed the full locked workspace check. Original integration failures and environment-limited worker ownership controls remain recorded.\n\nResidual branch semantics, peer/storage boundary increments, adapted supply-chain policy, final source-binding migration and required exact-commit CI remain open. Existing budgets and HOLD/false/null qualification fields are preserved. The PR stays draft; main merge and branch cleanup are pending.\n\nThe previous record is preserved below.\n\n---\n\n<!-- system-boundary-da1374a2 -->\n## Current system-boundary continuation \u2014 HOLD\n\nCurrent source: **`da1374a200022bc14dc2bd325cc9ba29dbcd24ab`**, tree `00479a98dabc6b1fd91a0ceef82ffbdbffb78067`, one fast-forward commit after M14 `ac8501a85a770ba34f34e1bed507ca747e5c3f8d`. This successor changes 13 reviewed files and keeps the original Hepta counterpart, native lock, production refusal and acceptance budgets. The M14 account below is preserved as historical evidence; its native results do not qualify this successor.\n\nA report could previously claim a timely confirmation without retaining the original six-depth verifier observation and complete ordered clocks. The phase reader now rejects that inconsistency, phase-success claims with missing rounds, and startup-failure/success contradictions. Unknown clocks stay null; the three-round denominator and original thirty-second deadline remain.\n\nThe new [custody V2 declaration review](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/da1374a200022bc14dc2bd325cc9ba29dbcd24ab/docs/security/PQ_ROOT_CUSTODY_REVIEW_V2.md) adds network/power availability and explicit cross-axis common-control groups. Network and power confer no key access. Exact minima cover only listed factors; labels and matching local bytes do not authenticate independence, freshness, real compromise cost or exclusion of a common old-backup restore. V1 is retained and V2 is added to the existing mandatory repository-truth lane with failure-propagation controls.\n\n### Fresh local revalidation on this exact source\n\n| Observation | Result |\n| --- | --- |\n| Original phase/policy controls | 69/69 passed |\n| Custody V1/V2 controls | 39/39 passed |\n| Qualification and command binding | 48/48 and 13/13 passed |\n| Complete CI contract / source-integrity controls | 177/177 and 43/43 passed |\n| Corpus negative controls | 59/59 passed |\n| Actual CI contract inspector | Passed; still reports `tests_executed=false` |\n| Actual current corpus inspector | 1,079 pinned blobs / 987 required paths; `HOLD_NO_GO` |\n| Default custody V2 inspection | Valid HOLD with 12 missing items; every qualification/activation flag remains false |\n| Source checks | Exact HEAD/tree, clean state and checked inputs stable before/after; project preflight and diff checks passed |\n\nThese are local mechanism and source-consistency observations. This revalidation did not execute native Host service, external effects, independent recovery, model training/evaluation or WAN custody acceptance. Hosted successor runs retain their own outcomes.\n\nThe [common-source boundary review](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/da1374a200022bc14dc2bd325cc9ba29dbcd24ab/docs/security/SYSTEM_BOUNDARY_QUALIFICATION_20261109.md) separates source presence, mechanism tests, same-operation observations and qualification. Research-side and Hepta-side receipts are not imported as current-source acceptance. All-legal-strategy cost, joint consensus security, timely honest service, ordinary FinalUse/effects, sufficiently fresh independently surviving recovery facts and independent WAN operation remain open. **Overall HOLD_NO_GO / DENY_ALL; draft retained; no production activation.**\n\n---\n\n## Historical M14 record (preserved)\n\n## Problem and source repair\n\nExact M12 validation exposed a real cache persistence failure: the data-availability library passed 714 tests and failed its existing read-write post-refusal byte-preservation assertion. The read-write opener established the no-close-checkpoint policy after a schema-sensitive PRAGMA, leaving an earlier refusal path outside that policy. The original failure, file differences and raw test output are retained.\n\nThe M13 repair establishes the existing close policy immediately after opening the read-write connection. Both openers reuse `prevent_close_checkpoint`, and ordinary cache configuration continues to reassert it. The repair changes two production files and preserves the original 715-test suite, SQL contract, backend source fence, deadlines and assertions. M14 binds that reviewed repair into the candidate's curated authority register and corpus.\n\nThis draft source update makes **fixed M14** available to the original hosted workflows while exact-source native verification continues. The complete new execution-evidence packet is not yet committed. Previously published M6/M7 evidence remains historical and does not qualify M14. The PR remains a draft.\n\n## Changes since the published M7 head\n\n- Pin `rusqlite` 0.41.0 and `libsqlite3-sys` 0.39.0 consistently across the native workspace, fuzz lock and research adapter lock. Adapt transaction-observer registration and test-owned connections to the actual mutable-connection API while preserving existing transaction, recovery, cancellation and refusal assertions.\n- Update the SQLite source/layout fence to the exact bundled SQLite 3.54.0 amalgamation and upstream build script, including the actual normal bundled compiler flags. Retain the original four-phase refusal/recovery control. The M13 close-policy fix keeps this selected backend and its fence unchanged.\n- Adapt the test-only SQL trace guard to own its mutable connection before opening the transaction. Recording keeps the original apply interval, and repeated arms reset their own counters. The primary timing pass remains trace-free; original assertions, timing expressions and test names remain.\n- Rebind authority's 44 source pins to actual M13 Git objects. Only the curated `cell/store.rs` digest changes; the other 43 source identities, seven routes, 18 original test names and all false qualification fields remain. The prior active source revision is explicitly rejected in the existing stale-context control. The helper in `cell/cache_wal.rs` remains outside this incomplete curated set and does not acquire a complete-coverage claim.\n- Retain Root's explicit M11 37-path base and the prior proof mapping/lifetime bases where their selected bytes are unchanged. M14 updates seven existing corpus pins for the two repaired sources, four authority binding files and sole plan; the 1,074-pin / 982-required-path sets are unchanged.\n- Add a separate current semantics report and make the actual workflow compare it byte-for-byte. The original report stays unchanged. Its only structured difference is the formal `w1_zkvm/Cargo.lock` SHA reflecting the already-integrated methods dependency list. Strengthen the existing semantics test while retaining all 22 method names.\n- Retain the two empty failed stdout artifacts losslessly under `.stdout.log` names, with correction provenance and updated manifests. Keep failed API/build/test observations, historical evidence, the fifteen proof obligations, null lifetime bound and original acceptance budgets.\n\nThe earlier sealed-loader fd/dev/ino test correction and full-body journal subprocess isolation remain in the ancestry. Their production loader/lock behavior was not replaced by successful test substitutes. The original M5 journal cold-open `WouldBlock` cause remains unestablished.\n\n## Fixed identities\n\n- **Chain M14 execution candidate:** `ac8501a85a770ba34f34e1bed507ca747e5c3f8d`; tree `3f321d412ab7eb1f5c03f18ba21201e96a3db144`.\n- **M13 reviewed production-source checkpoint:** `893738947a50dc42819b56e632192de4f9f24fa0`; tree `78945356aa750db9a85e96ffa5ee64249d38a1c2`. This is M14's parent and the authority source base; the subsequent binding files are not claimed to have existed in M13.\n- **Authority canonical table SHA256:** `a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c`.\n- **Native workspace lock SHA256:** `759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f`.\n- **Hepta counterpart:** `71738345326b98d88b738250d2b84ecbcb466eb8`; tree `bfd8384241bf09fcf79daa94f2ef9c9438f92ee4`.\n- **Selected proof profile:** `trnm-w1-risc0-3.0.6-poseidon2-join-v2`; descriptor SHA256 `5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031`.\n\nDeclared source-subset bases are explicit. They do not supply ordinary-daemon binary, model, loader or evaluator identities.\n\n## M14 validation snapshot \u2014 Python complete, native pending\n\n| Exact M14 observation | State at this review snapshot |\n| --- | --- |\n| Complete Python controls | **474 unique methods passed:** 176 CI-contract + 11 scope + 23 campaign-reader + 26 proof-profile + 59 corpus + 42 Root-register + 14 current-mapping + 18 authority + 105 complete named controls |\n| Inspectors and named completion | All six inspectors and the original independent named-completion check exited zero; authority remains HOLD with all seven qualification/coverage fields false |\n| Actual workflow reproduction | All seven original report commands and all seven strict byte comparisons passed |\n| Source guard | All **1,504 actual inputs** match frozen Git blobs and before/after bytes; HEAD/tree and clean tracked state unchanged; all twelve original learning fixtures match their original identities |\n| Full native execution checkout | 27,655 tracked files / 2,527,811,332 bytes verified against M14; no sparse or hidden index entries; clean exact HEAD/tree |\n| Workspace all-feature library check | Passed on exact M14, exit 0, 26.21 seconds; source and provider identities unchanged |\n| Original full data-availability library | Complete 715-test result on M14 remains pending |\n| Remaining native libraries, original quality gates and 76 Root integration controls | No complete M14 result claimed; each requires its own exact-source terminal record |\n\nThe M14 Python controller completed on 2026-11-09 from 20:14:30 to 20:17:39 UTC with exit zero. All 30 commands and 60 raw streams were independently checked, including all 474 successful identifiers and every declared input.\n\nNo historical or precommit pass is reused as a M14 execution pass. The ledger's 19 methods and closure gate's 21 methods are already included once in the 105-method named roster. The added authority 18 are separate from the original 456. Child-process results and parent-invoked helper observations are recorded separately from top-level library denominators.\n\nThe M14 guard retains all 1,487 M12 inputs and adds 17 authority-declared paths previously outside that inventory. The full union is 1,504. A finalization-only script initially asserted the old subset count as the full total; that error is retained, and the corrected independent review verified the actual union without rerunning project tests or changing source or original results.\n\nThe M12 1,487-path guard expanded the earlier 1,404-path set by two successor files and 81 current-mapping dependencies absent from that earlier guard. M10's 1,392/1,404-path records establish stability only for their declared sets. Its incomplete first attempt, recovered 105-method execution and failed historical-report comparison remain unchanged.\n\n## Preserved M12 failure and earlier evidence\n\nM12's exact-source Python validation passed all 456 unique methods and all seven report comparisons. Its native workspace check, original SQLite four-phase control and ten-package no-run build passed. The complete node harness recorded 1,359 passed / 0 failed / 39 top-level ignored; the journal child separately recorded one passed / 1,397 filtered and is not added to the parent denominator.\n\nM12's full DA harness recorded **714 passed / 1 failed**. The failing test is `cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null`, `damage=name`. Read-only refusal and byte preservation passed. The read-write path also refused the fixture, but its file-byte equality assertion failed. The original stdout remains unchanged: 272,848 bytes, SHA256 `5b6eee7e9043f86eb4d1997f16561e832f23c5c9c8ac823c4ff79e79d3266d7b`.\n\nThe two actually observed M12 libraries total **2,073 passed / 1 failed / 39 top-level ignored**. All-ten totals remain null; the other eight libraries, remaining quality gates and Root integrations were not started after that known failure. The M13 repair does not relabel M12 as passed. No original assertion or acceptance threshold has been relaxed.\n\n[Published M6/M7 evidence and closure register](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/7ddfe2bfa480d1ebd91c07d03d56a963fff038c5/evidence/chain-hepta-closure-20261109-481716/README.md) remains at its original immutable URL. It records the M6 five-library result of 2,450 passed / 0 failed / 41 top-level ignored and retains M5's 2,449 passed / 1 failed / 41 ignored plus earlier failures. These source/provider cohorts remain historical. The new evidence packet requires its own later evidence commit.\n\n## Remaining acceptance\n\nThe original `0746` campaigns remain **0/3 passing and 0/9 phases passing**. The recovered original archive and whole-phase history/SQL snapshots remain historical observations. The original **4-second Host service**, independent **30-second campaign**, and separate **History/capacity/churn** criteria require hosted evidence from exact M14 under their original contracts; the storage campaign still requires **at least three independently administered failure domains and at least 72 hours**. Failed or missing hosted lanes remain open until their complete outcomes are collected.\n\nOrdinary Hepta daemon stage-owner assembly and the same-operation training/evaluation/Selection-or-NoUpdate/install/FinalUse/next-task/cold-recovery trace remain unestablished. Test ELFs do not supply the ordinary-daemon model, loader or evaluator identities. Large-model BT with complete custody, independent WAN operators and failure domains, real payments and sustained leases, and required long-run deployments remain open. The PoN cost/consensus and PQ proof obligations remain conditional or unresolved.\n\nOverall qualification remains **HOLD_NO_GO / DENY_ALL**. No original acceptance deadline or threshold changes, and no production activation is granted.\n",
+    "draft": true,
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "node_id": "PR_kwDOTty1_c8AAAABN3jgpw",
+    "number": 847,
+    "state": "open",
+    "title": "Converge fixed Chain/Hepta closure source and evidence contracts"
+  },
+  "pr_after_edit": {
+    "auto_merge": null,
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "main",
+    "body": "## Purpose and reviewed scope\n\nThe frozen pre-consolidation inventory contains **908 branch names and 892 distinct tips**. This PR combines the selected current implementation and its original controls, records **296 terminal dispositions covering all 908 names**, and preserves the original history before branch cleanup.\n\nThe selected runtime includes ownership and lifecycle boundaries, fresh Host observation, receiver scheduling, worker accounting, native statement and mining-time controls, and the explicitly retained Cell, network and recovery APIs. Conflicting historical alternatives retain explicit dispositions; archiving an alternative is not a claim that its behavior is implemented by the current runtime.\n\nThe [audit report](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md), [original audit evidence index](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json) and [later execution records](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/execution-manifest.json) distinguish source review, component observations, exact full-lane results and unresolved qualification. Current-source binding and fixture repairs retain their original acceptance limits and historical evidence.\n\n## Exact candidate and evidence\n\nCandidate: `2a86462a1ab20c68151719ba4635e3c294391e64`  \nTree: `5c26776f96f15fd131e85a5c2d7c5e895ad7fab4`  \nReviewed main base: `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`\n\n[Confirmed published source and evidence manifest](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/archive-file-index.json). The terminal publication receipt is retained separately; it is not embedded in its own archive. Every result below must name this candidate; prospective-merge evidence must also name the reviewed main base.\n\n| Required observation | Recorded state | Original evidence |\n| --- | --- | --- |\n| Seven local prepublication source gates | Passed on this exact candidate (seven original commands) | [Receipt and all original outputs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/local-gates.json) |\n| Original full Linux `repository-truth` lane | Passed on this exact candidate (original complete fail-fast lane) | [Full fail-fast lane and source readbacks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/rog-full-lane.json) |\n| Required hosted checks on the exact head | Not established by this preparation; required checks remain mandatory | [Head checks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847/checks) |\n| Required hosted checks on the exact prospective merge | Not established by this preparation; required checks remain mandatory | [Prospective-merge checks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847/checks) |\n\nHosted status observed at: `Not supplied for this final candidate/base; no hosted pass asserted`. Missing, queued, running, failed, cancelled or timed-out results do not count as passes.\n\nThe seven source gates are project preflight, source verification before and after, repository check, generated inventory check, CI contract and PQ corpus check. Named component tests and the separate 122-command diagnostic do not substitute for the original complete Linux lane. A source-consistent result does not grant hosted or system qualification.\n\n## Preserved failures and follow-up repairs\n\nThe original public `CONFIRMATION_TARGET` failures remain failures. The **4-second window and 16 pressure workers** are unchanged; source-map reconciliation does not establish that this runtime deadline has been met.\n\nThe full local run on `dc42ce4d` stopped at the stale lifetime source lock; the later full run on `7d8d4c59` stopped at the hash-use source map. Both original outcomes and raw streams are retained. Subsequent metadata-only binding repairs are manually reviewed against their declared source inputs; their local controls are not relabelled as successful full-lane or hosted runs.\n\n**Historical collector disposition:** B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification. ([separate reviewed disposition](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/payload/post-m5-root-closures/reviewed-collector-disposition-v1.txt)).\n\nThat separate collector issue is not deemed repaired by the source-map changes above. Its retained historical results must not be rewritten as observations of the final candidate.\n\n## Original system acceptance conditions remain\n\n**Prior system qualification remains `HOLD_NO_GO / DENY_ALL`.** The retained original `0746` campaigns remain **0/3 passing and 0/9 phases passing**. History preservation, source checks, component tests and PR readiness do not waive the original system conditions.\n\nThe original **4-second Host service**, independent **30-second campaign**, and separate **History/capacity/churn** criteria require exact-source hosted evidence under their original contracts. The storage campaign still requires **at least three independently administered failure domains and at least 72 hours**. Failed or missing lanes remain open until their complete outcomes are collected.\n\nOrdinary Hepta daemon stage-owner assembly and the **same-operation training/evaluation/Selection-or-NoUpdate/install/FinalUse/next-task/cold-recovery trace** remain subject to the original identity, ownership and recovery requirements. Test ELFs do not supply the ordinary-daemon binary, model, loader or evaluator identities.\n\nLarge-model BT with complete custody, independent WAN operators and failure domains, real payments and sustained leases, and the required long-run deployments retain their original contracts. The PoN cost/consensus and PQ proof obligations remain conditional or unresolved. **No acceptance deadline, threshold or denominator is waived, and no production activation is granted.**\n\n## History retention and remaining repository actions\n\nRecorded history tag: `archive/execution-receipts-20261114-2a86462a1ab2-v1`  \nAnnotated tag object: `454761ef276433740453b5b80ce886c1d251c6d3`  \n[Archive commit and exact manifests](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9): `0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9`  \nCandidate explicitly captured by that archive: `2a86462a1ab20c68151719ba4635e3c294391e64`\n\nThe verified archive scope must retain all **892 original tips**, their reachable history and the exact 908-name manifest. The archive's captured candidate is stated separately from the final PR head; an older archive is not presented as containing later source or execution results. History retention does not assert semantic equivalence between alternatives or that every archived tip becomes an ancestor of linear main.\n\nMain integration must use the protected linear merge route after the required exact-head and prospective-merge acceptance checks. Branch cleanup follows a verified merge and a fresh complete reference inventory. The observed protection on `fix/chain-bulk-state-tree-20261017` disallows deletion; that remains a distinct blocker to a one-branch result, and this update does not change protection.\n\nThe audit report also retains the unresolved macOS physical-retention observation and the 27 historical dependency registry/yank-query timeouts. Main integration and final branch cleanup are not completed by this PR metadata update.\n",
+    "draft": true,
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "node_id": "PR_kwDOTty1_c8AAAABN3jgpw",
+    "number": 847,
+    "state": "open",
+    "title": "Consolidate audited branch history and current runtime"
+  },
+  "pr_final": {
+    "auto_merge": null,
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "main",
+    "body": "## Purpose and reviewed scope\n\nThe frozen pre-consolidation inventory contains **908 branch names and 892 distinct tips**. This PR combines the selected current implementation and its original controls, records **296 terminal dispositions covering all 908 names**, and preserves the original history before branch cleanup.\n\nThe selected runtime includes ownership and lifecycle boundaries, fresh Host observation, receiver scheduling, worker accounting, native statement and mining-time controls, and the explicitly retained Cell, network and recovery APIs. Conflicting historical alternatives retain explicit dispositions; archiving an alternative is not a claim that its behavior is implemented by the current runtime.\n\nThe [audit report](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md), [original audit evidence index](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2a86462a1ab20c68151719ba4635e3c294391e64/evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json) and [later execution records](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/execution-manifest.json) distinguish source review, component observations, exact full-lane results and unresolved qualification. Current-source binding and fixture repairs retain their original acceptance limits and historical evidence.\n\n## Exact candidate and evidence\n\nCandidate: `2a86462a1ab20c68151719ba4635e3c294391e64`  \nTree: `5c26776f96f15fd131e85a5c2d7c5e895ad7fab4`  \nReviewed main base: `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`\n\n[Confirmed published source and evidence manifest](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/archive-file-index.json). The terminal publication receipt is retained separately; it is not embedded in its own archive. Every result below must name this candidate; prospective-merge evidence must also name the reviewed main base.\n\n| Required observation | Recorded state | Original evidence |\n| --- | --- | --- |\n| Seven local prepublication source gates | Passed on this exact candidate (seven original commands) | [Receipt and all original outputs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/local-gates.json) |\n| Original full Linux `repository-truth` lane | Passed on this exact candidate (original complete fail-fast lane) | [Full fail-fast lane and source readbacks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/metadata/rog-full-lane.json) |\n| Required hosted checks on the exact head | Not established by this preparation; required checks remain mandatory | [Head checks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847/checks) |\n| Required hosted checks on the exact prospective merge | Not established by this preparation; required checks remain mandatory | [Prospective-merge checks](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847/checks) |\n\nHosted status observed at: `Not supplied for this final candidate/base; no hosted pass asserted`. Missing, queued, running, failed, cancelled or timed-out results do not count as passes.\n\nThe seven source gates are project preflight, source verification before and after, repository check, generated inventory check, CI contract and PQ corpus check. Named component tests and the separate 122-command diagnostic do not substitute for the original complete Linux lane. A source-consistent result does not grant hosted or system qualification.\n\n## Preserved failures and follow-up repairs\n\nThe original public `CONFIRMATION_TARGET` failures remain failures. The **4-second window and 16 pressure workers** are unchanged; source-map reconciliation does not establish that this runtime deadline has been met.\n\nThe full local run on `dc42ce4d` stopped at the stale lifetime source lock; the later full run on `7d8d4c59` stopped at the hash-use source map. Both original outcomes and raw streams are retained. Subsequent metadata-only binding repairs are manually reviewed against their declared source inputs; their local controls are not relabelled as successful full-lane or hosted runs.\n\n**Historical collector disposition:** B1 now binds the archived collector to historical commit e4abb172147e941b62483652b0ceabaae4317624, tree 016ebf3deeac88d6d7a782edf563f2291ebe17f5 and raw SHA256 f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254. The .py.raw fixture is data only and is never executed. All 25 original bridge test methods are unchanged; six added controls bring the component result to 31 passes. Separately, the full M4 Linux lane exposed a real closed-exec-gate cleanup race (root return code -15 instead of 125). C5 preserves the 14 original collector tests, adds two deterministic controls, and defers only SIGTERM for the unreleased root after confirmed gate closure; the original kill escalation and cleanup deadline remain. The exact final full-lane result is reported independently in the table above; these component facts do not grant hosted or system qualification. ([separate reviewed disposition](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9/payload/post-m5-root-closures/reviewed-collector-disposition-v1.txt)).\n\nThat separate collector issue is not deemed repaired by the source-map changes above. Its retained historical results must not be rewritten as observations of the final candidate.\n\n## Original system acceptance conditions remain\n\n**Prior system qualification remains `HOLD_NO_GO / DENY_ALL`.** The retained original `0746` campaigns remain **0/3 passing and 0/9 phases passing**. History preservation, source checks, component tests and PR readiness do not waive the original system conditions.\n\nThe original **4-second Host service**, independent **30-second campaign**, and separate **History/capacity/churn** criteria require exact-source hosted evidence under their original contracts. The storage campaign still requires **at least three independently administered failure domains and at least 72 hours**. Failed or missing lanes remain open until their complete outcomes are collected.\n\nOrdinary Hepta daemon stage-owner assembly and the **same-operation training/evaluation/Selection-or-NoUpdate/install/FinalUse/next-task/cold-recovery trace** remain subject to the original identity, ownership and recovery requirements. Test ELFs do not supply the ordinary-daemon binary, model, loader or evaluator identities.\n\nLarge-model BT with complete custody, independent WAN operators and failure domains, real payments and sustained leases, and the required long-run deployments retain their original contracts. The PoN cost/consensus and PQ proof obligations remain conditional or unresolved. **No acceptance deadline, threshold or denominator is waived, and no production activation is granted.**\n\n## History retention and remaining repository actions\n\nRecorded history tag: `archive/execution-receipts-20261114-2a86462a1ab2-v1`  \nAnnotated tag object: `454761ef276433740453b5b80ce886c1d251c6d3`  \n[Archive commit and exact manifests](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9): `0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9`  \nCandidate explicitly captured by that archive: `2a86462a1ab20c68151719ba4635e3c294391e64`\n\nThe verified archive scope must retain all **892 original tips**, their reachable history and the exact 908-name manifest. The archive's captured candidate is stated separately from the final PR head; an older archive is not presented as containing later source or execution results. History retention does not assert semantic equivalence between alternatives or that every archived tip becomes an ancestor of linear main.\n\nMain integration must use the protected linear merge route after the required exact-head and prospective-merge acceptance checks. Branch cleanup follows a verified merge and a fresh complete reference inventory. The observed protection on `fix/chain-bulk-state-tree-20261017` disallows deletion; that remains a distinct blocker to a one-branch result, and this update does not change protection.\n\nThe audit report also retains the unresolved macOS physical-retention observation and the 27 historical dependency registry/yank-query timeouts. Main integration and final branch cleanup are not completed by this PR metadata update.\n",
+    "draft": false,
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "node_id": "PR_kwDOTty1_c8AAAABN3jgpw",
+    "number": 847,
+    "state": "open",
+    "title": "Consolidate audited branch history and current runtime"
+  },
+  "identity_after": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "status": ""
+  },
+  "finished_at": "2026-11-14T14:23:03.746690+00:00"
+}

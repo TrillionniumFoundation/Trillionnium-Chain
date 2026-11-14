@@ -1,0 +1,38 @@
+[
+  {
+    "bytes": 32654,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-protocol--src--pon_wire.rs",
+    "git_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+    "lines": 907,
+    "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+    "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 67363,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-pon-node--src--host_kernel_parent.rs",
+    "git_blob": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6",
+    "lines": 1583,
+    "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 27612,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--history_import.rs",
+    "git_blob": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+    "lines": 704,
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  },
+  {
+    "bytes": 82351,
+    "capture": "/private/tmp/chain-R1-w1-fresh-service-source-review-20261114-v1/runtime-critical-path-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--public_v3--scalar_cpu.rs",
+    "git_blob": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+    "lines": 2026,
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+    "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384",
+    "source": "2a86462a1ab20c68151719ba4635e3c294391e64"
+  }
+]

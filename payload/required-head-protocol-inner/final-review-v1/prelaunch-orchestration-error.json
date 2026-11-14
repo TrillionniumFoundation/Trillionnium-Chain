@@ -1,0 +1,7 @@
+{
+  "actual_error": "SyntaxError: Unexpected identifier 'IO'",
+  "correction": "Removed Markdown backtick delimiters from Python README string in orchestration literal; acquisition and inspection unchanged.",
+  "network_or_evidence_mutation": false,
+  "scope": "ChatGPT JavaScript orchestration parsing before any target invocation",
+  "target_started": false
+}

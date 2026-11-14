@@ -1,0 +1,59 @@
+{
+  "archive_tag": "archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1",
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/postpublication-diagnostics-publish-v1-r1-001",
+  "payload_manifest": {
+    "bytes": 719021,
+    "path": "/private/tmp/chain-consolidation-20261114-root/frozen-execution-payload-postpublication-r1-v1/frozen-execution-payload-manifest-v1.json",
+    "sha256": "f39f2a27975982ec6806ff319fd15a3e902e29d92af4653d770acc1b470e9777"
+  },
+  "producer_sha256": "9b26e9fd40d6ec258554114c495f174606790f51fd26ee191ec6cdb9c4c6a482",
+  "publication_inputs": {
+    "bytes": 2431,
+    "path": "/private/tmp/chain-consolidation-20261114-root/pr847-final-audit-inputs-2a8646-parallel-hook-v1.json",
+    "sha256": "f48d98f3a21b92b463800bffca05c0b3266acda85ac05de779789c77aecf7b37"
+  },
+  "report": {
+    "bytes": 7042,
+    "path": "/private/tmp/chain-R1-postpublication-diagnostic-archive-preparation-20261114-v1/driver-v2/archive-README.md",
+    "sha256": "2b415849225c8111f837991de99a03b5b5b36164a7d83a53122f10d5e0d3cbf9"
+  },
+  "reviewed_remote_snapshot": {
+    "bytes": 91592,
+    "path": "/private/tmp/chain-consolidation-20261114-root/postpublication-remote-refs-snapshot-v1/summary.json",
+    "sha256": "3abe29900af2bdf37b60390edc613154228c026e2e68a27a39ee02b0aae59015"
+  },
+  "scan": {
+    "coverage": {
+      "bytes": 306005,
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-postpublication-r1-v1/coverage.jsonl",
+      "sha256": "3682da215ce306bac1191b5d6c74f34dda53fb252b891860278fd6bdd43b91e7"
+    },
+    "hits": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-postpublication-r1-v1/hits.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "producer": {
+      "bytes": 14664,
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/scan_frozen_execution_payload_v2.py",
+      "sha256": "14305dfe4b3edaecb601dffed336a13c916fe6a9182a9547770f0637031b50b6"
+    },
+    "summary": {
+      "bytes": 1131,
+      "path": "/private/tmp/chain-execution-payload-credential-scanner-20261114-v1/run-postpublication-r1-v1/summary.json",
+      "sha256": "875701e6764f23d32597749e524894a9d0aaa1835519aa528e2c82c88f0c4bbf"
+    },
+    "terminal": {
+      "bytes": 1819,
+      "path": "/private/tmp/chain-consolidation-20261114-root/postpublication-diagnostics-final-review-inputs-v1/actual-scan-terminal.json",
+      "sha256": "049d3e91575654eae6607c1e0ddf71c91c4b8ec38783357978d4e54109d2fabd"
+    }
+  },
+  "schema": "trnm-postpublication-diagnostic-archive-spec-v1",
+  "transport_timeout_seconds": 3600,
+  "workflow_trigger_review": {
+    "bytes": 1474,
+    "path": "/private/tmp/chain-consolidation-20261114-root/postpublication-diagnostics-final-review-inputs-v1/combined-workflow-trigger-review.json",
+    "sha256": "c9156ea3314f088dab96551d3949b1411047660aa3f66b5a72d70458c7cf4072"
+  }
+}

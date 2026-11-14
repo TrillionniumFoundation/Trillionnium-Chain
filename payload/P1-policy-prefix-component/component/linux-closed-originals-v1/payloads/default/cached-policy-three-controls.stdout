@@ -1,8 +1,0 @@
-
-running 3 tests
-test ingress::public_v3::tests::cached_policy_id_retains_all_six_framed_suffix_parts ... ok
-test ingress::public_v3::tests::cached_policy_id_matches_original_hash_for_public_fields ... ok
-test ingress::public_v3::tests::cached_policy_id_clones_are_independent_across_callers ... ok
-
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1556 filtered out; finished in 0.00s
-

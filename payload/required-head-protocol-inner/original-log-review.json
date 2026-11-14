@@ -1,0 +1,519 @@
+{
+  "expected": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "job_id": 132481412290,
+    "run_attempt": 1,
+    "run_id": 43604217412,
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "line_count": 1501,
+  "observed_at": "2026-11-14T15:56:40.998686+00:00",
+  "schema": "trnm-r1-required-head-protocol-original-log-review-v1",
+  "scope": "Original closed log only; no API, Git, tests, artifact execution or source mutation.",
+  "selected_lines": [
+    {
+      "line": 3,
+      "text": "2026-11-14T14:42:28.6163080Z Hosted Compute Agent"
+    },
+    {
+      "line": 32,
+      "text": "2026-11-14T14:42:29.0522571Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)"
+    },
+    {
+      "line": 118,
+      "text": "2026-11-14T14:43:12.7704632Z  * [new branch]          audit/chain-506-from-zero-five-tests-20261027 -> origin/audit/chain-506-from-zero-five-tests-20261027"
+    },
+    {
+      "line": 433,
+      "text": "2026-11-14T14:43:12.8134330Z  * [new branch]          fix/chain-from-zero-execution-owner-20261006 -> origin/fix/chain-from-zero-execution-owner-20261006"
+    },
+    {
+      "line": 434,
+      "text": "2026-11-14T14:43:12.8135155Z  * [new branch]          fix/chain-from-zero-native-20261006 -> origin/fix/chain-from-zero-native-20261006"
+    },
+    {
+      "line": 435,
+      "text": "2026-11-14T14:43:12.8135958Z  * [new branch]          fix/chain-from-zero-native-20261006-round7 -> origin/fix/chain-from-zero-native-20261006-round7"
+    },
+    {
+      "line": 436,
+      "text": "2026-11-14T14:43:12.8136837Z  * [new branch]          fix/chain-from-zero-native-closure-20261006 -> origin/fix/chain-from-zero-native-closure-20261006"
+    },
+    {
+      "line": 437,
+      "text": "2026-11-14T14:43:12.8137708Z  * [new branch]          fix/chain-from-zero-service-cost-20261006 -> origin/fix/chain-from-zero-service-cost-20261006"
+    },
+    {
+      "line": 529,
+      "text": "2026-11-14T14:43:12.8222444Z  * [new branch]          fix/chain-pon-w1-from-zero-cost-20261005 -> origin/fix/chain-pon-w1-from-zero-cost-20261005"
+    },
+    {
+      "line": 580,
+      "text": "2026-11-14T14:43:12.8272573Z  * [new branch]          fix/chain-pq-retain-dag-failure-receipt-20261102 -> origin/fix/chain-pq-retain-dag-failure-receipt-20261102"
+    },
+    {
+      "line": 622,
+      "text": "2026-11-14T14:43:12.8319207Z  * [new branch]          fix/chain-retained-failure-readback-20261104 -> origin/fix/chain-retained-failure-readback-20261104"
+    },
+    {
+      "line": 652,
+      "text": "2026-11-14T14:43:12.8349746Z  * [new branch]          fix/chain-state-difference-from-zero-20261006 -> origin/fix/chain-state-difference-from-zero-20261006"
+    },
+    {
+      "line": 685,
+      "text": "2026-11-14T14:43:12.8379566Z  * [new branch]          fix/chain-w1-native-failure-classification-20261106 -> origin/fix/chain-w1-native-failure-classification-20261106"
+    },
+    {
+      "line": 760,
+      "text": "2026-11-14T14:43:12.8448765Z  * [new branch]          fix/pon-w1-from-zero-cost-20261005 -> origin/fix/pon-w1-from-zero-cost-20261005"
+    },
+    {
+      "line": 1173,
+      "text": "2026-11-14T14:43:29.0912239Z   \"schema\": \"trnm-ci-source-v1\","
+    },
+    {
+      "line": 1287,
+      "text": "2026-11-14T14:45:33.6506868Z   TRNM_PQ_OPENSSL_SHA256: ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f"
+    },
+    {
+      "line": 1323,
+      "text": "2026-11-14T14:45:34.8194493Z test_backend_missing_or_unsupported_is_an_explicit_failure (test_pq_seed_relation_vectors_v1.PublicSeedRelationVectorsTests.test_backend_missing_or_unsupported_is_an_explicit_failure) ... ok"
+    },
+    {
+      "line": 1387,
+      "text": "2026-11-14T14:48:05.1261936Z test_pre_cas_failure_keeps_pending_and_cannot_claim_external_completion (__main__.DurableRootNativeTests.test_pre_cas_failure_keeps_pending_and_cannot_claim_external_completion) ... ok"
+    },
+    {
+      "line": 1405,
+      "text": "2026-11-14T15:22:04.4457342Z {\"name\": \"fresh-witness\", \"argv\": [\"cargo\", \"test\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--features\", \"pq-root-v3\", \"--test\", \"root_witness_v5_native\", \"--\", \"--nocapture\", \"--test-threads=1\"], \"source\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"exit_code\": 0, \"elapsed_seconds\": 577.375338677, \"log\": \"fresh-witness.log\", \"bytes\": 1862, \"sha256\": \"b95bd0bb8222d265ced67950ea718887a40a3d9e7fbe8d9eb88a892f5a7be528\", \"execution\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--features\", \"pq-root-v3\", \"--test\", \"root_witness_v5_native\", \"--\", \"--nocapture\", \"--test-threads=1\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"exit_code\": 0, \"timed_out\": false, \"elapsed_ns\": 577374811485, \"log\": \"fresh-witness.log\", \"executed\": true, \"process_exit_code\": 0}, \"observation\": {\"tests\": [\"native_witness_v5_another_recovery_epoch_cannot_use_the_same_service_pin\", \"native_witness_v5_callback_budget_replacement_and_cancellation_remain_fenced\", \"native_witness_v5_changed_signed_pending_and_anchor_cannot_bypass_role_snapshot\", \"native_witness_v5_complete_binding_and_role_separation_are_required\", \"native_witness_v5_context_and_intent_recheck_live_witness_and_latch_failure\", \"native_witness_v5_corrupt_pending_never_advances_the_witness\", \"native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas\", \"native_witness_v5_open_checks_retained_root_key_roles\", \"native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition\", \"native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample\", \"native_witness_v5_rotation_cannot_reuse_witness_keys\", \"native_witness_v5_signed_response_must_bind_the_complete_fresh_request\", \"native_witness_v5_success_is_witnessed_before_pending_is_completed\", \"native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore\", \"native_witness_v5_unavailable_witness_has_no_static_floor_fallback\", \"native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor\", \"native_witness_v5_wrong_signature_and_outcome_are_refused\"], \"passed\": 17, \"filtered_out\": 0}, \"error\": null}"
+    },
+    {
+      "line": 1406,
+      "text": "2026-11-14T15:24:22.1603909Z {\"name\": \"durable-witness\", \"argv\": [\"cargo\", \"test\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--features\", \"pq-root-v3\", \"--test\", \"root_witness_v5_durable_native\", \"--\", \"--nocapture\", \"--test-threads=1\"], \"source\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"exit_code\": 0, \"elapsed_seconds\": 137.71421931799978, \"log\": \"durable-witness.log\", \"bytes\": 1568, \"sha256\": \"4366a6d31e9dd992b572e2584d17c51da99d5e457b4b98e5f579f30328966996\", \"execution\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--features\", \"pq-root-v3\", \"--test\", \"root_witness_v5_durable_native\", \"--\", \"--nocapture\", \"--test-threads=1\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"exit_code\": 0, \"timed_out\": false, \"elapsed_ns\": 137714084496, \"log\": \"durable-witness.log\", \"executed\": true, \"process_exit_code\": 0}, \"observation\": {\"tests\": [\"native_durable_witness_v5_budget_replacement_on_ok_or_err_and_cancellation_fence\", \"native_durable_witness_v5_complete_policy_and_live_stored_binding_are_enforced\", \"native_durable_witness_v5_exact_cas_retry_and_cold_reopen_have_dual_family_receipts\", \"native_durable_witness_v5_exclusive_lock_and_named_inode_are_required\", \"native_durable_witness_v5_foreign_namespace_and_extra_schema_are_refused\", \"native_durable_witness_v5_real_sqlite_commit_busy_fences_until_explicit_reopen\", \"native_durable_witness_v5_root_lost_ack_cold_recovery_does_not_repeat_cas\", \"native_durable_witness_v5_signer_callback_cannot_replace_committed_row_before_ack\", \"native_durable_witness_v5_signing_failure_and_wrong_quorum_preserve_committed_head\", \"native_durable_witness_v5_stale_database_requires_surviving_independent_reopen_pin\", \"native_durable_witness_v5_unauthenticated_requests_cannot_mutate_or_fence\", \"native_durable_witness_v5_wrong_predecessor_and_competing_successor_are_mismatches\"], \"passed\": 12, \"filtered_out\": 0}, \"error\": null}"
+    },
+    {
+      "line": 1409,
+      "text": "2026-11-14T15:48:42.3954275Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/ci-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43604217412-1-protocol-contract-21661.service\", \"current_service\": \"trnm-from-zero-43604217412-1-protocol-contract-21661.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"81ba7bae-f230-478b-8bf8-b504fba2abc0\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7773, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794671242556776016, \"device\": 29, \"inode\": 1535, \"mtime_ns\": 1794671242556776016, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794671247780882860, \"device\": 29, \"inode\": 1588, \"mtime_ns\": 1794671247780882860, \"path\": \"/run/trnm-public-fixture-43604217412-1-protocol-contract/parent.json\", \"sha256\": \"dd5eb406f8aba8f8a60ff1ddcc6744dde1b9cf8468fba1904824b2e2a4c50026\", \"size_bytes\": 3204}, \"seal_sha256\": \"dd5eb406f8aba8f8a60ff1ddcc6744dde1b9cf8468fba1904824b2e2a4c50026\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43604217412-1-protocol-contract-21661.service\", \"current_service\": \"trnm-from-zero-43604217412-1-protocol-contract-21661.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"81ba7bae-f230-478b-8bf8-b504fba2abc0\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7773, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794671242556776016, \"device\": 29, \"inode\": 1535, \"mtime_ns\": 1794671242556776016, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794671247780882860, \"device\": 29, \"inode\": 1588, \"mtime_ns\": 1794671247780882860, \"path\": \"/run/trnm-public-fixture-43604217412-1-protocol-contract/parent.json\", \"sha256\": \"dd5eb406f8aba8f8a60ff1ddcc6744dde1b9cf8468fba1904824b2e2a4c50026\", \"size_bytes\": 3204}, \"seal_sha256\": \"dd5eb406f8aba8f8a60ff1ddcc6744dde1b9cf8468fba1904824b2e2a4c50026\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"binary_sha256\": \"749a2791782e704deb3c0d27c115043e2aac9ca9836bbe8c200c3fc8f57ace0f\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-protocol-contract\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-protocol-contract\", \"OPENSSL_CONF\": \"/dev/null\", \"OPENSSL_DIR\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install\", \"OPENSSL_MODULES\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/lib/ossl-modules\", \"OPENSSL_STATIC\": \"1\", \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/bin/openssl\", \"TRNM_PQ_OPENSSL_SHA256\": \"ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f\", \"TRNM_PQ_OPENSSL_VERSION\": \"3.5.9\"}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"format_preparation\": {\"process\": {\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"cpu_ns\": 15884368000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 119, \"major_faults\": 0, \"max_rss_kib\": 273236, \"minor_faults\": 54959, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"system_cpu_ns\": 202060000, \"timed_out\": false, \"user_cpu_ns\": 15682308000, \"voluntary_switches\": 33, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 15888956915}, \"timeout_seconds\": 60, \"tool_versions\": {\"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\\nbinary: rustc\\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\\ncommit-date: 2026-04-14\\nhost: x86_64-unknown-linux-gnu\\nrelease: 1.95.0\\nLLVM version: 22.1.2\\n\", \"rustfmt\": \"rustfmt 1.9.0-stable (59807616e1 2026-04-14)\"}}, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 450596982000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 4228, \"major_faults\": 285, \"max_rss_kib\": 1938724, \"minor_faults\": 4500326, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"513d553c16ffe49460afb06afaea9f391acb5baed105bad96e850a967718a4dd\", \"stdout_sha256\": \"cf7638db0100e6811798a20dba6a46053058e2023ae3b2d9387ad6b4b59767ce\", \"system_cpu_ns\": 14376055000, \"timed_out\": false, \"user_cpu_ns\": 436220927000, \"voluntary_switches\": 14413, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 237868014239}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"tested_tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3994964901, \"tracked_entries\": 41677, \"tracked_worktree_verified\": true}, \"tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"}, \"source_before\": {\"commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\", \"tested_tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3994964901, \"tracked_entries\": 41677, \"tracked_worktree_verified\": true}, \"tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-43604217412-1-protocol-contract-21661.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+    },
+    {
+      "line": 1410,
+      "text": "2026-11-14T15:48:42.4084939Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1428,
+      "text": "2026-11-14T15:48:42.4202183Z   TRNM_PQ_OPENSSL_SHA256: ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f"
+    },
+    {
+      "line": 1438,
+      "text": "2026-11-14T15:48:47.2643266Z   \"schema\": \"trnm-ci-source-v1\","
+    },
+    {
+      "line": 1446,
+      "text": "2026-11-14T15:48:47.2824962Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 1469,
+      "text": "2026-11-14T15:48:47.2832708Z   TRNM_PQ_OPENSSL_SHA256: ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f"
+    },
+    {
+      "line": 1477,
+      "text": "2026-11-14T15:48:47.5053317Z Artifact name is valid!"
+    },
+    {
+      "line": 1483,
+      "text": "2026-11-14T15:48:48.7408925Z SHA256 digest of uploaded artifact zip is a8c9b352fdb5bcd27785b13d753d59949e6330bbd29222104bf284b7c9822961"
+    },
+    {
+      "line": 1485,
+      "text": "2026-11-14T15:48:49.3949065Z Artifact head-protocol-contract-2a86462a1ab20c68151719ba4635e3c294391e64-1.zip successfully finalized. Artifact ID 14120622057"
+    },
+    {
+      "line": 1486,
+      "text": "2026-11-14T15:48:49.3950725Z Artifact head-protocol-contract-2a86462a1ab20c68151719ba4635e3c294391e64-1 has been successfully uploaded! Final size is 7001798 bytes. Artifact ID is 14120622057"
+    },
+    {
+      "line": 1487,
+      "text": "2026-11-14T15:48:49.3955941Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/artifacts/14120622057"
+    },
+    {
+      "line": 1501,
+      "text": "2026-11-14T15:48:49.7189780Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ],
+  "source": {
+    "bytes": 219457,
+    "identity": [
+      16777233,
+      607228449,
+      33152,
+      1,
+      219457,
+      1794671593134464314,
+      1794671593134464314
+    ],
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-protocol-failed-job-original-log-v1/132481412290-original-log.stdout",
+    "sha256": "a2abb8f09485c32739ca970ac1aa8ab12d3cfee01f53a954e9c9d2dded0ae935"
+  },
+  "tail": [
+    {
+      "line": 1412,
+      "text": "2026-11-14T15:48:42.4143907Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\"\u001b[0m"
+    },
+    {
+      "line": 1413,
+      "text": "2026-11-14T15:48:42.4196355Z shell: /usr/bin/bash -e {0}"
+    },
+    {
+      "line": 1414,
+      "text": "2026-11-14T15:48:42.4196608Z env:"
+    },
+    {
+      "line": 1415,
+      "text": "2026-11-14T15:48:42.4196794Z   CI: true"
+    },
+    {
+      "line": 1416,
+      "text": "2026-11-14T15:48:42.4196989Z   CARGO_INCREMENTAL: 0"
+    },
+    {
+      "line": 1417,
+      "text": "2026-11-14T15:48:42.4197205Z   CARGO_BUILD_JOBS: 2"
+    },
+    {
+      "line": 1418,
+      "text": "2026-11-14T15:48:42.4197585Z   RUST_TEST_THREADS: 1"
+    },
+    {
+      "line": 1419,
+      "text": "2026-11-14T15:48:42.4198131Z   CARGO_TERM_COLOR: never"
+    },
+    {
+      "line": 1420,
+      "text": "2026-11-14T15:48:42.4198410Z   PYTHONDONTWRITEBYTECODE: 1"
+    },
+    {
+      "line": 1421,
+      "text": "2026-11-14T15:48:42.4198909Z   TRNM_EXPECTED_SOURCE_SHA: 2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    {
+      "line": 1422,
+      "text": "2026-11-14T15:48:42.4199362Z   CARGO_HOME: /home/runner/work/_temp/cargo-protocol-contract"
+    },
+    {
+      "line": 1423,
+      "text": "2026-11-14T15:48:42.4199808Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-protocol-contract"
+    },
+    {
+      "line": 1424,
+      "text": "2026-11-14T15:48:42.4200301Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+    },
+    {
+      "line": 1425,
+      "text": "2026-11-14T15:48:42.4200768Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install"
+    },
+    {
+      "line": 1426,
+      "text": "2026-11-14T15:48:42.4201174Z   OPENSSL_STATIC: 1"
+    },
+    {
+      "line": 1427,
+      "text": "2026-11-14T15:48:42.4201562Z   TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/bin/openssl"
+    },
+    {
+      "line": 1428,
+      "text": "2026-11-14T15:48:42.4202183Z   TRNM_PQ_OPENSSL_SHA256: ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f"
+    },
+    {
+      "line": 1429,
+      "text": "2026-11-14T15:48:42.4202638Z   TRNM_PQ_OPENSSL_VERSION: 3.5.9"
+    },
+    {
+      "line": 1430,
+      "text": "2026-11-14T15:48:42.4202899Z   OPENSSL_CONF: /dev/null"
+    },
+    {
+      "line": 1431,
+      "text": "2026-11-14T15:48:42.4203329Z   OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/lib/ossl-modules"
+    },
+    {
+      "line": 1432,
+      "text": "2026-11-14T15:48:42.4203798Z ##[endgroup]"
+    },
+    {
+      "line": 1433,
+      "text": "2026-11-14T15:48:47.2639632Z {"
+    },
+    {
+      "line": 1434,
+      "text": "2026-11-14T15:48:47.2641376Z   \"base\": null,"
+    },
+    {
+      "line": 1435,
+      "text": "2026-11-14T15:48:47.2642067Z   \"candidate\": \"2a86462a1ab20c68151719ba4635e3c294391e64\","
+    },
+    {
+      "line": 1436,
+      "text": "2026-11-14T15:48:47.2642601Z   \"kind\": \"head\","
+    },
+    {
+      "line": 1437,
+      "text": "2026-11-14T15:48:47.2642960Z   \"prospective_merge\": null,"
+    },
+    {
+      "line": 1438,
+      "text": "2026-11-14T15:48:47.2643266Z   \"schema\": \"trnm-ci-source-v1\","
+    },
+    {
+      "line": 1439,
+      "text": "2026-11-14T15:48:47.2643586Z   \"tested_commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\","
+    },
+    {
+      "line": 1440,
+      "text": "2026-11-14T15:48:47.2644299Z   \"tested_tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\","
+    },
+    {
+      "line": 1441,
+      "text": "2026-11-14T15:48:47.2644649Z   \"tests_executed_by_identity_check\": false,"
+    },
+    {
+      "line": 1442,
+      "text": "2026-11-14T15:48:47.2644946Z   \"tracked_bytes\": 3994964901,"
+    },
+    {
+      "line": 1443,
+      "text": "2026-11-14T15:48:47.2645189Z   \"tracked_entries\": 41677,"
+    },
+    {
+      "line": 1444,
+      "text": "2026-11-14T15:48:47.2645431Z   \"tracked_worktree_verified\": true"
+    },
+    {
+      "line": 1445,
+      "text": "2026-11-14T15:48:47.2645676Z }"
+    },
+    {
+      "line": 1446,
+      "text": "2026-11-14T15:48:47.2824962Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    {
+      "line": 1447,
+      "text": "2026-11-14T15:48:47.2825400Z with:"
+    },
+    {
+      "line": 1448,
+      "text": "2026-11-14T15:48:47.2825732Z   name: head-protocol-contract-2a86462a1ab20c68151719ba4635e3c294391e64-1"
+    },
+    {
+      "line": 1449,
+      "text": "2026-11-14T15:48:47.2826173Z   path: /home/runner/work/_temp/ci-observations/"
+    },
+    {
+      "line": 1450,
+      "text": "2026-11-14T15:48:47.2826492Z   if-no-files-found: error"
+    },
+    {
+      "line": 1451,
+      "text": "2026-11-14T15:48:47.2826725Z   retention-days: 30"
+    },
+    {
+      "line": 1452,
+      "text": "2026-11-14T15:48:47.2826940Z   compression-level: 6"
+    },
+    {
+      "line": 1453,
+      "text": "2026-11-14T15:48:47.2827161Z   overwrite: false"
+    },
+    {
+      "line": 1454,
+      "text": "2026-11-14T15:48:47.2827378Z   include-hidden-files: false"
+    },
+    {
+      "line": 1455,
+      "text": "2026-11-14T15:48:47.2827625Z env:"
+    },
+    {
+      "line": 1456,
+      "text": "2026-11-14T15:48:47.2827809Z   CI: true"
+    },
+    {
+      "line": 1457,
+      "text": "2026-11-14T15:48:47.2828331Z   CARGO_INCREMENTAL: 0"
+    },
+    {
+      "line": 1458,
+      "text": "2026-11-14T15:48:47.2828554Z   CARGO_BUILD_JOBS: 2"
+    },
+    {
+      "line": 1459,
+      "text": "2026-11-14T15:48:47.2828765Z   RUST_TEST_THREADS: 1"
+    },
+    {
+      "line": 1460,
+      "text": "2026-11-14T15:48:47.2828979Z   CARGO_TERM_COLOR: never"
+    },
+    {
+      "line": 1461,
+      "text": "2026-11-14T15:48:47.2829214Z   PYTHONDONTWRITEBYTECODE: 1"
+    },
+    {
+      "line": 1462,
+      "text": "2026-11-14T15:48:47.2829581Z   TRNM_EXPECTED_SOURCE_SHA: 2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    {
+      "line": 1463,
+      "text": "2026-11-14T15:48:47.2830014Z   CARGO_HOME: /home/runner/work/_temp/cargo-protocol-contract"
+    },
+    {
+      "line": 1464,
+      "text": "2026-11-14T15:48:47.2830438Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-protocol-contract"
+    },
+    {
+      "line": 1465,
+      "text": "2026-11-14T15:48:47.2830863Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+    },
+    {
+      "line": 1466,
+      "text": "2026-11-14T15:48:47.2831318Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install"
+    },
+    {
+      "line": 1467,
+      "text": "2026-11-14T15:48:47.2831711Z   OPENSSL_STATIC: 1"
+    },
+    {
+      "line": 1468,
+      "text": "2026-11-14T15:48:47.2832094Z   TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/bin/openssl"
+    },
+    {
+      "line": 1469,
+      "text": "2026-11-14T15:48:47.2832708Z   TRNM_PQ_OPENSSL_SHA256: ac2b150f9873a75ebb9925cc235392d8f4856e953de4d007fc541640a6a3d61f"
+    },
+    {
+      "line": 1470,
+      "text": "2026-11-14T15:48:47.2833162Z   TRNM_PQ_OPENSSL_VERSION: 3.5.9"
+    },
+    {
+      "line": 1471,
+      "text": "2026-11-14T15:48:47.2833409Z   OPENSSL_CONF: /dev/null"
+    },
+    {
+      "line": 1472,
+      "text": "2026-11-14T15:48:47.2833830Z   OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.4dVvKg71/install/lib/ossl-modules"
+    },
+    {
+      "line": 1473,
+      "text": "2026-11-14T15:48:47.2834299Z ##[endgroup]"
+    },
+    {
+      "line": 1474,
+      "text": "2026-11-14T15:48:47.4696915Z (node:25251) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead."
+    },
+    {
+      "line": 1475,
+      "text": "2026-11-14T15:48:47.4697765Z (Use `node --trace-deprecation ...` to show where the warning was created)"
+    },
+    {
+      "line": 1476,
+      "text": "2026-11-14T15:48:47.5052449Z With the provided path, there will be 109 files uploaded"
+    },
+    {
+      "line": 1477,
+      "text": "2026-11-14T15:48:47.5053317Z Artifact name is valid!"
+    },
+    {
+      "line": 1478,
+      "text": "2026-11-14T15:48:47.5053723Z Root directory input is valid!"
+    },
+    {
+      "line": 1479,
+      "text": "2026-11-14T15:48:47.7421483Z Beginning upload of artifact content to blob storage"
+    },
+    {
+      "line": 1480,
+      "text": "2026-11-14T15:48:48.6284521Z (node:25251) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities."
+    },
+    {
+      "line": 1481,
+      "text": "2026-11-14T15:48:48.7283972Z Uploaded bytes 7001798"
+    },
+    {
+      "line": 1482,
+      "text": "2026-11-14T15:48:48.7407420Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 1483,
+      "text": "2026-11-14T15:48:48.7408925Z SHA256 digest of uploaded artifact zip is a8c9b352fdb5bcd27785b13d753d59949e6330bbd29222104bf284b7c9822961"
+    },
+    {
+      "line": 1484,
+      "text": "2026-11-14T15:48:48.7410439Z Finalizing artifact upload"
+    },
+    {
+      "line": 1485,
+      "text": "2026-11-14T15:48:49.3949065Z Artifact head-protocol-contract-2a86462a1ab20c68151719ba4635e3c294391e64-1.zip successfully finalized. Artifact ID 14120622057"
+    },
+    {
+      "line": 1486,
+      "text": "2026-11-14T15:48:49.3950725Z Artifact head-protocol-contract-2a86462a1ab20c68151719ba4635e3c294391e64-1 has been successfully uploaded! Final size is 7001798 bytes. Artifact ID is 14120622057"
+    },
+    {
+      "line": 1487,
+      "text": "2026-11-14T15:48:49.3955941Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/artifacts/14120622057"
+    },
+    {
+      "line": 1488,
+      "text": "2026-11-14T15:48:49.4241362Z Post job cleanup."
+    },
+    {
+      "line": 1489,
+      "text": "2026-11-14T15:48:49.5157855Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1490,
+      "text": "2026-11-14T15:48:49.5208319Z git version 2.56.1"
+    },
+    {
+      "line": 1491,
+      "text": "2026-11-14T15:48:49.5248513Z Temporarily overriding HOME='/home/runner/work/_temp/c4e3b7e1-cbd2-4460-a04a-0e0abb7152f5' before making global git config changes"
+    },
+    {
+      "line": 1492,
+      "text": "2026-11-14T15:48:49.5249919Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1493,
+      "text": "2026-11-14T15:48:49.5255316Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1494,
+      "text": "2026-11-14T15:48:49.5304863Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1495,
+      "text": "2026-11-14T15:48:49.5352978Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1496,
+      "text": "2026-11-14T15:48:49.5736303Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1497,
+      "text": "2026-11-14T15:48:49.5785563Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1498,
+      "text": "2026-11-14T15:48:49.6133121Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1499,
+      "text": "2026-11-14T15:48:49.6185766Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1500,
+      "text": "2026-11-14T15:48:49.6732305Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1501,
+      "text": "2026-11-14T15:48:49.7189780Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

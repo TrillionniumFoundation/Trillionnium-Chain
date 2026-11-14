@@ -1,6 +1,0 @@
-tree d4b694838d70191a5206f7cec3253c8f63613e8e
-parent 1a7afcdb820b051d1e4bfde3d436f96fc050c487
-author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794646070 +0800
-committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794646070 +0800
-
-fix(ci): preserve closed exec gate refusal before cleanup escalation

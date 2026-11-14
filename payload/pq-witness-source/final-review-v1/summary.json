@@ -1,0 +1,143 @@
+{
+  "authentication_work": {
+    "details": "Client signer self-verifies; service verifies writer; service signer self-verifies; client verifies witness. OpenSSL signer key and canonical verifier are already held by key objects.",
+    "per_successful_witness_exchange": {
+      "canonical_verifications": 4,
+      "signatures": 2
+    },
+    "permission_to_remove_or_cache_validation": false
+  },
+  "clock_and_counter_boundaries": [
+    "deadline_elapsed is the outer accepted-connection deadline, not the witness exchange cap.",
+    "ingress_charge_calls is TLS BIO Observation::charge count; zero does not prove no durable outer ingress debit was attempted or committed.",
+    "The outer serve lifetime in this exact test is two seconds; per-connection ceiling is ten seconds clipped to remaining service lifetime.",
+    "Current and CAS each have their own 250 ms cap. The observed 261 ms cannot identify which one or whether client signing, service processing, readback, or final freshness check expired.",
+    "The separate W1 4-second/16-worker/0.25-CPU performance evidence is not this PQ workflow's resource identity."
+  ],
+  "closed_at_utc": "2026-11-14T15:59:07.695759+00:00",
+  "evidence_integrity": {
+    "full_source_capture_not_full_body_semantic_proof": true,
+    "initial_locator_capture": "Original excerpt_cap failure preserved via actual terminal; v2 bounded locator only, full original raw log remains pinned.",
+    "seal_preparation_attempt": "One orchestration JavaScript parse error occurred before launching any remote process; no source or output was changed by that attempt.",
+    "source_indexes": "source-provenance.json"
+  },
+  "execution": {
+    "git_or_remote_mutation": false,
+    "helpers_executed": 0,
+    "new_test_runs": 0,
+    "provider_or_environment_changed": false,
+    "source_mutation": false,
+    "stage_mutation": false,
+    "targeted_test_not_repeated_reason": "No sufficiently discriminating hypothesis; root explicitly stopped repeated testing and observation-only source changes for this round."
+  },
+  "hosted": {
+    "child_diagnostic": {
+      "child_before_cleanup": "running",
+      "failure_since_spawn_start_us": 340580,
+      "owned_cleanup_signal": 9,
+      "ready_received_us": 76903,
+      "request_stages": []
+    },
+    "client_error": {
+      "code": "PQ_NETWORK_CRYPTO",
+      "io_errno": 104,
+      "meaning": "Connection reset by peer",
+      "ssl_error_code": 5
+    },
+    "connection_refusal": {
+      "bio_error_code": null,
+      "bio_error_kind": null,
+      "deadline_elapsed": false,
+      "elapsed_us": 261315,
+      "error_code": "PQ_WITNESS_DEADLINE",
+      "error_kind": "Unclassified",
+      "ingress_charge_calls": 0,
+      "ingress_charge_us": 0,
+      "stage": "ingress_admission",
+      "stage_elapsed_us": 261316
+    },
+    "failure_artifact_reference_only": {
+      "bytes": 1601593,
+      "downloaded_by_this_review": false,
+      "id": 14120551602,
+      "sha256": "aa235d05b9bfc84baa6e1bbd9472e13172bc79de98801c78d491c867ebb48239"
+    },
+    "interpretation": "Failure precedes TLS handshake. Owned SIG9 follows panic and is not the triggering refusal. Other four selectors in the step returned zero; no assertion that this original selector passed.",
+    "job_id": 132475258045,
+    "original_log": {
+      "bytes": 818816,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258045-original-log.stdout",
+      "sha256": "39f05164eaaeb530d90ecae6dda34ef6176d90889d55931519c0b2b4a9109fa0"
+    },
+    "panic_line": 90,
+    "run_id": 43604217597,
+    "rust_exit": 101,
+    "selector": "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+    "test_source": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs"
+  },
+  "phase_gap": {
+    "consequence": "No source-level correctness bug or semantics-preserving, causally supported fix has been established from this original diagnostic.",
+    "next_work_if_authorized": "A separately reviewed phase-local observation design may be needed; this review does not add instrumentation, retry, or change tests/deadlines.",
+    "unknown": [
+      "Current versus CAS",
+      "client signing versus socket wait versus service processing",
+      "SQLite/root/signature phase durations",
+      "which inner deadline check produced the same code",
+      "whether the expired exchange committed a CAS before refusal"
+    ]
+  },
+  "retained_original_controls": [
+    "cancellation_after_signing_before_send_preserves_same_client",
+    "service_expiry_after_update_before_commit_keeps_original_checkpoint",
+    "authenticated_late_current_receipt_cannot_supply_live_authority",
+    "late_committed_cas_cannot_write_past_original_connection_deadline"
+  ],
+  "schema": "trnm-r1-pq-witness-deadline-readonly-review-v1",
+  "source": {
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "second_source_after_identity_found_in_outer_log": false,
+    "source_before_in_original_log": true,
+    "source_identity_scope": "One printed eleven-field pre-step identity; immutable Git captures use exactly R1. No claimed before/after double proof for this hosted step.",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "status": "CLOSED_STATIC_REVIEW_NO_SUPPORTED_PATCH",
+  "test_setup_findings": [
+    "Exact original failure occurs on third spawned child after reopening, when replaying an already prepared request.",
+    "Witness listener is bound before its owner thread; opening the child database already performs witness validation before READY.",
+    "Previous Child::finish waits for child exit; temporary Witness::current client drops its Unix stream. No retained-connection or readiness defect was established.",
+    "Original exact test does not populate support.observe request stages. Inner witness phase observation is cfg(test) and not present in the selected CLI library.",
+    "Original workflow sets RUST_TEST_THREADS=1; no evidence supports blaming harness parallelism."
+  ],
+  "verified_call_chain": [
+    {
+      "call": "observation.stage(ingress_admission) then charge_connection, before TLS channel accept",
+      "line": 154,
+      "source": "src/ingress/pq_network/tls.rs"
+    },
+    {
+      "call": "lock_live_owner then charge_pq_ingress_with_check with original deadline",
+      "line": 1053,
+      "source": "src/ingress/pq_network.rs"
+    },
+    {
+      "call": "live/policy checks, Mutation::begin_until, connection debit UPDATE, commit_with_check",
+      "line": 318,
+      "source": "src/store/pq_network.rs"
+    },
+    {
+      "call": "SQLite IMMEDIATE, local checkpoint, authenticated Current, fresh protected root and checkpoint equality",
+      "line": 172,
+      "source": "src/store/pq_rollback_witness.rs"
+    },
+    {
+      "call": "fresh root, sequence transition, authenticated AdvanceCas, retain committed receipt and local commit before late live check",
+      "line": 247,
+      "source": "src/store/pq_rollback_witness.rs"
+    },
+    {
+      "call": "Each request has separate min(original_deadline, now + MAX_EXCHANGE) cap; MAX_EXCHANGE = 250 ms",
+      "line": 316,
+      "source": "src/pq_rollback_witness.rs"
+    }
+  ]
+}

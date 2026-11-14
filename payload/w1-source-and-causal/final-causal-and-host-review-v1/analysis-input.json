@@ -1,0 +1,221 @@
+{
+  "actions": {
+    "external_create_only_report": true,
+    "new_native_execution": false,
+    "new_network": false,
+    "new_profiling": false,
+    "new_tests": false,
+    "source_or_git_or_refs_or_config_mutation": false,
+    "stage_mutation": false
+  },
+  "callback_accounting": {
+    "arithmetic": "1 BeforeReplay + 4*64 noise callbacks + 128 E/F row callbacks + 512 transcript-tile callbacks + 1 BeforeProduct + 200 product-row callbacks + 1 BeforeVerifiedWork",
+    "complete_observed_count": 1099,
+    "not_every_report_completes_1099": true,
+    "not_policy_id_calls": true,
+    "partial_examples": [
+      561,
+      668,
+      72
+    ]
+  },
+  "contract_comparison": {
+    "actual_listener_address": "127.0.0.1:0; actual bound address is loopback",
+    "historical_document_warning": "Frozen old candidate sections mentioning bounded cadence or every 64 tiles do not supersede the current public API section or current every-real-boundary tests.",
+    "no_equivalence_claim": true,
+    "no_frequency_change_allowed": true,
+    "reason": "A loopback source locator is not provenance: a local forwarder can carry remote untrusted proof bytes. Explicit public/authenticated History import therefore retains the fixed Host parent. Plain local serving has a distinct documented compatibility contract.",
+    "service_progress": "public_dispatch_submit's task_alive / optional continuous check / ScopedWorkerCpu::checkpoint remains active. Ordinary scalar checkpoint passes an empty resource callback; the loopback server does not invoke kernel_for_worker.verify nor the conditional 50 ms reactor Host verify.",
+    "service_selection": "serve_inner calls require_for_listener(actual local_addr); loopback passes no fixed-parent argument and returns Ok(None).",
+    "strict_history_progress": "history_checkpoint uses the original control.check at each real W1 boundary; control checks original absolute deadline, fresh resource callback, then the same deadline again. Initial/final and native M06/commit boundaries remain separate.",
+    "strict_history_selection": "receive_public_page_from_before_observed and other exported public History adapters explicitly supply Some(FIXED_CGROUP_PARENT), even when the source address is loopback."
+  },
+  "direct_conclusions": [
+    "Both original Rust invocations exited 0 but their wrapper rejected CONFIRMATION_TARGET; both fresh invocations exited 101 at the unchanged original four-second/six-depth assertion.",
+    "All four baseline phases reached the business target. All four pressure phases had seven honest Submit ACKs but failed independent confirmation in the original window. The last independent replay in each rejected with PUBLIC_REQUEST_DEADLINE.",
+    "The actual loopback service has no internal HostKernelBudget; the actual strict public History entry has a fixed HostKernelBudget even for loopback and rechecks it at every real W1 progress callback. Outer cgroup enforcement remains actual for both.",
+    "The actual independent replay uses Owner::Exclusive. Its W1 progress path has no shared Node owner wait and no other arithmetic worker for the measured W1 replay.",
+    "The available reports establish a long W1 wall interval and a large nested Host-check calling-thread CPU component. They do not identify a sole scheduler/CFS/IO cause or a measured adequate optimization."
+  ],
+  "host_success_path": {
+    "allocated_stack_buffer_declarations_bytes": 1159,
+    "already_optimized": [
+      "stack/Cow text path",
+      "fixed held-parent-relative openat for child files",
+      "precomputed immutable parent/context identity",
+      "no BTreeMap counter parsing on verify_limits path",
+      "no redundant adjacent history Host check before the actual progress callback"
+    ],
+    "complete_eof_text_streams": 7,
+    "fast_path_explicit_project_heap_allocations": 0,
+    "fd_metadata_operations": 6,
+    "final_symlink_metadata_operations": 1,
+    "fresh_successful_opens": {
+      "boot": 1,
+      "calling_thread_membership": 1,
+      "parent": 1,
+      "relative_limit_files": 5,
+      "total": 8
+    },
+    "invariants": [
+      "original boot identity",
+      "same physical parent device/inode and expected owner/mode",
+      "fresh current calling-thread membership beneath the fixed parent",
+      "openat no-follow/regular-file/EOF/UTF-8/bounded five-limit checks",
+      "quota, period, burst, memory, swap, task bounds exactly original",
+      "final parent path identity check after child reads"
+    ],
+    "long_context_fallback": "Boot/membership context above the 256-byte stack threshold uses the existing same-FD heap fallback. It is not newly rejected or truncated.",
+    "loop_and_retry_caveat": "Short reads and EINTR make actual read/open-attempt counts variable. For nonempty short files with one payload read then EOF, 14 successful reads is a conditional illustration, not an observed syscall count. Correctness requires reading to EOF.",
+    "order": "fresh boot -> fresh parent open/metadata identity -> current-thread membership -> all five fresh limits/parse -> final parent path metadata/identity -> expected limits equality",
+    "proof_limit": "The report has no per-open/read/stat/parser or allocator CPU breakdown. std/rustix internal allocation/syscall implementations are not instrumented.",
+    "scope": "One successful HostKernelBudget::check through checked_parent, with short boot/membership text, five valid limit files, no EINTR or failed open attempts. Counts are source-level successful operations, not measured physical syscall totals.",
+    "stack_buffer_peak_not_measured": true,
+    "u64_parses": 4,
+    "utf8_validations": 7
+  },
+  "jobs": [
+    {
+      "artifact": 14117751904,
+      "job": 132475259337,
+      "mode": "head"
+    },
+    {
+      "artifact": 14117403147,
+      "job": 132475258996,
+      "mode": "prospective-merge"
+    }
+  ],
+  "measured_nested_cpu_examples": [
+    {
+      "case": "head/original/pressure/first packet work",
+      "full_work_host_callbacks": 1099,
+      "nested_host_thread_cpu_ns": 78011584,
+      "residual_ns": 3716199,
+      "work_thread_cpu_ns": 81727783
+    },
+    {
+      "case": "prospective/original/pressure/first packet work",
+      "full_work_host_callbacks": 1099,
+      "nested_host_thread_cpu_ns": 77031929,
+      "residual_ns": 3812134,
+      "work_thread_cpu_ns": 80844063
+    }
+  ],
+  "optimization_disposition": {
+    "adequate_measured_production_fix": false,
+    "candidates_not_selected": [
+      "Replacing tiny integer parsers with a canonical-string fast path would add comparisons and has no measured gain; the fallback/error/Unicode trimming contract must remain. No implementation is proposed.",
+      "R1 already includes the pure PublicPolicy immutable-prefix cache. Its static reachability is real, but its call count is not the 1099 Host count and these failures show no adequate four-second remedy.",
+      "The short W1 nonce-prefix state has no demonstrated material benefit on the actual critical path; no nonce, signature, work, Host result or mutable OS state is cached."
+    ],
+    "diagnosis_status": "Closed read-only diagnosis; original CONFIRMATION_TARGET qualification remains failed/unproved.",
+    "implemented": false,
+    "no_new_profiling": "The separately observed permitted perf task-clock probe failed at perf_event_paranoid=4. No stack/scheduler/strace observation or native reproduction is inferred or requested here.",
+    "prohibited_inferences": [
+      "wall minus calling-thread CPU is not a sole CFS explanation",
+      "whole-child cpu.stat cannot be allocated to one four-second phase",
+      "baseline server W1 CPU and strict History W1 CPU do not measure equivalent checking contracts",
+      "service final scalar credit is not physical CPU supply or proof of fairness",
+      "observer fields may overlap and may extend after the original four-second deadline",
+      "classic authentication CPU is not established as zero by the PQ-specific zero field"
+    ]
+  },
+  "run": 43604217632,
+  "schema": "trnm-r1-w1-fresh-service-causal-closure-v1",
+  "scope": "Read-only closure of the two R1 W1 fresh-service jobs and their four original baseline/pressure reports, with pinned R1 source/controls/documentation. This is not a new test, profiling run, all-CI verdict, or global source audit.",
+  "settings": {
+    "attack_workers": 16,
+    "confirmation_depth": 6,
+    "honest_packet_count": 7,
+    "host": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "per_rpc_budget_ms": 2000,
+    "per_rpc_deadline": "min(call start + 2 seconds, original traffic window end)",
+    "traffic_window_ns": 4000000000
+  },
+  "source": {
+    "head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "prospective": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+    "prospective_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  },
+  "timings": [
+    {
+      "baseline_confirmation_end_ns": 3190078265,
+      "case": "head/original",
+      "durable_begin_first_wall_ns": 1226000,
+      "last_replay_ended_ns": 4091682299,
+      "last_replay_started_ns": 1792816258,
+      "last_replay_thread_cpu_ns": 92200062,
+      "last_replay_wall_ns": 2298866041,
+      "page_cpu_wait_wall_ns": 399458000,
+      "pressure_accepted_replays": 0,
+      "pressure_replays": 1,
+      "pressure_seven_ack_end_ns": 1697580798,
+      "rounded_auxiliary_wall_values": true
+    },
+    {
+      "baseline_confirmation_end_ns": 3189859278,
+      "case": "head/fresh",
+      "durable_begin_first_wall_ns": 619000,
+      "last_replay_ended_ns": 4093243028,
+      "last_replay_started_ns": 2596921943,
+      "last_replay_thread_cpu_ns": 51285993,
+      "last_replay_wall_ns": 1496321085,
+      "page_cpu_wait_wall_ns": 401387000,
+      "pressure_accepted_replays": 0,
+      "pressure_replays": 1,
+      "pressure_seven_ack_end_ns": 2498053967,
+      "rounded_auxiliary_wall_values": true
+    },
+    {
+      "baseline_confirmation_end_ns": 3218165389,
+      "case": "prospective/original",
+      "durable_begin_first_wall_ns": 1359000,
+      "first_replay_ended_ns": 3798848833,
+      "first_replay_started_ns": 1895773240,
+      "first_replay_thread_cpu_ns": 91293000,
+      "first_replay_wall_ns": 1903075593,
+      "last_replay_ended_ns": 4090484524,
+      "last_replay_started_ns": 3991634532,
+      "last_replay_thread_cpu_ns": 6568000,
+      "last_replay_wall_ns": 98849992,
+      "page_cpu_wait_wall_ns": 400524000,
+      "pressure_accepted_replays": 1,
+      "pressure_replays": 2,
+      "pressure_seven_ack_end_ns": 1800221855,
+      "rounded_auxiliary_wall_values": true,
+      "rounded_first_replay_cpu": true,
+      "rounded_last_replay_cpu": true
+    },
+    {
+      "baseline_confirmation_end_ns": 3290665022,
+      "case": "prospective/fresh",
+      "durable_begin_first_wall_ns": 780000,
+      "last_replay_ended_ns": 4092961096,
+      "last_replay_started_ns": 2792769569,
+      "last_replay_thread_cpu_ns": 45243829,
+      "last_replay_wall_ns": 1300191527,
+      "page_cpu_wait_wall_ns": 495100000,
+      "pressure_accepted_replays": 0,
+      "pressure_replays": 1,
+      "pressure_seven_ack_end_ns": 2690236357,
+      "rounded_auxiliary_wall_values": true
+    }
+  ],
+  "unchanged_contracts": [
+    "4-second business window",
+    "16 original pressure workers",
+    "2-second per-RPC bound and original absolute deadline",
+    "7 honest packets and depth 6",
+    "all actual fresh Host reads/checks and identity/refusal order",
+    "all original work/nonce/signature verification",
+    "cold account/refill/settlement and current source identities"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "GETs_executed": 0,
+  "closed_CD_summary": {
+    "bytes": 5961,
+    "path": "/private/tmp/chain-prci-R1-history-artifact-central-directory-20261114-v1/summary.json",
+    "sha256": "e0e847f526898c29138a6963b4995a3d08cc83ca0a78f4d910eb78f69e265db3"
+  },
+  "compile_only": true,
+  "compile_optimize": 0,
+  "created_at": "2026-11-14T15:47:46.243689+00:00",
+  "diff": {
+    "bytes": 21399,
+    "path": "/private/tmp/chain-prci-R1-history-selected-member-reader-preparation-20261114-v1/central-directory-to-selected-members.patch",
+    "sha256": "f7790cb21203c9f3124b8c2547fd1f67b05997859794e3edcc5d0973d3cff48d"
+  },
+  "expanded_total_bytes": 18434,
+  "fixed_members": [
+    {
+      "compressed": 531,
+      "crc32": "5e13cf8a",
+      "end": 10624,
+      "expanded": 972,
+      "flags": 8,
+      "index": 3,
+      "method": 8,
+      "offset": 10011,
+      "output": "history-resources.txt",
+      "path": "history-native/history-resources.txt",
+      "version": 20
+    },
+    {
+      "compressed": 2558,
+      "crc32": "7f9502ac",
+      "end": 13254,
+      "expanded": 11359,
+      "flags": 8,
+      "index": 4,
+      "method": 8,
+      "offset": 10624,
+      "output": "history.log",
+      "path": "history-native/history.log",
+      "version": 20
+    },
+    {
+      "compressed": 320,
+      "crc32": "d998eb9b",
+      "end": 36548644,
+      "expanded": 514,
+      "flags": 8,
+      "index": 4113,
+      "method": 8,
+      "offset": 36548239,
+      "output": "long-history-source.json",
+      "path": "history-native/long-history/source.json",
+      "version": 20
+    },
+    {
+      "compressed": 160,
+      "crc32": "c3eab677",
+      "end": 36548890,
+      "expanded": 259,
+      "flags": 8,
+      "index": 4114,
+      "method": 8,
+      "offset": 36548644,
+      "output": "long-history-summary.json",
+      "path": "history-native/long-history/summary.json",
+      "version": 20
+    },
+    {
+      "compressed": 1450,
+      "crc32": "b859bbaf",
+      "end": 59499532,
+      "expanded": 4907,
+      "flags": 8,
+      "index": 4117,
+      "method": 8,
+      "offset": 59498008,
+      "output": "manifest.json",
+      "path": "history-native/manifest.json",
+      "version": 20
+    },
+    {
+      "compressed": 239,
+      "crc32": "63111cae",
+      "end": 59511122,
+      "expanded": 423,
+      "flags": 8,
+      "index": 4139,
+      "method": 8,
+      "offset": 59510826,
+      "output": "source.json",
+      "path": "source.json",
+      "version": 20
+    }
+  ],
+  "fixed_ranges": [
+    {
+      "end": 13253,
+      "label": "resources-and-history-log",
+      "members": [
+        0,
+        1
+      ],
+      "start": 10011
+    },
+    {
+      "end": 36548889,
+      "label": "long-history-source-and-summary",
+      "members": [
+        2,
+        3
+      ],
+      "start": 36548239
+    },
+    {
+      "end": 59499531,
+      "label": "native-manifest",
+      "members": [
+        4
+      ],
+      "start": 59498008
+    },
+    {
+      "end": 59511121,
+      "label": "top-level-source",
+      "members": [
+        5
+      ],
+      "start": 59510826
+    }
+  ],
+  "future_total_budget_seconds": 180,
+  "maximum_future_GETs": 5,
+  "original": {
+    "bytes": 18677,
+    "path": "/private/tmp/chain-prci-R1-history-central-directory-reader-preparation-20261114-v1/read_history_artifact_central_directory_v1.py",
+    "sha256": "4f6f6fbaa9a464eb1ca529cd77739a4517b78d9c2c6c1e4c0d82708904476386"
+  },
+  "plan": {
+    "bytes": 4128,
+    "path": "/private/tmp/chain-prci-R1-history-selected-member-plan-20261114-v1/candidate-records.json",
+    "sha256": "e8454a864e272919a2acce18d3fbe67bcbb375cc2b7e1f4762642452eaed08e4"
+  },
+  "producer": {
+    "bytes": 23040,
+    "path": "/private/tmp/chain-prci-R1-history-selected-member-reader-preparation-20261114-v1/read_history_artifact_selected_members_v1.py",
+    "sha256": "1cee9d0f0e321e4e367d65fe5ba48880a0efef423f034b176e649c17481adef6"
+  },
+  "qualification": false,
+  "range_body_total_bytes": 5714,
+  "readme": {
+    "bytes": 669,
+    "path": "/private/tmp/chain-prci-R1-history-selected-member-reader-preparation-20261114-v1/README.txt",
+    "sha256": "88407e6fea2d6280edabee004f975cc9f946362df02dbd6f53aa0e211ec087d2"
+  },
+  "runtime_functions_executed": false,
+  "schema": "trnm-r1-history-selected-member-preparation-v1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "unchanged_helper_AST": [
+    "need",
+    "now",
+    "fingerprint",
+    "stable_bytes",
+    "save",
+    "save_json",
+    "pairs",
+    "parse_json",
+    "parsed_headers"
+  ],
+  "whole_artifact_verified": false
+}

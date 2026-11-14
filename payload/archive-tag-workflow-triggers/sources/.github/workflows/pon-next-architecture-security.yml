@@ -1,0 +1,498 @@
+name: PoN next architecture exact-source observations
+
+on:
+  pull_request:
+    paths:
+      - formal/next-architecture-security/**
+      - config/**
+      - docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+      - docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md
+      - docs/development/specs/pon/NEXT_CONSENSUS_PQ_RESEARCH_V1.md
+      - docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md
+      - docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md
+      - docs/development/specs/pon/CELL_BEP52_BINDING_V1.md
+      - docs/development/specs/pon/CELL_RS46_CHUNK_V1.md
+      - docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md
+      - docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md
+      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md
+      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md
+      - docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md
+      - scripts/cell_complete_version_vector.py
+      - scripts/cell_discovery_epoch_v3_vector.py
+      - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json
+      - formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json
+      - scripts/cell_version_content_vector.py
+      - docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md
+      - scripts/cell_version_retention_v3_vector.py
+      - scripts/cell_storage_descriptor_reference.py
+      - scripts/ci/test_cell_storage_convergence_ci.py
+      - scripts/cell_sealed_bootstrap_v1.py
+      - scripts/llm_cell_sealed_worker_v1.py
+      - scripts/prepare_cell_sealed_research_v1.py
+      - scripts/test_llm_cell_sealed_worker_v1.py
+      - tests/fixtures/llm_material_runtime_bridge_v1/**
+      - formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json
+      - formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json
+      - docs/development/specs/pon/CELL_FULL_CONTENT_V2.md
+      - docs/development/specs/pon/CELL_SEALED_LOADER_V1.md
+      - docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md
+      - docs/development/specs/pon/CELL_BEP52_PEER_V1.md
+      - formal/pon-nakamoto-v1/vectors/cell-version-content-v2.json
+      - trillionnium/crates/trnm-data-availability/**
+      - trillionnium/crates/trnm-pon-node/**
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/crates/trnm-protocol/**
+      - trillionnium/crates/trnm-research-protocol/**
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
+      - .cargo/**
+      - rust-toolchain.toml
+      - scripts/project-preflight.sh
+      - scripts/ci/**
+      - .github/workflows/pon-next-architecture-security.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pon-next-architecture-${{ github.event.pull_request.number }}
+  # Preserve earlier failed and partial source observations when a successor arrives.
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  next-architecture:
+    name: next architecture (${{ matrix.runner }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - name: Reserve isolated logs without changing source
+        id: reserve
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/next-architecture-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-next-architecture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-next-architecture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          cat > "$out/SCOPE.txt" <<'SCOPE'
+          Exact-source component observations under the default Cargo features.
+          Head and prospective merge, x86_64 and ARM64, remain separate records.
+          Synthetic Cell bytes are not models. Local recovery and packet reads
+          do not qualify WAN throughput, DHT, independent custody, Hepta FinalUse,
+          useful-work hardness, QROM/PQ128, sustainable rewards or production.
+          Original required gates remain unchanged. Qualification: HOLD_NO_GO.
+          SCOPE
+          cat > "$out/run-command.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          label="$1"
+          shift
+          status=0
+          "$@" 2>&1 | tee "$OUT/$label.log" || status=$?
+          printf '%s\n' "$status" > "$OUT/$label.exit"
+          exit "$status"
+          SH
+          cat > "$out/native-selector-label.py" <<'PY'
+          from pathlib import Path
+          import json, re, sys
+          prefix, selector, output = sys.argv[1:]
+          if prefix not in ("native-storage", "native-storage-component"):
+              raise SystemExit("invalid native artifact prefix")
+          if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", selector) is None:
+              raise SystemExit("invalid ASCII Rust selector")
+          # Identifiers contain no hyphen; '-' reverses to '::'. The '--'
+          # prefix boundary cannot occur in a nonempty encoded Rust path.
+          label = prefix + "--" + selector.replace("::", "-")
+          record = {"schema": "trnm-native-selector-artifact-v1",
+                    "prefix": prefix, "selector": selector, "label": label}
+          with (Path(output) / (label + ".selector.json")).open("x", encoding="utf-8") as stream:
+              json.dump(record, stream, sort_keys=True)
+              stream.write("\n")
+          print(label)
+          PY
+      - name: Checkout the immutable event source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source and ordered prospective merge
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          bash "$OUT/run-command.sh" source-before python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-before.json"
+          # Preserve the exact receipt path consumed by the original Host launcher.
+          test ! -e "$OUT/source.json"
+          cp "$OUT/source-before.json" "$OUT/source.json"
+          cmp "$OUT/source-before.json" "$OUT/source.json"
+      - name: Retain original project preflight
+        id: preflight
+        shell: bash
+        run: bash "$OUT/run-command.sh" preflight bash scripts/project-preflight.sh --audit
+      - name: Install pinned compiler and lint tools
+        id: toolchain
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$OUT/run-command.sh" toolchain rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustc +1.95.0 -Vv > "$OUT/rustc.txt"
+          cargo +1.95.0 -V > "$OUT/cargo.txt"
+          uname -m > "$OUT/architecture.txt"
+      - name: Preserve repository truth and source-integrity negative controls
+        id: repository
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" repository python3 -B scripts/ci/check_repository.py || status=1
+          bash "$OUT/run-command.sh" source-negative-controls python3 -B scripts/ci/test_ci_source_integrity.py || status=1
+          exit "$status"
+      - name: Run all next-architecture Python controls and retained exact fixture
+        id: python
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" next-python python3 -B -m unittest discover -s formal/next-architecture-security -p 'test_*.py' -v || status=1
+          bash "$OUT/run-command.sh" counterexample-fixture python3 -B formal/next-architecture-security/counterexamples.py --check-fixture || status=1
+          bash "$OUT/run-command.sh" complete-version-vector python3 -B scripts/cell_complete_version_vector.py --check || status=1
+          bash "$OUT/run-command.sh" discovery-epoch-vector python3 -B scripts/cell_discovery_epoch_v3_vector.py --check || status=1
+          bash "$OUT/run-command.sh" discovery-workflow-controls python3 -B scripts/ci/test_cell_discovery_v3_ci.py || status=1
+          bash "$OUT/run-command.sh" complete-content-vector python3 -B scripts/cell_version_content_vector.py --check || status=1
+          bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
+          bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
+          bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
+          bash "$OUT/run-command.sh" artifact-map-controls python3 -B scripts/ci/test_prepare_artifact_upload.py || status=1
+          exit "$status"
+      - name: Verify locked graph and unchanged all-source formatting
+        id: graph_format
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json" 2> "$OUT/cargo-graph.log" || status=1
+          bash "$OUT/run-command.sh" all-source-format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check || status=1
+          exit "$status"
+      - name: Run the complete default-feature P2P crate
+        id: p2p
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$OUT/run-command.sh" p2p-complete cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --test-threads=1
+      - name: Run real sealed-input Python controls and verify every frozen case
+        id: sealed_python
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" sealed-research-python-controls python3 -B -m unittest discover -s scripts -p test_llm_cell_sealed_worker_v1.py -v || status=1
+          python3 -B scripts/ci/test_cell_storage_convergence_ci.py --check-sealed-controls "$OUT/sealed-research-python-controls.log" || status=1
+          exit "$status"
+      - name: Run exact sealed-handoff and complete shard-capacity controls
+        id: storage_components
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          required=(
+            cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline
+            cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
+          )
+          for selector in "${required[@]}"; do
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage-component "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
+          done
+          exit "$status"
+      - name: Run complete storage-owner module and exact new funding controls
+        id: storage_owner
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" native-storage-owner cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::storage_service:: -- --test-threads=1 || status=1
+          required=(
+            store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement
+            store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done
+            store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source
+            store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation
+            store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents
+            store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits
+            store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present
+            store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire
+            store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
+          )
+          for selector in "${required[@]}"; do
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
+          done
+          exit "$status"
+      - name: Run the new packet observer and retained native packet-status controls
+        id: native_packet
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" native-packet-observer cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_packet_observer -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-node-packet-status cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node packet_status -- --test-threads=1 || status=1
+          for selector in test_every_reorg_process_cut_and_admission_gap_recovers_once test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner test_confirmed_transfer_is_removed_by_a_real_heavier_fork; do
+            bash "$OUT/run-command.sh" "$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$selector.log" --test "$selector" || status=1
+          done
+          exit "$status"
+      - name: Verify original Hepta receivers and accepted-task binding
+        id: hepta_receivers
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" hepta-classical-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test protocol_v1 hepta_ -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" hepta-pq-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test hepta_handoff_pq -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-accepted-task cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::task_observation::tests:: -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-settlement-cold-readback cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation -- --test-threads=1 || status=1
+          exit "$status"
+      - name: Preserve existing growth packet and cold-observer controls
+        id: growth_observers
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for selector in native_growth_v2_exact_packet_observation native_growth_v2_packet_observer native_growth_v2_cold_observer; do
+            bash "$OUT/run-command.sh" "$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --test-threads=1 || status=1
+          done
+          bash "$OUT/run-command.sh" growth-cli-packet-cold cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_growth_cli native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot -- --exact --test-threads=1 || status=1
+          python3 -B scripts/ci/check_required_native_test.py "$OUT/growth-cli-packet-cold.log" --test native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot || status=1
+          exit "$status"
+      - name: Require nonempty filtered native executions without freezing test counts
+        id: native_execution
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path
+          import re, sys
+          root = Path(sys.argv[1])
+          names = ["native-packet-observer", "native-node-packet-status",
+                   "hepta-classical-receiver", "hepta-pq-receiver", "native-accepted-task",
+                   "native-settlement-cold-readback",
+                   "native_growth_v2_exact_packet_observation",
+                   "native_growth_v2_packet_observer", "native_growth_v2_cold_observer"]
+          for name in names:
+              text = (root / (name + ".log")).read_text()
+              rows = re.findall(r"^test result: ok\. ([0-9]+) passed; 0 failed;", text, re.M)
+              if len(rows) != 1 or int(rows[0]) == 0:
+                  raise SystemExit("no successful nonempty native execution: " + name)
+          PY
+      - name: Run strict default-feature lint for both affected crates and all targets
+        id: clippy
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for package in trnm-data-availability trnm-pon-node; do
+            bash "$OUT/run-command.sh" "clippy-$package" cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p "$package" --all-targets -- -D warnings || status=1
+          done
+          exit "$status"
+      - name: Retain release Cell component observations
+        id: examples
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for example in cell_bep52_cost_v1 cell_rs46_cost_v1 cell_signed_sealed_pipeline_v1; do
+            command_status=0
+            timeout --signal=TERM --kill-after=10s 600 cargo +1.95.0 run --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example "$example" > "$OUT/$example.json" 2> "$OUT/$example.log" || command_status=$?
+            printf '%s\n' "$command_status" > "$OUT/$example.exit"
+            if test "$command_status" != 0; then status=1; fi
+          done
+          exit "$status"
+      - name: Reverify the complete measured source after all attempts
+        id: source_after
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          bash "$OUT/run-command.sh" source-after python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+          cmp "$OUT/source-before.json" "$OUT/source-after.json"
+          cmp "$OUT/source-before.json" "$OUT/source.json"
+      - name: Retain stage outcomes and artifact digests
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        env:
+          STAGE_OUTCOMES: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, sys
+          root = Path(sys.argv[1])
+          stage_outcomes = json.loads(os.environ["STAGE_OUTCOMES"])
+          storage_owner_passed = stage_outcomes.get("storage_owner", {}).get("outcome") == "success"
+          storage_components_passed = stage_outcomes.get("storage_components", {}).get("outcome") == "success"
+          sealed_python_passed = stage_outcomes.get("sealed_python", {}).get("outcome") == "success"
+          (root / "stage-outcomes.json").write_text(json.dumps({
+              "steps": stage_outcomes,
+              "storage_owner_required": True,
+              "storage_owner_passed": storage_owner_passed,
+              "storage_components_required": True,
+              "storage_components_passed": storage_components_passed,
+              "sealed_python_required": True,
+              "sealed_python_passed": sealed_python_passed,
+              "expected_source": os.environ["EXPECTED_SOURCE"],
+              "source_kind": os.environ["SOURCE_KIND"],
+              "runner": os.environ["TRNM_COST_RUNNER_LABEL"],
+              "qualification": "HOLD_NO_GO",
+              "production_qualified": False,
+              "performance_or_economics_qualified": False,
+              "optional_pq_features_tested": False,
+          }, sort_keys=True, indent=2) + "\n")
+          records = []
+          for path in sorted(root.iterdir()):
+              if path.is_file() and not path.is_symlink() and path.name != "sha256sums.txt":
+                  records.append(hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name)
+          (root / "sha256sums.txt").write_text("\n".join(records) + "\n")
+          if not storage_owner_passed:
+              raise SystemExit("required storage-owner native stage did not succeed")
+          if not storage_components_passed or not sealed_python_passed:
+              raise SystemExit("required storage convergence component stages did not succeed")
+          PY
+      - name: Package complete raw observations without renaming members
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, io, json, stat, sys, tarfile
+          root = Path(sys.argv[1])
+          if root.is_symlink() or not root.is_dir():
+              raise SystemExit("raw observation root must be a real directory")
+          root = root.resolve(strict=True)
+          destination = root.with_name(root.name + "-artifact")
+          destination.mkdir()
+          pending = destination / "raw-observations.tar.gz.partial"
+          records = []
+          def regular_bytes(path):
+              if not stat.S_ISREG(path.lstat().st_mode):
+                  raise SystemExit("non-regular observation: " + str(path))
+              return path.read_bytes()
+          def safe_member(name):
+              path = PurePosixPath(name)
+              return bool(name) and not path.is_absolute() and ".." not in path.parts
+          with tarfile.open(pending, "x:gz", format=tarfile.PAX_FORMAT) as archive:
+              for path in sorted(root.rglob("*")):
+                  mode = path.lstat().st_mode
+                  if stat.S_ISDIR(mode):
+                      continue
+                  name = path.relative_to(root).as_posix()
+                  if not safe_member(name):
+                      raise SystemExit("unsafe observation path: " + name)
+                  data = regular_bytes(path)
+                  member = tarfile.TarInfo(name)
+                  member.size = len(data)
+                  member.mode = stat.S_IMODE(mode)
+                  archive.addfile(member, io.BytesIO(data))
+                  records.append({"raw_relative_path": name, "archive_member": name,
+                                  "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
+          if not records:
+              raise SystemExit("no raw observations to archive")
+          expected = {record["archive_member"]: record for record in records}
+          with tarfile.open(pending, "r:gz") as archive:
+              members = archive.getmembers()
+              if len(members) != len(expected) or {member.name for member in members} != set(expected):
+                  raise SystemExit("archive member set differs from raw observations")
+              for member in members:
+                  if not member.isfile() or not safe_member(member.name):
+                      raise SystemExit("unsafe archive member: " + member.name)
+                  reader = archive.extractfile(member)
+                  if reader is None:
+                      raise SystemExit("missing archive member bytes: " + member.name)
+                  with reader:
+                      data = reader.read()
+                  record = expected[member.name]
+                  if (len(data) != record["bytes"]
+                          or hashlib.sha256(data).hexdigest() != record["sha256"]
+                          or data != regular_bytes(root / record["raw_relative_path"])):
+                      raise SystemExit("archive readback differs from raw observation: " + member.name)
+          archive_path = destination / "raw-observations.tar.gz"
+          pending.rename(archive_path)
+          manifest = {"schema": "pon-ci-raw-observation-archive-v1",
+                      "archive": archive_path.name,
+                      "archive_bytes": archive_path.stat().st_size,
+                      "archive_sha256": hashlib.sha256(archive_path.read_bytes()).hexdigest(),
+                      "member_count": len(records), "members": records}
+          (destination / "members.json").write_text(
+              json.dumps(manifest, sort_keys=True, indent=2) + "\n")
+          PY
+      - name: Map every observation to a safe upload path
+        id: artifact_map
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/prepare_artifact_upload.py --source "$OUT" --output "$OUT-upload"
+      - name: Retain logs and failed or partial observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/raw-observations.tar.gz
+            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/members.json
+            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-upload/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,438 @@
+{
+  "line_count": 2833,
+  "lines": [
+    {
+      "line": 1224,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 30,
+      "prefix": "2026-11-14T14:20:16.8872959Z {",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1225,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 44,
+      "prefix": "2026-11-14T14:20:16.8873252Z   \"base\": null,",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1226,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 87,
+      "prefix": "2026-11-14T14:20:16.8873595Z   \"candidate\": \"2a86462a1ab20c68151719ba4635e3c294391e64\",",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1227,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 46,
+      "prefix": "2026-11-14T14:20:16.8873963Z   \"kind\": \"head\",",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1228,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 57,
+      "prefix": "2026-11-14T14:20:16.8874354Z   \"prospective_merge\": null,",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1229,
+      "matched_spans": [
+        {
+          "offset_chars": 42,
+          "text": "2026-11-14T14:20:16.8874650Z   \"schema\": \"trnm-ci-source-v1\","
+        }
+      ],
+      "original_line_utf8_bytes": 61,
+      "prefix": "2026-11-14T14:20:16.8874650Z   \"schema\": \"trnm-ci-source-v1\",",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1230,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 91,
+      "prefix": "2026-11-14T14:20:16.8875008Z   \"tested_commit\": \"2a86462a1ab20c68151719ba4635e3c294391e64\",",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1231,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 89,
+      "prefix": "2026-11-14T14:20:16.8875426Z   \"tested_tree\": \"5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\",",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1232,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 73,
+      "prefix": "2026-11-14T14:20:16.8875811Z   \"tests_executed_by_identity_check\": false,",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1233,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 59,
+      "prefix": "2026-11-14T14:20:16.8876117Z   \"tracked_bytes\": 3994964901,",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1234,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 56,
+      "prefix": "2026-11-14T14:20:16.8876385Z   \"tracked_entries\": 41677,",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1235,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 64,
+      "prefix": "2026-11-14T14:20:16.8876971Z   \"tracked_worktree_verified\": true",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1236,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 30,
+      "prefix": "2026-11-14T14:20:16.8877448Z }",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1237,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 161,
+      "prefix": "2026-11-14T14:20:16.9423477Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1238,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 59,
+      "prefix": "2026-11-14T14:20:16.9919690Z ##[group]Run set -euo pipefail",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1239,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 57,
+      "prefix": "2026-11-14T14:20:16.9919957Z \u001b[36;1mset -euo pipefail\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1240,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 216,
+      "prefix": "2026-11-14T14:20:16.9920519Z \u001b[36;1mfor test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1241,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 152,
+      "prefix": "2026-11-14T14:20:16.9921264Z \u001b[36;1m  bash \"$PQ_OUT/run-command.sh\" \"${test_file%.py}\" python3 -m unittest discover -s scripts/ci -p \"$test_file\" -v\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1242,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 44,
+      "prefix": "2026-11-14T14:20:16.9921651Z \u001b[36;1mdone\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1817,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 155,
+      "prefix": "2026-11-14T15:03:22.2777220Z {\"exit_code\": 101, \"receipt\": \"/home/runner/work/_temp/pq-system-records/tls-witness-cli-00.json\", \"status\": \"command_failed\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1818,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 101,
+      "prefix": "2026-11-14T15:03:22.2876330Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1819,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 159,
+      "prefix": "2026-11-14T15:03:22.2876993Z      Running tests/pq_tls_witness_cli.rs (/home/runner/work/_temp/pq-system-target/debug/deps/pq_tls_witness_cli-b8a3faf86b9bebb0)",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1820,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2877357Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1821,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 43,
+      "prefix": "2026-11-14T15:03:22.2877438Z running 1 test",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1822,
+      "matched_spans": [
+        {
+          "offset_chars": 34,
+          "text": "2026-11-14T15:03:22.2881834Z test witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database ... TRNM_PQ_TLS_CLI_DIAGNOSTIC {\"child_after_cleanup\":{\"exit_code\":null,\"signal\":9,\"state\":\"exited\",\"success\":false},\"child_before_cleanup\":{\"state\":\"running\"},\"cleanup_elapsed_us\":952,\"failure_since_spawn_start_us\":340580,\"pid\":32415,\"ready_received_us\":76903,\"request_stages\":[],\"request_stages_truncated\":false,\"schema\":\"trnm-pq-tls-cli-failure-v1\",\"stderr\":{\"connection_refusals\":[{\"bio_error_code\":null,\"bio_error_kind\":null,\"deadline_elapsed\":false,\"elapsed_us\":261315,\"error_code\":\"PQ_WITNESS_DEADLINE\",\"error_kind\":\"Unclassified\",\"ingress_charge_calls\":0,\"ingress_charge_us\":0,\"schema\":\"pq-tls-connection-refusal-v1\",\"stage\":\"ingress_admission\",\"stag"
+        },
+        {
+          "offset_chars": 599,
+          "text": "pq-tls-cli-failure-v1\",\"stderr\":{\"connection_refusals\":[{\"bio_error_code\":null,\"bio_error_kind\":null,\"deadline_elapsed\":false,\"elapsed_us\":261315,\"error_code\":\"PQ_WITNESS_DEADLINE\",\"error_kind\":\"Unclassified\",\"ingress_charge_calls\":0,\"ingress_charge_us\":0,\"schema\":\"pq-tls-connection-refusal-v1\",\"stage\":\"ingress_admission\",\"stage_elapsed_us\":261316}],\"known_markers\":[\"PQ_WITNESS_DEADLINE\",\"PQ_TLS\"],\"marker_scan_bytes\":326,\"marker_scan_truncated\":false,\"observed_bytes\":326,\"observed_sha256\":\"7ab2d1b5132c7095e4d2a4a8600f9d6c47c97cb651a42570ca5498eb96784681\",\"raw_text_redacted\":true,\"read_error_kind\":null},\"stdout\":[{\"accepted\":null,\"pnq2_rollback_witness_selected\":true,\"production_activation\":false,\"public_wan_qualification\":false,\"ready_event\":true,\"refused\":null,\"valid_json\":true,\"whole_node_rollback_protection\":false}],\"stdout_capture\":\"first_and_last_only\"}"
+        },
+        {
+          "offset_chars": 809,
+          "text": "ingress_charge_calls\":0,\"ingress_charge_us\":0,\"schema\":\"pq-tls-connection-refusal-v1\",\"stage\":\"ingress_admission\",\"stage_elapsed_us\":261316}],\"known_markers\":[\"PQ_WITNESS_DEADLINE\",\"PQ_TLS\"],\"marker_scan_bytes\":326,\"marker_scan_truncated\":false,\"observed_bytes\":326,\"observed_sha256\":\"7ab2d1b5132c7095e4d2a4a8600f9d6c47c97cb651a42570ca5498eb96784681\",\"raw_text_redacted\":true,\"read_error_kind\":null},\"stdout\":[{\"accepted\":null,\"pnq2_rollback_witness_selected\":true,\"production_activation\":false,\"public_wan_qualification\":false,\"ready_event\":true,\"refused\":null,\"valid_json\":true,\"whole_node_rollback_protection\":false}],\"stdout_capture\":\"first_and_last_only\"}"
+        }
+      ],
+      "original_line_utf8_bytes": 1309,
+      "prefix": "2026-11-14T15:03:22.2881834Z test witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database ... TRNM_PQ_TLS_CLI_DIAGNOSTIC {\"child_after_cleanup\":{\"exit_code\":null,\"signal\":9,\"state\":\"exited\",\"success\":false},\"child_before_cleanup\":{\"state\":\"running\"},\"cleanup_elapsed_us\":952,\"failure_since_spawn_start_us\":340580,\"pid\":32415,\"ready_received_us\":76903,\"request_stages\":[],\"request_stages_truncated\":false,\"schema\":\"trnm-pq-tls-cli-failure-v1\",\"stderr\":{\"connection_refusals\":[{\"bio_error_code\":null,\"bio_error_kind\":null,\"deadline_elapsed\":false,\"elapsed_us\":261315,\"error_code\":\"PQ_WITNESS_DEADLINE\",\"error_kind\":\"Unclassified\",\"ingress_charge_calls\":0,\"ingress_charge_us\":0,\"schema\":\"pq-tls-connection-refusal-v1\",\"stage\":\"ingress_admission\",\"stage_elapsed_us\":261316}],\"known_markers\":[\"PQ_WITNESS_DEADLINE\",\"PQ_TLS\"],\"marker_scan_bytes\":326,\"marker_scan_truncated\":false,\"observed_bytes\":326,\"observed_sha256\":\"7ab2d1b5132c7095e4d2a4a8600f9d6c47c97cb651a42570ca5498eb96784681\",\"raw_text_redacted\":true,\"read_error_kind\":null},\"stdout\":[{\"accepted\":null,\"pnq2_rollback_witness_selected\":true,\"production_activation\":false,\"public_wan_qualification\":false,\"ready_event\":true,\"refused\":null,\"valid_json\":true,\"whole_node_rollback_protection\":false}],\"stdout_capture\":\"first_and_last_only\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1823,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 35,
+      "prefix": "2026-11-14T15:03:22.2885922Z FAILED",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1824,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2886014Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1825,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 39,
+      "prefix": "2026-11-14T15:03:22.2886088Z successes:",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1826,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2886183Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1827,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 39,
+      "prefix": "2026-11-14T15:03:22.2886247Z successes:",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1828,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2886331Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1829,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 38,
+      "prefix": "2026-11-14T15:03:22.2886392Z failures:",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1830,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2886649Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1831,
+      "matched_spans": [
+        {
+          "offset_chars": 34,
+          "text": "2026-11-14T15:03:22.2886869Z ---- witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database stdout ----"
+        }
+      ],
+      "original_line_utf8_bytes": 121,
+      "prefix": "2026-11-14T15:03:22.2886869Z ---- witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database stdout ----",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1832,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2887176Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1833,
+      "matched_spans": [
+        {
+          "offset_chars": 37,
+          "text": "2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:"
+        },
+        {
+          "offset_chars": 122,
+          "text": "2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:"
+        }
+      ],
+      "original_line_utf8_bytes": 189,
+      "prefix": "2026-11-14T15:03:22.2887565Z thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (32406) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli.rs:90:14:",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1834,
+      "matched_spans": [
+        {
+          "offset_chars": 124,
+          "text": "2026-11-14T15:03:22.2894470Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PQ_NETWORK_CRYPTO:Error { code: ErrorCode(5), cause: Some(Io(Os { code: 104, kind: ConnectionReset, message: \\\"Connection reset by peer\\\" })) }\", source: None, request_history_budget: false }"
+        }
+      ],
+      "original_line_utf8_bytes": 315,
+      "prefix": "2026-11-14T15:03:22.2894470Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PQ_NETWORK_CRYPTO:Error { code: ErrorCode(5), cause: Some(Io(Os { code: 104, kind: ConnectionReset, message: \\\"Connection reset by peer\\\" })) }\", source: None, request_history_budget: false }",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1835,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 106,
+      "prefix": "2026-11-14T15:03:22.2895362Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1836,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2895605Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1837,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2895608Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1838,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 38,
+      "prefix": "2026-11-14T15:03:22.2895680Z failures:",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1839,
+      "matched_spans": [
+        {
+          "offset_chars": 33,
+          "text": "2026-11-14T15:03:22.2895942Z     witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database"
+        }
+      ],
+      "original_line_utf8_bytes": 108,
+      "prefix": "2026-11-14T15:03:22.2895942Z     witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1840,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2896188Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1841,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 126,
+      "prefix": "2026-11-14T15:03:22.2896399Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 4.91s",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1842,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 29,
+      "prefix": "2026-11-14T15:03:22.2896687Z ",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1843,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 107,
+      "prefix": "2026-11-14T15:03:22.2896865Z error: test failed, to rerun pass `-p trnm-pon-node --test pq_tls_witness_cli`",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1844,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 156,
+      "prefix": "2026-11-14T15:03:30.7734429Z {\"exit_code\": 0, \"receipt\": \"/home/runner/work/_temp/pq-system-records/tls-witness-cli-01.json\", \"status\": \"command_succeeded\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1845,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 156,
+      "prefix": "2026-11-14T15:03:41.3108337Z {\"exit_code\": 0, \"receipt\": \"/home/runner/work/_temp/pq-system-records/tls-witness-cli-02.json\", \"status\": \"command_succeeded\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1846,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 156,
+      "prefix": "2026-11-14T15:03:49.7819107Z {\"exit_code\": 0, \"receipt\": \"/home/runner/work/_temp/pq-system-records/tls-witness-cli-03.json\", \"status\": \"command_succeeded\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1847,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 156,
+      "prefix": "2026-11-14T15:03:58.1322395Z {\"exit_code\": 0, \"receipt\": \"/home/runner/work/_temp/pq-system-records/tls-witness-cli-04.json\", \"status\": \"command_succeeded\"}",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1848,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 73,
+      "prefix": "2026-11-14T15:03:58.1700727Z ##[error]Process completed with exit code 1.",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1849,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 59,
+      "prefix": "2026-11-14T15:03:58.1746359Z ##[group]Run set -euo pipefail",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1850,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 57,
+      "prefix": "2026-11-14T15:03:58.1746663Z \u001b[36;1mset -euo pipefail\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1851,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 105,
+      "prefix": "2026-11-14T15:03:58.1746973Z \u001b[36;1mmanifest=config/pon/pq-native-tls-endpoint-required-tests-v1.json\u001b[0m",
+      "prefix_truncated": false
+    },
+    {
+      "line": 1852,
+      "matched_spans": [],
+      "original_line_utf8_bytes": 211,
+      "prefix": "2026-11-14T15:03:58.1747721Z \u001b[36;1mbash \"$PQ_OUT/run-command.sh\" tls-endpoint-lib-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --list\u001b[0m",
+      "prefix_truncated": false
+    }
+  ],
+  "raw": {
+    "bytes": 818816,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258045-original-log.stdout",
+    "sha256": "39f05164eaaeb530d90ecae6dda34ef6176d90889d55931519c0b2b4a9109fa0"
+  },
+  "scope": "Locator excerpts only; original complete raw remains pinned and unchanged."
+}

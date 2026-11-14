@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "-H",
+    "Accept: application/vnd.github+json",
+    "-H",
+    "X-GitHub-Api-Version: 2026-03-10",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14119380013"
+  ],
+  "automatic_retry": false,
+  "completed_at": "2026-11-14T15:13:59.421474+00:00",
+  "cwd": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3",
+  "elapsed_seconds": 2.701482541015139,
+  "exit_code": 0,
+  "label": "artifact-14119380013-metadata",
+  "pid": 7716,
+  "process_returncode": 0,
+  "size_exceeded": false,
+  "started_at": "2026-11-14T15:13:56.719992+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119380013-metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 1048576,
+  "stderr_path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119380013-metadata.stderr",
+  "stdout": {
+    "bytes": 807,
+    "path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119380013-metadata.stdout",
+    "sha256": "72d37348e5e15674e035a737daf997c646e71da8976c7ef77f580d199b726b8e"
+  },
+  "stdout_cap_bytes": 2097152,
+  "stdout_path": "/private/tmp/chain-R1-required-cross-arch-cost-artifacts-20261114-v3/artifact-14119380013-metadata.stdout",
+  "timeout_reached": false,
+  "timeout_seconds": 90
+}

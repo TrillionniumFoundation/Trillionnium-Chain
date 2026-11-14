@@ -1,0 +1,16 @@
+{
+  "full_log_original_preserved": true,
+  "git_refs_changed": false,
+  "index": {
+    "bytes": 20710,
+    "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "e6f47c8beff02386c2d25013b8b62f55299767eb7c79fc27681a8bca8bb8a9b5"
+  },
+  "indexed_bytes": 442409,
+  "indexed_files": 36,
+  "new_tests": 0,
+  "schema": "trnm-readonly-review-seal-v1",
+  "source_changed": false,
+  "stage_changed": false,
+  "status": "CLOSED"
+}

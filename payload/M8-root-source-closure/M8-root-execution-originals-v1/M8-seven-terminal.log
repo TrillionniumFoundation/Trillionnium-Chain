@@ -1,8 +1,0 @@
-{"label": "preflight-audit", "exit": 0}
-{"label": "verify-source-before", "exit": 0}
-{"label": "repository-check", "exit": 0}
-{"label": "distributed-inventory-check", "exit": 0}
-{"label": "ci-contract", "exit": 0}
-{"label": "pq-corpus", "exit": 0}
-{"label": "verify-source-after", "exit": 0}
-{"status": "passed", "receipt": "/private/tmp/chain-consolidation-20261114-root/prepublication-source-gates-ed0d35-v1/receipt.json", "sha256": "a28a26198d738a96cf4ad76a889c85a41926fa41d88f02986f93f871c05802e5", "head": "ed0d35487f2a67239e4d646fd41c2c7acb5cc740", "tree": "1aa9c21812489080980bdc3c1c2bb43611e88354"}

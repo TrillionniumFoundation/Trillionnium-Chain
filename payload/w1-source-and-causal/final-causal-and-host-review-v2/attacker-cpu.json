@@ -1,0 +1,1006 @@
+{
+  "nulls_never_filled_with_zero": true,
+  "rows": [
+    {
+      "attacker_workers_cpu_ns": 382272415,
+      "call.client_thread_cpu_ns": {
+        "known_count": 331,
+        "known_sum": 297650031,
+        "null_or_missing_count": 0,
+        "values_count": 331
+      },
+      "calls_per_worker_max": 23,
+      "calls_per_worker_min": 18,
+      "calls_total": 331,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "search_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "setup_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        }
+      },
+      "latest_recorded_call_end_ns": 4091727589,
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 330,
+        "known_sum": 13096146,
+        "null_or_missing_count": 1,
+        "values_count": 331
+      },
+      "metrics.solution_trials": {
+        "known_count": 331,
+        "known_sum": 77684,
+        "null_or_missing_count": 0,
+        "values_count": 331
+      },
+      "mode": "head",
+      "original_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "per_worker": [
+        {
+          "call.client_thread_cpu_ns.known_sum": 20905917,
+          "calling_thread_cpu_ns": 26627503,
+          "calls_count": 23,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 909548,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5471,
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 5721586,
+          "worker": 0
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19522656,
+          "calling_thread_cpu_ns": 24865224,
+          "calls_count": 22,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 957316,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5999,
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 5342568,
+          "worker": 1
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19109239,
+          "calling_thread_cpu_ns": 24590104,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 809801,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4924,
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 5480865,
+          "worker": 2
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18066768,
+          "calling_thread_cpu_ns": 23150118,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 578057,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2959,
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 5083350,
+          "worker": 3
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18684752,
+          "calling_thread_cpu_ns": 23748728,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1034761,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 6162,
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 5063976,
+          "worker": 4
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18799445,
+          "calling_thread_cpu_ns": 24139528,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 805786,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5043,
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 5340083,
+          "worker": 5
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19283759,
+          "calling_thread_cpu_ns": 24949798,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 730306,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4375,
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 5666039,
+          "worker": 6
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18933541,
+          "calling_thread_cpu_ns": 24535066,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1085665,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 6409,
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 5601525,
+          "worker": 7
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17827389,
+          "calling_thread_cpu_ns": 22829078,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 851760,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5135,
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 5001689,
+          "worker": 8
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 16529913,
+          "calling_thread_cpu_ns": 21267234,
+          "calls_count": 18,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 792597,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4569,
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4737321,
+          "worker": 9
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17880674,
+          "calling_thread_cpu_ns": 22830611,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 624264,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 3805,
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4949937,
+          "worker": 10
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19228885,
+          "calling_thread_cpu_ns": 24805980,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 884661,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4938,
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 5577095,
+          "worker": 11
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17706569,
+          "calling_thread_cpu_ns": 22747709,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 760182,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4490,
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 5041140,
+          "worker": 12
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18799699,
+          "calling_thread_cpu_ns": 24367151,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 963569,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5883,
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 5567452,
+          "worker": 13
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 16696452,
+          "calling_thread_cpu_ns": 21229027,
+          "calls_count": 19,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 791778,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4646,
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4532575,
+          "worker": 14
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19674373,
+          "calling_thread_cpu_ns": 25589556,
+          "calls_count": 22,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 516095,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2876,
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 5915183,
+          "worker": 15
+        }
+      ],
+      "residual_after_client_and_construction_cpu_ns": 84622384,
+      "variant": "original",
+      "worker_count": 16
+    },
+    {
+      "attacker_workers_cpu_ns": 355550457,
+      "call.client_thread_cpu_ns": {
+        "known_count": 209,
+        "known_sum": 189065344,
+        "null_or_missing_count": 0,
+        "values_count": 209
+      },
+      "calls_per_worker_max": 14,
+      "calls_per_worker_min": 12,
+      "calls_total": 209,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 95293275,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 77690349,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "search_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 953188,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        },
+        "setup_cpu_ns": {
+          "known_count": 209,
+          "known_sum": 15027333,
+          "null_or_missing_count": 0,
+          "values_count": 209
+        }
+      },
+      "latest_recorded_call_end_ns": 4093312122,
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 207,
+        "known_sum": 9846195,
+        "null_or_missing_count": 2,
+        "values_count": 209
+      },
+      "metrics.solution_trials": {
+        "known_count": 209,
+        "known_sum": 58854,
+        "null_or_missing_count": 0,
+        "values_count": 209
+      },
+      "mode": "head",
+      "original_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "per_worker": [
+        {
+          "call.client_thread_cpu_ns.known_sum": 11883966,
+          "calling_thread_cpu_ns": 22056093,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5971407,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 820108,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5092,
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 4200720,
+          "worker": 0
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12296195,
+          "calling_thread_cpu_ns": 22948157,
+          "calls_count": 14,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6150692,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 396160,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2304,
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 4501270,
+          "worker": 1
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11387426,
+          "calling_thread_cpu_ns": 21204122,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5661281,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 523046,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3158,
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 4155415,
+          "worker": 2
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11827369,
+          "calling_thread_cpu_ns": 22414942,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5971082,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 527124,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3075,
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4616491,
+          "worker": 3
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11989023,
+          "calling_thread_cpu_ns": 22279874,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5933119,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 473563,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2972,
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4357732,
+          "worker": 4
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12121849,
+          "calling_thread_cpu_ns": 23140707,
+          "calls_count": 14,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6225479,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 573580,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 3171,
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 4793379,
+          "worker": 5
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12572405,
+          "calling_thread_cpu_ns": 23956622,
+          "calls_count": 14,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6551241,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 734871,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4595,
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4832976,
+          "worker": 6
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12060423,
+          "calling_thread_cpu_ns": 22866797,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6039568,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 940787,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 6002,
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 4766806,
+          "worker": 7
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11930801,
+          "calling_thread_cpu_ns": 22466970,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5960080,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 642297,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3970,
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 4576089,
+          "worker": 8
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11119372,
+          "calling_thread_cpu_ns": 21012431,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5666534,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 648318,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3819,
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4226525,
+          "worker": 9
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11065487,
+          "calling_thread_cpu_ns": 21357811,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5917431,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 397030,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 2309,
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4374893,
+          "worker": 10
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12279297,
+          "calling_thread_cpu_ns": 22795093,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5908083,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 837049,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4670,
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 4607713,
+          "worker": 11
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11709090,
+          "calling_thread_cpu_ns": 21719936,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5687130,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 489643,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2439,
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4323716,
+          "worker": 12
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 10654236,
+          "calling_thread_cpu_ns": 19642968,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5081199,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 711497,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4214,
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 3907533,
+          "worker": 13
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11303497,
+          "calling_thread_cpu_ns": 21637245,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6017095,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 523386,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3330,
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4316653,
+          "worker": 14
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12864908,
+          "calling_thread_cpu_ns": 24050689,
+          "calls_count": 14,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6551854,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 607736,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3734,
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4633927,
+          "worker": 15
+        }
+      ],
+      "residual_after_client_and_construction_cpu_ns": 71191838,
+      "variant": "fresh",
+      "worker_count": 16
+    },
+    {
+      "attacker_workers_cpu_ns": 375937894,
+      "call.client_thread_cpu_ns": {
+        "known_count": 316,
+        "known_sum": 293112715,
+        "null_or_missing_count": 0,
+        "values_count": 316
+      },
+      "calls_per_worker_max": 21,
+      "calls_per_worker_min": 18,
+      "calls_total": 316,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "search_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        },
+        "setup_cpu_ns": {
+          "known_count": 0,
+          "known_sum": 0,
+          "null_or_missing_count": 0,
+          "values_count": 0
+        }
+      },
+      "latest_recorded_call_end_ns": 4092374390,
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 315,
+        "known_sum": 13774002,
+        "null_or_missing_count": 1,
+        "values_count": 316
+      },
+      "metrics.solution_trials": {
+        "known_count": 316,
+        "known_sum": 82897,
+        "null_or_missing_count": 0,
+        "values_count": 316
+      },
+      "mode": "prospective",
+      "original_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "per_worker": [
+        {
+          "call.client_thread_cpu_ns.known_sum": 19281442,
+          "calling_thread_cpu_ns": 24642480,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 764468,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4525,
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 5361038,
+          "worker": 0
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19369605,
+          "calling_thread_cpu_ns": 24910130,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 896492,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 5688,
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 5540525,
+          "worker": 1
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19129763,
+          "calling_thread_cpu_ns": 24509506,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1010527,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5796,
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 5379743,
+          "worker": 2
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17740515,
+          "calling_thread_cpu_ns": 22722729,
+          "calls_count": 19,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 833124,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5064,
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4982214,
+          "worker": 3
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 16137092,
+          "calling_thread_cpu_ns": 20827772,
+          "calls_count": 18,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 650962,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3620,
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4690680,
+          "worker": 4
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18577464,
+          "calling_thread_cpu_ns": 23750094,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 864070,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5041,
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 5172630,
+          "worker": 5
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 16809527,
+          "calling_thread_cpu_ns": 21561010,
+          "calls_count": 19,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 734499,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4537,
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4751483,
+          "worker": 6
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19568323,
+          "calling_thread_cpu_ns": 25030740,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 777589,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4758,
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 5462417,
+          "worker": 7
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18836493,
+          "calling_thread_cpu_ns": 23906139,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1015734,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 6000,
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 5069646,
+          "worker": 8
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18280359,
+          "calling_thread_cpu_ns": 24211011,
+          "calls_count": 19,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1039423,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 6393,
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 5930652,
+          "worker": 9
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18206872,
+          "calling_thread_cpu_ns": 23585342,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 697972,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4221,
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 5378470,
+          "worker": 10
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18440579,
+          "calling_thread_cpu_ns": 23625529,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 731402,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4187,
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 5184950,
+          "worker": 11
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17529783,
+          "calling_thread_cpu_ns": 22407662,
+          "calls_count": 18,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 789062,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4636,
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4877879,
+          "worker": 12
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 18599713,
+          "calling_thread_cpu_ns": 23638731,
+          "calls_count": 20,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 1195243,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 7336,
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 5039018,
+          "worker": 13
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 19407514,
+          "calling_thread_cpu_ns": 24823576,
+          "calls_count": 21,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 893187,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5667,
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 5416062,
+          "worker": 14
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 17197671,
+          "calling_thread_cpu_ns": 21785443,
+          "calls_count": 18,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 0,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 880248,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 5428,
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4587772,
+          "worker": 15
+        }
+      ],
+      "residual_after_client_and_construction_cpu_ns": 82825179,
+      "variant": "original",
+      "worker_count": 16
+    },
+    {
+      "attacker_workers_cpu_ns": 351309889,
+      "call.client_thread_cpu_ns": {
+        "known_count": 198,
+        "known_sum": 187157544,
+        "null_or_missing_count": 0,
+        "values_count": 198
+      },
+      "calls_per_worker_max": 13,
+      "calls_per_worker_min": 11,
+      "calls_total": 198,
+      "from_zero_construction": {
+        "attacker_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 94587391,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "packet_encoding_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 77137224,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "search_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 905468,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        },
+        "setup_cpu_ns": {
+          "known_count": 198,
+          "known_sum": 14876953,
+          "null_or_missing_count": 0,
+          "values_count": 198
+        }
+      },
+      "latest_recorded_call_end_ns": 4093793431,
+      "metrics.solution_search_thread_cpu_ns": {
+        "known_count": 196,
+        "known_sum": 8756571,
+        "null_or_missing_count": 2,
+        "values_count": 198
+      },
+      "metrics.solution_trials": {
+        "known_count": 198,
+        "known_sum": 52835,
+        "null_or_missing_count": 0,
+        "values_count": 198
+      },
+      "mode": "prospective",
+      "original_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+      "per_worker": [
+        {
+          "call.client_thread_cpu_ns.known_sum": 12300028,
+          "calling_thread_cpu_ns": 22964666,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6121625,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 530902,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3283,
+          "pointer": "/phases/1/attacks/0",
+          "residual_after_client_and_construction_cpu_ns": 4543013,
+          "worker": 0
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11795401,
+          "calling_thread_cpu_ns": 22205293,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6075929,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 675699,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3910,
+          "pointer": "/phases/1/attacks/1",
+          "residual_after_client_and_construction_cpu_ns": 4333963,
+          "worker": 1
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12575321,
+          "calling_thread_cpu_ns": 23414835,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6201811,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 772731,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4869,
+          "pointer": "/phases/1/attacks/2",
+          "residual_after_client_and_construction_cpu_ns": 4637703,
+          "worker": 2
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11333340,
+          "calling_thread_cpu_ns": 21080829,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5579515,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 584351,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3477,
+          "pointer": "/phases/1/attacks/3",
+          "residual_after_client_and_construction_cpu_ns": 4167974,
+          "worker": 3
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11722010,
+          "calling_thread_cpu_ns": 22032106,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5790257,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 483040,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2608,
+          "pointer": "/phases/1/attacks/4",
+          "residual_after_client_and_construction_cpu_ns": 4519839,
+          "worker": 4
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11207029,
+          "calling_thread_cpu_ns": 21072606,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5646318,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 350242,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 1788,
+          "pointer": "/phases/1/attacks/5",
+          "residual_after_client_and_construction_cpu_ns": 4219259,
+          "worker": 5
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11172939,
+          "calling_thread_cpu_ns": 21721040,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5992687,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 505841,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3147,
+          "pointer": "/phases/1/attacks/6",
+          "residual_after_client_and_construction_cpu_ns": 4555414,
+          "worker": 6
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11696778,
+          "calling_thread_cpu_ns": 21699772,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5767229,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 386973,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2286,
+          "pointer": "/phases/1/attacks/7",
+          "residual_after_client_and_construction_cpu_ns": 4235765,
+          "worker": 7
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11660189,
+          "calling_thread_cpu_ns": 22352438,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6132753,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 413752,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2530,
+          "pointer": "/phases/1/attacks/8",
+          "residual_after_client_and_construction_cpu_ns": 4559496,
+          "worker": 8
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 10979559,
+          "calling_thread_cpu_ns": 21043256,
+          "calls_count": 11,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5925873,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 386599,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2311,
+          "pointer": "/phases/1/attacks/9",
+          "residual_after_client_and_construction_cpu_ns": 4137824,
+          "worker": 9
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11783441,
+          "calling_thread_cpu_ns": 22199319,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6088915,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 633362,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 4148,
+          "pointer": "/phases/1/attacks/10",
+          "residual_after_client_and_construction_cpu_ns": 4326963,
+          "worker": 10
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11026682,
+          "calling_thread_cpu_ns": 21097264,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6009515,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 536171,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 1,
+          "metrics.solution_trials.known_sum": 3203,
+          "pointer": "/phases/1/attacks/11",
+          "residual_after_client_and_construction_cpu_ns": 4061067,
+          "worker": 11
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12381471,
+          "calling_thread_cpu_ns": 22455908,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5727181,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 640150,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4206,
+          "pointer": "/phases/1/attacks/12",
+          "residual_after_client_and_construction_cpu_ns": 4347256,
+          "worker": 12
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 12396830,
+          "calling_thread_cpu_ns": 22517163,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5749944,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 619726,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 3961,
+          "pointer": "/phases/1/attacks/13",
+          "residual_after_client_and_construction_cpu_ns": 4370389,
+          "worker": 13
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11491908,
+          "calling_thread_cpu_ns": 21946777,
+          "calls_count": 12,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 6230627,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 503837,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 2814,
+          "pointer": "/phases/1/attacks/14",
+          "residual_after_client_and_construction_cpu_ns": 4224242,
+          "worker": 14
+        },
+        {
+          "call.client_thread_cpu_ns.known_sum": 11634618,
+          "calling_thread_cpu_ns": 21506617,
+          "calls_count": 13,
+          "from_zero_construction.attacker_cpu_ns.known_sum": 5547212,
+          "metrics.solution_search_thread_cpu_ns.known_sum": 733195,
+          "metrics.solution_search_thread_cpu_ns.null_or_missing_count": 0,
+          "metrics.solution_trials.known_sum": 4294,
+          "pointer": "/phases/1/attacks/15",
+          "residual_after_client_and_construction_cpu_ns": 4324787,
+          "worker": 15
+        }
+      ],
+      "residual_after_client_and_construction_cpu_ns": 69564954,
+      "variant": "fresh",
+      "worker_count": 16
+    }
+  ],
+  "schema": "trnm-r1-four-pressure-attacker-cpu-summary-v1"
+}

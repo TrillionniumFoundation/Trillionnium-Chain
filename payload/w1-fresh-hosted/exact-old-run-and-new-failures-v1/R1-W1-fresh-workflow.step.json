@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "cat-file",
+    "blob",
+    "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/pon-w1-work-security.yml"
+  ],
+  "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+  "elapsed_seconds": 0.03,
+  "exit": 0,
+  "finished_at": "2026-11-14T14:32:42.993537+00:00",
+  "label": "R1-W1-fresh-workflow",
+  "started_at": "2026-11-14T14:32:42.964006+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 40413,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow.stdout",
+    "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+  },
+  "timed_out": false,
+  "timeout_seconds": 30
+}

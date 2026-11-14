@@ -1,0 +1,52 @@
+{
+  "error": {
+    "message": "LINK_SPECIAL_ENCRYPTED_ZIP_MEMBER",
+    "type": "ValueError"
+  },
+  "frames": [
+    {
+      "function": "<module>",
+      "line": 44,
+      "source": "<string>"
+    },
+    {
+      "entry": {
+        "external_attr": 2175008800,
+        "flag_bits": 8,
+        "flags_and_0x41": 0,
+        "kind": 32768,
+        "mode": 33188,
+        "path": "cross-arch-cost/build-configuration-v1.json",
+        "predicate": true
+      },
+      "function": "inspect_complete_zip",
+      "line": 268,
+      "source": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py"
+    },
+    {
+      "function": "need",
+      "line": 54,
+      "source": "/private/tmp/chain-consolidation-20261114-root/resume_r1_arm64_cost_artifact_v1.py"
+    }
+  ],
+  "network_or_native_calls": 0,
+  "only_original_offline_inspector_called": true,
+  "original_HOLD_preserved": true,
+  "result": null,
+  "runtime": {
+    "capture_not_called": true,
+    "compiled_source_sha256": "6aec3684388395ae38f6d871f5d764dce419a41ba1c62d425c81dabcb415b3f9",
+    "constants": {
+      "S_IFDIR": 16384,
+      "S_IFREG": 32768
+    },
+    "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "function_source_sha256": "b6438bb30e36be2470f159126438d18ddcd4e33b2197cdf72e89db9fb4d804dd",
+    "main_not_loaded_as_call": true,
+    "new_OUT_only": "/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/offline-exact-inspection-v1",
+    "stat_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py",
+    "version": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "zipfile_module": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/zipfile/__init__.py"
+  },
+  "schema": "trnm-arm-original-inspector-independent-observation-v1"
+}

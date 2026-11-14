@@ -1,0 +1,8 @@
+tree c4cd82ed0004709192eff1563d90423bd5641e99
+parent db93026b9314bfd8bc4350945036998f1b7d34aa
+author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794363771 -0500
+committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794363771 -0500
+
+test(pon): pin old budget production with settled-flow observation controls
+
+Deliberate negative-control snapshot: restore the original pre-fix budget production while retaining the exact shared tests and cfg(test)-only observation hooks. Other G2 delivery files remain. This is not a deployable production successor or a passing acceptance result.

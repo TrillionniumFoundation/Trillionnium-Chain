@@ -1,0 +1,92 @@
+1: # P1 History W1: combine the original CPU account and Host/M06 fence
+2: 
+3: Status: **DRAFT / SHADOW_ONLY / HOLD_NO_GO**, not production qualification.
+4: Exact source parent: Chain #490 `197ba7a076ea9b89b9644e850341f4a45a3c0c79`;
+5: the candidate is a separate child branch, not a merge to #328 or main.
+6: No W1/PNW1 encoding, TaskId, lottery ticket, target, chainwork, signed
+7: public V3 Cookie, final-use, consensus, state schema or activation changes.
+8: 
+9: ## Concrete remaining P1 bypass at the original parent
+10: 
+11: Chain #490 already checked the original administrator-owned Host cgroup during
+12: History W1 transcript replay and at M06/BeforeDurableCommit. However it did
+13: not charge each remote History W1 and subsequent M06 operation to the Node's
+14: already shared `ServiceMutationCpuDomain`. Cgroup aggregate CPU bounds are
+15: not the V3 original per-request paid CPU budget. Up to 16 untrusted proofs/page
+16: and 4096 pages/import could contend with actual honest paid mutations.
+17: 
+18: Chain #437 separately developed original-domain metering, a Node-scoped
+19: zero-credit cold History epoch and durable old-V3-epoch fail-closed checks.
+20: It lacked the newer #490 Host checks **inside** W1 and native M06. Neither
+21: source alone closes both CPU/Host boundaries.
+22: 
+23: ## Composition implemented on the child branch
+24: 
+25: - `store/operator_continuous_owner.rs::Node::remote_history_cpu_domain`
+26:   uses the same previously bound V3/continuous CPU owner; if none exists it
+27:   checks the durable `ordinary-public-v3-epoch-v1` metadata and refuses a
+28:   leftover active/unclean epoch, then binds one **zero-initial-credit** original
+29:   domain. No caller, peer key, packet or restart gets an independent warm burst.
+30: - `ingress/public_v3/scalar_cpu.rs::cold_remote_history_epoch` reuses the
+31:   original scalar credit/refill and actual same-thread accounting. No change
+32:   to V3 quotas, credits or version signature.
+33: - `ingress.rs::receive_page` reserves/settles an original CPU operation for
+34:   bounded packet decoding, packet IDs/parent linkage, **each** complete
+35:   new W1 + native M06 verification, and final activation. No nesting or
+36:   double billing; already stored exact packets still run original context
+37:   checks. Known budget depletion may wait at most two seconds for original
+38:   refill; exhausted credit is local Busy/Capacity, never consensus Invalid.
+39: - Each W1 callback checks its live original CPU debit. At the original
+40:   bounded Host checkpoint cadence it also checks actual fixed cgroup owner.
+41:   The native `ExecutionControl` combines that same Host check and live CPU
+42:   checkpoint with `operation.worker_accounting()`, so M06 scoped workers,
+43:   state-root work, ledger deltas and BeforeDurableCommit are inside one
+44:   metered cancellation/commit authority. No new block verifier was created.
+45: - Every operation settles even on false Transcript/Product, CPU refusal,
+46:   cancellation and M06 failure. Missing/unknown CPU disables further starts
+47:   without manufacturing a zero charge or rewriting an already durable block.
+48:   Post-commit Host failures likewise refuse **sync completion**, not W1
+49:   mathematical validity or existing persisted state.
+50: - Public `receive_public_page_from` retains #488/#490's strict root-owned
+51:   Host requirement even for loopback proxy sources. Crate-private
+52:   `receive_page_from` retains local development compatibility but still
+53:   charges the **same Node CPU account**. Raw/authenticated/durable/CLI
+54:   History paths continue to call the original Host guarded owner.
+55: - Existing #490 negative tests for W1 tile Host cancellation and
+56:   BeforeDurableCommit M06 Host fault remain untouched.
+57: 
+58: ## Additional native controls (source submitted, execution outstanding)
+59: 
+60: Under `ingress.rs`:
+61: 
+62: 1. A malformed History packet consumes bounded decode CPU and leaves state unchanged.
+63: 2. A correct ticket/transcript with a wrong C receives a late `WORK:Product`
+64:    refusal; the original cold Node account settles with zero inflight.
+65: 3. An independently valid W1 packet must still commit under that same account.
+66: 4. Two loopback source ports must reuse one CPU domain across a false and
+67:    valid proof; bad duplicate content cannot overwrite the stored accepted byte.
+68: 5. Four different forged ticket-valid transcript claims under one exact
+69:    challenge/target each cost a full W1 refusal; no Chainwork or state
+70:    increases, then the honest reference proof still admits normally.
+71: 6. A previously active public V3 persistent epoch must prevent creating a
+72:    fresh cold History budget after crash/cold open.
+73: 7. An explicitly clean V3 close allows exactly one shared cold account
+74:    with zero initial credit, not a new epoch per lookup.
+75: 8. A locally marked unclean public service epoch refuses new CPU credit.
+76: 
+77: The original #488/#490 native Host W1/M06 failure and legal retry tests
+78: remain required. No new historical timing, native compilation or physical
+79: cgroup/GPU observation is inferred from adding a selector.
+80: 
+81: ## Remaining blockers
+82: 
+83: - **P1:** A standalone History CPU epoch is still volatile and lacks its
+84:   *own* complete durable operation-ID/debt reconciliation after a standalone
+85:   History process crash. Its existing old-V3 persistent epoch guard does not
+86:   solve every independent History crash. Shared Node `&mut` import holds the
+87:   writer owner across refill wait/W1/M06 and does **not** provide fair
+88:   scheduling against paid honest readers. Loopback relays and other exported
+89:   caller paths require an explicit physical operator deployment contract.
+90: - **P2:** Full original signed-Cookie/native W1 attack costs against the
+91:   cheapest attacker CPU/GPU/ASIC, memory and WAN are unknown. Raising a
+92:   public ticket target or changing signed domains without versioning

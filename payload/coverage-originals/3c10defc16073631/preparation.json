@@ -1,0 +1,33 @@
+{
+  "central_directory_contract": "Only if entire single-disk non-ZIP64 central directory is contained in acquired tail, <=512 entries, exact lengths/counts/end, no duplicate/traversal/control-character/link/special/encrypted paths. Declared CRC is not verification.",
+  "compile_optimize_zero": true,
+  "exact_expected_content_range": "bytes 59822103-59887659/59887660",
+  "fixed_archive_bytes": 59887660,
+  "fixed_archive_sha256": "cf934b39339e2039beb285ade75473b9bb1035b0a69441c13ce08d3b47e376dc",
+  "fixed_artifact_id": 14118769328,
+  "fixed_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "fixed_run_id": 43604217565,
+  "functions_executed": false,
+  "future_network_requests_maximum": 2,
+  "mode": "PREPARED_ONLY",
+  "network_requests_executed_during_preparation": 0,
+  "no_tests_no_Git_no_source_no_stage_no_CI_actions": true,
+  "overall_seconds": 120,
+  "producer": {
+    "bytes": 17734,
+    "path": "/private/tmp/chain-prci-R1-history-tail-range-probe-preparation-20261114-v1/probe_history_artifact_tail_v1.py",
+    "sha256": "f2f39b72566bce27a29791fc367bf8d6f775ba90de56f11ce51471d2f1f3fdf9"
+  },
+  "range": "bytes=-65557",
+  "raw_sensitive_headers_or_stderr_written": false,
+  "schema": "trnm-r1-history-tail-probe-preparation-v1",
+  "scope": "Fresh fixed artifact metadata, then exactly one official gh GET /zip with Range and --include. No manual redirect URL; no subsequent member ranges.",
+  "stdout_contract": "Only typed safe headers, body of a precisely identified 206 response, counts/digests of consumed stdout/header/stderr bytes. Unrecognized framing is HOLD, no header/body inference.",
+  "success_is_not_whole_artifact_digest_or_member_crc_verification": true,
+  "terminal_statuses": [
+    "TAIL_AND_CENTRAL_DIRECTORY_OBSERVED",
+    "RANGE_UNSUPPORTED",
+    "HOLD"
+  ],
+  "unsupported_status_policy": "A non-206 observed response immediately terminates only the owned read-only request. No body from a 200 response is retained. gh streaming/Range compatibility remains to be observed."
+}

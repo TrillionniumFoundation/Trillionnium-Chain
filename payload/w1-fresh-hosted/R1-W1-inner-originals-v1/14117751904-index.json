@@ -1,0 +1,1062 @@
+{
+  "all_paths_regular": true,
+  "artifact_metadata": {
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117751904/zip",
+    "created_at": "2026-11-14T14:28:06Z",
+    "digest": "sha256:b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+    "expired": false,
+    "expires_at": "2026-12-14T14:28:05Z",
+    "id": 14117751904,
+    "name": "w1-fresh-service-head-2a86462a1ab20c68151719ba4635e3c294391e64-1",
+    "node_id": "MDg6QXJ0aWZhY3QxNDExNzc1MTkwNA==",
+    "size_in_bytes": 6479218,
+    "updated_at": "2026-11-14T14:28:06Z",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117751904",
+    "workflow_run": {
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "head_repository_id": 1323087357,
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "id": 43604217632,
+      "repository_id": 1323087357
+    }
+  },
+  "complete_archive": {
+    "bytes": 6479218,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-complete-artifacts-v1/14117751904.zip",
+    "sha256": "b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8",
+    "version": [
+      16777233,
+      607182104,
+      33152,
+      1,
+      6479218,
+      1794667632793698441,
+      1794667632793698441
+    ]
+  },
+  "crc_all_verified": true,
+  "file_count": 57,
+  "files": [
+    {
+      "bytes": 114546,
+      "compressed_bytes": 8211,
+      "compression": 8,
+      "crc32": "74de936f",
+      "extracted": {
+        "bytes": 114546,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/build.log",
+        "sha256": "a0a0c141c4d3f425dad8b662d8dc77ef384f55764eb8bf7e3efe544fe81af2d6",
+        "version": [
+          16777233,
+          607186092,
+          33152,
+          1,
+          114546,
+          1794667681302590042,
+          1794667681302590042
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service/build.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "a0a0c141c4d3f425dad8b662d8dc77ef384f55764eb8bf7e3efe544fe81af2d6"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33621,
+      "compression": 8,
+      "crc32": "9c80d83d",
+      "mode": 33188,
+      "path": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/fresh/baseline/independent-client/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "compression": 8,
+      "crc32": "1d6759a3",
+      "mode": 33188,
+      "path": "fresh-service/fresh/baseline/receiver/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/fresh/baseline/receiver/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 147456,
+      "compressed_bytes": 4689,
+      "compression": 8,
+      "crc32": "3f15d2c7",
+      "mode": 33188,
+      "path": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "a1743bb86315bd56e65d1d262ad90923194b3d0dc36baba63946ec68ce7293e1"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/fresh/pressure/independent-client/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "compression": 8,
+      "crc32": "1d6759a3",
+      "mode": 33188,
+      "path": "fresh-service/fresh/pressure/receiver/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/fresh/pressure/receiver/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "compression": 8,
+      "crc32": "09dfee0a",
+      "mode": 33188,
+      "path": "fresh-service/fresh/producer/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "9a85c75d850bd8d8c400ddee48c8f9281c1ae14dd65c1ce7910b03f00800dcfa"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/fresh/producer/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8528638,
+      "compressed_bytes": 476112,
+      "compression": 8,
+      "crc32": "6fcd5c62",
+      "mode": 33188,
+      "path": "fresh-service/fresh/report.json",
+      "retained_as": "complete ZIP only",
+      "sha256": "73c36acdfe8da731100b7ab8831346bfc9f7baf349b005a51c2d83b3e191eb96"
+    },
+    {
+      "bytes": 915,
+      "compressed_bytes": 478,
+      "compression": 8,
+      "crc32": "61562065",
+      "extracted": {
+        "bytes": 915,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/fresh.log",
+        "sha256": "d833a6bbe0de6e2fa0ef14c7110d9c50f63471feba25435b837525515178213e",
+        "version": [
+          16777233,
+          607186093,
+          33152,
+          1,
+          915,
+          1794667681308956015,
+          1794667681308956015
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service/fresh.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "d833a6bbe0de6e2fa0ef14c7110d9c50f63471feba25435b837525515178213e"
+    },
+    {
+      "bytes": 8909,
+      "compressed_bytes": 1983,
+      "compression": 8,
+      "crc32": "997e0416",
+      "extracted": {
+        "bytes": 8909,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/manifest.json",
+        "sha256": "1aa8604941327a834c9ae2897006f45cec3f71d19a97887734635bb1f32a1924",
+        "version": [
+          16777233,
+          607186094,
+          33152,
+          1,
+          8909,
+          1794667681309172310,
+          1794667681309172310
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service/manifest.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "1aa8604941327a834c9ae2897006f45cec3f71d19a97887734635bb1f32a1924"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33621,
+      "compression": 8,
+      "crc32": "9c80d83d",
+      "mode": 33188,
+      "path": "fresh-service/original/baseline/independent-client/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/original/baseline/independent-client/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "compression": 8,
+      "crc32": "1d6759a3",
+      "mode": 33188,
+      "path": "fresh-service/original/baseline/receiver/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/original/baseline/receiver/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "compressed_bytes": 9360,
+      "compression": 8,
+      "crc32": "725f61b5",
+      "mode": 33188,
+      "path": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "a846841d88f8bdacaada088fdd6be570f5da218a4ae8ae93822a4ddbb3ec42bb"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/original/pressure/independent-client/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "compression": 8,
+      "crc32": "1d6759a3",
+      "mode": 33188,
+      "path": "fresh-service/original/pressure/receiver/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/original/pressure/receiver/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "compression": 8,
+      "crc32": "09dfee0a",
+      "mode": 33188,
+      "path": "fresh-service/original/producer/native.sqlite",
+      "retained_as": "complete ZIP only",
+      "sha256": "9a85c75d850bd8d8c400ddee48c8f9281c1ae14dd65c1ce7910b03f00800dcfa"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "mode": 33152,
+      "path": "fresh-service/original/producer/owner.lock",
+      "retained_as": "complete ZIP only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12003417,
+      "compressed_bytes": 539155,
+      "compression": 8,
+      "crc32": "742939c1",
+      "mode": 33188,
+      "path": "fresh-service/original/report.json",
+      "retained_as": "complete ZIP only",
+      "sha256": "33165bac2a383716996cc3cd93d055a8a3c88a5864365808fcaa28ce91265a08"
+    },
+    {
+      "bytes": 421,
+      "compressed_bytes": 278,
+      "compression": 8,
+      "crc32": "a8d7f3ad",
+      "extracted": {
+        "bytes": 421,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service/original.log",
+        "sha256": "446c0eb07471786cb3ec42c8d9e1d490f64200168cae3af82b627664a4f2f647",
+        "version": [
+          16777233,
+          607186095,
+          33152,
+          1,
+          421,
+          1794667681317548606,
+          1794667681317548606
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service/original.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "446c0eb07471786cb3ec42c8d9e1d490f64200168cae3af82b627664a4f2f647"
+    },
+    {
+      "bytes": 12971192,
+      "compressed_bytes": 5134348,
+      "compression": 8,
+      "crc32": "c91e22dd",
+      "mode": 33261,
+      "path": "fresh-service/public_v3_from_zero",
+      "retained_as": "complete ZIP only",
+      "sha256": "00947de0454b64fc04d2ced0be3d76009218f22ab8edeb564eea563708745ce4"
+    },
+    {
+      "bytes": 129,
+      "compressed_bytes": 37,
+      "compression": 8,
+      "crc32": "e8c29b2f",
+      "extracted": {
+        "bytes": 129,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-controls.log",
+        "sha256": "012d44679b6c77a093ec6afb182e06e1b87bbb523592ec92e7b74fcd71bfdea8",
+        "version": [
+          16777233,
+          607186098,
+          33152,
+          1,
+          129,
+          1794667681336122017,
+          1794667681336122017
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-controls.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "012d44679b6c77a093ec6afb182e06e1b87bbb523592ec92e7b74fcd71bfdea8"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "compression": 8,
+      "crc32": "b37d4686",
+      "extracted": {
+        "bytes": 200,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/actual-systemd-parent-after.log",
+        "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+        "version": [
+          16777233,
+          607186100,
+          33152,
+          1,
+          200,
+          1794667681336294186,
+          1794667681336294186
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/actual-systemd-parent-after.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "compression": 8,
+      "crc32": "b37d4686",
+      "extracted": {
+        "bytes": 200,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/actual-systemd-parent.log",
+        "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+        "version": [
+          16777233,
+          607186101,
+          33152,
+          1,
+          200,
+          1794667681339507444,
+          1794667681339507444
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/actual-systemd-parent.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+    },
+    {
+      "bytes": 2801,
+      "compressed_bytes": 709,
+      "compression": 8,
+      "crc32": "63bba39f",
+      "extracted": {
+        "bytes": 2801,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/before-provision.json",
+        "sha256": "ce00e236c93847a080ee4fdfaa29c3296c9308ce66307c5dc2c18fc2d27f7a25",
+        "version": [
+          16777233,
+          607186102,
+          33152,
+          1,
+          2801,
+          1794667681339640696,
+          1794667681339640696
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/before-provision.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "ce00e236c93847a080ee4fdfaa29c3296c9308ce66307c5dc2c18fc2d27f7a25"
+    },
+    {
+      "bytes": 1634,
+      "compressed_bytes": 790,
+      "compression": 8,
+      "crc32": "23899fa6",
+      "extracted": {
+        "bytes": 1634,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/after-provision.json",
+        "sha256": "fb4b5d86eb8cce6d20db7b9c28a8b2e0bc8cf136852528c54915ad94a6e2a28b",
+        "version": [
+          16777233,
+          607186103,
+          33152,
+          1,
+          1634,
+          1794667681339896658,
+          1794667681339896658
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/after-provision.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "fb4b5d86eb8cce6d20db7b9c28a8b2e0bc8cf136852528c54915ad94a6e2a28b"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "compression": 8,
+      "crc32": "132d2814",
+      "extracted": {
+        "bytes": 10,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/child-final-load-state.log",
+        "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+        "version": [
+          16777233,
+          607186104,
+          33152,
+          1,
+          10,
+          1794667681340458417,
+          1794667681340458417
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/child-final-load-state.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "compression": 8,
+      "crc32": "132d2814",
+      "extracted": {
+        "bytes": 10,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/child-load-state.log",
+        "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+        "version": [
+          16777233,
+          607186105,
+          33152,
+          1,
+          10,
+          1794667681340562710,
+          1794667681340562710
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/child-load-state.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+    },
+    {
+      "bytes": 353,
+      "compressed_bytes": 233,
+      "compression": 8,
+      "crc32": "5b4a9b94",
+      "extracted": {
+        "bytes": 353,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/child-result.json",
+        "sha256": "f4f632f626f35c705d26dd1966778a4ccf4679bec49e42a4986cb12f06292464",
+        "version": [
+          16777233,
+          607186106,
+          33152,
+          1,
+          353,
+          1794667681340654420,
+          1794667681340654420
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/child-result.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "f4f632f626f35c705d26dd1966778a4ccf4679bec49e42a4986cb12f06292464"
+    },
+    {
+      "bytes": 7701,
+      "compressed_bytes": 1991,
+      "compression": 8,
+      "crc32": "a1e0b29c",
+      "extracted": {
+        "bytes": 7701,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/controller-result.json",
+        "sha256": "16f12c66d1f84ce79db1d5df03642f438eff4e8dc3189b3bf24abc0c29524756",
+        "version": [
+          16777233,
+          607186107,
+          33152,
+          1,
+          7701,
+          1794667681340766921,
+          1794667681340766921
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/controller-result.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "16f12c66d1f84ce79db1d5df03642f438eff4e8dc3189b3bf24abc0c29524756"
+    },
+    {
+      "bytes": 1716,
+      "compressed_bytes": 819,
+      "compression": 8,
+      "crc32": "f7437e6a",
+      "extracted": {
+        "bytes": 1716,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/inside-after.json",
+        "sha256": "704e07acd44d66f41493e859ee46801a6eb54202cb6a2459d1c189777215f3f8",
+        "version": [
+          16777233,
+          607186108,
+          33152,
+          1,
+          1716,
+          1794667681344538688,
+          1794667681344538688
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/inside-after.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "704e07acd44d66f41493e859ee46801a6eb54202cb6a2459d1c189777215f3f8"
+    },
+    {
+      "bytes": 1701,
+      "compressed_bytes": 806,
+      "compression": 8,
+      "crc32": "5759db05",
+      "extracted": {
+        "bytes": 1701,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/inside-before.json",
+        "sha256": "29155e6e605541d675d150495b58898bbed92b1d646a8d080d50234f8092dc3b",
+        "version": [
+          16777233,
+          607186109,
+          33152,
+          1,
+          1701,
+          1794667681344641606,
+          1794667681344641606
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/inside-before.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "29155e6e605541d675d150495b58898bbed92b1d646a8d080d50234f8092dc3b"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "extracted": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/install-reviewed-unit.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "version": [
+          16777233,
+          607186110,
+          33152,
+          1,
+          0,
+          1794667681344696982,
+          1794667681344696982
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/install-reviewed-unit.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1672,
+      "compressed_bytes": 835,
+      "compression": 8,
+      "crc32": "f9fd8df4",
+      "extracted": {
+        "bytes": 1672,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/outside-after.json",
+        "sha256": "60da215d585b93835d4aff6b268d89d96adb021babe07969ca1f52339fa1c867",
+        "version": [
+          16777233,
+          607186111,
+          33152,
+          1,
+          1672,
+          1794667681344854234,
+          1794667681344854234
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/outside-after.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "60da215d585b93835d4aff6b268d89d96adb021babe07969ca1f52339fa1c867"
+    },
+    {
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "compression": 8,
+      "crc32": "f132333d",
+      "extracted": {
+        "bytes": 146,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/parent-properties.log",
+        "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+        "version": [
+          16777233,
+          607186112,
+          33152,
+          1,
+          146,
+          1794667681345047362,
+          1794667681345047362
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/parent-properties.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343"
+    },
+    {
+      "bytes": 921,
+      "compressed_bytes": 519,
+      "compression": 8,
+      "crc32": "3021b60c",
+      "extracted": {
+        "bytes": 921,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/prepare-build/process.json",
+        "sha256": "169dd2d0c3ddf213eb6719f13e3a6b8fa2e4be7e220117395e1cbc10684cc2bb",
+        "version": [
+          16777233,
+          607186114,
+          33152,
+          1,
+          921,
+          1794667681345162572,
+          1794667681345162572
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/prepare-build/process.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "169dd2d0c3ddf213eb6719f13e3a6b8fa2e4be7e220117395e1cbc10684cc2bb"
+    },
+    {
+      "bytes": 7385,
+      "compressed_bytes": 1652,
+      "compression": 8,
+      "crc32": "fcaa8aed",
+      "mode": 33188,
+      "path": "fresh-service-host/prepare-build/stderr",
+      "retained_as": "complete ZIP only",
+      "sha256": "9f06852e511015b34abb2e0f24024ece8d0f3780d5a4abd3dbc6dd68d6309ea0"
+    },
+    {
+      "bytes": 114611,
+      "compressed_bytes": 8173,
+      "compression": 8,
+      "crc32": "9d7c5c03",
+      "mode": 33188,
+      "path": "fresh-service-host/prepare-build/stdout",
+      "retained_as": "complete ZIP only",
+      "sha256": "73220e706fd102f9b1a2176488968f6b5c55d069a47b22e3350b6779147a778f"
+    },
+    {
+      "bytes": 3406,
+      "compressed_bytes": 1228,
+      "compression": 8,
+      "crc32": "cad883db",
+      "extracted": {
+        "bytes": 3406,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/prepare-build.json",
+        "sha256": "f9af8fad7c2d738e9de7442332e741c7cc1020d31da7e8d0c3e769f4d1ce6369",
+        "version": [
+          16777233,
+          607186115,
+          33152,
+          1,
+          3406,
+          1794667681345349658,
+          1794667681345349658
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/prepare-build.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "f9af8fad7c2d738e9de7442332e741c7cc1020d31da7e8d0c3e769f4d1ce6369"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "extracted": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/seal-parent-directory.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "version": [
+          16777233,
+          607186116,
+          33152,
+          1,
+          0,
+          1794667681345406326,
+          1794667681345406326
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/seal-parent-directory.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "extracted": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/seal-parent-receipt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "version": [
+          16777233,
+          607186117,
+          33152,
+          1,
+          0,
+          1794667681345472994,
+          1794667681345472994
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/seal-parent-receipt.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "extracted": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/start-fixed-parent.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "version": [
+          16777233,
+          607186118,
+          33152,
+          1,
+          0,
+          1794667681345539578,
+          1794667681345539578
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/start-fixed-parent.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "compression": 8,
+      "crc32": "00000000",
+      "extracted": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/systemd-reload.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "version": [
+          16777233,
+          607186119,
+          33152,
+          1,
+          0,
+          1794667681345606496,
+          1794667681345606496
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/systemd-reload.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 537,
+      "compressed_bytes": 367,
+      "compression": 8,
+      "crc32": "5fb2b46d",
+      "extracted": {
+        "bytes": 537,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/systemd-run.log",
+        "sha256": "2c7dc42240779edd72625c0a3fa4f15b10ffd822f8e092f0d18d87907dd66a94",
+        "version": [
+          16777233,
+          607186120,
+          33152,
+          1,
+          537,
+          1794667681345697831,
+          1794667681345697831
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/systemd-run.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "2c7dc42240779edd72625c0a3fa4f15b10ffd822f8e092f0d18d87907dd66a94"
+    },
+    {
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "compression": 8,
+      "crc32": "794c098a",
+      "extracted": {
+        "bytes": 229,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/fresh-service-host/unprovisioned-parent.json",
+        "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+        "version": [
+          16777233,
+          607186121,
+          33152,
+          1,
+          229,
+          1794667681345780707,
+          1794667681345780707
+        ]
+      },
+      "mode": 33188,
+      "path": "fresh-service-host/unprovisioned-parent.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+    },
+    {
+      "bytes": 188,
+      "compressed_bytes": 38,
+      "compression": 8,
+      "crc32": "8e448fcb",
+      "extracted": {
+        "bytes": 188,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/original-host-controls.log",
+        "sha256": "732792553576ec8b3f9231f3011629fa37f6fa97654b7703b334c62ca38b223f",
+        "version": [
+          16777233,
+          607186122,
+          33152,
+          1,
+          188,
+          1794667681345860958,
+          1794667681345860958
+        ]
+      },
+      "mode": 33188,
+      "path": "original-host-controls.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "732792553576ec8b3f9231f3011629fa37f6fa97654b7703b334c62ca38b223f"
+    },
+    {
+      "bytes": 29620,
+      "compressed_bytes": 4780,
+      "compression": 8,
+      "crc32": "21e34175",
+      "extracted": {
+        "bytes": 29620,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/original-native-controls.log",
+        "sha256": "75729c596d77c30839ae1660d45f46e6ad4269311a8324a8fceb04fd12acfc52",
+        "version": [
+          16777233,
+          607186123,
+          33152,
+          1,
+          29620,
+          1794667681345975210,
+          1794667681345975210
+        ]
+      },
+      "mode": 33188,
+      "path": "original-native-controls.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "75729c596d77c30839ae1660d45f46e6ad4269311a8324a8fceb04fd12acfc52"
+    },
+    {
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "compression": 8,
+      "crc32": "64de7ce4",
+      "extracted": {
+        "bytes": 133,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/preflight.log",
+        "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+        "version": [
+          16777233,
+          607186124,
+          33152,
+          1,
+          133,
+          1794667681346173296,
+          1794667681346173296
+        ]
+      },
+      "mode": 33188,
+      "path": "preflight.log",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "bytes": 3304,
+      "compressed_bytes": 1229,
+      "compression": 8,
+      "crc32": "71ddb524",
+      "extracted": {
+        "bytes": 3304,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/public-fixture-parent.json",
+        "sha256": "4749fac1ddede21010fb5720057b6dcc3433a4d5a385f38415edb9b3190474cc",
+        "version": [
+          16777233,
+          607186125,
+          33152,
+          1,
+          3304,
+          1794667681346261589,
+          1794667681346261589
+        ]
+      },
+      "mode": 33188,
+      "path": "public-fixture-parent.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "4749fac1ddede21010fb5720057b6dcc3433a4d5a385f38415edb9b3190474cc"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 239,
+      "compression": 8,
+      "crc32": "63111cae",
+      "extracted": {
+        "bytes": 423,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/source-after.json",
+        "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+        "version": [
+          16777233,
+          607186126,
+          33152,
+          1,
+          423,
+          1794667681346340757,
+          1794667681346340757
+        ]
+      },
+      "mode": 33188,
+      "path": "source-after.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 239,
+      "compression": 8,
+      "crc32": "63111cae",
+      "extracted": {
+        "bytes": 423,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/R1-W1-inner-originals-v1/14117751904/source.json",
+        "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+        "version": [
+          16777233,
+          607186127,
+          33152,
+          1,
+          423,
+          1794667681346522010,
+          1794667681346522010
+        ]
+      },
+      "mode": 33188,
+      "path": "source.json",
+      "retained_as": "standalone original and complete ZIP",
+      "sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03"
+    }
+  ],
+  "schema": "trnm-complete-original-artifact-member-index-v1",
+  "sha256_all_members_verified": true,
+  "total_uncompressed_bytes": 38149251
+}

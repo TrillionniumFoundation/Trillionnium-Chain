@@ -1,0 +1,30 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-5cd04e3c05665871ca9e02c36682ba6cefc3381d02e297b4109eb5bb4fe24fd4/output.log",
+  "available_end": 281,
+  "bytes_hex": "7b226d656d6265725f636f756e74223a203136312c202272656a65637465645f6d656d62657273223a205b5d2c202273756d6d617279223a207b226279746573223a2037353235342c202270617468223a20222f707269766174652f746d702f636861696e2d52312d72657175697265642d63726f73732d617263682d636f73742d61726d2d726573756d652d32303236313131342d76312f6d656d6265722d6865616465722d7265766965772d76312f63656e7472616c2d6d657461646174612e6a736f6e222c2022736861323536223a202230306534653432303639643938356230396464623235613731616666346163343138373237356239316235343332636634653234666365346266653634343338227d7d0d0a",
+  "chunk_sha256": "31f75d03966082530885c419e2421df10cbde5efdf2eb155e6144de361f3ca59",
+  "host": "mac",
+  "next_offset": 281,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-5cd04e3c05665871ca9e02c36682ba6cefc3381d02e297b4109eb5bb4fe24fd4",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 277247 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 281,
+    "bytes_stored": 281,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794671263179,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 48298,
+    "pid": 48301,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"member_count\": 161, \"rejected_members\": [], \"summary\": {\"bytes\": 75254, \"path\": \"/private/tmp/chain-R1-required-cross-arch-cost-arm-resume-20261114-v1/member-header-review-v1/central-metadata.json\", \"sha256\": \"00e4e42069d985b09ddb25a71aff4ac4187275b91b5432cf4e24fce4bfe64438\"}}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

@@ -1,0 +1,377 @@
+{
+  "line_numbering": "1-based original UTF-8 report bytes",
+  "lines": [
+    {
+      "line": 3,
+      "text": "  \"attacker_construction_wall_ns\": 6233987,"
+    },
+    {
+      "line": 4,
+      "text": "  \"finite_target_met\": false,"
+    },
+    {
+      "line": 5,
+      "text": "  \"from_zero_construction\": ["
+    },
+    {
+      "line": 564,
+      "text": "      \"client_confirmed_before_original_window_end\": true,"
+    },
+    {
+      "line": 565,
+      "text": "      \"client_confirmed_transactions\": 1,"
+    },
+    {
+      "line": 566,
+      "text": "      \"completed_false_calls_at_confirmation\": 0,"
+    },
+    {
+      "line": 578,
+      "text": "      },"
+    },
+    {
+      "line": 579,
+      "text": "      \"finite_business_target_met\": true,"
+    },
+    {
+      "line": 580,
+      "text": "      \"full_native_state_equal\": true,"
+    },
+    {
+      "line": 5079,
+      "text": "          \"prior_after\": \"f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516\","
+    },
+    {
+      "line": 5080,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 5081,
+      "text": "          \"replay_ended_ns\": 988646054,"
+    },
+    {
+      "line": 5082,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 5083,
+      "text": "          \"replay_started_ns\": 295446148,"
+    },
+    {
+      "line": 5084,
+      "text": "          \"replay_thread_cpu_ns\": 88611036,"
+    },
+    {
+      "line": 5085,
+      "text": "          \"replay_wall_ns\": 693199906"
+    },
+    {
+      "line": 5086,
+      "text": "        },"
+    },
+    {
+      "line": 6245,
+      "text": "          \"prior_after\": \"cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754\","
+    },
+    {
+      "line": 6246,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 6247,
+      "text": "          \"replay_ended_ns\": 1296093064,"
+    },
+    {
+      "line": 6248,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 6249,
+      "text": "          \"replay_started_ns\": 993933497,"
+    },
+    {
+      "line": 6250,
+      "text": "          \"replay_thread_cpu_ns\": 73227692,"
+    },
+    {
+      "line": 6251,
+      "text": "          \"replay_wall_ns\": 302159567"
+    },
+    {
+      "line": 6252,
+      "text": "        },"
+    },
+    {
+      "line": 7411,
+      "text": "          \"prior_after\": \"4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165\","
+    },
+    {
+      "line": 7412,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 7413,
+      "text": "          \"replay_ended_ns\": 1687566238,"
+    },
+    {
+      "line": 7414,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 7415,
+      "text": "          \"replay_started_ns\": 1376650998,"
+    },
+    {
+      "line": 7416,
+      "text": "          \"replay_thread_cpu_ns\": 74414372,"
+    },
+    {
+      "line": 7417,
+      "text": "          \"replay_wall_ns\": 310915240"
+    },
+    {
+      "line": 7418,
+      "text": "        },"
+    },
+    {
+      "line": 8577,
+      "text": "          \"prior_after\": \"e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70\","
+    },
+    {
+      "line": 8578,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 8579,
+      "text": "          \"replay_ended_ns\": 2083237557,"
+    },
+    {
+      "line": 8580,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 8581,
+      "text": "          \"replay_started_ns\": 1691916596,"
+    },
+    {
+      "line": 8582,
+      "text": "          \"replay_thread_cpu_ns\": 77002592,"
+    },
+    {
+      "line": 8583,
+      "text": "          \"replay_wall_ns\": 391320961"
+    },
+    {
+      "line": 8584,
+      "text": "        },"
+    },
+    {
+      "line": 9743,
+      "text": "          \"prior_after\": \"76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76\","
+    },
+    {
+      "line": 9744,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 9745,
+      "text": "          \"replay_ended_ns\": 2477318167,"
+    },
+    {
+      "line": 9746,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 9747,
+      "text": "          \"replay_started_ns\": 2088216608,"
+    },
+    {
+      "line": 9748,
+      "text": "          \"replay_thread_cpu_ns\": 76790275,"
+    },
+    {
+      "line": 9749,
+      "text": "          \"replay_wall_ns\": 389101559"
+    },
+    {
+      "line": 9750,
+      "text": "        },"
+    },
+    {
+      "line": 10909,
+      "text": "          \"prior_after\": \"8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611\","
+    },
+    {
+      "line": 10910,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 10911,
+      "text": "          \"replay_ended_ns\": 2794890640,"
+    },
+    {
+      "line": 10912,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 10913,
+      "text": "          \"replay_started_ns\": 2482242556,"
+    },
+    {
+      "line": 10914,
+      "text": "          \"replay_thread_cpu_ns\": 78705383,"
+    },
+    {
+      "line": 10915,
+      "text": "          \"replay_wall_ns\": 312648084"
+    },
+    {
+      "line": 10916,
+      "text": "        },"
+    },
+    {
+      "line": 12075,
+      "text": "          \"prior_after\": \"80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d\","
+    },
+    {
+      "line": 12076,
+      "text": "          \"replay_accepted\": true,"
+    },
+    {
+      "line": 12077,
+      "text": "          \"replay_ended_ns\": 3289626345,"
+    },
+    {
+      "line": 12078,
+      "text": "          \"replay_error\": null,"
+    },
+    {
+      "line": 12079,
+      "text": "          \"replay_started_ns\": 2874741344,"
+    },
+    {
+      "line": 12080,
+      "text": "          \"replay_thread_cpu_ns\": 98645416,"
+    },
+    {
+      "line": 12081,
+      "text": "          \"replay_wall_ns\": 414885001"
+    },
+    {
+      "line": 12082,
+      "text": "        }"
+    },
+    {
+      "line": 45497,
+      "text": "      \"receiver_matches_valid_honest_prefix\": true,"
+    },
+    {
+      "line": 45498,
+      "text": "      \"requested_window_ns\": 4000000000,"
+    },
+    {
+      "line": 45499,
+      "text": "      \"resource_fairness_qualified\": false,"
+    },
+    {
+      "line": 45598,
+      "text": "      \"work_profile_qualified\": false,"
+    },
+    {
+      "line": 45599,
+      "text": "      \"workers\": 0"
+    },
+    {
+      "line": 45600,
+      "text": "    },"
+    },
+    {
+      "line": 57619,
+      "text": "      \"client_confirmed_before_original_window_end\": false,"
+    },
+    {
+      "line": 57620,
+      "text": "      \"client_confirmed_transactions\": 0,"
+    },
+    {
+      "line": 57621,
+      "text": "      \"completed_false_calls_at_confirmation\": 309,"
+    },
+    {
+      "line": 57633,
+      "text": "      },"
+    },
+    {
+      "line": 57634,
+      "text": "      \"finite_business_target_met\": false,"
+    },
+    {
+      "line": 57635,
+      "text": "      \"full_native_state_equal\": false,"
+    },
+    {
+      "line": 60577,
+      "text": "          \"prior_after\": \"f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516\","
+    },
+    {
+      "line": 60578,
+      "text": "          \"replay_accepted\": false,"
+    },
+    {
+      "line": 60579,
+      "text": "          \"replay_ended_ns\": 4096679728,"
+    },
+    {
+      "line": 60580,
+      "text": "          \"replay_error\": \"PUBLIC_REQUEST_DEADLINE\","
+    },
+    {
+      "line": 60581,
+      "text": "          \"replay_started_ns\": 1994857361,"
+    },
+    {
+      "line": 60582,
+      "text": "          \"replay_thread_cpu_ns\": 92973940,"
+    },
+    {
+      "line": 60583,
+      "text": "          \"replay_wall_ns\": 2101822367"
+    },
+    {
+      "line": 60584,
+      "text": "        }"
+    },
+    {
+      "line": 242681,
+      "text": "      \"receiver_matches_valid_honest_prefix\": true,"
+    },
+    {
+      "line": 242682,
+      "text": "      \"requested_window_ns\": 4000000000,"
+    },
+    {
+      "line": 242683,
+      "text": "      \"resource_fairness_qualified\": false,"
+    },
+    {
+      "line": 242788,
+      "text": "      \"work_profile_qualified\": false,"
+    },
+    {
+      "line": 242789,
+      "text": "      \"workers\": 16"
+    },
+    {
+      "line": 242790,
+      "text": "    }"
+    }
+  ],
+  "report": {
+    "bytes": 11533430,
+    "compressed_bytes": 523301,
+    "crc32": "a83834c7",
+    "mode": 33188,
+    "path": "from-zero-native/confirmation/report.json",
+    "sha256": "76c781dd78518e8287e6d8ff28462c5d35d05c0b4ce29a96147ac232983d1188"
+  }
+}

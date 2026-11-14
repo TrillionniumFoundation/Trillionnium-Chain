@@ -1,0 +1,64 @@
+1022:#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+1023:pub struct HistoryReadCounters {
+1024:    pub header_link_queries: u64,
+1025:    /// Header and trace bytes returned to Rust; excludes SQLite page reads.
+1026:    pub header_trace_bytes: u64,
+1027:}
+1028:/// Owns the exact packet whose work was actually verified. Not state or clock authority.
+1029:/// Private fields prevent replacing the header/body/proof after verification.
+1030:pub(crate) struct WorkCheckedPacket {
+1031:    packet: Packet,
+1032:    work: pon_work::VerifiedWork,
+1033:    owner_permit: Option<OwnerPacketPermit>,
+1034:}
+1035:
+1036:/// Scheduling evidence constructed only by the original native admission
+1037:/// owner after complete W1, parent/task binding, execution, output and original
+1038:/// transactional readback checks, before the original durable commit.
+1039:/// Its exact bytes remain privately borrowed by that admission. This is not
+1040:/// commit authority: current-owner, epoch, time and transactional fences still
+1041:/// run, and a later failure retains the original paid scheduling identity.
+1042:pub(crate) struct NativeAdmissionCompletion<'a> {
+1043:    domain: &'static [u8],
+1044:    packet: &'a [u8],
+1045:}
+1046:impl NativeAdmissionCompletion<'_> {
+1047:    pub(crate) fn identity(&self) -> Hash {
+1048:        hash(self.domain, &[self.packet])
+1049:    }
+1050:}
+1051:
+1052:impl WorkCheckedPacket {
+1053:    pub(crate) fn verify_with_facts(
+1054:        packet: Packet,
+1055:        facts: &pon_work::facts::WorkFactCache,
+1056:        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+1057:    ) -> Result<Self> {
+1058:        let h = &packet.header;
+1059:        let work = facts
+1060:            .verify_with_progress(
+1061:                h.challenge(),
+1062:                h.work_task,
+1063:                h.target,
+1064:                &packet.proof,
+1065:                progress,
+1066:            )
+1067:            .map_err(|error| match error {
+1068:                pon_work::facts::FactError::Relation(error) => {
+1069:                    Error::from(format!("WORK:{error:?}"))
+1070:                }
+1071:                pon_work::facts::FactError::Cancelled(error) => error,
+1072:                pon_work::facts::FactError::Unavailable => Error::from("WORK_FACTS_UNAVAILABLE"),
+1073:            })?;
+1074:        Ok(Self {
+1075:            packet,
+1076:            work,
+1077:            owner_permit: None,
+1078:        })
+1079:    }
+1080:    /// The opt-in arithmetic owner supplies only exact mathematical facts.
+1081:    /// Current proof claims are verified before this private packet is created.
+1082:    /// No owner permit, task or execution authority is retained in that cache.
+1083:    pub(crate) fn verify_with_arithmetic_facts(
+1084:        packet: Packet,
+1085:        facts: &pon_work::arithmetic_facts::ArithmeticFactCache,

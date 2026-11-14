@@ -1,0 +1,370 @@
+{
+  "CI_actions": false,
+  "all_required_workflow_job_counts": {
+    "failure": 4,
+    "in_progress": 4,
+    "success": 11
+  },
+  "created_at": "2026-11-14T16:05:03.535075+00:00",
+  "extra_logs_or_artifacts_downloaded": false,
+  "head_protocol_cause_reference": {
+    "basis": "Parent and ci_repairs supplied an independent already-closed diagnosis; this snapshot did not download or revalidate the artifact",
+    "bytes": 42945,
+    "cause": "CONFIRMATION_TARGET; first replay accepted through 3.999257347s, second History challenge IO11; not inherited from cross-cost PUBLIC_REQUEST_DEADLINE",
+    "not_applied_to_prospective_failure": true,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/review.json",
+    "sha256": "9c87e3d8ba331bcc467169ff5fd5f52b27efcf7afd44343a273e03ba0e356f42"
+  },
+  "hosted_qualification_granted": false,
+  "latest_check_counts": {
+    "completed/cancelled": 4,
+    "completed/failure": 17,
+    "completed/skipped": 3,
+    "completed/success": 137,
+    "in_progress/None": 4
+  },
+  "new_failed_checks_since_ready018": [
+    {
+      "app": {
+        "id": 15368,
+        "name": "GitHub Actions",
+        "slug": "github-actions"
+      },
+      "completed_at": "2026-11-14T15:53:08Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412473",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "id": 132481412473,
+      "name": "prospective-merge (protocol-contract)",
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    }
+  ],
+  "new_failed_jobs_since_ready018": [
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": "2026-11-14T15:52:58Z",
+          "conclusion": "failure",
+          "name": "Execute the same lane on the prospective merge",
+          "number": 12,
+          "started_at": "2026-11-14T14:45:40Z",
+          "status": "completed"
+        }
+      ],
+      "completed_at": "2026-11-14T15:53:08Z",
+      "conclusion": "failure",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412473",
+      "id": 132481412473,
+      "name": "prospective-merge (protocol-contract)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    }
+  ],
+  "new_failure_inner_cause": "UNKNOWN_NOT_DOWNLOADED",
+  "new_network_requests_by_closure": 0,
+  "observed_from": "2026-11-14T16:03:12.807333+00:00",
+  "observed_to": "2026-11-14T16:03:29.126181+00:00",
+  "original_checks_pin": {
+    "bytes": 135079,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/R1-latest-checks-normalized.json",
+    "sha256": "493886d5b6d645ba0cb263cd3d8be23817f31ebe6d80f0a1baecb0a163212dfa"
+  },
+  "original_index": {
+    "bytes": 4315,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/EVIDENCE_INDEX.json",
+    "sha256": "69f59024c75da9b1f87a6aaf95b553f4ef80db56f3285213e084a5c87054368a"
+  },
+  "original_jobs_pin": {
+    "bytes": 82991,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/R1-run-43604217412-jobs-normalized.json",
+    "sha256": "9f96b5f2151daaf2344ebae001fb5c930179cd143ea363ae866f22a67359e36d"
+  },
+  "original_summary": {
+    "bytes": 14238,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-019/summary.json",
+    "sha256": "91714f113b95b9a15b9b2d31eca9b0f2af78dd7f705b61f886317f0d7a05cc46"
+  },
+  "pr": {
+    "auto_merge": null,
+    "base": {
+      "label": "TrillionniumFoundation:main",
+      "ref": "main",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+    },
+    "created_at": "2026-11-09T14:37:45Z",
+    "draft": false,
+    "head": {
+      "label": "TrillionniumFoundation:fix/chain-hepta-closure-candidate-20261109-481716",
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "identity_matches_R1_and_main": true,
+    "merge_commit_sha": "a7ee9542d10e15bba4256de9579a0196ba9ab9c9",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "number": 847,
+    "open_ready_without_auto_merge": true,
+    "state": "open",
+    "updated_at": "2026-11-14T14:23:10Z"
+  },
+  "prior_snapshot_pins": {
+    "checks": {
+      "bytes": 135058,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-018/R1-latest-checks-normalized.json",
+      "sha256": "b561f7340d1577de52e5df11d52c563e838dc4c123f1f71c2c24144d760157a5"
+    },
+    "jobs": {
+      "bytes": 82592,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-required-ci-progress-v1-ready-018/R1-run-43604217412-jobs-normalized.json",
+      "sha256": "bbd2d67a15575e2e14ac4be80c5d8bbc17a2f13e83019b938bf89d17bcacf654"
+    }
+  },
+  "read_only": true,
+  "ready017_unknown_preserved": true,
+  "ready018_failure_preserved": true,
+  "required_counts": {
+    "absent": 2,
+    "failure": 2,
+    "in_progress": 4,
+    "success": 6
+  },
+  "required_jobs": [
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:58:31Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412396",
+      "id": 132481412396,
+      "name": "repository-truth",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": "2026-11-14T15:48:42Z",
+          "conclusion": "failure",
+          "name": "Run actual protocol-contract checks",
+          "number": 8,
+          "started_at": "2026-11-14T14:45:33Z",
+          "status": "completed"
+        }
+      ],
+      "completed_at": "2026-11-14T15:48:51Z",
+      "conclusion": "failure",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412290",
+      "id": 132481412290,
+      "name": "protocol-contract",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:56:43Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412227",
+      "id": 132481412227,
+      "name": "fuzz-smoke",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:50:54Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412373",
+      "id": 132481412373,
+      "name": "external-evidence-contract",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "conclusion": null,
+      "id": null,
+      "name": "rust-baseline",
+      "status": "absent"
+    },
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:57:01Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412365",
+      "id": 132481412365,
+      "name": "prospective-merge (repository-truth)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": "2026-11-14T15:52:58Z",
+          "conclusion": "failure",
+          "name": "Execute the same lane on the prospective merge",
+          "number": 12,
+          "started_at": "2026-11-14T14:45:40Z",
+          "status": "completed"
+        }
+      ],
+      "completed_at": "2026-11-14T15:53:08Z",
+      "conclusion": "failure",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412473",
+      "id": 132481412473,
+      "name": "prospective-merge (protocol-contract)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:59:26Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412337",
+      "id": 132481412337,
+      "name": "prospective-merge (fuzz-smoke)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "completed_at": "2026-11-14T14:50:18Z",
+      "conclusion": "success",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413128",
+      "id": 132481413128,
+      "name": "prospective-merge (external-evidence-contract)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "completed"
+    },
+    {
+      "active_or_failed_steps": [],
+      "conclusion": null,
+      "id": null,
+      "name": "prospective-merge (rust-baseline)",
+      "status": "absent"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T14:47:53Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412294",
+      "id": 132481412294,
+      "name": "rust-baseline shard (runtime)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "in_progress"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T14:47:48Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412104",
+      "id": 132481412104,
+      "name": "rust-baseline shard (quality)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "in_progress"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T14:47:23Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481412235",
+      "id": 132481412235,
+      "name": "prospective Rust shard (runtime)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:27Z",
+      "status": "in_progress"
+    },
+    {
+      "active_or_failed_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T14:48:20Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43604217412/job/132481413062",
+      "id": 132481413062,
+      "name": "prospective Rust shard (quality)",
+      "run_attempt": 1,
+      "run_id": 43604217412,
+      "started_at": "2026-11-14T14:42:28Z",
+      "status": "in_progress"
+    }
+  ],
+  "required_names_count": 14,
+  "run_attempt": 1,
+  "run_id": 43604217412,
+  "schema": "trnm-r1-required-progress-ready019-closure-v1",
+  "source_identity_scope": "API metadata only; neither name nor PR merge_commit_sha proves actual tested checkout source",
+  "status": "OBSERVED_METADATA_ONLY"
+}

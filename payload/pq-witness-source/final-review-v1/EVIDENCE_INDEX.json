@@ -1,0 +1,661 @@
+{
+  "external_original_log": {
+    "bytes": 818816,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-other-failed-job-original-logs-v1/132475258045-original-log.stdout",
+    "sha256": "39f05164eaaeb530d90ecae6dda34ef6176d90889d55931519c0b2b4a9109fa0"
+  },
+  "file_count": 36,
+  "files": [
+    {
+      "bytes": 387,
+      "identity": [
+        16777233,
+        607228175,
+        33152,
+        1,
+        387,
+        1794671522829943429,
+        1794671522829943429
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/exact-charge-source-search.txt"
+      },
+      "path": "admission-source-v1/exact-charge-source-search.txt",
+      "sha256": "44bfa822e3f6eeb88fd14b91607dc0afb49e5a5884038e31df1df2460e079841"
+    },
+    {
+      "bytes": 1711,
+      "identity": [
+        16777233,
+        607228172,
+        33152,
+        1,
+        1711,
+        1794671522767960193,
+        1794671522767960193
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/producer.py"
+      },
+      "path": "admission-source-v1/producer.py",
+      "sha256": "09e254c1ef23d87ecc14b077721e9526c8a84cb5e332a72eabedbb19c5cf613a"
+    },
+    {
+      "bytes": 1495,
+      "identity": [
+        16777233,
+        607228180,
+        33152,
+        1,
+        1495,
+        1794671522928293885,
+        1794671522928293885
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/source-index.json"
+      },
+      "path": "admission-source-v1/source-index.json",
+      "sha256": "3447fe2980980cfef9107438bf9c213de7fa881258fa59fbad8de435acddd2c1"
+    },
+    {
+      "bytes": 9756,
+      "identity": [
+        16777233,
+        607228177,
+        33152,
+        1,
+        9756,
+        1794671522872278275,
+        1794671522872278275
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--io.rs.original"
+      },
+      "path": "admission-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--io.rs.original",
+      "sha256": "52eeb34e8fe666248fc9c2e1ed3526c1f472ff0cbce952f81b092cc9160f8132"
+    },
+    {
+      "bytes": 46767,
+      "identity": [
+        16777233,
+        607228176,
+        33152,
+        1,
+        46767,
+        1794671522847699640,
+        1794671522847699640
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network.rs.original"
+      },
+      "path": "admission-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network.rs.original",
+      "sha256": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b"
+    },
+    {
+      "bytes": 27534,
+      "identity": [
+        16777233,
+        607228178,
+        33152,
+        1,
+        27534,
+        1794671522896583157,
+        1794671522896583157
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_network.rs.original"
+      },
+      "path": "admission-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_network.rs.original",
+      "sha256": "0842e29ff49fcd485b8fc78f61cab93868900e1dace5de39550b6a26d5cbbe66"
+    },
+    {
+      "bytes": 16488,
+      "identity": [
+        16777233,
+        607228179,
+        33152,
+        1,
+        16488,
+        1794671522920963374,
+        1794671522920963374
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/admission-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness.rs.original"
+      },
+      "path": "admission-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness.rs.original",
+      "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+    },
+    {
+      "bytes": 409,
+      "identity": [
+        16777233,
+        607229191,
+        33152,
+        1,
+        409,
+        1794671621073413923,
+        1794671621073413923
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/crypto-signing-source-v1/exact-functions.txt"
+      },
+      "path": "crypto-signing-source-v1/exact-functions.txt",
+      "sha256": "3aac9d1986c7e82666584f096fb068fe1633fd5ffa4f9c289709b6669867b5d9"
+    },
+    {
+      "bytes": 1454,
+      "identity": [
+        16777233,
+        607229188,
+        33152,
+        1,
+        1454,
+        1794671620961926082,
+        1794671620961926082
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/crypto-signing-source-v1/producer.py"
+      },
+      "path": "crypto-signing-source-v1/producer.py",
+      "sha256": "64b1fdf3bd2efc422ef9c7683cd28e83c5ba298d98ae531a3ce0e0c3abc01178"
+    },
+    {
+      "bytes": 421,
+      "identity": [
+        16777233,
+        607229193,
+        33152,
+        1,
+        421,
+        1794671621101361915,
+        1794671621101361915
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/crypto-signing-source-v1/source-index.json"
+      },
+      "path": "crypto-signing-source-v1/source-index.json",
+      "sha256": "7a085cbb5b1b5400d156aabdcd62e19cc17d2f9d83bdd3b39108e1ff58c761b2"
+    },
+    {
+      "bytes": 12902,
+      "identity": [
+        16777233,
+        607229192,
+        33152,
+        1,
+        12902,
+        1794671621093681443,
+        1794671621093681443
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/crypto-signing-source-v1/trillionnium--crates--trnm-crypto-primitives--src--pq_auth.rs.original"
+      },
+      "path": "crypto-signing-source-v1/trillionnium--crates--trnm-crypto-primitives--src--pq_auth.rs.original",
+      "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+    },
+    {
+      "bytes": 56798,
+      "identity": [
+        16777233,
+        607232670,
+        33152,
+        1,
+        56798,
+        1794671947694330894,
+        1794671947694330894
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/actual-tool-records.json"
+      },
+      "path": "final-review-v1/actual-tool-records.json",
+      "sha256": "916ec1cb18773f41031fa6a6794eb7f4ba30770f0ee5849ffe3b527f228211b3"
+    },
+    {
+      "bytes": 10654,
+      "identity": [
+        16777233,
+        607232672,
+        33152,
+        1,
+        10654,
+        1794671947694922690,
+        1794671947694922690
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/original-log-failure-1760-1860.txt"
+      },
+      "path": "final-review-v1/original-log-failure-1760-1860.txt",
+      "sha256": "e3c85bf2b7238e0f79ba2b5ec4ee531501c407009822ae76e6ddc73d6db12c05"
+    },
+    {
+      "bytes": 800,
+      "identity": [
+        16777233,
+        607232671,
+        33152,
+        1,
+        800,
+        1794671947694815022,
+        1794671947694815022
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/original-log-source-before-1224-1236.txt"
+      },
+      "path": "final-review-v1/original-log-source-before-1224-1236.txt",
+      "sha256": "f363af733b097014196d946b93ee78706b354016e00f40c77f17aa58d800a4ad"
+    },
+    {
+      "bytes": 3961,
+      "identity": [
+        16777233,
+        607232669,
+        33152,
+        1,
+        3961,
+        1794671947694065267,
+        1794671947694065267
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/producer.py"
+      },
+      "path": "final-review-v1/producer.py",
+      "sha256": "dc35fcb7cf7c0143f8467f7b59b2a813e0cbf6255c0af53deab27abbceb0c65a"
+    },
+    {
+      "bytes": 3381,
+      "identity": [
+        16777233,
+        607232675,
+        33152,
+        1,
+        3381,
+        1794671947696317950,
+        1794671947696317950
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/review.md"
+      },
+      "path": "final-review-v1/review.md",
+      "sha256": "1a610ff8f54b94b5161e2178679b4e56b7ff07c28232afa32f17d8be88e75c2b"
+    },
+    {
+      "bytes": 7030,
+      "identity": [
+        16777233,
+        607232673,
+        33152,
+        1,
+        7030,
+        1794671947695707445,
+        1794671947695707445
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/source-provenance.json"
+      },
+      "path": "final-review-v1/source-provenance.json",
+      "sha256": "636052c71057f465b62a24a262569a519772cd0438bd2225b9c1b527853d42b9"
+    },
+    {
+      "bytes": 7191,
+      "identity": [
+        16777233,
+        607232674,
+        33152,
+        1,
+        7191,
+        1794671947696203699,
+        1794671947696203699
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/final-review-v1/summary.json"
+      },
+      "path": "final-review-v1/summary.json",
+      "sha256": "7d32f56f8819d6827b67abea6fafe36a5a0e4202b56ca107bfb60933235ae0d0"
+    },
+    {
+      "bytes": 4581,
+      "identity": [
+        16777233,
+        607226426,
+        33152,
+        1,
+        4581,
+        1794671435168520314,
+        1794671435168520314
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/exact-witness-search.txt"
+      },
+      "path": "immutable-source-v1/exact-witness-search.txt",
+      "sha256": "3038605c31c00996350b154e7abdf6e7f6116362c5cf776022f749bdc5a8e582"
+    },
+    {
+      "bytes": 2354,
+      "identity": [
+        16777233,
+        607226423,
+        33152,
+        1,
+        2354,
+        1794671435105047401,
+        1794671435105047401
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/producer.py"
+      },
+      "path": "immutable-source-v1/producer.py",
+      "sha256": "6f6f9830e32b18e4bf5e9403f4311e31464e190e285e739b32853a641d631aeb"
+    },
+    {
+      "bytes": 2267,
+      "identity": [
+        16777233,
+        607226439,
+        33152,
+        1,
+        2267,
+        1794671435353471641,
+        1794671435353471641
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/source-identity-log-locators.json"
+      },
+      "path": "immutable-source-v1/source-identity-log-locators.json",
+      "sha256": "18571966ac982d1841615cefb9612cf40d278bb4fa0098c6489c5c14ec0fde7e"
+    },
+    {
+      "bytes": 3761,
+      "identity": [
+        16777233,
+        607226437,
+        33152,
+        1,
+        3761,
+        1794671435325591025,
+        1794671435325591025
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/source-index.json"
+      },
+      "path": "immutable-source-v1/source-index.json",
+      "sha256": "4a3e6da14c2cc2fcf9ff1f54c59c5d7d4f950aeafac40f1eaca6bda3743fd266"
+    },
+    {
+      "bytes": 5782,
+      "identity": [
+        16777233,
+        607226428,
+        33152,
+        1,
+        5782,
+        1794671435193573952,
+        1794671435193573952
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--diagnostics.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls--diagnostics.rs.original",
+      "sha256": "38ec29adf8a967869e6bed154a3d4d4de806ee0558cfdb19878cfb240323e8cf"
+    },
+    {
+      "bytes": 8471,
+      "identity": [
+        16777233,
+        607226427,
+        33152,
+        1,
+        8471,
+        1794671435177708297,
+        1794671435177708297
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--ingress--pq_network--tls.rs.original",
+      "sha256": "e2b7f742cb69411e473cc5f715ba09175cd016b4118233974cf317d7b4fd31ee"
+    },
+    {
+      "bytes": 41717,
+      "identity": [
+        16777233,
+        607226430,
+        33152,
+        1,
+        41717,
+        1794671435224656467,
+        1794671435224656467
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--test_observation.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--test_observation.rs.original",
+      "sha256": "0153c8fe811dccaa64bb6f8ac2d882e83e79f49c068a74526dc3e03c5ac80a8e"
+    },
+    {
+      "bytes": 31629,
+      "identity": [
+        16777233,
+        607226431,
+        33152,
+        1,
+        31629,
+        1794671435240093453,
+        1794671435240093453
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--tests.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness--tests.rs.original",
+      "sha256": "f99f8f41e51354e3ca59d67b01ae1f3ea3714b216a7dbfdeb70de074e430451a"
+    },
+    {
+      "bytes": 38829,
+      "identity": [
+        16777233,
+        607226429,
+        33152,
+        1,
+        38829,
+        1794671435209111772,
+        1794671435209111772
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--pq_rollback_witness.rs.original",
+      "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+    },
+    {
+      "bytes": 34649,
+      "identity": [
+        16777233,
+        607226432,
+        33152,
+        1,
+        34649,
+        1794671435256023484,
+        1794671435256023484
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness--tests.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--src--store--pq_rollback_witness--tests.rs.original",
+      "sha256": "205098456dd281599bec215e718a1055b07808d858c03f2d36beec9311a8bf4c"
+    },
+    {
+      "bytes": 1973,
+      "identity": [
+        16777233,
+        607226433,
+        33152,
+        1,
+        1973,
+        1794671435271488137,
+        1794671435271488137
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_refusal_diagnostics.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_refusal_diagnostics.rs.original",
+      "sha256": "c91101f966c1affe117b8c5683eae9434ef19f6eec690004310d1883ab2572ff"
+    },
+    {
+      "bytes": 2568,
+      "identity": [
+        16777233,
+        607226435,
+        33152,
+        1,
+        2568,
+        1794671435301961855,
+        1794671435301961855
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--refusal_diagnostics.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--refusal_diagnostics.rs.original",
+      "sha256": "088e857bdd2b39eb61936e59f392e6d99302cf55f3642df941a8958fe2511ae5"
+    },
+    {
+      "bytes": 17795,
+      "identity": [
+        16777233,
+        607226436,
+        33152,
+        1,
+        17795,
+        1794671435317801344,
+        1794671435317801344
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--support.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli--support.rs.original",
+      "sha256": "78066dc62d98b9fb5f652f17f296a19923687a9f947d55f5e78a4650e530e068"
+    },
+    {
+      "bytes": 12089,
+      "identity": [
+        16777233,
+        607226434,
+        33152,
+        1,
+        12089,
+        1794671435286727329,
+        1794671435286727329
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli.rs.original"
+      },
+      "path": "immutable-source-v1/trillionnium--crates--trnm-pon-node--tests--pq_tls_witness_cli.rs.original",
+      "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+    },
+    {
+      "bytes": 19049,
+      "identity": [
+        16777233,
+        607225466,
+        33152,
+        1,
+        19049,
+        1794671410998706627,
+        1794671410998706627
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/log-context-v2/context.json"
+      },
+      "path": "log-context-v2/context.json",
+      "sha256": "29ecaaa6cbd67d645460a735b6b5f96d67cbff58eb512f1e990754a257583355"
+    },
+    {
+      "bytes": 1816,
+      "identity": [
+        16777233,
+        607225467,
+        33152,
+        1,
+        1816,
+        1794671410998917754,
+        1794671410998917754
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/log-context-v2/hit-locators.json"
+      },
+      "path": "log-context-v2/hit-locators.json",
+      "sha256": "14328d01cf3b5eae87a79c195e1023c955c33fb9bd795f92354bf444f23ac485"
+    },
+    {
+      "bytes": 1760,
+      "identity": [
+        16777233,
+        607225464,
+        33152,
+        1,
+        1760,
+        1794671410990603152,
+        1794671410990603152
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/log-context-v2/producer.py"
+      },
+      "path": "log-context-v2/producer.py",
+      "sha256": "8666e74d6dcda81c531fa95efa90641c2b8e5ca625d0159e287c80ead3facb38"
+    },
+    {
+      "bytes": 2180,
+      "identity": [
+        16777233,
+        607224873,
+        33152,
+        1,
+        2180,
+        1794671367476352423,
+        1794671367476352423
+      ],
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1/producer.py"
+      },
+      "path": "producer.py",
+      "sha256": "b227fe289f5f671c6fddcae5221aa4e807a53d89c5e2ba436ec70f9883b30702"
+    }
+  ],
+  "root": "/private/tmp/chain-R1-pq-witness-deadline-source-review-20261114-v1",
+  "schema": "trnm-r1-pq-static-review-evidence-index-v1",
+  "total_bytes": 442409
+}

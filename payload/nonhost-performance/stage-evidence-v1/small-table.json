@@ -1,0 +1,866 @@
+[
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 3.768,
+    "client_cpu_ms": 5.872,
+    "client_span_ms": {
+      "end": 284.437,
+      "start": 0.574
+    },
+    "construction_ms": 2.601,
+    "kind": "head",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 68.947,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 18.245,
+        "wall": 21.58
+      },
+      "admission_owner_wait": {
+        "cpu": 0.046,
+        "wall": 0.046
+      },
+      "admission_prepare": {
+        "cpu": 2.831,
+        "wall": 2.83
+      },
+      "body_decode": {
+        "cpu": 1.213,
+        "wall": 1.213
+      },
+      "commit": {
+        "cpu": 13.106,
+        "wall": 16.437
+      },
+      "commit_owner_wait": {
+        "cpu": 0.024,
+        "wall": 0.024
+      },
+      "context": {
+        "cpu": 2.055,
+        "wall": 2.054
+      },
+      "context_owner_wait": {
+        "cpu": 0.012,
+        "wall": 0.012
+      },
+      "cpu_settle": {
+        "cpu": 0.021,
+        "wall": 0.021
+      },
+      "cpu_wait": {
+        "cpu": 0.026,
+        "wall": 0.028
+      },
+      "decode": {
+        "cpu": 0.554,
+        "wall": 0.553
+      },
+      "execution": {
+        "cpu": 1.164,
+        "wall": 1.164
+      },
+      "response_encoding": {
+        "cpu": 0.264,
+        "wall": 0.263
+      },
+      "root_commitment": {
+        "cpu": 0.801,
+        "wall": 0.801
+      },
+      "submit_result": {
+        "cpu": 8.499,
+        "wall": 82.77
+      },
+      "work": {
+        "cpu": 10.399,
+        "wall": 10.399
+      }
+    },
+    "solution_body_response_ms": 201.035,
+    "variant": "original"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 6.389,
+    "client_cpu_ms": 6.009,
+    "client_span_ms": {
+      "end": 2779.685,
+      "start": 284.687
+    },
+    "construction_ms": 0.154,
+    "kind": "head",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.133,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.109,
+        "wall": 0.108
+      },
+      "response_encoding": {
+        "cpu": 2.21,
+        "wall": 77.076
+      }
+    },
+    "solution_body_response_ms": 100.372,
+    "variant": "original"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 101.381,
+    "client_cpu_ms": 5.962,
+    "client_span_ms": {
+      "end": 1697.581,
+      "start": 94.306
+    },
+    "construction_ms": 2.907,
+    "kind": "head",
+    "n": 7,
+    "phase": 1,
+    "queue_ms": 105.413,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 20.965,
+        "wall": 202.469
+      },
+      "admission_owner_wait": {
+        "cpu": 0.643,
+        "wall": 99.496
+      },
+      "admission_prepare": {
+        "cpu": 3.404,
+        "wall": 3.402
+      },
+      "body_decode": {
+        "cpu": 1.372,
+        "wall": 1.372
+      },
+      "commit": {
+        "cpu": 15.036,
+        "wall": 196.472
+      },
+      "commit_owner_wait": {
+        "cpu": 0.028,
+        "wall": 0.028
+      },
+      "context": {
+        "cpu": 2.502,
+        "wall": 2.491
+      },
+      "context_owner_wait": {
+        "cpu": 0.03,
+        "wall": 2.092
+      },
+      "cpu_settle": {
+        "cpu": 0.023,
+        "wall": 0.023
+      },
+      "cpu_wait": {
+        "cpu": 0.017,
+        "wall": 0.018
+      },
+      "decode": {
+        "cpu": 0.708,
+        "wall": 0.708
+      },
+      "execution": {
+        "cpu": 1.248,
+        "wall": 1.248
+      },
+      "response_encoding": {
+        "cpu": 0.319,
+        "wall": 0.319
+      },
+      "root_commitment": {
+        "cpu": 0.826,
+        "wall": 0.827
+      },
+      "submit_result": {
+        "cpu": 9.275,
+        "wall": 101.998
+      },
+      "work": {
+        "cpu": 12.806,
+        "wall": 198.426
+      }
+    },
+    "solution_body_response_ms": 1493.014,
+    "variant": "original"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 0.407,
+    "client_cpu_ms": 0.909,
+    "client_span_ms": {
+      "end": 1792.797,
+      "start": 1697.842
+    },
+    "construction_ms": 0.022,
+    "kind": "head",
+    "n": 1,
+    "phase": 1,
+    "queue_ms": 90.81,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.015,
+        "wall": 0.015
+      },
+      "response_encoding": {
+        "cpu": 0.542,
+        "wall": 0.543
+      }
+    },
+    "solution_body_response_ms": 94.401,
+    "variant": "original"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 71.281,
+    "client_cpu_ms": 5.778,
+    "client_span_ms": {
+      "end": 283.719,
+      "start": 0.525
+    },
+    "construction_ms": 2.508,
+    "kind": "head",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.203,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 18.148,
+        "wall": 93.537
+      },
+      "admission_owner_wait": {
+        "cpu": 0.045,
+        "wall": 0.045
+      },
+      "admission_prepare": {
+        "cpu": 2.914,
+        "wall": 2.913
+      },
+      "body_decode": {
+        "cpu": 1.228,
+        "wall": 1.228
+      },
+      "commit": {
+        "cpu": 13.032,
+        "wall": 88.417
+      },
+      "commit_owner_wait": {
+        "cpu": 0.025,
+        "wall": 0.025
+      },
+      "context": {
+        "cpu": 2.097,
+        "wall": 2.096
+      },
+      "context_owner_wait": {
+        "cpu": 0.012,
+        "wall": 0.012
+      },
+      "cpu_settle": {
+        "cpu": 0.029,
+        "wall": 0.038
+      },
+      "cpu_wait": {
+        "cpu": 0.025,
+        "wall": 0.027
+      },
+      "decode": {
+        "cpu": 0.554,
+        "wall": 0.553
+      },
+      "execution": {
+        "cpu": 1.146,
+        "wall": 1.146
+      },
+      "response_encoding": {
+        "cpu": 0.297,
+        "wall": 0.296
+      },
+      "root_commitment": {
+        "cpu": 0.792,
+        "wall": 0.792
+      },
+      "submit_result": {
+        "cpu": 8.662,
+        "wall": 12.921
+      },
+      "work": {
+        "cpu": 10.257,
+        "wall": 10.257
+      }
+    },
+    "solution_body_response_ms": 205.6,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 4.813,
+    "client_cpu_ms": 5.727,
+    "client_span_ms": {
+      "end": 2777.959,
+      "start": 283.983
+    },
+    "construction_ms": 0.121,
+    "kind": "head",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.135,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.087,
+        "wall": 0.086
+      },
+      "response_encoding": {
+        "cpu": 2.021,
+        "wall": 2.021
+      }
+    },
+    "solution_body_response_ms": 100.686,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 189.847,
+    "client_cpu_ms": 5.887,
+    "client_span_ms": {
+      "end": 2498.054,
+      "start": 192.552
+    },
+    "construction_ms": 2.129,
+    "kind": "head",
+    "n": 7,
+    "phase": 1,
+    "queue_ms": 505.683,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 22.091,
+        "wall": 300.882
+      },
+      "admission_owner_wait": {
+        "cpu": 0.089,
+        "wall": 2.141
+      },
+      "admission_prepare": {
+        "cpu": 3.809,
+        "wall": 188.601
+      },
+      "body_decode": {
+        "cpu": 1.496,
+        "wall": 1.496
+      },
+      "commit": {
+        "cpu": 15.539,
+        "wall": 109.536
+      },
+      "commit_owner_wait": {
+        "cpu": 0.033,
+        "wall": 0.033
+      },
+      "context": {
+        "cpu": 2.693,
+        "wall": 3.557
+      },
+      "context_owner_wait": {
+        "cpu": 0.015,
+        "wall": 0.016
+      },
+      "cpu_settle": {
+        "cpu": 0.023,
+        "wall": 0.024
+      },
+      "cpu_wait": {
+        "cpu": 0.019,
+        "wall": 0.019
+      },
+      "decode": {
+        "cpu": 0.76,
+        "wall": 0.759
+      },
+      "execution": {
+        "cpu": 1.353,
+        "wall": 1.353
+      },
+      "response_encoding": {
+        "cpu": 0.292,
+        "wall": 0.292
+      },
+      "root_commitment": {
+        "cpu": 0.871,
+        "wall": 0.872
+      },
+      "submit_result": {
+        "cpu": 9.214,
+        "wall": 191.476
+      },
+      "work": {
+        "cpu": 11.833,
+        "wall": 104.862
+      }
+    },
+    "solution_body_response_ms": 2109.535,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 0.555,
+    "client_cpu_ms": 0.95,
+    "client_span_ms": {
+      "end": 2596.898,
+      "start": 2498.274
+    },
+    "construction_ms": 0.018,
+    "kind": "head",
+    "n": 1,
+    "phase": 1,
+    "queue_ms": 0.291,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.016,
+        "wall": 0.016
+      },
+      "response_encoding": {
+        "cpu": 0.46,
+        "wall": 0.46
+      }
+    },
+    "solution_body_response_ms": 97.903,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 5.945,
+    "client_cpu_ms": 5.772,
+    "client_span_ms": {
+      "end": 218.03,
+      "start": 0.59
+    },
+    "construction_ms": 2.578,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.18,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 18.798,
+        "wall": 92.851
+      },
+      "admission_owner_wait": {
+        "cpu": 0.062,
+        "wall": 2.12
+      },
+      "admission_prepare": {
+        "cpu": 3.202,
+        "wall": 74.169
+      },
+      "body_decode": {
+        "cpu": 1.232,
+        "wall": 1.232
+      },
+      "commit": {
+        "cpu": 13.278,
+        "wall": 16.359
+      },
+      "commit_owner_wait": {
+        "cpu": 0.026,
+        "wall": 0.026
+      },
+      "context": {
+        "cpu": 2.099,
+        "wall": 2.098
+      },
+      "context_owner_wait": {
+        "cpu": 0.012,
+        "wall": 0.012
+      },
+      "cpu_settle": {
+        "cpu": 0.022,
+        "wall": 0.022
+      },
+      "cpu_wait": {
+        "cpu": 0.028,
+        "wall": 0.03
+      },
+      "decode": {
+        "cpu": 0.616,
+        "wall": 0.616
+      },
+      "execution": {
+        "cpu": 1.119,
+        "wall": 1.119
+      },
+      "response_encoding": {
+        "cpu": 0.293,
+        "wall": 0.292
+      },
+      "root_commitment": {
+        "cpu": 0.745,
+        "wall": 0.746
+      },
+      "submit_result": {
+        "cpu": 8.664,
+        "wall": 10.929
+      },
+      "work": {
+        "cpu": 10.258,
+        "wall": 81.335
+      }
+    },
+    "solution_body_response_ms": 204.905,
+    "variant": "original"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 6.281,
+    "client_cpu_ms": 6.521,
+    "client_span_ms": {
+      "end": 2805.784,
+      "start": 218.264
+    },
+    "construction_ms": 0.146,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.141,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.096,
+        "wall": 0.096
+      },
+      "response_encoding": {
+        "cpu": 2.273,
+        "wall": 77.329
+      }
+    },
+    "solution_body_response_ms": 101.154,
+    "variant": "original"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 198.14,
+    "client_cpu_ms": 6.327,
+    "client_span_ms": {
+      "end": 1800.222,
+      "start": 92.963
+    },
+    "construction_ms": 2.365,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 1,
+    "queue_ms": 203.432,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 21.735,
+        "wall": 207.27
+      },
+      "admission_owner_wait": {
+        "cpu": 0.172,
+        "wall": 95.736
+      },
+      "admission_prepare": {
+        "cpu": 3.698,
+        "wall": 3.697
+      },
+      "body_decode": {
+        "cpu": 1.485,
+        "wall": 1.783
+      },
+      "commit": {
+        "cpu": 15.009,
+        "wall": 200.541
+      },
+      "commit_owner_wait": {
+        "cpu": 0.028,
+        "wall": 0.028
+      },
+      "context": {
+        "cpu": 2.955,
+        "wall": 98.463
+      },
+      "context_owner_wait": {
+        "cpu": 0.016,
+        "wall": 0.016
+      },
+      "cpu_settle": {
+        "cpu": 0.022,
+        "wall": 0.023
+      },
+      "cpu_wait": {
+        "cpu": 0.02,
+        "wall": 0.021
+      },
+      "decode": {
+        "cpu": 0.877,
+        "wall": 0.877
+      },
+      "execution": {
+        "cpu": 1.39,
+        "wall": 1.39
+      },
+      "response_encoding": {
+        "cpu": 0.305,
+        "wall": 0.305
+      },
+      "root_commitment": {
+        "cpu": 0.841,
+        "wall": 0.841
+      },
+      "submit_result": {
+        "cpu": 9.115,
+        "wall": 10.967
+      },
+      "work": {
+        "cpu": 12.252,
+        "wall": 200.684
+      }
+    },
+    "solution_body_response_ms": 1502.818,
+    "variant": "original"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 1.708,
+    "client_cpu_ms": 1.987,
+    "client_span_ms": {
+      "end": 3991.61,
+      "start": 1800.414
+    },
+    "construction_ms": 0.037,
+    "kind": "prospective-merge",
+    "n": 2,
+    "phase": 1,
+    "queue_ms": 92.937,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.036,
+        "wall": 0.036
+      },
+      "response_encoding": {
+        "cpu": 0.921,
+        "wall": 1.006
+      }
+    },
+    "solution_body_response_ms": 285.927,
+    "variant": "original"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 5.074,
+    "client_cpu_ms": 6.108,
+    "client_span_ms": {
+      "end": 211.589,
+      "start": 0.58
+    },
+    "construction_ms": 2.668,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.159,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 19.066,
+        "wall": 94.375
+      },
+      "admission_owner_wait": {
+        "cpu": 0.051,
+        "wall": 0.051
+      },
+      "admission_prepare": {
+        "cpu": 3.208,
+        "wall": 76.175
+      },
+      "body_decode": {
+        "cpu": 1.208,
+        "wall": 1.208
+      },
+      "commit": {
+        "cpu": 13.542,
+        "wall": 15.879
+      },
+      "commit_owner_wait": {
+        "cpu": 0.027,
+        "wall": 0.027
+      },
+      "context": {
+        "cpu": 2.246,
+        "wall": 2.245
+      },
+      "context_owner_wait": {
+        "cpu": 0.012,
+        "wall": 0.012
+      },
+      "cpu_settle": {
+        "cpu": 0.023,
+        "wall": 0.023
+      },
+      "cpu_wait": {
+        "cpu": 0.028,
+        "wall": 0.031
+      },
+      "decode": {
+        "cpu": 0.614,
+        "wall": 0.614
+      },
+      "execution": {
+        "cpu": 1.203,
+        "wall": 1.203
+      },
+      "response_encoding": {
+        "cpu": 0.303,
+        "wall": 0.302
+      },
+      "root_commitment": {
+        "cpu": 0.788,
+        "wall": 0.788
+      },
+      "submit_result": {
+        "cpu": 9.006,
+        "wall": 78.345
+      },
+      "work": {
+        "cpu": 10.357,
+        "wall": 10.357
+      }
+    },
+    "solution_body_response_ms": 199.236,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 4.81,
+    "client_cpu_ms": 6.018,
+    "client_span_ms": {
+      "end": 2799.783,
+      "start": 211.868
+    },
+    "construction_ms": 0.137,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 0,
+    "queue_ms": 0.16,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.111,
+        "wall": 0.111
+      },
+      "response_encoding": {
+        "cpu": 2.235,
+        "wall": 2.236
+      }
+    },
+    "solution_body_response_ms": 175.897,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_submissions",
+    "challenge_ms": 380.498,
+    "client_cpu_ms": 6.37,
+    "client_span_ms": {
+      "end": 2690.236,
+      "start": 91.748
+    },
+    "construction_ms": 2.13,
+    "kind": "prospective-merge",
+    "n": 7,
+    "phase": 1,
+    "queue_ms": 693.972,
+    "server_phase_ms": {
+      "admission": {
+        "cpu": 21.791,
+        "wall": 302.854
+      },
+      "admission_owner_wait": {
+        "cpu": 0.056,
+        "wall": 0.057
+      },
+      "admission_prepare": {
+        "cpu": 3.535,
+        "wall": 95.438
+      },
+      "body_decode": {
+        "cpu": 1.485,
+        "wall": 1.512
+      },
+      "commit": {
+        "cpu": 15.561,
+        "wall": 202.678
+      },
+      "commit_owner_wait": {
+        "cpu": 0.047,
+        "wall": 2.086
+      },
+      "context": {
+        "cpu": 3.255,
+        "wall": 5.473
+      },
+      "context_owner_wait": {
+        "cpu": 0.036,
+        "wall": 96.306
+      },
+      "cpu_settle": {
+        "cpu": 0.023,
+        "wall": 0.024
+      },
+      "cpu_wait": {
+        "cpu": 0.022,
+        "wall": 0.024
+      },
+      "decode": {
+        "cpu": 0.766,
+        "wall": 0.765
+      },
+      "execution": {
+        "cpu": 1.31,
+        "wall": 1.31
+      },
+      "response_encoding": {
+        "cpu": 0.393,
+        "wall": 0.391
+      },
+      "root_commitment": {
+        "cpu": 0.812,
+        "wall": 0.813
+      },
+      "submit_result": {
+        "cpu": 9.552,
+        "wall": 100.239
+      },
+      "work": {
+        "cpu": 12.142,
+        "wall": 12.143
+      }
+    },
+    "solution_body_response_ms": 2209.427,
+    "variant": "fresh"
+  },
+  {
+    "category": "honest_history",
+    "challenge_ms": 2.824,
+    "client_cpu_ms": 1.012,
+    "client_span_ms": {
+      "end": 2792.742,
+      "start": 2690.502
+    },
+    "construction_ms": 0.023,
+    "kind": "prospective-merge",
+    "n": 1,
+    "phase": 1,
+    "queue_ms": 94.042,
+    "server_phase_ms": {
+      "body_decode": {
+        "cpu": 0.037,
+        "wall": 0.037
+      },
+      "response_encoding": {
+        "cpu": 0.454,
+        "wall": 0.454
+      }
+    },
+    "solution_body_response_ms": 99.259,
+    "variant": "fresh"
+  }
+]

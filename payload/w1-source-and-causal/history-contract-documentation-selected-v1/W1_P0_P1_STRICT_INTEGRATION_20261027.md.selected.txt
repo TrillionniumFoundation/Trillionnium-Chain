@@ -1,0 +1,53 @@
+1: # P0–P1 exact integration preview: W1 negatives and Host-bound history
+2: Status: **draft / shadow-only / HOLD_NO_GO**. No PNW1 byte, target, ticket, fork-weight,
+3: FinalUse, model installation, V3 Cookie, genesis, or production flag modification.
+4: 
+5: ## Frozen input owners and retained failures
+6: - Source parent: Chain PR #484, commit `288e6a7f12770aec44f6449b0330c917b1d382bd`. This already incorporates
+7:   #340 (pinned-peer shared CPU), #342 (nonloopback History guard), and #483
+8:   (durable single-host W2-C spent tickets with a copied-DB double-spend counterexample).
+9: - P0: transplant the exact corrected four-false-transcript Python test blob
+10:   `534854e1341c9613e30b965123710891295a9de8` from PR #461.
+11:   The parent #484 had a literal unterminated `assertRaisesRegex` string.
+12:   The original negative vectors, nonce/trial counts, W1 relation and timing scope
+13:   are unchanged. This repair **enables** the test; it is not evidence that
+14:   a native Rust campaign ran.
+15: - P1: preserve #479 strict paid public/authenticated History request context
+16:   and #480 explicit fixed Host parent for V3 loopback listeners with remote
+17:   pinned-peer polling. Plain loopback-only local developer serving without
+18:   external history remains distinct.
+19: - P1 external API: `ingress::receive_page_from` is now crate-private.
+20:   It deliberately retains the old loopback-only developer compatibility.
+21:   The sole public History page import is `receive_public_page_from`,
+22:   requiring the original admin-provisioned
+23:   `/sys/fs/cgroup/trnmponpublic.slice` even if the caller's socket address
+24:   is loopback (a TCP proxy is not source provenance).
+25:   A compile-fail rustdoc rejects importing the weak symbol from an external crate.
+26: - P1 full W1 replay: the existing Native Node remains sole authority.
+27:   `admit_with_work_progress` preserves `Node::admit`'s task,
+28:   owner, parent, and durable checks while allowing a *local* resource callback;
+29:   no new work primitive or arithmetic-cache acceptance is created.
+30:   Import checks actual Host membership/limits before and after each of up to
+31:   16 received packets, before and after activation, and during W1 at
+32:   BeforeReplay, BeforeProduct, BeforeVerifiedWork, bounded noise/row and
+33:   every 64 transcript tiles. Raw cgroup `cpu.max` remains enforced by the
+34:   kernel between reads. An already committed native block is not turned
+35:   into invalid W1 after a local post-admission resource fault.
+36: 
+37: ## Focused source/test selectors (not yet qualified in this session)
+38: - `python3 formal/pon-nakamoto-v1/test_work_precheck.py -v`
+39: - `cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node
+40:   kernel_progress_rechecks_original_host_at_most_every_64_tiles -- --exact`
+41: - `cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node
+42:   public_loopback_history_requires_real_fixed_host_parent`
+43: - `cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --doc`
+44: - Existing remote History / pinned-peer CPU integration tests and actual
+45:   host-owned A03 work all remain mandatory. First run project preflight
+46:   in a real checkout as required by repository AGENTS.md.
+47: 
+48: ## Invariants and remaining blockers
+49: The preview has never minted `VerifiedWork` from a ticket or local cache:
+50: P0 four forged transcripts must continue to fail `TRANSCRIPT`, adding
+51: zero state/chainwork. P1 Host/calling-thread guards do **not** replace
+52: per-caller economics, cross-process CPU accounting, isolation of durable
+53: external effects, or honest fairness under an unbounded identity flood.

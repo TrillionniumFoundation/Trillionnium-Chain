@@ -1,0 +1,44 @@
+[
+  {
+    "label": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      "{login,id}"
+    ],
+    "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+    "exit": 0,
+    "timeout_seconds": 180,
+    "started_at": "2026-11-14T14:21:00.702019+00:00",
+    "finished_at": "2026-11-14T14:21:05.999856+00:00",
+    "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stdout",
+    "stdout_bytes": 37,
+    "stdout_sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7",
+    "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/actor.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "pr-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+      "--jq",
+      "{number,state,draft,node_id,head:.head.sha,head_ref:.head.ref,base:.base.sha,base_ref:.base.ref,title,body,auto_merge}"
+    ],
+    "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+    "exit": 0,
+    "timeout_seconds": 180,
+    "started_at": "2026-11-14T14:21:06.002540+00:00",
+    "finished_at": "2026-11-14T14:21:10.165078+00:00",
+    "stdout_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stdout",
+    "stdout_bytes": 20182,
+    "stdout_sha256": "c7778a723784e32630f2628c5369ea2d10cdd07ec054c6221f9806bc88dd5d56",
+    "stderr_path": "/private/tmp/chain-consolidation-20261114-root/prepare-pr847-audit-update-v10-r1-parallel-hook-v1/pr-before.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

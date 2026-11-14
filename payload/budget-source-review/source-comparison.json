@@ -1,0 +1,1205 @@
+{
+  "cases": [
+    {
+      "comparison_order": "common inputs first, then exact selected group",
+      "comparisons": [
+        {
+          "driver": {
+            "bytes": 2204,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 0,
+          "path": "trillionnium/Cargo.toml",
+          "subject": {
+            "bytes": 2204,
+            "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--Cargo.lock.patch",
+            "sha256": "15d13987ed19369fd2cbd481d731d9468e31144532f1a6682aa8f85161b24dc6"
+          },
+          "driver": {
+            "bytes": 42127,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 42127,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+              "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+            },
+            "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 1,
+          "path": "trillionnium/Cargo.lock",
+          "subject": {
+            "bytes": 40597,
+            "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 40597,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+              "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+            },
+            "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-scan-before--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "b0d5f6d7a9d7c877f873de3413b36f095bdf5e4db74e6ca816e2a17df4ef416f"
+          },
+          "driver": {
+            "bytes": 2357,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2357,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+              "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+            },
+            "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 2,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject": {
+            "bytes": 2183,
+            "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2183,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+              "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+            },
+            "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+          },
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "driver": {
+            "bytes": 86,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 3,
+          "path": "rust-toolchain.toml",
+          "subject": {
+            "bytes": 86,
+            "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          }
+        },
+        {
+          "driver": {
+            "bytes": 8536,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "2a41c8cf8e1cd781a604f6fcaf43ade17c42e2cc",
+            "path": "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+            "raw": {
+              "bytes": 8536,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stdout",
+              "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+            },
+            "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+          },
+          "equal": true,
+          "group": "pool-scan",
+          "guard_order": 4,
+          "path": "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+          "subject": {
+            "bytes": 8536,
+            "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "oid": "2a41c8cf8e1cd781a604f6fcaf43ade17c42e2cc",
+            "path": "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+            "raw": {
+              "bytes": 8536,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stdout",
+              "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+            },
+            "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+          }
+        }
+      ],
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "mode": "pool-scan-before",
+      "subject": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "subject_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366"
+    },
+    {
+      "comparison_order": "common inputs first, then exact selected group",
+      "comparisons": [
+        {
+          "driver": {
+            "bytes": 2204,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 0,
+          "path": "trillionnium/Cargo.toml",
+          "subject": {
+            "bytes": 2204,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--Cargo.lock.patch",
+            "sha256": "d8216f04cda46afaf40fdac4aee6bed5dead4c3d30babecd88f7720eeece541a"
+          },
+          "driver": {
+            "bytes": 42127,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 42127,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+              "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+            },
+            "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 1,
+          "path": "trillionnium/Cargo.lock",
+          "subject": {
+            "bytes": 40597,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 40597,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+              "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+            },
+            "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "9804ad9a457447334c21f2d1f0a62edf36e1653247d1db89926d3aec2066fdf1"
+          },
+          "driver": {
+            "bytes": 2357,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2357,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+              "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+            },
+            "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 2,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject": {
+            "bytes": 2183,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2183,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+              "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+            },
+            "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+          },
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "driver": {
+            "bytes": 86,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 3,
+          "path": "rust-toolchain.toml",
+          "subject": {
+            "bytes": 86,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 11756,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/budget-before-v2--trillionnium--crates--trnm-pon-node--src--ingress--history_import_detached_budget_tests.rs.patch",
+            "sha256": "269411447760f3abc1e0d8eceeb6a55e831710b7d1a9818219a4e449c1abf382"
+          },
+          "driver": {
+            "bytes": 16321,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "cf02b6c7426626c0bd56a91e0ff515dc6053083c",
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+            "raw": {
+              "bytes": 16321,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stdout",
+              "sha256": "9753eb12cc1e6b5f7864bf2a8082ee0d964343a19382e102524f3d6fe879c208"
+            },
+            "sha256": "9753eb12cc1e6b5f7864bf2a8082ee0d964343a19382e102524f3d6fe879c208"
+          },
+          "equal": false,
+          "group": "budget",
+          "guard_order": 4,
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+          "subject": {
+            "bytes": 12090,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "0c910637bb3644968adfc59d1a96724402c0530e",
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+            "raw": {
+              "bytes": 12090,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stdout",
+              "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+            },
+            "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+          }
+        },
+        {
+          "driver": {
+            "bytes": 12211,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "3a1a67380768b0c6e5a29ac7cc5d6d963600c2a1",
+            "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+            "raw": {
+              "bytes": 12211,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stdout",
+              "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+            },
+            "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+          },
+          "equal": true,
+          "group": "budget",
+          "guard_order": 5,
+          "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+          "subject": {
+            "bytes": 12211,
+            "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "oid": "3a1a67380768b0c6e5a29ac7cc5d6d963600c2a1",
+            "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+            "raw": {
+              "bytes": 12211,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stdout",
+              "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+            },
+            "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+          }
+        }
+      ],
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "mode": "budget-before-v2",
+      "subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "subject_tree": "c4cd82ed0004709192eff1563d90423bd5641e99"
+    },
+    {
+      "comparison_order": "common inputs first, then exact selected group",
+      "comparisons": [
+        {
+          "driver": {
+            "bytes": 2204,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 0,
+          "path": "trillionnium/Cargo.toml",
+          "subject": {
+            "bytes": 2204,
+            "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "oid": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+            "path": "trillionnium/Cargo.toml",
+            "raw": {
+              "bytes": 2204,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+              "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+            },
+            "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 17384,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--Cargo.lock.patch",
+            "sha256": "0265b6edefeeb0a8851275955dcea3dad35e5e3d89757862d773b9e26e857e75"
+          },
+          "driver": {
+            "bytes": 42127,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "19530b3bce6b679ae87cb5b92b0578faf781c0b3",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 42127,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+              "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+            },
+            "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 1,
+          "path": "trillionnium/Cargo.lock",
+          "subject": {
+            "bytes": 40597,
+            "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "oid": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+            "path": "trillionnium/Cargo.lock",
+            "raw": {
+              "bytes": 40597,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+              "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+            },
+            "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+          }
+        },
+        {
+          "diff": {
+            "bytes": 1526,
+            "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/differences/pool-before-v2--trillionnium--crates--trnm-pon-node--Cargo.toml.patch",
+            "sha256": "d7ee0e670ddd7b2e4349bb61bef6e15dec7b7dd58d858e2ddac3137e1dd90c04"
+          },
+          "driver": {
+            "bytes": 2357,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "140b9af87ebf85d3e05e525c638dc9c65b965a5e",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2357,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+              "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+            },
+            "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+          },
+          "equal": false,
+          "group": "common",
+          "guard_order": 2,
+          "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "profile_semantically_equal": true,
+          "subject": {
+            "bytes": 2183,
+            "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "oid": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "raw": {
+              "bytes": 2183,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+              "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+            },
+            "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+          },
+          "toml_top_level_keys_changed": [
+            "dependencies",
+            "dev-dependencies",
+            "target"
+          ]
+        },
+        {
+          "driver": {
+            "bytes": 86,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          },
+          "equal": true,
+          "group": "common",
+          "guard_order": 3,
+          "path": "rust-toolchain.toml",
+          "subject": {
+            "bytes": 86,
+            "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "oid": "8770b1d875864c5356dc4abad904b69ec484817f",
+            "path": "rust-toolchain.toml",
+            "raw": {
+              "bytes": 86,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+              "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+            },
+            "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+          }
+        },
+        {
+          "driver": {
+            "bytes": 19292,
+            "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+            "oid": "e2c8f8224270449587907a0a5607efaab147eb70",
+            "path": "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+            "raw": {
+              "bytes": 19292,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stdout",
+              "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+            },
+            "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+          },
+          "equal": true,
+          "group": "pool",
+          "guard_order": 4,
+          "path": "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+          "subject": {
+            "bytes": 19292,
+            "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "oid": "e2c8f8224270449587907a0a5607efaab147eb70",
+            "path": "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+            "raw": {
+              "bytes": 19292,
+              "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stdout",
+              "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+            },
+            "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+          }
+        }
+      ],
+      "first_actual_mismatch": "trillionnium/Cargo.lock",
+      "mode": "pool-before-v2",
+      "subject": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "subject_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005"
+    }
+  ],
+  "commits": [
+    {
+      "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "parents": [
+        "1e54c4ff66a92827c83bea8715f59f6b299e98cf",
+        "096c6b5f9b952c49389fd975515744074ba61317"
+      ],
+      "raw": {
+        "bytes": 363,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stdout",
+        "sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+      },
+      "tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+    },
+    {
+      "commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "parents": [
+        "85a905b9e47cea0d76144253abb4a483b58bc2be"
+      ],
+      "raw": {
+        "bytes": 525,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stdout",
+        "sha256": "ea69ee856e2d80610defd4d2fafe093ada9897a0140bc2905654f780453033dd"
+      },
+      "tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366"
+    },
+    {
+      "commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "parents": [
+        "db93026b9314bfd8bc4350945036998f1b7d34aa"
+      ],
+      "raw": {
+        "bytes": 605,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stdout",
+        "sha256": "73b918dc18901075b29a8f7912aee69fa198051f963b413b81c0d4953731aa50"
+      },
+      "tree": "c4cd82ed0004709192eff1563d90423bd5641e99"
+    },
+    {
+      "commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "parents": [
+        "db93026b9314bfd8bc4350945036998f1b7d34aa"
+      ],
+      "raw": {
+        "bytes": 646,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stdout",
+        "sha256": "2da191df779b83bbf5781e4bd0f4c150181634d80eaf443f00fece5469b5055e"
+      },
+      "tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005"
+    }
+  ],
+  "current_driver": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "current_runner": {
+    "bytes": 47276,
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "oid": "64e29f974ae60d2a688d9a19d4320827e7feadaa",
+    "path": "scripts/ci/run_pon_budget_controls.py",
+    "raw": {
+      "bytes": 47276,
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+      "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+    },
+    "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+  },
+  "current_test": {
+    "bytes": 59699,
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "oid": "0f436b85a6ce1225bf53c1780d32f4f7490adb69",
+    "path": "scripts/ci/test_pon_budget_controls.py",
+    "raw": {
+      "bytes": 59699,
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+      "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+    },
+    "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+  },
+  "current_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "current_workflow": {
+    "bytes": 3896,
+    "commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "oid": "d9e7e2141ef26833deba030cb8b70d80c22274b6",
+    "path": ".github/workflows/pon-budget-controls.yml",
+    "raw": {
+      "bytes": 3896,
+      "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stdout",
+      "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+    },
+    "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+  },
+  "guard_is_before_compilation": true,
+  "guard_line": 685,
+  "observed_at": "2026-11-14T15:53:56.729690+00:00",
+  "qualification": false,
+  "schema": "trnm-r1-budget-identity-source-review-v1",
+  "source_git_mutations": false,
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "2a86462a1ab20c68151719ba4635e3c294391e64"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.414146+00:00",
+      "started_at": "2026-11-14T15:53:56.406386+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 363,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/001.stdout",
+        "sha256": "a1d72b40924fd5856c89479e9501dcb7f9fcf9b7e5e1f8c1f032c35294491f39"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.430927+00:00",
+      "started_at": "2026-11-14T15:53:56.414436+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 525,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/002.stdout",
+        "sha256": "ea69ee856e2d80610defd4d2fafe093ada9897a0140bc2905654f780453033dd"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.446953+00:00",
+      "started_at": "2026-11-14T15:53:56.431432+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 605,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/003.stdout",
+        "sha256": "73b918dc18901075b29a8f7912aee69fa198051f963b413b81c0d4953731aa50"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "commit",
+        "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.464954+00:00",
+      "started_at": "2026-11-14T15:53:56.450177+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 646,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/004.stdout",
+        "sha256": "2da191df779b83bbf5781e4bd0f4c150181634d80eaf443f00fece5469b5055e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--",
+        "scripts/ci/run_pon_budget_controls.py",
+        "scripts/ci/test_pon_budget_controls.py",
+        ".github/workflows/pon-budget-controls.yml"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.472771+00:00",
+      "started_at": "2026-11-14T15:53:56.465262+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 278,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/005.stdout",
+        "sha256": "ccff359a6be20d908a7ba22877efc4b056612e71d141b4172775a83a4ea7ba19"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "d9e7e2141ef26833deba030cb8b70d80c22274b6"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.487751+00:00",
+      "started_at": "2026-11-14T15:53:56.473007+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3896,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/006.stdout",
+        "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "64e29f974ae60d2a688d9a19d4320827e7feadaa"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.494924+00:00",
+      "started_at": "2026-11-14T15:53:56.488006+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 47276,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/007.stdout",
+        "sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "0f436b85a6ce1225bf53c1780d32f4f7490adb69"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.501537+00:00",
+      "started_at": "2026-11-14T15:53:56.495264+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 59699,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/008.stdout",
+        "sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--",
+        "trillionnium/Cargo.toml",
+        "trillionnium/Cargo.lock",
+        "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "rust-toolchain.toml",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.511702+00:00",
+      "started_at": "2026-11-14T15:53:56.505080+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 827,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/009.stdout",
+        "sha256": "0c733ed60629989a9bb40e34f9659283c458d11896638457dbe6c89a563c44e7"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "8770b1d875864c5356dc4abad904b69ec484817f"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.527453+00:00",
+      "started_at": "2026-11-14T15:53:56.511905+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 86,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/010.stdout",
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "19530b3bce6b679ae87cb5b92b0578faf781c0b3"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.541675+00:00",
+      "started_at": "2026-11-14T15:53:56.527752+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 42127,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/011.stdout",
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "44df8f8d5eec880d10da42c12a903c03658cfc65"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.555821+00:00",
+      "started_at": "2026-11-14T15:53:56.541981+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2204,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/012.stdout",
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "140b9af87ebf85d3e05e525c638dc9c65b965a5e"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.569496+00:00",
+      "started_at": "2026-11-14T15:53:56.556091+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2357,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/013.stdout",
+        "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "cf02b6c7426626c0bd56a91e0ff515dc6053083c"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.583584+00:00",
+      "started_at": "2026-11-14T15:53:56.569760+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 16321,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/014.stdout",
+        "sha256": "9753eb12cc1e6b5f7864bf2a8082ee0d964343a19382e102524f3d6fe879c208"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "3a1a67380768b0c6e5a29ac7cc5d6d963600c2a1"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.598381+00:00",
+      "started_at": "2026-11-14T15:53:56.583898+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12211,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/015.stdout",
+        "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "2a41c8cf8e1cd781a604f6fcaf43ade17c42e2cc"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.612159+00:00",
+      "started_at": "2026-11-14T15:53:56.598645+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 8536,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/016.stdout",
+        "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "e2c8f8224270449587907a0a5607efaab147eb70"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.626448+00:00",
+      "started_at": "2026-11-14T15:53:56.612444+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 19292,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/017.stdout",
+        "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        "ae657e262278ae4a058220f66a6a0495721eb9ad",
+        "--",
+        "trillionnium/Cargo.toml",
+        "trillionnium/Cargo.lock",
+        "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "rust-toolchain.toml",
+        "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.641759+00:00",
+      "started_at": "2026-11-14T15:53:56.626763+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 448,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/018.stdout",
+        "sha256": "fd3dcc55932abdb78228996c7df9a69bbfe44afd16a0885e8f67e0d5f2bd3f75"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "def80fa394ebb1ae6ce7d1d62ed77524152a2d04"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.656350+00:00",
+      "started_at": "2026-11-14T15:53:56.642042+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 40597,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/019.stdout",
+        "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.670844+00:00",
+      "started_at": "2026-11-14T15:53:56.656914+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2183,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/020.stdout",
+        "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+        "--",
+        "trillionnium/Cargo.toml",
+        "trillionnium/Cargo.lock",
+        "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "rust-toolchain.toml",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.691934+00:00",
+      "started_at": "2026-11-14T15:53:56.673709+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 587,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/021.stdout",
+        "sha256": "7d3d4e92eb5512dac48556f76d7a326fe6119639818112e6fa2c95c8c6a4b5b3"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "cat-file",
+        "blob",
+        "0c910637bb3644968adfc59d1a96724402c0530e"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.705848+00:00",
+      "started_at": "2026-11-14T15:53:56.692221+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 12090,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/022.stdout",
+        "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+        "--",
+        "trillionnium/Cargo.toml",
+        "trillionnium/Cargo.lock",
+        "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "rust-toolchain.toml",
+        "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs"
+      ],
+      "exit": 0,
+      "finished_at": "2026-11-14T15:53:56.726859+00:00",
+      "started_at": "2026-11-14T15:53:56.709078+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 442,
+        "path": "/private/tmp/chain-prci-R1-budget-input-identity-source-review-20261114-v1/git-reads/023.stdout",
+        "sha256": "7824ce4e25660fbda2096c033575738639e08302d83c648c8649fe4e125c32ce"
+      }
+    }
+  ],
+  "target_helpers_or_tests_executed": false
+}

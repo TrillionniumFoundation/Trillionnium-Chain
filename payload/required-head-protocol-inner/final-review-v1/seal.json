@@ -1,0 +1,18 @@
+{
+  "actual_failure_preserved": "CONFIRMATION_TARGET",
+  "index": {
+    "bytes": 35833,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "5da4bdc1a25fad43ee7b80578d892d8630d7d82cb5a7bbab5bfd780a9afac11e"
+  },
+  "network_or_tests_by_sealer": false,
+  "original_files_preserved": 47,
+  "review": {
+    "bytes": 42945,
+    "path": "/private/tmp/chain-R1-required-head-protocol-artifact-review-20261114-v1/final-review-v1/review.json",
+    "sha256": "9c87e3d8ba331bcc467169ff5fd5f52b27efcf7afd44343a273e03ba0e356f42"
+  },
+  "schema": "trnm-closed-evidence-seal-v1",
+  "stage_modified": false,
+  "whole_artifact_sha256_verified": false
+}

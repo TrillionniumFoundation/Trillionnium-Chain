@@ -1,0 +1,29 @@
+HTTP/2.0 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+Cache-Control: private, max-age=60, s-maxage=60
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 14:40:18 GMT
+Etag: W/"18dc10708cc608f1d9fddc52d5bf602fb05fd7d2d7067d4b5806510b65c675ba"
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Server: github.com
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+Vary: Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+X-Accepted-Oauth-Scopes: 
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Github-Api-Version-Selected: 2026-03-10
+X-Github-Edge-Region: fra
+X-Github-Media-Type: github.v3; format=json
+X-Github-Request-Id: C115:31E826:5CF0FE8:8D5C80B:6AF872D1
+X-Oauth-Client-Id: 178c6fc778ccc68e1d6a
+X-Oauth-Scopes: gist, read:org, repo, workflow
+X-Ratelimit-Limit: 5000
+X-Ratelimit-Remaining: 4348
+X-Ratelimit-Reset: 1794668240
+X-Ratelimit-Resource: core
+X-Ratelimit-Used: 652
+X-Xss-Protection: 0
+
+{"id":14117751904,"node_id":"MDg6QXJ0aWZhY3QxNDExNzc1MTkwNA==","name":"w1-fresh-service-head-2a86462a1ab20c68151719ba4635e3c294391e64-1","size_in_bytes":6479218,"url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117751904","archive_download_url":"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14117751904/zip","expired":false,"digest":"sha256:b77dd9120901f5e4d3ccdd21be7f307fecabedabaca28a9d3c3d184d867d6ef8","created_at":"2026-11-14T14:28:06Z","updated_at":"2026-11-14T14:28:06Z","expires_at":"2026-12-14T14:28:05Z","workflow_run":{"id":43604217632,"repository_id":1323087357,"head_repository_id":1323087357,"head_branch":"fix/chain-hepta-closure-candidate-20261109-481716","head_sha":"2a86462a1ab20c68151719ba4635e3c294391e64"}}

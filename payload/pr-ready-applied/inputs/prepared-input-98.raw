@@ -1,0 +1,52 @@
+{
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1",
+  "original_launch_inputs": {
+    "bytes": 2426,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-launch-inputs-v1/inputs.json",
+    "sha256": "2381ac94dab56b9016f4cea84442fbde8ddda135ed46592c7708d95a83b58acb"
+  },
+  "original_publication_receipt": {
+    "bytes": 6458208,
+    "path": "/private/tmp/chain-consolidation-20261114-root/publish-followup-candidate-execution-2a8646-v1/summary.json",
+    "sha256": "dee8425873fcf7ae469b5ec3f66348765ad2507cb1c815db84708b743d8a044e"
+  },
+  "original_publication_spec": {
+    "bytes": 1847,
+    "path": "/private/tmp/chain-consolidation-20261114-root/followup-publication-spec-2a8646-v1.json",
+    "sha256": "4011ca777cc60afdd414791a206b3b64343b23d628448ad504ab1a61227e2908"
+  },
+  "original_terminal_pages": {
+    "bytes": 885065,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-original-terminal-pages-v1.json",
+    "sha256": "753dbb0b65fa4377a28b705c888dd9319de5707cd569c1cb268759439e66612d"
+  },
+  "previous_resume_attempts": [
+    {
+      "receipt": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v1/summary.json",
+        "bytes": 223986,
+        "sha256": "b75aa5c3bebebb563d2aff09adb43f4a453a6cae56bc3f3f23d9240c0df2f3d5"
+      },
+      "terminal_pages": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt1-terminal-pages-v1.json",
+        "bytes": 19706,
+        "sha256": "212a94c22cac923317ad6433280b5345eb468ed52ae793a6b066db1316002d7c"
+      }
+    },
+    {
+      "receipt": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-v2/summary.json",
+        "bytes": 223986,
+        "sha256": "2ebfba359430d8d93f77139f99ae1eee17cb400270cbeac2dd9a1038ff77b165"
+      },
+      "terminal_pages": {
+        "path": "/private/tmp/chain-consolidation-20261114-root/R1-publication-resume-attempt2-terminal-pages-v1.json",
+        "bytes": 19710,
+        "sha256": "67202f649fd78ffbad5383d500ad3f0a69cd016eab8ea9a9a04acdd0e849a18d"
+      }
+    }
+  ],
+  "resume_sha256": "f4db0552a747f18525a4938510b5768e4852b0a787271762c6e80c204b829627",
+  "schema": "trnm-followup-candidate-execution-resume-spec-v3",
+  "transport_timeout_seconds": 3600
+}

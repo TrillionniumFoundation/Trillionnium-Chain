@@ -1,0 +1,29 @@
+{
+  "NO_DATA": true,
+  "REDACT": true,
+  "bounds": {
+    "events": 4096,
+    "line": 8192,
+    "parsed_input": 16777216,
+    "postprocess_EOF_seconds": 5,
+    "retained_bytes": 524288
+  },
+  "complete": true,
+  "eof": true,
+  "errors": [],
+  "events": {
+    "bytes": 1250,
+    "path": "/private/tmp/chain-consolidation-20261114-root/resume-followup-candidate-execution-2a8646-parallel-hook-v1/atomic-publish-resume-redacted-curl/events.jsonl",
+    "sha256": "0afedc31154670904dab5a69ec4d5712c0b8032c34d051e7a00dcff0c0efb1ad"
+  },
+  "events_retained": 17,
+  "header_auth_cookie_URL_or_body_retained": false,
+  "input_bytes_seen": 20483,
+  "lines_seen": 227,
+  "overlong_lines_discarded": 0,
+  "raw_trace_written": false,
+  "schema": "trnm-redacted-git-curl-info-v1",
+  "scope": "Strict typed connection/DNS/ALPN/TLS events; not a complete HTTP trace.",
+  "trace_fd": 4,
+  "unrecognized_or_header_lines_discarded": 210
+}

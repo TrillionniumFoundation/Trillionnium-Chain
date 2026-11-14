@@ -1,0 +1,46 @@
+90:    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
+91:    if hash(b"ticket", &[&challenge, trace_claim]) > target {
+92:        return Err(WorkError::Target);
+93:    }
+94:    Ok(())
+95:}
+96:
+97:/// Local observation boundaries; these are neither proof bytes nor consensus input.
+98:#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+99:pub enum VerificationProgress {
+100:    BeforeReplay,
+101:    Noise {
+102:        label: u8,
+103:        counter: u32,
+104:    },
+105:    MatrixRow {
+106:        row: usize,
+107:    },
+108:    TranscriptTile {
+109:        row: usize,
+110:        column: usize,
+111:        inner: usize,
+112:    },
+113:    BeforeProduct,
+114:    BeforeVerifiedWork,
+115:}
+116:
+117:/// An abandoned local computation does not assert that the relation is invalid.
+118:#[derive(Debug, Clone, PartialEq, Eq)]
+119:pub enum VerificationError<E> {
+120:    Relation(WorkError),
+121:    Cancelled(E),
+122:}
+123:impl<E> From<WorkError> for VerificationError<E> {
+124:    fn from(error: WorkError) -> Self {
+125:        Self::Relation(error)
+126:    }
+127:}
+128:fn relation_only<T>(
+129:    result: Result<T, VerificationError<std::convert::Infallible>>,
+130:) -> Result<T, WorkError> {
+131:    match result {
+132:        Ok(value) => Ok(value),
+133:        Err(VerificationError::Relation(error)) => Err(error),
+134:        Err(VerificationError::Cancelled(impossible)) => match impossible {},
+135:    }

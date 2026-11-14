@@ -1,0 +1,14 @@
+{
+  "bytes": 24989,
+  "capture": "/private/tmp/chain-R1-history-4105-entry-map-20261114-v1/workflow.yml.original",
+  "git_blob": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+  "matching_line": 346,
+  "path": ".github/workflows/pon-priority-acceptance.yml",
+  "selected_lines": [
+    206,
+    374
+  ],
+  "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+  "source": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "tests_or_workflow_executed": false
+}

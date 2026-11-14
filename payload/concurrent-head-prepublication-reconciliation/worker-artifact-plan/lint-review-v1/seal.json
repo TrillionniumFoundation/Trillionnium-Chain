@@ -1,7 +1,0 @@
-{
-  "index_bytes": 2064,
-  "index_sha256": "0daf25d30ec389245a2ea85f4c633ab5e66af69ea8f277e8302910dc49286712",
-  "schema": "trnm-worker-artifact-lint-review-seal-v1",
-  "source_git_stage_mutation": false,
-  "tests_or_checkers_run": false
-}

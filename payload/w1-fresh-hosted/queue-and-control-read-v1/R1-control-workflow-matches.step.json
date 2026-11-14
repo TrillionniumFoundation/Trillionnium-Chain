@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "grep",
+    "-n",
+    "-E",
+    "retained-pressure-failure|Original budget controls",
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "--",
+    ".github/workflows"
+  ],
+  "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+  "elapsed_seconds": 0.04,
+  "exit": 0,
+  "finished_at": "2026-11-14T14:30:35.484682+00:00",
+  "label": "R1-control-workflow-matches",
+  "started_at": "2026-11-14T14:30:35.444735+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/queue-and-control-read-v1/R1-control-workflow-matches.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 263,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/queue-and-control-read-v1/R1-control-workflow-matches.stdout",
+    "sha256": "cd3e0913a31747cb08f6fbc5f04f5b6314f5a84d7069b51f3d3202b8baa08ac9"
+  },
+  "timed_out": false,
+  "timeout_seconds": 30
+}

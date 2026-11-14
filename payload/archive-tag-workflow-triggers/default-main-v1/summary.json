@@ -1,0 +1,360 @@
+{
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "base_workflow_tree": "fd63a2b0d22ffd259c17f804b757cd7d080eb5b7",
+  "candidate": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "candidate_workflow_tree": "7c67bacebbdb9982dafeab21ab02fdfea9ab6d80",
+  "no_network_tests_or_workflow_execution": true,
+  "schema": "trnm-default-main-workflow-trigger-review-v1",
+  "scope": "Immutable GitHub Actions declarations only; no claim about external webhooks or Apps.",
+  "source_after": [
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  ],
+  "source_before": [
+    "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+  ],
+  "source_refs_stage_config_unmodified": true,
+  "source_unchanged": true,
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "protocol.allow=never",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp",
+      "elapsed_seconds": 0.008596500003477558,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:17:42.995054+00:00",
+      "label": "source-head-before",
+      "started_at": "2026-11-14T16:17:42.986290+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/source-head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 82,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/source-head-before.stdout",
+        "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "protocol.allow=never",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0^{commit}",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0:.github/workflows",
+        "2a86462a1ab20c68151719ba4635e3c294391e64^{commit}",
+        "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows"
+      ],
+      "cwd": "/private/tmp",
+      "elapsed_seconds": 0.008869041979778558,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:17:43.004172+00:00",
+      "label": "fixed-workflow-trees",
+      "started_at": "2026-11-14T16:17:42.995314+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/fixed-workflow-trees.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 164,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/fixed-workflow-trees.stdout",
+        "sha256": "84f4093a97bbc99fa9347d132f16125742a63da6cd5cb62fbd4e66cdabda3dbe"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "protocol.allow=never",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "ls-tree",
+        "-r",
+        "-z",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "--",
+        ".github/workflows"
+      ],
+      "cwd": "/private/tmp",
+      "elapsed_seconds": 0.00676350001594983,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:17:43.011166+00:00",
+      "label": "B-workflow-list",
+      "started_at": "2026-11-14T16:17:43.004413+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/B-workflow-list.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 98,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/B-workflow-list.stdout",
+        "sha256": "ced9235a436625ae25857419e31bd7a46e8f9a7e8c153052d12fdf93a22198a0"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "protocol.allow=never",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "--batch"
+      ],
+      "cwd": "/private/tmp",
+      "elapsed_seconds": 0.007736166997347027,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:17:43.019164+00:00",
+      "label": "B-workflow-blobs",
+      "started_at": "2026-11-14T16:17:43.011439+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/B-workflow-blobs.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6393,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/B-workflow-blobs.stdout",
+        "sha256": "1035d480db3617c0cb1d2e2d927f12574e1aefc56fd3367633f9dbccfc23a11c"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-c",
+        "protocol.allow=never",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp",
+      "elapsed_seconds": 0.00585545800277032,
+      "exit": 0,
+      "finished_at": "2026-11-14T16:17:43.029039+00:00",
+      "label": "source-head-after",
+      "started_at": "2026-11-14T16:17:43.023192+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/source-head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 82,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/source-head-after.stdout",
+        "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+      },
+      "timeout_seconds": 60
+    }
+  ],
+  "trees_identical": false,
+  "workflow_count": 1,
+  "workflows": [
+    {
+      "events": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "lines": [
+        {
+          "line": 1,
+          "text": "name: trnm-required-baseline"
+        },
+        {
+          "line": 2,
+          "text": "on:"
+        },
+        {
+          "line": 3,
+          "text": "  pull_request:"
+        },
+        {
+          "line": 4,
+          "text": "  push:"
+        },
+        {
+          "line": 5,
+          "text": "    branches: [main]"
+        },
+        {
+          "line": 6,
+          "text": "  workflow_dispatch:"
+        },
+        {
+          "line": 7,
+          "text": "permissions:"
+        },
+        {
+          "line": 8,
+          "text": "  contents: read"
+        },
+        {
+          "line": 9,
+          "text": "concurrency:"
+        },
+        {
+          "line": 10,
+          "text": "  group: portable-${{ github.workflow }}-${{ github.ref }}"
+        },
+        {
+          "line": 11,
+          "text": "  cancel-in-progress: true"
+        },
+        {
+          "line": 12,
+          "text": "env:"
+        },
+        {
+          "line": 13,
+          "text": "  CI: \"true\""
+        },
+        {
+          "line": 14,
+          "text": "  CARGO_INCREMENTAL: \"0\""
+        },
+        {
+          "line": 15,
+          "text": "  CARGO_BUILD_JOBS: \"2\""
+        },
+        {
+          "line": 16,
+          "text": "  RUST_TEST_THREADS: \"1\""
+        },
+        {
+          "line": 17,
+          "text": "  CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 18,
+          "text": "  PYTHONDONTWRITEBYTECODE: \"1\""
+        },
+        {
+          "line": 19,
+          "text": "  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+        },
+        {
+          "line": 20,
+          "text": "jobs:"
+        },
+        {
+          "line": 21,
+          "text": "  repository-truth:"
+        },
+        {
+          "line": 22,
+          "text": "    name: repository-truth"
+        },
+        {
+          "line": 23,
+          "text": "    runs-on: ubuntu-24.04"
+        },
+        {
+          "line": 24,
+          "text": "    timeout-minutes: 45"
+        },
+        {
+          "line": 25,
+          "text": "    steps:"
+        },
+        {
+          "line": 26,
+          "text": "      - name: Checkout exact candidate"
+        },
+        {
+          "line": 27,
+          "text": "        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "line": 28,
+          "text": "        with:"
+        },
+        {
+          "line": 29,
+          "text": "          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}"
+        },
+        {
+          "line": 30,
+          "text": "          fetch-depth: 0"
+        },
+        {
+          "line": 31,
+          "text": "          persist-credentials: false"
+        },
+        {
+          "line": 32,
+          "text": "      - name: Verify immutable source identity"
+        },
+        {
+          "line": 33,
+          "text": "        run: test \"$(git rev-parse HEAD)\" = \"$TRNM_EXPECTED_SOURCE_SHA\""
+        },
+        {
+          "line": 34,
+          "text": "      - name: Set isolated Cargo paths after runner allocation"
+        },
+        {
+          "line": 35,
+          "text": "        shell: bash"
+        },
+        {
+          "line": 36,
+          "text": "        run: |"
+        },
+        {
+          "line": 37,
+          "text": "          set -euo pipefail"
+        },
+        {
+          "line": 38,
+          "text": "          printf 'CARGO_HOME=%s/cargo-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\""
+        },
+        {
+          "line": 39,
+          "text": "          printf 'CARGO_TARGET_DIR=%s/target-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\""
+        },
+        {
+          "line": 40,
+          "text": "      - name: Run actual repository-truth checks"
+        }
+      ],
+      "mode": "100644",
+      "oid": "80dbd94aa41328b95b893074706cb3ab1bac137f",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "source": {
+        "bytes": 6341,
+        "path": "/private/tmp/chain-R1-archive-tag-workflow-trigger-review-20261114-v1/default-main-v1/sources/.github/workflows/trnm-required-baseline.yml",
+        "sha256": "bb407ebb197fc7eae9bbf24d165732f5b16937241d3430745506568cec1fe1c9"
+      }
+    }
+  ]
+}

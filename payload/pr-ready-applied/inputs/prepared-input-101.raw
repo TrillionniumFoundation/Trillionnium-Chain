@@ -1,0 +1,66 @@
+import hashlib,json,os,pathlib,sys
+if sys.flags.optimize:raise RuntimeError("optimized publication launcher forbidden")
+ROOT=pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+HEAD="2a86462a1ab20c68151719ba4635e3c294391e64";TREE="5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+assert ROOT.resolve(strict=True)==ROOT
+def unique(pairs):
+ d={}
+ for k,v in pairs:
+  if k in d:raise ValueError("duplicate input key")
+  d[k]=v
+ return d
+def nonfinite(v):raise ValueError("nonfinite input")
+def parse(raw):return json.loads(raw,object_pairs_hook=unique,parse_constant=nonfinite)
+def read(pin):
+ assert type(pin)is dict and set(pin)=={"path","bytes","sha256"}
+ assert type(pin["bytes"])is int and 0<=pin["bytes"]<=8*1024*1024
+ p=pathlib.Path(pin["path"]);assert p.is_absolute() and p.resolve(strict=True)==p and (p.is_relative_to(ROOT)or p.is_relative_to(pathlib.Path("/private/tmp/chain-prci-final-execution-coverage-checker-20261114-v1")))
+ fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC)
+ try:
+  st=os.fstat(fd);assert st.st_nlink==1
+  with os.fdopen(fd,"rb",closefd=False)as f:raw=f.read(8*1024*1024+1)
+  after=os.fstat(fd);assert(st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime_ns)==(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns)
+ finally:os.close(fd)
+ assert len(raw)==pin["bytes"] and hashlib.sha256(raw).hexdigest()==pin["sha256"]
+ return raw
+inputs=parse(sys.argv[2]);assert type(inputs)is dict and set(inputs)=={"publication_spec","coverage_receipt","coverage_terminal"}
+spec=inputs["publication_spec"];assert spec["candidate_head"]==HEAD and spec["candidate_tree"]==TREE
+assert spec["expected_remote_head"]=="096c6b5f9b952c49389fd975515744074ba61317"
+for key in ("local_gate_receipt","rog_lane_receipt","execution_manifest"):read(spec[key])
+RECEIPTS=[
+("full/flat/original/summary.json",21354,"70e5dd235cf16b1ec3a0ba37da2a5c523cce3e97000a13de9fdd92e5e440ffef",18),
+("W1/original/summary.json",7754,"edb1e9f855450b5f330332b5dbdae17ea6546ad75d2f1dff81106b9b2382ee71",8),
+("external/flat/original/summary.json",17336,"e261ab55ca4eb6104c3087d3e5d2a82fde3009d6cb848a782255cc1e35a83360",12)]
+for rel,size,sha,count in RECEIPTS:
+ s=parse(read({"path":str(ROOT/"execution-receipts-followup-v1/R1-final-original-executions-and-publication-review"/rel),"bytes":size,"sha256":sha}))
+ assert s["head"]==HEAD and s["tree"]==TREE and s["status"]=="passed" and s["errors"]==[] and s["source_before_after_verified"] is True
+ assert len(s["steps"])==count and all(type(x["exit"])is int and x["exit"]==0 for x in s["steps"])
+ if count==8:assert s["original_suite_result"]=="31 executed; OK; no skips" and s["tests_modified"] is False
+ else:assert type(s["lane_exit"])is int and s["lane_exit"]==0
+coverage=parse(read(inputs["coverage_receipt"]))
+# Actual successful independent coverage receipt fields are bound below before use.
+assert coverage["schema"]=="trnm-final-execution-payload-coverage-check-v1" and coverage["status"]=="COVERAGE_CONFIRMED" and coverage["coverage_confirmed"] is True
+assert coverage["final_manifest"]==spec["execution_manifest"] and all(v is True for v in coverage["checks"].values())
+assert coverage["pattern_source_sha256"]=="5c292f6554bbf1345d6e58a3c64cf9099230223fc9c70f217a575f6f20ee7368"
+assert coverage["checker"]=={"path":"/private/tmp/chain-prci-final-execution-coverage-checker-20261114-v1/check_final_execution_coverage_v2.py","bytes":23687,"sha256":"9f3a1370fdf50adccf6cecf2b33b5fe15e6b32d007a7bc7b87fb997ee11db21e"}
+ct=parse(read(inputs["coverage_terminal"]))
+assert ct["host"]=="mac" and ct["status"]["state"]=="exited" and type(ct["status"]["exit_code"])is int and ct["status"]["exit_code"]==0 and ct["output_complete"] is True and ct["status"]["output_complete"] is True and ct["status"]["capture_error"] is None
+out=bytes.fromhex(ct["bytes_hex"])
+assert hashlib.sha256(out).hexdigest()==ct["chunk_sha256"] and ct["text"].encode()==out
+assert ct["offset"]==0 and ct["next_offset"]==ct["available_end"]==ct["status"]["bytes_seen"]==ct["status"]["bytes_stored"]==len(out)
+assert ct["truncated_before_offset"]is False and ct["text_is_lossy"]is False and ct["utf8_pending"]is False
+observed=parse(out)
+assert observed["schema"]==coverage["schema"] and observed["status"]=="COVERAGE_CONFIRMED" and observed["summary"]==inputs["coverage_receipt"]
+driver=ROOT/"publish_followup_candidate_execution_archive_v2.py"
+raw=read({"path":str(driver),"bytes":73492,"sha256":"0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2"})
+assert spec["publisher_sha256"]=="0d0a9153f6a0f8aed7201afc77ba52fd2e6ea36009b155ce24d2e59cf1caf0e2"
+E=ROOT/"R1-publication-launch-inputs-v1";E.mkdir(mode=0o700,exist_ok=False)
+def save(path,data):
+ with path.open("xb")as f:f.write(data);f.flush();os.fsync(f.fileno())
+ assert path.read_bytes()==data
+ return {"path":str(path),"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()}
+save(E/"producer.py",sys.argv[1].encode());save(E/"inputs.json",(json.dumps(inputs,indent=2,sort_keys=True)+"\n").encode())
+pin=save(ROOT/"followup-publication-spec-2a8646-v1.json",(json.dumps(spec,indent=2,sort_keys=True)+"\n").encode())
+print(json.dumps({"publication_spec":pin,"candidate":HEAD,"archive_tag":spec["archive_tag"],"normal_two_ref_atomic_publication":True,"main_merge_or_branch_deletion":False}),flush=True)
+sys.argv=[str(driver),"--spec",pin["path"],"--spec-sha256",pin["sha256"]]
+exec(compile(raw,str(driver),"exec",optimize=0),{"__name__":"__main__","__file__":str(driver)})

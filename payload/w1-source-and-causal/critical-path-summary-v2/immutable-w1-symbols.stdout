@@ -1,0 +1,52 @@
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs:303:pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:99:pub enum VerificationProgress {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:481:pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:494:        VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:571:pub fn verify_full_limb(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:586:pub fn verify_full_limb_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:599:        VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:679:    FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:859:        VerificationKernel::FullLimb => {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:878:            if matches!(kernel, VerificationKernel::FullLimb) {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:890:        | VerificationKernel::FullLimb
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:1505:            VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:1569:            VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:1654:            VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:1712:                    VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:2707:            VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs:127:    pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs:108:    pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:22:    FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:225:            Arithmetic::FullLimb => {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:351:            for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:404:            let specialized = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:407:            let general = Task::with_rank_preparation(&a, &b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:486:            assert!(Task::with_rank_one_preparation(a, b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:489:            let general = Task::with_rank_preparation(a, b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:493:                Task::new(a, b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:507:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:540:        let rank = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:543:        let dense = Task::new(&a, &b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:597:        let rank = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:661:                for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:693:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:732:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:787:        let task = Task::new(&zero, &zero, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:834:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:877:            for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:911:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs:935:        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs:223:            let actual = Task::with_rank_preparation(a, b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs:227:                Task::new(a, b, Arithmetic::FullLimb)
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs:265:                for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs:290:        let task = Task::with_rank_preparation(&a, &b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs:291:        let dense = Task::new(&a, &b, Arithmetic::FullLimb).unwrap();
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs:172:    pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs:255:        super::VerificationKernel::FullLimb,
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs:111:    pub fn verify_with_progress<E>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs:297:    pub fn verify_with_progress<E: From<ArchiveError>>(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store.rs:1030:pub(crate) struct WorkCheckedPacket {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store.rs:1052:impl WorkCheckedPacket {
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store.rs:1200:    pub(crate) fn verify_with_progress(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs:138:    fn verify_full_generation(
+2a86462a1ab20c68151719ba4635e3c294391e64:trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs:15:    pub(crate) fn verify_with_progress(

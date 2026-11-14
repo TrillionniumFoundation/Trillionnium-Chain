@@ -1,6 +1,0 @@
-tree d61a69d3433db127019924d269bf25ded3aecf60
-parent 6cdbf9551aae1754e489773bac29bc0598e20a9b
-author Tomasrgbsf <tomasbraynt@gmail.com> 1790669347 +0800
-committer Tomasrgbsf <tomasbraynt@gmail.com> 1790669347 +0800
-
-fix(M11): bind evaluation controls, partitions and service consent

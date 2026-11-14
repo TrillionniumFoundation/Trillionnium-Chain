@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "HTTP_status_unparsed": true,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 2.453372,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347",
+  "exit": 0,
+  "finished_at": "2026-11-14T15:20:24.488412+00:00",
+  "label": "job-132475258347-metadata",
+  "method": "GET",
+  "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258347",
+  "overall_deadline_seconds": 300,
+  "started_at": "2026-11-14T15:20:22.035046+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 2097152,
+  "stdout": {
+    "bytes": 6097,
+    "path": "/private/tmp/chain-R1-native-priorities-history-log-review-20261114-v1/job-132475258347-metadata.stdout",
+    "sha256": "f58d644a9fd4cc596c5d62af6f9df8aab94e2e8beebe49594b486b7f97fa9068"
+  },
+  "stdout_cap_bytes": 2097152,
+  "termination_reason": null,
+  "timeout_seconds": 300
+}

@@ -1,0 +1,613 @@
+{
+  "N2_R1_required_workflow_identical": true,
+  "W1_workflow_path": ".github/workflows/pon-w1-work-security.yml",
+  "diagnosis": "Same workflow/ref group is occupied by old N2; R1 pending has no jobs. Timing is inferred from original job timeout, not a guaranteed future workflow completion.",
+  "errors": [],
+  "mutations": false,
+  "network_GETs": 3,
+  "new_failure_jobs": [
+    {
+      "completed_at": "2026-11-14T14:28:08Z",
+      "conclusion": "failure",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "id": 132475259337,
+      "name": "W1 fresh challenge service (x64, head)",
+      "run_attempt": 1,
+      "run_id": 43604217632,
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-14T14:19:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-14T14:19:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:04Z",
+          "conclusion": "success",
+          "name": "Checkout exact observed source",
+          "number": 2,
+          "started_at": "2026-11-14T14:19:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:04Z",
+          "conclusion": "skipped",
+          "name": "Reproduce the frozen integration-push source",
+          "number": 3,
+          "started_at": "2026-11-14T14:20:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:09Z",
+          "conclusion": "success",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-14T14:20:04Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:17Z",
+          "conclusion": "success",
+          "name": "Install original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-14T14:20:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:42Z",
+          "conclusion": "success",
+          "name": "Run refusal controls for original Host and fresh successor",
+          "number": 6,
+          "started_at": "2026-11-14T14:20:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:00Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-14T14:20:42Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:05Z",
+          "conclusion": "success",
+          "name": "Verify observed source after execution",
+          "number": 8,
+          "started_at": "2026-11-14T14:28:00Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:05Z",
+          "conclusion": "skipped",
+          "name": "Preserve this lane's actual push source context",
+          "number": 9,
+          "started_at": "2026-11-14T14:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:06Z",
+          "conclusion": "success",
+          "name": "Retain both service outcomes and original Host evidence",
+          "number": 10,
+          "started_at": "2026-11-14T14:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:06Z",
+          "conclusion": "success",
+          "name": "Post Checkout exact observed source",
+          "number": 20,
+          "started_at": "2026-11-14T14:28:06Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:07Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "started_at": "2026-11-14T14:28:06Z",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "completed_at": "2026-11-14T14:28:27Z",
+      "conclusion": "failure",
+      "head_sha": "2a86462a1ab20c68151719ba4635e3c294391e64",
+      "id": 132475258996,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 43604217632,
+      "started_at": "2026-11-14T14:19:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-11-14T14:19:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-11-14T14:19:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:05Z",
+          "conclusion": "success",
+          "name": "Checkout exact observed source",
+          "number": 2,
+          "started_at": "2026-11-14T14:19:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:05Z",
+          "conclusion": "skipped",
+          "name": "Reproduce the frozen integration-push source",
+          "number": 3,
+          "started_at": "2026-11-14T14:20:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:11Z",
+          "conclusion": "success",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-14T14:20:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:19Z",
+          "conclusion": "success",
+          "name": "Install original pinned compiler",
+          "number": 5,
+          "started_at": "2026-11-14T14:20:11Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:20:43Z",
+          "conclusion": "success",
+          "name": "Run refusal controls for original Host and fresh successor",
+          "number": 6,
+          "started_at": "2026-11-14T14:20:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:19Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-14T14:20:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:24Z",
+          "conclusion": "success",
+          "name": "Verify observed source after execution",
+          "number": 8,
+          "started_at": "2026-11-14T14:28:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:24Z",
+          "conclusion": "skipped",
+          "name": "Preserve this lane's actual push source context",
+          "number": 9,
+          "started_at": "2026-11-14T14:28:24Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:26Z",
+          "conclusion": "success",
+          "name": "Retain both service outcomes and original Host evidence",
+          "number": 10,
+          "started_at": "2026-11-14T14:28:24Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:26Z",
+          "conclusion": "success",
+          "name": "Post Checkout exact observed source",
+          "number": 20,
+          "started_at": "2026-11-14T14:28:26Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-14T14:28:26Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "started_at": "2026-11-14T14:28:26Z",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "old_N2_jobs_source": {
+    "bytes": 85801,
+    "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/dependent-and-controls-v1/summary.json",
+    "sha256": "c7e6b6cce928898eb83fe39a66010b3ffe4b0a6986afc8d76d216c957a4cb5e4"
+  },
+  "old_nonterminal_jobs": [
+    {
+      "active_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T12:57:00Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+      "id": 132453107096,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "rust-baseline shard (runtime)",
+      "nominal_job_deadline": "2026-11-14T15:51:36+00:00",
+      "original_job_timeout_minutes": 180,
+      "run_attempt": 1,
+      "run_id": 43588788281,
+      "runner_name": "GitHub Actions 1000143744",
+      "started_at": "2026-11-14T12:51:36Z",
+      "status": "in_progress"
+    },
+    {
+      "active_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T12:56:08Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+      "id": 132453107166,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "prospective Rust shard (quality)",
+      "nominal_job_deadline": "2026-11-14T15:51:36+00:00",
+      "original_job_timeout_minutes": 180,
+      "run_attempt": 1,
+      "run_id": 43588788281,
+      "runner_name": "GitHub Actions 1000143747",
+      "started_at": "2026-11-14T12:51:36Z",
+      "status": "in_progress"
+    },
+    {
+      "active_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T12:55:33Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+      "id": 132453107168,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "prospective Rust shard (runtime)",
+      "nominal_job_deadline": "2026-11-14T15:51:36+00:00",
+      "original_job_timeout_minutes": 180,
+      "run_attempt": 1,
+      "run_id": 43588788281,
+      "runner_name": "GitHub Actions 1000143742",
+      "started_at": "2026-11-14T12:51:36Z",
+      "status": "in_progress"
+    },
+    {
+      "active_steps": [
+        {
+          "completed_at": null,
+          "conclusion": null,
+          "name": "Run retained Rust shard",
+          "number": 9,
+          "started_at": "2026-11-14T12:56:56Z",
+          "status": "in_progress"
+        }
+      ],
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+      "id": 132453107234,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "rust-baseline shard (quality)",
+      "nominal_job_deadline": "2026-11-14T15:51:36+00:00",
+      "original_job_timeout_minutes": 180,
+      "run_attempt": 1,
+      "run_id": 43588788281,
+      "runner_name": "GitHub Actions 1000143748",
+      "started_at": "2026-11-14T12:51:36Z",
+      "status": "in_progress"
+    }
+  ],
+  "old_run": {
+    "actor": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+      "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+      "followers_url": "https://api.github.com/users/ProfHepta/followers",
+      "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/ProfHepta",
+      "id": 102159240,
+      "login": "ProfHepta",
+      "node_id": "U_kgDOBhbTiA",
+      "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+      "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+      "repos_url": "https://api.github.com/users/ProfHepta/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/ProfHepta",
+      "user_view_type": "public"
+    },
+    "conclusion": null,
+    "created_at": "2026-11-14T11:10:50Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "096c6b5f9b952c49389fd975515744074ba61317",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43588788281",
+    "id": 43588788281,
+    "name": "trnm-required-baseline",
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "pull_requests": [
+      {
+        "base": {
+          "ref": "main",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        },
+        "head": {
+          "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "2a86462a1ab20c68151719ba4635e3c294391e64"
+        },
+        "id": 5225636007,
+        "number": 847,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      }
+    ],
+    "run_attempt": 1,
+    "run_started_at": "2026-11-14T11:10:50Z",
+    "status": "in_progress",
+    "triggering_actor": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+      "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+      "followers_url": "https://api.github.com/users/ProfHepta/followers",
+      "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/ProfHepta",
+      "id": 102159240,
+      "login": "ProfHepta",
+      "node_id": "U_kgDOBhbTiA",
+      "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+      "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+      "repos_url": "https://api.github.com/users/ProfHepta/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/ProfHepta",
+      "user_view_type": "public"
+    },
+    "updated_at": "2026-11-14T13:00:11Z",
+    "workflow_id": 345677268
+  },
+  "schema": "trnm-R1-required-queue-exact-old-and-failure-observation-v1",
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43588788281"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.448,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.602155+00:00",
+      "label": "N2-run-43588788281-metadata",
+      "started_at": "2026-11-14T14:32:41.154160+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-run-43588788281-metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 17155,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-run-43588788281-metadata.stdout",
+        "sha256": "0d18ba5d00d228a5c2392df41cc516e42c99b7ee58b37dc46761b6194a1a3254"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475259337"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.793,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.947178+00:00",
+      "label": "R1-W1-head-job-132475259337",
+      "started_at": "2026-11-14T14:32:41.154646+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-head-job-132475259337.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4635,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-head-job-132475259337.stdout",
+        "sha256": "50ae37bdc25a423fc92930fee936d637b77add0dec659887afa7afdea668ced9"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2026-03-10",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132475258996"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.748,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.903752+00:00",
+      "label": "R1-W1-merge-job-132475258996",
+      "started_at": "2026-11-14T14:32:41.155708+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-merge-job-132475258996.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4649,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-merge-job-132475258996.stdout",
+        "sha256": "827b8e99ea0eca97eeaf74f36f67b86ccb00d83ba4a97d6414d3c779df225954"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "cat-file",
+        "blob",
+        "096c6b5f9b952c49389fd975515744074ba61317:.github/workflows/trnm-required-baseline.yml"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.032,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.635734+00:00",
+      "label": "N2-required-workflow",
+      "started_at": "2026-11-14T14:32:42.604248+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-required-workflow.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 35462,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/N2-required-workflow.stdout",
+        "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+      },
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "grep",
+        "-n",
+        "-F",
+        "W1 fresh challenge service",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--",
+        ".github/workflows"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.022,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.659322+00:00",
+      "label": "R1-W1-fresh-workflow-match",
+      "started_at": "2026-11-14T14:32:42.636883+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow-match.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 153,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow-match.stdout",
+        "sha256": "7ea40956c443f6e1747cc95a559494e0a4733d2ccc04b7dfab492fa285693077"
+      },
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "cat-file",
+        "blob",
+        "2a86462a1ab20c68151719ba4635e3c294391e64:.github/workflows/pon-w1-work-security.yml"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 0.03,
+      "exit": 0,
+      "finished_at": "2026-11-14T14:32:42.993537+00:00",
+      "label": "R1-W1-fresh-workflow",
+      "started_at": "2026-11-14T14:32:42.964006+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 40413,
+        "path": "/private/tmp/chain-R1-required-queue-diagnosis-20261114-v1/exact-old-run-and-new-failures-v1/R1-W1-fresh-workflow.stdout",
+        "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+      },
+      "timed_out": false,
+      "timeout_seconds": 30
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+#!/opt/homebrew/bin/python3
+"""Exact two-ref guard; an omitted, duplicate, no-op, or stale update fails."""
+import datetime, hashlib, json, os, pathlib, re, stat, subprocess, sys
+EXPECTED_SHA = "3005d3e4b22dbdd6d241b02bf6d17f53455574bcffea80e0d9a20d9295aae3a5"
+EXPECTED_BYTES = 87261
+HERE = pathlib.Path(__file__).parent
+SOURCE = pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
+def need(ok, message):
+    if not ok:
+        raise ValueError(message)
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def read_fixed(path, maximum):
+    need(path.resolve(strict=True) == path, "noncanonical hook input")
+    old = path.lstat()
+    identity = lambda s: (s.st_dev, s.st_ino, s.st_mode, s.st_nlink,
+                          s.st_size, s.st_mtime_ns, s.st_ctime_ns)
+    need(stat.S_ISREG(old.st_mode) and old.st_size <= maximum, "invalid hook input")
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, "rb") as stream:
+        need(identity(os.fstat(stream.fileno())) == identity(old), "hook input replaced")
+        raw = stream.read(old.st_size + 1)
+        need(identity(os.fstat(stream.fileno())) == identity(old), "hook input changed")
+    need(identity(path.lstat()) == identity(old) and len(raw) == old.st_size,
+         "hook input path changed")
+    return raw
+def pairs(items):
+    value = {}
+    for key, item in items:
+        need(key not in value, "duplicate JSON field")
+        value[key] = item
+    return value
+receipt_path = HERE / "receipt.json"
+receipt = {"schema": "trnm-followup-publication-exact-prepush-v1",
+           "status": "HOLD", "started_at": now(), "argv": list(sys.argv),
+           "commands": [], "errors": [], "updates": None}
+with receipt_path.open("xb") as stream:
+    stream.write((json.dumps(receipt, sort_keys=True) + "\n").encode())
+def save():
+    temporary = HERE / "receipt.next"
+    with temporary.open("xb") as stream:
+        stream.write((json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode())
+    os.replace(temporary, receipt_path)
+def command(label, argv):
+    try:
+        q = subprocess.run(argv, cwd=SOURCE, stdin=subprocess.DEVNULL,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           timeout=90, check=False)
+    except subprocess.TimeoutExpired as error:
+        q = subprocess.CompletedProcess(argv, 124, error.stdout or b"", error.stderr or b"")
+    except OSError as error:
+        q = subprocess.CompletedProcess(argv, 127, b"", str(error).encode())
+    row = {"label": label, "argv": argv, "exit": q.returncode, "timeout_seconds": 90}
+    for channel in ("stdout", "stderr"):
+        raw = getattr(q, channel)
+        path = HERE / (label + "." + channel)
+        with path.open("xb") as stream:
+            stream.write(raw)
+        row[channel + "_path"] = str(path)
+        row[channel + "_bytes"] = len(raw)
+        row[channel + "_sha256"] = sha(raw)
+    receipt["commands"].append(row)
+    save()
+    return q
+def advertised(raw, prefix=None, allowed=None):
+    result = {}
+    for line in raw.decode("ascii").splitlines():
+        values = line.split()
+        need(len(values) == 2, "malformed advertised ref")
+        oid, ref = values
+        need(re.fullmatch(r"[0-9a-f]{40}", oid) and ref not in result,
+             "invalid or duplicate advertised ref")
+        if prefix is not None:
+            need(ref.startswith(prefix), "unexpected ref namespace")
+        if allowed is not None:
+            need(ref in allowed, "unexpected tag advertisement")
+        result[ref] = oid
+    return result
+try:
+    need(sys.flags.optimize == 0, "optimized Python is forbidden")
+    need(pathlib.Path.cwd().resolve(strict=True) == SOURCE, "unexpected hook cwd")
+    raw = read_fixed(HERE / "expected.json", 256 * 1024)
+    need(len(raw) == EXPECTED_BYTES and sha(raw) == EXPECTED_SHA, "hook expectation differs")
+    spec = json.loads(raw, object_pairs_hook=pairs)
+    need(set(spec) == {"origin", "remote_heads", "old_archive_tags", "new_tag_ref", "updates"},
+         "hook expectation field set differs")
+    self_raw = read_fixed(pathlib.Path(__file__), 64 * 1024)
+    receipt["hook_sha256"] = sha(self_raw)
+    receipt["expected_sha256"] = EXPECTED_SHA
+    need(len(sys.argv) == 3 and sys.argv[1:] == ["origin", spec["origin"]],
+         "unexpected actual remote name or URL")
+    incoming = sys.stdin.buffer.read(65537)
+    need(len(incoming) <= 65536, "too much pre-push input")
+    rows = incoming.decode("ascii").splitlines()
+    need(len(rows) == 2, "hook requires exactly two actual wire updates")
+    seen = {}
+    for line in rows:
+        values = line.split()
+        need(len(values) == 4, "malformed pre-push tuple")
+        local_ref, new, remote_ref, old = values
+        need(remote_ref not in seen
+             and re.fullmatch(r"[0-9a-f]{40}", new)
+             and re.fullmatch(r"[0-9a-f]{40}", old), "duplicate or malformed update")
+        seen[remote_ref] = {"local_ref": local_ref, "new": new, "old": old}
+    receipt["updates"] = seen
+    need(seen == spec["updates"], "actual advertised old/new/local ref set differs")
+    push_url = command("push-url", ["git", "remote", "get-url", "--push", "--all", "origin"])
+    fetch_url = command("fetch-url", ["git", "remote", "get-url", "--all", "origin"])
+    # Both ref observations execute independently. They are observations, not
+    # locks on main/old archive/other refs that this transaction does not update.
+    heads = command("heads", ["git", "ls-remote", "--heads", "origin"])
+    refs = sorted(spec["old_archive_tags"]) + [spec["new_tag_ref"], spec["new_tag_ref"] + "^{}"]
+    tags = command("tags", ["git", "ls-remote", "origin", *refs])
+    need(push_url.returncode == fetch_url.returncode == heads.returncode == tags.returncode == 0,
+         "fresh hook remote observation failed")
+    need(push_url.stdout.decode().splitlines() == [spec["origin"]]
+         and fetch_url.stdout.decode().splitlines() == [spec["origin"]],
+         "origin must resolve to exactly one fixed fetch and push URL")
+    wanted_heads = {"refs/heads/" + name: oid for name, oid in spec["remote_heads"].items()}
+    need(advertised(heads.stdout, prefix="refs/heads/") == wanted_heads,
+         "complete remote heads changed")
+    need(advertised(tags.stdout, allowed=set(refs)) == spec["old_archive_tags"],
+         "old archive changed or new tag appeared")
+    receipt["status"] = "passed"
+except Exception as error:
+    receipt["errors"].append({"type": type(error).__name__, "message": str(error)})
+finally:
+    receipt["finished_at"] = now()
+    save()
+sys.stderr.write("followup-prepush-" + receipt["status"] + "\n")
+sys.stderr.flush()
+sys.exit(0 if receipt["status"] == "passed" else 1)
