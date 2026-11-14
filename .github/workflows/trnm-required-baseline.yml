@@ -1,346 +1,166 @@
+# Separate annotated diagnostic tag; never required pull-request qualification.
 name: trnm-required-baseline
+run-name: H5DF Witness D2 phases (diagnostic only)
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: portable-${{ github.workflow }}-${{ github.ref }}
-  # Preserve running head/merge evidence when a successor enters the queue.
+  group: diagnostic-pq-witness-d2-phases-${{ github.ref }}
   cancel-in-progress: false
-env:
-  CI: "true"
-  CARGO_INCREMENTAL: "0"
-  CARGO_BUILD_JOBS: "2"
-  RUST_TEST_THREADS: "1"
-  CARGO_TERM_COLOR: never
-  PYTHONDONTWRITEBYTECODE: "1"
-  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 jobs:
-  repository-truth:
-    name: repository-truth
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Check PQ provider CI wiring and failure controls
-        run: python3 scripts/ci/test_pq_provider_ci.py
-      - name: Check original public Host CI ownership and failure controls
-        run: python3 scripts/ci/test_from_zero_host_ci.py
-      - name: Install isolated runtime material verifier dependency
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
-          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
-          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Run actual repository-truth checks
-        run: bash scripts/ci/ci_job.sh repository-truth
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-cost:
-    name: cross-arch-cost (${{ matrix.arch }})
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 155
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-    env:
-      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
-      - name: Install matching native formatter
-        run: rustup component add --toolchain 1.95.0 rustfmt
-      - name: Execute native release setup and repeated-search costs
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
-      - name: Execute native zero-matrix locality costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
-      - name: Execute native one-zero rank-one locality costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
-      - name: Execute native fixed maintenance producer and preparation costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
-      - name: Execute native legal and late-rejection verifier costs
-        if: always()
-        run: python3 scripts/pon_work_rejection_report.py --run --out "$TRNM_CI_RECEIPT_DIR/work-rejection"
-      - name: Execute exact native from-zero service controls
-        if: always()
-        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain native cost successes and failures
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: cost-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-w1-reuse-v3:
-    name: W1 actual reuse V3 (${{ matrix.arch }}, ${{ matrix.source }})
-    if: github.event_name == 'pull_request'
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 155
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x64, arm64]
-        source: [head, prospective-merge]
-        include:
-          - arch: x64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-    env:
-      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
-      TRNM_COST_SOURCE_KIND: ${{ matrix.source }}
-      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify V3 exact source and ordered merge before execution
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
-          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
-            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
-          fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-before.json"
-      - name: Check original repository boundary before native V3 build
-        run: bash scripts/project-preflight.sh --audit
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
-      - name: Install matching native formatter
-        run: rustup component add --toolchain 1.95.0 rustfmt
-      - name: Execute the complete native W1 actual reuse V3 grid
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
-      - name: Verify V3 exact source and ordered merge after execution
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
-          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
-            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
-          fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-after.json"
-      - name: Retain V3 costs including all failed observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: w1-reuse-v3-${{ matrix.source }}-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-cost-consistency:
-    name: cross-arch-cost-consistency
-    needs: cross-arch-cost
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both actual cost observations from this run
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: cost-*-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/cost-inputs/
-          merge-multiple: false
-      - name: Check actual streams and source identity without a speed threshold
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-comparison.json"
-      - name: Check zero-matrix streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-zero-locality-comparison.json" --suite zero-locality --zero-version 2
-      - name: Check one-zero rank-one streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
-      - name: Check fixed maintenance streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-maintenance-comparison.json" --suite maintenance-paired
-      - name: Check actual rejection stages and paired native architectures
-        if: always()
-        run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$RUNNER_TEMP/ci-observations/work-rejection-comparison"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain comparison result including missing or failed architectures
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: cost-consistency-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  protocol-contract:
-    name: protocol-contract
-    runs-on: ubuntu-24.04
-    # Hosted orchestration only; native command and business budgets are unchanged.
-    timeout-minutes: 240
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install isolated conformance-only Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-contract-env"
-          "$RUNNER_TEMP/pon-contract-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-contract-env/bin" >> "$GITHUB_PATH"
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run actual protocol-contract checks
-        run: bash scripts/ci/ci_job.sh protocol-contract
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  fuzz-smoke:
-    name: fuzz-smoke
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install pinned coverage-guided fuzz tools
-        run: bash scripts/ci/install_ci_tools.sh fuzz
-      - name: Run actual fuzz-smoke checks
-        run: bash scripts/ci/ci_job.sh fuzz-smoke
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  rust-baseline-shards:
-    name: rust-baseline shard (${{ matrix.shard }})
+  pq-witness-phase-diagnostic:
+    name: PQ Witness endpoint phase diagnostic (not qualification)
     runs-on: ubuntu-24.04
     timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [runtime, quality]
+    permissions:
+      contents: read
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONOPTIMIZE: "0"
+      TRNM_EXPECTED_SOURCE_SHA: "cfa3be3b34c817c269a8e2fdc971f442de63ccc6"
     steps:
-      - name: Checkout exact candidate
+      - name: Checkout exact diagnostic subject D2
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          ref: "cfa3be3b34c817c269a8e2fdc971f442de63ccc6"
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
+      - name: Bind actual tag control and runner-local subject checkout
+        shell: bash
+        env:
+          GIT_NO_LAZY_FETCH: "1"
+          GIT_NO_REPLACE_OBJECTS: "1"
+          GIT_OPTIONAL_LOCKS: "0"
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 -B - <<'TRNM_CONTROL_SUBJECT'
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import stat
+          import subprocess
+
+          REPO = "TrillionniumFoundation/Trillionnium-Chain"
+          WORKFLOW = ".github/workflows/trnm-required-baseline.yml"
+          BASE = "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+          PARENT = "e3a7de44e1c861a4ee60d622c49e4aa60d56392d"
+          PARENT_TREE = "adcd6d3f4ec496de17803c2e4995fb3ac8249eaf"
+          D = "cfa3be3b34c817c269a8e2fdc971f442de63ccc6"
+          TREE = "d6754d6d6f2d96cf8869a34e66dd7f88a22ef94d"
+          TAG = "refs/tags/diagnostic/h5df-pq-witness-phases-d2-20261114-v1"
+          BRANCH = "fix/chain-pq-witness-d2-phase-diagnostic-20261114"
+          PATCH_SHA256 = "2a5bbaba04e6433dd6b9b688939f4f2db4d73efd6cdc69ab26b96564af725cb4"
+          ORIGINAL_DIAGNOSTIC_PATCH_SHA256 = "df00841d5d4d8b09f7c798d0e40ac235b8f32d4ecc3cd84d688db2660974c157"
+
+          def require(ok, message):
+              if not ok:
+                  raise ValueError(message)
+
+          def pin(path):
+              raw = path.read_bytes()
+              return {"path": str(path), "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+
+          context = {name: os.environ.get(name) for name in (
+              "GITHUB_ACTIONS", "GITHUB_EVENT_NAME", "GITHUB_REPOSITORY", "GITHUB_REF", "GITHUB_SHA",
+              "GITHUB_WORKFLOW_REF", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_JOB")}
+          require(context["GITHUB_ACTIONS"] == "true" and context["GITHUB_EVENT_NAME"] == "workflow_dispatch", "real dispatch context")
+          require(context["GITHUB_REPOSITORY"] == REPO and context["GITHUB_REF"] == TAG, "exact repository and tag")
+          require(context["GITHUB_WORKFLOW_REF"] == REPO + "/" + WORKFLOW + "@" + TAG, "registered workflow at tag")
+          require(context["GITHUB_JOB"] == "pq-witness-phase-diagnostic", "diagnostic job")
+          require(re.fullmatch("[0-9a-f]{40}", context["GITHUB_SHA"] or "") and context["GITHUB_SHA"] != D, "actual control commit")
+          require(all(re.fullmatch("[1-9][0-9]*", context[k] or "") for k in ("GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT")), "actual run context")
+          source = Path(os.environ["GITHUB_WORKSPACE"]).resolve(strict=True)
+          temporary = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          require(not temporary.is_relative_to(source), "runner temporary root outside full checkout")
+          root = temporary / "h5df-pq-witness-d2-phase-diagnostic-v1"
+          root.mkdir(mode=0o700)
+          require(stat.S_IMODE(root.stat().st_mode) == 0o700 and root.stat().st_uid == os.geteuid(), "private owned output")
+          out = root / "control"
+          out.mkdir(mode=0o700)
+          steps = []
+          def command(label, argv, expected=0):
+              began = dt.datetime.now(dt.timezone.utc).isoformat()
+              p = subprocess.run(argv, cwd=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=False)
+              require(len(p.stdout) <= 16 * 1024 * 1024 and len(p.stderr) <= 65536, "bounded metadata")
+              row = {"label": label, "argv": argv, "cwd": str(source), "started_at": began,
+                     "finished_at": dt.datetime.now(dt.timezone.utc).isoformat(), "exit_code": p.returncode}
+              for stream, data in (("stdout", p.stdout), ("stderr", p.stderr)):
+                  path = out / (label + "." + stream)
+                  with path.open("xb") as f:
+                      f.write(data)
+                  row[stream] = pin(path)
+              steps.append(row)
+              with (out / (label + ".step.json")).open("x") as f:
+                  json.dump(row, f, indent=2); f.write("\n")
+              require(p.returncode == expected, label)
+              return p.stdout
+
+          record = {"schema": "trnm-pq-witness-diagnostic-control-subject-v1", "status": "HOLD",
+                    "actual_github": context, "base": BASE, "diagnostic_parent": PARENT, "diagnostic_parent_tree": PARENT_TREE, "subject": D, "subject_tree": TREE,
+                    "namespace_correction_patch_sha256": PATCH_SHA256, "original_diagnostic_patch_sha256": ORIGINAL_DIAGNOSTIC_PATCH_SHA256, "local_branch": BRANCH,
+                    "qualification": False, "production_activation": False, "remote_ref_mutations": False}
+          try:
+              require(Path(command("root", ["git", "rev-parse", "--show-toplevel"]).decode().strip()).resolve() == source, "full checkout root")
+              require(command("control-parents", ["git", "rev-list", "--parents", "-n", "1", context["GITHUB_SHA"]]).decode().split() == [context["GITHUB_SHA"], D], "single-parent control")
+              record["actual_control_tree"] = command("control-tree", ["git", "rev-parse", context["GITHUB_SHA"] + "^{tree}"]).decode().strip()
+              require(command("control-diff", ["git", "diff", "--name-only", D, context["GITHUB_SHA"]]).decode().splitlines() == [WORKFLOW], "control changes only workflow")
+              require(command("subject-parents", ["git", "rev-list", "--parents", "-n", "1", D]).decode().split() == [D, PARENT], "single-parent D2 diagnostic source")
+              require(command("original-diagnostic-parents", ["git", "rev-list", "--parents", "-n", "1", PARENT]).decode().split() == [PARENT, BASE], "D sole parent H5DF")
+              require(command("original-diagnostic-tree", ["git", "rev-parse", PARENT + "^{tree}"]).decode().strip() == PARENT_TREE, "fixed original D tree")
+              require(command("namespace-paths", ["git", "diff", "--name-only", PARENT, D]).decode().splitlines() == [
+                  "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                  "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs"], "only two namespace correction paths")
+              require(command("subject-tree", ["git", "rev-parse", D + "^{tree}"]).decode().strip() == TREE, "actual diagnostic tree")
+              require(command("subject-head-before", ["git", "rev-parse", "HEAD"]).decode().strip() == D, "explicit D2 checkout")
+              require(not command("subject-clean-before", ["git", "status", "--porcelain=v1", "--untracked-files=all"]), "clean subject checkout")
+              flags = command("subject-index-before", ["git", "ls-files", "-v", "-z"]).split(b"\0")
+              require(all(row.startswith(b"H ") for row in flags if row), "ordinary tracked index")
+              boundary = json.loads((source / "PROJECT_BOUNDARY.json").read_bytes())
+              require(BRANCH not in boundary["branch"]["protected"] and re.fullmatch(boundary["branch"]["development_regex"], BRANCH), "original development branch policy")
+              command("local-branch-absent", ["git", "show-ref", "--verify", "--quiet", "refs/heads/" + BRANCH], expected=1)
+              # Only this fresh runner's local development ref is created. There is no push.
+              command("local-development-checkout", ["git", "switch", "--create", BRANCH, D])
+              require(command("subject-head", ["git", "rev-parse", "HEAD"]).decode().strip() == D, "subject checkout")
+              require(command("subject-tree-after", ["git", "rev-parse", "HEAD^{tree}"]).decode().strip() == TREE, "subject tree after switch")
+              require(command("local-branch", ["git", "branch", "--show-current"]).decode().strip() == BRANCH, "local development branch")
+              require(not command("subject-clean", ["git", "status", "--porcelain=v1", "--untracked-files=all"]), "clean subject")
+              flags = command("subject-index", ["git", "ls-files", "-v", "-z"]).split(b"\0")
+              require(all(row.startswith(b"H ") for row in flags if row), "ordinary subject index")
+              record["status"] = "subject_checked_out"
+          finally:
+              record["steps"] = steps
+              record["finished_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
+              with (root / "control-subject.json").open("x") as f:
+                  json.dump(record, f, indent=2); f.write("\n")
+          TRNM_CONTROL_SUBJECT
+      - name: Verify diagnostic source before setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json" > "$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1/source-before-setup.stdout" 2> "$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1/source-before-setup.stderr"
+      - name: Run original default project preflight before any builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_root="$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1"
+          set +e
+          bash scripts/project-preflight.sh > "$task_root/default-preflight-before-setup.stdout" 2> "$task_root/default-preflight-before-setup.stderr"
+          preflight_exit=$?
+          set -e
+          printf '%s\n' "$preflight_exit" > "$task_root/default-preflight-before-setup.exit"
+          exit "$preflight_exit"
       - name: Set isolated Cargo paths after runner allocation
         shell: bash
         run: |
@@ -361,278 +181,72 @@ jobs:
       - name: Prepare pinned OpenSSL 3.5.9 PQ provider
         shell: bash
         run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run retained Rust shard
-        run: python3 scripts/ci/rust_baseline_shards.py run --kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
-      - name: Verify source remained unchanged
+      - name: Restore exact external runner and closed-results collector
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 -B - <<'TRNM_WITNESS_HELPERS'
+          import base64,hashlib,json,os,stat,zlib
+          from pathlib import Path
+          directory=Path(os.environ["RUNNER_TEMP"])/'h5df-pq-witness-d2-phase-diagnostic-v1/helpers'
+          directory.mkdir(mode=0o700)
+          if directory.is_symlink() or stat.S_IMODE(directory.stat().st_mode)!=0o700 or directory.stat().st_uid!=os.geteuid(): raise ValueError("private owned helper directory")
+          entries=[{'name': 'run_endpoint_phase_diagnostic_v2.py', 'bytes': 12495, 'sha256': 'bfe19c0a758893e5b77c539b31124c19dfc3811efa34f8fdec7f20f76bb967ff', 'gzip_bytes': 4587, 'gzip_sha256': '360a6d97ad7bbc18ed5bbef9e1ca2c4239737542d0c2dd92b8c411f34d2d877c', 'gzip_base64': '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'}, {'name': 'collect_closed_phase_records.py', 'bytes': 10179, 'sha256': 'f006ec719faf662283d29017580c95b7aca974cbd3f2b0fb854eb065ad347e35', 'gzip_bytes': 3320, 'gzip_sha256': '7bd1bfe474ab6af98c9adab1ee77090f1a94ff1a11e535dbbd5b874bed49a74b', 'gzip_base64': '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'}]
+          proofs=[]
+          for item in entries:
+              packed=base64.b64decode(item["gzip_base64"],validate=True)
+              if len(packed)!=item["gzip_bytes"] or hashlib.sha256(packed).hexdigest()!=item["gzip_sha256"]: raise ValueError("gzip pin")
+              decoder=zlib.decompressobj(31)
+              raw=decoder.decompress(packed,item["bytes"]+1)
+              if (not decoder.eof or decoder.unused_data or decoder.unconsumed_tail or len(raw)!=item["bytes"]
+                  or hashlib.sha256(raw).hexdigest()!=item["sha256"]): raise ValueError("bounded exact helper bytes")
+              if Path(item["name"]).name!=item["name"]: raise ValueError("literal helper basename")
+              path=directory/item["name"]
+              fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+              with os.fdopen(fd,"wb") as f: f.write(raw);f.flush()
+              if path.read_bytes()!=raw: raise ValueError("helper readback")
+              proofs.append({"path":str(path),"bytes":len(raw),"sha256":item["sha256"],"gzip_bytes":item["gzip_bytes"],"gzip_sha256":item["gzip_sha256"]})
+          with (directory/"decoded-source-pins.json").open("x") as f:
+              json.dump({"schema":"trnm-diagnostic-embedded-source-pins-v1","files":proofs,"qualification":False},f,indent=2);f.write("\n")
+          TRNM_WITNESS_HELPERS
+      - name: Run unchanged endpoint selector with original debug workspace feature graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1/helpers/run_endpoint_phase_diagnostic_v2.py" --source "$GITHUB_WORKSPACE" --diagnostic-head "cfa3be3b34c817c269a8e2fdc971f442de63ccc6" --diagnostic-tree "d6754d6d6f2d96cf8869a34e66dd7f88a22ef94d" --output "$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1/run"
+      - name: Verify diagnostic source after execution or setup failure
         if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_root="$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1"
+          if [[ ! -d "$task_root" ]]; then
+            echo "HOLD: control-subject setup did not produce a private evidence root"
+            exit 1
+          fi
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$task_root/source-after-workflow.json" > "$task_root/source-after-workflow.stdout" 2> "$task_root/source-after-workflow.stderr"
+      - name: Collect only actual closed phase records without changing native status
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_root="$RUNNER_TEMP/h5df-pq-witness-d2-phase-diagnostic-v1"
+          if [[ ! -f "$task_root/run/run-receipt.json" || ! -f "$task_root/helpers/collect_closed_phase_records.py" ]]; then
+            echo "HOLD: no closed native run receipt; no phase facts or qualification"
+            if [[ -d "$task_root" ]]; then
+              printf '%s\n' '{"status":"HOLD","reason":"closed_run_receipt_or_collector_missing","qualification":false}' > "$task_root/collection-incomplete.json"
+            fi
+            exit 1
+          fi
+          python3 -B "$task_root/helpers/collect_closed_phase_records.py" --run-output "$task_root/run" --output "$task_root/closed-phase-facts.json" > "$task_root/collector.stdout" 2> "$task_root/collector.stderr"
+      - name: Preserve original failures and diagnostic observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: rust-observations-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-      - name: Retain lightweight exact Rust shard proof
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-shard-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: h5df-witness-d2-phase-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/ci-observations/rust-shard.json
-            ${{ runner.temp }}/ci-observations/rust-shard.sh
-          if-no-files-found: error
-          retention-days: 30
-  rust-baseline:
-    name: rust-baseline
-    needs: rust-baseline-shards
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    env:
-      TRNM_RUST_SHARD_RESULT: ${{ needs.rust-baseline-shards.result }}
-    steps:
-      - name: Checkout exact tested source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both current-run Rust shard observations
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: rust-shard-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*
-          path: ${{ runner.temp }}/rust-shards/
-          merge-multiple: false
-      - name: Require both successful exact-source Rust shards
-        if: always()
-        run: python3 scripts/ci/rust_baseline_shards.py check --kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain failed and successful Rust fan-in observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-fanin-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  prospective-rust-shards:
-    name: prospective Rust shard (${{ matrix.shard }})
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [runtime, quality]
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install pinned dependency auditor
-        run: bash scripts/ci/install_ci_tools.sh supply-chain
-      - name: Install isolated signed-state oracle Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-state-env"
-          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run retained Rust shard
-        run: python3 scripts/ci/rust_baseline_shards.py run --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-observations-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-      - name: Retain lightweight exact Rust shard proof
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-shard-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: |
-            ${{ runner.temp }}/ci-observations/rust-shard.json
-            ${{ runner.temp }}/ci-observations/rust-shard.sh
-          if-no-files-found: error
-          retention-days: 30
-  prospective-rust-baseline:
-    name: prospective-merge (rust-baseline)
-    needs: prospective-rust-shards
-    if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-      TRNM_RUST_SHARD_RESULT: ${{ needs.prospective-rust-shards.result }}
-    steps:
-      - name: Checkout exact tested source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both current-run Rust shard observations
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: rust-shard-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*
-          path: ${{ runner.temp }}/rust-shards/
-          merge-multiple: false
-      - name: Require both successful exact-source Rust shards
-        if: always()
-        run: python3 scripts/ci/rust_baseline_shards.py check --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain failed and successful Rust fan-in observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-fanin-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  external-evidence-contract:
-    name: external-evidence-contract
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install isolated evidence-replay Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-evidence-env"
-          "$RUNNER_TEMP/pon-evidence-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-evidence-env/bin" >> "$GITHUB_PATH"
-      - name: Run actual external-evidence-contract checks
-        run: bash scripts/ci/ci_job.sh external-evidence-contract
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  prospective-merge:
-    name: prospective-merge (${{ matrix.lane }})
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: ${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}
-    strategy:
-      fail-fast: false
-      matrix:
-        lane: [repository-truth, protocol-contract, fuzz-smoke, external-evidence-contract]
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact prospective merge
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify merge identity and exact ordered parents
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        if: matrix.lane == 'protocol-contract' || matrix.lane == 'fuzz-smoke' || matrix.lane == 'rust-baseline'
-        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install isolated conformance and evidence Python environment
-        if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-merge-env"
-          "$RUNNER_TEMP/pon-merge-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-merge-env/bin" >> "$GITHUB_PATH"
-      - name: Install pinned coverage-guided fuzz tools
-        if: matrix.lane == 'fuzz-smoke'
-        run: bash scripts/ci/install_ci_tools.sh fuzz
-      - name: Install pinned dependency auditor
-        if: matrix.lane == 'rust-baseline'
-        run: bash scripts/ci/install_ci_tools.sh supply-chain
-      - name: Check PQ provider CI wiring and failure controls
-        if: matrix.lane == 'repository-truth'
-        run: python3 scripts/ci/test_pq_provider_ci.py
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        if: matrix.lane == 'protocol-contract'
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Install isolated runtime material verifier dependency
-        if: matrix.lane == 'repository-truth'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
-          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
-          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Execute the same lane on the prospective merge
-        run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"
-      - name: Verify merge source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: merge-${{ matrix.lane }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
+            ${{ runner.temp }}/h5df-pq-witness-d2-phase-diagnostic-v1/
+            ${{ runner.temp }}/ci-observations/
           if-no-files-found: error
           retention-days: 30
