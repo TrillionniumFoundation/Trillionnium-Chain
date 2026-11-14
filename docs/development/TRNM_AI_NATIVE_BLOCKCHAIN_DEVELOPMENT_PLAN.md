@@ -14700,3 +14700,20 @@ workflow passes its installed rustup explicitly. These are synthetic orchestrati
 and source-preservation controls, not a new real Cargo requalification, SQLite
 operation, dependency provenance or public-service result. All qualification
 flags remain false; exact hosted native execution remains separately required.
+
+### 2026-11-14 current-process cgroup observation
+
+The 9f77f433 read-only observation and all original fourteen controls are retained.
+The current three source files exactly matched the original parent; all imported
+tip bytes remain exact, including six existing process-accounting tests and eight
+new cgroup controls. The rank reader records the calling process's unique visible
+cgroup2 mount, actual leaf and every visible ancestor, with bounded nonblocking
+regular-file reads and before/after membership and mount-table comparison.
+
+Ambiguous or shadowed mounts, noncanonical/overlong paths, missing values,
+device/identity changes, FIFO inputs and membership drift cannot become a complete
+observation. Root-view limits remain explicitly separate. Atomicity, effective
+quota, external namespace ancestry, child placement and consensus/model authority
+remain false. The original Linux controls run only synthetic namespace files and
+owned finite child processes; no rank campaign, Host provisioning, native service
+qualification or performance gate is executed by this port.

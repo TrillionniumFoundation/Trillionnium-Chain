@@ -1508,6 +1508,15 @@ SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS
 
 
+# A non-atomic cgroup observation is not a Host capability or an effective quota proof.
+CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'scripts/ci/public_host_ci_observation.py',
+    'scripts/ci/run_w1_rank_batch_v5.py',
+    'scripts/ci/test_run_w1_rank_batch_v5.py',
+))
+NATIVE_REQUIRED_PATHS |= CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
