@@ -932,6 +932,39 @@ class NativeDurableSchemaTests(unittest.TestCase):
                                        'continuous: '+owner+', pq_network: None,')
         return source
 
+    def test_selected_opener_requires_current_tls_endpoint_witness_guard(self):
+        self.extract(self.current)
+        guard = (
+            '        if let Some(policy) = owners.pq_network.as_deref() {\n'
+            '            ensure(\n'
+            '                !crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?\n'
+            '                    || (state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()),\n'
+            '                "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",\n'
+            '            )?;\n'
+            '        }\n'
+        )
+        # This exact rollback restores the old observation_only body. It must
+        # not become an accepted alternate current implementation.
+        rolled_back = self.replace_once(self.current, guard, '')
+        ignored_error = self.replace_once(
+            self.current, guard,
+            guard.replace('            ensure(', '            let _ = ensure(')
+                 .replace('            )?;', '            );'),
+        )
+        after_effect = self.replace_once(
+            rolled_back, '            fs::create_dir_all(path)?;',
+            '            fs::create_dir_all(path)?;\n' +
+            ''.join('    ' + line for line in guard.splitlines(keepends=True)),
+        )
+        for name, changed in (
+            ('old-body-rollback', rolled_back),
+            ('ignored-witness-refusal', ignored_error),
+            ('witness-check-after-namespace-effect', after_effect),
+        ):
+            with self.subTest(name=name), self.assertRaisesRegex(
+                    ValueError, 'durable backend selected implementation'):
+                self.extract(changed)
+
     def test_historical_three_variant_backend_keeps_exact_contract_and_bytes(self):
         sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
         from contract_wire import H

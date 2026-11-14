@@ -546,3 +546,33 @@ archive may retain this archive and the reviewed successor as separate parents;
 an older tag is never represented as capturing source added afterward.
 At this source checkpoint, main integration and the single-branch remote result
 are still uncompleted actions.
+
+## Public-readiness reader correction after the C0 external failures
+
+The two C0 external-evidence jobs reached the original 76-method readiness
+suite and reported 46 failures and 23 errors. Their actual first mismatch was
+the complete observation_only opener-body digest. The
+[readiness source review](../../evidence/public-readiness-selected-body-binding-20261114/README.md)
+preserves both complete hosted logs and the exact historical/current body
+comparison.
+
+Component a3495dab updates one independently reviewed digest. The only body
+difference is the already selected requirement for a TLS endpoint witness,
+checked before namespace effects; the M06 account-profile refusal remains
+before that check. The reader retains the historical growth-body digest and
+all DDL, domain, typed-mode and schema checks, and accepts no old-body fallback.
+All original 76 methods are byte- and AST-identical. One added method refuses
+old-body rollback, an ignored witness error and moving the guard after a
+namespace effect.
+
+The first local Mac run attempted 77 methods: 69 passed, eight encountered
+missing-dependency errors and none failed an assertion. The new three refusal
+cases passed. No dependency installation or test skip was used to turn that
+run into a pass. Complete Linux and hosted outcomes must be recorded separately
+on their actual tested source. This reader correction changes no Rust runtime
+or production qualification.
+
+The e1bf seven-source-gate run also remains an original failed observation:
+six commands passed, while the corpus checker refused the newly appended
+development-plan bytes. The 308878 follow-up changed only the stale plan pin.
+All subsequent plan appends must be pinned after their final bytes are written.

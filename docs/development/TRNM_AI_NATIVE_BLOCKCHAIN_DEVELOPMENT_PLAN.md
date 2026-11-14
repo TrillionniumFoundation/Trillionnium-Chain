@@ -15203,3 +15203,26 @@ Linux gates and required hosted checks. The newly observed C0 external-evidence
 failure is independently under review; these four fixes do not claim to repair
 that different gate. No protected main merge, branch deletion, production
 activation, deadline relaxation or one-branch completion is declared here.
+
+### 2026-11-14 current public-readiness selected-body binding
+
+Merge the reviewed readiness component a3495dab9979a7630373c979399c7e29e5cf6e5b.
+The old observation_only body pin matches the historical 2bb/332d body.
+The current body adds only the already selected TLS endpoint-witness refusal
+before namespace effects, after the retained M06 account-profile check.
+Update that one independently reviewed body pin; retain the historical growth
+body, DDL, domain, typed-mode and namespace checks. All original 76 method bodies
+remain unchanged, with one new method covering three unsafe guard mutations.
+
+The first Mac run is 77 attempted, 69 passed, eight environment errors and zero
+assertion failures. Its missing numpy/cryptography dependencies and all original
+streams are retained. Do not relabel it as 77 passing. Use the prepared exact
+Linux dependencies for the complete 77-method suite and original external
+lane, and keep the complete repository-truth lane on the same committed source.
+
+The e1bf source gates separately recorded six passes and one corpus failure
+because this plan's appended bytes were not yet reflected in its pin. The
+one-leaf 308878 correction preserved that failure; synchronize this new plan
+blob after this appendix as well. Preserve all failed observations and original
+qualification boundaries. The current four-second pressure confirmation
+failure remains an independent runtime problem; no source-map repair closes it.
