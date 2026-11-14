@@ -35,6 +35,8 @@ mod release_snapshot;
 mod residency;
 mod retained;
 mod retention;
+#[cfg(unix)]
+mod runtime_root;
 mod snapshot_schedule;
 mod store;
 mod tensor;
@@ -209,6 +211,11 @@ pub use snapshot_schedule::{
 pub use residency::{CellSealedLoaderBundleV1, CellSealedLoaderFileV1, CellSealedLoaderLimitsV1};
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
+};
+#[cfg(unix)]
+pub use runtime_root::{
+    materialize_runtime_root_v1, runtime_files_root_v1, CellRuntimeFileV1, CellRuntimeLimitsV1,
+    CellRuntimeMaterializationV1, CellRuntimePlanV1, CellRuntimeRoleV1,
 };
 pub use store::{CellReleaseLimitsV1, CellStoreV1};
 pub use tensor::{
