@@ -1178,6 +1178,14 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
     "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
 ))
+# Bind the reviewed peer owner pre-write and occupied-endpoint controls.
+# These source requirements do not activate the local service or qualify PQ.
+CONSOLIDATION_CONTROL_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
 # Exact reviewed Cell source coverage; no execution or acceptance is inferred.

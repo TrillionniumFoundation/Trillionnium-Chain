@@ -14428,3 +14428,27 @@ The account aggregate observation now reads checkpoint, authenticated root and e
 The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
 
 Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+
+## 2026-11-14 peer lease owner pre-write checks retained from 871ade83
+
+The consolidation port restores the bounded peer-lease checks from
+871ade83cd0bf43adbbefc397a88b187bf7bbd5d at the four reviewed seams.
+Payload append revalidates every bound endpoint immediately before the write;
+head-lag repair and ACK persistence repeat owner/endpoint validation before
+their durable writes. Existing post-write checks, poisoning and original
+absolute deadlines remain in force. The ordinary Unix daemon refuses any
+occupied socket path before opening the authority journal and never silently
+unlinks an existing endpoint.
+
+The current recovery daemon already rejects zero timeout before configuration
+or owner access, and decoded tokens already use validated reconstruction.
+Those stronger current controls remain unchanged. The original occupied-path
+control is retained. The isolated Linux source passed all 90 peer-lease tests
+and strict Clippy for all targets; the Mac source passed 89 platform-selected
+tests and strict Clippy. The sole non-semantic source adaptation is rustfmt on
+one test call. The subsequent, separate Q4 integration fixture failure in the
+combined Linux job is preserved and is not a peer-lease pass claim.
+
+This is a local compatibility port. It does not grant runtime activation,
+external authority, deployment, physical resource or security qualification.
