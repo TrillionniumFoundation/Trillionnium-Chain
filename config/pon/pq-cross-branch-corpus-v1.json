@@ -1780,7 +1780,7 @@
     "scripts/ci/test_chain_hepta_command_binding.py": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd",
     "scripts/ci/test_chain_hepta_qualification.py": "a52c8e3f8b81525290867355f2f0a00a089bf5e9",
     "scripts/ci/test_chain_system_security.py": "f919a47c0882bc1945e359e9525fc3fd0538b784",
-    "scripts/ci/test_ci_contract.py": "b8f39d29a0cd3382f54bcafa43808f1a0a871429",
+    "scripts/ci/test_ci_contract.py": "8683f6b319cb6104bf7dc201e3b363c648901468",
     "scripts/ci/test_ci_observation_process.py": "83a132a161d1b93c569e7382f238046609a229fc",
     "scripts/ci/test_codeql_retention.py": "719db201b9e08f649a8f243858088a0a4d65adac",
     "scripts/ci/test_codeql_semantic_observations_v1.py": "2ab766684e6c6d1a2cfbe14b1032000f9cceebf0",

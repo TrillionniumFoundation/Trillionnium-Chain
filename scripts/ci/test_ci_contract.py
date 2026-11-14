@@ -2638,15 +2638,32 @@ cargo() {
                         self.assertEqual((output / 'native-account-verification-cost.log').exists(),
                                          len(expected_calls) == 4)
 
+    def current_model_observation_block(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        marker = '    (\n      trnm_model_receipt_root='
+        self.assertEqual(original.count(marker), 1)
+        start = original.index(marker)
+        end = original.index('    )\n', start) + len('    )\n')
+        block = original[start:end]
+        # Keep actual comments in the moved fixture while checking every command.
+        commands = ''.join(line for line in block.splitlines(keepends=True)
+                           if not line.lstrip().startswith('#'))
+        self.assertEqual(commands, MODEL_OBSERVATION_BLOCK)
+        return block
+
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
-        changed = original.replace(MODEL_OBSERVATION_BLOCK, '').replace('  fuzz-smoke)\n',
-                                                                              '  fuzz-smoke)\n' + MODEL_OBSERVATION_BLOCK)
+        block = self.current_model_observation_block()
+        changed = original.replace(block, '', 1).replace('  fuzz-smoke)\n',
+                                                        '  fuzz-smoke)\n' + block, 1)
+        self.assertEqual(changed.count(block), 1)
+        self.assertEqual(sorted(changed.splitlines()), sorted(original.splitlines()))
         self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_model_oracles_must_precede_documentation_tests(self):
-        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK + RUST_DOCS,
-                      RUST_DOCS + MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
+        block = self.current_model_observation_block()
+        self.rejected('scripts/ci/ci_job.sh', block + NATIVE_RELEASE_BLOCK + RUST_DOCS,
+                      RUST_DOCS + block + NATIVE_RELEASE_BLOCK)
 
     def test_model_exports_cannot_leak_into_doc_or_clippy_commands(self):
         self.rejected('scripts/ci/ci_job.sh', '    )\n' + RUST_DOCS, RUST_DOCS + '    )\n')
