@@ -43,6 +43,13 @@ pub(super) fn put(path: &Path, bytes: &[u8], mode: u32) {
     fs::set_permissions(path, fs::Permissions::from_mode(mode)).unwrap();
 }
 
+fn with_witness_phase_scope(action: impl FnOnce()) {
+    #[cfg(feature = "pq-witness-phase-diagnostics")]
+    trnm_pon_node::pq_rollback_witness::with_fixture_phase_diagnostics(action);
+    #[cfg(not(feature = "pq-witness-phase-diagnostics"))]
+    action();
+}
+
 pub(super) struct Witness {
     pub socket: PathBuf,
     pub writer: PKey<Private>,
@@ -78,36 +85,65 @@ impl Witness {
         let halted = stop.clone();
         let counted = calls.clone();
         let worker = thread::spawn(move || {
-            while !halted.load(Ordering::Acquire) {
-                match listener.accept() {
-                    Ok((mut stream, _)) => loop {
-                        if halted.load(Ordering::Acquire) {
-                            break;
-                        }
-                        let mut byte = [0_u8; 1];
-                        match recv(&stream, &mut byte, RecvFlags::PEEK | RecvFlags::DONTWAIT) {
-                            Ok((0, _)) => break,
-                            Ok(_) => {
-                                counted.fetch_add(1, Ordering::AcqRel);
-                                if owner
-                                    .serve_one(&mut stream, Instant::now() + MAX_EXCHANGE)
-                                    .is_err()
-                                {
+            with_witness_phase_scope(|| {
+                while !halted.load(Ordering::Acquire) {
+                    match listener.accept() {
+                        Ok((mut stream, _)) => {
+                            #[cfg(feature = "pq-witness-phase-diagnostics")]
+                            let mut phase_failure = None;
+                            loop {
+                                if halted.load(Ordering::Acquire) {
                                     break;
                                 }
+                                let mut byte = [0_u8; 1];
+                                match recv(
+                                    &stream,
+                                    &mut byte,
+                                    RecvFlags::PEEK | RecvFlags::DONTWAIT,
+                                ) {
+                                    Ok((0, _)) => break,
+                                    Ok(_) => {
+                                        counted.fetch_add(1, Ordering::AcqRel);
+                                        #[cfg(feature = "pq-witness-phase-diagnostics")]
+                                        if let Err(error) = owner
+                                            .serve_one(&mut stream, Instant::now() + MAX_EXCHANGE)
+                                        {
+                                            phase_failure = Some(error);
+                                            break;
+                                        }
+                                        #[cfg(not(feature = "pq-witness-phase-diagnostics"))]
+                                        if owner
+                                            .serve_one(&mut stream, Instant::now() + MAX_EXCHANGE)
+                                            .is_err()
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    Err(rustix::io::Errno::AGAIN) => {
+                                        thread::sleep(Duration::from_millis(1))
+                                    }
+                                    Err(_) => break,
+                                }
                             }
-                            Err(rustix::io::Errno::AGAIN) => {
-                                thread::sleep(Duration::from_millis(1))
+                            #[cfg(feature = "pq-witness-phase-diagnostics")]
+                            {
+                                // Close after the original failed exchange and before
+                                // diagnostic IO. Default-off retains implicit drop.
+                                drop(stream);
+                                if let Some(error) = phase_failure.as_ref() {
+                                    trnm_pon_node::pq_rollback_witness::save_fixture_phase_failure(
+                                        error,
+                                    );
+                                }
                             }
-                            Err(_) => break,
                         }
-                    },
-                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
-                        thread::sleep(Duration::from_millis(1));
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            thread::sleep(Duration::from_millis(1));
+                        }
+                        Err(error) => panic!("witness accept: {error}"),
                     }
-                    Err(error) => panic!("witness accept: {error}"),
                 }
-            }
+            })
         });
         Self {
             socket,

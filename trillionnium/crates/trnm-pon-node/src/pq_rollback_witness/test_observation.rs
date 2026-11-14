@@ -1,7 +1,9 @@
-//! Test-only bounded measurements. No request bytes, roots, keys, signatures or
+//! Test and explicitly scoped diagnostic measurements. No request bytes, roots, keys, signatures or
 //! error text enter a record; no measurement can authorize or refuse work.
 use serde::Serialize;
 use serde_json::{json, Value};
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+use std::os::unix::fs::{DirBuilderExt, MetadataExt};
 use std::{
     cell::{Cell, RefCell},
     fmt::{self, Write as _},
@@ -27,6 +29,8 @@ const MAX_LINE_BYTES: usize = 32 * 1024;
 const MAX_PROCESS_LOG_BYTES: usize = 256 * 1024;
 static LOG_REMAINING: AtomicUsize = AtomicUsize::new(MAX_PROCESS_LOG_BYTES);
 static LOG_LIMIT_REPORTED: AtomicBool = AtomicBool::new(false);
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+static CLI_SCOPE_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 thread_local! {
     static ACTIVE: RefCell<Option<Arc<Recorder>>> = const { RefCell::new(None) };
 }
@@ -412,6 +416,8 @@ struct State {
 enum Sink {
     Stderr,
     File(PathBuf),
+    #[cfg(feature = "pq-witness-phase-diagnostics")]
+    CliFile(PathBuf),
     Quiet,
 }
 pub(crate) struct Recorder {
@@ -499,6 +505,12 @@ impl Recorder {
             "budgets_unchanged":true,"observation_has_authority":false})
     }
     fn emit(&self) {
+        // A CLI's first post-connection failure is immutable even if it serves
+        // another connection or its Scope later drops. Unit child sinks are unchanged.
+        #[cfg(feature = "pq-witness-phase-diagnostics")]
+        if matches!(self.sink, Sink::CliFile(_)) && self.failure_saved.load(Ordering::Acquire) {
+            return;
+        }
         if self.emitted.swap(true, Ordering::AcqRel) || matches!(self.sink, Sink::Quiet) {
             return;
         }
@@ -507,8 +519,10 @@ impl Recorder {
     fn save_child_failure(&self, error: &crate::Error) {
         // EOF from an ordinary client close is not a failed service request.
         // This classification changes observation only, never the old result.
-        if !matches!(self.sink, Sink::File(_)) || error.diagnostic().code == Some("PQ_WITNESS_EOF")
-        {
+        let file_sink = matches!(self.sink, Sink::File(_));
+        #[cfg(feature = "pq-witness-phase-diagnostics")]
+        let file_sink = file_sink || matches!(self.sink, Sink::CliFile(_));
+        if !file_sink || error.diagnostic().code == Some("PQ_WITNESS_EOF") {
             return;
         }
         if !self.failure_saved.swap(true, Ordering::AcqRel) {
@@ -552,6 +566,24 @@ impl Recorder {
                 // A child with captured pipes must not block on a large stderr
                 // write while its parent is waiting for exit. One bounded file
                 // is read only after the child has stopped, outside all requests.
+                let pending = path.with_file_name(CHILD_PENDING);
+                if let Ok(mut file) = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create(true)
+                    .truncate(true)
+                    .mode(0o600)
+                    .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+                    .open(&pending)
+                {
+                    if file.write_all(&bytes.0).and_then(|_| file.flush()).is_ok() {
+                        let _ = std::fs::rename(&pending, path);
+                    }
+                }
+            }
+            #[cfg(feature = "pq-witness-phase-diagnostics")]
+            Sink::CliFile(path) => {
+                // This runs after a failed connection/closed Witness stream,
+                // or at scope teardown. It never runs inside a measured exchange.
                 let pending = path.with_file_name(CHILD_PENDING);
                 if let Ok(mut file) = std::fs::OpenOptions::new()
                     .write(true)
@@ -640,6 +672,57 @@ pub(crate) struct Scope {
     _same_thread: PhantomData<Rc<()>>,
 }
 impl Scope {
+    /// Opt-in, best-effort scope. Activation failures do not alter business results.
+    /// The runner checks the complete checkout root. This scope checks only
+    /// ownership, canonical paths and exclusion from its current directory.
+    #[cfg(feature = "pq-witness-phase-diagnostics")]
+    pub(crate) fn cli_from_environment(role: &'static str) -> Option<Self> {
+        if !matches!(role, "node-cli" | "fixture-witness") {
+            return None;
+        }
+        let directory = PathBuf::from(std::env::var_os("TRNM_PQ_WITNESS_PHASE_DIAGNOSTIC_DIR")?);
+        if !directory.is_absolute() || std::fs::canonicalize(&directory).ok()? != directory {
+            return None;
+        }
+        let current_directory = std::fs::canonicalize(std::env::current_dir().ok()?).ok()?;
+        let metadata = std::fs::symlink_metadata(&directory).ok()?;
+        if directory.starts_with(current_directory)
+            || !metadata.is_dir()
+            || metadata.mode() & 0o777 != 0o700
+            || metadata.uid() != rustix::process::geteuid().as_raw()
+        {
+            return None;
+        }
+        let sequence = CLI_SCOPE_SEQUENCE
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
+            .ok()?
+            .checked_add(1)?;
+        let directory = directory.join(format!("{role}-{}-{sequence}", std::process::id()));
+        std::fs::DirBuilder::new()
+            .mode(0o700)
+            .create(&directory)
+            .ok()?;
+        // This small activation file is written before accepting work. It is
+        // not a success receipt; missing/truncated snapshots remain incomplete.
+        let activation = json!({"schema":"trnm-pq-phase-cli-scope-v1",
+            "role":role,"process_id":std::process::id(),"scope_sequence":sequence,
+            "record_capacity":MAX_RECORDS,"diagnostic_only":true,
+            "test_gate":false,"production_activation":false,"observation_has_authority":false});
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(directory.join("scope.json"))
+            .ok()?;
+        serde_json::to_writer(&mut file, &activation).ok()?;
+        file.write_all(b"\n").ok()?;
+        file.flush().ok()?;
+        Some(Self::install(
+            Recorder::new(Sink::CliFile(directory.join(CHILD_FILE))),
+            true,
+        ))
+    }
     pub(crate) fn new() -> Self {
         Self::install(Recorder::new(Sink::Stderr), true)
     }
@@ -665,6 +748,21 @@ impl Scope {
         self.recorder.save_child_failure(error);
     }
 }
+/// Save only after the caller has unwound its original connection result.
+/// No environment, request material or raw error text is serialized.
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+pub(crate) fn save_active_cli_failure(error: &crate::Error) {
+    let recorder = ACTIVE
+        .try_with(|active| active.try_borrow().ok().and_then(|value| value.clone()))
+        .ok()
+        .flatten();
+    if let Some(recorder) = recorder {
+        if matches!(recorder.sink, Sink::CliFile(_)) {
+            recorder.save_child_failure(error);
+        }
+    }
+}
+
 impl Drop for Scope {
     fn drop(&mut self) {
         let _ = ACTIVE.try_with(|active| {

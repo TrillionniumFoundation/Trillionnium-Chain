@@ -175,6 +175,9 @@ impl PqTlsServer {
         })();
         if let Err(error) = &result {
             observation.emit(error, deadline, &self.refusal_records);
+            // The closure has returned and its stream/channel has already dropped.
+            #[cfg(feature = "pq-witness-phase-diagnostics")]
+            crate::pq_rollback_witness::test_observation::save_active_cli_failure(error);
         }
         result
     }

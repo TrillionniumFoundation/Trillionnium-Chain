@@ -252,7 +252,7 @@ impl<'a> Mutation<'a> {
             observation,
             crate::pq_rollback_witness::test_observation::Kind::MutationCommit,
             {
-                #[cfg(test)]
+                #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                 if let (Some(observation), Some(deadline)) = (observation.as_ref(), self.deadline) {
                     observation.deadlines(Some(deadline), deadline);
                 }
@@ -285,7 +285,7 @@ impl<'a> Mutation<'a> {
                         // A verified successful external receipt must always be paired
                         // with local commit before reporting any late live-use error.
                         let tx = self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?;
-                        #[cfg(test)]
+                        #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                         if let Some(observation) = observation.as_ref() {
                             observation.mark(crate::pq_rollback_witness::test_observation::Mark::LocalCommitAttempted);
                         }
@@ -293,7 +293,7 @@ impl<'a> Mutation<'a> {
                             client.fail_closed();
                             return Err(error.into());
                         }
-                        #[cfg(test)]
+                        #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                         if let Some(observation) = observation.as_ref() {
                             observation.mark(
                                 crate::pq_rollback_witness::test_observation::Mark::LocalCommitted,
@@ -304,14 +304,14 @@ impl<'a> Mutation<'a> {
                 }
                 observe_phase!(observation, FinalLiveCheck, check())?;
                 let tx = self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?;
-                #[cfg(test)]
+                #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                 if let Some(observation) = observation.as_ref() {
                     observation.mark(
                         crate::pq_rollback_witness::test_observation::Mark::LocalCommitAttempted,
                     );
                 }
                 observe_phase!(observation, LocalCommit, tx.commit())?;
-                #[cfg(test)]
+                #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                 if let Some(observation) = observation.as_ref() {
                     observation
                         .mark(crate::pq_rollback_witness::test_observation::Mark::LocalCommitted);

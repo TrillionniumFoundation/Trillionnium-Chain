@@ -25,44 +25,59 @@ use std::{
 use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
 use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, ML_DSA_65_SIGNATURE_BYTES};
 
-// These wrappers compile to the original expressions outside libtests. Test
+// Default non-test builds retain the original expressions. Diagnostic-feature
 // scopes are explicit; an absent scope never reads a clock, allocates or emits data.
-#[cfg(test)]
+#[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
 macro_rules! observe_phase {
     ($operation:expr, $phase:ident, $action:expr) => {{
-        #[cfg(test)]
+        #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
         let guard = $operation.as_ref().map(|operation| {
             operation.phase($crate::pq_rollback_witness::test_observation::Phase::$phase)
         });
         let result = $action;
-        #[cfg(test)]
+        #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
         if let Some(guard) = guard {
             guard.finish(&result);
         }
         result
     }};
 }
-#[cfg(not(test))]
+#[cfg(not(any(test, feature = "pq-witness-phase-diagnostics")))]
 macro_rules! observe_phase {
     ($operation:expr, $phase:ident, $action:expr) => {
         $action
     };
 }
-#[cfg(test)]
+#[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
 macro_rules! observe_operation {
     ($operation:ident, $kind:expr, $action:block) => {
         $crate::pq_rollback_witness::test_observation::with_operation($kind, |$operation| $action)
     };
 }
-#[cfg(not(test))]
+#[cfg(not(any(test, feature = "pq-witness-phase-diagnostics")))]
 macro_rules! observe_operation {
     ($operation:ident, $kind:expr, $action:block) => {
         $action
     };
 }
 pub(crate) use {observe_operation, observe_phase};
-#[cfg(test)]
+#[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
 pub(crate) mod test_observation;
+
+/// Diagnostic scope for the integration fixture's own Witness thread.
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+#[doc(hidden)]
+pub fn with_fixture_phase_diagnostics<T>(action: impl FnOnce() -> T) -> T {
+    let _scope = test_observation::Scope::cli_from_environment("fixture-witness");
+    action()
+}
+
+/// Called only after the fixture's original exchange has returned and closed.
+#[cfg(feature = "pq-witness-phase-diagnostics")]
+#[doc(hidden)]
+pub fn save_fixture_phase_failure(error: &crate::Error) {
+    test_observation::save_active_cli_failure(error);
+}
 
 const REQUEST_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/request/v1\0";
 const REPLY_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/reply/v1\0";
@@ -334,7 +349,7 @@ impl WitnessClient {
                         self.available()?;
                         let cap = Instant::now() + MAX_EXCHANGE;
                         let until = original.map_or(cap, |v| v.min(cap));
-                        #[cfg(test)]
+                        #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                         if let Some(observation) = observation.as_ref() {
                             observation.deadlines(original, until);
                         }
@@ -379,7 +394,7 @@ impl WitnessClient {
                 }
                 observe_phase!(observation, BeforeTransport, deadline(until))?;
                 let result: Result<Checkpoint> = (|| {
-                    #[cfg(test)]
+                    #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                     if let Some(observation) = observation.as_ref() {
                         observation.mark(test_observation::Mark::TransportEntered);
                     }
@@ -430,7 +445,7 @@ impl WitnessClient {
                             if next != Some(observed) {
                                 deadline(until)?;
                             }
-                            #[cfg(test)]
+                            #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                             if next == Some(observed) {
                                 if let Some(observation) = observation.as_ref() {
                                     observation.mark(test_observation::Mark::MatchingCasReceipt);
@@ -666,7 +681,7 @@ impl DurableWitness {
                 _ => test_observation::Kind::ServiceUnknown,
             },
             {
-                #[cfg(test)]
+                #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                 if let Some(observation) = observation.as_ref() {
                     observation.deadlines(Some(until), until);
                 }
@@ -750,12 +765,12 @@ impl DurableWitness {
                             // local COMMIT has an unknown result, refuse later requests until
                             // explicit reopen; a disk read must not silently resolve it.
                             self.commit_uncertain = true;
-                            #[cfg(test)]
+                            #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                             if let Some(observation) = observation.as_ref() {
                                 observation.mark(test_observation::Mark::CasCommitAttempted);
                             }
                             observe_phase!(observation, ServiceCommit, tx.commit())?;
-                            #[cfg(test)]
+                            #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
                             if let Some(observation) = observation.as_ref() {
                                 observation.mark(test_observation::Mark::CasCommitted);
                             }
@@ -806,7 +821,7 @@ impl DurableWitness {
     }
     pub fn serve_one(&mut self, stream: &mut UnixStream, until: Instant) -> Result<()> {
         observe_operation!(observation, test_observation::Kind::WitnessConnection, {
-            #[cfg(test)]
+            #[cfg(any(test, feature = "pq-witness-phase-diagnostics"))]
             if let Some(observation) = observation.as_ref() {
                 observation.deadlines(Some(until), until);
             }
