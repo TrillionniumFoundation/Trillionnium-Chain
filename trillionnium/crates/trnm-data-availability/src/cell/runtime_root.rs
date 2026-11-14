@@ -258,6 +258,8 @@ fn census(path: &Path, uid: u32, entries: &mut u64, deadline: Instant) -> CellRe
 /// The durable create-only reservation remains after EVERY outcome;
 /// an unknown or failed attempt is never made cheap by calling this API again.
 /// Caller reconciliation of that record is deliberately not a refund API.
+/// A deadline or I/O error after the final rename can leave published bytes;
+/// both those bytes and the spent reservation remain for caller reconciliation.
 pub fn materialize_runtime_root_v1(
     store: &mut CellStoreV1,
     scope: &Path,
@@ -481,11 +483,7 @@ pub fn materialize_runtime_root_v1(
             .is_some_and(|n| n <= limits.host_bytes),
         "runtime actual same-owner cap",
     )?;
-    require(Instant::now() <= deadline, "runtime publication deadline")?;
-    // Private same-owner namespace and held owner lock exclude supported races.
-    // No chmod/mount/immutable flag is silently performed by this byte owner.
-    fs::rename(&staging, &output)?;
-    File::open(&scope)?.sync_all()?;
+    publish_runtime_directory(&scope, &staging, &output, deadline, Instant::now)?;
     Ok(CellRuntimeMaterializationV1 {
         files_root,
         file_count: files.len(),
@@ -495,6 +493,25 @@ pub fn materialize_runtime_root_v1(
         received_response_bytes: responses.received()?,
         connection_attempts: limits.peer.max_connections - requests_left.load(Ordering::Relaxed),
     })
+}
+
+// Keep the original deadline across rename and directory durability. The
+// injected clock is private; production always supplies the real monotonic clock.
+fn publish_runtime_directory(
+    scope: &Path,
+    staging: &Path,
+    output: &Path,
+    deadline: Instant,
+    mut now: impl FnMut() -> Instant,
+) -> CellResultV1<()> {
+    require(now() <= deadline, "runtime publication deadline")?;
+    // Private same-owner namespace and held owner lock exclude supported races.
+    // No chmod/mount/immutable flag is silently performed by this byte owner.
+    fs::rename(staging, output)?;
+    File::open(scope)?.sync_all()?;
+    // Publication may already be durable. Refusal cannot undo it or refund the
+    // original reservation; it prevents a late operation reporting success.
+    require(now() <= deadline, "runtime publication deadline")
 }
 
 #[cfg(test)]

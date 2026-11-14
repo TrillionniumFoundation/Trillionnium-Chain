@@ -409,3 +409,39 @@ fn expired_original_deadline_cannot_retire_disposable_runtime_rows() {
         assert!(store.chunk(segment.chunks()[0].sha256).unwrap().is_some());
     }
 }
+
+#[test]
+fn publication_past_original_deadline_retains_bytes_and_spent_reservation() {
+    let scope = tempfile::tempdir().unwrap();
+    let staging = scope.path().join("runtime.partial");
+    let output = scope.path().join("runtime");
+    fs::create_dir(&staging).unwrap();
+    fs::write(staging.join("original"), b"original runtime bytes").unwrap();
+    let reservation = scope.path().join("runtime-reservation-v1");
+    fs::write(&reservation, b"original spent reservation").unwrap();
+    let deadline = Instant::now();
+    let readings = [
+        deadline.checked_sub(Duration::from_millis(1)).unwrap(),
+        deadline.checked_add(Duration::from_millis(1)).unwrap(),
+    ];
+    let mut calls = 0;
+    let result = publish_runtime_directory(scope.path(), &staging, &output, deadline, || {
+        let value = readings[calls];
+        calls += 1;
+        value
+    });
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("runtime publication deadline"))
+    ));
+    assert_eq!(calls, 2);
+    assert!(!staging.exists());
+    assert_eq!(
+        fs::read(output.join("original")).unwrap(),
+        b"original runtime bytes"
+    );
+    assert_eq!(
+        fs::read(reservation).unwrap(),
+        b"original spent reservation"
+    );
+}
