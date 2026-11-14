@@ -1,0 +1,42 @@
+.github/workflows/cpq1-full-content.yml:16:      - config/pon/hash-use-contract-v1.json
+.github/workflows/cpq1-full-content.yml:21:      - scripts/ci/hash_use_contract.py
+.github/workflows/cpq1-full-content.yml:22:      - scripts/ci/test_hash_use_contract.py
+.github/workflows/cpq1-full-content.yml:77:          record hash-purpose-controls python3 scripts/ci/test_hash_use_contract.py
+.github/workflows/cpq1-full-content.yml:78:          record hash-purpose-source python3 scripts/ci/hash_use_contract.py
+config/pon/pq-cross-branch-corpus-v1.json:166:    "config/pon/hash-use-contract-v1.json": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+config/pon/pq-cross-branch-corpus-v1.json:259:    "docs/security/HASH_USE_CONTRACT_V1.md": "d912dc2e923b1e39bab1661d5616e90873c74522",
+config/pon/pq-cross-branch-corpus-v1.json:1733:    "scripts/ci/hash_use_contract.py": "0c8e2ac894a8a36a70ba69d10e8146c930541010",
+config/pon/pq-cross-branch-corpus-v1.json:1794:    "scripts/ci/test_hash_use_contract.py": "25dd6d15a910ffe8900cfc4f167d96d8df86de55",
+config/pon/pq-cross-branch-corpus-v1.json:2779:    "config/pon/hash-use-contract-v1.json",
+config/pon/pq-cross-branch-corpus-v1.json:2872:    "docs/security/HASH_USE_CONTRACT_V1.md",
+config/pon/pq-cross-branch-corpus-v1.json:4278:    "scripts/ci/hash_use_contract.py",
+config/pon/pq-cross-branch-corpus-v1.json:4338:    "scripts/ci/test_hash_use_contract.py",
+config/pon/hash-use-contract-v1.json:2:  "schema": "trnm-hash-use-contract-v1",
+scripts/ci/hash_use_contract.py:20:SCHEMA = "trnm-hash-use-contract-v1"
+scripts/ci/hash_use_contract.py:21:RESULT_SCHEMA = "trnm-hash-use-contract-result-v1"
+scripts/ci/hash_use_contract.py:22:DEFAULT_MANIFEST = "config/pon/hash-use-contract-v1.json"
+scripts/ci/hash_use_contract.py:34:REVIEWED_SOURCE_MAP_SHA256 = "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf"
+scripts/ci/check_ci_contract.py:851:    python3 scripts/ci/test_hash_use_contract.py
+scripts/ci/check_ci_contract.py:852:    python3 scripts/ci/hash_use_contract.py
+scripts/ci/check_ci_contract.py:1675:    for command in ('python3 scripts/ci/test_hash_use_contract.py',
+scripts/ci/check_ci_contract.py:1676:                    'python3 scripts/ci/hash_use_contract.py'):
+docs/security/HASH_USE_CONTRACT_V1.md:6:The [manifest](../../config/pon/hash-use-contract-v1.json) and
+docs/security/HASH_USE_CONTRACT_V1.md:7:[checker](../../scripts/ci/hash_use_contract.py) make the distinction between
+docs/security/HASH_USE_CONTRACT_V1.md:11:[negative controls](../../scripts/ci/test_hash_use_contract.py) run in the
+docs/security/HASH_USE_CONTRACT_V1.md:158:python3 scripts/ci/test_hash_use_contract.py
+docs/security/HASH_USE_CONTRACT_V1.md:159:python3 scripts/ci/hash_use_contract.py
+scripts/ci/ci_job.sh:65:    python3 scripts/ci/test_hash_use_contract.py
+scripts/ci/ci_job.sh:66:    python3 scripts/ci/hash_use_contract.py
+scripts/ci/test_hash_use_contract.py:15:import hash_use_contract as contract
+scripts/ci/test_hash_use_contract.py:33:        with tempfile.TemporaryDirectory(prefix="hash-use-contract-") as temporary:
+scripts/ci/check_pq_research_integration.py:294:    "scripts/ci/hash_use_contract.py",
+scripts/ci/check_pq_research_integration.py:295:    "scripts/ci/test_hash_use_contract.py",
+scripts/ci/check_pq_research_integration.py:296:    "config/pon/hash-use-contract-v1.json",
+scripts/ci/check_pq_research_integration.py:297:    "docs/security/HASH_USE_CONTRACT_V1.md",
+docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md:9:The [hash-purpose contract](HASH_USE_CONTRACT_V1.md) distinguishes the protected
+docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md:189:python3 scripts/ci/test_hash_use_contract.py
+docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md:190:python3 scripts/ci/hash_use_contract.py
+scripts/ci/test_ci_contract.py:3201:        'hash_use_contract': ('repository-truth', '    python3 scripts/ci/pq_authority_surface_scan.py --summary-only\n', (
+scripts/ci/test_ci_contract.py:3202:            '    python3 scripts/ci/test_hash_use_contract.py\n',
+scripts/ci/test_ci_contract.py:3203:            '    python3 scripts/ci/hash_use_contract.py\n',
+scripts/ci/test_ci_contract.py:3317:        self.reject_command_mutations('hash_use_contract')

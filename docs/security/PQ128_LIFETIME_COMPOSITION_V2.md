@@ -14,7 +14,45 @@ The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 [V1 lifetime contract](PQ128_LIFETIME_BUDGET_V1.md) and
 [root dependency contract](PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
 
-## 1. What the source bridge establishes
+## Current consolidated source bridge, 2026-11-14
+
+This reviewed mapping uses source checkpoint `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` as its
+review context. The current legacy register binds its 21 declared source blobs
+to that checkpoint; its new manifest SHA-256 is
+`ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc`.
+The unchanged 46-path root register has declared review context
+`5c04c60e463462d9df8884786e0d5bb32af08a64` and manifest SHA-256
+`2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725`.
+These source-review contexts do not identify the later commits that store the
+corresponding mapping metadata.
+Its additional path is the already selected
+`trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs`;
+the exact example bytes match the selected `19940a6653df0d88aba02f264f295a40ee047f96`
+component.
+
+The independent fixed counts are now **21 legacy, 46 root, one shared and 66
+distinct source files**. The sole shared path remains
+`trillionnium/crates/trnm-release-bundle/src/pq_release.rs`, with the same exact
+digest in both inventories. The inspector still reads both exact child
+manifests, invokes both actual inspectors, compares every shared digest and
+requires the reviewed path counts and shared path. Count changes do not
+replace the exact source maps or permit equal-count substitution.
+
+Only reviewed input identities, the review context and these exact counts
+change. All arithmetic, primitive identities, loss accounting, role populations,
+query-budget unknowns, strict reading limits, nonqualification fields and the
+original sixty control methods remain. Two existing methods adapt only their
+fixed 45/65 expectations to 46/66; the historical method name containing
+`65` is retained as a stable control identifier.
+The [current review and original failure](../../evidence/pq128-lifetime-source-binding-20261114/README.md)
+record the exact source scope and original observations. Full repository-truth
+and hosted acceptance still require their own fixed-source execution.
+
+The following section retains the prior bridge's source identities and results.
+References to its then-current mapping describe that historical review, not the
+default inputs of this continuation.
+
+## 1. Retained source bridge before this continuation
 
 The current legacy V1 budget declares **21 source paths** at
 `0f9b30549328e5be20f4d3e6e27bd132b42d90de`. The current root inventory
@@ -372,7 +410,7 @@ report continues to contain:
 
 ## Current source correspondence entry (2026-11-14)
 
-The v2 machine register and the original observation files remain unchanged.
+The selected frozen v2 machine register is byte-identical to C0; its original observation files remain unchanged.
 The default checker now reads the explicit
 [current-v3 register](../../config/pon/pq128-lifetime-composition-current-v3.json).
 That register retains the exact v2 identity and binds the
@@ -387,3 +425,23 @@ probability, query budget, theorem applicability or production qualification.
 All arithmetic, unknown values, HOLD results and original refusal limits remain
 in force. Supplying the retained v2 register to the current-v3 checker is refused;
 historical logs retain their original schema and outcome.
+
+### Concurrent-source reconciliation boundary
+
+The earlier L1 section records the then-current default metadata and its actual
+source-specific checks. That record and all original evidence are preserved.
+The active frozen v2 input now has its true C0 SHA-256
+`5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052`.
+Current source acceptance belongs to the separate current-v3 manifest and the
+current21 map `4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0`, with independent snapshot
+`e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc`. Its selected store is the complete
+C0/M6 implementation; the concurrent two store-check reorderings were not
+selected. The root46 input keeps its existing manifest identity
+`2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725`.
+
+The original arithmetic helpers and limits are unchanged. The full60-method
+composition roster is retained with explicit namespace/fixture assertions.
+Frozen V1 is not presented as current-source-bound; actual current21 and root46
+reads must agree at their one shared release path and yield exactly66 paths.
+This merged correspondence requires its own checks and conveys no native,
+lifetime-security, deployment or production qualification.

@@ -1,0 +1,514 @@
+{
+  "all_profile_fields_except_mapping_contract_unchanged": true,
+  "direct_consumer_excerpts": {
+    "scripts/ci/check_ci_contract.py": {
+      "bytes": 5917,
+      "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/scripts--ci--check_ci_contract.py.excerpt",
+      "sha256": "10a7698a4f1474c25104d0866e2a4e576daea8a7e820c0933e70b46b62ca0766"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "bytes": 1431,
+      "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/scripts--ci--check_pq_research_integration.py.excerpt",
+      "sha256": "924939ef62a39956a9cddbd38c6f01e629a64462b04649441b66129d3f143182"
+    },
+    "scripts/ci/ci_job.sh": {
+      "bytes": 1273,
+      "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/scripts--ci--ci_job.sh.excerpt",
+      "sha256": "d283e4d7fbaf94eb1122c36d624287f57f282b18c6efe81f1202e8a9e0c5262a"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "bytes": 5261,
+      "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/scripts--ci--test_ci_contract.py.excerpt",
+      "sha256": "543f8e79b9cb1755d0027c7ffa22fd7ab572a919ab32c3b41fb4105fcf6cc388"
+    }
+  },
+  "direct_consumer_search": {
+    "bytes": 4240,
+    "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/direct-consumers.stdout",
+    "sha256": "54d2aeaf90c6ee3789191129ea0077a997edfa907d28743872155ec0de4f9df0"
+  },
+  "exact_declared_function_spans": [
+    {
+      "current_excerpt": {
+        "bytes": 724,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/function-sequence_root.rs",
+        "sha256": "d84eba5bca0df395112f0395f1b0265ca2282032e9dc72d68093e0ddf79577c3"
+      },
+      "function": "sequence_root",
+      "new_bytes": 724,
+      "new_sha256": "d84eba5bca0df395112f0395f1b0265ca2282032e9dc72d68093e0ddf79577c3",
+      "old_bytes": 724,
+      "old_sha256": "d84eba5bca0df395112f0395f1b0265ca2282032e9dc72d68093e0ddf79577c3",
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "same_raw_span": true
+    },
+    {
+      "current_excerpt": {
+        "bytes": 163,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/function-task_id.rs",
+        "sha256": "e61cc263bba77601bfe98f2d488b97b7467ea7728ca34110818eef3e95e644c2"
+      },
+      "function": "task_id",
+      "new_bytes": 163,
+      "new_sha256": "e61cc263bba77601bfe98f2d488b97b7467ea7728ca34110818eef3e95e644c2",
+      "old_bytes": 163,
+      "old_sha256": "e61cc263bba77601bfe98f2d488b97b7467ea7728ca34110818eef3e95e644c2",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "same_raw_span": true
+    },
+    {
+      "current_excerpt": {
+        "bytes": 667,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/function-precheck_proof_statement.rs",
+        "sha256": "f138b08b648ce9b5b33a363b5932faea966b934930411af99948b14091a9b252"
+      },
+      "function": "precheck_proof_statement",
+      "new_bytes": 667,
+      "new_sha256": "f138b08b648ce9b5b33a363b5932faea966b934930411af99948b14091a9b252",
+      "old_bytes": 667,
+      "old_sha256": "f138b08b648ce9b5b33a363b5932faea966b934930411af99948b14091a9b252",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "same_raw_span": true
+    },
+    {
+      "current_excerpt": {
+        "bytes": 288,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/function-verify.rs",
+        "sha256": "d9744a5550a832a35bbc711873e8fa90c4f08c868821dc348b14fd197e270672"
+      },
+      "function": "verify",
+      "new_bytes": 288,
+      "new_sha256": "d9744a5550a832a35bbc711873e8fa90c4f08c868821dc348b14fd197e270672",
+      "old_bytes": 288,
+      "old_sha256": "d9744a5550a832a35bbc711873e8fa90c4f08c868821dc348b14fd197e270672",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "same_raw_span": true
+    }
+  ],
+  "no_source_edits": true,
+  "no_tests_run": true,
+  "original_test_roster": [
+    "test_declaration_validation_never_claims_source_inspection_or_security",
+    "test_actual_reviewed_source_inspection_preserves_hold",
+    "test_missing_or_added_use_cannot_narrow_or_expand_the_review",
+    "test_attack_selection_orders_are_distinct_and_not_interchangeable",
+    "test_collision_game_cannot_be_omitted_for_signature_or_root_binding",
+    "test_work_threshold_cannot_be_replaced_by_a_single_target_hash_game",
+    "test_width_exponent_is_not_a_lifetime_probability_or_concrete_bit_claim",
+    "test_primitive_relabel_width_change_and_unknown_algorithm_refused",
+    "test_domain_omission_or_transfer_requires_a_new_review",
+    "test_consumed_width_cannot_hide_truncation_or_drop_a_role",
+    "test_unmapped_proof_output_cannot_inherit_digest_width",
+    "test_literal_metadata_cannot_be_claimed_as_transitive_full_content",
+    "test_proof_parameter_profiles_cannot_be_pooled_or_replaced",
+    "test_proof_width_or_fri_parameters_cannot_supply_soundness",
+    "test_source_map_cannot_self_repin_changed_source",
+    "test_source_paths_cannot_be_removed_redirected_or_duplicated",
+    "test_bool_int_aliases_wrong_types_and_extra_fields_refused",
+    "test_numeric_bounds_source_trust_and_scope_self_certification_refused",
+    "test_wrapper_can_only_describe_the_old_digest_literal",
+    "test_wrapper_cannot_claim_original_content_or_recovered_provenance",
+    "test_small_inner_collision_survives_a_real_sha512_wrapper",
+    "test_direct_recomputation_still_grants_no_old_history_or_adoption",
+    "test_new_byte_readbacks_have_explicit_narrow_scopes",
+    "test_typed_graph_and_history_cannot_promote_missing_authority",
+    "test_finite_or_declared_readback_cannot_claim_whole_chain_scope",
+    "test_missing_migration_prerequisite_and_unknown_material_refused",
+    "test_strict_json_refuses_duplicate_numeric_unicode_and_nesting_ambiguity",
+    "test_missing_source_and_same_size_source_mutation_refused",
+    "test_symlink_source_and_symlink_manifest_refused",
+    "test_symlink_repository_ancestor_refused",
+    "test_nonregular_fifo_and_oversize_source_refused_without_blocking",
+    "test_cli_success_is_hold_and_failure_is_refuse_exit_two",
+    "test_manifest_path_traversal_and_changed_review_base_refused"
+  ],
+  "originals": {
+    "config/pon/hash-use-contract-v1.json": {
+      "current_blob": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+      "historical_blob": "c2f7552fded037e2e6ff6a91609112ad7aa6b301",
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "preserved_original": {
+        "bytes": 72224,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/originals/manifest.json",
+        "sha256": "50c12b630049933110a400590d64f8bfb764a76bdf8737c71a53a71245a0fc92"
+      },
+      "whole_raw_same": true
+    },
+    "docs/security/HASH_USE_CONTRACT_V1.md": {
+      "current_blob": "d912dc2e923b1e39bab1661d5616e90873c74522",
+      "historical_blob": "d912dc2e923b1e39bab1661d5616e90873c74522",
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "preserved_original": {
+        "bytes": 12742,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/originals/contract.md",
+        "sha256": "5aed5a2226f8de982617355476009eaa42ce4600199a4cfece494a5388503777"
+      },
+      "whole_raw_same": true
+    },
+    "scripts/ci/hash_use_contract.py": {
+      "current_blob": "0c8e2ac894a8a36a70ba69d10e8146c930541010",
+      "historical_blob": "0c8e2ac894a8a36a70ba69d10e8146c930541010",
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "preserved_original": {
+        "bytes": 18003,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/originals/reader.py",
+        "sha256": "5b5b63fd827bfbf38662e5b77b6dda0253306287878161c37b091c2ccc84e159"
+      },
+      "whole_raw_same": true
+    },
+    "scripts/ci/test_hash_use_contract.py": {
+      "current_blob": "25dd6d15a910ffe8900cfc4f167d96d8df86de55",
+      "historical_blob": "25dd6d15a910ffe8900cfc4f167d96d8df86de55",
+      "last_mapping_commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "preserved_original": {
+        "bytes": 19886,
+        "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/readonly-consumer-and-scope-v2/originals/tests.py",
+        "sha256": "6f70a7335ae33f0f5adcaf14fcc6fb783da16c59e945eab2fd637ed25cee881f"
+      },
+      "whole_raw_same": true
+    }
+  },
+  "pon_work_entire_suffix_from_checked_matrices_unchanged": true,
+  "profile_version_provenance": [
+    {
+      "all_other_profile_fields": {
+        "excluded_profile_sources": [
+          {
+            "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+            "source": {
+              "bytes": 13329,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+              "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+            }
+          },
+          {
+            "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+            "source": {
+              "bytes": 11732,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+              "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+            }
+          }
+        ],
+        "expected_identity": {
+          "field": {
+            "base_modulus": "2013265921",
+            "extension_degree": 4,
+            "extension_polynomial": "X^4 + 11"
+          },
+          "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+          "fri": {
+            "final_min_degree": 256,
+            "folding_factor": 16,
+            "inverse_rate": 4,
+            "queries": 50
+          },
+          "hash_suite": "poseidon2",
+          "image_id": [
+            1958252411,
+            3287394615,
+            1805488136,
+            1516578702,
+            78549041,
+            790278610,
+            301018785,
+            4279049364
+          ],
+          "sdk": "3.0.6",
+          "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+        },
+        "schema": "trnm-pq-proof-profile-binding-v1",
+        "scope": "selected-source-binding-only",
+        "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+        "system_lifetime_register": {
+          "path": "config/pon/pq128-lifetime-budget-v1.json",
+          "profile_id": "pon-nakamoto-v1-pq-research-native-pnw1",
+          "relationship": "separate-native-system-experiment"
+        },
+        "theorem_reference": {
+          "evaluator_revision": "2026-01-01",
+          "evaluator_source": {
+            "bytes": 21292,
+            "path": "scripts/w1_qrom_composition_budget.py",
+            "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+          },
+          "latest_full_text_obtained": false,
+          "observation_date": "2026-11-09",
+          "official_latest_revision_observed": "2026-03-02",
+          "official_url": "https://eprint.iacr.org/2025/2166",
+          "version_equivalence_verified": false
+        }
+      },
+      "blob": "304e81508897d7d865ea79d2cb4b25235ccb9d2f",
+      "bytes": 2378,
+      "commit": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "mapping_contract": {
+        "bytes": 46786,
+        "path": "config/pon/w1-qrom-implementation-current-v2.json",
+        "sha256": "27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934"
+      },
+      "sha256": "e2b13c985b1e00ad0d9e4bc6c41b6a2cb2c870da379db77fa2882defd79f8a23"
+    },
+    {
+      "all_other_profile_fields": {
+        "excluded_profile_sources": [
+          {
+            "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+            "source": {
+              "bytes": 13329,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+              "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+            }
+          },
+          {
+            "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+            "source": {
+              "bytes": 11732,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+              "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+            }
+          }
+        ],
+        "expected_identity": {
+          "field": {
+            "base_modulus": "2013265921",
+            "extension_degree": 4,
+            "extension_polynomial": "X^4 + 11"
+          },
+          "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+          "fri": {
+            "final_min_degree": 256,
+            "folding_factor": 16,
+            "inverse_rate": 4,
+            "queries": 50
+          },
+          "hash_suite": "poseidon2",
+          "image_id": [
+            1958252411,
+            3287394615,
+            1805488136,
+            1516578702,
+            78549041,
+            790278610,
+            301018785,
+            4279049364
+          ],
+          "sdk": "3.0.6",
+          "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+        },
+        "schema": "trnm-pq-proof-profile-binding-v1",
+        "scope": "selected-source-binding-only",
+        "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+        "system_lifetime_register": {
+          "path": "config/pon/pq128-lifetime-budget-v1.json",
+          "profile_id": "pon-nakamoto-v1-pq-research-native-pnw1",
+          "relationship": "separate-native-system-experiment"
+        },
+        "theorem_reference": {
+          "evaluator_revision": "2026-01-01",
+          "evaluator_source": {
+            "bytes": 21292,
+            "path": "scripts/w1_qrom_composition_budget.py",
+            "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+          },
+          "latest_full_text_obtained": false,
+          "observation_date": "2026-11-09",
+          "official_latest_revision_observed": "2026-03-02",
+          "official_url": "https://eprint.iacr.org/2025/2166",
+          "version_equivalence_verified": false
+        }
+      },
+      "blob": "63553753715aebb0cff15cb589069bbcab55977c",
+      "bytes": 2378,
+      "commit": "ecf8b5cfea66d7451c2ae6910233746bd95fc155",
+      "mapping_contract": {
+        "bytes": 47790,
+        "path": "config/pon/w1-qrom-implementation-current-v2.json",
+        "sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb"
+      },
+      "sha256": "72d7bfd4394f5c23839bfdca3ab0214fa2900b8d26cf6ecfe5915b16b82495fe"
+    },
+    {
+      "all_other_profile_fields": {
+        "excluded_profile_sources": [
+          {
+            "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+            "source": {
+              "bytes": 13329,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+              "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+            }
+          },
+          {
+            "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+            "source": {
+              "bytes": 11732,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+              "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+            }
+          }
+        ],
+        "expected_identity": {
+          "field": {
+            "base_modulus": "2013265921",
+            "extension_degree": 4,
+            "extension_polynomial": "X^4 + 11"
+          },
+          "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+          "fri": {
+            "final_min_degree": 256,
+            "folding_factor": 16,
+            "inverse_rate": 4,
+            "queries": 50
+          },
+          "hash_suite": "poseidon2",
+          "image_id": [
+            1958252411,
+            3287394615,
+            1805488136,
+            1516578702,
+            78549041,
+            790278610,
+            301018785,
+            4279049364
+          ],
+          "sdk": "3.0.6",
+          "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+        },
+        "schema": "trnm-pq-proof-profile-binding-v1",
+        "scope": "selected-source-binding-only",
+        "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+        "system_lifetime_register": {
+          "path": "config/pon/pq128-lifetime-budget-v1.json",
+          "profile_id": "pon-nakamoto-v1-pq-research-native-pnw1",
+          "relationship": "separate-native-system-experiment"
+        },
+        "theorem_reference": {
+          "evaluator_revision": "2026-01-01",
+          "evaluator_source": {
+            "bytes": 21292,
+            "path": "scripts/w1_qrom_composition_budget.py",
+            "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+          },
+          "latest_full_text_obtained": false,
+          "observation_date": "2026-11-09",
+          "official_latest_revision_observed": "2026-03-02",
+          "official_url": "https://eprint.iacr.org/2025/2166",
+          "version_equivalence_verified": false
+        }
+      },
+      "blob": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+      "bytes": 2378,
+      "commit": "b84568a714e24070d9554008660f1382e2c1b1b5",
+      "mapping_contract": {
+        "bytes": 50313,
+        "path": "config/pon/w1-qrom-implementation-current-v2.json",
+        "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+      },
+      "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+    },
+    {
+      "all_other_profile_fields": {
+        "excluded_profile_sources": [
+          {
+            "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+            "source": {
+              "bytes": 13329,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+              "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+            }
+          },
+          {
+            "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+            "source": {
+              "bytes": 11732,
+              "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+              "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+            }
+          }
+        ],
+        "expected_identity": {
+          "field": {
+            "base_modulus": "2013265921",
+            "extension_degree": 4,
+            "extension_polynomial": "X^4 + 11"
+          },
+          "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+          "fri": {
+            "final_min_degree": 256,
+            "folding_factor": 16,
+            "inverse_rate": 4,
+            "queries": 50
+          },
+          "hash_suite": "poseidon2",
+          "image_id": [
+            1958252411,
+            3287394615,
+            1805488136,
+            1516578702,
+            78549041,
+            790278610,
+            301018785,
+            4279049364
+          ],
+          "sdk": "3.0.6",
+          "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+        },
+        "schema": "trnm-pq-proof-profile-binding-v1",
+        "scope": "selected-source-binding-only",
+        "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+        "system_lifetime_register": {
+          "path": "config/pon/pq128-lifetime-budget-v1.json",
+          "profile_id": "pon-nakamoto-v1-pq-research-native-pnw1",
+          "relationship": "separate-native-system-experiment"
+        },
+        "theorem_reference": {
+          "evaluator_revision": "2026-01-01",
+          "evaluator_source": {
+            "bytes": 21292,
+            "path": "scripts/w1_qrom_composition_budget.py",
+            "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+          },
+          "latest_full_text_obtained": false,
+          "observation_date": "2026-11-09",
+          "official_latest_revision_observed": "2026-03-02",
+          "official_url": "https://eprint.iacr.org/2025/2166",
+          "version_equivalence_verified": false
+        }
+      },
+      "blob": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+      "bytes": 2378,
+      "commit": "7d8d4c59fcd01480a12e1c64835b202079091800",
+      "mapping_contract": {
+        "bytes": 50313,
+        "path": "config/pon/w1-qrom-implementation-current-v2.json",
+        "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+      },
+      "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+    }
+  ],
+  "proposal": {
+    "changed_pin_count": 6,
+    "current_manifest_sha256": "50c12b630049933110a400590d64f8bfb764a76bdf8737c71a53a71245a0fc92",
+    "current_source_map_sha256": "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf",
+    "proposed_current_source_map_sha256": "15a8d91e0b2c50908d17c6bb9743e8ef5a44927814e59354874d77d9654f9ee7",
+    "proposed_map_has_exact_same_roster": true,
+    "source_files_currently_modified": false,
+    "source_paths": 31,
+    "unchanged_review_base_revision": "e4abb172147e941b62483652b0ceabaae4317624",
+    "unchanged_semantics_sha256": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b",
+    "uses": 19
+  },
+  "review_note": "Review-base remains the historical semantic context. A manually reviewed new selected-source map is a new observation of current bytes, not a rewrite of a historical result. No whole-callgraph or cryptographic qualification.",
+  "schema": "hash-use-current-provenance-consumer-scope-readonly-v1",
+  "source_after": {
+    "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "status": "",
+    "tree": "47b283f20c7b2afdb668316c26d098e378b4b849"
+  },
+  "source_before": {
+    "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+    "status": "",
+    "tree": "47b283f20c7b2afdb668316c26d098e378b4b849"
+  }
+}

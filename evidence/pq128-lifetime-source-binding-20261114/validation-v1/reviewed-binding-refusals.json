@@ -1,0 +1,88 @@
+{
+  "schema": "reviewed-binding-independent-refusals-v1",
+  "cases": [
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-data-availability/src/cell.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-data-availability/src/cell/version_content.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-pon-node/src/store.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+    },
+    {
+      "case": "old_sha_for_trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
+    },
+    {
+      "case": "old_lock_with_current_register",
+      "refused": true,
+      "reason": "source lock revision differs from the declared experiment"
+    },
+    {
+      "case": "old_register_with_current_lock",
+      "refused": true,
+      "reason": "source lock revision differs from the declared experiment"
+    },
+    {
+      "case": "old_register_and_old_lock_against_current_source",
+      "refused": true,
+      "reason": "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "case": "old_composition_legacy_sha256",
+      "refused": true,
+      "reason": "changed frozen contract: composition manifest.input_manifests.legacy.sha256"
+    },
+    {
+      "case": "old_composition_legacy_declared_revision",
+      "refused": true,
+      "reason": "changed frozen contract: composition manifest.input_manifests.legacy.declared_revision"
+    },
+    {
+      "case": "old_composition_root_sha256",
+      "refused": true,
+      "reason": "changed frozen contract: composition manifest.input_manifests.root.sha256"
+    },
+    {
+      "case": "old_composition_root_declared_revision",
+      "refused": true,
+      "reason": "changed frozen contract: composition manifest.input_manifests.root.declared_revision"
+    },
+    {
+      "case": "old_composition_review_context",
+      "refused": true,
+      "reason": "changed frozen contract: composition manifest.review_base_revision"
+    }
+  ],
+  "case_count": 16,
+  "current_positive_after_mutations": true,
+  "qualification_granted": false
+}

@@ -122,8 +122,8 @@
   },
   "current_lifetime_correspondence": {
     "path": "config/pon/pq128-source-correspondence-current-v2.json",
-    "sha256": "2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93",
-    "source_snapshot_sha256": "5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140"
+    "sha256": "4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0",
+    "source_snapshot_sha256": "e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc"
   },
   "experiment": {
     "authority_after_retirement_included": true,

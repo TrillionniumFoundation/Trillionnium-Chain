@@ -1,0 +1,132 @@
+{
+  "branch": "fix/chain-fixed-joint-source-binding-20261114",
+  "head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "old_failure_preserved": true,
+  "project_boundary_unchanged": true,
+  "schema": "fixed-joint-owned-branch-preflight-recovery-v1",
+  "source_edits_started": false,
+  "status": "passed",
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "name": "head",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/head.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/head.stdout",
+        "sha256": "5570446a2dd1de14aa9666cf4cabbc07498b83d8c12c191a85823a46b6d43f6a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "name": "branch-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/branch-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 54,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/branch-before.stdout",
+        "sha256": "4c8c32dad2b656bba90545c8868d6068ab0f7e82f1096e3d37e721f1a3d89697"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "name": "status-before",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/status-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/status-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "branch",
+        "-m",
+        "fix/chain-fixed-joint-source-binding-20261114"
+      ],
+      "exit": 0,
+      "name": "rename-owned-branch",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/rename-owned-branch.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/rename-owned-branch.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "name": "project-preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/project-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 176,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/project-preflight.stdout",
+        "sha256": "9d6c19e895e5795b948d5f0f9a61fe95dd345bb61ecfa7af950c9f8ba1c37fb3"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "name": "status-after",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/setup-recovery-v1/status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "worktree": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114"
+}

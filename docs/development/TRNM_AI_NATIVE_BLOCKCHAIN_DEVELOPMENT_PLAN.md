@@ -14311,26 +14311,6 @@ does not close the separately recorded Page JSON parsing-account gap or
 qualify the other source changes on that historical branch.
 
 
-### 2026-11-14 retain the reviewed hash-purpose proof descriptor binding
-
-The existing hash-purpose source guard correctly refused the stale proof
-descriptor identity after the independently reviewed standalone verifier lock
-alignment. Rebind only that descriptor within the existing 31-path inventory
-and retain the exact 19-use semantic identity. The descriptor changes only the
-byte count and digest of its selected W1 implementation map. That map preserves
-the 16 selected inputs and 140 local-closure inputs, updating the one verifier
-lock in both inventories with its explicit review record.
-
-The selected RISC Zero package versions, sources, checksums and resolved direct
-dependency edges, proof parameters, expected image and control identities, historical proof materials and unresolved obligations stay
-unchanged. The hash-purpose inspector still refuses unreviewed source changes
-or automatic repinning. Its existing 33 finite controls and positive source
-inspection are the validation scope for this correction; successful inspection
-continues to report HOLD_NO_GO, unknown security bits and no production
-activation. Original failed CI records remain valid observations of their
-original source. This binding supplies no new native execution, complete
-callgraph review, authenticated history or cryptographic qualification.
-
 ### 2026-11-14 consolidation: cooperative paged restore owner contract
 
 This compatible port preserves the controlled restore capability from
@@ -15148,10 +15128,309 @@ all 67 actually observed absolute project inputs match this checkpoint, with
 60 modules loaded before and 61 afterward. This selected-input comparison
 does not claim a complete checkout or resolve the 7,331 relative open events.
 
-### 2026-11-14 frozen branch-disposition inventory and integration record
+### 2026-11-14 frozen branch-disposition audit and integration record
 
 The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records all 908 frozen branch names, 892 distinct tips, 296 terminal dispositions and the selected current implementation. Its evidence index preserves original successful and failed controls, source identities, dependency findings and unselected historical alternatives. The original hosted four-second confirmation gate, protected main requirements and legacy deletion protection remain independent conditions. This audit does not activate a production profile or declare the one-branch remote result before a verified protected merge and reference cleanup. This file remains the sole development plan.
 
+### 2026-11-14 reviewed PQ lifetime default mapping after the first full-lane failure
+
+The published source `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` (tree `9fda17fed2542b2baccaa34585bb00afd699e12b`)
+stopped in the original repository-truth lane after 6.677 seconds: the original
+58 lifetime controls reported 57 passes and one stale `pon_work.rs` source pin.
+The complete original Linux receipt and 21-path review are retained in
+[the corrective mapping evidence](../../evidence/pq128-lifetime-source-binding-20261114/README.md).
+A previous static proof that the 0f9 input bytes were preserved did not establish
+that the active default inspector could bind the current physical source.
+
+Review all 21 old/current Git blobs before rebinding the default current register:
+eight selected source bodies changed and thirteen remain identical. Retain the
+old mapping and failure as historical evidence. Keep the original budget reader,
+58 controls, event roster, arithmetic, security parameters and false/null flags.
+Synchronize the composition bridge to the exact reviewed children and strict
+21/46/1/66 union; adapt only two old count expectations in its original 60 controls.
+The already correct 46-path root register and historical proof profiles do not change.
+
+Run the complete original lane on the final successor commit, including this
+documentation. Targeted local controls do not assert a full lane pass, hosted
+confirmation, production qualification or a protected main merge. The original
+2700-second lane limit and four-second/16-worker hosted confirmation gate remain.
+
+The successor's targeted Mac validation passed the original 58 lifetime controls,
+60 composition controls and 147 direct-consumer controls, plus all five actual
+inspectors and the current CI/corpus contracts. The 79 selected inputs matched
+before/after and all 16 stale-binding negatives refused. The original first Mac
+composition failure (including its strict temporary-path refusal) remains
+separate evidence. No complete successor Linux lane or hosted result is claimed.
+
+### 2026-11-14 reviewed follow-up after the second full-lane failure
+
+The complete original Linux lane on source 7d8d4c59fcd01480a12e1c64835b202079091800
+failed in the hash-use source binding after 30.922 seconds of its unchanged
+2700-second limit. Preserve that failed receipt and both original streams.
+A separate diagnostic then executed all 122 remaining original command units:
+116 exited zero and six exited nonzero. Its outer continuation process completed,
+but it is not a successful full fail-fast lane. The six failures identify the
+hash-use map, fixed-probability map, joint-consensus map and historical collector
+binding. The complete original diagnostic package is retained in the
+[follow-up integration record](../../evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/README.md).
+
+Integrate the reviewed component commits e811c204e039565c06f5bb2cba3543564f510f7b,
+2d9baf313e54e49a4507c5057578e89ddbe7a1b6, 6418023d7f60e6e0c42f08c8726085a2b983757b
+and 341a8b5f751342b51a4aaf9512534853c79d7b5b without rewriting their history.
+The hash-use map retains 31 inputs and 19 uses; the fixed-probability relation
+retains its four inputs, probability 1/16 and research credit 16u; the joint map
+retains exactly 23 inputs and names the actual committed fixed-probability child.
+The original 33 hash-use, 16 fixed-probability and 35 joint methods passed.
+Only the joint revision-identity method adapts its current checkpoint and adds
+the old revision to its refusals. Independent old-map refusals remain.
+
+For the retained native collector, require the one original e4abb172 source,
+016ebf3 tree, original context digest and exact 23,639-byte producer as data.
+Keep current collector improvements and all original ZIP/context/report bytes.
+The original 25 bridge methods remain unchanged and pass with six new boundary
+controls; the new corpus dependency-omission/tamper control also passes.
+No historical native producer is imported, compiled or executed. These results
+do not authenticate a native build or grant service or quantum qualification.
+
+Refresh only the twelve reviewed existing corpus pins and add the one required
+historical raw producer. Preserve the complete historical Markdown text while
+changing its evidence carrier to .md.original, so its thirteen old relative links
+are not misrepresented as links in the new current location. The repository
+link checker and all original test thresholds remain unchanged.
+
+The exact committed successor still needs the original complete source and
+Linux gates and required hosted checks. The newly observed C0 external-evidence
+failure is independently under review; these four fixes do not claim to repair
+that different gate. No protected main merge, branch deletion, production
+activation, deadline relaxation or one-branch completion is declared here.
+
+### 2026-11-14 current public-readiness selected-body binding
+
+Merge the reviewed readiness component a3495dab9979a7630373c979399c7e29e5cf6e5b.
+The old observation_only body pin matches the historical 2bb/332d body.
+The current body adds only the already selected TLS endpoint-witness refusal
+before namespace effects, after the retained M06 account-profile check.
+Update that one independently reviewed body pin; retain the historical growth
+body, DDL, domain, typed-mode and namespace checks. All original 76 method bodies
+remain unchanged, with one new method covering three unsafe guard mutations.
+
+The first Mac run is 77 attempted, 69 passed, eight environment errors and zero
+assertion failures. Its missing numpy/cryptography dependencies and all original
+streams are retained. Do not relabel it as 77 passing. Use the prepared exact
+Linux dependencies for the complete 77-method suite and original external
+lane, and keep the complete repository-truth lane on the same committed source.
+
+The e1bf source gates separately recorded six passes and one corpus failure
+because this plan's appended bytes were not yet reflected in its pin. The
+one-leaf 308878 correction preserved that failure; synchronize this new plan
+blob after this appendix as well. Preserve all failed observations and original
+qualification boundaries. The current four-second pressure confirmation
+failure remains an independent runtime problem; no source-map repair closes it.
+
+
+### 2026-11-14 original Linux lane and closed exec-gate cleanup
+
+The exact 1a7afc source passed all seven local source gates with identical
+before/after identities: 41,653 tracked entries and 3,994,532,888 bytes.
+Its original Linux repository-truth command then ran for 496.806 seconds and
+failed. The final owned-process collector suite passed 13 of its original
+14 methods; the post-fork identity-refusal control received the actual wait4
+return code -15 where the original contract requires 125. The original
+source-before/source-after identities remained equal. Preserve that full
+failed execution, not only its last assertion.
+
+Merge reviewed component b71b84bbccd9bc403384921802e7edcf2e682242. After a
+successful close of the never-released exec gate, defer only the first TERM
+to that exact root so it can read EOF and return its original refusal code.
+Keep the existing KILL escalation, total cleanup grace, descendant signals,
+released-root cleanup, actual wait4 status and original command deadline.
+The original 14 method bodies remain byte- and AST-identical. Two new
+deterministic controls cover the unchanged escalation boundary and the roots
+that must not receive this deferral.
+
+At this integration checkpoint the changed collector has syntax/static
+validation only. Run the complete 16-method suite and the original full
+Linux lane on the committed integration source; do not infer a pass from
+the code review. Historical source-object recovery and the external-evidence
+lane remain separate validation. The unchanged active Rust implementation
+still has original C0 pressure-confirmation failures. No main merge, branch
+deletion, production qualification or single-branch completion is declared.
+
+
+### 2026-11-14 exact collector count and complete historical-evidence lane
+
+The original full Linux repository-truth lane on 08c9becab740ab2c375b970f376a7638f44c9e8e
+ran for 481.260 seconds and failed after all 16 collector controls passed in
+2.664 seconds. This includes every original 14 method and both added signal
+controls; the previously failing post-fork identity-refusal control passed.
+The later shell guard still required exactly 14 and rejected the actual 16.
+Preserve original receipt c39d394f383dd88f31544292e3222b8a76f69ebea86377099a6192e8bbba9777
+and all 39 original execution files as a failed full lane.
+
+Merge f0f6a4192dc3bcda2fca20110322f7cff07e4644: align the shell and independent
+CI contract to exactly 16. Preserve rejection of skips, incomplete/duplicate
+counts, failed runs and missing logs. The original four CI methods passed;
+negative fixtures retain bad counts 0/13 and additionally reject old 14 and
+incomplete 15. Synthetic parser fixtures are not collector execution.
+No collector method, runtime, command deadline or native workload changes.
+
+The separate original external-evidence-contract lane on the same 08c9beca
+source passed in 225.948 seconds; all 77 readiness tests passed in 36.691
+seconds. Both source identities remained 41,671 tracked entries and
+3,994,762,924 bytes. Receipt 624efff452b6bd0b2c6ebcf9a47abe3216999a7d051d1e7d0fb9e5ea86fb2ca3
+records all 12 driver stages, the original 30-command lane and no source fetch.
+The materializer verified all 14 declared historical trees with fetched=[].
+These observations bind 08c9beca, not the new integration commit.
+
+Run the original complete repository-truth lane on the new committed source.
+Current-source consistency and historical-evidence checks do not repair the
+unchanged active Rust four-second/16-worker CONFIRMATION_TARGET failures.
+Main integration, protected branch cleanup and a one-branch result remain
+pending; no required check, source identity or production acceptance is waived.
+
+### Concurrent candidate reconciliation — frozen scope and selected source
+
+The concurrent candidate `5a4b7fe8de1adce803184f262fd9f704ead1930c` is reconciled with the reviewed
+M6 source `2a62061177852dc3ebd200fa8d7c66c661a119a1`. The original908-name/892-tip audit and296
+terminal dispositions remain the frozen audit scope; their evidence and all
+intermediate L1/H1/B1/F1/F2/C5/C6 records are retained. The concurrent plan's
+checkpoint-specific claims are not reused as validation of this combination.
+
+Keep the complete C0/M6 Node store blob
+`d596dc6bab16698cd18bcc15bcbbe1fafedf603e` (SHA-256
+`5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c`). Static source review rejected the concurrent
+store's two check reorderings because they change the epoch window and fatal
+error precedence. This is a source-level finding, not a claim of an executed
+attack. Adopt the independent worker artifact metadata prevalidation and
+locked-baseline strengthening, with its two additional controls.
+
+Retain the exact C0 frozen PQ V1 register/lock and v2 composition JSON bytes.
+Current21 acceptance moves to the explicit reviewed correspondence namespace;
+its raw map SHA-256 is `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a`, snapshot
+`69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`. Only the concurrent store digest changes in that map.
+Keep M6's44-authority,20-current-lifetime and31-hash-purpose bindings. The
+current composition still joins21 and46 declared paths with one shared release
+path and exactly66 unique inputs. All arithmetic, unknown values, limits and
+false/null qualification fields remain.
+
+Keep the original58 budget command alongside the25 current-correspondence
+controls and reader. Keep the historical B1 collector carrier and its source
+guard. Preserve the exact16 owned-process collector count and the independent
+bad0/13/14/15 refusals, together with the existing failure, skip and timeout
+semantics. Retain both endpoint-witness readback control methods (static78 total),
+the explicit SQLite connection closure, exact SP27 child command/status binding,
+typed receipt equality, original native-completion phase controls and the
+independent10-method W1 current-stage workflow roster.
+
+This reconciliation was prepared from immutable source evidence without running
+new tests, native workloads or hosted gates. Existing M6 successes and concurrent
+failures remain observations of their respective sources. The combined source
+must independently pass the original complete local lanes and required hosted
+head/prospective checks. The four-second confirmation budget,16 pressure workers,
+fresh Host checks,30-second campaign and protected-main conditions are unchanged.
+No waiver, production activation, protected merge, branch deletion or single-branch
+remote completion is asserted here. This remains the sole development plan.
+
+
+### Root validation checkpoint before publishing the reconciled source
+
+M6 `2a62061177852dc3ebd200fa8d7c66c661a119a1` passed all seven Mac source
+gates, the original complete Linux repository-truth command (582.575 seconds),
+and the original complete external-evidence command (221.499 seconds, 77
+readiness methods). Its publication attempt stopped before any push when the
+remote candidate had advanced to N; the failure remains an original pre-push
+HOLD. The [audit report](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records the
+receipts and the explicit 53-path merge selection. New results must bind the
+actual reconciled commit and tree. Source pins are refreshed only after this
+final plan append. This checkpoint grants no hosted, production or single-branch
+completion claim.
+
+
+### Generated inventory completion after the reconciled-source check
+
+The seven source gates on `c3ae6e71d7b0da4b43b0c7aa6df34aeabf838f47`
+reported six passes and one distributed-inventory failure with unchanged
+source identities. The original generator adds only the two newly selected
+current PQ JSON paths to the embedded native inventory. Existing inventory
+records and checker semantics remain. The original failed receipt is retained
+in the audit report; this successor requires new exact-source validation.
+
+### 2026-11-14: PublicPolicy ID prefix-equivalence successor of M8
+
+The isolated successor starts from M8 ed0d35487f2a67239e4d646fd41c2c7acb5cc740
+and changes only the existing PublicPolicy::id computation in
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs. A private OnceLock
+retains the unfinalized SHA-256 state after the immutable 5,105-byte framed
+prefix. Each call clones it and appends all six original framed suffix fields.
+The original resource literal, domain, encoding, returned bytes, fresh Host
+checks, nonce order, deadline cadence, 4-second window and 16 pressure workers
+are unchanged. The 84 original tests in that file remain byte-identical; three
+oracle/suffix/clone-independence controls are added. No nonce optimization is
+included.
+
+The Mac libtest build remains HOLD with 11 existing Darwin fixture errors
+before any test ran. On the independent Linux M8-plus-Rust-proposal worktree,
+the first run used serial RUST_TEST_THREADS=1 and passed three new controls
+plus the original golden. A separate run removed every RUST_TEST_* environment
+variable and passed the same 3 + 1 with the default harness. Strict all-target,
+all-feature Clippy passed and was not repeated. Its SQLite I/O boundary warning
+about nonabsolute RUSTC remains in the raw evidence; these results grant no
+SQLite/native or hosted-performance qualification.
+
+The current correspondence/composition digests change only for the reviewed
+source bytes. All three frozen model/lock/composition JSON files, historical
+identities, mathematical controls, caps and false qualification fields remain
+unchanged. After preserving the Mac temporary-directory symlink refusal, the
+same original 58 + 25 + 60 + 57 consumer controls passed with a canonical
+temporary directory. Seven policy-vector and 33 Hash-use controls also passed.
+The Hash-use reader still covers only its 19 declared purposes and 31 sources,
+not this entire call graph. The normal merged-source and hosted gates remain
+required; no 4-second completion or latency improvement has been measured.
+
+### 2026-11-14: Reconcile the later 096c6b CI increment
+
+This reconciliation combines local 1e54c4ff66a92827c83bea8715f59f6b299e98cf
+with remote 096c6b5f9b952c49389fd975515744074ba61317, whose single parent is
+5a4b7fe8de1adce803184f262fd9f704ead1930c. It selects the three reviewed W1
+workflow/control files, retaining the original producer endpoint, 120-second
+budget and strict completion-before-deadline condition. The workflow requires
+all 19 named factorial kernel controls; its nine batch controls remain.
+The identical generated inventory needs no further change. The existing H1
+31-source/19-purpose manifest and reader remain bound to the selected complete
+store implementation; current PQ correspondence, frozen records and the B1
+historical fixture remain. Only the three selected W1 corpus pins and this
+plan pin change. The resulting commit requires its own original source,
+repository and external-evidence gates before publication and protected merge.
+
+### Retained pre-reconciliation audit text
+
+The following exact text from local ABFC is retained as historical context.
+Its then-current FC39 labels do not describe the selection below. Original
+execution observations keep their original source identities and limits.
+
+```text
+### 2026-11-14 retain the reviewed hash-purpose proof descriptor binding
+
+The existing hash-purpose source guard correctly refused the stale proof
+descriptor identity after the independently reviewed standalone verifier lock
+alignment. Rebind only that descriptor within the existing 31-path inventory
+and retain the exact 19-use semantic identity. The descriptor changes only the
+byte count and digest of its selected W1 implementation map. That map preserves
+the 16 selected inputs and 140 local-closure inputs, updating the one verifier
+lock in both inventories with its explicit review record.
+
+The selected RISC Zero package versions, sources, checksums and resolved direct
+dependency edges, proof parameters, expected image and control identities, historical proof materials and unresolved obligations stay
+unchanged. The hash-purpose inspector still refuses unreviewed source changes
+or automatic repinning. Its existing 33 finite controls and positive source
+inspection are the validation scope for this correction; successful inspection
+continues to report HOLD_NO_GO, unknown security bits and no production
+activation. Original failed CI records remain valid observations of their
+original source. This binding supplies no new native execution, complete
+callgraph review, authenticated history or cryptographic qualification.
+```
+
+```text
 ### Corrective audit checkpoint and remaining consolidation work — 2026-11-14
 
 The active local corrective source is
@@ -15218,3 +15497,52 @@ a newly verified full-history archive, merge through the existing protected
 main process, then verify reference cleanup. These outcomes remain pending;
 no one-branch remote result, complete-repository qualification or production
 activation is claimed. This file remains the sole development plan.
+```
+
+### 2026-11-14 reconcile local ABFC and concurrent 2a source
+
+This reconciliation selects the reviewed concurrent candidate
+`2a86462a1ab20c68151719ba4635e3c294391e64` together with the independent
+local `abfcff23d4e2aab7dfd92dfb34937ec7d6021ead` corrections. It is an
+integration candidate; main merge, complete remaining historical review and
+remote branch cleanup remain pending.
+
+The 42 active differences were read and independently rebound to native Git
+bytes. The 298 retained evidence paths and all 327 ZIP members were checked
+for custody and complete CRC/hash reads. That check does not confer source
+semantics or successful execution on historical programs. Four metadata
+files missing from the original-full-lane index were recovered byte for byte
+from their declared source copies; the original index is unchanged.
+
+Select the immutable PublicPolicy hash-prefix cache without changing any
+domain, resource bytes, framing or six dynamic fields. All 84 existing test
+definitions remain intact; the three added definitions and structural hash
+work reduction alone do not prove the four-second target. Preserve the local
+public_v2 strict-signature completion deadline fix.
+
+Select Node store d596dc6 with epoch capture before readiness and same-row
+work checks before time deferral. The previous local preference for 3bce39ce
+is withdrawn: an independent SQLite writer can otherwise be captured after
+readiness, and simultaneous future time can mask a typed local work-integrity
+fault. Both counterexamples are static; no new exploit, global transaction
+snapshot, public-listener shutdown or native performance result is asserted.
+
+Select the raw fixed historical collector fixture as read-only evidence.
+Use the remote closed-gate TERM deferral with the composed 16-control suite;
+its real post-fork refusal keeps raw same-root wait status and requires a
+recorded causal KILL event for the signal branch. This does not weaken the
+ordinary exit-125 check, the original kill/grace boundary or cleanup ownership.
+
+Use the concurrent current source maps for their exact selected bodies.
+Retain the earlier FC39 audit and its original failures/passes as historical
+records; finite PASS results do not prove the two uncovered store schedules.
+The current authority44 and lifetime20 maps select 5c04c60e; the current QROM
+comparison still fixes both provenance lock fields 0 and 2. No frozen
+mathematical claim, historical failure or qualification flag is upgraded.
+
+The original 096 protocol head and prospective-merge archives both retain
+five exit-zero native children, but their pressure confirmations fail
+CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
+window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
+report failure; their original artifacts are under separate inspection.
+No new committed-source gate or native target PASS is claimed by this entry.

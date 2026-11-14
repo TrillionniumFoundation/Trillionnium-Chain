@@ -13,7 +13,7 @@ The snapshot was observed at 2026-11-14T04:07:38.570192Z. Its manifest has SHA25
 The protected main tip was `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`;
 the existing consolidation PR is [#847](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847).
 
-The selected runtime integration and current reader bindings are combined at
+The initial runtime integration and reader-binding checkpoint was
 `96643a2dd8a90cded0059216cae15e2cd620c77b` (tree
 `b3adb2552cf47b7dbd6956b3b23cdac3f588c4cb`). The final binding component is
 `b84568a714e24070d9554008660f1382e2c1b1b5`. The branch-disposition ledger is
@@ -70,6 +70,48 @@ record their scope rather than converting metadata completeness into semantic
 equivalence.
 
 ## Findings that affect acceptance
+
+### Published-candidate repository-truth stopped at a stale current mapping
+
+The first full Linux repository-truth attempt on published source
+`dc42ce4df5cff79cc61c5addbaf01074b56b06ca` (tree `9fda17fed2542b2baccaa34585bb00afd699e12b`) returned exit 1
+after **6.677 seconds**, before the remainder of that lane could execute.
+The original 58 lifetime-budget controls reported **57 passes and one error**:
+`test_default_research_register_contains_no_known_security_bound` reached
+`pq_lifetime_budget.inspect` and rejected the stale `pon_work.rs` source hash.
+The original [summary](../../evidence/pq128-lifetime-source-binding-20261114/original-full-lane/summary.json)
+has SHA-256 `9a4bc9c021e80adff3d2c7d5500e1aed3f9eda519efb3942cbd42a2e34c5eab2`;
+all 37 original streams/receipts are preserved. Source checks before and after
+the failed lane matched the same clean checkpoint. This is a failed full-lane
+attempt, not evidence that later commands passed.
+
+The documented default is a current reviewed source mapping. Its 0f9 bytes
+remain historical evidence; preserving those bytes alone does not establish
+that the current physical source satisfies that default inspector. All 21
+old/current regular Git blobs were compared explicitly: eight changed and
+thirteen did not. The corrective mapping binds the selected current source
+without changing the original budget reader, 58 controls, mathematical
+parameters, event roster or qualification flags.
+
+The current composition bridge also required exact-child synchronization:
+its already reviewed root register contains 46 paths, so the strict joined
+inventory is 21/46/1/66. The root register remains unchanged. Only two existing
+composition controls adapt their exact count expectations; the original
+probability, source-integrity and nonqualification assertions remain.
+The repaired working source passed the original **58 lifetime, 60 composition,
+51 root-dependency, 57 chain-claim and 39 proof-profile controls** (265 method
+executions), with no failures or skips. The five actual inspectors, current
+corpus and CI contract also passed. All 79 selected validation inputs matched
+before and after; the selected proof-profile descriptor remained unchanged.
+Sixteen separate negative observations refused each stale source digest, mixed
+old/current revision pair and superseded composition identity. These targeted
+Mac observations use Python 3.14.3 and a canonical private temporary directory;
+they do not replace the required full Linux lane on the final successor commit.
+
+The [corrective evidence](../../evidence/pq128-lifetime-source-binding-20261114/README.md) separates the
+original failures from subsequent targeted results. A complete successor lane
+and exact-head hosted checks remain required; neither has a passing result
+from this corrective source review.
 
 ### The original confirmation target remains a separate blocking gate
 
@@ -422,3 +464,446 @@ remote reference.
 The single-branch result can be asserted only from a fresh remote inventory after
 all authorized deletions. Any unresolved required CI result or explicit deletion
 protection remains visible in the final execution receipt.
+
+## Follow-up source bindings and preserved complete-lane failures
+
+The published dc42ce4d source failed its original complete Linux
+repository-truth run in the 58-method lifetime suite, with 57 passes and one
+source-lock error. The reviewed lifetime successor
+7d8d4c59fcd01480a12e1c64835b202079091800 passed all seven local source gates, but
+its complete original Linux lane then failed in the hash-use source binding:
+31 of the original 33 methods passed, one failed and one errored. That lane
+exited 1 after 30.922 seconds; its original limit remained 2700 seconds.
+Both failed complete runs and their original source readbacks are preserved.
+
+To identify the remaining causes, a separate diagnostic executed the 122
+remaining original command units from the unchanged lane, preserving each
+unit's body and arguments. All units ran; 116 exited zero and six exited nonzero
+(units 1, 6, 10, 22, 23 and 107). The original 58 repository mutation controls
+were among the successful units. The diagnostic continued between failed
+units and therefore cannot qualify as a complete original lane pass.
+The [complete diagnostic package and integration record](../../evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/README.md)
+retain the original summary, all 266 original files in the indexed ZIP,
+and the exact source identity before and after.
+
+The four independently reviewed corrections are:
+
+| Component | Exact scope | Focused result |
+| --- | --- | --- |
+| Hash-use source map, e811c204 | Six changed and 25 unchanged inputs in the fixed 31-path map; original 19 uses and semantic digest retained | Original 33 methods and the existing CI registration control pass; actual reader remains HOLD_NO_GO |
+| Fixed-probability source map, 2d9baf31 | One changed and three unchanged inputs; original probability 1/16, research credit 16u, reader and all original methods retained | Original 16 methods pass; old map is refused; actual reader remains HOLD_NO_GO |
+| Joint-consensus source map, 6418023d | Four changed and 19 unchanged inputs, bound to the actual F1 source commit; no parameter or runtime change | Original 35 methods pass; one current-revision assertion is adapted and old-revision rejection is added; qualification request still exits 3 |
+| Historical collector binding, 341a8b5f | One fixed historical source/tree/producer tuple checked as bounded raw data; current collector and original native evidence remain unchanged | All original 25 methods plus six new boundary methods pass; one new corpus omission/tamper method passes |
+
+The [hash-use review](../../evidence/hash-use-current-source-review-20261114/README.md),
+[fixed and joint source review](../../evidence/pon-fixed-joint-source-binding-20261114/README.md)
+and [historical collector provenance](../../evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md)
+state their exact coverage. The historical producer is never imported, compiled
+or executed. Its content-address proof does not authenticate a native build.
+The fixed source contexts identify reviewed inputs; they are not presented as
+the later commits which store the new mapping metadata.
+
+The original failed Mac temporary-path control and the two failed staged
+whitespace checks remain recorded. Canonical temporary-path selection and
+byte-preserving ZIP carriers corrected those execution/carrier issues without
+weakening readers, tests or the repository checker. The old joint Markdown
+document is retained byte-for-byte as .md.original because its thirteen original
+relative links do not describe its new archival location.
+
+No Rust runtime source, original service deadline, worker count, probability,
+cost parameter or qualification flag is changed by these four follow-ups.
+The next complete gate receipts must identify their actual committed successor.
+The current published C0 external-evidence failure is a separate unresolved
+observation at this checkpoint and is not claimed as fixed by these changes.
+
+## Later remote and dependency observations
+
+The original e40d workflow 43551533528 subsequently completed with 15 successful
+and six failed jobs. Its two protocol runs and two architecture-specific service
+runs retained real CONFIRMATION_TARGET failures under the original four-second,
+16-worker contract. The exact-head and prospective protocol receipts both
+recorded zero accepted confirmations out of one pressure request; all five
+native processes in each run exited normally. These business acceptance
+failures are preserved and are not inferred from an outer process exit.
+The later C0 workflow 43567821538 remains a separate source and observation;
+its ongoing or failed checks cannot be replaced by the predecessor's results.
+
+The seven then-open Dependabot alerts all concern the main branch's
+cryptography 41.0.7 requirement. The selected candidate uses cryptography 50.0.2,
+outside each of the seven reported vulnerable ranges. Four alerts were high,
+two medium and one low. Their original API responses and advisory records are
+retained in the later execution evidence; no alert was manually dismissed or
+closed. This narrow comparison is not a claim that every dependency, wheel or
+OpenSSL deployment is qualified. The 27 historical registry/yank-query timeouts
+and the unresolved macOS physical-retention result remain open observations.
+
+The original 908-name archive was confirmed remotely before any merge or branch
+cleanup. Its annotated tag is archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2,
+tag object 9dafd9192e4040fab530958ef71598aaec9265b9, commit
+5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b. That commit retains all 892 original
+tips plus the published C0 candidate as its 893 direct parents. A later execution
+archive may retain this archive and the reviewed successor as separate parents;
+an older tag is never represented as capturing source added afterward.
+At this source checkpoint, main integration and the single-branch remote result
+are still uncompleted actions.
+
+## Public-readiness reader correction after the C0 external failures
+
+The two C0 external-evidence jobs reached the original 76-method readiness
+suite and reported 46 failures and 23 errors. Their actual first mismatch was
+the complete observation_only opener-body digest. The
+[readiness source review](../../evidence/public-readiness-selected-body-binding-20261114/README.md)
+preserves both complete hosted logs and the exact historical/current body
+comparison.
+
+Component a3495dab updates one independently reviewed digest. The only body
+difference is the already selected requirement for a TLS endpoint witness,
+checked before namespace effects; the M06 account-profile refusal remains
+before that check. The reader retains the historical growth-body digest and
+all DDL, domain, typed-mode and schema checks, and accepts no old-body fallback.
+All original 76 methods are byte- and AST-identical. One added method refuses
+old-body rollback, an ignored witness error and moving the guard after a
+namespace effect.
+
+The first local Mac run attempted 77 methods: 69 passed, eight encountered
+missing-dependency errors and none failed an assertion. The new three refusal
+cases passed. No dependency installation or test skip was used to turn that
+run into a pass. Complete Linux and hosted outcomes must be recorded separately
+on their actual tested source. This reader correction changes no Rust runtime
+or production qualification.
+
+The e1bf seven-source-gate run also remains an original failed observation:
+six commands passed, while the corpus checker refused the newly appended
+development-plan bytes. The 308878 follow-up changed only the stale plan pin.
+All subsequent plan appends must be pinned after their final bytes are written.
+
+
+## Original full Linux failure and bounded exec-gate repair
+
+The 1a7afc candidate passed its seven local source gates. Its complete original
+Linux repository-truth command subsequently exited 1 after 496.806 seconds,
+with identical source identities before and after execution. The last suite
+passed 13 of 14 original collector controls. In the post-fork identity-refusal
+case, the recorded root exit was -15 rather than the required 125. The
+[collector review and complete failed-run package](../audit/20261114-m4-closed-exec-gate/README.md)
+retain the raw result and its source identity.
+
+The source review found a concrete ordering race: the parent closes the exec
+gate, but cleanup can signal TERM before the child is scheduled to read EOF.
+Component b71b84bb adds a successful-close flag and defers only that root's
+TERM when exec was never released. The original KILL threshold and total
+cleanup grace remain unchanged; descendants, already released roots and
+unconfirmed gate closures retain their original signal behavior. No return
+code is rewritten. All original 14 test methods are preserved, and two
+deterministic signal-order controls are added.
+
+Linux execution of the changed 16-method suite and the complete original lane
+is still pending at this source checkpoint. This Python collector correction
+does not change the active Rust workload or resolve its four-second pressure
+confirmation failure. Local source checks, hosted qualification and the final
+remote one-branch result remain distinct observations.
+
+
+## Complete M5 observations and exact-count integration
+
+The full Linux repository-truth lane on 08c9beca exited 1 after 481.260 seconds.
+All 16 collector tests passed, including the original post-fork refusal case,
+but the later CI parser still required exactly 14. The failed execution and
+both unchanged source identities remain preserved; passing the collector
+suite does not turn the complete lane into a pass.
+
+Component f0f6a419 updates only the exact collector count in the shell,
+its independent CI contract, and their existing mutation controls. It
+requires all 16, retains failures for 0/13, and adds refusal of old 14 and
+incomplete 15. The original zero-skip, exact-OK, missing-log and failed-process
+guards remain. All four original focused CI methods and ten synthetic parser
+cases passed; no collector or Rust runtime code changed in this follow-up.
+
+The independent complete external-evidence-contract command on 08c9beca
+passed in 225.948 seconds. The previously incomplete readiness suite now
+passed all 77 tests in the prepared Linux dependency environment. All 14
+declared historical source trees were present, the original materializer
+reported fetched=[], and before/after source identities were equal. This
+validates the declared historical-evidence contract on that exact source;
+it does not grant current system, hosted or production qualification.
+
+The new integration requires its own original full repository-truth result.
+The unchanged original C0 head and prospective native confirmation failures,
+the original four-second window and 16 pressure workers, and all prior
+HOLD_NO_GO / DENY_ALL conditions remain in force. No main merge or branch
+deletion has occurred at this checkpoint.
+
+
+## Complete M6 validation and concurrent-source reconciliation
+
+The exact M6 source `2a62061177852dc3ebd200fa8d7c66c661a119a1`, tree
+`f8d170ff75990e879e93888a95e5408f36b36f6c`, subsequently passed all seven
+Mac source gates and both original complete Linux commands. The original
+repository-truth command passed in 582.575 seconds, including all 16 collector
+controls. The original external-evidence-contract command passed in 221.499
+seconds, including all 77 readiness methods. Its historical materializer reported
+`fetched=[]`. Each complete lane retained equal before/after identities for
+41,671 tracked entries and 3,994,766,803 tracked bytes.
+
+| Original M6 receipt | SHA256 |
+| --- | --- |
+| Seven Mac source gates | `fc8901b9c33e0887f28994a29ca1fefa3df1301169cfd611a4f30f392fb1f155` |
+| Complete Linux repository-truth, 18-stage driver | `7516f4d8602dd58949eeb608439005882c3703a189dac32b0cea716eafd157ce` |
+| Complete Linux external-evidence contract, 12-stage driver | `c7ed3b0109e09b1fe18ede0986250c96cb9cf1e41bedf9b1966875ecc03874f4` |
+
+These successes qualify those exact source checks on M6. They do not qualify a
+later source, hosted native performance, deployment or production activation.
+Earlier failed runs retain their original outcomes.
+
+The attempt to publish M6 stopped before any push because PR #847 had advanced
+from C0 to `5a4b7fe8de1adce803184f262fd9f704ead1930c` (N). The actual
+pre-push receipt has SHA256
+`c7878c180b7019ff635203f08fe05a9c09e00d8e8e9ee44232f4df7272d05183`,
+`push_started=false`, `push_exit=null`, and `archive=null`.
+No M6 publication or new execution tag was inferred from this refusal. The
+09:57:36–09:57:42 UTC full reference observation still contained 908 names and
+892 tips: only the candidate had advanced, while the other 907 names and main
+were unchanged. N adds 14 commits and changes 49 paths relative to C0.
+
+The reconciliation preserves both M6 and N as parents and explicitly selects
+53 paths. This report and a final sole-plan append record the root decision;
+all other M6 source and historical evidence remain unchanged. The reviewed
+pre-append selected-file manifest has SHA256
+`7cd35f9aa4f4cc11ba0b3dc10eb19148c1d5a087d464101573188afa9edb7d95`.
+The reviewed source choices are:
+
+- Retain the complete C0/M6 Node store blob
+  `d596dc6bab16698cd18bcc15bcbbe1fafedf603e`. Moving the initial readiness
+  check before the admission epoch capture introduces an uncovered reorganization
+  interleaving. Moving time deferral before local chainwork validation changes
+  fatal local-integrity refusal into a nonfatal time refusal. Both findings
+  concern source ordering; no executed exploit or false confirmation is claimed.
+- Adopt N's worker artifact reader blob
+  `f021a33e2969305241099998f703172d29b15251`. It preserves the originally
+  validated metadata across the lock boundary and adds independent permission
+  and hard-link mutation controls. The complete Linux module now contains
+  eight retained controls and two new controls; its actual execution remains
+  a separate exact-source result.
+- Restore the three genuine C0 frozen PQ JSON identities and use a separate
+  current correspondence map. The map binds the same 21 declared source paths,
+  including the retained store. Its SHA256 is
+  `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a`;
+  the independent canonical map digest is
+  `69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`.
+  Frozen arithmetic is explicitly unbound. The current 21-path and existing
+  46-path inventories still share one release path and cover 66 distinct paths,
+  without proving a Git revision, security theorem or complete dependency closure.
+- Preserve H1's 31 current hash-purpose bindings, the authority and current
+  lifetime inventories, F1/F2, the B1 historical collector carrier, C5's bounded
+  cleanup repair, and C6's exact 16-control requirement with the 0/13/14/15
+  refusals. Retain the original 58 budget command and add the 25 current-map
+  controls. Both endpoint-witness methods remain, giving a static roster of
+  78 readiness methods.
+- Accept explicit SQLite connection closure, strict JSON type matching, exact
+  SP27 native-process readback, current History phase validation and the separate
+  10-control W1 workflow roster. Retain the original QROM observations; the new
+  fixed expected report changes only the reviewed dependency-lock identity and
+  does not become a native execution receipt.
+
+The merged source requires new complete source, repository and external-evidence
+gates, the worker module tests and strict lint, and the required hosted checks.
+M6 passes cannot substitute for any of these. The original four-second window,
+16 pressure workers, fresh Host checks, 30-second campaign and all
+HOLD_NO_GO / DENY_ALL conditions remain unchanged. This reconciliation is not
+a demonstrated fix for the original confirmation failures or macOS physical
+retention failure. Main integration, the explicitly protected legacy deletion,
+and the final one-branch inventory remain separate uncompleted actions at this
+source checkpoint.
+
+
+## Reconciled-source inventory check
+
+The first seven-gate run on `c3ae6e71d7b0da4b43b0c7aa6df34aeabf838f47`
+passed six commands and failed the distributed-source inventory check. The
+complete failed receipt has SHA256
+`df8fafcf273cdd00bf2a3a468cbc7e4d318235f0b14a5033f93bfe16c37db512`.
+Both source observations were equal and verified 41,677 entries and
+3,994,945,659 bytes. The two new current PQ JSON paths were absent from the
+generated native inventory. The original generator adds exactly those two
+`include_bytes!` records, without removing or changing an existing entry.
+The sole plan and its corpus pin are updated after the correction. The new
+commit must pass its own gates; the original failed run remains failed.
+
+### 2026-11-14: PublicPolicy ID prefix-equivalence successor of M8
+
+This local component starts from M8 ed0d35487f2a67239e4d646fd41c2c7acb5cc740
+(tree 1aa9c21812489080980bdc3c1c2bb43611e88354). The reviewed Rust patch is
+16,945 bytes, SHA-256
+519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37.
+The original public_v3.rs is 433,736 bytes, SHA-256
+1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70;
+the candidate is 438,782 bytes, SHA-256
+0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a.
+Reversing the four declared transformations recovers the original file byte
+for byte, including all 84 preexisting test bodies and all Host, authorization,
+nonce and deadline code.
+
+The private cache retains the unfinalized state of the existing pon_wire::hash
+framing after its immutable 5,105-byte prefix: 79 complete SHA-256 blocks plus
+49 buffered bytes. The six original framed dynamic fields add 61 bytes; warm
+calls finalize two blocks from a cloned state. These are encoding counts, not
+measurements or a latency bound. Cold initialization still performs the prefix
+work. The four-thread control checks independent clone results, but does not
+guarantee that the harness scheduled simultaneous cold initialization.
+
+Actual observations remain distinct:
+
+- Mac libtest compilation: HOLD, 11 existing Darwin fixture errors and zero
+  executed Rust tests; summary SHA-256
+  2447c1d7d7300e3a1b8d0d2591ad362c294b261510ef493511496d0a8bfcdcdf.
+- Independent Linux M8 plus the exact single-file Rust proposal: serial
+  RUST_TEST_THREADS=1 passed the three new controls and original full-qualified
+  golden. Strict all-target/all-feature Clippy with -D warnings passed.
+  Summary SHA-256
+  bf16496bd43d61e935e84748177d8add0ef5cc661be35f77ddb2ec11f94448f4.
+- Default-harness follow-up: all RUST_TEST_* environment variables were removed;
+  unchanged 3-prefix and 1 --exact commands passed with no ignored tests.
+  Summary SHA-256
+  0be788fea02aa1a59869c7610f42002c39954f52a63b4f4a76bfdf78f038780a.
+  Clippy was not repeated. Both Linux records verify that the root M8 worktree
+  stayed clean and the independent uncommitted proposal did not change.
+- Original Python policy-vector 7/7 and Hash-use 33/33 controls, the actual
+  Hash-use inspector and workspace formatting passed; summary SHA-256
+  6464a84fa41517c4d41b0ff4a03032009347c079a904e363a291ed7c4ad8a27a.
+- The first budget suite encountered the Mac system temporary directory's
+  symlink ancestor: Ran 58 tests; failures=1, errors=4, including two
+  subtest errors in one method. That failure is preserved. With only a
+  canonical temporary directory selected, unchanged
+  budget58, current-correspondence25, composition60 and chain-claim57 all
+  passed. The three actual inspectors retained HOLD/HOLD_NO_GO and
+  activation=false. Summary SHA-256
+  ec1a745291e4ec3f4cda2eb9769d7196490edabc49e92587a17f2dca43b0f9be.
+
+The Linux compilation warning "SQLite I/O boundary UNQUALIFIED: RUSTC must be
+absolute" is retained. The hash controls grant no SQLite/native acceptance;
+Clippy applies to the exact isolated Rust-proposal source. These are not
+hosted 4-second results.
+
+For one reviewed successful paid RPC, the server computes the base policy ID
+once for cookie construction, once for Solution validation, once for body
+validation and once for response construction; the client computes it once
+and reuses it. WaitGrant polling does not repeat it. This is a per-RPC static
+count, with no proven global invocation bound. Two historical numbers are
+different: the W1 trace's 1,099 fresh Host observations are
+3 + 256 + 128 + 512 + 200; the separate x64 policy-stage lower bound is
+370 issued + 369 spent + 360 delivered = 1,099 (ARM:
+524 + 519 + 510 = 1,553). The latter uses distinct server counters, not direct
+id() instrumentation, an exact 4-second interval or a Host count.
+
+This successor's current 21-path map changes only the public_v3.rs digest.
+Its new raw-map SHA-256 is
+4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0,
+and canonical source-map digest is
+e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc.
+The current reader and composition independently bind this pair. These
+successor metadata bytes are not claimed to exist at the M8 commit. Frozen
+V1 budget, source lock and V2 composition remain respectively SHA-256
+0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd,
+094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2 and
+5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052.
+Path sets, mathematics, caps, flags and source-revision limitations are
+unchanged. H1's 19-use/31-source inventory is not expanded: the helper retains
+the existing PublicPolicy SHA-256 purpose, reviewed by framing/oracle evidence,
+without claiming full-callgraph coverage. No nonce optimization, Host-check
+reduction, limit increase or qualification waiver is included.
+
+### 2026-11-14: Reconcile the later 096c6b CI increment
+
+The complete remote observation from 11:25:36 to 11:25:49 UTC retained 908
+branch names and 892 distinct tips. Only the integration candidate advanced
+from 5a4b7fe8de1adce803184f262fd9f704ead1930c to
+096c6b5f9b952c49389fd975515744074ba61317; the other 907 refs and main remained
+unchanged. That one-parent increment modifies seven files. This normal
+reconciliation retains both it and local 1e54c4ff66a92827c83bea8715f59f6b299e98cf.
+
+The three selected W1 CI files require all 19 named factorial kernel controls
+and correct floating-point endpoint validation. The original 120-second
+producer endpoint remains the bound: deadline <= started + 120, remaining
+must equal deadline - started, and completion must be strictly before the
+deadline. The added cases cover an exact producer endpoint whose subtraction
+rounds above 120, and reject an extended endpoint, mismatched remaining
+duration and completion at the endpoint. The workflow's nine batch controls
+and original shard budgets remain.
+
+The incoming Hash-use source map agrees with the local map for 30 of 31 paths.
+Its remaining store identity belongs to the concurrent store variant that was
+not selected in the earlier review. The complete local H1 manifest and reader
+therefore remain unchanged, including their 19 declared purposes and false
+qualification fields. The generated inventory is already byte-identical.
+The local 2,606 corpus pins and 2,510 required paths, including the B1 raw
+historical fixture and both current PQ manifests, are retained; only the
+three selected W1 pins and appended plan pin are updated.
+
+Before this reconciliation, the first Linux P1 attempt stopped before running
+the repository lane: the existing sparse-checkout setting reapplied two
+skip-worktree flags and removed two tracked historical ZIP files. Restoring
+the full checkout from the existing local Git objects left the commit and
+tree unchanged. The original source verifier then accepted all 41,677
+tracked entries. A separate P1 run finished at 11:28:39 UTC with all 18 stages
+successful; its original repository lane took 546.056 seconds within the
+unchanged 2,700-second budget. That receipt is bound to
+6a8cd55573065ceb50cdb65a7834615f79b521ae, not this later merge. Original
+failures remain preserved, and the merged commit still requires its own
+gates. No hosted four-second result or whole-system qualification is granted.
+
+The first local merge-validation attempt invoked the unchanged Linux-oriented
+W1 controls on macOS and stopped with 'Ran 31 tests; failures=1, errors=6'.
+All six error events report the missing '/proc/sys/kernel/random/boot_id';
+the cancellation test separately reports '0 != 1'. These are preserved as
+failures, without inferring that every failure has the same cause. No test
+or producer is altered to make macOS pass. The normal merge is finalized
+after its repository and inventory checks; the original Linux lane must
+validate this merged source separately before publication.
+
+### 2026-11-14 reconcile local ABFC and concurrent 2a source
+
+This reconciliation selects the reviewed concurrent candidate
+`2a86462a1ab20c68151719ba4635e3c294391e64` together with the independent
+local `abfcff23d4e2aab7dfd92dfb34937ec7d6021ead` corrections. It is an
+integration candidate; main merge, complete remaining historical review and
+remote branch cleanup remain pending.
+
+The 42 active differences were read and independently rebound to native Git
+bytes. The 298 retained evidence paths and all 327 ZIP members were checked
+for custody and complete CRC/hash reads. That check does not confer source
+semantics or successful execution on historical programs. Four metadata
+files missing from the original-full-lane index were recovered byte for byte
+from their declared source copies; the original index is unchanged.
+
+Select the immutable PublicPolicy hash-prefix cache without changing any
+domain, resource bytes, framing or six dynamic fields. All 84 existing test
+definitions remain intact; the three added definitions and structural hash
+work reduction alone do not prove the four-second target. Preserve the local
+public_v2 strict-signature completion deadline fix.
+
+Select Node store d596dc6 with epoch capture before readiness and same-row
+work checks before time deferral. The previous local preference for 3bce39ce
+is withdrawn: an independent SQLite writer can otherwise be captured after
+readiness, and simultaneous future time can mask a typed local work-integrity
+fault. Both counterexamples are static; no new exploit, global transaction
+snapshot, public-listener shutdown or native performance result is asserted.
+
+Select the raw fixed historical collector fixture as read-only evidence.
+Use the remote closed-gate TERM deferral with the composed 16-control suite;
+its real post-fork refusal keeps raw same-root wait status and requires a
+recorded causal KILL event for the signal branch. This does not weaken the
+ordinary exit-125 check, the original kill/grace boundary or cleanup ownership.
+
+Use the concurrent current source maps for their exact selected bodies.
+Retain the earlier FC39 audit and its original failures/passes as historical
+records; finite PASS results do not prove the two uncovered store schedules.
+The current authority44 and lifetime20 maps select 5c04c60e; the current QROM
+comparison still fixes both provenance lock fields 0 and 2. No frozen
+mathematical claim, historical failure or qualification flag is upgraded.
+
+The original 096 protocol head and prospective-merge archives both retain
+five exit-zero native children, but their pressure confirmations fail
+CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
+window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
+report failure; their original artifacts are under separate inspection.
+No new committed-source gate or native target PASS is claimed by this entry.

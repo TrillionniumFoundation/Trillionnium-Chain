@@ -3,9 +3,26 @@
 Status: **HOLD / NO-GO**. No lifetime bound or cryptographic qualification is
 created by this source-survey continuation of #850.
 
-## Active corrective source binding, 2026-11-14
+## Selected source correspondence after ordering review, 2026-11-14
 
-The current contract selects `fc39da5f35298ce8a4c34aa5bdb25849648612f9`,
+The active 20-path contract selects
+`5c04c60e463462d9df8884786e0d5bb32af08a64`; its SHA-256 is
+`bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7`.
+The selected store is 391,470 bytes with SHA-256
+`5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c`.
+The preceding FC39 selection is retained below as historical context and is
+superseded following the readiness/epoch and same-row work/time review.
+The ordered roster, frozen historical hashes, eight changed-path comparison
+and every lifetime/qualification limitation remain unchanged.
+
+The current QROM report correspondence still permits exactly provenance
+lock fields 0 and 2, for the verifier and zkVM locks. Guest lock field 1 and
+all other values remain identical. The older zkVM-only description and the
+382,866-byte store describe their historical checkpoints.
+
+## Historical corrective source binding, 2026-11-14 (superseded)
+
+The superseded contract selected `fc39da5f35298ce8a4c34aa5bdb25849648612f9`,
 tree `20ef410a1ea847a3585de91d5f0a0380009cf874`, with the same
 ordered 20-path roster and the same 20 historical SHA-256 values.
 Its SHA-256 is `ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63`.
@@ -127,9 +144,9 @@ quantum auxiliary-state hypotheses, a complete shared-oracle reduction,
 recursive composition and complete lifetime event coverage still require their
 own mathematical and operational evidence.
 
-## Retained consolidated source review, 2026-11-14
+## Selected consolidated source mapping, 2026-11-14
 
-The preceding checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
+The selected mapped checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 retains the exact ordered 20-path roster and all
 20 historical SHA-256 values from 7150d96a. Four current rows changed from
 332d7f72: the crypto Cargo manifest, pon_work.rs, pq_accounts_v2.rs and Node
 store.rs. The historical-versus-current difference list now has eight paths,

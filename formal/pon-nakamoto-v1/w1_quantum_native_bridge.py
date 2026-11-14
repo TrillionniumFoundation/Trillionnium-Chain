@@ -37,6 +37,17 @@ SCHEMA = "trnm-w1-native-oracle-bridge-v1"
 MAX_ARCHIVE = 8 * 1024 * 1024
 MAX_MEMBER = 4 * 1024 * 1024
 MAX_EXPANDED = 32 * 1024 * 1024
+# One independently approved retained producer, kept only as non-executable data.
+# The raw Git commit/tree/blob provenance is archived with the correction review.
+HISTORICAL_COLLECTOR_SOURCE = "e4abb172147e941b62483652b0ceabaae4317624"
+HISTORICAL_COLLECTOR_TREE = "016ebf3deeac88d6d7a782edf563f2291ebe17f5"
+HISTORICAL_COLLECTOR_SHA256 = "f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254"
+HISTORICAL_COLLECTOR_BLOB = "421b10241820580efcdabc692ccb1f6dd27b6586"
+HISTORICAL_COLLECTOR_BYTES = 23_639
+HISTORICAL_COLLECTOR_PATH = (
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+)
+
 PROCESS_IDS = (
     "produce", "receive", "observe", "duplicate", "duplicate-observe",
     "late-product", "late-product-observe", "cancelled", "cancelled-observe",
@@ -47,6 +58,7 @@ READER_SOURCES = tuple(dict.fromkeys(SOURCE_FILES + (
     "formal/pon-native-fullpath-v1/adapt_native.py",
     "formal/pon-native-fullpath-v1/fullpath_gate.py",
     "formal/pon-native-fullpath-v1/collect_native.py",
+    HISTORICAL_COLLECTOR_PATH,
     "config/pon/ledger-v1.json", "config/pon/work-profile-v1.json",
     "config/pon/model-family-v1.json", "config/pon/devnet-v1.json",
     "config/pon/evaluation-round-v1.json",
@@ -99,48 +111,6 @@ def source_commitment(root, files, ref="HEAD"):
             "uncommitted_source_files": different,
             "source_commitment_state": "COMMITTED_DECLARED_INPUTS" if committed else
                 "NO_GIT_HEAD" if head is None else "UNCOMMITTED_DECLARED_INPUTS"}
-
-
-def native_collector_source_sha256(pins, root=ROOT):
-    """Read the collector from the externally pinned native commit; never execute it."""
-    pins.validate()
-    name = "formal/pon-native-fullpath-v1/collect_native.py"
-    env = {key: value for key, value in os.environ.items()
-           if not key.startswith("GIT_") or key == "GIT_ALTERNATE_OBJECT_DIRECTORIES"}
-    env.update(GIT_NO_REPLACE_OBJECTS="1", GIT_NO_LAZY_FETCH="1",
-               GIT_TERMINAL_PROMPT="0", GIT_ALLOW_PROTOCOL="")
-
-    def git(*args):
-        try:
-            result = subprocess.run(["git", "--no-replace-objects", *args],
-                                    cwd=root, env=env, capture_output=True, timeout=30)
-        except (OSError, subprocess.TimeoutExpired) as error:
-            raise ValueError("NATIVE_COLLECTOR_SOURCE_UNAVAILABLE") from error
-        gate.require(result.returncode == 0, "NATIVE_COLLECTOR_SOURCE_UNAVAILABLE")
-        return result.stdout
-
-    commit = git("rev-parse", "--verify", pins.native_source + "^{commit}").decode("ascii").strip()
-    gate.require(commit == pins.native_source, "NATIVE_COLLECTOR_COMMIT_BINDING")
-    tree = git("rev-parse", "--verify", commit + "^{tree}").decode("ascii").strip()
-    gate.require(tree == pins.native_tree, "NATIVE_COLLECTOR_TREE_BINDING")
-    entry = git("ls-tree", "-z", commit, "--", name)
-    gate.require(entry.endswith(b"\0") and entry.count(b"\0") == 1,
-                 "NATIVE_COLLECTOR_REGULAR_BLOB")
-    parts = entry[:-1].split(b"\t")
-    gate.require(len(parts) == 2 and parts[1] == name.encode(),
-                 "NATIVE_COLLECTOR_REGULAR_BLOB")
-    metadata = parts[0].split()
-    gate.require(len(metadata) == 3 and metadata[0] in {b"100644", b"100755"}
-                 and metadata[1] == b"blob", "NATIVE_COLLECTOR_REGULAR_BLOB")
-    oid = metadata[2].decode("ascii")
-    gate.hex_value(oid, "NATIVE_COLLECTOR_BLOB_ID", 20)
-    size = int(git("cat-file", "-s", oid).decode("ascii").strip())
-    gate.require(0 < size <= MAX_MEMBER, "NATIVE_COLLECTOR_SOURCE_SIZE")
-    raw = git("cat-file", "blob", oid)
-    gate.require(len(raw) == size
-                 and hashlib.sha1(b"blob " + str(size).encode() + b"\0" + raw).hexdigest() == oid,
-                 "NATIVE_COLLECTOR_BLOB_BINDING")
-    return gate.sha256(raw)
 
 
 def source_record():
@@ -216,6 +186,33 @@ def extract_archive(raw, root):
     return members
 
 
+
+def validate_collector_source(pins, collector_sha256, root=ROOT):
+    """Bind the one retained producer as data; preserve the current-source path.
+
+    The historical source is never imported, compiled or executed. Its fixed
+    tuple and raw bytes were independently verified against the original Git
+    commit/tree/blob. This check does not authenticate the external pins or
+    attest that a native binary was built or executed from those sources.
+    """
+    pins.validate()
+    if pins.native_source == HISTORICAL_COLLECTOR_SOURCE:
+        gate.require(pins.native_tree == HISTORICAL_COLLECTOR_TREE
+                     and collector_sha256 == HISTORICAL_COLLECTOR_SHA256,
+                     "COLLECTOR_SOURCE_BINDING")
+        raw = gate.Evidence(root).read(HISTORICAL_COLLECTOR_PATH, HISTORICAL_COLLECTOR_BYTES)
+        blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        gate.require(len(raw) == HISTORICAL_COLLECTOR_BYTES
+                     and gate.sha256(raw) == HISTORICAL_COLLECTOR_SHA256
+                     and blob == HISTORICAL_COLLECTOR_BLOB,
+                     "COLLECTOR_SOURCE_BINDING")
+        return
+    # An unrelated source cannot borrow the retained producer's fixed identity.
+    gate.require(collector_sha256 == gate.sha256((NATIVE / "collect_native.py").read_bytes()),
+                 "COLLECTOR_SOURCE_BINDING")
+
+
+
 def validate_native(root, pins):
     """Recheck original source guards, process bytes and the unchanged native gate."""
     pins.validate()
@@ -247,8 +244,7 @@ def validate_native(root, pins):
     gate.require(context["source_commit"] == pins.native_source
                  and context["source_tree"] == pins.native_tree
                  and context["binary_sha256"] == pins.binary_sha256, "NATIVE_SOURCE_OR_BINARY_BINDING")
-    gate.require(context["collector_sha256"] == native_collector_source_sha256(pins),
-                 "COLLECTOR_SOURCE_BINDING")
+    validate_collector_source(pins, context["collector_sha256"])
     native_context = context["native_context"]
     gate.require(context["production_activation"] is False
                  and native_context.get("development") is True

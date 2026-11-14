@@ -19,12 +19,12 @@ from types import FunctionType, ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
-CONTRACT_SHA256 = 'ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63'
+CONTRACT_SHA256 = 'bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7'
 # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
 # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
 LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
 LEGACY_SHA256 = '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6'
-CURRENT = 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'
+CURRENT = '5c04c60e463462d9df8884786e0d5bb32af08a64'
 HISTORICAL = '7150d96a2112875b4afcf3023361a5cef4a0e4b1'
 CHANGED = (
     'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',

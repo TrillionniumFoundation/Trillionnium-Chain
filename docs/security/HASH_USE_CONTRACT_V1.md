@@ -11,6 +11,50 @@ reachable through that digest. Both the checker and its
 [negative controls](../../scripts/ci/test_hash_use_contract.py) run in the
 mandatory `repository-truth` lane.
 
+## Reviewed current-source map, 2026-11-14 UTC
+
+The full local `repository-truth` run at source checkpoint
+`7d8d4c59fcd01480a12e1c64835b202079091800` stopped at this contract:
+the original 33 controls reported 31 passes, one failure and one error because
+the first declared input had changed. The preserved run has summary SHA-256
+`79d37af0ecec1749098bdfd1cfc7127de2cf9aa928b7271ca4ef8de39cd4061b`.
+Its 2,700-second limit was unchanged; it exited after 30.922 seconds. Later
+commands in that fail-fast run did not execute.
+
+This successor makes a manual source review of all 31 declared paths.
+The old pins exactly match their bytes at
+`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. Twenty-five inputs are unchanged;
+the six changed inputs are the proof-profile binding descriptor, native
+`pon_work.rs`, Cell `store.rs` and `cell.rs`, and Node `lib.rs` and `store.rs`.
+All 31 source blobs at the reviewed `7d8d4c` checkpoint are also identical to
+their earlier `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` bytes. The previous
+lifetime-register repair did not introduce these changes.
+
+The proof descriptor changes only the byte length and SHA-256 of its current
+W1 mapping. Its selected profile, image/control/parameter identities and
+withdrawal boundary remain unchanged. The five Rust-file deltas retain the
+declared hash encodings and output widths while adding separately reviewed
+APIs or owner/readback checks. Those additional APIs do not acquire coverage
+under this finite 19-use inventory.
+
+The newly reviewed source-map commitment is
+`15a8d91e0b2c50908d17c6bb9743e8ef5a44927814e59354874d77d9654f9ee7`.
+The 19-use semantics commitment remains
+`29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b`,
+and `e4abb172147e941b62483652b0ceabaae4317624` remains the original semantic
+review context. The source checkpoint identifies the reviewed input blobs;
+it is not claimed to contain this successor's new mapping metadata.
+
+The [review packet](../../evidence/hash-use-current-source-review-20261114/README.md)
+preserves the previous manifest, reader, original controls, full six-file
+source deltas, all 31 old/current identities and original failure records.
+All original 33 controls, reader functions, source-reading limits and
+qualification values remain unchanged. The independent source-map commitment
+still rejects unreviewed repinning; the CLI still returns `HOLD_NO_GO` on a
+successful source inspection. This repair does not establish a full-lane pass,
+hosted qualification, a complete call graph, a cryptographic security bound
+or production activation.
+
 ## Composed W1 mapping review, 2026-11-12 America/New_York
 
 The integration combines the 19-use, 31-source TCG3/CMH2 review from #927

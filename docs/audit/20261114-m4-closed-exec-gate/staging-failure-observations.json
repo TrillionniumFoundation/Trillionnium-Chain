@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-M4-original-staging-failure-carriers-v1",
+  "observations": [
+    {
+      "source_path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v1/staged-diff-check.stdout",
+      "exit_code": 2,
+      "bytes": 456,
+      "sha256": "5a7c5009a3c60c8528266ec5324f8feae9ecadd0b83e79037b3a55243dbc39e2",
+      "stdout": "docs/audit/20261114-m4-closed-exec-gate/source-and-tests.patch:12: trailing whitespace.\n+ \ndocs/audit/20261114-m4-closed-exec-gate/source-and-tests.patch:14: trailing whitespace.\n+ \ndocs/audit/20261114-m4-closed-exec-gate/source-and-tests.patch:17: trailing whitespace.\n+ \ndocs/audit/20261114-m4-closed-exec-gate/source-and-tests.patch:18: trailing whitespace.\n+ \ndocs/audit/20261114-m4-closed-exec-gate/source-and-tests.patch:121: trailing whitespace.\n+ \n",
+      "cause": "unchanged unified-diff context space stored in an evidence text carrier; production source whitespace was not failing"
+    },
+    {
+      "source_path": "/private/tmp/chain-M4-owned-process-collector-review-20261114-v1/commit-v2/staged-diff-check.stdout",
+      "exit_code": 2,
+      "bytes": 556,
+      "sha256": "205b29cb014d8de9e2d7987bef0f51cf565c9845989df93c033e1d2406eb9808",
+      "stdout": "docs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:2: trailing whitespace.\n++ \ndocs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:4: trailing whitespace.\n++ \ndocs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:6: trailing whitespace.\n++ \ndocs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:8: trailing whitespace.\n++ \ndocs/audit/20261114-m4-closed-exec-gate/initial-staged-patch-whitespace.stdout.raw:10: trailing whitespace.\n++ \n",
+      "cause": "unchanged unified-diff context space stored in an evidence text carrier; production source whitespace was not failing"
+    }
+  ],
+  "original_external_bytes_unchanged": true
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "trnm-M4-component-evidence-index-v3",
+  "base": "1a7afcdb820b051d1e4bfde3d436f96fc050c487",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3285,
+      "sha256": "85685ace94a88ae4f055eec6311effa678b47b10e2c4a2783c0e0ea5c5a1078b"
+    },
+    {
+      "path": "original-failure-extract.json",
+      "bytes": 6337,
+      "sha256": "c59d9e7fcd3fb25f84199bdb066ef5f4fc563d3e2edeff0d92c761c0debf73c7"
+    },
+    {
+      "path": "original-relevant-functions.json",
+      "bytes": 12788,
+      "sha256": "e6cec3f95ade7cd6da7c7777af0ce31821a0cbfa01cc9bfa22a8ca0efdea19c3"
+    },
+    {
+      "path": "original-repository-truth-1a7afc-failure-v1.zip",
+      "bytes": 152665,
+      "sha256": "c67721b25a546d73b25b498c6afbeb1e6338fb267eea202403d2e167f2bf469a"
+    },
+    {
+      "path": "original-run-EVIDENCE_INDEX.json",
+      "bytes": 14929,
+      "sha256": "d9be663934186c7c79b68f408841a2bc686b33a47dfba569307c3ad5f436b66e"
+    },
+    {
+      "path": "original-run-copy-verification.json",
+      "bytes": 2793,
+      "sha256": "f296c259e471a0bf1fce198b36482cba809f0bb784007242803000bc9507e4c1"
+    },
+    {
+      "path": "original-run-package-summary.json",
+      "bytes": 1111,
+      "sha256": "bff939e4545e35a75cb31991a4e2864c41dde622f097562901aec40be3415dcf"
+    },
+    {
+      "path": "original14-source-ast-proof.json",
+      "bytes": 5423,
+      "sha256": "d383d2a4588d1c02c8e583b053a0f2671df7c5cb7aa393f874b149c9cf50581c"
+    },
+    {
+      "path": "preflight-before-edit-summary.json",
+      "bytes": 835,
+      "sha256": "1ebaa4450d80a580b1f9d5513e2fddf31337d0a41254cec020820562dfa7a826"
+    },
+    {
+      "path": "preflight-before-edit.stderr.raw",
+      "bytes": 253,
+      "sha256": "7aba2ef6719a8e581c9042bb0116e857656e02a73790192ddd4fc0d3f96bf2b9"
+    },
+    {
+      "path": "preflight-correct-python.stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "preflight-correct-python.stdout.raw",
+      "bytes": 169,
+      "sha256": "c8ca234dafb06196cc5ec4cd28e7e15562d459b828cc2953a129a510fa75ea17"
+    },
+    {
+      "path": "source-and-tests-current.patch.json",
+      "bytes": 6831,
+      "sha256": "d4479ff677a44f4561b17922ae3ce5420034fe55de05997db4200f6776430c56"
+    },
+    {
+      "path": "source-and-tests-initial.patch.json",
+      "bytes": 6681,
+      "sha256": "4e4f76f335dfa7a237f8f0aa07984a90234a4cb93b0e129075ed1e11455e7159"
+    },
+    {
+      "path": "source-static-validation-v2.json",
+      "bytes": 1581,
+      "sha256": "4c231364a4c90bf99af5d71cb1b6a579679dcef51c7add290a8db84622234970"
+    },
+    {
+      "path": "source-static-validation.json",
+      "bytes": 1392,
+      "sha256": "23096bd61d45ccfda5e169e9c142dcb45348a19c48ea16e90969ed4f4da113ea"
+    },
+    {
+      "path": "staging-failure-observations.json",
+      "bytes": 2000,
+      "sha256": "1994d4d8cff284975e1c47475a6b0286fe5f26dc0a109425f16ac0d9c3a8f2ae"
+    }
+  ],
+  "linux_execution_included": "original failed full lane only; no changed-source Linux run"
+}

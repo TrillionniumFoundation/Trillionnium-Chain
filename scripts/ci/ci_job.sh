@@ -172,7 +172,7 @@ expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
             ("source-builder", 8),
             ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
             ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
-            ("owned-process-collector", 14))
+            ("owned-process-collector", 16))
 for name, count in expected:
     text = (root / (name + ".log")).read_text()
     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]

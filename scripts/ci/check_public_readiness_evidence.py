@@ -510,10 +510,10 @@ def native_durable_schema(root):
                 # require explicit review; no historical fallback is allowed.
                 reviewed_bodies = {
                     'growth_observation_only': '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
-                    # Current body includes the M06 account-profile refusal before
-                    # namespace effects; deleting or bypassing it is not a legacy fallback.
-                    # The reviewed current body also requires the canonical endpoint
-                    # policy to select PqWitnessV4 with a retained witness before effects.
+                    # Reviewed E1 body keeps the M06 account-profile refusal and
+                    # requires the PQ TLS endpoint witness before namespace effects.
+                    # See evidence/public-readiness-selected-body-binding-20261114.
+                    # Deleting or bypassing either check is not a legacy fallback.
                     'observation_only': 'f79b2baf4938ca8f410a26559118505fb36ba3b21b50efb3971bc9ba82845978',
                 }
                 require(sha(selected_body.encode()) == reviewed_bodies[observation_field],

@@ -6859,13 +6859,12 @@ impl Node {
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_USE_CONFIRMATION_PROGRESS",
         )?;
-        self.ready()?;
-        // Preserve the original namespace/reorg refusals before the new epoch read.
-        // Subsequent row observations must use one unchanged local storage epoch.
-        // The owner excludes cooperating writers; the counters additionally
+        // A successful observation must use one unchanged local storage epoch.
+        // The owner excludes cooperating writers; these counters additionally
         // detect callback writes and commits by independent SQLite connections.
         // They do not authenticate arbitrary out-of-band filesystem mutation.
         let epoch = self.admission_state_epoch()?;
+        self.ready()?;
         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
         for (transaction, block) in queries {
@@ -6897,7 +6896,6 @@ impl Node {
             // The prior query has ended before cancellation or caller code runs.
             progress(checked)?;
             let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
-                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
                 let required =
                     consensus::required_work(link.header.target).map_err(Error::local_integrity)?;
                 let cumulative = link
@@ -6919,6 +6917,7 @@ impl Node {
                     .map_err(Error::local_integrity)?;
                     found.insert(id);
                 }
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
                 expected_height = link
                     .record
                     .height

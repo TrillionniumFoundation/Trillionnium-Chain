@@ -224,3 +224,24 @@ gate is replaced by a successful arithmetic certificate.
 - [BCHN integer ASERT specification](https://bitcoin-cash-node.gitlab.io/bchn-sw/bitcoincash-upgrade-specifications/2020-11-15-asert/): integer division, polynomial, anchor semantics, and reference vectors; deployment parameters are not copied into PoN.
 - [Cojocaru et al., Quantum 7:944](https://arxiv.org/abs/2012.15254v4): multi-solution Bernoulli quantum-query analysis under its stated adversary and honest-miner model; no automatic W1 physical-cost reduction.
 - [Komargodski and Weinstein, ESA 2026](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.2): useful matrix work under explicit hardness conjectures, rather than an unconditional lower bound for arbitrary optimized Cell arithmetic.
+
+## Reviewed relation-source mapping, 2026-11-14
+
+The current four-file relation-source mapping was reviewed against source
+checkpoint `7d8d4c59fcd01480a12e1c64835b202079091800`. Its only changed input
+is `trnm-crypto-primitives/src/pon_work.rs`: the current SHA-256 is
+`7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e`.
+The other three inputs retain their original bytes. The original four pins
+match source `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`; their original
+contract and the actual failed observations are preserved in the
+[review evidence](../../../../evidence/pon-fixed-joint-source-binding-20261114/f1/README.md).
+These source checkpoints identify reviewed source bytes, not the later
+commit that stores this mapping metadata.
+
+The reviewed Rust delta contains previously selected owner progress and
+same-invocation verification changes plus explicit module additions. This
+mapping edit changes one source digest only. The original reader and all
+sixteen controls, probability `1/16`, research credit `16u`, context,
+accounting, strategy roster, sixteen unproved cost points and open obligations
+are retained. Qualification remains `HOLD_NO_GO`; this selected-source check
+supplies no all-algorithm cost bound, native execution receipt or activation.
