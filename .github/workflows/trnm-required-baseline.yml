@@ -1,260 +1,157 @@
+# Separate annotated diagnostic tag; never required pull-request qualification.
 name: trnm-required-baseline
+run-name: H5DF native stage2 (diagnostic only)
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: portable-${{ github.workflow }}-${{ github.ref }}
-  # Preserve running head/merge evidence when a successor enters the queue.
+  group: diagnostic-h5df-native-stage2-${{ github.ref }}
   cancel-in-progress: false
-env:
-  CI: "true"
-  CARGO_INCREMENTAL: "0"
-  CARGO_BUILD_JOBS: "2"
-  RUST_TEST_THREADS: "1"
-  CARGO_TERM_COLOR: never
-  PYTHONDONTWRITEBYTECODE: "1"
-  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 jobs:
-  repository-truth:
-    name: repository-truth
+  h5df_native_stage2:
+    name: H5DF native stage2 observation (not qualification)
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Check PQ provider CI wiring and failure controls
-        run: python3 scripts/ci/test_pq_provider_ci.py
-      - name: Check original public Host CI ownership and failure controls
-        run: python3 scripts/ci/test_from_zero_host_ci.py
-      - name: Install isolated runtime material verifier dependency
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
-          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
-          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Run actual repository-truth checks
-        run: bash scripts/ci/ci_job.sh repository-truth
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-cost:
-    name: cross-arch-cost (${{ matrix.arch }})
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 155
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-    env:
-      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
-      - name: Install matching native formatter
-        run: rustup component add --toolchain 1.95.0 rustfmt
-      - name: Execute native release setup and repeated-search costs
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
-      - name: Execute native zero-matrix locality costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
-      - name: Execute native one-zero rank-one locality costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
-      - name: Execute native fixed maintenance producer and preparation costs
-        if: always()
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
-      - name: Execute native legal and late-rejection verifier costs
-        if: always()
-        run: python3 scripts/pon_work_rejection_report.py --run --out "$TRNM_CI_RECEIPT_DIR/work-rejection"
-      - name: Execute exact native from-zero service controls
-        if: always()
-        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain native cost successes and failures
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: cost-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-w1-reuse-v3:
-    name: W1 actual reuse V3 (${{ matrix.arch }}, ${{ matrix.source }})
-    if: github.event_name == 'pull_request'
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 155
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x64, arm64]
-        source: [head, prospective-merge]
-        include:
-          - arch: x64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-    env:
-      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
-      TRNM_COST_SOURCE_KIND: ${{ matrix.source }}
-      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify V3 exact source and ordered merge before execution
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
-          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
-            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
-          fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-before.json"
-      - name: Check original repository boundary before native V3 build
-        run: bash scripts/project-preflight.sh --audit
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
-      - name: Install matching native formatter
-        run: rustup component add --toolchain 1.95.0 rustfmt
-      - name: Execute the complete native W1 actual reuse V3 grid
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
-      - name: Verify V3 exact source and ordered merge after execution
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
-          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
-            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
-          fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-after.json"
-      - name: Retain V3 costs including all failed observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: w1-reuse-v3-${{ matrix.source }}-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  cross-arch-cost-consistency:
-    name: cross-arch-cost-consistency
-    needs: cross-arch-cost
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both actual cost observations from this run
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: cost-*-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/cost-inputs/
-          merge-multiple: false
-      - name: Check actual streams and source identity without a speed threshold
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-comparison.json"
-      - name: Check zero-matrix streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-zero-locality-comparison.json" --suite zero-locality --zero-version 2
-      - name: Check one-zero rank-one streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
-      - name: Check fixed maintenance streams and exact source identity
-        if: always()
-        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-maintenance-comparison.json" --suite maintenance-paired
-      - name: Check actual rejection stages and paired native architectures
-        if: always()
-        run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$RUNNER_TEMP/ci-observations/work-rejection-comparison"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain comparison result including missing or failed architectures
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: cost-consistency-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  protocol-contract:
-    name: protocol-contract
-    runs-on: ubuntu-24.04
-    # Hosted orchestration only; native command and business budgets are unchanged.
     timeout-minutes: 240
+    permissions:
+      contents: read
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONOPTIMIZE: "0"
+      TRNM_EXPECTED_SOURCE_SHA: "5df7ae6f482157c5f7fdcbcd52222117a965053f"
     steps:
-      - name: Checkout exact candidate
+      - name: Checkout exact unchanged H5DF subject
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          ref: "5df7ae6f482157c5f7fdcbcd52222117a965053f"
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
+      - name: Bind actual tag control and runner-local subject checkout
+        shell: bash
+        env:
+          GIT_NO_LAZY_FETCH: "1"
+          GIT_NO_REPLACE_OBJECTS: "1"
+          GIT_OPTIONAL_LOCKS: "0"
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 -B - <<'TRNM_CONTROL_SUBJECT'
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import stat
+          import subprocess
+
+          REPO = "TrillionniumFoundation/Trillionnium-Chain"
+          WORKFLOW = ".github/workflows/trnm-required-baseline.yml"
+          SUBJECT = "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+          SUBJECT_PARENTS = ["abfcff23d4e2aab7dfd92dfb34937ec7d6021ead", "2a86462a1ab20c68151719ba4635e3c294391e64"]
+          TREE = "6be4940d38cc88782657f2684cbefe48866f8b9f"
+          TAG = "refs/tags/diagnostic/h5df-native-stage2-tracepoint-capacity-20261114-v2"
+          BRANCH = "fix/chain-h5df-native-stage2-20261114"
+
+          def require(ok, message):
+              if not ok:
+                  raise ValueError(message)
+
+          def pin(path):
+              raw = path.read_bytes()
+              return {"path": str(path), "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+
+          context = {name: os.environ.get(name) for name in (
+              "GITHUB_ACTIONS", "GITHUB_EVENT_NAME", "GITHUB_REPOSITORY", "GITHUB_REF", "GITHUB_SHA",
+              "GITHUB_WORKFLOW_REF", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_JOB")}
+          require(context["GITHUB_ACTIONS"] == "true" and context["GITHUB_EVENT_NAME"] == "workflow_dispatch", "real dispatch context")
+          require(context["GITHUB_REPOSITORY"] == REPO and context["GITHUB_REF"] == TAG, "exact repository and tag")
+          require(context["GITHUB_WORKFLOW_REF"] == REPO + "/" + WORKFLOW + "@" + TAG, "registered workflow at tag")
+          require(context["GITHUB_JOB"] == "h5df_native_stage2", "diagnostic job")
+          require(re.fullmatch("[0-9a-f]{40}", context["GITHUB_SHA"] or "") and context["GITHUB_SHA"] != SUBJECT, "actual control commit")
+          require(all(re.fullmatch("[1-9][0-9]*", context[k] or "") for k in ("GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT")), "actual run context")
+          source = Path(os.environ["GITHUB_WORKSPACE"]).resolve(strict=True)
+          temporary = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          require(not temporary.is_relative_to(source), "runner temporary root outside full checkout")
+          root = temporary / "h5df-native-stage2-control"
+          root.mkdir(mode=0o700)
+          require(stat.S_IMODE(root.stat().st_mode) == 0o700 and root.stat().st_uid == os.geteuid(), "private owned output")
+          out = root / "control"
+          out.mkdir(mode=0o700)
+          steps = []
+          def command(label, argv, expected=0):
+              began = dt.datetime.now(dt.timezone.utc).isoformat()
+              p = subprocess.run(argv, cwd=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=False)
+              require(len(p.stdout) <= 16 * 1024 * 1024 and len(p.stderr) <= 65536, "bounded metadata")
+              row = {"label": label, "argv": argv, "cwd": str(source), "started_at": began,
+                     "finished_at": dt.datetime.now(dt.timezone.utc).isoformat(), "exit_code": p.returncode}
+              for stream, data in (("stdout", p.stdout), ("stderr", p.stderr)):
+                  path = out / (label + "." + stream)
+                  with path.open("xb") as f:
+                      f.write(data)
+                  row[stream] = pin(path)
+              steps.append(row)
+              with (out / (label + ".step.json")).open("x") as f:
+                  json.dump(row, f, indent=2); f.write("\n")
+              require(p.returncode == expected, label)
+              return p.stdout
+
+          record = {"schema": "trnm-h5df-native-stage2-control-subject-v1", "status": "HOLD",
+                    "actual_github": context, "subject": SUBJECT, "subject_tree": TREE,
+                    "subject_parents": SUBJECT_PARENTS, "local_branch": BRANCH,
+                    "qualification": False, "production_activation": False, "remote_ref_mutations": False}
+          try:
+              require(Path(command("root", ["git", "rev-parse", "--show-toplevel"]).decode().strip()).resolve() == source, "full checkout root")
+              require(command("control-parents", ["git", "rev-list", "--parents", "-n", "1", context["GITHUB_SHA"]]).decode().split() == [context["GITHUB_SHA"], SUBJECT], "single-parent control")
+              record["actual_control_tree"] = command("control-tree", ["git", "rev-parse", context["GITHUB_SHA"] + "^{tree}"]).decode().strip()
+              require(command("control-diff", ["git", "diff", "--name-only", SUBJECT, context["GITHUB_SHA"]]).decode().splitlines() == [WORKFLOW], "control changes only workflow")
+              require(command("subject-parents", ["git", "rev-list", "--parents", "-n", "1", SUBJECT]).decode().split() == [SUBJECT, *SUBJECT_PARENTS], "exact H5DF ordered two-parent source")
+              require(command("subject-tree", ["git", "rev-parse", SUBJECT + "^{tree}"]).decode().strip() == TREE, "actual unchanged H5DF tree")
+              require(command("subject-head-before", ["git", "rev-parse", "HEAD"]).decode().strip() == SUBJECT, "explicit H5DF checkout")
+              require(not command("subject-clean-before", ["git", "status", "--porcelain=v1", "--untracked-files=all"]), "clean subject checkout")
+              flags = command("subject-index-before", ["git", "ls-files", "-v", "-z"]).split(b"\0")
+              require(all(row.startswith(b"H ") for row in flags if row), "ordinary tracked index")
+              boundary = json.loads((source / "PROJECT_BOUNDARY.json").read_bytes())
+              require(BRANCH not in boundary["branch"]["protected"] and re.fullmatch(boundary["branch"]["development_regex"], BRANCH), "original development branch policy")
+              command("local-branch-absent", ["git", "show-ref", "--verify", "--quiet", "refs/heads/" + BRANCH], expected=1)
+              # Only this fresh runner's local development ref is created. There is no push.
+              command("local-development-checkout", ["git", "switch", "--create", BRANCH, SUBJECT])
+              require(command("subject-head", ["git", "rev-parse", "HEAD"]).decode().strip() == SUBJECT, "subject checkout")
+              require(command("subject-tree-after", ["git", "rev-parse", "HEAD^{tree}"]).decode().strip() == TREE, "subject tree after switch")
+              require(command("local-branch", ["git", "branch", "--show-current"]).decode().strip() == BRANCH, "local development branch")
+              require(not command("subject-clean", ["git", "status", "--porcelain=v1", "--untracked-files=all"]), "clean subject")
+              flags = command("subject-index", ["git", "ls-files", "-v", "-z"]).split(b"\0")
+              require(all(row.startswith(b"H ") for row in flags if row), "ordinary subject index")
+              record["status"] = "subject_checked_out"
+          finally:
+              record["steps"] = steps
+              record["finished_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
+              with (root / "control-subject.json").open("x") as f:
+                  json.dump(record, f, indent=2); f.write("\n")
+          TRNM_CONTROL_SUBJECT
+      - name: Verify diagnostic source before setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json" > "$RUNNER_TEMP/h5df-native-stage2-control/source-before-setup.stdout" 2> "$RUNNER_TEMP/h5df-native-stage2-control/source-before-setup.stderr"
+      - name: Run original default project preflight before any builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_root="$RUNNER_TEMP/h5df-native-stage2-control"
+          set +e
+          bash scripts/project-preflight.sh > "$task_root/default-preflight-before-setup.stdout" 2> "$task_root/default-preflight-before-setup.stderr"
+          preflight_exit=$?
+          set -e
+          printf '%s\n' "$preflight_exit" > "$task_root/default-preflight-before-setup.exit"
+          exit "$preflight_exit"
       - name: Set isolated Cargo paths after runner allocation
         shell: bash
         run: |
@@ -265,374 +162,60 @@ jobs:
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install isolated conformance-only Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-contract-env"
-          "$RUNNER_TEMP/pon-contract-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-contract-env/bin" >> "$GITHUB_PATH"
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run actual protocol-contract checks
-        run: bash scripts/ci/ci_job.sh protocol-contract
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  fuzz-smoke:
-    name: fuzz-smoke
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
+      - name: Restore exact external observer, mapper, clock admission and runner
         shell: bash
         run: |
           set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install pinned coverage-guided fuzz tools
-        run: bash scripts/ci/install_ci_tools.sh fuzz
-      - name: Run actual fuzz-smoke checks
-        run: bash scripts/ci/ci_job.sh fuzz-smoke
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  rust-baseline-shards:
-    name: rust-baseline shard (${{ matrix.shard }})
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [runtime, quality]
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
+          umask 077
+          python3 -B - <<'TRNM_NATIVE_STAGE2_HELPERS'
+          import base64,hashlib,json,os,stat,zlib
+          from pathlib import Path
+          directory=Path(os.environ["RUNNER_TEMP"])/'helpers'
+          directory.mkdir(mode=0o700)
+          if directory.is_symlink() or stat.S_IMODE(directory.stat().st_mode)!=0o700 or directory.stat().st_uid!=os.geteuid(): raise ValueError("private owned helper directory")
+          entries=[{'name': 'observe_native_six_sites_tracepoint_v1.c', 'bytes': 40588, 'sha256': 'ee34606dfca9d756ce683ada05d472066e6c948448675d7d15c0a4c8373c5659', 'gzip_bytes': 12098, 'gzip_sha256': 'ba3649df330d1b67b21557d69ac61d7d92650a839751442828f97fae0778b520', 'gzip_base64': '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'}, {'name': 'map_and_join_native_tracepoint_v1.py', 'bytes': 27139, 'sha256': 'cfc0c87a1ed196fdf992904888eded5121d49f0330c0f9fc6bde4018c8941777', 'gzip_bytes': 8351, 'gzip_sha256': '99342d5862dd33cfa17c16f6c601a6a18dffb439a99764f65e479352c8e2a119', 'gzip_base64': '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'}, {'name': 'admit_h5df_current_elf_clock_v1.py', 'bytes': 14846, 'sha256': '7c13cc8f5bdcb23670ee61053b4b643b48944965ce52cfda601c07974c4a629f', 'gzip_bytes': 5082, 'gzip_sha256': '3a5118019ab9bebded3477509de5e5681c705618827f4368727dd57fdd843225', 'gzip_base64': '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'}, {'name': 'run_h5df_native_stage2_v2.py', 'bytes': 46762, 'sha256': 'a8607714114dae302a4030b63193b50fb47cce65777f58cbcfcd24fb0fc8b204', 'gzip_bytes': 13798, 'gzip_sha256': 'e0e533ce5df9240fe1e2291abf21571effe6fd2a29e3582dd53f1f0e6cc36a8e', 'gzip_base64': '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'}]
+          proofs=[]
+          for item in entries:
+              packed=base64.b64decode(item["gzip_base64"],validate=True)
+              if len(packed)!=item["gzip_bytes"] or hashlib.sha256(packed).hexdigest()!=item["gzip_sha256"]: raise ValueError("gzip pin")
+              decoder=zlib.decompressobj(31)
+              raw=decoder.decompress(packed,item["bytes"]+1)
+              if (not decoder.eof or decoder.unused_data or decoder.unconsumed_tail or len(raw)!=item["bytes"]
+                  or hashlib.sha256(raw).hexdigest()!=item["sha256"]): raise ValueError("bounded exact helper bytes")
+              if Path(item["name"]).name!=item["name"]: raise ValueError("literal helper basename")
+              path=directory/item["name"]
+              fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+              with os.fdopen(fd,"wb") as f: f.write(raw);f.flush()
+              if path.read_bytes()!=raw: raise ValueError("helper readback")
+              proofs.append({"path":str(path),"bytes":len(raw),"sha256":item["sha256"],"gzip_bytes":item["gzip_bytes"],"gzip_sha256":item["gzip_sha256"]})
+          with (directory/"decoded-source-pins.json").open("x") as f:
+              json.dump({"schema":"trnm-diagnostic-embedded-source-pins-v1","files":proofs,"qualification":False},f,indent=2);f.write("\n")
+          TRNM_NATIVE_STAGE2_HELPERS
+      - name: Observe original H5DF native controls under the original Host workflow
         shell: bash
         run: |
           set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install pinned dependency auditor
-        run: bash scripts/ci/install_ci_tools.sh supply-chain
-      - name: Install isolated signed-state oracle Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-state-env"
-          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+          python3 -B "$RUNNER_TEMP/helpers/run_h5df_native_stage2_v2.py" --source "$GITHUB_WORKSPACE" --control "$GITHUB_SHA" --tag diagnostic/h5df-native-stage2-tracepoint-capacity-20261114-v2 --output "$RUNNER_TEMP/h5df-native-stage2"
+      - name: Verify diagnostic source after execution or setup failure
+        if: always()
         shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run retained Rust shard
-        run: python3 scripts/ci/rust_baseline_shards.py run --kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-observations-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-      - name: Retain lightweight exact Rust shard proof
+        run: |
+          set -euo pipefail
+          task_root="$RUNNER_TEMP/h5df-native-stage2-control"
+          if [[ ! -d "$task_root" ]]; then
+            echo "HOLD: control-subject setup did not produce a private evidence root"
+            exit 1
+          fi
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$task_root/source-after-workflow.json" > "$task_root/source-after-workflow.stdout" 2> "$task_root/source-after-workflow.stderr"
+      - name: Preserve original failures and diagnostic observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: rust-shard-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
+          name: h5df-native-stage2-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/ci-observations/rust-shard.json
-            ${{ runner.temp }}/ci-observations/rust-shard.sh
-          if-no-files-found: error
-          retention-days: 30
-  rust-baseline:
-    name: rust-baseline
-    needs: rust-baseline-shards
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    env:
-      TRNM_RUST_SHARD_RESULT: ${{ needs.rust-baseline-shards.result }}
-    steps:
-      - name: Checkout exact tested source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both current-run Rust shard observations
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: rust-shard-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*
-          path: ${{ runner.temp }}/rust-shards/
-          merge-multiple: false
-      - name: Require both successful exact-source Rust shards
-        if: always()
-        run: python3 scripts/ci/rust_baseline_shards.py check --kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain failed and successful Rust fan-in observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-fanin-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  prospective-rust-shards:
-    name: prospective Rust shard (${{ matrix.shard }})
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [runtime, quality]
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install pinned dependency auditor
-        run: bash scripts/ci/install_ci_tools.sh supply-chain
-      - name: Install isolated signed-state oracle Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-state-env"
-          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Run retained Rust shard
-        run: python3 scripts/ci/rust_baseline_shards.py run --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-observations-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-      - name: Retain lightweight exact Rust shard proof
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-shard-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}
-          path: |
-            ${{ runner.temp }}/ci-observations/rust-shard.json
-            ${{ runner.temp }}/ci-observations/rust-shard.sh
-          if-no-files-found: error
-          retention-days: 30
-  prospective-rust-baseline:
-    name: prospective-merge (rust-baseline)
-    needs: prospective-rust-shards
-    if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-      TRNM_RUST_SHARD_RESULT: ${{ needs.prospective-rust-shards.result }}
-    steps:
-      - name: Checkout exact tested source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Retrieve both current-run Rust shard observations
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          pattern: rust-shard-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*
-          path: ${{ runner.temp }}/rust-shards/
-          merge-multiple: false
-      - name: Require both successful exact-source Rust shards
-        if: always()
-        run: python3 scripts/ci/rust_baseline_shards.py check --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain failed and successful Rust fan-in observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: rust-fanin-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  external-evidence-contract:
-    name: external-evidence-contract
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - name: Checkout exact candidate
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify immutable source identity
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install isolated evidence-replay Python environment
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-evidence-env"
-          "$RUNNER_TEMP/pon-evidence-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-evidence-env/bin" >> "$GITHUB_PATH"
-      - name: Run actual external-evidence-contract checks
-        run: bash scripts/ci/ci_job.sh external-evidence-contract
-      - name: Verify source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: head-${{ github.job }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
-          if-no-files-found: error
-          retention-days: 30
-  prospective-merge:
-    name: prospective-merge (${{ matrix.lane }})
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: ${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}
-    strategy:
-      fail-fast: false
-      matrix:
-        lane: [repository-truth, protocol-contract, fuzz-smoke, external-evidence-contract]
-    env:
-      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
-      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-    steps:
-      - name: Checkout exact prospective merge
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify merge identity and exact ordered parents
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
-      - name: Set isolated Cargo paths after runner allocation
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
-          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Install pinned compiler and tools in isolated hosted runner
-        if: matrix.lane == 'protocol-contract' || matrix.lane == 'fuzz-smoke' || matrix.lane == 'rust-baseline'
-        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Install isolated conformance and evidence Python environment
-        if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'
-        run: |
-          python3 -m venv "$RUNNER_TEMP/pon-merge-env"
-          "$RUNNER_TEMP/pon-merge-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
-          echo "$RUNNER_TEMP/pon-merge-env/bin" >> "$GITHUB_PATH"
-      - name: Install pinned coverage-guided fuzz tools
-        if: matrix.lane == 'fuzz-smoke'
-        run: bash scripts/ci/install_ci_tools.sh fuzz
-      - name: Install pinned dependency auditor
-        if: matrix.lane == 'rust-baseline'
-        run: bash scripts/ci/install_ci_tools.sh supply-chain
-      - name: Check PQ provider CI wiring and failure controls
-        if: matrix.lane == 'repository-truth'
-        run: python3 scripts/ci/test_pq_provider_ci.py
-      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
-        if: matrix.lane == 'protocol-contract'
-        shell: bash
-        run: bash scripts/ci/prepare_pq_provider.sh
-      - name: Install isolated runtime material verifier dependency
-        if: matrix.lane == 'repository-truth'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
-          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
-          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Execute the same lane on the prospective merge
-        run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"
-      - name: Verify merge source remained unchanged
-        if: always()
-        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
-      - name: Retain source and execution observations
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: merge-${{ matrix.lane }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/ci-observations/
+            ${{ runner.temp }}/h5df-native-stage2/
+            ${{ runner.temp }}/h5df-native-stage2-control/
+            ${{ runner.temp }}/helpers/
+            ${{ runner.temp }}/ci-observations/
           if-no-files-found: error
           retention-days: 30
