@@ -3097,6 +3097,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
                 '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
                 '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+                '    python3 scripts/ci/test_read_native_campaign_attempt.py\n',
             ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
@@ -3190,6 +3191,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
     def test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('native_observation_guards')
 
+
+    def test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure(self):
+        self.reject_command_mutations('failed_campaign_diagnostics')
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')

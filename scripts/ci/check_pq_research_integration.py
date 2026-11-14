@@ -1279,6 +1279,14 @@ SP27_03_RESEARCH_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= SP27_03_RESEARCH_REQUIRED_PATHS
 
 
+# Partial campaign readback retains every planned slot without certifying a run.
+PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/read_native_campaign_attempt.py',
+    'scripts/ci/test_read_native_campaign_attempt.py',
+))
+NATIVE_REQUIRED_PATHS |= PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS
+
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
