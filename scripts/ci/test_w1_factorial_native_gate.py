@@ -18,7 +18,7 @@ EXAMPLES = ROOT / 'trillionnium/crates/trnm-pon-node/examples'
 MATERIAL_SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs'
 COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (11, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (38, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (40, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
@@ -76,15 +76,44 @@ class NativeGateTests(unittest.TestCase):
                 (Path(directory) / (name + '.log')).write_text(content)
             return subprocess.run([sys.executable, '-c', self.code, directory], capture_output=True).returncode
 
+    def test_detached_diagnostics_keep_exact_success_and_refuse_bad_records(self):
+        for name in [n for n in HISTORY if n.startswith('detached_budget_controls::')]:
+            selector = 'ingress::history_import::tests::' + name
+            original = self.logs['history-import-tests']
+            line = f'test {selector} ... ok\n'
+            observed = f'test {selector} ... {{"diagnostic":true}}\nmore diagnostic\nok\n'
+            self.logs['history-import-tests'] = original.replace(line, observed)
+            self.assertEqual(self.run_gate(), 0)
+            for bad in ('', observed + observed, observed.replace(selector, selector + '_wrong'),
+                        observed.replace('\nok\n', '\nFAILED\n'),
+                        observed.replace('\nok\n', '\nignored\n'),
+                        observed.replace('\nok\n', '\n'),
+                        observed.replace('\nok\n', '\nok\nok\n')):
+                with self.subTest(selector=selector, bad=bad):
+                    self.logs['history-import-tests'] = original.replace(line, bad)
+                    self.assertNotEqual(self.run_gate(), 0)
+            self.logs['history-import-tests'] = original
+
     def test_fixture_counts_match_frozen_complete_named_rosters(self):
         for suite, profile in [('factorial-example-tests', 'factorial-example'),
                                ('history-import-tests', 'history-import')]:
             roster = ROSTERS[profile]
             ignored = len(roster['ignored'])
             self.assertEqual(COUNTS[suite], (len(roster['names']) - ignored, ignored))
-        # Independently reviewed Linux registration: 39 cases, one original child.
+        # Independently reviewed Linux registration: 41 cases, one original child.
+        history_root = ROOT / 'trillionnium/crates/trnm-pon-node/src/ingress'
+        actual = []
+        for filename, module in (
+                ('history_import_tests.rs', ''),
+                ('history_import_deadline_tests.rs', 'deadline_controls::'),
+                ('history_import_detached_budget_tests.rs', 'detached_budget_controls::')):
+            actual += ['ingress::history_import::tests::' + module + name for name in
+                       re.findall(r'#\[test\]\s+(?:#\[[^\]]+\]\s+)*fn (\w+)',
+                                  (history_root / filename).read_text())]
+        self.assertEqual(len(actual), 41)
+        self.assertCountEqual(actual, ROSTERS['history-import']['names'])
         history = ROSTERS['history-import']
-        self.assertEqual(len(history['names']), 39)
+        self.assertEqual(len(history['names']), 41)
         self.assertEqual(history['ignored'], [
             'ingress::history_import::tests::history_kill_cut_child'])
         for name in (
@@ -98,7 +127,8 @@ class NativeGateTests(unittest.TestCase):
 
     def test_previous_incomplete_positive_fixture_is_refused(self):
         for suite, old_passes, ignored in [('factorial-example-tests', 6, 0),
-                                          ('history-import-tests', 28, 1)]:
+                                          ('history-import-tests', 28, 1),
+                                          ('history-import-tests', 38, 1)]:
             original = self.logs[suite]
             self.logs[suite] = original.replace(
                 f'test result: ok. {COUNTS[suite][0]} passed;',

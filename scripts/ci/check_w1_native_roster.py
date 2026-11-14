@@ -8,6 +8,26 @@ import re
 
 ROSTERS = json.loads(Path(__file__).with_name("w1_native_rosters_v1.json").read_text())
 
+def require_named_success(text, selector):
+    """Accept one libtest result, including nocapture output before its status.
+
+    A following named test or suite summary closes the record. Diagnostic text
+    cannot supply another test's status or replace a missing terminal result.
+    """
+    starts = list(re.finditer(r'^test (\S+) \.\.\. ', text, re.M))
+    matches = [i for i, match in enumerate(starts) if match[1] == selector]
+    if len(matches) != 1:
+        raise ValueError(selector + ': missing or duplicate native control')
+    i = matches[0]
+    end = starts[i + 1].start() if i + 1 < len(starts) else len(text)
+    body = text[starts[i].end():end].split('\ntest result:', 1)[0]
+    lines = [line.strip() for line in body.splitlines() if line.strip()]
+    if not lines or lines[-1] != 'ok':
+        raise ValueError(selector + ': native control did not succeed')
+    if any(line in ('ok', 'FAILED') or line.startswith('ignored') for line in lines[:-1]):
+        raise ValueError(selector + ': ambiguous native outcome')
+
+
 def check(text, profile):
     expected = ROSTERS[profile]
     names = expected["names"]
