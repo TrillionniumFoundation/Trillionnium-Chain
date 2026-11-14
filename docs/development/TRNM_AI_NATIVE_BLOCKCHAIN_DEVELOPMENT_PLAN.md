@@ -14504,3 +14504,7 @@ The [outbound contract](../security/PQ_DURABLE_OUTBOUND_V1.md) preserves origina
 ### 2026-11-14 root review: durable-outbound
 
 Integrated reviewed commit f66df9b7324daaf7171d6e9f940f562c1a244633. Exact signed-request durable loopback outbound owner; original nine Linux controls, sealed-reply type refusal and strict Node library/CLI Clippy passed. Original budgets, retained cancellation, unknown outcome and rollback limitations remain. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: readonly-audit-tools
+
+Integrated reviewed commit 6159b8ef0d334230e2b34071104ba94f9e835f5a. Cost coverage preserves missing costs as unknown; anchored trial reconciliation authorizes no retry/refund; collector retains exact raw-source snapshots and failed attempts. Original finite Python suites passed on the recorded platform; no native campaign or qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
