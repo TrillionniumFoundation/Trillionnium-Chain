@@ -14992,3 +14992,30 @@ Selected the three independent 1d11f875 statement-boundary controls. They exerci
 ### 2026-11-14 retained literal-aware Rust token reader
 
 Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
+
+### Cell ordinary peer-failure ordering preservation, 2026-11-14
+
+The selected bounded Cell fetch session retains ordinary unavailable and transport
+failure observations by actual SocketAddr, with at most eight saturating counters.
+Each request takes one stable score snapshot. Failure score orders peers first;
+existing availability preference and cyclic ties remain stable within equal scores.
+An ordinary miss only reduces priority and never removes a fallback peer or creates
+corrupt-peer quarantine. Original connection, request, byte, absolute deadline,
+cancellation and retry owners remain unchanged.
+
+The original seven-connection complete-release control and three combination
+controls are retained. Fixed-source Linux execution passed 19 release, 13
+availability, 8 network budget and 4 cancellation controls with zero ignored tests,
+plus strict all-target Clippy. The first Mac availability suite had 12 passes and
+one existing probe-count failure; that observation remains preserved. An isolated
+baseline run and an isolated patched run each passed that unchanged control;
+neither is evidence that the first failure was reproduced or explained. Ordinary
+miss ordering is a selected behavior policy, not a claim of improvement for every
+peer arrangement, a four-second confirmation result, activation or release
+qualification.
+
+Root integration retained the exact three Cell runtime/test blobs from
+283981a062158f3b41eea42d52f56eaee457ba97 on the e8241969 composition.
+Only independent source-guard and plan conflicts were composed. The selected
+44-control Linux receipt is component evidence and does not replace protected
+exact-head/prospective-merge confirmation or remove the prior Mac failure.
