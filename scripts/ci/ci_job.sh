@@ -186,6 +186,7 @@ PY
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_read_failed_native_campaign_zip.py
+    python3 scripts/ci/test_read_native_campaign_attempt.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
