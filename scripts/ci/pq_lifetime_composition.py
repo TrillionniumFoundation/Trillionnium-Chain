@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Review the declared V1/root inventory union and conditional AND arithmetic.
 
+The current-v3 entry retains the original v2 manifest by exact identity.
 This is a research accounting contract, not a theorem checker. The two source
 inventories do not instantiate one security game. No numeric declaration, source
 checksum, or successful inspection can produce an actual lifetime bound.
@@ -16,13 +17,14 @@ from pathlib import Path
 import sys
 
 import pq_lifetime_budget as legacy
+import pq_lifetime_current_v2 as current_lifetime
 import pq_root_dependency_register as root_register
 from pq_source_reader import SourceReadError, read_regular
 
-SCHEMA = "trnm-pq128-lifetime-composition-v2"
-RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
+SCHEMA = "trnm-pq128-lifetime-composition-current-v3"
+RESULT_SCHEMA = "trnm-pq128-lifetime-composition-current-result-v3"
 ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
-DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
+DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-current-v3.json"
 REVIEW_BASE = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
 EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
 COMMON_GAME = "uninstantiated-common-root-game-v2"
@@ -37,11 +39,13 @@ INPUTS = {
     },
     "root": {
         "path": root_register.DEFAULT_MANIFEST,
-        "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725",
         "declared_revision": root_register.REVIEW_BASE,
         "revision_semantics": "review-base-context-not-all-source-revision",
     },
 }
+FROZEN_COMPOSITION = {'path': 'config/pon/pq128-lifetime-composition-v2.json', 'sha256': '5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052'}
+CURRENT_CORRESPONDENCE = {'path': 'config/pon/pq128-source-correspondence-current-v2.json', 'sha256': '2aa06a43b36deca1f6a4b3b6d345468fc50b9b60e0cc3ee764f3a14a289b0c93', 'source_snapshot_sha256': '5b409e39276cdd6df0a012625c31e75d382944f87d2c87725b51e089464a8140'}
 PRIMITIVES = {
     "sha256": "FIPS180-4/SHA-256", "sha512": "FIPS180-4/SHA-512",
     "shake128": "FIPS202/SHAKE128", "shake256": "FIPS202/SHAKE256",
@@ -122,7 +126,9 @@ def default_manifest():
     """Return reviewed declarations; never regenerate a source lock from files."""
     return {
         "schema": SCHEMA, "purpose": "research-obligation-bridge",
-        "review_base_revision": REVIEW_BASE,
+        "frozen_review_base_revision": REVIEW_BASE,
+        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
+        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
         "input_manifests": copy.deepcopy(INPUTS),
         "experiment": {
             "id": EXPERIMENT_ID, "model": legacy.MODEL,
@@ -420,7 +426,9 @@ def validate_manifest(data):
     exact(data, default_manifest(), "composition manifest")
     return {
         "schema": RESULT_SCHEMA, "status": "HOLD", "inventory_contract_satisfied": True,
-        "review_base_revision": REVIEW_BASE,
+        "frozen_review_base_revision": REVIEW_BASE,
+        "frozen_composition": copy.deepcopy(FROZEN_COMPOSITION),
+        "current_lifetime_correspondence": copy.deepcopy(CURRENT_CORRESPONDENCE),
         "declared_source_union_consistent": False, "source_binding_scope": "unbound",
         "source_revision_bound": False, "deployment_identity_proved": False,
         "transitive_dependency_closure_proved": False,
@@ -446,13 +454,21 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
         raw = read_regular(root, legacy.relative_path(manifest_path, "manifest"), MAX_BYTES)
         data = legacy.strict_json(raw)
         result = validate_manifest(data)
+        frozen_raw = read_regular(root, FROZEN_COMPOSITION["path"], MAX_BYTES)
+        require(hashlib.sha256(frozen_raw).hexdigest() == FROZEN_COMPOSITION["sha256"],
+                "input manifest differs from reviewed bytes: frozen composition")
         children = {}
         for name, item in INPUTS.items():
             child_raw = read_regular(root, item["path"], MAX_BYTES)
             require(hashlib.sha256(child_raw).hexdigest() == item["sha256"],
                     "input manifest differs from reviewed bytes: " + name)
             children[name] = legacy.strict_json(child_raw)
-        old_result = legacy.inspect(root)
+        current_result = current_lifetime.inspect(root)
+        old_result = current_result['frozen_model']
+        current_sources = current_result['current_source_correspondence']
+        require(current_sources['map_sha256'] == CURRENT_CORRESPONDENCE['sha256']
+                and current_sources['source_snapshot_sha256'] == CURRENT_CORRESPONDENCE['source_snapshot_sha256'],
+                'current lifetime correspondence differs from the reviewed composition input')
         root_result = root_register.inspect(root)
         for name, child in (("legacy", old_result), ("root", root_result)):
             require(child["manifest_sha256"] == INPUTS[name]["sha256"],
@@ -465,21 +481,24 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
         require(old_result["experiment"]["source_revision"] == INPUTS["legacy"]["declared_revision"]
                 and root_result["review_base_revision"] == INPUTS["root"]["declared_revision"],
                 "child revision semantics mismatch")
-        require(old_result["purpose"] == "research-model" and old_result["source_revision_bound"] is True
+        require(old_result["purpose"] == "research-model"
+                and old_result["source_revision_bound"] is False
+                and current_sources["source_files_checked"] is True
+                and current_sources["source_revision_bound"] is False
                 and root_result["source_files_checked"] is True,
                 "source inventories must be checked research inputs")
         require(len(old_result["unknown_terms"]) == 8
                 and all(value is None for value in root_result["domain_failure_bounds"].values()),
                 "new component bounds require explicit experiment and coverage review")
-        files = merge_source_maps(old_result["source_files_sha256"], root_result["source_files_sha256"])
-        shared_paths = sorted(set(old_result["source_files_sha256"])
+        files = merge_source_maps(current_sources["source_files_sha256"], root_result["source_files_sha256"])
+        shared_paths = sorted(set(current_sources["source_files_sha256"])
                               & set(root_result["source_files_sha256"]))
         source_counts = {
-            "legacy": len(old_result["source_files_sha256"]),
+            "legacy": len(current_sources["source_files_sha256"]),
             "root": len(root_result["source_files_sha256"]),
             "shared": len(shared_paths), "union": len(files),
         }
-        require(source_counts == {"legacy": 21, "root": 45, "shared": 1, "union": 65}
+        require(source_counts == {"legacy": 21, "root": 46, "shared": 1, "union": 66}
                 and shared_paths == ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"],
                 "declared source union changed; review the mapping")
         scopes = bridge_primitives(children["legacy"], children["root"])
@@ -488,7 +507,9 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
         result.update({
             "manifest_sha256": hashlib.sha256(raw).hexdigest(),
             "input_manifests": copy.deepcopy(INPUTS),
-            "legacy_source_lock_sha256": old_result["source_lock_sha256"],
+            "legacy_source_lock_sha256": current_result["frozen_model_identity"]["source_lock_sha256"],
+            "legacy_frozen_model_identity": current_result["frozen_model_identity"],
+            "legacy_current_source_correspondence": current_sources,
             "root_declared_source_snapshot_sha256": root_result["declared_source_snapshot_sha256"],
             "declared_source_union_consistent": True,
             "source_binding_scope": "declared-path-union-only",

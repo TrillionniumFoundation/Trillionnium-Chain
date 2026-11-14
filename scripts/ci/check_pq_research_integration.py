@@ -1138,6 +1138,10 @@ NATIVE_REQUIRED_PATHS |= ECONOMICS_INTEGRATION_REQUIRED_PATHS
 
 # Preserve complete inputs of the independently retained research components.
 NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.json',
+ 'config/pon/pq128-lifetime-composition-current-v3.json',
+ 'config/pon/pq128-source-correspondence-current-v2.json',
+ 'scripts/ci/pq_lifetime_current_v2.py',
+ 'scripts/ci/test_pq_lifetime_current_v2.py',
  'docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md',
  'docs/security/PQ128_LIFETIME_COMPOSITION_V2.md',
  'docs/security/PQ_CONTENT_CHAIN_REVIEW_V1.md',

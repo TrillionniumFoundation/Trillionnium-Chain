@@ -2074,7 +2074,8 @@ class CiContractTests(unittest.TestCase):
     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
         path = 'scripts/ci/ci_job.sh'
         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
-                        '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                        '    python3 scripts/ci/test_pq_lifetime_current_v2.py\n',
+                        '    python3 scripts/ci/pq_lifetime_current_v2.py\n',
                         '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
                         '    python3 scripts/ci/pq_authority_effect_register.py\n',
                         "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
@@ -3162,7 +3163,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n",
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n",
         ), '    python3 scripts/ci/test_project_boundary.py\n'),
-        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_budget.py\n', (
+        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_current_v2.py\n', (
             '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
             '    python3 scripts/ci/pq_authority_effect_register.py\n',
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",

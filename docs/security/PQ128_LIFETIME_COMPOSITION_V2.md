@@ -369,3 +369,21 @@ report continues to contain:
   "production_activation": false
 }
 ```
+
+## Current source correspondence entry (2026-11-14)
+
+The v2 machine register and the original observation files remain unchanged.
+The default checker now reads the explicit
+[current-v3 register](../../config/pon/pq128-lifetime-composition-current-v3.json).
+That register retains the exact v2 identity and binds the
+[current 21-path correspondence](../../config/pon/pq128-source-correspondence-current-v2.json)
+separately from the frozen v1 model and source lock. The frozen arithmetic does
+not claim a current source revision.
+
+The current root inventory has 46 declared source paths, including the bounded
+cost observation source. Its one shared path with the 21-path event map gives
+66 distinct current source paths. This source accounting adds no bad event,
+probability, query budget, theorem applicability or production qualification.
+All arithmetic, unknown values, HOLD results and original refusal limits remain
+in force. Supplying the retained v2 register to the current-v3 checker is refused;
+historical logs retain their original schema and outcome.
