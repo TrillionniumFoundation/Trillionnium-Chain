@@ -14640,3 +14640,34 @@ Integrated reviewed shared commit 73d5a17b9b7fb5f67040554f22ff37d20725e548 and a
 Preserve the exact checker and all23 original controls from 4be50aa40ed537b8a06475984a8da4141e44cf77 (actual parent 9eda0ada15be1702269e08e527917568c710f4d3), blobs aa0e0e9e1575e60fc9f5aa5e876a7832c6a68b3e and 4b14ca5cb85b92a2a723581a9f5e5d82a1167bc1. The explicit read-only command compares immutable Chain/Hepta commits, declared Cargo aliases/target/build/dev/patch/replace paths, all checked-in locks and overrides, both query and fragment revisions, exact Bazel28 rules_rs namespace/strip-prefix/package roster, and Chain package identities. Missing or different versions refuse instead of broadening the accepted consumer schema. Required repository-truth executes its original temporary-Git conformance suite exactly once; independent omission/mutation controls bind both files. No actual Hepta repository is inspected or changed by this integration.
 
 This is source dependency alignment only. It neither resolves the effective build environment nor authenticates remote repository membership, working-tree bytes, binaries, model material or native execution; every qualification/activation field remains false. The4MiB object size check precedes each object read, while the16MiB Git command output check occurs after capture and is not a streaming peak-memory bound. The synthetic controls do not prove resource cost or a complete system candidate. No deployed state, source namespace or original Host/protocol budget changes.
+
+
+### 2026-11-14 — THP2 explicit post-verification time contract from historical 95939e13
+
+Selected source: historical `95939e1380f21dcf3209acaee70e29fcf0141d6c` over
+`1c5899a663037689d26bf7c31472a70d26971a8b`; current implementation base:
+`692f2454620faad648850f9421f2f11467ba046e`.
+The current THP2 library now exposes explicit context-verification and decode
+entrypoints that check a caller-provided fresh time after exactly one successful
+ML-DSA verification. Cheap chain/owner/generation/time checks still run first.
+A clock rollback fails; admission expiry remains inclusive, while authority-pin
+expiry and revocation retain their existing exclusive boundary. The original
+strict bounded THP2 parser, external SPKI pins and immutable owner context remain
+the selected contract. The old embedded-key CBOR wire is not restored.
+
+The original six current controls are retained, with three adapted historical
+controls and one additional pin-expiry/revocation control. All ten passed on
+macOS aarch64 with the exact locked offline dependency graph; strict library and
+integration-test Clippy and whole-workspace formatting also passed. Independent
+literal source guards cover omission of either required path or pin and mutation
+of either source. Source-integrity success does not grant cryptographic,
+production, final-use, rollback-resistance or WAN qualification.
+
+This remains an opt-in research library API with no production Node or CLI caller
+found in the reviewed source. It validates one point in time; a later effect must
+still recheck its current withdrawal/journal/owner context. Current final-source
+bindings and combined candidate qualification remain separate integration gates.
+
+### 2026-11-14 root review: THP2 fresh-time research API
+
+Integrated reviewed 6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc with current THP2 wire, external SPKI pins and immutable expected owner. Exactly one existing ML-DSA verification precedes the trusted-clock reread, rollback refusal and original admission/pin time boundaries. The six current controls, three adapted historical controls and one pin-boundary control all passed in the reviewed native receipt. No production caller is added; final-use owner context and exact combined protected CI remain separate gates. The original fixed-budget confirmation failure is retained.
