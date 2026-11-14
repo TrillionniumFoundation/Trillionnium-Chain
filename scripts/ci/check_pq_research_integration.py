@@ -1682,6 +1682,12 @@ CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS
 
+# These original wall-clock controls use current Registered task material.
+MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
+))
+NATIVE_REQUIRED_PATHS |= MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS
+
 
 class IntegrityError(ValueError):
     pass

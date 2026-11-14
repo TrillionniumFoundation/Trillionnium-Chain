@@ -15047,3 +15047,18 @@ Retain the original b23c0ef8 bounded metadata collector and its 26 original cont
 Retain only require, source_uri and semantic_extraction_observations plus their three original bounds/marker constants in a separate pure readback module. The four original semantic controls preserve their ASTs: informational and unlocated failures remain failures, a retained-row cap does not erase counts, and even empty logs grant no semantic/security qualification. Neither component imports or restores the retired CodeQL runner, query packs, toolchain installer or scanning workflow. Their two control commands execute exactly once in repository-truth, with independent command and source omission/mutation guards. Synthetic fixture results are not native scan evidence.
 
 Root retained exact original metadata collector/test blobs and independently compared the three pure semantic functions, three constant ASTs, and four original semantic method ASTs. The 30 controls use retained/synthetic input only. Current official CodeQL action, exporter, toolchain and security authority remain selected.
+
+### Original wall-clock MTP controls, 2026-11-14
+
+Two complete historical wall-clock controls now exercise the current Registered
+bootstrap task material and make_with_registered_material interface. Only their
+fixture adapter changes; original statements, exact event timestamp equality,
+explicit full W1 verification, persisted packet byte equality, pool-state checks
+and diagnostic records remain. The successful branch retains 4,096 search
+attempts and a two-second runtime. The future-median refusal retains its original
+150-millisecond runtime and zero-search/zero-work assertions. Existing
+pool_mining controls and all production mining, consensus and admission owners
+remain unchanged. These local controls do not establish hosted four-second
+confirmation, activation or production qualification.
+
+Root retained the two complete original wall-clock mining controls through the reviewed Registered-material adapter. Both original test bodies preserve all diagnostic string literals and non-whitespace statements except the explicit Settings argument for the ancestor adapter. The original 4096 attempts and 2-second/150-millisecond bounds remain; the selected component Linux receipt contains two passes without ignored controls.
