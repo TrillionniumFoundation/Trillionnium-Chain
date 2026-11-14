@@ -62,10 +62,12 @@ pub use bep52::{
     MAX_CELL_BEP52_METAINFO_BYTES_V1, MAX_CELL_BEP52_PROOF_BYTES_V1,
 };
 pub use bep52_peer::{
-    fetch_cell_bep52, fetch_cell_bep52_with_content, query_cell_bep52_dht_peers,
-    CellBep52DhtHintsV1, CellBep52DhtNodeHintV1, CellBep52FetchReportV1, CellBep52PeerLimitsV1,
-    CellBep52PeerSessionV1, CellBep52PeerUsageV1, CellBep52SeedV1, CELL_BEP52_PEER_PROFILE_V1,
-    MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1, MAX_CELL_BEP52_PEER_FRAME_BYTES_V1,
+    fetch_cell_bep52, fetch_cell_bep52_with_content, lookup_cell_bep52_dht_peers,
+    query_cell_bep52_dht_peers, CellBep52DhtEndpointPolicyV1, CellBep52DhtHintsV1,
+    CellBep52DhtLookupReportV1, CellBep52DhtLookupStopV1, CellBep52DhtNodeHintV1,
+    CellBep52FetchReportV1, CellBep52PeerLimitsV1, CellBep52PeerSessionV1, CellBep52PeerUsageV1,
+    CellBep52SeedV1, CELL_BEP52_PEER_PROFILE_V1, MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1,
+    MAX_CELL_BEP52_PEER_FRAME_BYTES_V1,
 };
 pub use bep52_peer::{
     CellBep52ReleaseLimitsV2, CellBep52ReleasePlanV2, CellBep52ReleaseReadUsageV2,
