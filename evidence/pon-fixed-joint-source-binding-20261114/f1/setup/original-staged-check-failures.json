@@ -1,0 +1,34 @@
+{
+  "archive": "f1/setup/original-staged-diff-check-failures.zip",
+  "archive_bytes": 847,
+  "archive_sha256": "1f766994ce5a20592b3aa9b79ac8b50734570d8286043d0f1c7b61f00af67b4c",
+  "both_attempts_stopped_before_commit": true,
+  "members": [
+    {
+      "bytes": 130,
+      "origin_path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-v1/staged-diff-check.stdout",
+      "path": "attempt1/staged-diff-check.stdout",
+      "sha256": "8d675d0a85327c5ff284bf264f8eedcd5a391ac113472838e3118a58a6b56d85"
+    },
+    {
+      "bytes": 0,
+      "origin_path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-v1/staged-diff-check.stderr",
+      "path": "attempt1/staged-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 127,
+      "origin_path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v1/staged-diff-check.stdout",
+      "path": "attempt2/staged-diff-check.stdout",
+      "sha256": "564e82b07bd2d63c84bc8f049366aca5e0eb1040d2598a240e8f40ae392ef9d7"
+    },
+    {
+      "bytes": 0,
+      "origin_path": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/f1-commit-recovery-v1/staged-diff-check.stderr",
+      "path": "attempt2/staged-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "reason": "The raw patch and the first error stream both reproduce a one-space context line. Preserve exact originals in verified ZIP carriers; no whitespace rule or original byte is altered.",
+  "schema": "fixed-joint-staged-check-originals-v1"
+}
