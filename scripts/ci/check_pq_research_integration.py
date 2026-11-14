@@ -1624,6 +1624,13 @@ CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
 
 
+# Independently selected original controls remain source-bound without qualification.
+ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+))
+NATIVE_REQUIRED_PATHS |= ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS
+
 class IntegrityError(ValueError):
     pass
 

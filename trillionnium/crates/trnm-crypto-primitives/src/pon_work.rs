@@ -16,6 +16,8 @@ pub mod maintenance_periodic;
 pub mod maintenance_prefix;
 pub mod paired_product;
 pub mod rejection_cache;
+#[cfg(test)]
+mod statement_boundaries;
 pub mod structured;
 pub mod task_product_facts;
 
