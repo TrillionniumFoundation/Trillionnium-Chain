@@ -14428,3 +14428,10 @@ The account aggregate observation now reads checkpoint, authenticated root and e
 The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
 
 Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+
+### 2026-11-14 BBDB durable outbound compatibility preservation
+
+Preserve the independently selected Linux loopback durable outbound library from `bbdb1af203674fec3923c522a49b3dcc6bbca6bc`, adapted on fixed current `11bdc4cce16fc7d550d361f5cc863b061204f61b`. The current verifier and TLS endpoint/deadline owner remain authoritative. The original two SQLite namespaces retain signed wire, boot deadline, cancellation and spent attempts; only a sealed verified terminal can advance a sequence. No automatic recovery, CLI/default startup, physical rollback claim or activation is added.
+
+The [outbound contract](../security/PQ_DURABLE_OUTBOUND_V1.md) preserves original failed observations and records exact component validation: original nine Linux native controls, one sealed-response compile-fail doctest and Node library/CLI strict Clippy passed on the hash-bound four-file port. Current source inclusion and these finite results leave all existing research/HOLD and qualification flags unchanged.

@@ -41,6 +41,7 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
     MAX_RECORDS, MAX_WIRE,
 };
 
+pub mod outbound;
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
 mod tls_endpoint;
@@ -50,6 +51,14 @@ pub use tls_endpoint::{
 };
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
+
+#[cfg(all(test, feature = "pq-native-openssl", target_os = "linux"))]
+use tls::{PqTlsClient, PqTlsIdentity, PqTlsServer};
+#[cfg(all(test, feature = "pq-native-openssl", target_os = "linux"))]
+// This shared fixture also contains cases exercised by the existing TLS suites.
+#[allow(dead_code)]
+#[path = "pq_network/tls/fixtures.rs"]
+mod tls_fixtures;
 
 mod shared;
 pub use shared::serve_pq_authenticated_shared;
@@ -530,6 +539,42 @@ pub struct PqResponse {
     pub value: Value,
 }
 
+/// A live signature-checked reply bound to one exact prepared request wire.
+/// Private fields and the absence of a deserializer prevent public response
+/// JSON from retiring a durable outbound operation. This seal establishes no
+/// account authorization, block finality or current recovery permission.
+#[derive(Debug)]
+pub struct VerifiedPqReply {
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    operation: Hash,
+    request_wire_digest: Hash,
+    wire: Vec<u8>,
+    response: PqResponse,
+}
+impl VerifiedPqReply {
+    pub fn response(&self) -> &PqResponse {
+        &self.response
+    }
+    pub fn wire(&self) -> &[u8] {
+        &self.wire
+    }
+    pub fn operation_id(&self) -> Hash {
+        self.operation
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn into_response(self) -> PqResponse {
+        self.response
+    }
+}
+
+fn outbound_request_digest(wire: &[u8]) -> Hash {
+    hash(b"TRNM/PQNetwork/outbound-exact-request/v1\0", &[wire])
+}
+
 pub struct PreparedPqRequest {
     verified: VerifiedRequest,
 }
@@ -732,6 +777,57 @@ impl PqClient {
         let wire = super::read_frame_deadline(&mut stream, deadline)?;
         let response = self.finish_response_until(&wire, prepared, deadline)?;
         Ok(PqResponseEvidence { response, wire })
+    }
+    /// Return a sealed reply for the explicitly selected durable outbound owner.
+    /// Existing public-response and recovery-evidence methods remain separate.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        self.check_send(address, prepared, budget)?;
+        let deadline = Instant::now() + budget;
+        self.send_verified_until(address, prepared, deadline)
+    }
+    fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        self.check_send_until(address, prepared, deadline)?;
+        let connect_budget = deadline
+            .checked_duration_since(Instant::now())
+            .filter(|value| !value.is_zero())
+            .ok_or_else(|| Error::new(ErrorCode::PqNetworkDeadline))?;
+        let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
+        super::write_frame_deadline(&mut stream, prepared.wire(), deadline)?;
+        let wire = super::read_frame_deadline(&mut stream, deadline)?;
+        self.finish_verified_response(&wire, prepared, deadline)
+    }
+    fn finish_verified_response(
+        &self,
+        wire: &[u8],
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let response = self.finish_response_until(wire, prepared, deadline)?;
+        let reply = VerifiedPqReply {
+            policy: self.policy.id(),
+            peer: prepared.verified.peer,
+            sequence: prepared.verified.sequence,
+            operation: prepared.verified.operation,
+            request_wire_digest: outbound_request_digest(prepared.wire()),
+            wire: wire.to_vec(),
+            response,
+        };
+        // Hashing/copying the retained bounded bytes spends the same original
+        // interval. A verified fact that materializes late is no timely ACK.
+        check_live_request(deadline, Some(prepared.expires_at()))?;
+        Ok(reply)
     }
     // Absolute-deadline recovery needs a typed, exclusively local expiry
     // observation. Preserve the legacy methods and their diagnostic strings.

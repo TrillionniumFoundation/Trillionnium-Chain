@@ -1317,6 +1317,18 @@ SP27_RESEARCH_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= SP27_RESEARCH_REQUIRED_PATHS
 
 
+# The independent outbound journal preserves original wire/deadline ownership.
+# Source inclusion is not whole-node or physical rollback qualification.
+DURABLE_PQ_OUTBOUND_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs',
+    'docs/security/PQ_DURABLE_OUTBOUND_V1.md',
+))
+NATIVE_REQUIRED_PATHS |= DURABLE_PQ_OUTBOUND_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
