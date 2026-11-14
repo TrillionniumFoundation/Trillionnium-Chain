@@ -113,6 +113,55 @@ class SourceCommitmentControls(unittest.TestCase):
             bridge.verify_source_record(fake, current, self.root)
 
 
+    def native_collector_fixture(self):
+        path = self.root / "formal/pon-native-fullpath-v1/collect_native.py"
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b"original collector fixture; read only\n")
+        self.commit()
+        pins = replace(PINS, native_source=self.git("rev-parse", "HEAD"),
+                       native_tree=self.git("rev-parse", "HEAD^{tree}"))
+        return path, pins
+
+    def test_native_collector_binds_original_commit_after_current_source_changes(self):
+        path, pins = self.native_collector_fixture()
+        original = bridge.gate.sha256(path.read_bytes())
+        self.assertEqual(bridge.native_collector_source_sha256(pins, self.root), original)
+        path.write_bytes(b"changed collector fixture; never executed\n")
+        self.assertEqual(bridge.native_collector_source_sha256(pins, self.root), original)
+        self.commit()
+        self.assertEqual(bridge.native_collector_source_sha256(pins, self.root), original)
+        current = replace(pins, native_source=self.git("rev-parse", "HEAD"),
+                          native_tree=self.git("rev-parse", "HEAD^{tree}"))
+        self.assertEqual(bridge.native_collector_source_sha256(current, self.root),
+                         bridge.gate.sha256(path.read_bytes()))
+        self.assertNotEqual(bridge.native_collector_source_sha256(current, self.root), original)
+
+    def test_native_collector_refuses_missing_commit_wrong_tree_and_symlink(self):
+        path, pins = self.native_collector_fixture()
+        for changed in (replace(pins, native_source="0" * 40),
+                        replace(pins, native_tree="0" * 40)):
+            with self.subTest(pins=changed), self.assertRaises(ValueError):
+                bridge.native_collector_source_sha256(changed, self.root)
+        path.unlink()
+        path.symlink_to("../../relation.py")
+        self.commit()
+        changed = replace(pins, native_source=self.git("rev-parse", "HEAD"),
+                          native_tree=self.git("rev-parse", "HEAD^{tree}"))
+        with self.assertRaisesRegex(ValueError, "NATIVE_COLLECTOR_REGULAR_BLOB"):
+            bridge.native_collector_source_sha256(changed, self.root)
+
+    def test_native_collector_ignores_repository_replacement_objects(self):
+        path, pins = self.native_collector_fixture()
+        original = bridge.gate.sha256(path.read_bytes())
+        path.write_bytes(b"replacement collector fixture; never executed\n")
+        self.commit()
+        replacement = self.git("rev-parse", "HEAD")
+        self.git("replace", pins.native_source, replacement)
+        self.assertEqual(self.git("for-each-ref", "--format=%(objectname)",
+                                  "refs/replace/" + pins.native_source), replacement)
+        self.assertEqual(bridge.native_collector_source_sha256(pins, self.root), original)
+
+
 class NativeArchiveRefusalControls(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -177,6 +226,13 @@ class NativeArchiveRefusalControls(unittest.TestCase):
             with self.subTest(field=field):
                 self.check_changed(self.changed_json("processes/context.json", lambda x: x.update(
                     {field: "0" * len(x[field])})))
+
+    def test_current_collector_digest_cannot_replace_original_native_source(self):
+        original = json.loads(self.members["processes/context.json"])["collector_sha256"]
+        current = bridge.gate.sha256((bridge.NATIVE / "collect_native.py").read_bytes())
+        self.assertNotEqual(current, original)
+        self.check_changed(self.changed_json("processes/context.json", lambda x: x.update(
+            collector_sha256=current)), reason="COLLECTOR_SOURCE_BINDING")
 
     def test_unknown_native_schema_and_promoted_scope_are_refused(self):
         self.check_changed(self.changed_json("processes/context.json", lambda x: x.update(extra_authority=True)),

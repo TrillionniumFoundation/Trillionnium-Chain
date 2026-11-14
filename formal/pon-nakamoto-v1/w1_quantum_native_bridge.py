@@ -101,6 +101,48 @@ def source_commitment(root, files, ref="HEAD"):
                 "NO_GIT_HEAD" if head is None else "UNCOMMITTED_DECLARED_INPUTS"}
 
 
+def native_collector_source_sha256(pins, root=ROOT):
+    """Read the collector from the externally pinned native commit; never execute it."""
+    pins.validate()
+    name = "formal/pon-native-fullpath-v1/collect_native.py"
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith("GIT_") or key == "GIT_ALTERNATE_OBJECT_DIRECTORIES"}
+    env.update(GIT_NO_REPLACE_OBJECTS="1", GIT_NO_LAZY_FETCH="1",
+               GIT_TERMINAL_PROMPT="0", GIT_ALLOW_PROTOCOL="")
+
+    def git(*args):
+        try:
+            result = subprocess.run(["git", "--no-replace-objects", *args],
+                                    cwd=root, env=env, capture_output=True, timeout=30)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise ValueError("NATIVE_COLLECTOR_SOURCE_UNAVAILABLE") from error
+        gate.require(result.returncode == 0, "NATIVE_COLLECTOR_SOURCE_UNAVAILABLE")
+        return result.stdout
+
+    commit = git("rev-parse", "--verify", pins.native_source + "^{commit}").decode("ascii").strip()
+    gate.require(commit == pins.native_source, "NATIVE_COLLECTOR_COMMIT_BINDING")
+    tree = git("rev-parse", "--verify", commit + "^{tree}").decode("ascii").strip()
+    gate.require(tree == pins.native_tree, "NATIVE_COLLECTOR_TREE_BINDING")
+    entry = git("ls-tree", "-z", commit, "--", name)
+    gate.require(entry.endswith(b"\0") and entry.count(b"\0") == 1,
+                 "NATIVE_COLLECTOR_REGULAR_BLOB")
+    parts = entry[:-1].split(b"\t")
+    gate.require(len(parts) == 2 and parts[1] == name.encode(),
+                 "NATIVE_COLLECTOR_REGULAR_BLOB")
+    metadata = parts[0].split()
+    gate.require(len(metadata) == 3 and metadata[0] in {b"100644", b"100755"}
+                 and metadata[1] == b"blob", "NATIVE_COLLECTOR_REGULAR_BLOB")
+    oid = metadata[2].decode("ascii")
+    gate.hex_value(oid, "NATIVE_COLLECTOR_BLOB_ID", 20)
+    size = int(git("cat-file", "-s", oid).decode("ascii").strip())
+    gate.require(0 < size <= MAX_MEMBER, "NATIVE_COLLECTOR_SOURCE_SIZE")
+    raw = git("cat-file", "blob", oid)
+    gate.require(len(raw) == size
+                 and hashlib.sha1(b"blob " + str(size).encode() + b"\0" + raw).hexdigest() == oid,
+                 "NATIVE_COLLECTOR_BLOB_BINDING")
+    return gate.sha256(raw)
+
+
 def source_record():
     rows = {}
     for name in READER_SOURCES:
@@ -205,7 +247,7 @@ def validate_native(root, pins):
     gate.require(context["source_commit"] == pins.native_source
                  and context["source_tree"] == pins.native_tree
                  and context["binary_sha256"] == pins.binary_sha256, "NATIVE_SOURCE_OR_BINARY_BINDING")
-    gate.require(context["collector_sha256"] == gate.sha256((NATIVE / "collect_native.py").read_bytes()),
+    gate.require(context["collector_sha256"] == native_collector_source_sha256(pins),
                  "COLLECTOR_SOURCE_BINDING")
     native_context = context["native_context"]
     gate.require(context["production_activation"] is False
