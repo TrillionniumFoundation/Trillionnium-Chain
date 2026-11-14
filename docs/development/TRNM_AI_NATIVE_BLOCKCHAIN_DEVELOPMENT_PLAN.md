@@ -14634,3 +14634,30 @@ The combined CI contract initially refused the retained public_v3_multiprocess w
 ### 2026-11-14 concurrent publication history and exact material source pair
 
 Integrated reviewed shared commit 73d5a17b9b7fb5f67040554f22ff37d20725e548 and all four concurrent ancestors. The current runtime pilot differs only by the selected reconciliation CLI, so its exact source pair and three canonical loaded-contract values are rebound across the neural reader, research preparation and both original test suites. Historical material bytes and all refusal assertions remain; the prior runtime and authority checkpoints are explicit stale-source refusals. Both standalone locks already match root. Root current-source mappings remain selected pending final composition rebind. No inference algorithm, native protocol budget or qualification flag changes. Original protected CI failures and the initial pre-write source-pair refusal remain retained.
+
+
+### 2026-11-14 — THP2 explicit post-verification time contract from historical 95939e13
+
+Selected source: historical `95939e1380f21dcf3209acaee70e29fcf0141d6c` over
+`1c5899a663037689d26bf7c31472a70d26971a8b`; current implementation base:
+`692f2454620faad648850f9421f2f11467ba046e`.
+The current THP2 library now exposes explicit context-verification and decode
+entrypoints that check a caller-provided fresh time after exactly one successful
+ML-DSA verification. Cheap chain/owner/generation/time checks still run first.
+A clock rollback fails; admission expiry remains inclusive, while authority-pin
+expiry and revocation retain their existing exclusive boundary. The original
+strict bounded THP2 parser, external SPKI pins and immutable owner context remain
+the selected contract. The old embedded-key CBOR wire is not restored.
+
+The original six current controls are retained, with three adapted historical
+controls and one additional pin-expiry/revocation control. All ten passed on
+macOS aarch64 with the exact locked offline dependency graph; strict library and
+integration-test Clippy and whole-workspace formatting also passed. Independent
+literal source guards cover omission of either required path or pin and mutation
+of either source. Source-integrity success does not grant cryptographic,
+production, final-use, rollback-resistance or WAN qualification.
+
+This remains an opt-in research library API with no production Node or CLI caller
+found in the reviewed source. It validates one point in time; a later effect must
+still recheck its current withdrawal/journal/owner context. Current final-source
+bindings and combined candidate qualification remain separate integration gates.
