@@ -33,7 +33,10 @@ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa6
 # review or current-use approval. The selected upstream profile remains withdrawn.
 # At 933d2d13, rebind only the proof descriptor after its separately reviewed
 # standalone verifier-lock map update; all 19 use semantics remain unchanged.
-REVIEWED_SOURCE_MAP_SHA256 = "1c79bdfe03c3303346f10ead1a91e31a583bbd6e7381b0dc2dffa80960c7aaa8"
+# At 5a4b7fe8, separately review six complete selected-source deltas and
+# rebind their identities. The same 31 paths and 19 use semantics remain fixed;
+# added APIs grant no complete-callgraph review or execution qualification.
+REVIEWED_SOURCE_MAP_SHA256 = "9b58a370b9ee6b6c867e283b817eef3a1b100fc535577b91c86834b4fd76780a"
 
 USES = {
     "model-legacy-root": "model",

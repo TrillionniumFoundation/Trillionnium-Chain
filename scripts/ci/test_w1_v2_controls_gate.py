@@ -7,6 +7,7 @@ import contextlib
 import hashlib
 import io
 import json
+import math
 import os
 from pathlib import Path
 import shutil
@@ -312,6 +313,26 @@ class V2ControlsGateTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 with self.assertRaises(ValueError):
                     gate.validate_process_observation(dict(process, **changes), 0)
+
+        # An exact 120-second endpoint can subtract to slightly more than 120.
+        # This exercises the producer's float arithmetic without extending it.
+        started = 8.000000000000016
+        deadline = started + 120
+        remaining = deadline - started
+        self.assertGreater(remaining, 120)
+        rounded = dict(process, started_monotonic=started, wall_seconds=1,
+                       effective_deadline_monotonic=deadline,
+                       effective_remaining_seconds=remaining)
+        gate.validate_process_observation(rounded, 0)
+        extended = math.nextafter(deadline, math.inf)
+        for changes in (
+                {'effective_deadline_monotonic': extended,
+                 'effective_remaining_seconds': extended - started},
+                {'effective_remaining_seconds': math.nextafter(remaining, 0)},
+                {'wall_seconds': remaining}):
+            with self.subTest(rounding_changes=changes):
+                with self.assertRaises(ValueError):
+                    gate.validate_process_observation(dict(rounded, **changes), 0)
 
     def test_current_stage_cannot_skip_common_settlement_controls(self):
         process = self.current_process()

@@ -613,11 +613,15 @@ jobs:
           python3 - "$OUT" <<'PYRANK'
           import re, sys
           from pathlib import Path
-          for name, count in [('kernel-tests', 14), ('batch-tests', 9)]:
+          sys.path.insert(0, 'scripts/ci')
+          from w1_native_controls import validate_log
+          for name, count in [('kernel-tests', 19), ('batch-tests', 9)]:
               raw = (Path(sys.argv[1]) / (name + '.log')).read_text()
               rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', raw, re.M)
               if rows != [(str(count), '0')]:
                   raise SystemExit(name + ': original and new native controls must all execute')
+              if name == 'kernel-tests':
+                  validate_log('factorial-kernel-tests', raw)
           PYRANK
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --all-targets -- -D warnings 2>&1 | tee "$OUT/clippy.log"
       - name: Execute all sixty-six shards with the original command budgets

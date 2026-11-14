@@ -71,7 +71,10 @@ def validate_process_observation(process, code, stage_schema=CURRENT_STAGE_SCHEM
         started, wall, deadline, remaining = (process[name] for name in (
             'started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
             'effective_remaining_seconds'))
-        controls.require(0 < remaining <= 120 and remaining == deadline - started
+        # Use the producer's absolute endpoint arithmetic. Subtracting the
+        # same finite endpoints can round the remaining duration above 120.
+        controls.require(0 < remaining and deadline <= started + 120
+                         and remaining == deadline - started
                          and started + wall < deadline,
                          'current process exceeds its original deadline')
     groups, pid = process['known_owned_groups'], process.get('pid')
