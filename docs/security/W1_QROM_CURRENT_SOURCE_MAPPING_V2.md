@@ -5,9 +5,37 @@ sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLA
 It does not replace the historical implementation contract, its test roster,
 its failed workflow results or its unknown cryptographic obligations.
 
-## Reviewed source change
+## Current independent-lock review, 2026-11-14
 
-The current reviewed source is Chain
+The active mapping now binds source `d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`.
+The independent native and V2 verifier locks previously failed full
+`cargo metadata --locked` because their shared crypto dependency now requires
+Ed25519 3.0 and Curve25519 5.0. The same manifest constraints were resolved;
+no guest lock or historical proof material was rewritten.
+
+Within this selected mapping, exactly one of 16 project inputs and one of
+140 local-closure inputs changes: `w1_v2_verifier/Cargo.lock`, now 46,018 bytes,
+SHA-256 `93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b`.
+All unchanged-version registry checksums and RISC Zero 3.0.6 package identities
+are retained. Relative to the historical V1 project roster, the reviewed
+difference set now contains the verifier entry, funded-service wire source and
+this lock.
+
+Both standalone crates passed complete `--locked --offline` dependency graphs,
+their original release tests (including the three named V2 saved-proof controls),
+formatting, strict Clippy and release builds on Rust 1.95.0 macOS arm64.
+These separate native observations do not change this mapping reader's scope.
+The prior pin refusals remain recorded. The eight literal inputs, proof/image
+identity, historical V1 reader and contract, 15 unresolved obligations and
+upstream current-use withdrawal remain unchanged.
+
+The profile-binding and upstream-security descriptors reference the same updated
+mapping bytes; the route registry rebinds only that mapping and V2 lock.
+No route, receipt format, approved profile, qualification flag or budget changes.
+
+## Earlier source reviews
+
+The earlier source review described Chain
 `39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency mapping
 reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9`; its observations remain
 historical. The retained V1 implementation contract is based on

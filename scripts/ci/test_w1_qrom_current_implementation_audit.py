@@ -151,6 +151,17 @@ class CurrentImplementationTests(unittest.TestCase):
             current.build_report(self.root)
 
     def test_project_input_digests_are_the_reviewed_values(self):
+        # Independent review pins bind the new graph; no runtime-generated expectation.
+        self.assertEqual(current.SOURCE, 'd9e6aa1ec8d1cdf4f506238f2df452c8c6215b00')
+        self.assertEqual(current.CHANGED, frozenset({
+            'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+            'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+            'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+        }))
+        lock = next(row for row in self.contract['project_files']
+                    if row['path'] == 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock')
+        self.assertEqual((lock['bytes'], lock['sha256']),
+                         (46018, '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'))
         old, _ = self.audit.load_contract(current.ROOT)
         old_rows = {row['path']: row for row in old['project_files']}
         new_rows = {row['path']: row for row in self.contract['project_files']}

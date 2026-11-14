@@ -509,9 +509,9 @@
   "source_base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
   "source_inputs": [
     {
-      "bytes": 46786,
+      "bytes": 47790,
       "path": "config/pon/w1-qrom-implementation-current-v2.json",
-      "sha256": "27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934"
+      "sha256": "5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb"
     },
     {
       "bytes": 9445,
@@ -584,9 +584,9 @@
       "sha256": "96f59192dc280908c3f4ac8268f798026259c1fad7d5d8d10891232b6855d6b1"
     },
     {
-      "bytes": 46489,
+      "bytes": 46018,
       "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
-      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+      "sha256": "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b"
     },
     {
       "bytes": 284,
