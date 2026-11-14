@@ -284,6 +284,31 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
                       'rust-baseline', 'external-evidence-contract'}
 
+    def test_wan_accounting_controls_cannot_disappear_duplicate_skip_swallow_or_move(self):
+        # Independent literal scope; synthetic checks grant no WAN qualification.
+        commands = (
+            '    python3 scripts/ci/test_pon_wan_evidence.py -v\n',
+            '    python3 scripts/ci/test_pon_decentralization_audit.py -v\n',
+            '    python3 scripts/ci/test_pon_wan_control_domains.py -v\n',
+        )
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'conditional skip': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+                'early success': self.script.replace(command, '    exit 0\n' + command),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'zero-match discovery': self.script.replace(command,
+                    "    python3 -m unittest discover -s scripts/ci -p 'missing_wan_test.py' -v\n"),
+            }
+            for change, candidate in changes.items():
+                with self.subTest(command=command, change=change), self.assertRaises(ValueError):
+                    check_independent_conformance(candidate, self.lanes)
+
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 

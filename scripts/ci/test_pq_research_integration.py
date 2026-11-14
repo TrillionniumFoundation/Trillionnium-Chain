@@ -163,6 +163,57 @@ class CorpusGateTests(unittest.TestCase):
         q.parent.mkdir(parents=True, exist_ok=True)
         q.write_text(json.dumps(self.manifest))
 
+    def test_wan_control_sources_require_each_path_and_pin(self):
+        paths = (
+            'config/pon/decentralization-audit-v1.json',
+            'docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md',
+            'scripts/ci/fixtures/pon_decentralization_v1.json',
+            'scripts/ci/test_pon_decentralization_audit.py',
+            'scripts/ci/test_pon_wan_control_domains.py',
+            'scripts/ci/test_pon_wan_evidence.py',
+            'scripts/pon_decentralization_audit.py',
+            'scripts/pon_wan_evidence.py',
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_wan_control_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            'config/pon/decentralization-audit-v1.json',
+            'docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md',
+            'scripts/ci/fixtures/pon_decentralization_v1.json',
+            'scripts/ci/test_pon_decentralization_audit.py',
+            'scripts/ci/test_pon_wan_control_domains.py',
+            'scripts/ci/test_pon_wan_evidence.py',
+            'scripts/pon_decentralization_audit.py',
+            'scripts/pon_wan_evidence.py',
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected WAN control")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def test_valid_offline_fixture_is_still_hold(self):
         result = check(self.root)
         self.assertEqual(result["status"], "HOLD_NO_GO")

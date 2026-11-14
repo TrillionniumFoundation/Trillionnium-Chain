@@ -14428,3 +14428,26 @@ The account aggregate observation now reads checkpoint, authenticated root and e
 The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
 
 Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+
+### 2026-11-14 selected WAN V3/V4 read-only control-domain port
+
+The all-branch source review selected the additive WAN V3/V4 accounting reader
+from 058a729a274b431ed1617efee2725cad8471d966 (actual old base
+513e92dfc27044ef3e0c9d62e7ae504fa5bea38f) and its immutable control-registry
+dependency. On fixed consolidation source 11bdc4cce16fc7d550d361f5cc863b061204f61b,
+the retained V1/V2 reader exactly matched that base; all six imported source,
+test, policy and fixture files preserve the original tip bytes. The independent
+evidence-file materializer is not a required dependency and remains historical.
+
+The new schemas explicitly bind operator/control context, preserve original
+typed results, schedule/window/failure-cost denominators and add V4 joint
+control/failure-domain matching. All original V1/V2, control-registry and V3/V4
+synthetic test suites passed on the fixed imported source. The existing
+repository-truth lane now runs all three suites explicitly. Independent
+negative lane controls reject omitted, duplicated, skipped, moved or swallowed
+commands; independent source controls bind the complete eight-path observation
+scope. These checks do not authenticate physical WAN operation, operators or
+receipts and do not confer native execution, protocol, PQ, release or production
+authority. Every original qualification flag remains false and WAN stays
+NOT RUN / HOLD_NO_GO.
