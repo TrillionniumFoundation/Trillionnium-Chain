@@ -14540,3 +14540,7 @@ external authority, deployment, physical resource or security qualification.
 ### 2026-11-14 root review: peer-prewrite
 
 Integrated reviewed commit 50759539544c78a16aa66c2b1a6d8a51acdeace1. Original payload, repair and ACK prewrite identity fences plus occupied socket refusal are retained. All ninety Linux and eighty-nine platform-selected macOS peer controls and strict all-target Clippy passed. Original zero-timeout checks are already stronger and remain retained. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: four-domain-review
+
+Integrated reviewed commit 0d584032b2727a52105efbeb1407d7a92abbad18. The original bounded four-domain material reader retains V1 controls and signed V3 parent/NoUpdate checks. All140 original conformance controls passed under the exact locked Python dependencies. Missing environment/closure failures remain recorded. Material review does not establish actual operator independence or execution/installation authority. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
