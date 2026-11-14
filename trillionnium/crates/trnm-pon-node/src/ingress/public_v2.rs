@@ -1540,6 +1540,10 @@ pub fn call_public_protected_v2_with_deadline(
     )?;
     verify_hex_strict(pinned_server, &r.message()?, &r.signature)
         .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
+    #[cfg(test)]
+    tests::before_client_return(total_deadline);
+    // Response decoding and signature verification spend the original call time too.
+    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
     Ok(PublicReply {
         ok: r.ok,
         value: r.value,
@@ -1580,6 +1584,100 @@ fn client_write(stream: &mut TcpStream, mut bytes: &[u8], deadline: Instant) -> 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    std::thread_local! {
+        static EXPIRE_AFTER_CLIENT_VERIFY: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+        static CLIENT_VERIFY_OBSERVED: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    }
+
+    pub(super) fn before_client_return(deadline: Instant) {
+        if EXPIRE_AFTER_CLIENT_VERIFY.with(|armed| armed.replace(false)) {
+            CLIENT_VERIFY_OBSERVED.with(|observed| observed.set(true));
+            while let Some(remaining) = deadline.checked_duration_since(Instant::now()) {
+                if remaining.is_zero() {
+                    break;
+                }
+                thread::sleep(remaining);
+            }
+        }
+    }
+
+    #[test]
+    fn original_v2_client_rejects_expiry_after_signed_response_verification() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v2(listener, node, Duration::from_secs(5), signal, server())
+        });
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let on_time = call_public_protected_v2(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            policy,
+        );
+
+        // Let the real signed response pass every context/signature check.
+        // Expire the same caller deadline only at the final return boundary.
+        CLIENT_VERIFY_OBSERVED.with(|observed| observed.set(false));
+        EXPIRE_AFTER_CLIENT_VERIFY.with(|armed| armed.set(true));
+        let late = call_public_protected_v2_with_deadline(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            policy,
+            Some(Instant::now() + Duration::from_secs(2)),
+        );
+        EXPIRE_AFTER_CLIENT_VERIFY.with(|armed| armed.set(false));
+        let verified = CLIENT_VERIFY_OBSERVED.with(|observed| observed.replace(false));
+        stop.store(true, Ordering::Release);
+        let metrics = worker.join().unwrap().unwrap();
+
+        let on_time = on_time.unwrap();
+        assert!(on_time.ok);
+        assert_eq!(on_time.value["height"], 0);
+        assert!(
+            verified,
+            "the actual signed response must reach the final boundary"
+        );
+        assert_eq!(metrics.completed_read, 2);
+        assert!(
+            late.is_err(),
+            "signed response completed after the original client deadline"
+        );
+        assert_eq!(late.unwrap_err().to_string(), "PUBLIC_CLIENT_DEADLINE");
+    }
+
+    #[test]
+    fn expired_v2_client_deadline_refuses_before_tcp() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let error = call_public_protected_v2_with_deadline(
+            listener.local_addr().unwrap(),
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            PublicPolicy::development(),
+            Some(Instant::now()),
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_CLIENT_DEADLINE");
+        assert_eq!(
+            listener.accept().unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock
+        );
+    }
     fn identity(n: u8) -> DevelopmentIdentity {
         DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap()
     }

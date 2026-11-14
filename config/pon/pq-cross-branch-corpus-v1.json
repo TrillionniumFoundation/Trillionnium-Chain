@@ -2373,7 +2373,7 @@
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs": "d10b1fda832333d595539668cbae5a9d46d4ed4f",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs": "91a4cced81579c44769abe9b2b1244546c607250",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs": "3175a397a00274d15baa1e0a1dc4f01eb320b48a",
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs": "e359ba90bb714c6e04233f32cdd12e817a09ed8b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs": "3a9fbe26283920a77ae4883a46153440abbe7e12",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs": "d51558492a278d7ac97932f1c8af60eb34790f77",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs": "d4ddbdb52d877f5e629002ef45051711f6fa62c3",
