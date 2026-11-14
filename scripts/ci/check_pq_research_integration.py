@@ -1533,6 +1533,16 @@ CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
 
 
+# Ordinary peer-failure hints retain the original bounded Cell session owner.
+# Source identity does not certify faster completion or release qualification.
+CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 

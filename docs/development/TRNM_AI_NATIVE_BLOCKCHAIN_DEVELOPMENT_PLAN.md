@@ -14754,3 +14754,24 @@ is claimed. The separate Mac installed-policy platform failure and its five
 pre-existing deployment skips remain recorded without weakening a test or policy.
 Repository-truth invokes the synthetic acquisition controls; all qualification,
 use-authority and installation-authority assertions retain their existing meaning.
+
+### Cell ordinary peer-failure ordering preservation, 2026-11-14
+
+The selected bounded Cell fetch session retains ordinary unavailable and transport
+failure observations by actual SocketAddr, with at most eight saturating counters.
+Each request takes one stable score snapshot. Failure score orders peers first;
+existing availability preference and cyclic ties remain stable within equal scores.
+An ordinary miss only reduces priority and never removes a fallback peer or creates
+corrupt-peer quarantine. Original connection, request, byte, absolute deadline,
+cancellation and retry owners remain unchanged.
+
+The original seven-connection complete-release control and three combination
+controls are retained. Fixed-source Linux execution passed 19 release, 13
+availability, 8 network budget and 4 cancellation controls with zero ignored tests,
+plus strict all-target Clippy. The first Mac availability suite had 12 passes and
+one existing probe-count failure; that observation remains preserved. An isolated
+baseline run and an isolated patched run each passed that unchanged control;
+neither is evidence that the first failure was reproduced or explained. Ordinary
+miss ordering is a selected behavior policy, not a claim of improvement for every
+peer arrangement, a four-second confirmation result, activation or release
+qualification.

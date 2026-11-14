@@ -2014,5 +2014,43 @@ class CorpusGateTests(unittest.TestCase):
 
 
 
+
+    def test_cell_peer_failure_order_cannot_omit_or_mutate(self):
+        # Independent literals pin the selected runtime and original/new controls.
+        dependencies = (
+            "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed bounded peer-failure ordering")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
 if __name__ == "__main__":
     unittest.main()
