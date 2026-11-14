@@ -1167,6 +1167,8 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
     "scripts/ci/test_chain_system_security.py",
     "scripts/ci/pq_external_rollback_oracle.py",
     "scripts/ci/test_pq_external_rollback_oracle.py",
+    "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+    "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
     "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
     "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
