@@ -71,6 +71,48 @@ equivalence.
 
 ## Findings that affect acceptance
 
+### Published-candidate repository-truth stopped at a stale current mapping
+
+The first full Linux repository-truth attempt on published source
+`dc42ce4df5cff79cc61c5addbaf01074b56b06ca` (tree `9fda17fed2542b2baccaa34585bb00afd699e12b`) returned exit 1
+after **6.677 seconds**, before the remainder of that lane could execute.
+The original 58 lifetime-budget controls reported **57 passes and one error**:
+`test_default_research_register_contains_no_known_security_bound` reached
+`pq_lifetime_budget.inspect` and rejected the stale `pon_work.rs` source hash.
+The original [summary](../../evidence/pq128-lifetime-source-binding-20261114/original-full-lane/summary.json)
+has SHA-256 `9a4bc9c021e80adff3d2c7d5500e1aed3f9eda519efb3942cbd42a2e34c5eab2`;
+all 37 original streams/receipts are preserved. Source checks before and after
+the failed lane matched the same clean checkpoint. This is a failed full-lane
+attempt, not evidence that later commands passed.
+
+The documented default is a current reviewed source mapping. Its 0f9 bytes
+remain historical evidence; preserving those bytes alone does not establish
+that the current physical source satisfies that default inspector. All 21
+old/current regular Git blobs were compared explicitly: eight changed and
+thirteen did not. The corrective mapping binds the selected current source
+without changing the original budget reader, 58 controls, mathematical
+parameters, event roster or qualification flags.
+
+The current composition bridge also required exact-child synchronization:
+its already reviewed root register contains 46 paths, so the strict joined
+inventory is 21/46/1/66. The root register remains unchanged. Only two existing
+composition controls adapt their exact count expectations; the original
+probability, source-integrity and nonqualification assertions remain.
+The repaired working source passed the original **58 lifetime, 60 composition,
+51 root-dependency, 57 chain-claim and 39 proof-profile controls** (265 method
+executions), with no failures or skips. The five actual inspectors, current
+corpus and CI contract also passed. All 79 selected validation inputs matched
+before and after; the selected proof-profile descriptor remained unchanged.
+Sixteen separate negative observations refused each stale source digest, mixed
+old/current revision pair and superseded composition identity. These targeted
+Mac observations use Python 3.14.3 and a canonical private temporary directory;
+they do not replace the required full Linux lane on the final successor commit.
+
+The [corrective evidence](../../evidence/pq128-lifetime-source-binding-20261114/README.md) separates the
+original failures from subsequent targeted results. A complete successor lane
+and exact-head hosted checks remain required; neither has a passing result
+from this corrective source review.
+
 ### The original confirmation target remains a separate blocking gate
 
 Earlier exact-head and prospective-merge runs failed `CONFIRMATION_TARGET`.

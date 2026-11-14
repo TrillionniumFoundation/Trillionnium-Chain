@@ -15131,3 +15131,33 @@ does not claim a complete checkout or resolve the 7,331 relative open events.
 ### 2026-11-14 complete branch-disposition audit and integration record
 
 The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records all 908 frozen branch names, 892 distinct tips, 296 terminal dispositions and the selected current implementation. Its evidence index preserves original successful and failed controls, source identities, dependency findings and unselected historical alternatives. The original hosted four-second confirmation gate, protected main requirements and legacy deletion protection remain independent conditions. This audit does not activate a production profile or declare the one-branch remote result before a verified protected merge and reference cleanup. This file remains the sole development plan.
+
+### 2026-11-14 reviewed PQ lifetime default mapping after the first full-lane failure
+
+The published source `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` (tree `9fda17fed2542b2baccaa34585bb00afd699e12b`)
+stopped in the original repository-truth lane after 6.677 seconds: the original
+58 lifetime controls reported 57 passes and one stale `pon_work.rs` source pin.
+The complete original Linux receipt and 21-path review are retained in
+[the corrective mapping evidence](../../evidence/pq128-lifetime-source-binding-20261114/README.md).
+A previous static proof that the 0f9 input bytes were preserved did not establish
+that the active default inspector could bind the current physical source.
+
+Review all 21 old/current Git blobs before rebinding the default current register:
+eight selected source bodies changed and thirteen remain identical. Retain the
+old mapping and failure as historical evidence. Keep the original budget reader,
+58 controls, event roster, arithmetic, security parameters and false/null flags.
+Synchronize the composition bridge to the exact reviewed children and strict
+21/46/1/66 union; adapt only two old count expectations in its original 60 controls.
+The already correct 46-path root register and historical proof profiles do not change.
+
+Run the complete original lane on the final successor commit, including this
+documentation. Targeted local controls do not assert a full lane pass, hosted
+confirmation, production qualification or a protected main merge. The original
+2700-second lane limit and four-second/16-worker hosted confirmation gate remain.
+
+The successor's targeted Mac validation passed the original 58 lifetime controls,
+60 composition controls and 147 direct-consumer controls, plus all five actual
+inspectors and the current CI/corpus contracts. The 79 selected inputs matched
+before/after and all 16 stale-binding negatives refused. The original first Mac
+composition failure (including its strict temporary-path refusal) remains
+separate evidence. No complete successor Linux lane or hosted result is claimed.

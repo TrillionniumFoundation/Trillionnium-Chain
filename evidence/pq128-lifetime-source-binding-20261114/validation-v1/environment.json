@@ -1,0 +1,11 @@
+{
+  "python": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "platform": "darwin",
+  "canonical_temp_directory": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/canonical-test-tmp-v1",
+  "no_bytecode": true,
+  "python_optimize": 0,
+  "local_targeted_controls_only": true,
+  "no_rog_execution": true,
+  "no_hosted_qualification": true
+}

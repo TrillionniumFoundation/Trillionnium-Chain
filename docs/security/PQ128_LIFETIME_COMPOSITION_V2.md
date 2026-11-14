@@ -14,7 +14,45 @@ The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 [V1 lifetime contract](PQ128_LIFETIME_BUDGET_V1.md) and
 [root dependency contract](PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
 
-## 1. What the source bridge establishes
+## Current consolidated source bridge, 2026-11-14
+
+This reviewed mapping uses source checkpoint `dc42ce4df5cff79cc61c5addbaf01074b56b06ca` as its
+review context. The current legacy register binds its 21 declared source blobs
+to that checkpoint; its new manifest SHA-256 is
+`ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc`.
+The unchanged 46-path root register has declared review context
+`5c04c60e463462d9df8884786e0d5bb32af08a64` and manifest SHA-256
+`2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725`.
+These source-review contexts do not identify the later commits that store the
+corresponding mapping metadata.
+Its additional path is the already selected
+`trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs`;
+the exact example bytes match the selected `19940a6653df0d88aba02f264f295a40ee047f96`
+component.
+
+The independent fixed counts are now **21 legacy, 46 root, one shared and 66
+distinct source files**. The sole shared path remains
+`trillionnium/crates/trnm-release-bundle/src/pq_release.rs`, with the same exact
+digest in both inventories. The inspector still reads both exact child
+manifests, invokes both actual inspectors, compares every shared digest and
+requires the reviewed path counts and shared path. Count changes do not
+replace the exact source maps or permit equal-count substitution.
+
+Only reviewed input identities, the review context and these exact counts
+change. All arithmetic, primitive identities, loss accounting, role populations,
+query-budget unknowns, strict reading limits, nonqualification fields and the
+original sixty control methods remain. Two existing methods adapt only their
+fixed 45/65 expectations to 46/66; the historical method name containing
+`65` is retained as a stable control identifier.
+The [current review and original failure](../../evidence/pq128-lifetime-source-binding-20261114/README.md)
+record the exact source scope and original observations. Full repository-truth
+and hosted acceptance still require their own fixed-source execution.
+
+The following section retains the prior bridge's source identities and results.
+References to its then-current mapping describe that historical review, not the
+default inputs of this continuation.
+
+## 1. Retained source bridge before this continuation
 
 The current legacy V1 budget declares **21 source paths** at
 `0f9b30549328e5be20f4d3e6e27bd132b42d90de`. The current root inventory

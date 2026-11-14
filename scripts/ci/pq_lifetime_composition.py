@@ -23,7 +23,7 @@ SCHEMA = "trnm-pq128-lifetime-composition-v2"
 RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
 ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
 DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
-REVIEW_BASE = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
+REVIEW_BASE = "dc42ce4df5cff79cc61c5addbaf01074b56b06ca"
 EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
 COMMON_GAME = "uninstantiated-common-root-game-v2"
 MAX_BYTES = legacy.MAX_BYTES
@@ -31,13 +31,13 @@ MAX_BYTES = legacy.MAX_BYTES
 INPUTS = {
     "legacy": {
         "path": legacy.DEFAULT_MANIFEST,
-        "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
-        "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+        "sha256": "ed2558e8e3ee0806395272e20bab4bd63ab8676cc0dda0c790dd82fb13692edc",
+        "declared_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
         "revision_semantics": "declared-event-source-revision",
     },
     "root": {
         "path": root_register.DEFAULT_MANIFEST,
-        "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
+        "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725",
         "declared_revision": root_register.REVIEW_BASE,
         "revision_semantics": "review-base-context-not-all-source-revision",
     },
@@ -479,7 +479,7 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
             "root": len(root_result["source_files_sha256"]),
             "shared": len(shared_paths), "union": len(files),
         }
-        require(source_counts == {"legacy": 21, "root": 45, "shared": 1, "union": 65}
+        require(source_counts == {"legacy": 21, "root": 46, "shared": 1, "union": 66}
                 and shared_paths == ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"],
                 "declared source union changed; review the mapping")
         scopes = bridge_primitives(children["legacy"], children["root"])

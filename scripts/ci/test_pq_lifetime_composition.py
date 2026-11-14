@@ -445,8 +445,8 @@ class SourceInspectionTests(ContractCase):
 
     def test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes(self):
         report = composition.inspect(self.root)
-        self.assertEqual(report["source_counts"], {"legacy": 21, "root": 45, "shared": 1, "union": 65})
-        self.assertEqual(len(report["source_files_sha256"]), 65)
+        self.assertEqual(report["source_counts"], {"legacy": 21, "root": 46, "shared": 1, "union": 66})
+        self.assertEqual(len(report["source_files_sha256"]), 66)
         self.assertEqual(set(report["source_files_sha256"]), set(self.legacy_files) | set(self.root_files))
         self.assertIs(report["declared_source_union_consistent"], True)
         self.assertEqual(report["source_binding_scope"], "declared-path-union-only")
@@ -545,7 +545,7 @@ class SourceInspectionTests(ContractCase):
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(process.stderr, "")
         report = json.loads(process.stdout)
-        self.assertEqual(report["source_counts"]["union"], 65)
+        self.assertEqual(report["source_counts"]["union"], 66)
         self.remains_unqualified(report)
 
     def test_cli_changed_input_returns_structured_refusal_without_qualification(self):

@@ -1,0 +1,1109 @@
+Updating dba81d56..dc42ce4d
+Fast-forward
+ .../workflows/chain-hepta-closure-candidate.yml    |      2 +-
+ config/pon/pq-authority-effects-v1.json            |     16 +-
+ config/pon/pq-cross-branch-corpus-v1.json          |     88 +-
+ config/pon/pq-proof-profile-binding-v1.json        |      4 +-
+ config/pon/pq-root-dependency-register-v3.json     |     13 +-
+ config/pon/w1-lifetime-current-source-v2.json      |     20 +-
+ config/pon/w1-qrom-current-required-tests-v1.json  |      6 +-
+ config/pon/w1-qrom-implementation-current-v2.json  |     70 +-
+ config/pon/w1-qrom-supplemental-tests-v1.json      |     32 +-
+ config/pon/w1-stark-route-registry-v1.json         |      4 +-
+ config/pon/w1-upstream-security-v1.json            |      4 +-
+ .../BRANCH_CONSOLIDATION_AUDIT_20261114.md         |    424 +
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |     69 +
+ docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md   |     16 +
+ docs/security/PQ_PROOF_PROFILE_BINDING_V1.md       |     16 +
+ docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md    |     20 +
+ .../W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md   |     15 +
+ docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md |     59 +
+ .../ARTIFACT_INDEX.json                            |   4772 +
+ .../bindings/FINAL_BINDING_EVIDENCE.md             |    118 +
+ .../bindings/commit-summary.json                   |    375 +
+ .../bindings/commit.patch                          |   1893 +
+ .../bindings/custody-manifest.json                 |   1539 +
+ .../final-current-binding-original-evidence.zip    |    Bin 0 -> 1317265 bytes
+ .../bindings/final-selected-inputs.json            |   1872 +
+ .../bindings/final-summary.json                    |     82 +
+ .../final-34path-delta-review-v1.json              |    411 +
+ ...ependent-bindings-final-consumer-review-v2.json |    151 +
+ .../independent-bindings-review-v1.json            |    124 +
+ ...workflow-consumer-validation-correction-v1.json |     15 +
+ .../bindings/whitelist.json                        |   1529 +
+ .../failures/confirmation-causal-review-v1.md      |     89 +
+ .../132340218555-error-index.json                  |     18 +
+ .../132340218555-failure-excerpts.txt              |     91 +
+ .../132340218555.download.stderr                   |      0
+ .../failures/e40d-required-jobs/132340218555.log   |   4409 +
+ .../132340218585-error-index.json                  |      6 +
+ .../132340218585-failure-excerpts.txt              |     73 +
+ .../132340218585.download.stderr                   |      0
+ .../failures/e40d-required-jobs/132340218585.log   |   1423 +
+ .../132340218732-error-index.json                  |     18 +
+ .../132340218732-failure-excerpts.txt              |     91 +
+ .../132340218732.download.stderr                   |      0
+ .../failures/e40d-required-jobs/132340218732.log   |   4418 +
+ .../132340219408-error-index.json                  |      6 +
+ .../132340219408-failure-excerpts.txt              |     73 +
+ .../132340219408.download.stderr                   |      0
+ .../failures/e40d-required-jobs/132340219408.log   |   1432 +
+ .../e40d-required-jobs/download-summary.json       |    166 +
+ ...thority44-lifetime20-final-5c04-overlay-v1.json |    634 +
+ ...env-original-receipts-root-verification-v1.json |      6 +
+ ...thon-env-preparation-receipts-mac-v1.index.json |    310 +
+ ...inal-python-env-preparation-receipts-mac-v1.zip |    Bin 0 -> 27484 bytes
+ .../commit-fixture-repair.log                      |      2 +
+ .../final-ci-contract-5c04-v1/commit-summary.json  |    129 +
+ .../final-ci-contract-5c04-v1/fast-forward.log     |     23 +
+ .../fixture-and-validation-entrypoints.txt         |     39 +
+ .../fixture-repair-source-proof-v1.json            |    245 +
+ .../final-ci-contract-5c04-v1/fixture-repair.patch |     54 +
+ .../full-ci-fixture-review-before.json             |     51 +
+ .../initial-identity.json                          |      5 +
+ ...racle-order-current-blocks-and-consumer-v1.json |     28 +
+ .../oracle-order-failure-review-v1.json            |      5 +
+ .../oracle-order-fixture-cause-v1.json             |     10 +
+ .../pre-commit-diff-check.log                      |      0
+ .../pre-commit-preflight.log                       |      1 +
+ .../pre-edit-preflight.log                         |      1 +
+ .../pre-update-preflight.log                       |      1 +
+ .../gates/final-ci-contract-5c04-v1/preflight.log  |      1 +
+ .../receipt-verification-rejection-v1.json         |      7 +
+ .../repair-diff-check.log                          |      0
+ .../final-ci-contract-5c04-v1/repair-steps.json    |     38 +
+ .../final-ci-contract-5c04-v1/repair-summary.json  |     46 +
+ .../stage-fixture-repair.log                       |      0
+ .../gates/final-ci-contract-5c04-v1/steps.json     |     50 +
+ .../gates/final-ci-contract-5c04-v1/summary.json   |     59 +
+ .../test-ci-contract-full-after.log                |    230 +
+ .../test-ci-contract-full-before.log               |    244 +
+ .../typed-pending-production-check-exact.py.txt    |     39 +
+ .../external-evidence-contract.txt                 |     30 +
+ .../final-gate-exact-lane-bodies/fuzz-smoke.txt    |      6 +
+ .../protocol-contract.txt                          |    128 +
+ .../repository-truth.txt                           |    232 +
+ .../final-gate-exact-lane-bodies/rust-baseline.txt |    121 +
+ .../gates/final-gate-inventory-v1.json             |   2813 +
+ .../gates/final-gate-inventory-v1.md               |     60 +
+ .../ledgers/all-908/README.md                      |     21 +
+ .../ledgers/all-908/addendum/README-addendum.md    |     13 +
+ .../addendum/publication-planning-overlay-v1.json  |    119 +
+ .../all-908/all-908-branch-dispositions-v1.json    |  76140 +++++++++
+ .../all-908-ledger-and-original-receipts-v1.zip    |    Bin 0 -> 5582062 bytes
+ .../ledgers/all-908/all-908-ref-summary.csv        |    909 +
+ .../ledgers/all-908/current-source-overlay-v1.json |    590 +
+ .../ledgers/all-908/delivery-index.json            |    254 +
+ ...archive-preservation-correction-overlay-v1.json |     15 +
+ .../ledgers/ci-controls-81-dispositions-v2.json    |  30995 ++++
+ ...te-tail-T01-T04-T05-disposition-overlay-v1.json |    238 +
+ .../ledgers/first80-semantic-dispositions-v1.json  |  99853 +++++++++++
+ .../ledgers/latter80-semantic-dispositions-v2.json |  23953 +++
+ .../root-selected-protocol-decisions-v1.json       |    431 +
+ ...x-head-post-baseline-validation-overlay-v1.json |   1434 +
+ .../ledgers/six-head-semantic-dispositions-v1.json |  20298 +++
+ .../ledgers/ten-head-semantic-dispositions-v2.json | 154905 ++++++++++++++++++
+ .../native/b940-and-692f-native-receipts-v1.zip    |    Bin 0 -> 111886 bytes
+ .../native/cell-and-mtp-original-receipts-v1.zip   |    Bin 0 -> 83754 bytes
+ ...ontrolled-restore-macos-full-module-failure.log |    113 +
+ .../retention-failed-arena-later-readback.json     |     82 +
+ .../retention-public-api-canonical-probe.json      |    224 +
+ ...native-complete-w1-rosters-1897-receipts-v1.zip |    Bin 0 -> 124436 bytes
+ .../native-final-rust-dba-receipt-index.json       |    111 +
+ .../native/native-final-rust-dba-receipts-v1.zip   |    Bin 0 -> 205820 bytes
+ .../native/native-final-rust-dba-summary.json      |    312 +
+ .../native/native-final-rust-dba-terminal.json     |     29 +
+ .../native/native-ownership-1897-receipts-v1.zip   |    Bin 0 -> 183777 bytes
+ ...parallel-clippy-e824-receipts-mac-v1.index.json |    418 +
+ ...tement-parallel-clippy-e824-receipts-mac-v1.zip |    Bin 0 -> 121146 bytes
+ .../native/s04-root-phase-count-proof-v1.json      |      9 +
+ .../t03-custody-independent-verification-v1.json   |      8 +
+ .../native/t03/actual-67-inputs-at-5c04.json       |   1215 +
+ .../native/t03/custody-manifest.json               |    301 +
+ .../native/t03/t03-original-execution-evidence.zip |    Bin 0 -> 335800 bytes
+ ...lication-v2-to-v3-original-gate-artifacts.patch |     55 +
+ .../operations/pure-validator-controls-v1.json     |    221 +
+ .../authenticated-caller-v5/commit-summary.json    |    152 +
+ .../ports/authenticated-caller-v5/commit.patch     |    394 +
+ .../ports/cell-peer-order/commit-summary.json      |     70 +
+ .../ports/cell-peer-order/complete-reviewed.patch  |    435 +
+ .../codeql-readonly-observers/commit-summary.json  |    247 +
+ .../ports/codeql-readonly-observers/commit.patch   |    971 +
+ .../collected-unit-observer/commit-summary.json    |    186 +
+ .../ports/collected-unit-observer/commit.patch     |   2627 +
+ .../commit-summary.json                            |     56 +
+ .../complete-reviewed.patch                        |    340 +
+ .../ports/typed-worker-pending/commit-summary.json |    410 +
+ .../ports/typed-worker-pending/commit.patch        |   2648 +
+ .../remote/branches-0170.json                      |   4542 +
+ .../remote/latest-readonly-run-status-v2.json      |     62 +
+ .../queue-refresh-0521-v3/43540659883-jobs.json    |      1 +
+ .../queue-refresh-0521-v3/43540659883-jobs.stderr  |      0
+ .../queue-refresh-0521-v3/43540659883-run.json     |      1 +
+ .../queue-refresh-0521-v3/43540659883-run.stderr   |      0
+ .../queue-refresh-0521-v3/43551533528-jobs.json    |      1 +
+ .../queue-refresh-0521-v3/43551533528-jobs.stderr  |      0
+ .../queue-refresh-0521-v3/43551533528-run.json     |      1 +
+ .../queue-refresh-0521-v3/43551533528-run.stderr   |      0
+ .../annotations-132340218555.json                  |      1 +
+ .../annotations-132340218555.stderr                |      0
+ .../annotations-132340218585.json                  |      1 +
+ .../annotations-132340218585.stderr                |      0
+ .../annotations-132340218732.json                  |      1 +
+ .../annotations-132340218732.stderr                |      0
+ .../annotations-132340219408.json                  |      1 +
+ .../annotations-132340219408.stderr                |      0
+ .../failure-annotations-and-timeouts-v1.json       |    222 +
+ .../remote/queue-refresh-0521-v3/summary.json      |    181 +
+ .../remote-open-pr-graphql-0210-v1/page-1.json     |      1 +
+ .../page-1.receipt.json                            |      8 +
+ .../remote-open-pr-graphql-0210-v1/page-1.stderr   |      0
+ .../remote-open-pr-graphql-0210-v1/page-2.json     |      1 +
+ .../page-2.receipt.json                            |      8 +
+ .../remote-open-pr-graphql-0210-v1/page-2.stderr   |      0
+ .../remote-open-pr-graphql-0210-v1/page-3.json     |      1 +
+ .../page-3.receipt.json                            |      8 +
+ .../remote-open-pr-graphql-0210-v1/page-3.stderr   |      0
+ .../remote-open-pr-graphql-0210-v1/page-4.json.raw |      0
+ .../page-4.receipt.json                            |      8 +
+ .../remote-open-pr-graphql-0210-v1/page-4.stderr   |      1 +
+ .../open-pulls-normalized.json                     |   7529 +
+ .../page-1.json                                    |      1 +
+ .../page-1.receipt.json                            |      8 +
+ .../page-1.stderr                                  |      0
+ .../page-2.json                                    |      1 +
+ .../page-2.receipt.json                            |      8 +
+ .../page-2.stderr                                  |      0
+ .../page-3.json                                    |      1 +
+ .../page-3.receipt.json                            |      8 +
+ .../page-3.stderr                                  |      0
+ .../page-4.json                                    |      1 +
+ .../page-4.receipt.json                            |      8 +
+ .../page-4.stderr                                  |      0
+ .../page-5.json                                    |      1 +
+ .../page-5.receipt.json                            |      8 +
+ .../page-5.stderr                                  |      0
+ .../page-6.json                                    |      1 +
+ .../page-6.receipt.json                            |      8 +
+ .../page-6.stderr                                  |      0
+ .../summary.json                                   |     84 +
+ .../actor.receipt.json                             |      8 +
+ .../actor.stderr                                   |      0
+ .../actor.stdout                                   |      1 +
+ .../branches-before.json                           |    910 +
+ .../open-pulls-page-1.receipt.json                 |      8 +
+ .../open-pulls-page-1.stderr                       |      1 +
+ .../open-pulls-page-1.stdout                       |      0
+ .../open-pulls-page-2.receipt.json                 |      8 +
+ .../open-pulls-page-2.stderr                       |      1 +
+ .../open-pulls-page-2.stdout                       |      0
+ .../open-pulls-page-3.receipt.json                 |      8 +
+ .../open-pulls-page-3.stderr                       |      1 +
+ .../open-pulls-page-3.stdout                       |      0
+ .../open-pulls-page-4.receipt.json                 |      8 +
+ .../open-pulls-page-4.stderr                       |      1 +
+ .../open-pulls-page-4.stdout                       |      0
+ .../open-pulls-page-5.receipt.json                 |      8 +
+ .../open-pulls-page-5.stderr                       |      1 +
+ .../open-pulls-page-5.stdout                       |      0
+ .../open-pulls-page-6.receipt.json                 |      8 +
+ .../open-pulls-page-6.stderr                       |      1 +
+ .../open-pulls-page-6.stdout                       |      0
+ .../refs-before.receipt.json                       |      8 +
+ .../refs-before.stderr                             |      0
+ .../refs-before.stdout                             |    908 +
+ ...quired-trigger-and-legacy-delete-review-v1.json |    863 +
+ ...required-trigger-and-legacy-delete-review-v1.md |     37 +
+ .../remote/summary-0170.json                       |     54 +
+ .../nonancestor-witnesses.json                     |   2367 +
+ .../summary.json                                   |     35 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../fast-forward.log                               |      5 +
+ .../preflight.log                                  |      1 +
+ .../reviewed-fixture.patch                         |     54 +
+ .../ci-complete-fixture-integration-v1/steps.json  |     26 +
+ .../summary.json                                   |     43 +
+ .../complete-increment.patch                       |    161 +
+ .../fetch-exact-advertised-commit.log              |      2 +
+ .../concurrent-e40d-source-review-v1/preflight.log |      1 +
+ .../prior-head-ancestor.log                        |      0
+ .../concurrent-e40d-source-review-v1/summary.json  |     33 +
+ .../ci-contract.log                                |      1 +
+ .../cross-repository-source-port-v1/commit.log     |      4 +
+ .../cross-repository-source-port-v1/corpus.log     |      1 +
+ .../root/cross-repository-source-port-v1/diff.log  |      0
+ .../root/cross-repository-source-port-v1/fmt.log   |      0
+ .../cross-repository-source-port-v1/inventory.log  |      1 +
+ .../original-cross-repo-controls.log               |     28 +
+ .../cross-repository-source-port-v1/precommit.log  |      1 +
+ .../cross-repository-source-port-v1/preflight.log  |      1 +
+ .../required-lane-original-and-new-cases.log       |     55 +
+ .../source-omission-mutation.log                   |      6 +
+ .../stage-new-intent.log                           |      0
+ .../root/cross-repository-source-port-v1/stage.log |      0
+ .../cross-repository-source-port-v1/steps.json     |     80 +
+ .../cross-repository-source-port-v1/summary.json   |    104 +
+ .../drivers/finish-final-bindings-0234-driver.py   |     36 +
+ .../drivers/merge-final-bindings-0231-driver.py    |     39 +
+ ...ing-security-packages-root-verification-v1.json |      8 +
+ .../ci-contract.log                                |      1 +
+ .../final-python-boundary-controls-v5/commit.log   |      2 +
+ .../final-python-boundary-controls-v5/corpus.log   |      1 +
+ .../final-python-boundary-controls-v5/diff.log     |      0
+ .../precommit.log                                  |      1 +
+ .../preflight.log                                  |      1 +
+ .../required-baseline-export-contract-controls.log |     11 +
+ .../source-guards.log                              |      6 +
+ .../final-python-boundary-controls-v5/stage.log    |      0
+ .../final-python-boundary-controls-v5/steps.json   |     56 +
+ .../final-python-boundary-controls-v5/summary.json |     95 +
+ .../caller-source-negative.log                     |      6 +
+ .../merge-authenticated-caller-v5-v1/commit.log    |      1 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../diff-check.log                                 |      0
+ .../root/merge-authenticated-caller-v5-v1/fmt.log  |      0
+ .../merge-authenticated-caller-v5-v1/merge.log     |      8 +
+ .../phase-reader-current.log                       |    101 +
+ .../precommit-preflight.log                        |      1 +
+ .../merge-authenticated-caller-v5-v1/preflight.log |      1 +
+ .../selected-reviewed.patch                        |    394 +
+ .../stage-resolved.log                             |      0
+ .../merge-authenticated-caller-v5-v1/steps.json    |     68 +
+ .../merge-authenticated-caller-v5-v1/summary.json  |     90 +
+ .../cell-source-negative.log                       |      6 +
+ .../root/merge-cell-peer-order-v1/commit.log       |      1 +
+ .../current-ci-contract.log                        |      1 +
+ .../merge-cell-peer-order-v1/current-corpus.log    |      1 +
+ .../root/merge-cell-peer-order-v1/diff-check.log   |      0
+ .../root/merge-cell-peer-order-v1/fmt.log          |      0
+ .../root/merge-cell-peer-order-v1/merge.log        |      9 +
+ .../precommit-preflight.log                        |      1 +
+ .../root/merge-cell-peer-order-v1/preflight.log    |      1 +
+ .../selected-reviewed.patch                        |    435 +
+ .../merge-cell-peer-order-v1/stage-resolved.log    |      0
+ .../root/merge-cell-peer-order-v1/steps.json       |     62 +
+ .../root/merge-cell-peer-order-v1/summary.json     |     85 +
+ .../merge-codeql-readonly-observers-v2/commit.log  |      1 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../diff-check.log                                 |      0
+ .../merge-codeql-readonly-observers-v2/fmt.log     |      0
+ .../independent-ci-command-negative.log            |      6 +
+ .../merge-codeql-readonly-observers-v2/merge.log   |      7 +
+ .../metadata-original-controls.log                 |     31 +
+ .../precommit-preflight.log                        |      1 +
+ .../preflight.log                                  |      1 +
+ .../selected-reviewed.patch                        |    971 +
+ .../semantic-original-controls.log                 |      9 +
+ .../merge-codeql-readonly-observers-v2/shell.log   |      0
+ .../source-negative.log                            |      6 +
+ .../stage-resolved.log                             |      0
+ .../merge-codeql-readonly-observers-v2/steps.json  |     86 +
+ .../summary.json                                   |    106 +
+ .../collected-original-and-current-controls.log    |     28 +
+ .../merge-collected-unit-observer-v1/commit.log    |      1 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../diff-check.log                                 |      0
+ .../root/merge-collected-unit-observer-v1/fmt.log  |      0
+ .../independent-ci-command-negative.log            |      6 +
+ .../merge-collected-unit-observer-v1/merge.log     |      7 +
+ .../precommit-preflight.log                        |      1 +
+ .../merge-collected-unit-observer-v1/preflight.log |      1 +
+ .../selected-reviewed.patch                        |   2627 +
+ .../merge-collected-unit-observer-v1/shell.log     |      0
+ .../source-negative.log                            |      6 +
+ .../stage-resolved.log                             |      0
+ .../merge-collected-unit-observer-v1/steps.json    |     80 +
+ .../merge-collected-unit-observer-v1/summary.json  |    104 +
+ .../completion-controls.log                        |     62 +
+ .../root/merge-concurrent-e40d-roster-v1/merge.log |      7 +
+ .../merge-concurrent-e40d-roster-v1/preflight.log  |      1 +
+ .../stage-resolved.log                             |      0
+ .../merge-concurrent-e40d-roster-v1/steps.json     |     26 +
+ .../ci-contract.log                                |      1 +
+ .../merge-concurrent-e40d-roster-v2/commit.log     |      1 +
+ .../completion-controls.log                        |     27 +
+ .../merge-concurrent-e40d-roster-v2/corpus.log     |      1 +
+ .../root/merge-concurrent-e40d-roster-v2/diff.log  |      0
+ .../merge-concurrent-e40d-roster-v2/precommit.log  |      1 +
+ .../merge-concurrent-e40d-roster-v2/preflight.log  |      1 +
+ .../roster-controls.log                            |     11 +
+ .../root/merge-concurrent-e40d-roster-v2/stage.log |      0
+ .../merge-concurrent-e40d-roster-v2/steps.json     |     56 +
+ .../merge-concurrent-e40d-roster-v2/summary.json   |     87 +
+ .../commit-bindings.log                            |      1 +
+ .../diff-check.log                                 |      0
+ .../distributed-inventory-check.log                |      1 +
+ .../merge-final-current-bindings-finish-v1/fmt.log |      0
+ .../integration.patch                              |   1899 +
+ .../precommit-preflight.log                        |      1 +
+ .../preflight-audit.log                            |      1 +
+ .../refresh-generated-inventory.log                |      1 +
+ .../stage-derived-metadata.log                     |      0
+ .../steps.json                                     |     50 +
+ .../summary.json                                   |     63 +
+ .../merge-final-current-bindings-v1/diff-check.log |      0
+ .../distributed-inventory-check.log                |      1 +
+ .../inventory-correction-preview.patch             |     16 +
+ .../merge-bindings.log                             |      2 +
+ .../preflight-audit.log                            |      1 +
+ .../merge-final-current-bindings-v1/steps.json     |     26 +
+ .../acquisition-controls.log                       |     11 +
+ .../ci-contract.log                                |      1 +
+ .../merge-four-current-reader-ports-v1/commit.log  |      1 +
+ .../merge-four-current-reader-ports-v1/corpus.log  |      1 +
+ .../merge-four-current-reader-ports-v1/diff.log    |      0
+ .../merge-four-current-reader-ports-v1/merge.log   |     13 +
+ .../precommit.log                                  |      1 +
+ .../preflight.log                                  |      1 +
+ .../rank-observation-controls.log                  |     19 +
+ .../merge-four-current-reader-ports-v1/shell.log   |      0
+ .../source-guards.log                              |      9 +
+ .../sqlite-controls.log                            |     15 +
+ .../stage-resolved.log                             |      0
+ .../merge-four-current-reader-ports-v1/stage.log   |      0
+ .../merge-four-current-reader-ports-v1/steps.json  |     86 +
+ .../summary.json                                   |    136 +
+ .../ci-contract.log                                |      1 +
+ .../combined-store-source.patch                    |     44 +
+ .../commit.log                                     |      1 +
+ .../corpus.log                                     |      1 +
+ .../merge-native-ownership-boundaries-v1/diff.log  |      0
+ .../ff-w1-clock-controls.log                       |     14 +
+ .../merge-native-ownership-boundaries-v1/fmt.log   |      0
+ .../inventory.log                                  |      1 +
+ .../merge-native-boundaries.log                    |      2 +
+ .../precommit.log                                  |      1 +
+ .../preflight-native.log                           |      1 +
+ .../preflight-w1.log                               |      1 +
+ .../source-guards.log                              |      6 +
+ .../merge-native-ownership-boundaries-v1/stage.log |      0
+ .../steps.json                                     |     80 +
+ .../summary.json                                   |    133 +
+ .../commit.log                                     |      1 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../diff-check.log                                 |      0
+ .../merge-original-mining-time-controls-v1/fmt.log |      0
+ .../merge.log                                      |      8 +
+ .../precommit-preflight.log                        |      1 +
+ .../preflight.log                                  |      1 +
+ .../selected-reviewed.patch                        |    340 +
+ .../shell.log                                      |      0
+ .../source-negative.log                            |      6 +
+ .../stage-resolved.log                             |      0
+ .../steps.json                                     |     68 +
+ .../summary.json                                   |     86 +
+ .../01-relay-fresh-time-ci-contract.log            |      1 +
+ .../01-relay-fresh-time-commit.log                 |      1 +
+ .../01-relay-fresh-time-corpus.log                 |      1 +
+ .../01-relay-fresh-time-diff.log                   |      0
+ .../01-relay-fresh-time-fmt.log                    |      0
+ .../01-relay-fresh-time-inventory.log              |      1 +
+ .../01-relay-fresh-time-merge.log                  |      7 +
+ .../01-relay-fresh-time-precommit.log              |      1 +
+ .../01-relay-fresh-time-preflight.log              |      1 +
+ .../01-relay-fresh-time-source-guards.log          |      7 +
+ .../01-relay-fresh-time-stage-resolved.log         |      0
+ .../01-relay-fresh-time-stage.log                  |      0
+ .../02-public-v3-reactor-json-ci-contract.log      |      1 +
+ .../02-public-v3-reactor-json-commit.log           |      1 +
+ .../02-public-v3-reactor-json-corpus.log           |      1 +
+ .../02-public-v3-reactor-json-diff.log             |      0
+ .../02-public-v3-reactor-json-fmt.log              |      0
+ .../02-public-v3-reactor-json-inventory.log        |      1 +
+ .../02-public-v3-reactor-json-merge.log            |      9 +
+ .../02-public-v3-reactor-json-precommit.log        |      1 +
+ .../02-public-v3-reactor-json-preflight.log        |      1 +
+ .../02-public-v3-reactor-json-source-guards.log    |      6 +
+ .../02-public-v3-reactor-json-stage-resolved.log   |      0
+ .../02-public-v3-reactor-json-stage.log            |      0
+ .../merge-relay-reactor-boundaries-v1/merges.json  |     57 +
+ .../python-ff.log                                  |     15 +
+ .../python-preflight.log                           |      1 +
+ .../merge-relay-reactor-boundaries-v1/steps.json   |    158 +
+ .../merge-relay-reactor-boundaries-v1/summary.json |    220 +
+ .../merge-s04-and-historical-clippy-v1/merged.json |     55 +
+ .../partial-campaign-readback-ci-command.log       |      6 +
+ .../partial-campaign-readback-ci-contract.log      |      1 +
+ .../partial-campaign-readback-commit.log           |      1 +
+ .../partial-campaign-readback-complete-zip.log     |     36 +
+ .../partial-campaign-readback-corpus.log           |      1 +
+ .../partial-campaign-readback-current-phase.log    |    100 +
+ .../partial-campaign-readback-diff.log             |      0
+ .../partial-campaign-readback-merge.log            |      9 +
+ .../partial-campaign-readback-partial-controls.log |     33 +
+ .../partial-campaign-readback-precommit.log        |      1 +
+ .../partial-campaign-readback-preflight.log        |      1 +
+ .../partial-campaign-readback-source-guard.log     |      6 +
+ .../partial-campaign-readback-stage-resolved.log   |      0
+ .../partial-campaign-readback-stage.log            |      0
+ .../merge-s04-and-historical-clippy-v1/steps.json  |    152 +
+ .../summary.json                                   |    214 +
+ ...est-fixture-identity-and-clippy-ci-contract.log |      1 +
+ .../test-fixture-identity-and-clippy-commit.log    |      1 +
+ .../test-fixture-identity-and-clippy-corpus.log    |      1 +
+ .../test-fixture-identity-and-clippy-diff.log      |      0
+ .../test-fixture-identity-and-clippy-fmt.log       |      0
+ ...ure-identity-and-clippy-historical-controls.log |     25 +
+ .../test-fixture-identity-and-clippy-merge.log     |      5 +
+ .../test-fixture-identity-and-clippy-precommit.log |      1 +
+ .../test-fixture-identity-and-clippy-preflight.log |      1 +
+ ...-fixture-identity-and-clippy-stage-resolved.log |      0
+ .../test-fixture-identity-and-clippy-stage.log     |      0
+ .../root/merge-thp2-fresh-time-v1/commit.log       |      1 +
+ .../root/merge-thp2-fresh-time-v1/corpus.log       |      1 +
+ .../root/merge-thp2-fresh-time-v1/diff.log         |      0
+ .../root/merge-thp2-fresh-time-v1/fmt.log          |      0
+ .../root/merge-thp2-fresh-time-v1/inventory.log    |      1 +
+ .../root/merge-thp2-fresh-time-v1/merge.log        |      6 +
+ .../root/merge-thp2-fresh-time-v1/precommit.log    |      1 +
+ .../root/merge-thp2-fresh-time-v1/preflight.log    |      1 +
+ .../merge-thp2-fresh-time-v1/repository-static.log |      1 +
+ .../merge-thp2-fresh-time-v1/stage-resolved.log    |      0
+ .../root/merge-thp2-fresh-time-v1/stage.log        |      0
+ .../root/merge-thp2-fresh-time-v1/steps.json       |     74 +
+ .../root/merge-thp2-fresh-time-v1/summary.json     |     96 +
+ .../thp2-source-guards.log                         |      7 +
+ .../ci-contract.log                                |      1 +
+ .../merge-throughput-cost-coverage-v1/commit.log   |      1 +
+ .../merge-throughput-cost-coverage-v1/corpus.log   |      1 +
+ .../merge-throughput-cost-coverage-v1/diff.log     |      0
+ .../merge-throughput-cost-coverage-v1/merge.log    |     10 +
+ .../precommit.log                                  |      1 +
+ .../preflight.log                                  |      1 +
+ .../reader-controls.log                            |     32 +
+ .../merge-throughput-cost-coverage-v1/shell.log    |      0
+ .../source-guards.log                              |      7 +
+ .../stage-resolved.log                             |      0
+ .../merge-throughput-cost-coverage-v1/stage.log    |      0
+ .../merge-throughput-cost-coverage-v1/steps.json   |     74 +
+ .../merge-throughput-cost-coverage-v1/summary.json |    101 +
+ .../commit.log                                     |      1 +
+ .../diff-check.log                                 |      0
+ .../merge-typed-worker-pending-finish-v1/fmt.log   |      0
+ .../precommit-preflight.log                        |      1 +
+ .../repository-check-correct-path.log              |      1 +
+ .../steps.json                                     |     32 +
+ .../summary.json                                   |    111 +
+ .../current-ci-contract.log                        |      1 +
+ .../current-corpus.log                             |      1 +
+ .../independent-original-controls-proof.json       |     26 +
+ .../root/merge-typed-worker-pending-v1/merge.log   |      9 +
+ .../merge-typed-worker-pending-v1/preflight.log    |      1 +
+ .../repository-check.log                           |      1 +
+ .../selected-reviewed.patch                        |   2648 +
+ .../stage-resolved.log                             |      0
+ .../root/merge-typed-worker-pending-v1/steps.json  |     50 +
+ .../typed-pending-source-negative.log              |      7 +
+ .../typed-pending-wiring-negative.log              |      9 +
+ .../Rust-token-reader-ci-contract.log              |      1 +
+ .../Rust-token-reader-commit.log                   |      4 +
+ .../Rust-token-reader-corpus.log                   |      1 +
+ .../Rust-token-reader-diff.log                     |      0
+ .../Rust-token-reader-precommit.log                |      1 +
+ .../Rust-token-reader-stage.log                    |      0
+ .../Rust-token-reader.patch                        |    361 +
+ .../commits.json                                   |     36 +
+ .../fast-forward-fixed-root.log                    |     64 +
+ .../preflight-initial.log                          |      1 +
+ .../statement-boundary-ci-contract.log             |      1 +
+ .../statement-boundary-commit.log                  |      3 +
+ .../statement-boundary-corpus.log                  |      1 +
+ .../statement-boundary-diff.log                    |      0
+ .../statement-boundary-precommit.log               |      1 +
+ .../statement-boundary-stage.log                   |      0
+ .../statement-boundary.patch                       |    328 +
+ .../statement-format.log                           |      0
+ .../statement-inventory.log                        |      1 +
+ .../statement-preflight.log                        |      1 +
+ .../statement-source-guard.log                     |      6 +
+ .../root-final-statement-token-ports-v2/steps.json |    134 +
+ .../summary.json                                   |    179 +
+ .../tokens-ci-command-mutations.log                |      6 +
+ .../tokens-original-five.log                       |     10 +
+ .../tokens-preflight.log                           |      1 +
+ .../tokens-source-guard.log                        |      6 +
+ .../commit-immutable-original-fixture.log          |      3 +
+ .../complete-reviewed.patch                        |   5783 +
+ .../w1-receipt-common-clock-port-v5/preflight.log  |      1 +
+ .../stage-immutable-original-fixture.log           |      0
+ .../w1-receipt-common-clock-port-v5/steps.json     |     20 +
+ .../w1-receipt-common-clock-port-v5/summary.json   |    112 +
+ .../security/all-object-secret-summary.json        |     74 +
+ .../security/dependency-raw-summary.json           |   4612 +
+ .../security/dependency-short-results.json         |    507 +
+ .../security/final-delta/README.md                 |     11 +
+ .../final-object-delta-original-receipts-v1.zip    |    Bin 0 -> 10073486 bytes
+ .../security/final-delta/patterns-and-scope.json   |     35 +
+ .../security/final-delta/receipt-index.json        |    193 +
+ .../security/final-delta/stable-git-fsck.log       |     55 +
+ .../security/final-delta/summary.json              |     89 +
+ .../security/git-fsck-summary-initial.json         |      5 +
+ .../security/local-ref-snapshot-initial.txt        |    976 +
+ .../security/object-inventory-initial.txt.gz       |    Bin 0 -> 4899238 bytes
+ .../security/private-marker-triage-v1.json         |    104 +
+ scripts/ci/check_ci_contract.py                    |    101 +
+ scripts/ci/check_pq_research_integration.py        |     13 +
+ scripts/ci/pq_authority_effect_register.py         |      4 +-
+ scripts/ci/pq_root_dependency_register.py          |      4 +-
+ scripts/ci/test_ci_contract.py                     |    113 +-
+ scripts/ci/test_pq_authority_effect_register.py    |      6 +-
+ scripts/ci/test_pq_proof_profile_binding.py        |      9 +-
+ scripts/ci/test_pq_research_integration.py         |     48 +
+ scripts/ci/test_pq_root_dependency_register.py     |     63 +
+ scripts/ci/test_w1_lifetime_current_observation.py |      8 +-
+ .../ci/test_w1_qrom_closure_current_controls.py    |     63 +-
+ scripts/ci/test_w1_qrom_current_ci.py              |     56 +-
+ .../test_w1_qrom_current_implementation_audit.py   |     48 +-
+ scripts/ci/test_w1_qrom_semantics_audit.py         |     16 +-
+ scripts/ci/test_w1_qrom_workflow_gate.py           |    120 +-
+ scripts/ci/w1_qrom_closure_current_controls.py     |     63 +-
+ scripts/ci/w1_qrom_current_ci.py                   |     12 +-
+ scripts/ci/w1_qrom_supplemental_controls.py        |      6 +-
+ scripts/llm_runtime_exit_worker_observation.py     |    400 +-
+ scripts/test_llm_runtime_exit_binding_pending.py   |    476 +
+ scripts/test_llm_runtime_exit_initial_pending.py   |    679 +
+ ...est_llm_runtime_exit_post_binding_retirement.py |    466 +
+ .../test_llm_runtime_exit_worker_observation.py    |     24 +-
+ scripts/test_llm_runtime_pilot.py                  |      3 +
+ scripts/w1_lifetime_current_observation.py         |      6 +-
+ scripts/w1_qrom_current_implementation_audit.py    |      5 +-
+ scripts/w1_stark_route_audit.py                    |      4 +-
+ .../support/distributed_source_inventory.rs        |      7 +
+ 574 files changed, 501928 insertions(+), 236 deletions(-)
+ create mode 100644 docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md
+ create mode 100644 evidence/branch-consolidation-20261114/ARTIFACT_INDEX.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/FINAL_BINDING_EVIDENCE.md
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/commit.patch
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/custody-manifest.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/final-current-binding-original-evidence.zip
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/final-selected-inputs.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/final-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/independent-review/final-34path-delta-review-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/independent-review/independent-bindings-final-consumer-review-v2.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/independent-review/independent-bindings-review-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/independent-review/workflow-consumer-validation-correction-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/bindings/whitelist.json
+ create mode 100644 evidence/branch-consolidation-20261114/failures/confirmation-causal-review-v1.md
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218555-error-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218555-failure-excerpts.txt
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218555.download.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218555.log
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218585-error-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218585-failure-excerpts.txt
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218585.download.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218585.log
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218732-error-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218732-failure-excerpts.txt
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218732.download.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340218732.log
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340219408-error-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340219408-failure-excerpts.txt
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340219408.download.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/132340219408.log
+ create mode 100644 evidence/branch-consolidation-20261114/failures/e40d-required-jobs/download-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/authority44-lifetime20-final-5c04-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/environment/final-python-env-original-receipts-root-verification-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/environment/final-python-env-preparation-receipts-mac-v1.index.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/environment/final-python-env-preparation-receipts-mac-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/commit-fixture-repair.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/fast-forward.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/fixture-and-validation-entrypoints.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/fixture-repair-source-proof-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/fixture-repair.patch
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/full-ci-fixture-review-before.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/initial-identity.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/oracle-order-current-blocks-and-consumer-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/oracle-order-failure-review-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/oracle-order-fixture-cause-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/pre-commit-diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/pre-commit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/pre-edit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/pre-update-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/receipt-verification-rejection-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/repair-diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/repair-steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/repair-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/stage-fixture-repair.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/test-ci-contract-full-after.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/test-ci-contract-full-before.log
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-ci-contract-5c04-v1/typed-pending-production-check-exact.py.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-exact-lane-bodies/external-evidence-contract.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-exact-lane-bodies/fuzz-smoke.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-exact-lane-bodies/protocol-contract.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-exact-lane-bodies/repository-truth.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-exact-lane-bodies/rust-baseline.txt
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-inventory-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/gates/final-gate-inventory-v1.md
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/README.md
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/addendum/README-addendum.md
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/addendum/publication-planning-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/all-908-branch-dispositions-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/all-908-ledger-and-original-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/all-908-ref-summary.csv
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/current-source-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/all-908/delivery-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/archive-preservation-correction-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/ci-controls-81-dispositions-v2.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/finite-tail-T01-T04-T05-disposition-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/first80-semantic-dispositions-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/latter80-semantic-dispositions-v2.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/root-selected-protocol-decisions-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/six-head-post-baseline-validation-overlay-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/six-head-semantic-dispositions-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ledgers/ten-head-semantic-dispositions-v2.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/b940-and-692f-native-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/cell-and-mtp-original-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/macos-retention/controlled-restore-macos-full-module-failure.log
+ create mode 100644 evidence/branch-consolidation-20261114/native/macos-retention/retention-failed-arena-later-readback.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/macos-retention/retention-public-api-canonical-probe.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-complete-w1-rosters-1897-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-final-rust-dba-receipt-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-final-rust-dba-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-final-rust-dba-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-final-rust-dba-terminal.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-ownership-1897-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-statement-parallel-clippy-e824-receipts-mac-v1.index.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/native-statement-parallel-clippy-e824-receipts-mac-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/native/s04-root-phase-count-proof-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/t03-custody-independent-verification-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/t03/actual-67-inputs-at-5c04.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/t03/custody-manifest.json
+ create mode 100644 evidence/branch-consolidation-20261114/native/t03/t03-original-execution-evidence.zip
+ create mode 100644 evidence/branch-consolidation-20261114/operations/publication-v2-to-v3-original-gate-artifacts.patch
+ create mode 100644 evidence/branch-consolidation-20261114/operations/pure-validator-controls-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/authenticated-caller-v5/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/authenticated-caller-v5/commit.patch
+ create mode 100644 evidence/branch-consolidation-20261114/ports/cell-peer-order/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/cell-peer-order/complete-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/ports/codeql-readonly-observers/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/codeql-readonly-observers/commit.patch
+ create mode 100644 evidence/branch-consolidation-20261114/ports/collected-unit-observer/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/collected-unit-observer/commit.patch
+ create mode 100644 evidence/branch-consolidation-20261114/ports/original-mining-time-controls/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/original-mining-time-controls/complete-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/ports/typed-worker-pending/commit-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/ports/typed-worker-pending/commit.patch
+ create mode 100644 evidence/branch-consolidation-20261114/remote/branches-0170.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/latest-readonly-run-status-v2.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43540659883-jobs.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43540659883-jobs.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43540659883-run.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43540659883-run.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43551533528-jobs.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43551533528-jobs.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43551533528-run.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/43551533528-run.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218555.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218555.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218585.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218585.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218732.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340218732.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340219408.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/annotations-132340219408.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/failure-annotations-and-timeouts-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/queue-refresh-0521-v3/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-1.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-1.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-1.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-2.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-2.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-2.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-3.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-3.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-3.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.json.raw
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-0210-v1/page-4.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/open-pulls-normalized.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-1.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-1.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-1.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-2.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-2.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-2.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-3.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-3.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-3.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-4.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-4.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-4.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-5.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-5.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-5.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-6.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-6.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/page-6.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-open-pr-graphql-continuation-0212-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/actor.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/actor.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/actor.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/branches-before.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-1.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-1.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-1.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-2.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-2.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-2.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-3.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-3.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-3.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-4.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-4.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-4.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-5.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-5.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-5.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-6.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-6.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/open-pulls-page-6.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/refs-before.receipt.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/refs-before.stderr
+ create mode 100644 evidence/branch-consolidation-20261114/remote/remote-ref-and-open-pr-inventory-0208-v1/refs-before.stdout
+ create mode 100644 evidence/branch-consolidation-20261114/remote/required-trigger-and-legacy-delete-review-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/remote/required-trigger-and-legacy-delete-review-v1.md
+ create mode 100644 evidence/branch-consolidation-20261114/remote/summary-0170.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/all-908-independent-verification-v1/nonancestor-witnesses.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/all-908-independent-verification-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/fast-forward.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/reviewed-fixture.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/ci-complete-fixture-integration-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/concurrent-e40d-source-review-v1/complete-increment.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/concurrent-e40d-source-review-v1/fetch-exact-advertised-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/concurrent-e40d-source-review-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/concurrent-e40d-source-review-v1/prior-head-ancestor.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/concurrent-e40d-source-review-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/original-cross-repo-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/required-lane-original-and-new-cases.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/source-omission-mutation.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/stage-new-intent.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/cross-repository-source-port-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/drivers/finish-final-bindings-0234-driver.py
+ create mode 100644 evidence/branch-consolidation-20261114/root/drivers/merge-final-bindings-0231-driver.py
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-binding-security-packages-root-verification-v1.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/required-baseline-export-contract-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/final-python-boundary-controls-v5/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/caller-source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/phase-reader-current.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-authenticated-caller-v5-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/cell-source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-cell-peer-order-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/independent-ci-command-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/metadata-original-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/semantic-original-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/shell.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-codeql-readonly-observers-v2/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/collected-original-and-current-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/independent-ci-command-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/shell.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-collected-unit-observer-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v1/completion-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/completion-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/roster-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-concurrent-e40d-roster-v2/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/commit-bindings.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/distributed-inventory-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/integration.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/preflight-audit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/refresh-generated-inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/stage-derived-metadata.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-finish-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/distributed-inventory-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/inventory-correction-preview.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/merge-bindings.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/preflight-audit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-final-current-bindings-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/acquisition-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/rank-observation-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/shell.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/sqlite-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-four-current-reader-ports-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/combined-store-source.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/ff-w1-clock-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/merge-native-boundaries.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/preflight-native.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/preflight-w1.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-native-ownership-boundaries-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/shell.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-original-mining-time-controls-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/01-relay-fresh-time-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/02-public-v3-reactor-json-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/merges.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/python-ff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/python-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-relay-reactor-boundaries-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/merged.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-ci-command.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-complete-zip.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-current-phase.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-partial-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-source-guard.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-historical-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-s04-and-historical-clippy-v1/test-fixture-identity-and-clippy-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/repository-static.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-thp2-fresh-time-v1/thp2-source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/reader-controls.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/shell.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/source-guards.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-throughput-cost-coverage-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/diff-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/fmt.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/precommit-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/repository-check-correct-path.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-finish-v1/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/current-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/current-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/independent-original-controls-proof.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/merge.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/repository-check.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/selected-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/stage-resolved.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/typed-pending-source-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/merge-typed-worker-pending-v1/typed-pending-wiring-negative.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/Rust-token-reader.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/commits.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/fast-forward-fixed-root.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/preflight-initial.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-ci-contract.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-commit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-corpus.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-diff.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-precommit.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary-stage.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-boundary.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-format.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-inventory.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/statement-source-guard.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/tokens-ci-command-mutations.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/tokens-original-five.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/tokens-preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/root-final-statement-token-ports-v2/tokens-source-guard.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/commit-immutable-original-fixture.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/complete-reviewed.patch
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/preflight.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/stage-immutable-original-fixture.log
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/steps.json
+ create mode 100644 evidence/branch-consolidation-20261114/root/w1-receipt-common-clock-port-v5/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/all-object-secret-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/dependency-raw-summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/dependency-short-results.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/README.md
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/final-object-delta-original-receipts-v1.zip
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/patterns-and-scope.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/receipt-index.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/stable-git-fsck.log
+ create mode 100644 evidence/branch-consolidation-20261114/security/final-delta/summary.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/git-fsck-summary-initial.json
+ create mode 100644 evidence/branch-consolidation-20261114/security/local-ref-snapshot-initial.txt
+ create mode 100644 evidence/branch-consolidation-20261114/security/object-inventory-initial.txt.gz
+ create mode 100644 evidence/branch-consolidation-20261114/security/private-marker-triage-v1.json
+ create mode 100644 scripts/test_llm_runtime_exit_binding_pending.py
+ create mode 100644 scripts/test_llm_runtime_exit_initial_pending.py
+ create mode 100644 scripts/test_llm_runtime_exit_post_binding_retirement.py
