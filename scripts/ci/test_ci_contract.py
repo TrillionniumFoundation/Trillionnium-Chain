@@ -39,6 +39,7 @@ from check_ci_contract import (check_pq_release_authority_controls, check_cell_c
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
                                PQ_SYSTEM_SUPPLEMENTAL_STEP, PQ_CHECKPOINT_OWNERSHIP_STEP)
+from check_ci_contract import check_typed_pending_worker_controls
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -81,6 +82,93 @@ synthetic_growth_v2_native() {
   printf '%s\n' 'running 1 test' 'test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
 }
 '''
+
+
+
+class TypedPendingWorkerWiringTests(unittest.TestCase):
+    # Deliberately independent of the checker's reviewed module/method roster.
+    GROUPS = (
+        ('test_llm_runtime_exit_initial_pending', 'InitialTerminalPendingTests', 14),
+        ('test_llm_runtime_exit_binding_pending', 'BindingTerminalPendingTests', 10),
+        ('test_llm_runtime_exit_post_binding_retirement', 'PostBindingRetirementTests', 12),
+    )
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='trnm-typed-pending-wiring-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve(strict=True)
+        (self.root / 'scripts').mkdir()
+        for path in ['scripts/test_llm_runtime_pilot.py'] + [
+                'scripts/' + module + '.py' for module, _, _ in self.GROUPS]:
+            (self.root / path).write_bytes((ROOT / path).read_bytes())
+
+    def test_actual_pilot_registers_all_36_original_controls_once(self):
+        result = check_typed_pending_worker_controls(self.root)
+        self.assertEqual(result['selected_original_controls'], 36)
+        self.assertEqual(result['original_controls'],
+                         {module: count for module, _, count in self.GROUPS})
+        self.assertIs(result['tests_executed'], False)
+
+    def test_each_original_import_must_be_present_unconditional_and_unique(self):
+        check_typed_pending_worker_controls(self.root)
+        target = self.root / 'scripts/test_llm_runtime_pilot.py'
+        original = target.read_text()
+        for module, class_name, _ in self.GROUPS:
+            line = 'from ' + module + ' import ' + class_name + '\n'
+            self.assertEqual(original.count(line), 1)
+            for label, replacement in (
+                    ('missing', ''), ('duplicate', line + line),
+                    ('conditional', 'if False:\n    ' + line),
+                    ('alias', 'from ' + module + ' import ' + class_name + ' as omitted\n')):
+                try:
+                    target.write_text(original.replace(line, replacement, 1))
+                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
+                        check_typed_pending_worker_controls(self.root)
+                finally:
+                    target.write_text(original)
+
+    def test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls(self):
+        check_typed_pending_worker_controls(self.root)
+        for module, class_name, _ in self.GROUPS:
+            target = self.root / 'scripts' / (module + '.py')
+            original = target.read_text()
+            tree = ast.parse(original)
+            cls = next(node for node in tree.body
+                       if isinstance(node, ast.ClassDef) and node.name == class_name)
+            method = next(node for node in cls.body
+                          if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
+            lines = original.splitlines(keepends=True)
+            exact = ''.join(lines[method.lineno - 1:method.end_lineno])
+            for label, replacement in (
+                    ('missing', ''), ('duplicate', exact + exact),
+                    ('renamed', exact.replace(method.name, 'omitted_' + method.name, 1)),
+                    ('skipped', '    @unittest.skip("explicit negative fixture")\n' + exact),
+                    ('stubbed', '    def ' + method.name + '(self):\n        pass\n')):
+                try:
+                    changed = original.replace(exact, replacement, 1)
+                    self.assertNotEqual(changed, original)
+                    target.write_text(changed)
+                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
+                        check_typed_pending_worker_controls(self.root)
+                finally:
+                    target.write_text(original)
+
+    def test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved(self):
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                    'rust-baseline', 'external-evidence-contract'}
+        check_independent_conformance(script, required)
+        command = '    python3 scripts/test_llm_runtime_pilot.py\n'
+        self.assertEqual(script.count(command), 1)
+        for label, changed in (
+                ('missing', script.replace(command, '', 1)),
+                ('duplicate', script.replace(command, command + command, 1)),
+                ('commented', script.replace(command, '    # ' + command.strip() + '\n', 1)),
+                ('hidden', script.replace(command, '    if false; then\n' + command + '    fi\n', 1)),
+                ('moved', script.replace(command, '', 1).replace(
+                    '  repository-truth)\n', '  repository-truth)\n' + command, 1))):
+            with self.subTest(mutation=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, required)
 
 
 class ManualResearchWorkflowTests(unittest.TestCase):

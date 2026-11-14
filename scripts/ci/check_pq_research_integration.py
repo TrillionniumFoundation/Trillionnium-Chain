@@ -1614,6 +1614,19 @@ NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS
 
+
+# Preserve the three partial-observation stages and their existing pilot entry.
+# Source identity never closes wait4, replenishes a hold, or qualifies a model.
+TYPED_PENDING_WORKER_REQUIRED_PATHS = frozenset((
+    "scripts/llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_exit_initial_pending.py",
+    "scripts/test_llm_runtime_exit_binding_pending.py",
+    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+    "scripts/test_llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_pilot.py",
+))
+NATIVE_REQUIRED_PATHS |= TYPED_PENDING_WORKER_REQUIRED_PATHS
+
 # Selected read-only cost coverage includes its bounded, duplicate-refusing input reader.
 # Exact source identity provides no execution authority or throughput qualification.
 THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS = frozenset((

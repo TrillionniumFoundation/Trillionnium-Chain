@@ -15062,3 +15062,52 @@ remain unchanged. These local controls do not establish hosted four-second
 confirmation, activation or production qualification.
 
 Root retained the two complete original wall-clock mining controls through the reviewed Registered-material adapter. Both original test bodies preserve all diagnostic string literals and non-whitespace statements except the explicit Settings argument for the ancestor adapter. The original 4096 attempts and 2-second/150-millisecond bounds remain; the selected component Linux receipt contains two passes without ignored controls.
+
+### 2026-11-14 retained three-stage typed pending worker observations
+
+Selected the complete 147bae52, 91e4a5e9 and c1650714 lineage for the existing
+explicit worker-pidfd V4 observer. Initial incomplete task observation, held-task
+ENOENT during partial binding, and post-binding ESRCH retain distinct pending
+records. The last case requires every original worker binding, the same held
+worker pidfd with its exact terminal event, unchanged owner/namespace/birth
+identity, and one proved roster loss. Previously observed invalid fields, new or
+reappearing tasks, a second unproved loss and unknown reads remain sticky refusals.
+
+Pending records neither claim zero RSS nor complete/release/refill a reservation.
+The existing pilot lifecycle, default profile, source-pair and trial-reconcile
+behavior remain byte-identical. Completion still requires the original same-owner
+wait4 with valid resource usage within both the whole operation deadline and the
+original missing-sample-plus-100ms bound. No Host/model campaign is activated.
+
+The original fourteen initial, ten binding and twelve post-binding controls enter
+the existing protocol-contract pilot command once. Only the two whole-pilot test
+fixture digests bind the already reviewed consolidated CLI body; original V2/V3
+pins, old observer-profile refusals and all original control assertions remain.
+Independent literal source and registration mutations refuse omission or bypass.
+Linux child/pidfd/proc/wait4 observations and controlled proc field views are
+recorded separately; they grant no model, production or campaign qualification.
+
+The old Diverse60 recipe deliberately retains its aae68f92 observer pin. It now
+refuses the changed observer at DIVERSE_V3_CURRENT_OBSERVER; neither its historical
+source namespace nor its old experimental receipts are refreshed or qualified.
+
+The selected Linux run completed all 59 original methods: 36 pending controls
+and 23 existing worker controls, with zero failures, errors or skips. The actual
+pilot discovery registered each of the 36 once. Sixty-seven absolute project
+inputs and the actual loaded project modules were source-bound before/after;
+unresolved dir_fd-relative audit events are separately counted, without claiming
+complete file-access coverage. The first external driver misinterpreted relative
+proc paths and produced 240 subtest errors; that failed run and its once-guard
+refusal remain retained. Correcting only this driver produced the passing run.
+Six independent CI/source negative controls and the actual CI/corpus readers
+also passed. These observations preserve all qualification flags as false.
+
+Root integration retained the exact T03 worker from c16507147b65285ea94dead22d3b93c5db7295af
+and all 36 original pending controls (only two reviewed whole-pilot fixture digest
+adapters), together with the 23 existing worker controls and their explicitly
+reviewed pending-observation fixtures. Linux executed 59 methods with zero
+failures, errors or skips; its 7,331 unresolved dir_fd-relative audit events are
+not claimed as verified project-file accesses. The original instrumentation
+errors and the duplicate-start once-guard refusal remain evidence. Production
+pilot/V2/V3 bytes, original 100ms limit, historical Diverse60 refusal and all
+qualification flags remain unchanged. No hosted confirmation target is granted.
