@@ -14357,3 +14357,8 @@ This keeps the Unix negative test and crate-wide forbid(unsafe_code), adds no
 dependency, and changes no production storage behavior. The exact named FIFO
 test passed 1/1 on aarch64-apple-darwin; the restored five owner controls passed
 5/5 on the combined source. Linux and final integration gates remain separate.
+
+
+### 2026-11-14 consolidation: explicit pinned TLS endpoint component
+
+Preserve the bounded endpoint capability from e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959 under its new signed/stored namespace and mandatory PqWitnessV4 boundary. Adapt the newer absolute-deadline client and shared-owner listeners to the same exact address and 64-connection cap. Preserve current complete-SPKI checks, retained-reply APIs, original deadlines, witness state and legacy loopback bytes. The 16 KiB charged ciphertext buffer and redacted refusal diagnostics retain original limits and errors. The original six library/three CLI controls plus two current integration controls are explicit in the required roster. See [the component contract](../security/PQ_TLS_PINNED_ENDPOINT_V1.md). This source integration is not a successful runtime observation, WAN acceptance or production activation; the audit records the exact subsequent validation outcome. All existing qualification flags remain false.

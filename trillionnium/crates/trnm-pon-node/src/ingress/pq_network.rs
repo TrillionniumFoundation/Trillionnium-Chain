@@ -43,6 +43,11 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
 
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
+mod tls_endpoint;
+pub(crate) use tls_endpoint::policy_record_requires_endpoint_witness;
+pub use tls_endpoint::{
+    PqTlsEndpointPins, TLS_ENDPOINT_ACCEPT_LIMIT, TLS_ENDPOINT_PROFILE, TLS_ENDPOINT_TRANSPORT_MODE,
+};
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
 
@@ -76,6 +81,8 @@ struct PolicyRecord {
     transport_confidentiality: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     tls: Option<PqTlsPins>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    endpoint: Option<PqTlsEndpointPins>,
 }
 
 /// Operator-supplied pins. No key from an incoming frame can enter this roster.
@@ -154,6 +161,7 @@ impl PqNetworkPolicy {
             inbound_verification_limit: MAX_INBOUND_VERIFICATIONS,
             transport_confidentiality: TRANSPORT_MODE.into(),
             tls: None,
+            endpoint: None,
         };
         let bytes = serde_json::to_vec(&record)?;
         let id = hash(POLICY_DOMAIN, &[&bytes]);
@@ -746,7 +754,7 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
-        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        self.policy.check_network_target(address)?;
         check_live_request(deadline, Some(prepared.expires_at()))
     }
     fn finish_response_until(
@@ -787,11 +795,9 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
-        // PNQ2 is authenticated plaintext for explicitly local development.
-        // The server already refuses non-loopback listeners; the public client
-        // must enforce the same boundary before a signed payload reaches a
-        // caller-selected remote TCP endpoint (or leaks across a public route).
-        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        // Existing profiles remain loopback-only. The separately selected TLS
+        // endpoint profile checks its exact pinned IP and port before TCP.
+        self.policy.check_network_target(address)?;
         // Preparation checked its original expiry, but caller queueing may
         // outlive the signed lease. Refuse a stale packet before TCP; the
         // receiving node independently checks expiry at the live boundary.

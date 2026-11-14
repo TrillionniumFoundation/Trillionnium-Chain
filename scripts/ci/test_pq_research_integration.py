@@ -590,6 +590,49 @@ class CorpusGateTests(unittest.TestCase):
         with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
             check(self.root)
 
+    def test_reviewed_endpoint_and_library_closure_cannot_drop_source_or_pin(self):
+        # Independent literal roster: deleting the implementation constant must fail.
+        dependencies = (
+            'config/pon/pq-native-tls-endpoint-required-tests-v1.json',
+            'docs/security/PQ_TLS_PINNED_ENDPOINT_V1.md',
+            'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
     def test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins(self):
         original = list(self.manifest["required_paths"])
         for path in NATIVE_REQUIRED_PATHS:

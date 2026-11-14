@@ -16,6 +16,16 @@ use sha2::{Digest, Sha256};
 
 const ALPN: &[u8] = b"trnm-pq-node/1";
 const ALPN_WIRE: &[u8] = b"\x0etrnm-pq-node/1";
+const ENDPOINT_ALPN: &[u8] = b"trnm-pq-endpoint/1";
+const ENDPOINT_ALPN_WIRE: &[u8] = b"\x12trnm-pq-endpoint/1";
+
+fn alpn(policy: &PqNetworkPolicy) -> (&'static [u8], &'static [u8]) {
+    if policy.tls_endpoint_pins().is_some() {
+        (ENDPOINT_ALPN, ENDPOINT_ALPN_WIRE)
+    } else {
+        (ALPN, ALPN_WIRE)
+    }
+}
 
 /// Already-loaded operator credentials. This constructor creates no CA, key,
 /// policy pin or trust store on disk. An explicit fixture CA has no production
@@ -164,12 +174,13 @@ impl TlsContext {
             .map_err(crypto)?;
         context.set_private_key(&identity.key).map_err(crypto)?;
         context.check_private_key().map_err(crypto)?;
+        let (_, alpn_wire) = alpn(&policy);
         if server {
-            context.set_alpn_select_callback(|_, offered| {
-                openssl::ssl::select_next_proto(ALPN_WIRE, offered).ok_or(AlpnError::ALERT_FATAL)
+            context.set_alpn_select_callback(move |_, offered| {
+                openssl::ssl::select_next_proto(alpn_wire, offered).ok_or(AlpnError::ALERT_FATAL)
             });
         } else {
-            context.set_alpn_protos(ALPN_WIRE).map_err(crypto)?;
+            context.set_alpn_protos(alpn_wire).map_err(crypto)?;
         }
         Ok(Self {
             context: context.build(),
@@ -194,7 +205,7 @@ impl TlsContext {
         ensure(
             ssl.version_str() == "TLSv1.3"
                 && !ssl.session_reused()
-                && ssl.selected_alpn_protocol() == Some(ALPN)
+                && ssl.selected_alpn_protocol() == Some(alpn(&self.policy).0)
                 && ssl.verify_result() == X509VerifyResult::OK,
             "PQ_TLS_HANDSHAKE_PROFILE",
         )?;

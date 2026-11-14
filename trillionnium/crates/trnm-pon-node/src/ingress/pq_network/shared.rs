@@ -88,10 +88,11 @@ fn serve(
     stop: Arc<AtomicBool>,
     server: SharedServer,
 ) -> Result<PqNetworkMetrics> {
-    ensure(
-        listener.local_addr()?.ip().is_loopback(),
-        "PQ_NETWORK_LOOPBACK_ONLY",
-    )?;
+    // TLS endpoint selection checks the same exact target as the standalone
+    // listener; plaintext and legacy TLS policies remain loopback-only.
+    server
+        .policy()
+        .check_network_target(listener.local_addr()?)?;
     ensure(
         !lifetime.is_zero() && lifetime <= Duration::from_secs(3600),
         "PQ_NETWORK_SERVER_BUDGET",
@@ -104,7 +105,14 @@ fn serve(
     check_live_request(startup, None)?;
     listener.set_nonblocking(true)?;
     let mut metrics = PqNetworkMetrics::default();
-    while !stop.load(Ordering::Acquire) && Instant::now() < end {
+    let accept_limit = server
+        .policy()
+        .tls_endpoint_pins()
+        .map(|_| TLS_ENDPOINT_ACCEPT_LIMIT);
+    while !stop.load(Ordering::Acquire)
+        && Instant::now() < end
+        && accept_limit.is_none_or(|limit| metrics.accepted + metrics.refused < limit)
+    {
         match listener.accept() {
             Ok((stream, _)) => {
                 let deadline = end.min(Instant::now() + Duration::from_secs(10));

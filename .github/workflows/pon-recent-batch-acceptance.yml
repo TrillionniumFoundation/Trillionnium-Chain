@@ -78,7 +78,7 @@ jobs:
           # The whole-file pin covers the opt-in owner census, integrated
           # admission/readback refinements, retained legacy replay-prefix cache,
           # CMH2 module export and the shared current-parent clock guard.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = a1b349768df8c6867f0926622ad2a90cf1104099
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 730576ae533440ae89f4ce4a84ba6d8a2e0d9534
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398

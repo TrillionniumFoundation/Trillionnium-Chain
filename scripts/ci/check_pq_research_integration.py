@@ -1229,6 +1229,36 @@ def is_pq_source(parts: tuple[str, ...]) -> bool:
         for part in parts
     )
 
+# Explicit closure for the reviewed endpoint and library ports. Presence is
+# source integrity only; it grants no cryptographic or network qualification.
+CONSOLIDATED_ENDPOINT_REQUIRED_PATHS = frozenset((
+    'config/pon/pq-native-tls-endpoint-required-tests-v1.json',
+    'docs/security/PQ_TLS_PINNED_ENDPOINT_V1.md',
+    'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs',
+    'trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs',
+))
+NATIVE_REQUIRED_PATHS |= CONSOLIDATED_ENDPOINT_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
