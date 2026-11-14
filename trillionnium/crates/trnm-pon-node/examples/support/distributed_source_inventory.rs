@@ -9500,6 +9500,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-research-protocol/fixtures/protocol-v1-golden.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

@@ -712,11 +712,17 @@ impl AccountArchive {
         checkpoint_id: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<AccountAggregateObservation> {
-        let checkpoint = self.checkpoint(checkpoint_id)?;
+        // Bind the checkpoint and every authenticated child read to one
+        // deferred snapshot. This is an observation of retained content, not
+        // evidence that it is still current when a later operation starts.
+        // Cancellation or any read error drops and rolls back this read scope.
+        let snapshot =
+            rusqlite::Transaction::new_unchecked(&self.db, TransactionBehavior::Deferred)?;
+        let checkpoint = load_checkpoint(&snapshot, self.context, checkpoint_id)?;
         if checkpoint.account_count > self.limits.max_accounts {
             return Err(ArchiveError::Budget);
         }
-        let mut stack = checked_root(&self.db, &checkpoint, &self.empty)?
+        let mut stack = checked_root(&snapshot, &checkpoint, &self.empty)?
             .into_iter()
             .collect::<Vec<_>>();
         let mut seen = BTreeSet::new();
@@ -735,8 +741,8 @@ impl AccountArchive {
                         .ok_or(ArchiveError::InvalidState)?;
                 }
                 Kind::Fork { .. } => {
-                    stack.push(child(&self.db, &node, true, &self.empty)?);
-                    stack.push(child(&self.db, &node, false, &self.empty)?);
+                    stack.push(child(&snapshot, &node, true, &self.empty)?);
+                    stack.push(child(&snapshot, &node, false, &self.empty)?);
                 }
             }
         }
@@ -744,6 +750,7 @@ impl AccountArchive {
         if account_count != checkpoint.account_count {
             return Err(ArchiveError::CorruptRecord);
         }
+        snapshot.commit()?;
         Ok(AccountAggregateObservation {
             context: checkpoint.context,
             checkpoint: checkpoint.id,

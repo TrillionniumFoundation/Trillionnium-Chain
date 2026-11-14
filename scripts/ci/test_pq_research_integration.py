@@ -1287,5 +1287,43 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+    def test_snapshot_and_admission_bridge_cannot_omit_or_mutate_source(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'docs/security/SP27_03_RESEARCH_BRIDGE_RETAINED_V1.md',
+            'trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs',
+            'trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed snapshot or admission bridge")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1175,6 +1175,7 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
     "scripts/ci/test_chain_system_security.py",
     "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
+    "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
     "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
 ))
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
@@ -1228,6 +1229,15 @@ NATIVE_OBSERVATION_REQUIRED_PATHS = frozenset((
     "scripts/ci/test_fresh_rejection_report.py",
 ))
 NATIVE_REQUIRED_PATHS |= NATIVE_OBSERVATION_REQUIRED_PATHS
+
+# Public-fixture admission research remains separate from current owner/effect
+# authority. Preserve the exact reusable bridge and its original-control map.
+SP27_03_RESEARCH_REQUIRED_PATHS = frozenset((
+    "docs/security/SP27_03_RESEARCH_BRIDGE_RETAINED_V1.md",
+    "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
+))
+NATIVE_REQUIRED_PATHS |= SP27_03_RESEARCH_REQUIRED_PATHS
+
 
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
