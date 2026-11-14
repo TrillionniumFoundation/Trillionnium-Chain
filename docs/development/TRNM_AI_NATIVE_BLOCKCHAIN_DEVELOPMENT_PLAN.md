@@ -14436,3 +14436,9 @@ Reviewed and integrated c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4 and ba8a5e1fad3
 ### 2026-11-14 branch consolidation: rollback assumption counterexamples
 
 Integrated 2f2dec9de8bd464c83d5c7769abf2f76a2ca950a: original negative controls show that co-restored witness state can answer a fresh challenge and that a reused challenge permits an old authentic receipt. Authentication alone is not independent anti-rollback authority. Existing four-selector root execution and recovery-floor source controls remain intact; both oracle reference and tests are explicit required sources. No security qualification or activation is inferred.
+
+### 2026-11-14 branch consolidation: immutable expansion and independent legal producers
+
+Ported the exact reviewed c36d9568 ML-DSA-87 roster cache, three unit controls, full-quorum warm-cache native control and bounded observation example. The cache stores immutable public-key expansion only; clones share it, decode starts cold, all message/signature checks and original irreversible budgets remain. The current native runner retains its original four suites and adds the explicit cached-key suite. No observation benchmark was executed or performance gain claimed. Current register source binding is refreshed only by the separate final reviewed snapshot.
+
+Retained the exact d08ff108 low-rank-prefix producer independently of its nonselected PurePoN/transparent-admission protocol. Its four controls check exact reduction, scalar/paired products, complete upstream transcript equality and unsupported-input refusal. Retained 55c6f15f exact two-rank-one preparation and five controls, plus the sole frozen-V5 label seam. Every challenge still runs the complete transcript; no VerifiedWork or authority is manufactured and no default producer or verifier changes. The generalized rank-bounded constructor remains distinct, including its explicit dense fallback. Original current dependency versions are preserved.

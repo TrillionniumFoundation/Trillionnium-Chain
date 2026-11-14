@@ -61,7 +61,7 @@ class RootNativeRunnerControls(unittest.TestCase):
 
     def test_native_profile_selectors_are_explicit_and_locked(self):
         entries = suites()
-        self.assertEqual(len(entries), 4)
+        self.assertEqual(len(entries), 5)
         for name, argv, required in entries:
             with self.subTest(name=name):
                 self.assertIn("--locked", argv)
@@ -69,8 +69,11 @@ class RootNativeRunnerControls(unittest.TestCase):
                 self.assertNotIn("--ignored", argv)
                 self.assertTrue(required)
         self.assertIn("pq-native-openssl", entries[1][1])
-        self.assertIn("pq-root-v3", entries[2][1])
+        self.assertIn("pq-native-openssl", entries[2][1])
+        self.assertIn("pq_root_v3::tests::native_cache_v3_", entries[2][1])
+        self.assertEqual(len(entries[2][2]), 3)
         self.assertIn("pq-root-v3", entries[3][1])
+        self.assertIn("pq-root-v3", entries[4][1])
 
 
 if __name__ == "__main__":
