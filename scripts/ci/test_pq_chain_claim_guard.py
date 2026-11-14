@@ -20,6 +20,7 @@ from pq_chain_claim_guard import (BOUNDARY, CONFIG, CONSENSUS, CORPUS, DEVNET, G
                                   inspect, safe_file)
 
 LIFETIME_SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'
+LIFETIME_CURRENT_MAP = 'config/pon/pq128-source-correspondence-current-v2.json'
 
 
 class DescriptorReaderControls:
@@ -287,26 +288,23 @@ class TestClaimGuard(unittest.TestCase):
         # source bytes establish a theorem or an implementation refinement.
         self.configs[LIFETIME_BUDGET] = json.loads(
             (Path(__file__).resolve().parents[2] / LIFETIME_BUDGET).read_text())
-        self.configs[LIFETIME_BUDGET]['experiment']['source_revision'] = 'a' * 40
         for name, obj in self.configs.items():
             self.put(name, json.dumps(obj).encode())
         for paths in GATES.values():
             for path in paths:
                 if path not in self.configs:
                     self.put(path, b'research source only')
-        for event in self.configs[LIFETIME_BUDGET]['events']:
-            for path in event['source_paths']:
-                if not (self.root / path).exists():
-                    self.put(path, b'research source only')
+        source_root = Path(__file__).resolve().parents[2]
+        # Preserve exact frozen declarations and copy only the declared current
+        # owner bytes. No historical code or native program is executed.
+        for path in (LIFETIME_BUDGET, LIFETIME_SOURCE_LOCK, LIFETIME_CURRENT_MAP):
+            self.put(path, (source_root / path).read_bytes())
+        self.configs[LIFETIME_SOURCE_LOCK] = json.loads(
+            (source_root / LIFETIME_SOURCE_LOCK).read_bytes())
         paths = {path for event in self.configs[LIFETIME_BUDGET]['events']
                  for path in event['source_paths']}
-        self.configs[LIFETIME_SOURCE_LOCK] = {
-            'schema': 'trnm-pq128-source-lock-v1',
-            'source_revision': self.configs[LIFETIME_BUDGET]['experiment']['source_revision'],
-            'files': {path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
-                      for path in sorted(paths)},
-        }
-        self.put(LIFETIME_SOURCE_LOCK, json.dumps(self.configs[LIFETIME_SOURCE_LOCK]).encode())
+        for path in paths:
+            self.put(path, (source_root / path).read_bytes())
 
     def put(self, path, data):
         target = self.root / path
@@ -365,7 +363,7 @@ class TestClaimGuard(unittest.TestCase):
         report = inspect(self.root)
         self.assertEqual(report['status'], 'HOLD')
         self.assertIsNone(report['lifetime_budget']['actual_lifetime_failure_bound'])
-        self.assertEqual(len(report['lifetime_budget']['unknown_terms']), 8)
+        self.assertEqual(len(report['lifetime_budget']['frozen_model']['unknown_terms']), 8)
 
     def test_missing_lifetime_manifest_refused(self):
         (self.root / LIFETIME_BUDGET).unlink()

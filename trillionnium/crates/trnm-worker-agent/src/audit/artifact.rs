@@ -64,6 +64,13 @@ pub(super) fn read(path: &Path) -> Result<String> {
     read_with_hook(path, || Ok(()))
 }
 fn read_with_hook(path: &Path, after_open: impl FnOnce() -> Result<()>) -> Result<String> {
+    read_with_hooks(path, || Ok(()), after_open)
+}
+fn read_with_hooks(
+    path: &Path,
+    after_validation: impl FnOnce() -> Result<()>,
+    after_open: impl FnOnce() -> Result<()>,
+) -> Result<String> {
     let mut file = OpenOptions::new()
         .read(true)
         .custom_flags((OFlags::NOFOLLOW | OFlags::NONBLOCK | OFlags::CLOEXEC).bits() as i32)
@@ -79,10 +86,11 @@ fn read_with_hook(path: &Path, after_open: impl FnOnce() -> Result<()>) -> Resul
             && metadata.mode() & 0o022 == 0,
         "worker audit artifact must be owned locally and not writable by other users"
     );
+    after_validation()?;
     // An exporter that uses a journal lock cannot be mistaken for a stable
     // input. Non-cooperating writes still face the complete identity checks.
     flock(&file, FlockOperation::NonBlockingLockShared)?;
-    let before = identity(&file.metadata()?);
+    let before = identity(&metadata);
     ensure!(
         before.len <= MAX_BYTES,
         "worker audit artifact byte capacity"
@@ -310,5 +318,44 @@ mod tests {
             read(&path).unwrap_err().to_string(),
             "worker audit artifact requires a regular file"
         );
+    }
+
+    fn validation_window_refuses_change(hard_link: bool) {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("input");
+        fs::write(&path, b"{}").unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        let mut reached = false;
+        let result = read_with_hooks(
+            &path,
+            || {
+                reached = true;
+                if hard_link {
+                    fs::hard_link(&path, dir.path().join("alias"))?;
+                } else {
+                    fs::set_permissions(&path, fs::Permissions::from_mode(0o666))?;
+                }
+                Ok(())
+            },
+            || Ok(()),
+        );
+        assert!(
+            reached,
+            "controlled mutation must occur after initial validation"
+        );
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "worker audit artifact identity changed"
+        );
+    }
+
+    #[test]
+    fn validation_to_lock_permission_change_is_refused() {
+        validation_window_refuses_change(false);
+    }
+
+    #[test]
+    fn validation_to_lock_hardlink_change_is_refused() {
+        validation_window_refuses_change(true);
     }
 }

@@ -11,7 +11,38 @@ and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
 [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md). They do not
 transfer an observation or security estimate from another candidate to this one.
 
-## Current consolidated source binding, 2026-11-14
+## Current frozen-model and source-correspondence boundary
+
+The V1 machine register and source lock retain the exact frozen C0 bytes
+(SHA-256 `0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd`
+and `094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2`),
+with the declared historical source revision
+`0f9b30549328e5be20f4d3e6e27bd132b42d90de`.
+The unchanged V1 reader does not accept different current bytes as that source.
+
+The separate [current correspondence map](../../config/pon/pq128-source-correspondence-current-v2.json)
+has raw SHA-256 `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a` and canonical source-map digest
+`69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`. Its same21 declared event paths bind the reviewed
+current source bytes, including the selected complete store blob
+`d596dc6bab16698cd18bcc15bcbbe1fafedf603e`.
+The reader independently verifies the exact frozen manifest/lock, raw map,
+canonical21-path digest and every bounded regular source read. A supplied
+report is accepted only after the same inspection is recomputed.
+
+CI retains the original58-method budget command and adds the25 current
+correspondence controls and current reader. The frozen mathematical result is
+unbound; the outer record separately records checked current files and
+`source_revision_bound=false`. The eight unknown terms, four unknown query
+budgets, numeric assumptions, strict refusal limits and null/false qualification
+fields are unchanged. Current composition uses its explicit current-v3 namespace.
+No original failed or successful source-specific observation transfers to this
+combined source without its own validation.
+
+The L1 mapping below is an exact historical integration record. Its reviewed
+current-source findings and original receipts remain retained in Git and
+evidence; its two JSON identities are no longer the default frozen inputs.
+
+## Historical L1 consolidated source binding, 2026-11-14
 
 The default **21-path** register and lock now bind to the reviewed source
 checkpoint `dc42ce4df5cff79cc61c5addbaf01074b56b06ca`, tree `9fda17fed2542b2baccaa34585bb00afd699e12b`.
@@ -545,7 +576,8 @@ Run from the repository root:
 
 ```sh
 python3 scripts/ci/test_pq_lifetime_budget.py -v
-python3 scripts/ci/pq_lifetime_budget.py
+python3 scripts/ci/test_pq_lifetime_current_v2.py -v
+python3 scripts/ci/pq_lifetime_current_v2.py
 python3 scripts/ci/pq_lifetime_budget.py --manifest config/pon/pq128-lifetime-example-v1.json
 python3 scripts/ci/test_pq_chain_claim_guard.py -v
 python3 scripts/ci/pq_chain_claim_guard.py

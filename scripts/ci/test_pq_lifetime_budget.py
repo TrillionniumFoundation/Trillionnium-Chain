@@ -16,6 +16,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pq_lifetime_budget as budget
+import pq_lifetime_current_v2 as current_budget
 
 
 EVENTS = ('signature', 'commitment', 'proof', 'ledger', 'transport', 'recovery',
@@ -534,16 +535,30 @@ class CheckedInContractTests(ContractCase):
                             and term['theorem'] is None for term in data['terms']))
         self.assertTrue(data['assumptions'])
         self.assertTrue(all(row['status'] == 'unmet' for row in data['assumptions']))
-        report = budget.inspect(self.root)
+        current = current_budget.inspect(self.root)
+        report = current['frozen_model']
         self.assertEqual(len(report['unknown_terms']), 8)
         self.assertEqual(len(report['unknown_query_budgets']), 4)
         self.assertIsNone(report['model_arithmetic_sum'])
         self.assertIsNone(report['target_met_under_declared_bounds'])
-        self.assertIs(report['source_revision_bound'], True)
-        self.assertEqual(report['source_binding_scope'], 'declared-event-paths-only')
-        self.assertEqual(report['source_lock_sha256'],
+        self.assertIs(report['source_revision_bound'], False)
+        self.assertEqual(report['source_binding_scope'], 'unbound')
+        self.assertIsNone(report['source_lock_sha256'])
+        self.assertEqual(current['frozen_model_identity']['source_lock_sha256'],
                          hashlib.sha256((self.root / SOURCE_LOCK).read_bytes()).hexdigest())
+        correspondence = current['current_source_correspondence']
+        self.assertIs(correspondence['source_files_checked'], True)
+        self.assertIs(correspondence['source_revision_bound'], False)
+        self.assertEqual(correspondence['source_binding_scope'], 'declared-event-paths-only')
+        self.assertEqual(set(correspondence['source_files_sha256']), set(report['source_paths']))
+        self.assertEqual(len(correspondence['source_files_sha256']), 21)
         self.remains_unqualified(report)
+        self.assertEqual(current['status'], 'HOLD')
+        self.assertIsNone(current['actual_lifetime_failure_bound'])
+        for field in ('whole_chain_pq_qualified', 'pq_128_qualified',
+                      'production_activation', 'composition_coverage_proved',
+                      'theorem_applicability_verified'):
+            self.assertIs(current[field], False, field)
 
     def test_checked_in_example_reproduces_only_the_illustrative_equality(self):
         example_path = 'config/pon/pq128-lifetime-example-v1.json'

@@ -611,6 +611,12 @@ def bind_execution(prepared: dict, out: Path) -> dict:
     require(observed == result['report_file'] and report['qualification'] == result['qualification'],
             'SP27_REPORT_CHANGED')
     require(readback == result.get('native_readback_files'), 'SP27_NATIVE_READBACK_CHANGED')
+    process = result.get('process')
+    command = [prepared['binary']['path'], SELECTOR, '--exact', '--ignored',
+               '--show-output', '--test-threads=1']
+    require(type(process) is dict and process.get('command') == command
+            and type(process.get('exit_code')) is int and process['exit_code'] == 0
+            and process.get('timed_out') is False, 'SP27_NATIVE_PROCESS_REQUIRED')
     require(result['process']['stdout_sha256'] == digest(out / 'run/stdout')
             and result['process']['stderr_sha256'] == digest(out / 'run/stderr')
             and named_test((out / 'run/stdout').read_text().splitlines(), SELECTOR)

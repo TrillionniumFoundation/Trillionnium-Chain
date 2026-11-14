@@ -10,6 +10,7 @@ import math
 import os
 import re
 import sqlite3
+from contextlib import closing
 import stat
 import subprocess
 import sys
@@ -595,7 +596,7 @@ def validate_durable_store(root, folder, summary, packets, roots, cumulative, st
     for owner in ('producer','validator'):
         path = safe(folder,owner+'/native.sqlite')
         require(not path.with_name(path.name+'-wal').exists(), 'uncheckpointed durable evidence')
-        with sqlite3.connect(path.as_uri()+'?mode=ro&immutable=1',uri=True) as database:
+        with closing(sqlite3.connect(path.as_uri()+'?mode=ro&immutable=1',uri=True)) as database, database:
             database.execute('PRAGMA trusted_schema=OFF')
             require(database.execute('PRAGMA integrity_check').fetchall() == [('ok',)], 'durable SQLite integrity')
             schema = dict(database.execute("SELECT name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'"))

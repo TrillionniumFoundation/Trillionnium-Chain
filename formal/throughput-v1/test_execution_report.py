@@ -208,7 +208,13 @@ class ReportTests(unittest.TestCase):
     def test_campaign_deduplicates_same_transaction_across_all_phases_and_runs(self):
         report = campaign_report()
         for phase in report["phases"]:
-            phase["confirmations"] = [positive_round(index) for index in reader.ROUNDS]
+            phase["confirmations"] = []
+            for index in reader.ROUNDS:
+                # Complete campaign fixtures use the native t=1/5/9s schedule.
+                start = (1 + 4 * index) * 1_000_000_000
+                row = positive_round(index, start + 10)
+                row["started_ns"] = start
+                phase["confirmations"].append(row)
             phase["all_signed_rounds_confirmed_in_window"] = True
         value = self.read(self.bundle({number: report for number in reader.RUNS}))
         self.assertEqual(value["confirmation_denominator"]["total_timely"], 27)
@@ -348,6 +354,8 @@ class ReportTests(unittest.TestCase):
     def test_failed_report_keeps_missing_runs_and_rounds(self):
         report = campaign_report()
         report["phases"][0]["confirmations"] = [negative_round(0), negative_round(2)]
+        for row in report["phases"][0]["confirmations"]:
+            row["started_ns"] = (1 + 4 * row["round"]) * 1_000_000_000
         value = self.read(self.bundle({1: report}))
         counts = value["confirmation_denominator"]
         self.assertEqual(counts["planned"], 27)

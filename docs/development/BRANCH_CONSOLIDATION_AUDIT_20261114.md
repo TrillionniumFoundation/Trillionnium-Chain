@@ -13,7 +13,7 @@ The snapshot was observed at 2026-11-14T04:07:38.570192Z. Its manifest has SHA25
 The protected main tip was `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`;
 the existing consolidation PR is [#847](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847).
 
-The selected runtime integration and current reader bindings are combined at
+The initial runtime integration and reader-binding checkpoint was
 `96643a2dd8a90cded0059216cae15e2cd620c77b` (tree
 `b3adb2552cf47b7dbd6956b3b23cdac3f588c4cb`). The final binding component is
 `b84568a714e24070d9554008660f1382e2c1b1b5`. The branch-disposition ledger is
@@ -632,3 +632,85 @@ The unchanged original C0 head and prospective native confirmation failures,
 the original four-second window and 16 pressure workers, and all prior
 HOLD_NO_GO / DENY_ALL conditions remain in force. No main merge or branch
 deletion has occurred at this checkpoint.
+
+
+## Complete M6 validation and concurrent-source reconciliation
+
+The exact M6 source `2a62061177852dc3ebd200fa8d7c66c661a119a1`, tree
+`f8d170ff75990e879e93888a95e5408f36b36f6c`, subsequently passed all seven
+Mac source gates and both original complete Linux commands. The original
+repository-truth command passed in 582.575 seconds, including all 16 collector
+controls. The original external-evidence-contract command passed in 221.499
+seconds, including all 77 readiness methods. Its historical materializer reported
+`fetched=[]`. Each complete lane retained equal before/after identities for
+41,671 tracked entries and 3,994,766,803 tracked bytes.
+
+| Original M6 receipt | SHA256 |
+| --- | --- |
+| Seven Mac source gates | `fc8901b9c33e0887f28994a29ca1fefa3df1301169cfd611a4f30f392fb1f155` |
+| Complete Linux repository-truth, 18-stage driver | `7516f4d8602dd58949eeb608439005882c3703a189dac32b0cea716eafd157ce` |
+| Complete Linux external-evidence contract, 12-stage driver | `c7ed3b0109e09b1fe18ede0986250c96cb9cf1e41bedf9b1966875ecc03874f4` |
+
+These successes qualify those exact source checks on M6. They do not qualify a
+later source, hosted native performance, deployment or production activation.
+Earlier failed runs retain their original outcomes.
+
+The attempt to publish M6 stopped before any push because PR #847 had advanced
+from C0 to `5a4b7fe8de1adce803184f262fd9f704ead1930c` (N). The actual
+pre-push receipt has SHA256
+`c7878c180b7019ff635203f08fe05a9c09e00d8e8e9ee44232f4df7272d05183`,
+`push_started=false`, `push_exit=null`, and `archive=null`.
+No M6 publication or new execution tag was inferred from this refusal. The
+09:57:36–09:57:42 UTC full reference observation still contained 908 names and
+892 tips: only the candidate had advanced, while the other 907 names and main
+were unchanged. N adds 14 commits and changes 49 paths relative to C0.
+
+The reconciliation preserves both M6 and N as parents and explicitly selects
+53 paths. This report and a final sole-plan append record the root decision;
+all other M6 source and historical evidence remain unchanged. The reviewed
+pre-append selected-file manifest has SHA256
+`7cd35f9aa4f4cc11ba0b3dc10eb19148c1d5a087d464101573188afa9edb7d95`.
+The reviewed source choices are:
+
+- Retain the complete C0/M6 Node store blob
+  `d596dc6bab16698cd18bcc15bcbbe1fafedf603e`. Moving the initial readiness
+  check before the admission epoch capture introduces an uncovered reorganization
+  interleaving. Moving time deferral before local chainwork validation changes
+  fatal local-integrity refusal into a nonfatal time refusal. Both findings
+  concern source ordering; no executed exploit or false confirmation is claimed.
+- Adopt N's worker artifact reader blob
+  `f021a33e2969305241099998f703172d29b15251`. It preserves the originally
+  validated metadata across the lock boundary and adds independent permission
+  and hard-link mutation controls. The complete Linux module now contains
+  eight retained controls and two new controls; its actual execution remains
+  a separate exact-source result.
+- Restore the three genuine C0 frozen PQ JSON identities and use a separate
+  current correspondence map. The map binds the same 21 declared source paths,
+  including the retained store. Its SHA256 is
+  `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a`;
+  the independent canonical map digest is
+  `69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`.
+  Frozen arithmetic is explicitly unbound. The current 21-path and existing
+  46-path inventories still share one release path and cover 66 distinct paths,
+  without proving a Git revision, security theorem or complete dependency closure.
+- Preserve H1's 31 current hash-purpose bindings, the authority and current
+  lifetime inventories, F1/F2, the B1 historical collector carrier, C5's bounded
+  cleanup repair, and C6's exact 16-control requirement with the 0/13/14/15
+  refusals. Retain the original 58 budget command and add the 25 current-map
+  controls. Both endpoint-witness methods remain, giving a static roster of
+  78 readiness methods.
+- Accept explicit SQLite connection closure, strict JSON type matching, exact
+  SP27 native-process readback, current History phase validation and the separate
+  10-control W1 workflow roster. Retain the original QROM observations; the new
+  fixed expected report changes only the reviewed dependency-lock identity and
+  does not become a native execution receipt.
+
+The merged source requires new complete source, repository and external-evidence
+gates, the worker module tests and strict lint, and the required hosted checks.
+M6 passes cannot substitute for any of these. The original four-second window,
+16 pressure workers, fresh Host checks, 30-second campaign and all
+HOLD_NO_GO / DENY_ALL conditions remain unchanged. This reconciliation is not
+a demonstrated fix for the original confirmation failures or macOS physical
+retention failure. Main integration, the explicitly protected legacy deletion,
+and the final one-branch inventory remain separate uncompleted actions at this
+source checkpoint.

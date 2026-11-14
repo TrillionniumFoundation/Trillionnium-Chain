@@ -79,7 +79,9 @@ def source_binding(before, after, *, head, tree, kind='head', base=None, merge=N
         digest(base, 40)
         tested = digest(merge, 40)
     require(type(before) is dict and set(before) == SOURCE_FIELDS
-            and before == after, 'unchanged complete source receipts required')
+            and type(after) is dict and set(after) == SOURCE_FIELDS
+            and all(type(before[key]) is type(after[key]) and before[key] == after[key]
+                    for key in SOURCE_FIELDS), 'unchanged complete source receipts required')
     require(before['schema'] == 'trnm-ci-source-v1'
             and before['kind'] == kind and before['candidate'] == head
             and before['tested_commit'] == tested and before['tested_tree'] == tree
