@@ -14446,3 +14446,13 @@ Retained the exact d08ff108 low-rank-prefix producer independently of its nonsel
 ### 2026-11-14 branch consolidation: cheap refusal and cross-claim payment readback
 
 Integrated e180c52b881955c3da054b59e6025d9292a4a4d3 and 056071f364e02efb71f787d6603f144244e46123. Current native task/target checks precede the optional full-proof rejection-cache digest, and only the same invocation's checked inputs reach the private verifier continuation. No accepted verdict or dynamic authority is cached; current observation, cancellation and nonblocking lock semantics remain. Original cache controls and strict Clippy were observed by the port owner. The original cross-claim cold-reopen control preserves historical payment generation while refusing stale anchors; current journal fences are unchanged. Component tests and source consistency grant no qualification.
+
+## 2026-11-14: original bounded-journal and native no-gain controls
+
+Retain the independent control from 1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf against the current typed worker journal: both original 64-MiB limits map to the same 64-MiB worker_journal limit. The control checks the exact malformed-record and byte-capacity refusals, so an unrelated file or permission error cannot stand in for its claim. No reader or lock is downgraded to the old implementation.
+
+Retain the complete 3e44c471187fc6c883693c836cdae6adae4bdafb no-gain control across Legacy, AuthenticatedV1 and PermanentAccountGrowthV2, with both contribution and evaluation fees. It preserves actual reserve/effect/payment, source aliases, duplicate-budget and unsigned-payment refusal, fee/escrow conservation, idempotence, unchanged chainwork, and history retained after reorganization and cold reopen.
+
+Exact native execution on Linux passed both controls (one test each, zero ignored). The bounded-journal control also passed on macOS. Earlier wrong Cargo target/toolchain invocations and the macOS Node compilation failure remain recorded; the latter includes the existing Linux-only test support and growth-reservation platform type errors and is not a successful Node run. Two other candidate groups were proved already retained: complete decoder Result parity from 38fda50 and the original delayed-ready rendezvous control from e62eb3 with the stronger actual accept-loop ready signal. They are not duplicated.
+
+An independent literal source roster and omission/pin/mutation controls cover both retained test files. This is source and native-control closure only; it grants no production, operator-independence, long-campaign or cryptographic qualification.

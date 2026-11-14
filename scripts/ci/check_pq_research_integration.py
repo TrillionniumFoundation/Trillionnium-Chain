@@ -1362,6 +1362,13 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
 ))
 
+
+# Original bounded journal and native no-gain payment controls remain required.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-worker-agent/src/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs',
+))
+
 class IntegrityError(ValueError):
     pass
 
