@@ -22,6 +22,9 @@ pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
 mod operator_continuous_history;
 mod operator_continuous_lease;
+pub use operator_continuous_lease::{
+    forecast_q4_renewal_window, Q4RenewalForecast, Q4RenewalPhase,
+};
 pub mod operator_continuous_policy;
 pub mod operator_continuous_pool;
 mod operator_continuous_recipient;

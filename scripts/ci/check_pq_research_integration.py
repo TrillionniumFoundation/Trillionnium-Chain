@@ -1178,6 +1178,15 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
     "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
 ))
+# Retain Q4 advisory source and its original native reentry control.
+# Source coverage neither signs a renewal nor grants admission authority.
+CONSOLIDATION_CONTROL_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
 # Exact reviewed Cell source coverage; no execution or acceptance is inferred.

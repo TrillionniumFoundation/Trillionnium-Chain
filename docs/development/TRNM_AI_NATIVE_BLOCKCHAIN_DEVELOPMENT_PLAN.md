@@ -14428,3 +14428,32 @@ The account aggregate observation now reads checkpoint, authenticated root and e
 The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
 
 Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+
+## 2026-11-14 Q4 renewal advice and authenticated reentry controls
+
+The selected port retains the original Q4RenewalPhase/Q4RenewalForecast
+time-window advice and forecast_q4_renewal_window from 0f062607, plus the
+actual-parent forecast_q4_renewal_from_active wrapper from 84a0c697/beca4408.
+The advice checks immutable lease context, exactly one revision, signed
+overlap, bounds and original expiry. The wrapper reads the current owner and
+checks the actual parent/generation again. Existing typed Classical/Pq lease
+edges and current storage owners remain intact. Advice neither signs nor
+dispatches a renewal and cannot revive an expired or revoked lease.
+
+The complete beca4408 maintenance reentry integration control is retained:
+actual owner-signed revoke/open/register transactions, real new-task W1 work,
+authenticated/native agreement, independent packet replay, the installed
+depth/work confirmation checks and cold reopen. The original fixture failed
+TASK_WINDOW because it opened a lease with not_before=1 in height 2. The old
+and current open guards are identical. Only that fixture's fresh lease
+not_before is changed to 2, with its ID and signatures recomputed through the
+same original owners; production admission checks and every original control
+assertion remain unchanged. The initial failure and exact source are retained.
+
+Linux passed all six lease controls and both authenticated continuity
+integration controls, plus strict release native Node library/CLI Clippy.
+Mac Node compilation remains blocked by the separately recorded pre-existing
+growth_reservation_io dev/mode type mismatch; no Mac Node pass is claimed.
+These are bounded local controls. Consensus, independent operation, physical
+capacity, public WAN, production and cryptographic qualification remain false.

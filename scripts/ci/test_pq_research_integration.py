@@ -1325,5 +1325,53 @@ class CorpusGateTests(unittest.TestCase):
 
 
 
+    def test_q4_advisory_sources_cannot_omit_source_or_pin(self):
+        # Independent literal review scope, including actual native reentry.
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+
+    def test_q4_advisory_sources_cannot_mutate_reviewed_bytes(self):
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        )
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed Q4 advisory or reentry source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
 if __name__ == "__main__":
     unittest.main()
