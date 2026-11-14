@@ -15354,3 +15354,35 @@ source identities. The original generator adds only the two newly selected
 current PQ JSON paths to the embedded native inventory. Existing inventory
 records and checker semantics remain. The original failed receipt is retained
 in the audit report; this successor requires new exact-source validation.
+
+### 2026-11-14: PublicPolicy ID prefix-equivalence successor of M8
+
+The isolated successor starts from M8 ed0d35487f2a67239e4d646fd41c2c7acb5cc740
+and changes only the existing PublicPolicy::id computation in
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs. A private OnceLock
+retains the unfinalized SHA-256 state after the immutable 5,105-byte framed
+prefix. Each call clones it and appends all six original framed suffix fields.
+The original resource literal, domain, encoding, returned bytes, fresh Host
+checks, nonce order, deadline cadence, 4-second window and 16 pressure workers
+are unchanged. The 84 original tests in that file remain byte-identical; three
+oracle/suffix/clone-independence controls are added. No nonce optimization is
+included.
+
+The Mac libtest build remains HOLD with 11 existing Darwin fixture errors
+before any test ran. On the independent Linux M8-plus-Rust-proposal worktree,
+the first run used serial RUST_TEST_THREADS=1 and passed three new controls
+plus the original golden. A separate run removed every RUST_TEST_* environment
+variable and passed the same 3 + 1 with the default harness. Strict all-target,
+all-feature Clippy passed and was not repeated. Its SQLite I/O boundary warning
+about nonabsolute RUSTC remains in the raw evidence; these results grant no
+SQLite/native or hosted-performance qualification.
+
+The current correspondence/composition digests change only for the reviewed
+source bytes. All three frozen model/lock/composition JSON files, historical
+identities, mathematical controls, caps and false qualification fields remain
+unchanged. After preserving the Mac temporary-directory symlink refusal, the
+same original 58 + 25 + 60 + 57 consumer controls passed with a canonical
+temporary directory. Seven policy-vector and 33 Hash-use controls also passed.
+The Hash-use reader still covers only its 19 declared purposes and 31 sources,
+not this entire call graph. The normal merged-source and hosted gates remain
+required; no 4-second completion or latency improvement has been measured.

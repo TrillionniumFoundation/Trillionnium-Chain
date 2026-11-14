@@ -728,3 +728,85 @@ generated native inventory. The original generator adds exactly those two
 `include_bytes!` records, without removing or changing an existing entry.
 The sole plan and its corpus pin are updated after the correction. The new
 commit must pass its own gates; the original failed run remains failed.
+
+### 2026-11-14: PublicPolicy ID prefix-equivalence successor of M8
+
+This local component starts from M8 ed0d35487f2a67239e4d646fd41c2c7acb5cc740
+(tree 1aa9c21812489080980bdc3c1c2bb43611e88354). The reviewed Rust patch is
+16,945 bytes, SHA-256
+519f7b6950743386f53e655edf5e31d3f198de581c7125461a08b28d81211a37.
+The original public_v3.rs is 433,736 bytes, SHA-256
+1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70;
+the candidate is 438,782 bytes, SHA-256
+0fd32665f5a666af27d8650214cdfd956d1efb5f72927a003ff0b7c84d10f49a.
+Reversing the four declared transformations recovers the original file byte
+for byte, including all 84 preexisting test bodies and all Host, authorization,
+nonce and deadline code.
+
+The private cache retains the unfinalized state of the existing pon_wire::hash
+framing after its immutable 5,105-byte prefix: 79 complete SHA-256 blocks plus
+49 buffered bytes. The six original framed dynamic fields add 61 bytes; warm
+calls finalize two blocks from a cloned state. These are encoding counts, not
+measurements or a latency bound. Cold initialization still performs the prefix
+work. The four-thread control checks independent clone results, but does not
+guarantee that the harness scheduled simultaneous cold initialization.
+
+Actual observations remain distinct:
+
+- Mac libtest compilation: HOLD, 11 existing Darwin fixture errors and zero
+  executed Rust tests; summary SHA-256
+  2447c1d7d7300e3a1b8d0d2591ad362c294b261510ef493511496d0a8bfcdcdf.
+- Independent Linux M8 plus the exact single-file Rust proposal: serial
+  RUST_TEST_THREADS=1 passed the three new controls and original full-qualified
+  golden. Strict all-target/all-feature Clippy with -D warnings passed.
+  Summary SHA-256
+  bf16496bd43d61e935e84748177d8add0ef5cc661be35f77ddb2ec11f94448f4.
+- Default-harness follow-up: all RUST_TEST_* environment variables were removed;
+  unchanged 3-prefix and 1 --exact commands passed with no ignored tests.
+  Summary SHA-256
+  0be788fea02aa1a59869c7610f42002c39954f52a63b4f4a76bfdf78f038780a.
+  Clippy was not repeated. Both Linux records verify that the root M8 worktree
+  stayed clean and the independent uncommitted proposal did not change.
+- Original Python policy-vector 7/7 and Hash-use 33/33 controls, the actual
+  Hash-use inspector and workspace formatting passed; summary SHA-256
+  6464a84fa41517c4d41b0ff4a03032009347c079a904e363a291ed7c4ad8a27a.
+- The first budget suite encountered the Mac system temporary directory's
+  symlink ancestor: 53 passed, one failed and four errored. That failure is
+  preserved. With only a canonical temporary directory selected, unchanged
+  budget58, current-correspondence25, composition60 and chain-claim57 all
+  passed. The three actual inspectors retained HOLD/HOLD_NO_GO and
+  activation=false. Summary SHA-256
+  ec1a745291e4ec3f4cda2eb9769d7196490edabc49e92587a17f2dca43b0f9be.
+
+The Linux compilation warning "SQLite I/O boundary UNQUALIFIED: RUSTC must be
+absolute" is retained. The hash controls grant no SQLite/native acceptance;
+Clippy applies to the exact isolated Rust-proposal source. These are not
+hosted 4-second results.
+
+For one reviewed successful paid RPC, the server computes the base policy ID
+once for cookie construction, once for Solution validation, once for body
+validation and once for response construction; the client computes it once
+and reuses it. WaitGrant polling does not repeat it. This is a per-RPC static
+count, with no proven global invocation bound. Two historical numbers are
+different: the W1 trace's 1,099 fresh Host observations are
+3 + 256 + 128 + 512 + 200; the separate x64 policy-stage lower bound is
+370 issued + 369 spent + 360 delivered = 1,099 (ARM:
+524 + 519 + 510 = 1,553). The latter uses distinct server counters, not direct
+id() instrumentation, an exact 4-second interval or a Host count.
+
+This successor's current 21-path map changes only the public_v3.rs digest.
+Its new raw-map SHA-256 is
+4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0,
+and canonical source-map digest is
+e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc.
+The current reader and composition independently bind this pair. These
+successor metadata bytes are not claimed to exist at the M8 commit. Frozen
+V1 budget, source lock and V2 composition remain respectively SHA-256
+0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd,
+094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2 and
+5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052.
+Path sets, mathematics, caps, flags and source-revision limitations are
+unchanged. H1's 19-use/31-source inventory is not expanded: the helper retains
+the existing PublicPolicy SHA-256 purpose, reviewed by framing/oracle evidence,
+without claiming full-callgraph coverage. No nonce optimization, Host-check
+reduction, limit increase or qualification waiver is included.

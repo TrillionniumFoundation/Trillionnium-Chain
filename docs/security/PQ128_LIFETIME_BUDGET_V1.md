@@ -21,8 +21,8 @@ with the declared historical source revision
 The unchanged V1 reader does not accept different current bytes as that source.
 
 The separate [current correspondence map](../../config/pon/pq128-source-correspondence-current-v2.json)
-has raw SHA-256 `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a` and canonical source-map digest
-`69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`. Its same21 declared event paths bind the reviewed
+has raw SHA-256 `4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0` and canonical source-map digest
+`e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc`. Its same21 declared event paths bind the reviewed
 current source bytes, including the selected complete store blob
 `d596dc6bab16698cd18bcc15bcbbe1fafedf603e`.
 The reader independently verifies the exact frozen manifest/lock, raw map,

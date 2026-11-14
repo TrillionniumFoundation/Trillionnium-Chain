@@ -433,8 +433,8 @@ source-specific checks. That record and all original evidence are preserved.
 The active frozen v2 input now has its true C0 SHA-256
 `5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052`.
 Current source acceptance belongs to the separate current-v3 manifest and the
-current21 map `b1a3e6d9124aa3e15b3f1e46ba361cc3876514f587eeaf4ff7d4530d4b8e2c7a`, with independent snapshot
-`69b8f761e92ecd0d43378f44eae7458a0acced35bd9323a171fe59fd843cf5f9`. Its selected store is the complete
+current21 map `4f234fbff89fdf5693b4d7b82676a46574f92e297fdd535101110a76b9abb3e0`, with independent snapshot
+`e8b0d9ceb227e95a045cee1b9224719c8b9ac9c416f8f503218bfee0160d57dc`. Its selected store is the complete
 C0/M6 implementation; the concurrent two store-check reorderings were not
 selected. The root46 input keeps its existing manifest identity
 `2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725`.
