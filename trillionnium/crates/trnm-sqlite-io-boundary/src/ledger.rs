@@ -1,5 +1,5 @@
 #[cfg(target_os = "linux")]
-use crate::{FILE_BYTES, OBJECTS_PER_ROOT};
+use crate::{DOMAIN, FILE_BYTES, GROWTH_QUANTUM_BYTES_V2, OBJECTS_PER_ROOT, RESERVATION_DOMAIN_V2};
 #[cfg(target_os = "linux")]
 use rusqlite::ffi;
 use serde::Serialize;
@@ -20,6 +20,46 @@ const LIFECYCLE_EVENTS: usize = 1024;
 const CLEANUP_EVENTS: usize = 256;
 #[cfg(target_os = "linux")]
 const EVENT_BYTES: usize = 512;
+
+#[cfg(target_os = "linux")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum GrowthPolicy {
+    ExactV1,
+    Reserve64KiBV2,
+}
+
+#[cfg(target_os = "linux")]
+impl GrowthPolicy {
+    pub fn domain(self) -> &'static str {
+        match self {
+            Self::ExactV1 => DOMAIN,
+            Self::Reserve64KiBV2 => RESERVATION_DOMAIN_V2,
+        }
+    }
+    pub fn quantum(self) -> Option<u64> {
+        match self {
+            Self::ExactV1 => None,
+            Self::Reserve64KiBV2 => Some(GROWTH_QUANTUM_BYTES_V2),
+        }
+    }
+    pub fn vfs_version(self) -> &'static str {
+        match self {
+            Self::ExactV1 => "v1",
+            Self::Reserve64KiBV2 => "reservation-v2",
+        }
+    }
+    fn reserved_endpoint(self, endpoint: u64) -> u64 {
+        // Callers first require endpoint <= FILE_BYTES. FILE_BYTES is an exact
+        // multiple of the fixed quantum, so rounding cannot cross that limit.
+        match self {
+            Self::ExactV1 => endpoint,
+            Self::Reserve64KiBV2 => {
+                endpoint.div_ceil(GROWTH_QUANTUM_BYTES_V2) * GROWTH_QUANTUM_BYTES_V2
+            }
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize)]
 pub struct LifecycleReceipt {
     pub sequence: u64,
@@ -34,6 +74,9 @@ pub struct LifecycleReceipt {
     pub shm_references: u32,
     pub high_water_bytes: u64,
     pub actual_last_bytes: u64,
+    // Absent from every original V1 event and from non-reservation V2 events.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub requested_endpoint: Option<u64>,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -86,6 +129,8 @@ pub struct RootReceipt {
     pub quarantined_actual_states: usize,
     pub quarantined_sqlite_codes: Vec<i32>,
     pub quarantine_entries_complete: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub growth_reservation_quantum_bytes: Option<u64>,
 }
 
 #[cfg(target_os = "linux")]
@@ -97,6 +142,7 @@ pub(crate) struct Object {
 
 #[cfg(target_os = "linux")]
 pub(crate) struct Ledger {
+    policy: GrowthPolicy,
     pub slots: [Option<Object>; OBJECTS_PER_ROOT],
     pub next_generation: u64,
     pub next_temp: u64,
@@ -119,7 +165,11 @@ pub(crate) struct Ledger {
 #[cfg(target_os = "linux")]
 impl Ledger {
     pub fn new() -> Self {
+        Self::with_policy(GrowthPolicy::ExactV1)
+    }
+    pub fn with_policy(policy: GrowthPolicy) -> Self {
         Self {
+            policy,
             slots: std::array::from_fn(|_| None),
             next_generation: 1,
             next_temp: 0,
@@ -138,6 +188,9 @@ impl Ledger {
             retained_logical_bytes_peak: 0,
             retained_objects_peak: 0,
         }
+    }
+    pub fn policy(&self) -> GrowthPolicy {
+        self.policy
     }
     fn peak(&mut self) {
         self.retained_logical_bytes_peak = self.retained_logical_bytes_peak.max(
@@ -185,6 +238,15 @@ impl Ledger {
         Ok(())
     }
     fn record(&mut self, slot: usize, action: &'static str, cleanup: bool) -> Code<()> {
+        self.record_with_request(slot, action, cleanup, None)
+    }
+    fn record_with_request(
+        &mut self,
+        slot: usize,
+        action: &'static str,
+        cleanup: bool,
+        requested_endpoint: Option<u64>,
+    ) -> Code<()> {
         let object = self.slots[slot].as_ref().ok_or(ffi::SQLITE_IOERR)?;
         let r = &object.receipt;
         let event = LifecycleReceipt {
@@ -200,6 +262,7 @@ impl Ledger {
             shm_references: r.shm_references,
             high_water_bytes: r.high_water_bytes,
             actual_last_bytes: r.actual_last_bytes,
+            requested_endpoint,
         };
         let bytes = serde_json::to_vec(&event)
             .map_err(|_| ffi::SQLITE_NOMEM)?
@@ -271,6 +334,36 @@ impl Ledger {
         blocks: u64,
         linked: bool,
     ) -> Code<()> {
+        self.bind_observed(slot, identity, length, blocks, linked, false)
+    }
+    /// Only callers observing a named inode BEFORE delegating xOpen, xShmMap
+    /// or xDelete may establish its initial reservation from existing length.
+    /// A post-delegation fstat must never silently authorize earlier growth.
+    pub fn observe_existing_before_io(
+        &mut self,
+        slot: usize,
+        identity: Identity,
+        length: u64,
+        blocks: u64,
+        linked: bool,
+    ) -> Code<()> {
+        if self.policy == GrowthPolicy::Reserve64KiBV2 && !linked {
+            return self.fail(
+                "named pre-I/O observation must be linked",
+                ffi::SQLITE_IOERR,
+            );
+        }
+        self.bind_observed(slot, identity, length, blocks, linked, true)
+    }
+    fn bind_observed(
+        &mut self,
+        slot: usize,
+        identity: Identity,
+        length: u64,
+        blocks: u64,
+        linked: bool,
+        before_io: bool,
+    ) -> Code<()> {
         if length > FILE_BYTES {
             return self.fail("existing object exceeds per-inode cap", ffi::SQLITE_FULL);
         }
@@ -282,24 +375,52 @@ impl Ledger {
         {
             return self.fail("inode aliased across retained slots", ffi::SQLITE_IOERR);
         }
-        let Some(object) = self.slots[slot].as_mut() else {
+        let Some(object) = self.slots[slot].as_ref() else {
             return Err(ffi::SQLITE_IOERR);
         };
         if object.identity.is_some_and(|old| old != identity) {
             return self.fail("named inode replaced", ffi::SQLITE_IOERR);
         }
         let first = object.identity.is_none();
+        let initial_observation = self.policy == GrowthPolicy::Reserve64KiBV2 && first && before_io;
+        if self.policy == GrowthPolicy::Reserve64KiBV2
+            && length > object.receipt.high_water_bytes
+            && !initial_observation
+        {
+            return self.fail(
+                "actual inode length exceeds prior reservation",
+                ffi::SQLITE_FULL,
+            );
+        }
+        let high_water = if self.policy == GrowthPolicy::ExactV1 || initial_observation {
+            object
+                .receipt
+                .high_water_bytes
+                .max(self.policy.reserved_endpoint(length))
+        } else {
+            object.receipt.high_water_bytes
+        };
+        if initial_observation {
+            // Keep the original evidence admission margin; no event is merged,
+            // discarded or moved out of the measured operation.
+            self.admission()?;
+        }
+        let object = self.slots[slot].as_mut().ok_or(ffi::SQLITE_IOERR)?;
         object.identity = Some(identity);
         object.receipt.device = Some(identity.dev);
         object.receipt.inode = Some(identity.ino);
         object.receipt.linked = linked;
-        object.receipt.high_water_bytes = object.receipt.high_water_bytes.max(length);
+        object.receipt.high_water_bytes = high_water;
         object.receipt.actual_last_bytes = length;
         object.receipt.actual_last_allocated_blocks_512 = blocks;
         object.receipt.reserved_pending_open = false;
         self.peak();
         if first {
-            self.record(slot, "bind-real-inode", false)?;
+            if initial_observation {
+                self.record_with_request(slot, "bind-existing-before-io-v2", false, Some(length))?;
+            } else {
+                self.record(slot, "bind-real-inode", false)?;
+            }
         }
         Ok(())
     }
@@ -308,14 +429,16 @@ impl Ledger {
         if endpoint > FILE_BYTES {
             return self.fail("pre-growth inode length cap", ffi::SQLITE_FULL);
         }
+        let reservation = self.policy.reserved_endpoint(endpoint);
+        let requested_endpoint = (self.policy == GrowthPolicy::Reserve64KiBV2).then_some(endpoint);
         let Some(object) = self.slots[slot].as_mut() else {
             return Err(ffi::SQLITE_IOERR);
         };
         let increased = endpoint > object.receipt.high_water_bytes;
-        object.receipt.high_water_bytes = object.receipt.high_water_bytes.max(endpoint);
+        object.receipt.high_water_bytes = object.receipt.high_water_bytes.max(reservation);
         self.peak();
         if increased {
-            self.record(slot, "reserve-growth", false)?;
+            self.record_with_request(slot, "reserve-growth", false, requested_endpoint)?;
         }
         Ok(())
     }
@@ -402,3 +525,7 @@ impl Ledger {
         }
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "reservation_v2_tests.rs"]
+mod reservation_v2_tests;
