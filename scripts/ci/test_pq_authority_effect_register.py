@@ -67,10 +67,13 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual(result['status'], 'HOLD')
         self.assertEqual(result['source_consistency'], 'PASS')
         self.assertEqual(result['curated_routes_checked'], 7)
+        self.assertEqual(len(result['source_files_sha256']), 44)
+        self.assertEqual(result['reviewed_source_lock_sha256'],
+                         '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528')
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '332d7f723d71707d88a2cffa52b3754579a46926')
+                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -149,6 +152,7 @@ class AuthorityEffectTests(unittest.TestCase):
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', '332d7f723d71707d88a2cffa52b3754579a46926'),
                              ('source_revision', 'c82c6eabe8f27e2b918de850d237f6b0b06444bb'),
                              ('source_revision', '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550'),
                              ('source_revision', '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8'),

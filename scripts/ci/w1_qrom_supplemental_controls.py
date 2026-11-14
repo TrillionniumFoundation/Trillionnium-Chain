@@ -20,11 +20,11 @@ from pq_source_reader import read_regular
 
 ROOT = Path(__file__).resolve().parents[2]
 ROSTER = 'config/pon/w1-qrom-supplemental-tests-v1.json'
-ROSTER_SHA256 = '33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4'
+ROSTER_SHA256 = 'fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307'
 RETAINED_ROSTER = 'supplemental-required-tests.json'
 SUITES = (
     ('historical', 'test_w1_qrom_historical_fixture', 8),
-    ('current', 'test_w1_qrom_current_implementation_audit', 14),
+    ('current', 'test_w1_qrom_current_implementation_audit', 16),
 )
 OUTPUTS = {'historical': 'historical-controls.json', 'current': 'current-controls.json'}
 QUALIFICATION = {
@@ -73,7 +73,7 @@ def load_roster(root):
     require(type(manifest) is dict and set(manifest) == {
                 'schema', 'scope', 'expected_tests', 'suites', 'qualification'}
             and manifest['schema'] == 'TRNM-W1-QROM-SUPPLEMENTAL-TESTS1'
-            and type(manifest['expected_tests']) is int and manifest['expected_tests'] == 22
+            and type(manifest['expected_tests']) is int and manifest['expected_tests'] == 24
             and type(manifest['suites']) is list and len(manifest['suites']) == len(SUITES)
             and unqualified(manifest['qualification']), 'supplemental roster schema or scope')
     all_names = []

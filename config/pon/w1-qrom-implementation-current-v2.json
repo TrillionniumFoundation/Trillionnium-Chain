@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00",
+  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -72,8 +72,8 @@
     },
     {
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
-      "bytes": 104121,
-      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      "bytes": 106066,
+      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
     },
     {
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
@@ -376,8 +376,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
-        "bytes": 924,
-        "sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d"
+        "bytes": 1016,
+        "sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
@@ -456,8 +456,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs",
-        "bytes": 40529,
-        "sha256": "a5bd50b96e51f6c63fdf4ee996d47bcdf4b177a046d632365ee24398cdd91e48"
+        "bytes": 40837,
+        "sha256": "b4906b6782e7bbe28e80f0837bf638bd9ddbeed66926dcc15478ec529eaa2b03"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs",
@@ -510,6 +510,11 @@
         "sha256": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a"
       },
       {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
+        "bytes": 21222,
+        "sha256": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb"
+      },
+      {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
         "bytes": 7114,
         "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
@@ -536,8 +541,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
-        "bytes": 104121,
-        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+        "bytes": 106066,
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
@@ -601,13 +606,18 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
-        "bytes": 24418,
-        "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+        "bytes": 40347,
+        "sha256": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
         "bytes": 13599,
         "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+        "bytes": 13950,
+        "sha256": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
@@ -631,18 +641,33 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
-        "bytes": 27102,
-        "sha256": "329fad8979b4ab8681aebe26edf6d3e65fcdbbc6de027262bffe697fb3ef31e2"
+        "bytes": 29477,
+        "sha256": "5aef4dc44007bb3a81af68769c72eba8a9398360903e057f883602cd0e915187"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
-        "bytes": 8669,
-        "sha256": "6ced986fd49f46c2e29df809488c50844ad8ae6f05e69d540abaca1638fd611c"
+        "bytes": 10004,
+        "sha256": "e85c9f8fc28d44fed0899c1167500c122b4e4703b46513bdac5385a59eaa4ce9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+        "bytes": 5504,
+        "sha256": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
         "bytes": 22800,
         "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs",
+        "bytes": 9625,
+        "sha256": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs",
+        "bytes": 15147,
+        "sha256": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
@@ -686,13 +711,13 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
-        "bytes": 21524,
-        "sha256": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b"
+        "bytes": 23689,
+        "sha256": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
-        "bytes": 11174,
-        "sha256": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1"
+        "bytes": 17768,
+        "sha256": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
@@ -736,8 +761,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
-        "bytes": 12740,
-        "sha256": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d"
+        "bytes": 15400,
+        "sha256": "3826964229379674be933f963b0860332ee19fc545143cdc40c4e92393b1fac7"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs",
@@ -957,6 +982,7 @@
     "zero_paired_lazy_20261111": "Reviewed source 0eab349d7e6123b458cb98540f36fd273ee24f21 rebinds only trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs among the prior 138 local-closure inputs and adds examples/pon_w1_zero_paired_lazy_v1.rs to that crate, bringing the inventory to 139. The existing zero integer-paired transcript kernel and original producer APIs remain byte-identical; a target-aware unverified attempt API composes the same kernel with optional winner-only proof materialization. The native example compares five fixed producer arms over six preregistered target/reuse cells, retains failures and verifier controls, and grants no consensus credit. The other 137 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. This mapping supplies no native execution, whole-chain proof, minimum adversarial cost, ideal-ticket independence or security qualification.",
     "audited_branch_integration_20261113": "Reviewed source 975ab0937243949b73cdbea9f13902802bbd7d00 rebinds four of the prior 139 local-closure inputs: the workspace lock, crypto Cargo manifest, crypto lib.rs and protocol lib.rs. Their exact old blobs match the separately reviewed dependency and source changes: the resolved package graph, Ed25519 API migration with stricter weak-key/canonical decoding, and validated protocol deserialization. Add the ordinary ed25519_rfc8032.rs vector source found by complete crate-directory enumeration, producing 140 inputs. The other 135 prior closure records, all 16 selected project files, saved proof materials, historical reader/contract, audit helpers, six crate roots, eight literal includes, proof parameters and 15 unresolved obligations retain their bytes. Preserve the earlier exact source-pin and unlisted-Rust-source refusals. Source byte counts identify reviewed files; they are not larger protocol, compute or security budgets. This selected inventory does not enumerate external Rust #[path] imports or third-party implementations and establishes no native execution, new proof, current-use approval or security qualification.",
     "operator_weak_key_error_contract_20261113": "Reviewed combination 80ee3a6ad326662074b329d4c9b7c04a5580b504 contains actor error-contract commit 1166b1661b389104b2209fc71dd9a81f263f17a1. Only crypto/lib.rs changes among the 140 local-closure inputs. The strict decode/canonical-encoding/point-parse/weak-key rejection order, display text and accepted key set remain unchanged. A typed WeakEd25519Key reason lets the separately reviewed operator preserve ACTOR_WEAK_KEY. New finite parser controls remain in the same source file. The mvcc caller is outside this selected six-crate closure. The other 139 inputs, 16 selected project files, saved proofs, historical reader/contract, helpers, eight literal includes, proof parameters and 15 unresolved obligations are unchanged. No business, CPU, protocol or security budget changes. This binding supplies no native execution, complete dependency proof, current-proof-use approval or security qualification.",
-    "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied."
+    "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied.",
+    "all_branch_source_consolidation_20261114": "Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 changes nine of the prior 140 local-closure records and adds five crypto sources: the explicit root cost example, low_rank_prefix, statement_boundaries, task_product_facts and its tests. The nine changed inputs are the crypto manifest, rank-batch diagnostic, pon_work entry, legal_attempt, rejection_cache and its controls, and the pq_root_v3 implementation plus unit/native controls. The 131 other prior closure inputs, six Cargo-reachable crate roots, eight literal includes, saved proof materials, guest lock/image, historical reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their identities. The selected 16-path project map changes only pon_work.rs from the preceding current checkpoint; its historical-V1 difference set therefore contains four paths. Native product reuse, cheap-statement checks, cooperative task hashing and explicit structured producers are separately reviewed source capabilities. Immutable root-key expansion preserves each-call quorum verification and the original budget. This mapping adds no native execution, lower cost bound, current-profile approval, full Rust #[path] closure, external implementation proof or security qualification. The SP27 example belongs to trnm-research-protocol and is outside these six crates."
   }
 }

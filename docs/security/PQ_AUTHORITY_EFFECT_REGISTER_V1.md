@@ -605,3 +605,19 @@ separate obligations; `native_tests_executed`, `call_graph_proved` and
 The consolidation preserves commits e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5, 493f7fce6e517211a8cabccc15ba099965ea7c2a, d98067e973e2d00ec577dfe0a9dc478b81e895e4 and 73d5a17b9b7fb5f67040554f22ff37d20725e548 as real merge ancestors. The first commit binds the same discovery readiness fixture to checkpoint c82c6eabe8f27e2b918de850d237f6b0b06444bb with canonical lock f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a. That retained checkpoint is not the final consolidated source identity. Its preceding-revision refusal remains present, and the stale c82 checkpoint is now also an explicit refusal.
 
 The incoming sealed-material fixture contains three corrected fixed expected contract hashes for its exact source pair. The current combination additionally contains the reviewed read-only trial-ledger reconciliation command, changing llm_runtime_pilot.py to SHA-256 13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7. The first integration attempt refused this real producer difference before changing the repository. The final merge rebinds the neural reader and explicit research preparation entry to that exact current pilot and independently derived complete contract. Both original test suites retain their fixed positive identities and all refusal assertions; the prior pilot is an additional explicit refusal. Historical material plan, target and original runtime identities retain their bytes. Both standalone lock blobs already exactly match the reviewed root. Final combined source mappings remain pending; neither this rebind nor preserved historical executions confer native, model, installation or security qualification.
+
+## Consolidated current source review, 2026-11-14
+
+Current source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
+selected paths. Seven selected files changed from the preceding 332d7f72
+review: Cell fetch ordering and controlled cache restoration, the per-call PQ
+account configuration and its controls, Node advisory/store integration, and
+the explicit THP2 fresh-time comparator plus its controls. Each full path and
+Git identity was compared before this new lock was formed.
+
+Canonical source-lock SHA-256: 3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528. The strict reader and independent
+test literals select this checkpoint explicitly. Prior revision and hash
+refusals, exact route fields, bounded regular-file reads and all false
+qualification flags remain. These 44 paths are a curated inventory; source
+consistency supplies no complete call graph, runtime reachability or whole-chain
+security result. Earlier dated review records retain their original identities.

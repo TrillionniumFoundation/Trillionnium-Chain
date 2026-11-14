@@ -156,3 +156,19 @@ whole_chain_hash_query_scope_closed = false
 whole_chain_pq_qualified = false
 production_activation = false
 ```
+
+## Consolidated current source review, 2026-11-14
+
+The explicit current mapping now binds source 5c04c60e463462d9df8884786e0d5bb32af08a64 and its 145-input local
+inventory. Its descriptor SHA-256 is 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1. The mapping,
+profile descriptor, upstream-policy mapping pin and route-source pin are
+updated together; the candidate workflow and independent controls require the
+same descriptor. The preceding 9e5766a7 descriptor remains a rejected current
+identity.
+
+The selected SDK, guest image, control root, verifier parameters, fixed proof
+assets and all 15 open obligations retain their original identities. The
+upstream policy remains the dated 2026-11-11 observation, with an empty current
+approval list. No new upstream advisory check or reinstatement is claimed.
+The diagnostic status remains PROFILE_BOUND_UPSTREAM_REVOKED_HOLD and
+--require-current continues to refuse.

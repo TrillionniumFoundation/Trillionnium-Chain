@@ -25,11 +25,13 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-w1-qrom-implementation.yml'
 ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
+# Independent current-job stage contract; the historical name runner stays separate.
 REQUIRED_STAGES = (
     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
-    'historical_controls', 'implementation', 'current_implementation',
-    'budget_unknown', 'budget_hypothetical',
-    'report_scopes', 'source_after',
+    'historical_drift', 'implementation',
+    'supplemental_historical_controls', 'supplemental_historical_mapping',
+    'supplemental_current_mapping', 'supplemental_budget_unknown',
+    'supplemental_budget_hypothetical', 'supplemental_report_scopes', 'source_after',
 )
 HEAD = 'a' * 40
 BASE = 'b' * 40
@@ -40,6 +42,7 @@ import w1_qrom_implementation_audit as implementation
 import w1_qrom_historical_fixture as historical
 import w1_qrom_current_implementation_audit as current
 import w1_qrom_supplemental_controls as supplemental
+import w1_qrom_current_ci as current_ci
 
 
 def embedded_python(workflow: str, step_id: str) -> str:
@@ -100,8 +103,36 @@ class WorkflowGateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.workflow_text = WORKFLOW.read_text()
-        cls.codes = {step: embedded_python(cls.workflow_text, step)
-                     for step in ('named_tests', 'report_scopes', 'status')}
+        # The two source jobs deliberately reuse step IDs. Bind the original
+        # historical job before selecting its exact embedded gate boundaries.
+        current_ci.validate_historical_job(cls.workflow_text)
+        historical_job, current_job = cls.workflow_text.split(
+            '  qrom-historical-implementation:\n', 1)[1].split(
+            '  qrom-current-implementation:\n', 1)
+        # Original named-runner controls belong to the fixed historical job.
+        # Relocated mapping/budget controls belong to the current supplemental step.
+        cls.codes = {
+            'named_tests': embedded_python(historical_job, 'named_tests'),
+            'report_scopes': embedded_python(current_job, 'supplemental_report_scopes'),
+        }
+        if REQUIRED_STAGES != current_ci.REQUIRED_STAGES or any(
+                current_job.count('        id: ' + stage + '\n') != 1
+                for stage in REQUIRED_STAGES):
+            raise ValueError('independent current stage roster differs from the actual workflow')
+        verify_command = (
+            '          python3 scripts/ci/w1_qrom_current_ci.py verify '
+            '--repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" '
+            '--kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" '
+            '--expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" '
+            '2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"\n')
+        if current_job.count(verify_command) != 1 or current_job.count(
+                '          W1_QROM_CURRENT_STEP_RESULTS: $' + '{{ toJSON(steps) }}\n') != 1:
+            raise ValueError('current final gate invocation differs')
+        cls.current_roster, cls.current_roster_bytes = current_ci.load_roster(ROOT)
+        with tempfile.TemporaryDirectory(prefix='current-workflow-drift-') as directory:
+            cls.current_drift = current_ci.observe_drift(ROOT, Path(directory))
+            cls.drift_stdout = (Path(directory) / 'historical-on-current.stdout.log').read_bytes()
+            cls.drift_stderr = (Path(directory) / 'historical-on-current.stderr.log').read_bytes()
         cls.roster_bytes = (ROOT / ROSTER).read_bytes()
         cls.roster = json.loads(cls.roster_bytes)
         cls.supplemental_roster, cls.supplemental_roster_bytes = supplemental.load_roster(ROOT)
@@ -164,19 +195,29 @@ class WorkflowGateTests(unittest.TestCase):
             steps = {name: {'outcome': 'success', 'conclusion': 'success'}
                      for name in REQUIRED_STAGES}
         environment = {
-            'W1_QROM_STEP_RESULTS': json.dumps(steps), 'SOURCE_KIND': 'head',
+            'W1_QROM_STEP_RESULTS': json.dumps(steps),
+            'W1_QROM_CURRENT_STEP_RESULTS': json.dumps(steps), 'SOURCE_KIND': 'head',
             'EXPECTED_SOURCE': HEAD, 'EXPECTED_HEAD': HEAD, 'EXPECTED_BASE': BASE,
         }
         stdout, stderr = io.StringIO(), io.StringIO()
         exit_code = 0
         # The scope gate reconstructs observations from the actual checkout;
         # only retained report files are replaced by each isolated mutation.
-        source_root = ROOT if step == 'report_scopes' else root
+        source_root = ROOT if step in ('report_scopes', 'status') else root
         with working_directory(source_root), mock.patch.object(sys, 'argv', ['gate', str(out)]), \
                 mock.patch.dict(os.environ, environment), redirect_stdout(stdout), redirect_stderr(stderr):
             try:
-                exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
-                     {'__name__': '__main__'})
+                if step == 'status':
+                    # Call the same production CLI selected by the exact workflow
+                    # command above; no test-side reconstruction of verify logic.
+                    argv = ['w1_qrom_current_ci.py', 'verify', '--repo-root', str(ROOT),
+                            '--out', str(out), '--kind', 'head', '--expected-source', HEAD,
+                            '--expected-head', HEAD, '--expected-base', BASE]
+                    with mock.patch.object(sys, 'argv', argv):
+                        exit_code = current_ci.main()
+                else:
+                    exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
+                         {'__name__': '__main__'})
             except SystemExit as error:
                 exit_code = error.code if type(error.code) is int else int(error.code is not None)
                 if error.code is not None and not isinstance(error.code, int):
@@ -222,10 +263,33 @@ class WorkflowGateTests(unittest.TestCase):
             if cached is not None:
                 sys.modules[first] = cached
 
-    def completed_workspace(self):
+    def completed_workspace(self, *, status=False):
         root, out = self.workspace()
-        result = self.run_named(root, out)
-        self.assertEqual(result[0], 0, result[2])
+        if status:
+            # The current final gate has its own receipt namespace and nested
+            # supplemental records. These inert named cases isolate completion
+            # validation; they are never reported as scientific test execution.
+            (out / 'required-tests.json').write_bytes(self.current_roster_bytes)
+            suites = {row['module']: row['tests'] for row in self.current_roster['suites']}
+            def isolated_discovery(loader, start_dir, pattern='test*.py', top_level_dir=None):
+                return unittest.TestSuite(named_fixture(name) for name in suites[Path(pattern).stem])
+            with mock.patch.object(unittest.TestLoader, 'discover', isolated_discovery):
+                named = current_ci.execute_named(ROOT, self.current_roster, io.StringIO())
+            current_ci.validate_named(named, self.current_roster)
+            write_json(out / 'named-tests.json', named)
+            write_json(out / 'implementation.json', self.reports['implementation-current.json'])
+            write_json(out / 'historical-drift.json', self.current_drift)
+            (out / 'historical-on-current.stdout.log').write_bytes(self.drift_stdout)
+            (out / 'historical-on-current.stderr.log').write_bytes(self.drift_stderr)
+            supplemental_out = out / 'supplemental'
+            supplemental_out.mkdir()
+            (supplemental_out / supplemental.RETAINED_ROSTER).write_bytes(
+                self.supplemental_roster_bytes)
+            for name in supplemental.OUTPUTS.values():
+                write_json(supplemental_out / name, self.reports[name])
+        else:
+            result = self.run_named(root, out)
+            self.assertEqual(result[0], 0, result[2])
         self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], True)
         return root, out
 
@@ -308,16 +372,17 @@ class WorkflowGateTests(unittest.TestCase):
     def test_status_rejects_exit_zero_without_named_completion(self):
         for name in ('named-tests.json', *supplemental.OUTPUTS.values()):
             with self.subTest(completion=name):
-                root, out = self.completed_workspace()
-                (out / name).unlink()  # All other evidence and step successes remain.
+                root, out = self.completed_workspace(status=True)
+                target = out / name if name == 'named-tests.json' else out / 'supplemental' / name
+                target.unlink()  # All other evidence and step successes remain.
                 result = self.execute('status', root, out)
                 self.assertNotEqual(result[0], 0, 'successful steps cannot replace a completion record')
-                self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
+                self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], False)
 
     def test_status_independently_rechecks_named_ids_and_boolean_scope(self):
         for mutation in ('missing_success', 'duplicate_success', 'skip', 'scope_zero', 'passed_one'):
             with self.subTest(mutation=mutation):
-                root, out = self.completed_workspace()
+                root, out = self.completed_workspace(status=True)
                 report = read_json(out / 'named-tests.json')
                 first = report['suites'][0]
                 if mutation == 'missing_success':
@@ -327,41 +392,44 @@ class WorkflowGateTests(unittest.TestCase):
                 elif mutation == 'skip':
                     first['skipped'] = [[first['expected_ids'][0], 'retained skipped control']]
                 elif mutation == 'scope_zero':
-                    report['post_quantum_soundness_qualified'] = 0
+                    report['qualification']['post_quantum_soundness_qualified'] = 0
                 else:
                     report['all_named_controls_passed'] = 1
                 write_json(out / 'named-tests.json', report)
                 result = self.execute('status', root, out)
                 self.assertNotEqual(result[0], 0)
-                self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
+                self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], False)
         for suite in supplemental.OUTPUTS:
             with self.subTest(supplemental=suite):
-                root, out = self.completed_workspace()
-                path = out / supplemental.OUTPUTS[suite]
+                root, out = self.completed_workspace(status=True)
+                path = out / 'supplemental' / supplemental.OUTPUTS[suite]
                 report = read_json(path)
                 report['success_ids'].pop()
                 write_json(path, report)
                 result = self.execute('status', root, out)
                 self.assertNotEqual(result[0], 0)
-                self.assertIs(read_json(out / 'ci-status.json')['supplemental_completion_verified'], False)
+                status_report = read_json(out / 'current-ci-status.json')
+                self.assertEqual(status_report['identities'], {})
+                self.assertTrue(any('supplemental' in reason
+                                    for reason in status_report['validation_errors']))
 
     def test_status_requires_every_step_outcome_and_conclusion(self):
-        root, out = self.completed_workspace()
+        root, out = self.completed_workspace(status=True)
         positive = self.execute('status', root, out)
         self.assertEqual(positive[0], 0, positive[2])
-        self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], True)
+        self.assertIs(read_json(out / 'current-ci-status.json')['all_required_current_observations_passed'], True)
         for stage in REQUIRED_STAGES:
             for field, value in (('outcome', 'failure'), ('conclusion', 'skipped')):
                 with self.subTest(stage=stage, field=field):
-                    root, out = self.completed_workspace()
+                    root, out = self.completed_workspace(status=True)
                     steps = {name: {'outcome': 'success', 'conclusion': 'success'}
                              for name in REQUIRED_STAGES}
                     steps[stage][field] = value
                     result = self.execute('status', root, out, steps=steps)
                     self.assertNotEqual(result[0], 0)
-                    status = read_json(out / 'ci-status.json')
+                    status = read_json(out / 'current-ci-status.json')
                     self.assertIn(stage, status['failed_or_skipped_stages'])
-                    self.assertIs(status['all_required_observations_passed'], False)
+                    self.assertIs(status['all_required_current_observations_passed'], False)
 
     def test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate(self):
         root, out = self.workspace()
