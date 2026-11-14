@@ -83,6 +83,40 @@ def review_learning_control_material(packet, trusted, manifest_raw, policy_raw,
             ["original learning actor-to-control binding"])
 
 
+def review_learning_control_domains(packet, trusted, manifest_raw, policy_raw,
+                                    control_trusted, domains_raw, documents, *,
+                                    expected_domains, now):
+    """Additional four-domain material join; no new native acceptance authority.
+
+    Retain V3 signature/parent/NoUpdate validation and the original V1 control
+    graph. This entry reads document bytes and catches declared funding/fault
+    dependencies that the V1 material schema does not express.
+    """
+    from control_domains import review_control_domains
+
+    require(type(control_trusted) is dict and set(control_trusted) == {
+        "manifest", "policy", "revision", "bindings"}, "CONTROL_TRUST_FIELDS")
+    learning = verify_learning_packet(packet, trusted)
+    controls = review_control_domains(
+        manifest_raw, policy_raw, domains_raw, documents,
+        expected_domains=expected_domains,
+        expected_manifest=control_trusted["manifest"],
+        expected_policy=control_trusted["policy"],
+        expected_campaign=trusted["campaign"], expected_pair=trusted["pair"],
+        expected_revision=control_trusted["revision"],
+        expected_bindings=control_trusted["bindings"], now=now)
+    return dict(schema="release-learning-control-domains-review-v1",
+        learning_input_review=learning, control_domain_material_review=controls,
+        frozen_pair=copy.deepcopy(trusted["pair"]), campaign=trusted["campaign"],
+        qualification="HOLD_NO_GO", independent_control_accepted=False,
+        learning_actor_control_binding_verified=False,
+        physical_installation_accepted=False, prospective_neural_gain_accepted=False,
+        hepta_final_use=False, production_activation=False,
+        missing_external_acceptance=list(learning["missing_external_acceptance"]) +
+            ["original learning actor-to-control binding",
+             "authenticated complete administration, fault, funding and custody observations"])
+
+
 def finite_number(value, positive=False):
     require(type(value) in (int, float) and math.isfinite(value) and
             (value > 0 if positive else value >= 0), "MEASUREMENT_NUMBER")

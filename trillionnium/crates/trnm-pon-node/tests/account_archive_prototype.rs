@@ -782,3 +782,123 @@ fn synthetic_archive_beyond_legacy_cap_retains_nonce_and_bounds_views() -> Resul
     );
     Ok(())
 }
+
+#[test]
+fn aggregate_observation_keeps_one_snapshot_when_another_connection_changes_a_leaf() {
+    for remove in [true, false] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("archive.sqlite");
+        let mut archive = open(&path);
+        let checkpoint = archive
+            .seed_research_accounts([17; 32], &values(4), &mut || Ok(()))
+            .unwrap();
+        let writer = Connection::open(&path).unwrap();
+        writer.busy_timeout(std::time::Duration::ZERO).unwrap();
+        assert_eq!(
+            writer
+                .query_row("PRAGMA journal_mode", [], |row| row.get::<_, String>(0))
+                .unwrap(),
+            "wal"
+        );
+        let (leaf, mut bytes): (Vec<u8>, Vec<u8>) = writer
+            .query_row(
+                "SELECT id,data FROM archive_nodes WHERE length(data)=49 AND substr(data,2,32)=?",
+                [owner(1).as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        bytes[40] ^= 1;
+        let mut changed = false;
+        let aggregate = archive
+            .aggregate_observation(checkpoint.id(), &mut || {
+                if !changed {
+                    // The root has been read, but this leaf has not. Commit on
+                    // a real second connection while the traversal is active.
+                    let affected = if remove {
+                        writer.execute("DELETE FROM archive_nodes WHERE id=?", [&leaf])
+                    } else {
+                        writer.execute(
+                            "UPDATE archive_nodes SET data=? WHERE id=?",
+                            params![&bytes, &leaf],
+                        )
+                    }
+                    .unwrap();
+                    assert_eq!(affected, 1);
+                    changed = true;
+                }
+                Ok(())
+            })
+            .expect("all rows of the fixed checkpoint must use one read snapshot");
+        assert!(changed);
+        assert_eq!(aggregate.account_count(), 4);
+        assert_eq!(aggregate.account_balance(), 6);
+        assert_eq!(aggregate.account_root(), checkpoint.account_root());
+        assert_eq!(aggregate.node_rows_read(), 7);
+
+        // The retained observation is not current authority. A later call
+        // reads the committed change and must retain the original refusals.
+        let later = archive.aggregate_observation(checkpoint.id(), &mut || Ok(()));
+        if remove {
+            assert!(matches!(later, Err(E::DataUnavailable)));
+        } else {
+            assert!(matches!(later, Err(E::CorruptRecord)));
+        }
+    }
+}
+
+#[test]
+fn aggregate_observation_cancellation_releases_its_snapshot() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("archive.sqlite");
+    let mut archive = open(&path);
+    let checkpoint = archive
+        .seed_research_accounts([18; 32], &values(4), &mut || Ok(()))
+        .unwrap();
+    let mut calls = 0;
+    let result = archive.aggregate_observation(checkpoint.id(), &mut || {
+        calls += 1;
+        Err(E::Cancelled)
+    });
+    assert!(matches!(result, Err(E::Cancelled)));
+    assert_eq!(calls, 1);
+    let writer = Connection::open(&path).unwrap();
+    writer
+        .execute(
+            "DELETE FROM archive_checkpoints WHERE id=?",
+            [checkpoint.id().as_slice()],
+        )
+        .unwrap();
+    assert!(matches!(
+        archive.aggregate_observation(checkpoint.id(), &mut || Ok(())),
+        Err(E::MissingCheckpoint)
+    ));
+}
+
+#[test]
+fn aggregate_observation_still_refuses_a_preexisting_content_hash_mismatch() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("archive.sqlite");
+    let mut archive = open(&path);
+    let checkpoint = archive
+        .seed_research_accounts([19; 32], &values(4), &mut || Ok(()))
+        .unwrap();
+    let writer = Connection::open(&path).unwrap();
+    let (leaf, mut bytes): (Vec<u8>, Vec<u8>) = writer
+        .query_row(
+            "SELECT id,data FROM archive_nodes WHERE length(data)=49 AND substr(data,2,32)=?",
+            [owner(1).as_slice()],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )
+        .unwrap();
+    bytes[40] ^= 1;
+    writer
+        .execute(
+            "UPDATE archive_nodes SET data=? WHERE id=?",
+            params![bytes, leaf],
+        )
+        .unwrap();
+    assert!(matches!(
+        archive.aggregate_observation(checkpoint.id(), &mut || Ok(())),
+        Err(E::CorruptRecord)
+    ));
+}

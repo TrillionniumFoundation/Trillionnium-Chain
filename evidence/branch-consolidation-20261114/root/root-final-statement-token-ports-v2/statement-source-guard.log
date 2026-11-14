@@ -1,0 +1,6 @@
+test_original_statement_boundary_sources_cannot_omit_or_mutate (__main__.CorpusGateTests.test_original_statement_boundary_sources_cannot_omit_or_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.693s
+
+OK

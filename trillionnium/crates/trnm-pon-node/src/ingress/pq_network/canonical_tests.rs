@@ -332,7 +332,13 @@ pub(crate) fn transfer(settings: &Settings) -> Vec<u8> {
     .concat();
     signed_command(settings, 1, 1, 1, &payload)
 }
-fn signed_command(settings: &Settings, seed: u8, nonce: u64, kind: u8, payload: &[u8]) -> Vec<u8> {
+pub(super) fn signed_command(
+    settings: &Settings,
+    seed: u8,
+    nonce: u64,
+    kind: u8,
+    payload: &[u8],
+) -> Vec<u8> {
     let signer = key(seed);
     let common = wire::Common {
         context: accounts::context(&settings.app).unwrap(),

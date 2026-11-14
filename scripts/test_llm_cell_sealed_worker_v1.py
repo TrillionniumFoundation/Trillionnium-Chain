@@ -520,9 +520,9 @@ class SealedHandoffControls(unittest.TestCase):
         state = types.SimpleNamespace(original_worker=original)
         pilot = dict(worker.decode(plan), runtime_source=original._EXECUTION_RUNTIME_SHA256)
         actual = worker.decode(target)
-        actual['tokenizer']['behavior_contract'] = '5bd0bfea568f544a784a11cc9f162cb401d1c23b44e5951ff38388ef9fca441a'
-        actual['numeric']['operator_contract'] = '42707d81b3af6343388afe865307522c13e56edebf8ce4e6c7ec25ac4dbd73c8'
-        actual['registration']['target_admission'] = '5293fb3ad4d607c34089b6c2a1f14f6fa902db48df4501830bc36fc27630b6e8'
+        actual['tokenizer']['behavior_contract'] = '882d9c90a3fb05cc56012a4122f6c43d49f95ccfda67a5b767991c7a399235c0'
+        actual['numeric']['operator_contract'] = 'e4aff215aa8e74f481c39253326e6c2abdc10e56a1e6eb9f283c5cc4143de576'
+        actual['registration']['target_admission'] = '685812fd2084828870b11a8a07b2a685612d76ed4c82d21ef703ccc548370a9f'
         result = worker.verify_loaded_material(inputs, state, pilot, actual, worker.decode(target))
         self.assertEqual(result['historical_runtime_source'], worker.decode(plan)['runtime_source'])
         self.assertEqual(result['execution_runtime_source'], original._EXECUTION_RUNTIME_SHA256)

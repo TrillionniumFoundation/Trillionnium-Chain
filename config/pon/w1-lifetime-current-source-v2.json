@@ -2,9 +2,11 @@
   "changed_paths": [
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
     "trillionnium/Cargo.lock",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
     "trillionnium/crates/trnm-pon-node/src/store.rs",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
     "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
   ],
   "historical_reader": {
@@ -22,11 +24,11 @@
   },
   "schema": "TRNM-W1-LIFETIME-CURRENT-SOURCE-CONTRACT2",
   "selected_source_scope": "20_selected_paths_not_full_dependency_or_execution_closure",
-  "source_base_commit": "493f7fce6e517211a8cabccc15ba099965ea7c2a",
+  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
   "sources": [
     {
-      "bytes": 924,
-      "current_sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
+      "bytes": 1016,
+      "current_sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
       "historical_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
       "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
     },
@@ -55,8 +57,8 @@
       "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
     },
     {
-      "bytes": 41699,
-      "current_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+      "bytes": 42956,
+      "current_sha256": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
       "historical_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
       "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs"
     },
@@ -67,8 +69,8 @@
       "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
     },
     {
-      "bytes": 387798,
-      "current_sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
+      "bytes": 391470,
+      "current_sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
       "historical_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
       "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
     },
@@ -79,8 +81,8 @@
       "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs"
     },
     {
-      "bytes": 104121,
-      "current_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "bytes": 106066,
+      "current_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
       "historical_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
     },

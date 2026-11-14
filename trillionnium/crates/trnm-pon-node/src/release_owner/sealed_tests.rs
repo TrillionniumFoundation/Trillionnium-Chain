@@ -1,5 +1,5 @@
 use super::sealed::{identity, DataBuilder, Sealed};
-use rustix::fs::{fcntl_get_seals, SealFlags};
+use rustix::fs::{fcntl_get_seals, fcntl_getfl, OFlags, SealFlags};
 use rustix::io::{fcntl_getfd, FdFlags};
 use sha2::{Digest, Sha256};
 use std::fs::{self, FileTimes, OpenOptions};
@@ -374,4 +374,31 @@ fn sealed_ctime_only_change_refuses_all_held_uses() {
     // Every other captured identity field is equal. Dropping the ctime check
     // would incorrectly accept this object even though its bytes remain sealed.
     assert_changed_identity_is_refused(&sealed);
+}
+
+#[test]
+fn sealed_handoff_retains_reserved_descriptor_as_read_only_and_cloexec() {
+    let builder = DataBuilder::new().unwrap();
+    let reserved = builder.raw_fd();
+    let sealed = builder.finish(b"bound handoff", 64).unwrap();
+    assert_eq!(sealed.raw_fd(), reserved);
+    assert_eq!(
+        fcntl_getfl(sealed.file()).unwrap() & OFlags::ACCMODE,
+        OFlags::RDONLY
+    );
+    assert!(fcntl_getfd(sealed.file())
+        .unwrap()
+        .contains(FdFlags::CLOEXEC));
+    let before = super::sealed::identity(sealed.file()).unwrap();
+    assert!(sealed.file().write_at(b"changed", 0).is_err());
+    assert_eq!(super::sealed::identity(sealed.file()).unwrap(), before);
+    sealed.require_descriptor(reserved as u32).unwrap();
+    let transport = Sealed::untrusted_handoff(reserved as u32, 64).unwrap();
+    assert_eq!(transport.read(64).unwrap(), b"bound handoff");
+    assert_eq!(super::sealed::identity(transport.file()).unwrap(), before);
+    sealed.pass_to_exec().unwrap();
+    assert!(!fcntl_getfd(sealed.file())
+        .unwrap()
+        .contains(FdFlags::CLOEXEC));
+    sealed.recheck().unwrap();
 }

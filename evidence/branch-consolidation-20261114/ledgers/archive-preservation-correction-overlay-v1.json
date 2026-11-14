@@ -1,0 +1,15 @@
+{
+  "schema": "custody-archive-claim-correction-overlay-v1",
+  "applies_to": {
+    "path": "/private/tmp/chain-audit-20261114-branch-graph/custody-eight-final-review-v1/eight-bounded-terminal-dispositions-v1.json",
+    "sha256": "8755f0b8e9daae2095ce6089780ede778a69e83c1d51ccff64790295ee5708f4"
+  },
+  "recorded_utc": "2026-11-14",
+  "archive_verified": false,
+  "previous_preservation_fields_status": "historical declaration only; not presently verified custody",
+  "correction": "Coordinator independently found archive/branches-before-consolidation-20261113-5954 ref and b9cc24f76617e28015ee890635ece8449b52ee7c object absent from the current shared complete.git. The original preservation fields must not be read as completed current archival protection. A new archive must be created and independently read back remotely before branch retirement.",
+  "historical_verification_receipts_are_not_current_verification": true,
+  "new_archive_status": "pending coordinator creation and remote verification",
+  "branch_deletion_authorized": false,
+  "semantic_decisions_and_source_identity_records_unchanged": true
+}

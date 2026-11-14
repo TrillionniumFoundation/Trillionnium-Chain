@@ -540,21 +540,41 @@ impl Node {
         retention: &mut CellReleaseRetentionStoreV2,
         release_operation: Hash,
         object_operation: Hash,
-        successor: Option<&mut CellReleaseRetentionStoreV2>,
+        mut successor: Option<&mut CellReleaseRetentionStoreV2>,
         deadline: Instant,
     ) -> Result<CellRetentionReadbackV1> {
         storage_deadline(deadline)?;
         let contract = retention
             .contract(release_operation, deadline)
             .map_err(owner_error)?;
-        ensure(
-            contract
-                .objects
-                .iter()
-                .any(|object| object.operation == object_operation),
-            "NATIVE_CELL_RELEASE_MEMBER_COVERAGE",
-        )?;
+        let object = contract
+            .objects
+            .iter()
+            .find(|object| object.operation == object_operation)
+            .ok_or("NATIVE_CELL_RELEASE_MEMBER_COVERAGE")?;
         let current = self.completed_release_anchor(budgets, retention, &contract, deadline)?;
+        if let Some(expected) = object.successor {
+            if retention
+                .retired_object_readback(object_operation, deadline)
+                .map_err(owner_error)?
+                .is_none()
+            {
+                let next = successor
+                    .as_deref_mut()
+                    .ok_or("NATIVE_CELL_SUCCESSOR_REQUIRED")?;
+                let next_contract = next
+                    .object_contract(expected.1, deadline)
+                    .map_err(owner_error)?;
+                self.check_retirement_successor(
+                    budgets,
+                    expected,
+                    next.store_id(),
+                    &next_contract,
+                    current,
+                    deadline,
+                )?;
+            }
+        }
         let result = retention
             .retire_object(object_operation, current.height, successor, deadline)
             .map_err(owner_error)?;

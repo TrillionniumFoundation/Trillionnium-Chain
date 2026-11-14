@@ -497,7 +497,8 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix='semantics-correspondence-')
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        for name in (gate.HISTORICAL_SEMANTICS, *(row[1] for row in gate.REVIEWED_LOCKS)):
+        for name in (gate.HISTORICAL_SEMANTICS,
+                     *(row[1] for row in gate.REVIEWED_LOCK_CHANGES)):
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes((self.repository / name).read_bytes())
@@ -512,11 +513,19 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
         historical = (self.root / gate.HISTORICAL_SEMANTICS).read_bytes()
         result = gate.check_semantics(self.root, self.current)
         self.assertEqual(result['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3')
-        self.assertEqual(result['only_changed_json_pointers'],
-                         ['/provenance/lock_checks/0/sha256', '/provenance/lock_checks/2/sha256'])
-        self.assertEqual([(row['path'], row['historical_sha256'], row['current_sha256'])
-                          for row in result['reviewed_locks']],
-                         [(path, old, current) for _, path, old, current in gate.REVIEWED_LOCKS])
+        self.assertEqual(result['only_changed_json_pointers'], [
+            '/provenance/lock_checks/0/sha256', '/provenance/lock_checks/2/sha256'])
+        self.assertEqual([(row['path'], row['current_sha256'])
+                          for row in result['reviewed_lock_changes']], [
+            ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+             '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
+            ('formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock',
+             'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'),
+        ])
+        self.assertEqual(
+            [(row['path'], row['historical_sha256'], row['current_sha256'])
+             for row in result['reviewed_lock_changes']],
+            [(path, old, current) for _, path, old, current in gate.REVIEWED_LOCK_CHANGES])
         self.assertTrue(result['all_other_report_fields_identical'])
         self.assertFalse(result['historical_report_bytes_rewritten'])
         self.assertFalse(result['new_native_execution_or_dependency_equivalence_proved'])
@@ -558,12 +567,12 @@ class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
                 self.reject()
 
     def test_changed_current_lock_bytes_cannot_be_relabelled_in_report(self):
-        for index, name, _, _ in gate.REVIEWED_LOCKS:
-            with self.subTest(index=index, path=name):
+        for index, name, _, _ in gate.REVIEWED_LOCK_CHANGES:
+            with self.subTest(index=index):
                 path = self.root / name
                 original = path.read_bytes()
+                changed = original + b'\n'
                 try:
-                    changed = original + b'\n'
                     path.write_bytes(changed)
                     value = json.loads(self.actual_bytes)
                     value['provenance']['lock_checks'][index]['sha256'] = hashlib.sha256(changed).hexdigest()

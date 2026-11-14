@@ -49,6 +49,8 @@ pub fn enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2.is_some() || cfg.params.get(SELECTOR).is_some()
 }
 fn config_digest(cfg: &Config) -> Result<Hash> {
+    #[cfg(test)]
+    tests::record_config_digest();
     Ok(hash(
         b"native-pq-config-integrity-v2",
         &[
@@ -81,6 +83,30 @@ fn policy(cfg: &Config) -> Result<&Profile> {
         "PQ2_CONFIG_CHANGED",
     )?;
     Ok(p)
+}
+/// A complete configuration check borrowed for this call only. Both references
+/// belong to the same immutable Config; no check survives a later entry, and this
+/// value carries no signature, account authority or canonical-state permission.
+struct CheckedConfig<'a> {
+    config: &'a Config,
+    profile: &'a Profile,
+}
+impl<'a> CheckedConfig<'a> {
+    fn new(config: &'a Config) -> Result<Self> {
+        Ok(Self {
+            config,
+            profile: policy(config)?,
+        })
+    }
+    fn context(&self) -> Result<ChainContext> {
+        let context = self.profile.context;
+        require(context.genesis != [0; 32], "PQ2_GENESIS")?;
+        Ok(context)
+    }
+    fn decode<'raw>(&self, raw: &'raw [u8]) -> Result<UnverifiedEnvelope<'raw>> {
+        UnverifiedEnvelope::decode_for_profile(raw, self.profile.wire_profile)
+            .map_err(|_| "PQ2_ENCODING")
+    }
 }
 /// Exact configured wire profile; callers never infer it from request bytes.
 pub fn account_profile(cfg: &Config) -> Result<wire::AccountProfile> {
@@ -131,12 +157,10 @@ pub fn tasks_v5_enabled(cfg: &Config) -> bool {
         .is_some_and(|p| p.wire_profile.task_v5())
 }
 pub fn decode_for_config<'a>(raw: &'a [u8], cfg: &Config) -> Result<UnverifiedEnvelope<'a>> {
-    UnverifiedEnvelope::decode_for_profile(raw, account_profile(cfg)?).map_err(|_| "PQ2_ENCODING")
+    CheckedConfig::new(cfg)?.decode(raw)
 }
 pub fn context(cfg: &Config) -> Result<ChainContext> {
-    let context = policy(cfg)?.context;
-    require(context.genesis != [0; 32], "PQ2_GENESIS")?;
-    Ok(context)
+    CheckedConfig::new(cfg)?.context()
 }
 /// Signing input only. Actual prior-key and new-key proofs, current imported
 /// lock/nonce/balance, header time and original execution still remain required.
@@ -451,7 +475,11 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
     if !enabled(cfg) {
         return Ok(());
     }
-    let profile = policy(cfg)?;
+    validate_state_checked(state, &CheckedConfig::new(cfg)?)
+}
+fn validate_state_checked(state: &State, checked: &CheckedConfig<'_>) -> Result<()> {
+    let cfg = checked.config;
+    let profile = checked.profile;
     require(state.len() <= 65_536, "LIMIT")?;
     let mut expected = BTreeSet::new();
     if let Some(anchor) = &profile.anchor {
@@ -634,10 +662,11 @@ pub fn validate_block(
     if !enabled(cfg) {
         return Ok(());
     }
-    context(cfg)?;
+    let checked = CheckedConfig::new(cfg)?;
+    checked.context()?;
     require(timestamp.is_some() && miner != [0; 32], "PQ2_BLOCK_CONTEXT")?;
     require(
-        transactions.len() <= account_profile(cfg)?.maximum_transactions(),
+        transactions.len() <= checked.profile.wire_profile.maximum_transactions(),
         "PQ2_TRANSACTION_LIMIT",
     )?;
     let mut total = 0_usize;
@@ -645,13 +674,13 @@ pub fn validate_block(
     let mut accounts = BTreeMap::<Hash, (usize, bool)>::new();
     let mut task_demands = BTreeSet::new();
     for raw in transactions {
-        let tx = decode_for_config(raw, cfg)?;
+        let tx = checked.decode(raw)?;
         application_v6::command_profile(tx.kind, cfg)?;
         verifications = verifications
             .checked_add(tx.verification_count())
             .ok_or("PQ_VERIFY_BUDGET")?;
         require(
-            verifications <= account_profile(cfg)?.maximum_verifications(),
+            verifications <= checked.profile.wire_profile.maximum_verifications(),
             "PQ_VERIFY_BUDGET",
         )?;
         total = total
@@ -684,7 +713,7 @@ pub fn validate_block(
             require(entry.0 == 1 || !entry.1, "PQ2_AUTHORITY_BLOCK_MUTEX")?;
         }
     }
-    validate_state(parent, cfg)
+    validate_state_checked(parent, &checked)
 }
 
 /// Private fields retain actual signature/key binding. They grant no fee,
@@ -834,8 +863,9 @@ pub fn prepare_signature_metered(
     cfg: &Config,
     signatures: &std::sync::atomic::AtomicUsize,
 ) -> Result<PreparedCommand> {
-    let context = context(cfg)?;
-    let tx = decode_for_config(raw, cfg)?;
+    let checked = CheckedConfig::new(cfg)?;
+    let context = checked.context()?;
+    let tx = checked.decode(raw)?;
     require(tx.common.context == context, "PQ2_CONTEXT")?;
     require(tx.common.max_fee <= cfg.limit("max_fee_limit")?, "FEE")?;
     if application_v6::enabled(cfg) {
@@ -873,7 +903,7 @@ pub fn prepare_signature_metered(
                 purpose: witness.role,
                 network: context.network,
                 owner_context: wire::owner_context_for_profile(
-                    account_profile(cfg)?,
+                    checked.profile.wire_profile,
                     &tx.common,
                     tx.kind,
                     witness.role,
@@ -905,10 +935,11 @@ pub fn prepare_signature_metered(
     })
 }
 pub fn validate_current_authority(parent: &State, raw: &[u8], cfg: &Config) -> Result<()> {
-    context(cfg)?;
-    validate_state(parent, cfg)?;
-    let tx = decode_for_config(raw, cfg)?;
-    require(tx.common.context == context(cfg)?, "PQ2_CONTEXT")?;
+    let checked = CheckedConfig::new(cfg)?;
+    let context = checked.context()?;
+    validate_state_checked(parent, &checked)?;
+    let tx = checked.decode(raw)?;
+    require(tx.common.context == context, "PQ2_CONTEXT")?;
     application_v6::command_profile(tx.kind, cfg)?;
     let mut view = View::new(parent, None);
     if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
@@ -930,11 +961,12 @@ pub(super) fn apply(
     cfg: &Config,
     access: Option<&super::AccountPointAccess<'_>>,
 ) -> Result<super::Patch> {
+    let checked = CheckedConfig::new(cfg)?;
     require(
-        prepared.common.context == context(cfg)?,
+        prepared.common.context == checked.context()?,
         "PQ2_PREPARED_CONTEXT",
     )?;
-    let tx = decode_for_config(&prepared.raw, cfg)?;
+    let tx = checked.decode(&prepared.raw)?;
     let mut view = View::new(base, access);
     if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
         tasks_v4::command_owners(&mut view, &tx, cfg)?;
@@ -1084,7 +1116,7 @@ pub(super) fn apply(
     account["nonce"] = json!(prepared.common.nonce);
     view.put(format!("account:{sender}"), account);
     let receipt = canonical(
-        &json!({"profile":account_profile(cfg)?.name(),"kind":prepared.kind,
+        &json!({"profile":checked.profile.wire_profile.name(),"kind":prepared.kind,
         "tx":hex::encode(prepared.wire_id),"statement":hex::encode(prepared.statement_id),
         "fee":fee,"status":"applied"}),
     )?;
@@ -1114,3 +1146,6 @@ mod tasks_v4_tests;
 mod application_v6_tests;
 #[cfg(test)]
 mod tasks_v5_tests;
+
+#[cfg(test)]
+mod parallel_preparation_tests;

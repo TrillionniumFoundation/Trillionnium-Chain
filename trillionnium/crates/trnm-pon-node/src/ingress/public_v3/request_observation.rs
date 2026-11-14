@@ -539,6 +539,10 @@ pub struct PublicRequestObservation {
     pub connection_id: Option<u64>,
     pub operation: Option<u8>,
     pub body_digest: Option<Hash>,
+    /// Only the opt-in v5 observer records a caller after actual signature
+    /// verification. A claimed Hello identity never authenticates this field.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authenticated_caller: Option<String>,
     /// Successful socket accept through the actual connection/task owners.
     /// This is a local diagnostic clock, not a remote confirmation or authority.
     pub lifecycle: PublicRequestLifecycleObservation,
@@ -592,6 +596,7 @@ impl PublicRequestObservation {
             connection_id: None,
             operation: None,
             body_digest: None,
+            authenticated_caller: None,
             lifecycle: PublicRequestLifecycleObservation {
                 schema: "public-v3-request-lifecycle-v1",
                 accepted_ns,
@@ -688,6 +693,7 @@ struct Cell {
 struct Inner {
     epoch: Instant,
     capacity: usize,
+    authenticated_callers: bool,
     rows: Box<[OnceLock<Arc<Cell>>]>,
     seen: AtomicU64,
     omitted: AtomicU64,
@@ -758,6 +764,15 @@ impl PublicRequestObservationSnapshot {
 
 impl PublicRequestObserver {
     pub fn new(capacity: usize) -> super::Result<Self> {
+        Self::with_caller_mode(capacity, false)
+    }
+
+    /// Explicit local v5 observation. This grants no admission or consensus right.
+    pub fn new_with_authenticated_callers(capacity: usize) -> super::Result<Self> {
+        Self::with_caller_mode(capacity, true)
+    }
+
+    fn with_caller_mode(capacity: usize, authenticated_callers: bool) -> super::Result<Self> {
         super::ensure(
             (1..=MAX_REQUEST_OBSERVATION_RECORDS).contains(&capacity),
             "PUBLIC_OBSERVATION_CAPACITY",
@@ -765,6 +780,7 @@ impl PublicRequestObserver {
         Ok(Self(Arc::new(Inner {
             epoch: Instant::now(),
             capacity,
+            authenticated_callers,
             rows: (0..capacity).map(|_| OnceLock::new()).collect(),
             seen: AtomicU64::new(0),
             omitted: AtomicU64::new(0),
@@ -880,7 +896,11 @@ impl PublicRequestObserver {
             }
         }
         PublicRequestObservationSnapshot {
-            schema: "public-v3-local-request-resource-observation-v4",
+            schema: if self.0.authenticated_callers {
+                "public-v3-local-request-resource-observation-v5"
+            } else {
+                "public-v3-local-request-resource-observation-v4"
+            },
             capacity: self.0.capacity,
             accepted_connections_seen: self.0.seen.load(Ordering::Acquire),
             records_not_retained: self.0.omitted.load(Ordering::Acquire),
@@ -1046,6 +1066,18 @@ impl ConnectionObservation {
         self.handle().update(|r| {
             r.operation = Some(op);
             r.body_digest = Some(digest);
+            true
+        });
+    }
+    pub(super) fn authenticated_caller(&self, caller: &str) {
+        if !self.inner.authenticated_callers {
+            return;
+        }
+        self.handle().update(|row| {
+            if row.authenticated_caller.is_some() {
+                return false;
+            }
+            row.authenticated_caller = Some(caller.to_owned());
             true
         });
     }
@@ -1575,6 +1607,55 @@ fn thread_cpu_ns() -> Option<u64> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn authenticated_caller_requires_explicit_v4_and_single_binding() {
+        let caller = "13".repeat(32);
+        let legacy = PublicRequestObserver::new(1).unwrap();
+        let connection = legacy.connection().unwrap();
+        connection.authenticated_caller(&caller);
+        drop(connection);
+        let snapshot = legacy.snapshot();
+        assert_eq!(
+            snapshot.schema,
+            "public-v3-local-request-resource-observation-v4"
+        );
+        assert!(snapshot.records[0].authenticated_caller.is_none());
+        assert!(serde_json::to_value(&snapshot.records[0])
+            .unwrap()
+            .get("authenticated_caller")
+            .is_none());
+
+        let observer = PublicRequestObserver::new_with_authenticated_callers(1).unwrap();
+        let connection = observer.connection().unwrap();
+        connection.identity(7);
+        connection.request(1, [9; 32]);
+        assert!(observer.snapshot().records[0]
+            .authenticated_caller
+            .is_none());
+        connection.authenticated_caller(&caller);
+        connection.authenticated_caller(&"14".repeat(32));
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(
+            snapshot.schema,
+            "public-v3-local-request-resource-observation-v5"
+        );
+        assert_eq!(
+            snapshot.records[0].authenticated_caller.as_deref(),
+            Some(caller.as_str())
+        );
+        assert!(!snapshot.coverage_complete());
+        assert_eq!(snapshot.measurement_failures, 1);
+    }
+
+    #[test]
+    fn default_observer_preserves_complete_v4_serialization() {
+        let snapshot = PublicRequestObserver::new(2).unwrap().snapshot();
+        let expected = br#"{"schema":"public-v3-local-request-resource-observation-v4","capacity":2,"accepted_connections_seen":0,"records_not_retained":0,"measurement_failures":0,"counter_overflow":false,"records":[],"observation_has_consensus_authority":false,"cpu_intervals_are_nested_not_additive":true,"cpu_includes_reactor_authentication_or_response_signing":true,"cpu_includes_reactor_authentication":false,"dispatch_cpu_includes_paid_body_decode":true,"dispatch_cpu_includes_response_signing":true,"submit_phase_cpu_excludes_scoped_workers":true,"phase_parent_links_are_inclusive":true,"cpu_wait_is_outside_dispatch":true,"monotonic_epoch_is_observer_local":true,"stream_bytes_are_physical_network_bytes":false}"#;
+        assert_eq!(serde_json::to_vec(&snapshot).unwrap(), expected);
+        assert!(snapshot.coverage_complete());
+    }
+
     #[test]
     fn active_phase_context_is_lock_free_and_uses_declared_nested_spans() {
         let observation = TaskObservation::local(Instant::now());

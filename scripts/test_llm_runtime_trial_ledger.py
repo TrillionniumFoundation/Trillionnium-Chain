@@ -185,6 +185,15 @@ class TrialLedgerTests(unittest.TestCase):
             with self.assertRaisesRegex(OSError, 'lost COMMIT'): self.reserve()
         current = self.owner.inspect()
         self.assertEqual(current['spent'], 1)
+        before = self.path.read_bytes()
+        observed = self.owner.reconcile('1' * 64,
+            current['attempts']['1' * 64]['reservation']['plan_id'], self.init['checkpoint'])
+        self.assertEqual((observed['state'], observed['spent'], observed['event_count']),
+                         ('reserved', 1, 1))
+        self.assertEqual(observed['committed_events'][-1]['checkpoint'], current['checkpoint'])
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertFalse(observed['retry_authorized'])
+        self.assertFalse(observed['refund_authorized'])
         with self.assertRaisesRegex(ValueError, 'ALLOWANCE_OR_REPLAY'):
             self.reserve(checkpoint=current['checkpoint'])
 
@@ -228,6 +237,88 @@ class TrialLedgerTests(unittest.TestCase):
         state = self.owner.inspect()
         self.assertEqual(state['spent'], 1)
         self.assertEqual(state['attempts']['1' * 64]['state'], 'reserved')
+        result = subprocess.run([sys.executable, runtime.__file__, 'trial-ledger-reconcile',
+            '--ledger', str(self.path), '--policy', self.init['policy_id'], '--trial', '1' * 64,
+            '--plan', state['attempts']['1' * 64]['reservation']['plan_id'],
+            '--minimum-checkpoint', self.init['checkpoint']],
+            capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        observed = json.loads(result.stdout)
+        self.assertEqual((observed['state'], observed['spent']), ('reserved', 1))
+        self.assertEqual(observed['external_effects_state'], 'UNKNOWN')
+        self.assertFalse(observed['installation_verified'])
+        self.assertFalse(observed['final_use_verified'])
+
+    def test_reconciliation_cli_has_no_current_model_dependency(self):
+        receipt = self.reserve()
+        isolated = self.root / 'isolated'; isolated.mkdir()
+        for source in (Path(runtime.__file__), Path(trial.__file__)):
+            (isolated / source.name).write_bytes(source.read_bytes())
+        result = subprocess.run([sys.executable, str(isolated / 'llm_runtime_pilot.py'),
+            'trial-ledger-reconcile', '--ledger', str(self.path), '--policy', self.init['policy_id'],
+            '--trial', '1' * 64, '--plan', receipt['plan'],
+            '--minimum-checkpoint', self.init['checkpoint']],
+            cwd=isolated, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['state'], 'reserved')
+
+    def test_reconciliation_rejects_a_database_before_the_retained_anchor(self):
+        before = self.path.read_bytes()
+        receipt = self.reserve()
+        self.path.write_bytes(before)
+        with self.assertRaisesRegex(ValueError, 'RECONCILE_CHECKPOINT_NOT_RETAINED'):
+            self.owner.reconcile('1' * 64, receipt['plan'], receipt['checkpoint'])
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_reconciliation_binds_plan_but_accepts_an_extended_retained_checkpoint(self):
+        receipt = self.reserve()
+        terminal = self.abort()
+        other = self.reserve('2' * 64, terminal['checkpoint'], 'other-related-key')
+        before = self.path.read_bytes()
+        # Historical replay never invokes today's run-admission validator.
+        with patch.object(runtime, 'validate_plan', side_effect=AssertionError('must not import runner')):
+            observed = self.owner.reconcile('1' * 64, receipt['plan'], receipt['checkpoint'])
+        self.assertEqual((observed['state'], observed['spent'], observed['minimum_sequence']),
+                         ('aborted', 2, 1))
+        self.assertEqual(observed['checkpoint'], other['checkpoint'])
+        self.assertEqual(observed['committed_events'][-1]['checkpoint'], terminal['checkpoint'])
+        self.assertEqual(len(observed['committed_events']), 2)
+        self.assertIsNotNone(observed['terminal_record_id'])
+        self.assertFalse(observed['retry_authorized'])
+        self.assertFalse(observed['refund_authorized'])
+        with self.assertRaisesRegex(ValueError, 'RECONCILE_PLAN_BINDING'):
+            self.owner.reconcile('1' * 64, '0' * 64, receipt['checkpoint'])
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_precommit_failure_reconciles_absence_without_retry_permission(self):
+        connect = sqlite3.connect
+        class BeforeCommitFailure:
+            def __init__(self, connection): self.connection = connection
+            def __getattr__(self, name): return getattr(self.connection, name)
+            def execute(self, sql, *args):
+                if sql == 'COMMIT': raise OSError('injected before COMMIT')
+                return self.connection.execute(sql, *args)
+        value = plan(self.init['policy_id'])
+        with patch.object(sqlite3, 'connect', side_effect=lambda *a, **k: BeforeCommitFailure(connect(*a, **k))):
+            with self.assertRaisesRegex(OSError, 'before COMMIT'):
+                self.owner.reserve(value, '1' * 64, self.init['checkpoint'], 'first-key')
+        before = self.path.read_bytes()
+        observed = self.owner.reconcile('1' * 64, trial._identity(value), self.init['checkpoint'])
+        self.assertEqual((observed['state'], observed['spent'], observed['event_count']),
+                         ('not-observed', 0, 0))
+        self.assertFalse(observed['target_observed'])
+        self.assertEqual(observed['committed_events'], [])
+        self.assertFalse(observed['retry_authorized'])
+        self.assertFalse(observed['refund_authorized'])
+        self.assertEqual(observed['external_effects_state'], 'UNKNOWN')
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_reconciliation_rejects_corruption_before_reporting_a_target(self):
+        receipt = self.reserve()
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE events SET payload = replace(payload, 'first-key', 'other-key')")
+        with self.assertRaisesRegex(ValueError, 'JOURNAL_ROOT'):
+            self.owner.reconcile('1' * 64, receipt['plan'], receipt['checkpoint'])
 
     def test_journal_edit_cannot_masquerade_as_an_accepted_observation(self):
         self.reserve()

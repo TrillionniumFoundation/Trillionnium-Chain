@@ -1,0 +1,301 @@
+{
+  "schema": "t03-original-execution-custody-v1",
+  "commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+  "execution_repeated_for_custody": false,
+  "exact_member_whitelist": [
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/initial-failure-manifest.json",
+      "member": "linux-v2/initial-failure-manifest.json",
+      "bytes": 2745,
+      "sha256": "0dc6b34b53e0c5b3adb29ccb42ddae63385ace9d491d8b0390c26a4986186724"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/run-original-controls.py",
+      "member": "linux-v2/run-original-controls.py",
+      "bytes": 6382,
+      "sha256": "11ead360483aeb3ccc36cd8ad90df3672809dee8ceba4861d67db2c94f46a6e2"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/runner-start.json",
+      "member": "linux-v2/runner-start.json",
+      "bytes": 52,
+      "sha256": "b553f2e66c3c4b570d03cadbe32d02821cf321336508c6c1b9ba959eb0572ee8"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/preflight.stdout",
+      "member": "linux-v2/preflight.stdout",
+      "bytes": 178,
+      "sha256": "7a4ef1680cf2bf748d07fc1bdc4f77303005f740a023cdbb56bb8a5eab1d9d30"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/driver.stdout",
+      "member": "linux-v2/driver.stdout",
+      "bytes": 2021,
+      "sha256": "3c89818f062d61a8dbf09582fd0b6203f345e9ef1fb2bf4e52f31885d412eb23"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/driver.stderr",
+      "member": "linux-v2/driver.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/initial-failure-and-once-guard.tar.gz",
+      "member": "retained-failure/initial-failure-and-once-guard.tar.gz",
+      "bytes": 54163,
+      "sha256": "889974feace35ef46da71d82d088c93a76e0eb6afddace43e852fb92a8318b76"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/summary.json",
+      "member": "retained-failure/linux-controls-v1/summary.json",
+      "bytes": 1485598,
+      "sha256": "39195821d1aa2a6b0fd55180f75253da5b82efca2aedcf8d06a6fc9fcfdf77a4"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/original-controls.stderr",
+      "member": "retained-failure/linux-controls-v1/original-controls.stderr",
+      "bytes": 1229287,
+      "sha256": "c56a0f21bd129b108aa4fa6b218033bd21e6cbdcc76152475ae3445cd3087353"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/driver.stdout",
+      "member": "retained-failure/linux-controls-v1/driver.stdout",
+      "bytes": 264543,
+      "sha256": "67ad1b0f10d270e678de8fc7bde90b9b6e3a8b0202e73d54c22be41ee6843f72"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/driver.stderr",
+      "member": "retained-failure/linux-controls-v1/driver.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/terminal.json",
+      "member": "retained-failure/linux-controls-v1/terminal.json",
+      "bytes": 1051,
+      "sha256": "d53db3a1bc26ab97b3d1137082e8caf534db9b8d65cdefa1235ae3cb36f26b2c"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/run-original-controls.py",
+      "member": "retained-failure/linux-controls-v1/run-original-controls.py",
+      "bytes": 5003,
+      "sha256": "2505ad373d5690ad86a44a316ba594f97becc46928febf80b81ea060ddc1d0cd"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/linux-controls-v1/runner-start.json",
+      "member": "retained-failure/linux-controls-v1/runner-start.json",
+      "bytes": 52,
+      "sha256": "f2f8e376e7be9734268ba00744fd5ee0c0d7978181c21107c70f97e60a69c493"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/retained-failure/once-guard-pty-recovery.log",
+      "member": "retained-failure/once-guard-pty-recovery.log",
+      "bytes": 601,
+      "sha256": "5690cb1273bcdf9b7f36c3d2d09b7dfe758ecd5dad77488aa3c85e71d9f96e91"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/summary.json",
+      "member": "linux-v2/summary.json",
+      "bytes": 31403,
+      "sha256": "a8f65e0f0cce76685ce7fbd2cf601b1528e4e08cf239c5795a6dbfdefa8de215"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/original-controls.stderr",
+      "member": "linux-v2/original-controls.stderr",
+      "bytes": 12492,
+      "sha256": "9f63d172dba77823ca782ff81055478b851d6c867d343cd0ed6444d1a17dc236"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/terminal.json",
+      "member": "linux-v2/terminal.json",
+      "bytes": 1069,
+      "sha256": "53b19bfc59efa366fb06b6f8ec0998ad6bec6906d859f68537b93f1cd9cd5046"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/retained-initial-failure.json",
+      "member": "linux-v2/retained-initial-failure.json",
+      "bytes": 794,
+      "sha256": "2ada30363721e082c90e77ed57ef6c1af47754d155d4393eecdead7113a1b490"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/pilot-discovery.json",
+      "member": "linux-v2/pilot-discovery.json",
+      "bytes": 5253,
+      "sha256": "c377545e0115e7d3fc034e849f2b9b305846bcca7acaee81a033a1acb767148a"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/passing-pty-readback.json",
+      "member": "operator-receipts/passing-pty-readback.json",
+      "bytes": 2320,
+      "sha256": "0bc598b83765aace7ebf3fedbc319488892184c8a32677a32c41b05a481b2172"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/commit-pty-readback.json",
+      "member": "operator-receipts/commit-pty-readback.json",
+      "bytes": 2065,
+      "sha256": "75ad071b03d6402052d4efc05aba45a67a98315994e51644c141f9c52ad8e2b0"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/failed_archive-pty-readback.json",
+      "member": "operator-receipts/failed_archive-pty-readback.json",
+      "bytes": 3526,
+      "sha256": "a3c32fc0e16d01710e8adcc150ed6af18016fd56df9417b0f2230f90e4f66b3b"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/static-and-linux-package-v1/selected-linux-source.json.gz",
+      "member": "source-inputs/selected-linux-source.json.gz",
+      "bytes": 158457,
+      "sha256": "f8cd308f9808805b31cf82b351da32951eeb413d639f1fc2140bed5cbac65d00"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/preflight-and-source-v1/manifest.json",
+      "member": "source-inputs/preflight-and-source-manifest.json",
+      "bytes": 3998,
+      "sha256": "996e3910817e2fd8badc9c2c5b862d13692954a7dee25acf7d6288d98ed5546b"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/roster-and-consumers-v2/roster.json",
+      "member": "source-inputs/original-method-roster.json",
+      "bytes": 7688,
+      "sha256": "4415935729a3a2ecc2f27ee1f75d63ad80c92ba4dee8177624daa55041a5242f"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-review-20261114/manifest.json",
+      "member": "source-inputs/original-lineage-manifest.json",
+      "bytes": 10945,
+      "sha256": "c3c21b0f3f20de99b103f83e714bf76d971d6f2a4b1e75d13c081ec547bf1fb2"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-review-20261114/current-pilot-seams-v1/manifest.json",
+      "member": "source-inputs/preserved-pilot-lifecycle-manifest.json",
+      "bytes": 70628,
+      "sha256": "720f00178067fbf70ec132c4da4f94740e9261fe33ac155309c67f3978311bca"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/commit.patch",
+      "member": "commit/commit.patch",
+      "bytes": 142551,
+      "sha256": "2f0c80e9fe99be0bd9917a12ca3563ca7ebfd09b91a69b290cffab4d2855d450"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/commit-summary.json",
+      "member": "commit/commit-summary.json",
+      "bytes": 22238,
+      "sha256": "b94e787e44f3a799df25a477b027d54ebc97e795d3f726761662226381ed8f2e"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/01-preflight.stdout",
+      "member": "commit-validation/01-preflight.stdout",
+      "bytes": 167,
+      "sha256": "eb3ad06abe034981c6d827d04633d9aafde29ad14eaebc74f9a81bdd581be536"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/01-preflight.stderr",
+      "member": "commit-validation/01-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/02-repository-check.stdout",
+      "member": "commit-validation/02-repository-check.stdout",
+      "bytes": 307,
+      "sha256": "23a0871f3bb4603ceef55b29e3d95fd52ee0bb2609d191e7b21bcf3a0afb9ac8"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/02-repository-check.stderr",
+      "member": "commit-validation/02-repository-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/03-actual-ci-contract.stdout",
+      "member": "commit-validation/03-actual-ci-contract.stdout",
+      "bytes": 852,
+      "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/03-actual-ci-contract.stderr",
+      "member": "commit-validation/03-actual-ci-contract.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/04-actual-corpus.stdout",
+      "member": "commit-validation/04-actual-corpus.stdout",
+      "bytes": 558,
+      "sha256": "a26f628704ebc3b5843fc816cdfcb8635e8fd347f60a7e7d4f7f54a9ce8e8a20"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/04-actual-corpus.stderr",
+      "member": "commit-validation/04-actual-corpus.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/05-diff-check.stdout",
+      "member": "commit-validation/05-diff-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/05-diff-check.stderr",
+      "member": "commit-validation/05-diff-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/06-precommit-preflight.stdout",
+      "member": "commit-validation/06-precommit-preflight.stdout",
+      "bytes": 167,
+      "sha256": "eb3ad06abe034981c6d827d04633d9aafde29ad14eaebc74f9a81bdd581be536"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/06-precommit-preflight.stderr",
+      "member": "commit-validation/06-precommit-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/07-commit.stdout",
+      "member": "commit-validation/07-commit.stdout",
+      "bytes": 388,
+      "sha256": "f306e63226382a585e2eebcbad31900eaa8fb80d7342e86c16416bad0756a4d2"
+    },
+    {
+      "source": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/commit-v1/07-commit.stderr",
+      "member": "commit-validation/07-commit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "passing_linux": {
+    "tests": 59,
+    "new_original": 36,
+    "existing": 23,
+    "failure": 0,
+    "error": 0,
+    "skip": 0,
+    "actual_project_source_inputs": 67,
+    "source_expectation_inventory_not_read_coverage": 3195,
+    "unresolved_relative_open_events": 7331,
+    "all_file_access_coverage_claimed": false,
+    "whole_current_checkout_claimed": false
+  },
+  "retained_initial_run": {
+    "methods_entered": 59,
+    "subtest_instrumentation_errors": 240,
+    "driver_error": "Audit event lacks dir_fd: relative proc names wrongly interpreted as project paths. Production/tests/deadlines unchanged for v2.",
+    "late_original_process_pid": 1353252,
+    "late_original_driver_pid": 1353388,
+    "original_process_job_id": null,
+    "original_process_start_key": "chain-t03-linux-original-36-and-worker-20261114-architecture-v1",
+    "manager_start_and_exact_key_reconcile": "MCP -32603 timeout; job id not obtained; on-disk original terminal retained",
+    "same_script_pty_recovery": "FileExistsError at create-only evidence-directory guard, before source writes or tests"
+  },
+  "scope": {
+    "real_linux_owned_child_and_pidfd_controls": true,
+    "controlled_proc_view_cases_included": true,
+    "model_campaign_qualification": false,
+    "production_activation": false
+  }
+}

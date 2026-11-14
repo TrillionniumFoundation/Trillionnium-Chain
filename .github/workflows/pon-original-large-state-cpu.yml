@@ -1,5 +1,6 @@
 # Execute the original tests without waiting for unrelated 180-minute campaigns.
 # Test budgets, workloads and service lifetime remain defined by the unchanged Rust source.
+# The original test profile and supplementary release profile retain separate receipts.
 "name": "PoN original large-state CPU acceptance"
 "on":
   "pull_request": {}
@@ -16,7 +17,7 @@
   "PYTHONDONTWRITEBYTECODE": "1"
 "jobs":
   "original-state-and-exit":
-    "name": "original state and exit (${{ matrix.runner }}, ${{ matrix.source }})"
+    "name": "original state and exit (${{ matrix.runner }}, ${{ matrix.source }}, ${{ matrix.build_profile }})"
     "runs-on": "${{ matrix.runner }}"
     "timeout-minutes": 60
     "strategy":
@@ -28,11 +29,15 @@
         "source":
           - "head"
           - "prospective-merge"
+        "build_profile":
+          - "test"
+          - "release"
     "env":
       "EXPECTED_HEAD": "${{ github.event.pull_request.head.sha }}"
       "EXPECTED_BASE": "${{ github.event.pull_request.base.sha }}"
       "EXPECTED_MERGE": "${{ github.sha }}"
       "SOURCE_KIND": "${{ matrix.source }}"
+      "TRNM_BUILD_PROFILE": "${{ matrix.build_profile }}"
     "steps":
       -
         "name": "Checkout the exact candidate or actual target merge"
@@ -63,7 +68,7 @@
         "id": "toolchain"
         "run": "rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy"
       -
-        "name": "Build the unchanged default release test binary"
+        "name": "Build the selected unchanged native profile"
         "id": "build"
         "shell": "bash"
         "run": |-
@@ -81,18 +86,28 @@
                   "CARGO_BUILD_TARGET", "CARGO_BUILD_RUSTC_WRAPPER", "CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER")
           env = {key: os.environ.get(key) for key in keys}
           env.update({key: value for key, value in os.environ.items()
-                      if key.startswith("CARGO_PROFILE_RELEASE_") or
+                      if key.startswith(("CARGO_PROFILE_RELEASE_", "CARGO_PROFILE_TEST_", "CARGO_PROFILE_DEV_")) or
                       (key.startswith("CARGO_TARGET_") and key.endswith("_RUSTFLAGS"))})
-          command = ["cargo", "+1.95.0", "test", "--release", "--locked", "--manifest-path",
+          selected = os.environ["TRNM_BUILD_PROFILE"]
+          assert selected in ("test", "release"), "unknown build profile"
+          command = ["cargo", "+1.95.0", "test", *(["--release"] if selected == "release" else []), "--locked", "--manifest-path",
                      "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "--no-run", "--message-format=json"]
-          (root / "build-command.json").write_text(json.dumps({"argv": command, "environment": env}, indent=2) + "\n")
+          (root / "build-command.json").write_text(json.dumps({"argv": command, "environment": env, "build_profile": selected,
+              "original_test_profile": selected == "test", "release_supplementary": selected == "release"}, indent=2) + "\n")
           overrides = keys[6:]
           assert not any(env.get(key) for key in overrides), "unexpected compiler override"
           assert not any(value for key, value in env.items() if key.startswith("CARGO_TARGET_")
                          and key.endswith("_RUSTFLAGS")), "unexpected target compiler flags"
-          assert not any(key.startswith("CARGO_PROFILE_RELEASE_") for key in env), "unexpected release profile override"
+          assert not any(key.startswith(("CARGO_PROFILE_RELEASE_", "CARGO_PROFILE_TEST_", "CARGO_PROFILE_DEV_"))
+                         for key in env), "unexpected build profile override"
           PY
-          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --no-run --message-format=json > "$TRNM_CI_RECEIPT_DIR/build.jsonl" 2> "$TRNM_CI_RECEIPT_DIR/build.stderr"
+          profile_args=()
+          case "$TRNM_BUILD_PROFILE" in
+            test) ;;
+            release) profile_args=(--release) ;;
+            *) exit 2 ;;
+          esac
+          cargo +1.95.0 test "${profile_args[@]}" --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --no-run --message-format=json > "$TRNM_CI_RECEIPT_DIR/build.jsonl" 2> "$TRNM_CI_RECEIPT_DIR/build.stderr"
           python3 - <<'PY'
           import hashlib, json, os
           from pathlib import Path
@@ -109,14 +124,27 @@
           binary = Path(artifact["executable"])
           assert binary.is_absolute() and binary.is_file() and not binary.is_symlink()
           profile = artifact["profile"]
-          assert profile["opt_level"] == "3" and profile["debug_assertions"] is False and profile["overflow_checks"] is False
+          original_test = os.environ["TRNM_BUILD_PROFILE"] == "test"
+          assert profile["opt_level"] == "3"
+          assert profile["debug_assertions"] is original_test and profile["overflow_checks"] is original_test
+          m06 = [row for row in rows if row.get("reason") == "compiler-artifact"
+                 and row.get("target", {}).get("name") == "trnm_mvcc_fee"
+                 and row.get("target", {}).get("kind") == ["lib"]
+                 and row.get("profile", {}).get("test") is False]
+          assert len(m06) == 1, "exact M06 dependency profile required"
+          m06_profile = m06[0]["profile"]
+          assert m06_profile["opt_level"] == ("1" if original_test else "3")
+          assert m06_profile["debug_assertions"] is original_test
+          assert m06_profile["overflow_checks"] is original_test
           assert artifact["features"] == ["default"], "expected default features"
           with binary.open("rb") as stream:
               assert stream.read(4) == b"\x7fELF"
               stream.seek(0)
               digest = hashlib.file_digest(stream, "sha256").hexdigest()
           (root / "binary.json").write_text(json.dumps({"artifact": artifact, "sha256": digest,
-              "scope": "original standalone CPU-policy tests and native reactor-exit regressions"}, indent=2) + "\n")
+              "m06_profile": m06_profile, "original_test_profile": original_test,
+              "release_supplementary": not original_test,
+              "scope": "unchanged CPU-policy workloads and limits; original test and supplementary release are separate denominators"}, indent=2) + "\n")
           (root / "binary.sha256").write_text(digest + "  " + str(binary) + "\n")
           (root / "binary.txt").write_text(str(binary) + "\n")
           PY
@@ -168,7 +196,7 @@
         "if": "always()"
         "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
         "with":
-          "name": "original-large-state-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}"
+          "name": "original-large-state-${{ matrix.runner }}-${{ matrix.source }}-${{ matrix.build_profile }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}"
           "path": "${{ runner.temp }}/original-large-state-observations/"
           "if-no-files-found": "error"
           "retention-days": 30

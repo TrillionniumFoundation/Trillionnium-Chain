@@ -10,12 +10,16 @@ pub mod blocked_zero_paired;
 pub mod facts;
 mod integer_paired;
 pub mod legal_attempt;
+pub mod low_rank_prefix;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
 pub mod maintenance_prefix;
 pub mod paired_product;
 pub mod rejection_cache;
+#[cfg(test)]
+mod statement_boundaries;
 pub mod structured;
+pub mod task_product_facts;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";
 pub const N: usize = 64;
@@ -184,6 +188,43 @@ pub fn task_id(a: &[u32], b: &[u32]) -> Result<Hash, WorkError> {
     validate(a)?;
     validate(b)?;
     Ok(hash(b"task", &[&field_bytes(a), &field_bytes(b)]))
+}
+/// Same task bytes with cooperative owner checkpoints; cancellation is never a
+/// statement that the task relation is invalid. The original entry stays intact.
+pub fn task_id_with_progress<E>(
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(u64) -> Result<(), E>,
+) -> Result<Hash, VerificationError<E>> {
+    let mut completed = 0;
+    for values in [a, b] {
+        if values.len() != CELLS {
+            return Err(WorkError::Length.into());
+        }
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            if chunk.iter().any(|v| u128::from(*v) >= Q) {
+                return Err(WorkError::Field.into());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    let mut h = Sha256::new();
+    h.update(b"TRNM-PON1\0");
+    h.update(4u16.to_le_bytes());
+    h.update(b"task");
+    for values in [a, b] {
+        h.update(((CELLS * 4) as u32).to_le_bytes());
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            for value in chunk {
+                h.update(value.to_le_bytes());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    progress(completed).map_err(VerificationError::Cancelled)?;
+    Ok(h.finalize().into())
 }
 fn expand(challenge: Hash, label: u8, len: usize) -> Result<Vec<u32>, WorkError> {
     relation_only(expand_with_progress(
@@ -774,11 +815,24 @@ fn verify_with_kernel<E>(
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     kernel: VerificationKernel,
 ) -> Result<VerifiedWork, VerificationError<E>> {
+    let checked = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+    verify_checked_with_kernel(challenge, bytes, progress, kernel, checked)
+}
+
+// Private continuation of the native verifier. Only the current invocation's
+// checked statement/inputs may enter: callers cannot supply a cached verdict.
+fn verify_checked_with_kernel<E>(
+    challenge: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+    kernel: VerificationKernel,
+    checked: CheckedProofInputs,
+) -> Result<VerifiedWork, VerificationError<E>> {
     let CheckedProofInputs {
         matrices,
         actual_task,
         ticket,
-    } = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+    } = checked;
     let (a, tail) = matrices.split_at(CELLS);
     let (b, claimed) = tail.split_at(CELLS);
     let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];

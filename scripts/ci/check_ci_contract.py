@@ -227,6 +227,11 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_read_validated_business_goodput.py',
     'python3 scripts/ci/test_read_failed_native_campaign_zip.py',
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
+    'python3 scripts/ci/test_throughput_cost_coverage.py',
+    'python3 scripts/ci/test_rust_source_tokens.py',
+    'python3 scripts/ci/test_collected_unit_empty_v1.py',
+    'python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+    'python3 scripts/ci/test_codeql_semantic_observations_v1.py',
     'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
     'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
     'python3 scripts/ci/test_w1_lifecycle_cost_v4.py',
@@ -234,6 +239,10 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
     'python3 scripts/test_llm_cell_release.py',
     'python3 scripts/ci/test_run_legacy_reorg_root_abba.py',
+    'python3 -B scripts/ci/test_w1_factorial_native_gate.py',
+    'python3 -B scripts/ci/test_prepare_artifact_upload.py',
+    'python3 -B scripts/ci/test_cell_storage_convergence_ci.py',
+    'python3 -B scripts/ci/test_fresh_rejection_report.py',
 )
 W1_LIFECYCLE_NATIVE_CONTROLS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4'
 PROOF_LATENCY_READER_COMMANDS = (
@@ -288,6 +297,7 @@ RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml
 MODEL_OBSERVATION_BLOCK = '''    (
       trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
       mkdir -p "$trnm_model_receipt_root"
+      export TRNM_CI_RECEIPT_DIR="$trnm_model_receipt_root"
       export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
       test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
       test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"
@@ -404,6 +414,16 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_authenticated_suite_count.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
+    # Immutable dependency inspection keeps all native and production claims false.
+    python3 scripts/ci/test_cross_repo_candidate.py -v
+    # Synthetic launcher/cache reader controls do not execute or qualify SQLite.
+    python3 scripts/ci/test_sqlite_build_requalification.py -v
+    # Synthetic acquisition controls retain the current ready and absolute-deadline contract.
+    python3 scripts/ci/test_llm_cell_acquisition.py -v
+    # Explicit synthetic WAN accounting retains all external qualification flags false.
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
     python3 scripts/ci/test_pq_authority_effect_register.py
@@ -773,6 +793,16 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
+    # Immutable dependency inspection keeps all native and production claims false.
+    python3 scripts/ci/test_cross_repo_candidate.py -v
+    # Synthetic launcher/cache reader controls do not execute or qualify SQLite.
+    python3 scripts/ci/test_sqlite_build_requalification.py -v
+    # Synthetic acquisition controls retain the current ready and absolute-deadline contract.
+    python3 scripts/ci/test_llm_cell_acquisition.py -v
+    # Explicit synthetic WAN accounting retains all external qualification flags false.
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
@@ -940,6 +970,10 @@ PY
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
     python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    python3 -B scripts/ci/test_w1_factorial_native_gate.py
+    python3 -B scripts/ci/test_prepare_artifact_upload.py
+    python3 -B scripts/ci/test_cell_storage_convergence_ci.py
+    python3 -B scripts/ci/test_fresh_rejection_report.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
@@ -948,7 +982,13 @@ PY
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_read_failed_native_campaign_zip.py
+    python3 scripts/ci/test_read_native_campaign_attempt.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_throughput_cost_coverage.py
+    python3 scripts/ci/test_rust_source_tokens.py
+    python3 scripts/ci/test_collected_unit_empty_v1.py
+    python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py
+    python3 scripts/ci/test_codeql_semantic_observations_v1.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
     python3 scripts/ci/test_w1_lifecycle_cost_v4.py
@@ -1050,6 +1090,7 @@ on:
       - scripts/w1_owned_process_collector_v1.py
       - scripts/test_w1_owned_process_collector_v1.py
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz
       - evidence/pon-w1-fresh-runtime-20261107/**
       - evidence/pon-w1-backend-sdk-20261107/**
       - scripts/w1_kaggle_worker_template.py
@@ -1057,6 +1098,7 @@ on:
       - scripts/project-preflight.sh
       - evidence/pon-w1-complete-succinct-20261028/**
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz
       - evidence/pon-w1-verifier-hardening-20261028/**
       - evidence/pon-w1-transparent-profile-20261104/**
       - evidence/pon-w1-stark-review-20261106/**
@@ -1175,7 +1217,7 @@ W1_POSTWIN_CRITICAL_STEPS = {
               raise SystemExit('all 15 named source-map controls must execute exactly once without skips')
           PY
 ''',
-    "v2_gate_tests": r'''      - name: Execute all 23 saved-v2 report consistency controls
+    "v2_gate_tests": r'''      - name: Execute all 31 saved-v2 report consistency controls
         if: always() && steps.source.outcome == 'success'
         id: v2_gate_tests
         shell: bash
@@ -1188,9 +1230,17 @@ W1_POSTWIN_CRITICAL_STEPS = {
           text = Path(sys.argv[1]).read_text()
           expected = {
               'test_budget_and_qualification_cannot_be_widened',
+              'test_cancellation_after_stage_snapshot_cannot_complete_the_controls',
               'test_case_command_must_use_pinned_verifier',
               'test_case_command_must_use_planned_inputs',
               'test_case_result_must_match_summary',
+              'test_current_gate_rejects_legacy_without_explicit_replay',
+              'test_current_gate_rejects_unknown_process_schema',
+              'test_current_hosted_controls_bind_common_clock_and_summary_completion',
+              'test_current_stage_cancellation_fields_are_mandatory_and_exact',
+              'test_current_stage_cannot_skip_common_settlement_controls',
+              'test_current_stage_clock_cannot_extend_original_budget',
+              'test_current_stage_measurements_pass_without_proof_claim',
               'test_incomplete_session_observation_is_rejected',
               'test_integer_exit_codes_cannot_be_booleans',
               'test_mutation_identity_must_match_planned_bytes',
@@ -1215,34 +1265,9 @@ W1_POSTWIN_CRITICAL_STEPS = {
           required = sorted((name, f'test_w1_v2_controls_gate.V2ControlsGateTests.{name}', 'ok')
                             for name in expected)
           if (sorted(rows) != required
-                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['23']
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['31']
                   or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
-              raise SystemExit('all 23 named v2 report controls must execute exactly once without skips')
-          PY
-          python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v 2>&1 | tee "$W1_PROFILE_OUT/v3-gate-tests.log"
-          python3 - "$W1_PROFILE_OUT/v3-gate-tests.log" <<'PY'
-          from pathlib import Path
-          import re, sys
-          text = Path(sys.argv[1]).read_text()
-          expected = {
-              'test_current_cli_selects_current_schema_without_a_downgrade_option',
-              'test_current_contract_accepts_actual_clean_expected_rejection',
-              'test_current_contract_accepts_actual_clean_process_observation',
-              'test_current_contract_refuses_deadline_exhaustion',
-              'test_current_contract_refuses_legacy_and_unknown_observations',
-              'test_current_contract_refuses_snapshot_cancellation',
-              'test_current_contract_requires_every_new_snapshot_field',
-              'test_current_contract_retains_unqualified_resource_and_proof_scope',
-              'test_current_snapshot_fields_cannot_coerce_types',
-              'test_version_selector_is_explicit_and_unknown_versions_are_refused',
-          }
-          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
-          required = sorted((name, f'test_w1_v2_current_stage_gate.CurrentStageV3ControlsGateTests.{name}', 'ok')
-                            for name in expected)
-          if (sorted(rows) != required
-                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['10']
-                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
-              raise SystemExit('all 10 current stage-v3 controls must execute exactly once without skips')
+              raise SystemExit('all 31 named v2 report controls must execute exactly once without skips')
           PY
 ''',
     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
@@ -1509,6 +1534,14 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     for command in (parent_material, parent_step):
         require(command in lanes['protocol-contract'] and script.count(command) == 1,
                 'parent material and parent-step byte checks must execute exactly once in protocol-contract')
+    for command in (
+            'python3 scripts/ci/test_cross_repo_candidate.py -v',
+            'python3 scripts/ci/test_pon_wan_evidence.py -v',
+            'python3 scripts/ci/test_pon_decentralization_audit.py -v',
+            'python3 scripts/ci/test_pon_wan_control_domains.py -v'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'WAN and immutable cross-repository controls must execute exactly once in repository-truth')
     for command in CURRENT_READER_COMMANDS:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
@@ -2284,6 +2317,105 @@ def check_pq_system_required_controls(root: Path) -> dict:
             'selected_meaningful_controls': 63, 'tests_executed': False}
 
 
+
+# Original typed-pending controls enter the existing pilot command once.
+# This checks registration, not execution or resource-owner qualification.
+LLM_TYPED_PENDING_TESTS = {
+    "test_llm_runtime_exit_initial_pending": {
+        "class": "InitialTerminalPendingTests",
+        "methods": [
+            "test_initial_task_set_shrink_keeps_pending_until_exact_wait4",
+            "test_initial_worker_stat_enoent_retains_validated_prefix_without_full_proof",
+            "test_constructor_refusal_is_retained_in_same_owner_slot_before_racing_terminal_wait4",
+            "test_pending_late_wait4_uses_both_original_deadlines",
+            "test_pending_requires_exact_wait4_and_valid_nonzero_resources",
+            "test_pending_full_owner_rejects_overcap_nonzero_exit_and_timeout_despite_final_exit0",
+            "test_observed_bad_status_or_stat_cannot_be_erased_by_later_enoent",
+            "test_successful_task_count_decrease_cannot_rebound_before_or_after_enoent",
+            "test_unknown_reads_malformed_fields_and_partial_constructor_fds_refuse",
+            "test_pending_new_tid_reappearance_changed_birth_and_reused_fd_are_sticky",
+            "test_actual_current_rss_failed_constructor_blocks_immediate_terminal_in_import_and_main",
+            "test_failed_slot_never_overwrites_an_earlier_result_or_foreign_owner",
+            "test_frozen_original_model_and_v2_v3_bytes_and_old_v4_profile_refusal",
+            "test_real_owned_wait4_closes_only_synthetic_initial_roster_gap"
+        ]
+    },
+    "test_llm_runtime_exit_binding_pending": {
+        "class": "BindingTerminalPendingTests",
+        "methods": [
+            "test_held_worker_enoent_in_each_acquisition_read_keeps_original_pending",
+            "test_successfully_read_bad_status_is_sticky_before_later_stat_enoent",
+            "test_other_task_read_errors_and_enoent_without_roster_loss_refuse",
+            "test_pidfd_open_or_fdinfo_failure_is_not_a_held_task_read",
+            "test_group_or_leader_read_failure_never_creates_binding_pending",
+            "test_real_supervise_and_owned_wait4_close_only_with_original_resource_rules",
+            "test_pending_unknown_wrong_wait_and_missing_receipts_cannot_close",
+            "test_original_whole_deadline_cannot_be_replaced_by_new_pending_window",
+            "test_constructor_failure_diagnostic_comes_from_actual_current_rss_call",
+            "test_legacy_sources_unchanged_and_previous_v4_source_receipt_refused"
+        ]
+    },
+    "test_llm_runtime_exit_post_binding_retirement": {
+        "class": "PostBindingRetirementTests",
+        "methods": [
+            "test_bound_esrch_in_each_postbinding_read_retains_only_pending",
+            "test_unbound_esrch_and_postbinding_other_errors_still_refuse",
+            "test_bound_esrch_requires_exact_original_worker_terminal_event",
+            "test_terminal_event_cannot_replace_original_binding_or_held_identity",
+            "test_event_does_not_qualify_live_reappearing_or_other_missing_worker",
+            "test_successful_bad_status_is_not_erased_by_later_bound_esrch",
+            "test_postbinding_leader_and_group_esrch_still_refuse",
+            "test_roster_change_after_first_retention_check_is_not_hidden",
+            "test_one_loss_from_three_threads_does_not_cover_a_later_other_loss",
+            "test_previous_v4_source_receipt_remains_closed",
+            "test_native_held_proc_read_esrch_and_pidfd_event_use_actual_owned_wait4",
+            "test_native_terminal_event_does_not_bypass_exit_rss_or_original_deadline"
+        ]
+    }
+}
+
+
+def check_typed_pending_worker_controls(root: Path) -> dict:
+    pilot_path = root / 'scripts/test_llm_runtime_pilot.py'
+    require(pilot_path.is_file() and not pilot_path.is_symlink(),
+            'typed pending controls require the regular pilot entry')
+    pilot = ast.parse(pilot_path.read_text())
+    counts = {}
+    for module_name, expected in LLM_TYPED_PENDING_TESTS.items():
+        imports = [node for node in ast.walk(pilot)
+                   if isinstance(node, ast.ImportFrom) and node.module == module_name]
+        require(len(imports) == 1 and imports[0] in pilot.body
+                and imports[0].level == 0
+                and [(alias.name, alias.asname) for alias in imports[0].names]
+                == [(expected['class'], None)],
+                'typed pending controls require one unconditional original class import: ' + module_name)
+        source = root / 'scripts' / (module_name + '.py')
+        require(source.is_file() and not source.is_symlink(),
+                'typed pending original control source missing: ' + module_name)
+        tree = ast.parse(source.read_text())
+        classes = [node for node in tree.body
+                   if isinstance(node, ast.ClassDef) and node.name == expected['class']]
+        require(len(classes) == 1 and not classes[0].decorator_list
+                and [ast.unparse(base) for base in classes[0].bases] == ['unittest.TestCase'],
+                'typed pending controls require their undecorated original TestCase: ' + module_name)
+        methods = [node for node in classes[0].body
+                   if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                   and node.name.startswith('test_')]
+        names = [node.name for node in methods]
+        require(len(names) == len(set(names)) == len(expected['methods'])
+                and set(names) == set(expected['methods'])
+                and all(isinstance(node, ast.FunctionDef) and not node.decorator_list
+                        and any(not isinstance(statement, ast.Pass)
+                                and not (isinstance(statement, ast.Expr)
+                                         and isinstance(statement.value, ast.Constant))
+                                for statement in node.body)
+                        for node in methods),
+                'typed pending controls must retain every original non-skipped method: ' + module_name)
+        counts[module_name] = len(methods)
+    return {'original_controls': counts, 'selected_original_controls': sum(counts.values()),
+            'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
@@ -2299,6 +2431,7 @@ def validate(root: Path = ROOT) -> dict:
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)
     check_manual_research_workflows(root)
+    typed_pending_worker_controls = check_typed_pending_worker_controls(root)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
     pq_system_controls = check_pq_system_required_controls(root)
@@ -2583,6 +2716,7 @@ def validate(root: Path = ROOT) -> dict:
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
             'pq_system_controls': pq_system_controls,
+            'typed_pending_worker_controls': typed_pending_worker_controls,
             'tests_executed': False}
 
 

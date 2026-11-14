@@ -1,0 +1,5 @@
+Updating 5c04c60e4..51c215b45
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json |  2 +-
+ scripts/ci/test_ci_contract.py            | 25 +++++++++++++++++++++----
+ 2 files changed, 22 insertions(+), 5 deletions(-)

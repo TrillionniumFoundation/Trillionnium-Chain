@@ -191,16 +191,14 @@ def check(root, output, expected_digest):
 
 HISTORICAL_SEMANTICS = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
 HISTORICAL_SEMANTICS_SHA256 = '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221'
-REVIEWED_LOCK = 'formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock'
-HISTORICAL_LOCK_SHA256 = 'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f'
-CURRENT_LOCK_SHA256 = 'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'
-
-REVIEWED_VERIFIER_LOCK = 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock'
-HISTORICAL_VERIFIER_LOCK_SHA256 = '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef'
-CURRENT_VERIFIER_LOCK_SHA256 = '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'
-REVIEWED_LOCKS = (
-    (0, REVIEWED_VERIFIER_LOCK, HISTORICAL_VERIFIER_LOCK_SHA256, CURRENT_VERIFIER_LOCK_SHA256),
-    (2, REVIEWED_LOCK, HISTORICAL_LOCK_SHA256, CURRENT_LOCK_SHA256),
+# Exact report index, source path, frozen historical SHA, and reviewed current SHA.
+REVIEWED_LOCK_CHANGES = (
+    (0, 'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
+     '9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef',
+     '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
+    (2, 'formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock',
+     'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f',
+     'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'),
 )
 
 
@@ -225,10 +223,12 @@ def bounded_regular(path):
 
 
 def check_semantics(root, current_report):
-    """Require exact correspondence except two separately pinned lock SHAs.
+    """Require exact report correspondence except two independently pinned lock SHAs.
 
-    This preserves the complete historical report bytes. It is neither a new
-    execution nor an equivalence theorem for the changed dependency graph.
+    Both saved historical observations retain their original bytes. This
+    current namespace is neither a new execution nor a dependency equivalence
+    theorem. The unchanged guest lock and every other report property must
+    still equal the frozen historical report.
     """
     original = bounded_regular(Path(root) / HISTORICAL_SEMANTICS)
     require(hashlib.sha256(original).hexdigest() == HISTORICAL_SEMANTICS_SHA256,
@@ -241,22 +241,22 @@ def check_semantics(root, current_report):
             'historical lock provenance differs')
     require(type(actual_rows) is list and len(actual_rows) == 3,
             'current reviewed lock provenance differs')
-    reviewed = []
-    for index, path, historical_sha256, current_sha256 in REVIEWED_LOCKS:
+    changes = []
+    for index, path, historical_sha, current_sha in REVIEWED_LOCK_CHANGES:
         lock = bounded_regular(Path(root) / path)
-        require(hashlib.sha256(lock).hexdigest() == current_sha256,
+        require(hashlib.sha256(lock).hexdigest() == current_sha,
                 'reviewed current lock bytes changed: ' + path)
         require(historical_rows[index]['path'] == path
-                and historical_rows[index]['sha256'] == historical_sha256,
-                'historical lock provenance differs: ' + path)
+                and historical_rows[index]['sha256'] == historical_sha,
+                'historical lock provenance differs')
         require(actual_rows[index]['path'] == path
-                and actual_rows[index]['sha256'] == current_sha256,
-                'current reviewed lock provenance differs: ' + path)
-        historical_rows[index]['sha256'] = current_sha256
-        reviewed.append({
-            'path': path, 'historical_sha256': historical_sha256,
-            'current_sha256': current_sha256,
-            'json_pointer': f'/provenance/lock_checks/{index}/sha256',
+                and actual_rows[index]['sha256'] == current_sha,
+                'current reviewed lock provenance differs')
+        historical_rows[index]['sha256'] = current_sha
+        changes.append({
+            'json_pointer': '/provenance/lock_checks/' + str(index) + '/sha256',
+            'path': path, 'historical_sha256': historical_sha,
+            'current_sha256': current_sha,
         })
     # Only these two exact properties may differ. Canonical JSON also refuses
     # bool/int or int/float aliases that ordinary dictionary equality accepts.
@@ -267,8 +267,8 @@ def check_semantics(root, current_report):
     return {
         'schema': 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3',
         'historical_report_sha256': HISTORICAL_SEMANTICS_SHA256,
-        'reviewed_locks': reviewed,
-        'only_changed_json_pointers': [row['json_pointer'] for row in reviewed],
+        'reviewed_lock_changes': changes,
+        'only_changed_json_pointers': [row['json_pointer'] for row in changes],
         'all_other_report_fields_identical': True,
         'historical_report_bytes_rewritten': False,
         'new_native_execution_or_dependency_equivalence_proved': False,

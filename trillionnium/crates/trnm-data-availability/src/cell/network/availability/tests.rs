@@ -481,3 +481,111 @@ fn default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fal
     assert_eq!(served.sent_response_bytes, report.received_response_bytes);
     cache.verify_complete(&manifest).unwrap();
 }
+
+#[test]
+fn peer_failure_order_preserves_preferred_cyclic_ties_and_actual_address_identity() {
+    let peers: Vec<SocketAddr> = (1..=4)
+        .map(|port| SocketAddr::from(([127, 0, 0, 1], port)))
+        .collect();
+    let responses = ResponseBudget::new(64);
+    responses.peer_failed(peers[0]).unwrap();
+    responses.peer_failed(peers[2]).unwrap();
+    let snapshot = responses.peer_indices(&peers, 2, 0b0110).unwrap();
+    assert_eq!(snapshot, [1, 3, 2, 0]);
+    let reordered = [peers[2], peers[0], peers[3], peers[1]];
+    assert_eq!(
+        responses.peer_indices(&reordered, 1, 0).unwrap(),
+        [2, 3, 1, 0]
+    );
+    responses.peer_failed(peers[1]).unwrap();
+    // A later observation affects only a later ordering, never this snapshot.
+    assert_eq!(snapshot, [1, 3, 2, 0]);
+    assert_eq!(
+        responses.peer_indices(&peers, 2, 0b0110).unwrap(),
+        [3, 2, 1, 0]
+    );
+    assert_eq!(responses.received().unwrap(), 0);
+}
+
+#[test]
+fn peer_failure_hints_are_bounded_saturating_and_private_to_one_session() {
+    let peers: Vec<SocketAddr> = (1..=9)
+        .map(|port| SocketAddr::from(([127, 0, 0, 1], port)))
+        .collect();
+    let responses = ResponseBudget::new(64);
+    for peer in &peers[..8] {
+        responses.peer_failed(*peer).unwrap();
+    }
+    assert!(matches!(
+        responses.peer_failed(peers[8]),
+        Err(CellErrorV1::Invalid("cell peer failure bound"))
+    ));
+    assert!(responses.peer_indices(&peers, 0, 0).is_err());
+    responses
+        .state
+        .lock()
+        .unwrap()
+        .peer_failures
+        .insert(peers[0], u64::MAX);
+    responses.peer_failed(peers[0]).unwrap();
+    assert_eq!(
+        responses.state.lock().unwrap().peer_failures[&peers[0]],
+        u64::MAX
+    );
+    assert_eq!(responses.state.lock().unwrap().peer_failures.len(), 8);
+    assert_eq!(
+        responses.peer_indices(&peers[..8], 0, 0).unwrap(),
+        [1, 2, 3, 4, 5, 6, 7, 0]
+    );
+    let fresh = ResponseBudget::new(64);
+    assert_eq!(
+        fresh.peer_indices(&peers[..8], 0, 0).unwrap(),
+        [0, 1, 2, 3, 4, 5, 6, 7]
+    );
+    assert!(responses
+        .peer_indices(&[], usize::MAX, 0)
+        .unwrap()
+        .is_empty());
+    assert_eq!(responses.received().unwrap(), 0);
+    assert!(peers[..8]
+        .iter()
+        .all(|peer| !responses.is_quarantined(*peer).unwrap()));
+}
+
+#[test]
+fn peer_failure_miss_keeps_previous_provider_as_real_pinned_fallback() {
+    let (_dir, _path, manifest, chunks) = fixture();
+    let a = supplying_peer(manifest.clone(), chunks.clone(), 2, Arc::default());
+    let b = supplying_peer(manifest.clone(), chunks.clone(), 1, Arc::default());
+    let peers = [a.address, b.address];
+    let requests_left = AtomicU64::new(4);
+    let responses = ResponseBudget::new(2 * (9 + 16_384) + 2 * 9);
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let transport = RequestContext {
+        cancelled: None,
+        timeout: Duration::from_secs(2),
+        overall: deadline,
+        requests_left: &requests_left,
+        responses: &responses,
+    };
+    let (first, supplier, rejected) =
+        download_chunk(&manifest.chunks()[0], 0, &peers, &transport).unwrap();
+    assert_eq!(first, chunks[0]);
+    assert_eq!(supplier, b.address);
+    assert_eq!(rejected, 1);
+    assert!(!responses.is_quarantined(a.address).unwrap());
+    // B now has the better score and an availability hint, but its ordinary
+    // miss must still fall back to A, which owns this different pinned chunk.
+    let (second, supplier, rejected) =
+        download_chunk_preferred(&manifest.chunks()[1], 0, &peers, &transport, 0b10).unwrap();
+    assert_eq!(second, chunks[1]);
+    assert_eq!(supplier, a.address);
+    assert_eq!(rejected, 1);
+    assert_eq!(a.calls.load(Ordering::Relaxed), 2);
+    assert_eq!(b.calls.load(Ordering::Relaxed), 2);
+    assert!(!responses.is_quarantined(a.address).unwrap());
+    assert!(!responses.is_quarantined(b.address).unwrap());
+    assert_eq!(requests_left.load(Ordering::Relaxed), 0);
+    assert_eq!(responses.received().unwrap(), 2 * (9 + 16_384) + 2 * 9);
+    assert_eq!(transport.overall, deadline);
+}

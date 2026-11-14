@@ -1,5 +1,6 @@
 """Adversarial fixtures for the claim guard; deliberately no crypto pass tests."""
 import json
+import math
 import hashlib
 import errno
 import io
@@ -483,6 +484,38 @@ class TestClaimGuard(unittest.TestCase):
     def test_duplicate_json_keys_refused(self):
         self.put(DEVNET, b'{"production_activation":false,"production_activation":false}')
         self.refused()
+
+    def test_ambiguous_json_numeric_values_refused_even_in_future_fields(self):
+        # Original b2bbcc95/9fcd3fef parser controls, adapted to current
+        # claim documents. An unused field cannot silently change its value.
+        for path in (CONFIG, CONSENSUS, CORPUS, DEVNET, BOUNDARY):
+            original = json.dumps(self.configs[path]).encode()
+            self.assertTrue(original.endswith(b'}'))
+            for token in (b'NaN', b'Infinity', b'-Infinity',
+                          b'1e309', b'-1e309', b'1e-99999', b'-1e-99999'):
+                with self.subTest(path=path, token=token):
+                    self.put(path, original[:-1] +
+                             b',"unreviewed_future_policy":' + token + b'}')
+                    self.refused()
+            self.put(path, original)
+
+    def test_finite_json_float_values_keep_their_original_meaning(self):
+        from pq_chain_claim_guard import strict_json
+        # Keep the original finite/zero/subnormal cases and both signed zeros.
+        for token, expected in (
+            ('1.25', 1.25), ('-1.25', -1.25), ('1e-8', 1e-8),
+            ('0e-99999', 0.0), ('-0e-99999', -0.0),
+            ('0.0', 0.0), ('-0.0', -0.0),
+            ('5e-324', 5e-324), ('-5e-324', -5e-324),
+        ):
+            with self.subTest(token=token):
+                self.put('policy-float-control.json',
+                         ('{"risk":' + token + '}').encode())
+                actual = strict_json(self.root, 'policy-float-control.json')['risk']
+                self.assertEqual(actual, expected)
+                if expected == 0:
+                    self.assertEqual(math.copysign(1.0, actual),
+                                     math.copysign(1.0, expected))
 
     def test_nonfinite_and_nonstandard_json_numbers_refused(self):
         # Unused configuration fields must not launder invalid JSON into HOLD.

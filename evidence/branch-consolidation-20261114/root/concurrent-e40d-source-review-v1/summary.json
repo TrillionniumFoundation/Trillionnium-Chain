@@ -1,0 +1,33 @@
+{
+  "root_head": "48257979322b8ef6d2394aab53b6ee439b7fc88b",
+  "old_remote_candidate": "73d5a17b9b7fb5f67040554f22ff37d20725e548",
+  "new_remote_candidate": "e40d7071c4724e6600deef8a2820bf35c1982289",
+  "remote_branch_changes": [
+    {
+      "branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "before": "73d5a17b9b7fb5f67040554f22ff37d20725e548",
+      "after": "e40d7071c4724e6600deef8a2820bf35c1982289"
+    }
+  ],
+  "commits": [
+    "e40d7071c4724e6600deef8a2820bf35c1982289 fix(ci): retain complete History roster and diagnostic test results"
+  ],
+  "paths": [
+    "M\t.github/workflows/pon-w1-work-security.yml",
+    "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+    "M\tscripts/ci/check_w1_native_roster.py",
+    "M\tscripts/ci/test_w1_factorial_native_gate.py",
+    "M\tscripts/ci/w1_native_rosters_v1.json"
+  ],
+  "numstat": [
+    "3\t4\t.github/workflows/pon-w1-work-security.yml",
+    "2\t2\tconfig/pon/pq-cross-branch-corpus-v1.json",
+    "20\t0\tscripts/ci/check_w1_native_roster.py",
+    "34\t4\tscripts/ci/test_w1_factorial_native_gate.py",
+    "2\t0\tscripts/ci/w1_native_rosters_v1.json"
+  ],
+  "patch_bytes": 10987,
+  "patch_sha256": "88c3c8a7f48943cf77af37e7674aa9e6f9124379a4ad4ae1eb60b944714d7103",
+  "new_tree": "6c6e1a3b1e3239a7cb95290485c1942ce22ef8a6",
+  "remote_writes": false
+}

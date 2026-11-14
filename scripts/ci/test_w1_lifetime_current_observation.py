@@ -67,16 +67,18 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertFalse(report['historical_reader_or_pin_bytes_changed'])
 
     def test_only_the_reviewed_store_source_delta_is_present(self):
-        # Retain this frozen roster identity while checking the exact six reviewed deltas.
+        # Retain this frozen roster identity while checking the exact eight reviewed deltas.
         changed = [row['path'] for row in self.contract['sources']
                    if row['historical_sha256'] != row['current_sha256']]
         self.assertEqual(changed, list(current.CHANGED))
         self.assertEqual(changed, [
             'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
             'trillionnium/Cargo.lock',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
             'trillionnium/crates/trnm-pon-node/src/store.rs',
             'trillionnium/crates/trnm-pon-node/src/consensus.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
             'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
         ])
         self.assertEqual(len(self.sources), 20)
@@ -85,9 +87,17 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
         self.assertEqual(self.contract['sources'][7]['current_sha256'],
-                         'df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17')
+                         '5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c')
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
+
+        oracle = next(row for row in self.contract['sources']
+                      if row['path'] == 'formal/pon-nakamoto-v1/quantum_oracle_resources.py')
+        self.assertEqual(oracle['bytes'], 29812)
+        self.assertEqual(oracle['current_sha256'],
+                         '3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049')
+        self.assertEqual(self.contract['source_base_commit'],
+                         '5c04c60e463462d9df8884786e0d5bb32af08a64')
 
     def test_historical_reader_and_contract_hashes_are_independently_frozen(self):
         self.assertEqual(current.LEGACY, 'tests/fixtures/w1-lifetime-historical-7150/ledger.py')

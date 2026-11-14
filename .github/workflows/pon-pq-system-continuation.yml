@@ -8,6 +8,7 @@ on:
       - config/pon/pq-system-supplemental-tests-v1.json
       - config/pon/pq-native-tls-required-tests-v1.json
       - config/pon/pq-native-tls-witness-required-tests-v1.json
+      - config/pon/pq-native-tls-endpoint-required-tests-v1.json
       - config/pon/pq-initial-root-material-required-tests-v1.json
       - config/pon/pq-release-authority-required-tests-v2.json
       - formal/pon-nakamoto-v1/pq_root_quorum_research.py
@@ -685,6 +686,61 @@ jobs:
             fi
           done < "$PQ_OUT/tls-witness-required.tsv"
           test "$failed" = 0
+      - name: Require fixed-endpoint TLS controls without replacing loopback or witness controls
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=config/pon/pq-native-tls-endpoint-required-tests-v1.json
+          bash "$PQ_OUT/run-command.sh" tls-endpoint-lib-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --list
+          bash "$PQ_OUT/run-command.sh" tls-endpoint-cli-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_endpoint_cli --all-features -- --list
+          python3 - "$manifest" "$PQ_OUT" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          counts = {'lib': 8, 'cli': 3}
+          if (not isinstance(manifest, dict)
+                  or manifest.get('schema') != 'trnm-pq-native-tls-endpoint-required-tests-v1'
+                  or manifest.get('expected_controls') != counts
+                  or any(type(value) is not int for value in manifest['expected_controls'].values())
+                  or not isinstance(manifest.get('scopes'), dict)
+                  or set(manifest['scopes']) != set(counts)
+                  or any(manifest.get(key) is not False for key in ('production_activation',
+                      'consensus_authority', 'public_wan_accepted', 'whole_chain_quantum_security_qualified',
+                      'whole_node_rollback_protection'))):
+              raise SystemExit('TLS endpoint required-control manifest invalid')
+          root = Path(sys.argv[2])
+          rows = []
+          for scope, count in counts.items():
+              required = manifest['scopes'][scope]
+              if (not isinstance(required, list) or len(required) != count
+                      or any(not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', name) for name in required)
+                      or len(set(required)) != count):
+                  raise SystemExit('TLS endpoint required-control names invalid')
+              log = (root / f'tls-endpoint-{scope}-registry.log').read_text()
+              names = re.findall(r'^([A-Za-z0-9_:]+): test$', log, re.M)
+              if len(names) != len(set(names)) or any(names.count(name) != 1 for name in required):
+                  raise SystemExit('TLS endpoint test absent/duplicated in actual binary registry')
+              if scope == 'cli' and set(names) != set(required):
+                  raise SystemExit('TLS endpoint CLI registry differs from required controls')
+              rows.extend(f'tls-endpoint-{scope}-{index:02d}\t{scope}\t{name}\n' for index, name in enumerate(required))
+          (root / 'tls-endpoint-required.tsv').write_text(''.join(rows))
+          print(json.dumps({'scope':'registry-presence-only','required_controls':counts,'production_activation':False},sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label scope selector; do
+            case "$scope" in
+              lib) target=(--lib --all-features) ;;
+              cli) target=(--test pq_tls_endpoint_cli --all-features) ;;
+              *) exit 1 ;;
+            esac
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node "${target[@]}" "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/tls-endpoint-required.tsv"
+          test "$failed" = 0
       - name: Require original transaction scope controls
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         shell: bash
@@ -720,7 +776,7 @@ jobs:
           set -euo pipefail
           bash "$PQ_OUT/run-command.sh" sqlite-build-requalification python3 scripts/ci/check_sqlite_build_requalification.py \
             --output "$PQ_OUT/sqlite-build-requalification" --target "$RUNNER_TEMP/sqlite-build-requalification-target" \
-            --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)"
+            --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)" --rustup "$(command -v rustup)"
       - name: Preserve native control records before the complete regression
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

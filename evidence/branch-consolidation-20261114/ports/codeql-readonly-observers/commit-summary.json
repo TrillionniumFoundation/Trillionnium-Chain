@@ -1,0 +1,247 @@
+{
+  "component": "T05 bounded CodeQL metadata and pure semantic readback",
+  "commit": "c34a729ac27da5787398a646457256fdddab132f",
+  "tree": "1992dfedba841c3fe15f107f6e8bfcbdcf287a23",
+  "parent": "bc24ed14f01167233f9a53306a4d82ba77049c42",
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/collect_pinned_codeql_metadata_v1.py",
+    "scripts/ci/read_codeql_semantic_observations_v1.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_codeql_semantic_observations_v1.py",
+    "scripts/ci/test_collect_pinned_codeql_metadata_v1.py",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "patch": {
+    "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/commit.patch",
+    "bytes": 55405,
+    "sha256": "d28f4c1eaec7580aef9ee62e7e8180c385c3cf6ab3c7aa7dad51938e067962ce"
+  },
+  "review_parts": [
+    {
+      "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/commit-review-part-1.txt",
+      "bytes": 54928,
+      "sha256": "c4942508d9fe7316144f3559f538eae82a8edd5b1c75054cda08e2ec6ad2cba3"
+    },
+    {
+      "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/commit-review-part-2.txt",
+      "bytes": 477,
+      "sha256": "fd5d446df9e7a6c80fc69657ae3acd46c38757b4aec18a050712eaf9fbfa6320"
+    }
+  ],
+  "source_preservation": {
+    "original_tip": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+    "original_parent": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+    "byte_identical_files": [
+      {
+        "path": "scripts/ci/collect_pinned_codeql_metadata_v1.py",
+        "sha256": "77ee3fcffb4fca699bfc35d7842f5d206ff606c34f760f75f8fd98baae3706d5",
+        "bytes": 13374,
+        "blob": "bd4b98f504ad756d09b2176367cec691bb5e2091",
+        "exact_original_bytes": true
+      },
+      {
+        "path": "scripts/ci/test_collect_pinned_codeql_metadata_v1.py",
+        "sha256": "070962e762b08385dc1ae14b05f0e69e94315a56ade863bee0001644f1b813b1",
+        "bytes": 15528,
+        "blob": "140da79d4026661fb50969419a03c21bc91228f1",
+        "exact_original_bytes": true
+      }
+    ],
+    "selected_source_closure": [
+      {
+        "name": "LOG_LIMIT",
+        "original_ast_sha256": "a5f32f56e65c702a2fd8005c79606a0b8b1056eaae3936f2dd256019ffd68dfc",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      },
+      {
+        "name": "SEMANTIC_DIAGNOSTIC_LIMIT",
+        "original_ast_sha256": "bf77d95243efd7ea8b214cbefeea955b1328c8450dc815ba25aad0e04e6df5ef",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      },
+      {
+        "name": "SEMANTIC_MARKERS",
+        "original_ast_sha256": "e63da01967e912190555c1f83888bae666ea21f82d1111887a0299d577b739e3",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      },
+      {
+        "name": "require",
+        "original_ast_sha256": "95ed15b88b3b6c7b88bde1e84b8a2d618008ed49f62129659be39b79a7e0bf48",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      },
+      {
+        "name": "source_uri",
+        "original_ast_sha256": "784baa893e2eeb993b523bba793c8bd162e1192a63d8b5d0d2f07b37a1781b2b",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      },
+      {
+        "name": "semantic_extraction_observations",
+        "original_ast_sha256": "266c7fa26e70a36695e2e27ade2c7614b422a71673bcf389e514a9317c38ccf6",
+        "exact_original_ast": true,
+        "exact_original_source_segment": true
+      }
+    ],
+    "original_semantic_controls": [
+      {
+        "name": "test_info_semantic_failures_are_located_without_excusing_source_classes",
+        "original_ast_sha256": "5bbf5bfb9a1de6b9e42bb09e6832f6ea845d1c07cd10ce41536a8119a7c37a0e",
+        "exact_original_ast": true
+      },
+      {
+        "name": "test_unmapped_and_unknown_semantic_failure_still_remain_failures",
+        "original_ast_sha256": "defe0eb2e46da16558df8e0de8f73c638a2e25484923195bec113ea2db20b27c",
+        "exact_original_ast": true
+      },
+      {
+        "name": "test_semantic_inventory_bound_never_erases_failure_counts",
+        "original_ast_sha256": "ff78cb2aaf13bfa5b905b1cd477972df3c09fc2ab1ba1e7c57164459a1c35856",
+        "exact_original_ast": true
+      },
+      {
+        "name": "test_empty_log_inventory_does_not_certify_semantics",
+        "original_ast_sha256": "da3dd4920d5065014b8ddf0e5ea8b6f6a9e5b21c928995a4c188570e03899919",
+        "exact_original_ast": true
+      }
+    ],
+    "collector_original_controls": 26,
+    "old_runner_imported_or_restored": false
+  },
+  "original_collector_tests_passed": 26,
+  "original_semantic_tests_passed": 4,
+  "literal_source_guard_paths": 4,
+  "validation": [
+    {
+      "label": "original-collector-26",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_collect_pinned_codeql_metadata_v1.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/original-collector-26.log",
+      "sha256": "d794de545c5a9c86aabc99b32abdb367c7d3cd8c0ed24d6ed5302579284c2517",
+      "tail": "t) ... ok\ntest_leaf_symlink_is_not_read (__main__.MetadataControls.test_leaf_symlink_is_not_read) ... ok\ntest_log_total_budget_is_explicit (__main__.MetadataControls.test_log_total_budget_is_explicit) ... ok\ntest_malformed_duplicate_and_nonfinite_json_are_retained_without_validation_claim (__main__.MetadataControls.test_malformed_duplicate_and_nonfinite_json_are_retained_without_validation_claim) ... ok\ntest_missing_root_stays_unavailable_in_every_row (__main__.MetadataControls.test_missing_root_stays_unavailable_in_every_row) ... ok\ntest_output_inside_input_is_refused (__main__.MetadataControls.test_output_inside_input_is_refused) ... ok\ntest_oversized_sarif_remains_refused_and_never_truncated (__main__.MetadataControls.test_oversized_sarif_remains_refused_and_never_truncated) ... ok\ntest_read_error_stays_unknown_not_empty_success (__main__.MetadataControls.test_read_error_stays_unknown_not_empty_success) ... ok\ntest_reported_success_does_not_promote_collector_security_flags (__main__.MetadataControls.test_reported_success_does_not_promote_collector_security_flags) ... ok\ntest_sarif_profile_does_not_relax_other_json_size_bounds (__main__.MetadataControls.test_sarif_profile_does_not_relax_other_json_size_bounds) ... ok\ntest_separate_sarif_retains_complete_bytes_above_metadata_limit (__main__.MetadataControls.test_separate_sarif_retains_complete_bytes_above_metadata_limit) ... ok\ntest_separate_sarif_still_refuses_links_and_records_missing_source (__main__.MetadataControls.test_separate_sarif_still_refuses_links_and_records_missing_source) ... ok\ntest_short_and_empty_retained_files_are_not_complete_process_streams (__main__.MetadataControls.test_short_and_empty_retained_files_are_not_complete_process_streams) ... ok\ntest_synthetic_failure_bytes_and_returncode_are_not_promoted (__main__.MetadataControls.test_synthetic_failure_bytes_and_returncode_are_not_promoted) ... ok\ntest_traversal_and_output_parent_symlink_are_refused (__main__.MetadataControls.test_traversal_and_output_parent_symlink_are_refused) ... ok\ntest_unlisted_files_and_database_are_not_enumerated_or_copied (__main__.MetadataControls.test_unlisted_files_and_database_are_not_enumerated_or_copied) ... ok\n\n----------------------------------------------------------------------\nRan 26 tests in 0.036s\n\nOK\n"
+    },
+    {
+      "label": "original-semantic-4",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_codeql_semantic_observations_v1.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/original-semantic-4.log",
+      "sha256": "ecb3af2b95aa811e02b92e7f7f88b2f066cb64520074029d3c51cc09a4f72737",
+      "tail": "test_empty_log_inventory_does_not_certify_semantics (__main__.AnalysisControls.test_empty_log_inventory_does_not_certify_semantics) ... ok\ntest_info_semantic_failures_are_located_without_excusing_source_classes (__main__.AnalysisControls.test_info_semantic_failures_are_located_without_excusing_source_classes) ... ok\ntest_semantic_inventory_bound_never_erases_failure_counts (__main__.AnalysisControls.test_semantic_inventory_bound_never_erases_failure_counts) ... ok\ntest_unmapped_and_unknown_semantic_failure_still_remain_failures (__main__.AnalysisControls.test_unmapped_and_unknown_semantic_failure_still_remain_failures) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "label": "literal-source-guard",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-k",
+        "codeql_diagnostic_reader",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/literal-source-guard.log",
+      "sha256": "73410529b305364b80d91e43448c8d2e519a66f083b6a65ff220314594c04163",
+      "tail": "test_codeql_diagnostic_reader_sources_cannot_omit_or_mutate (test_pq_research_integration.CorpusGateTests.test_codeql_diagnostic_reader_sources_cannot_omit_or_mutate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.399s\n\nOK\n"
+    },
+    {
+      "label": "ci-command-negative-and-positive",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "EvaluationQuorumLaneTests.test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved",
+        "MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls",
+        "MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/ci-command-negative-and-positive.log",
+      "sha256": "8be1c747630ae49899954c64406035b793bfcca29d16e206c88dcc33bfa44c14",
+      "tail": "test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved (__main__.EvaluationQuorumLaneTests.test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved) ... ok\ntest_actual_merged_lanes_keep_all_original_controls (__main__.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ok\ntest_independent_literals_keep_original_neighbors_and_unique_commands (__main__.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.302s\n\nOK\n"
+    },
+    {
+      "label": "current-ci-contract",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/current-ci-contract.log",
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d",
+      "tail": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 26, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"pq_release_authority_controls\": {\"complete_release\": 55, \"groups\": {\"cch1_content_binding\": 3, \"initial_root_material\": 6, \"original_release\": 37, \"quorum_preflight\": 9}, \"platform_scope\": \"unix\", \"python_test_doubles\": 18, \"tests_executed\": false}, \"pq_system_controls\": {\"retained_meaningful_controls\": 52, \"selected_meaningful_controls\": 63, \"supplemental_meaningful_controls\": 11, \"tests_executed\": false}, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n"
+    },
+    {
+      "label": "current-corpus",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/current-corpus.log",
+      "sha256": "92e20a0c1acb2e39ea9492ab8c4a9e9fb3b0c64a5016c970f5bbe435915c4bab",
+      "tail": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 2594, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n"
+    },
+    {
+      "label": "diff-check",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    },
+    {
+      "label": "preflight-before-commit",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/preflight-before-commit.log",
+      "sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c"
+    },
+    {
+      "label": "diff-check-before-commit",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T05-implementation/diff-check-before-commit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "old_runner_querypack_toolchain_or_scanning_workflow_restored": false,
+  "codeql_scan_executed": false,
+  "qualification_granted": false,
+  "worktree_clean": true
+}

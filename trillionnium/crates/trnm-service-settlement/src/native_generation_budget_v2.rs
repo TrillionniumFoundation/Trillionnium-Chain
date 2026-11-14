@@ -340,7 +340,7 @@ impl State {
             .get(&id)
             .ok_or(NativeBudgetErrorV1::Invalid("GENERATION_UNKNOWN"))
     }
-    fn anchor(&mut self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
+    fn check_anchor(&self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
         require(
             (a.network, a.parameters, a.genesis) == (cfg.network, cfg.parameters, cfg.genesis),
             "GENERATION_NATIVE_CONTEXT",
@@ -350,8 +350,40 @@ impl State {
                 .is_none_or(|prior| a.generation > prior.generation || a == prior),
             "GENERATION_STALE_OWNER_SNAPSHOT",
         )?;
+        Ok(())
+    }
+    fn anchor(&mut self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
+        self.check_anchor(a, cfg)?;
         self.anchor = Some(a);
         Ok(())
+    }
+    fn check_prepare(
+        &self,
+        anchor: NativeBudgetAnchorV1,
+        clock: &ClockCheckpointV2,
+        statement: &GenerationStatementV2,
+        funding: &NativeTaskPinV2,
+        cfg: &ConfigurationV2,
+    ) -> Result<Hash> {
+        self.check_anchor(anchor, cfg)?;
+        statement.check()?;
+        statement.original_deadline.check(clock)?;
+        let id = statement.id()?;
+        require(
+            self.records.len() < cfg.max_records as usize
+                && !self.records.contains_key(&id)
+                && !self.tasks.contains_key(&statement.task),
+            "GENERATION_TASK_REPLAY",
+        )?;
+        require(
+            funding.owner == statement.owner
+                && funding.provider == statement.provider
+                && funding.deadline == statement.chain_deadline
+                && funding.whole_obligation > 0
+                && anchor.height < funding.deadline,
+            "GENERATION_NATIVE_PIN",
+        )?;
+        Ok(id)
     }
     fn apply(&mut self, e: &Event, cfg: &ConfigurationV2) -> Result<()> {
         match e {
@@ -361,24 +393,8 @@ impl State {
                 statement,
                 funding,
             } => {
-                self.anchor(*anchor, cfg)?;
-                statement.check()?;
-                statement.original_deadline.check(clock)?;
-                let id = statement.id()?;
-                require(
-                    self.records.len() < cfg.max_records as usize
-                        && !self.records.contains_key(&id)
-                        && !self.tasks.contains_key(&statement.task),
-                    "GENERATION_TASK_REPLAY",
-                )?;
-                require(
-                    funding.owner == statement.owner
-                        && funding.provider == statement.provider
-                        && funding.deadline == statement.chain_deadline
-                        && funding.whole_obligation > 0
-                        && anchor.height < funding.deadline,
-                    "GENERATION_NATIVE_PIN",
-                )?;
+                let id = self.check_prepare(*anchor, clock, statement, funding, cfg)?;
+                self.anchor = Some(*anchor);
                 self.tasks.insert(statement.task, id);
                 self.records.insert(
                     id,
@@ -793,11 +809,14 @@ impl NativeGenerationStoreV2 {
         Ok(store)
     }
     fn snapshot(&self) -> Result<State> {
+        self.snapshot_with_head().map(|(state, _, _)| state)
+    }
+    fn snapshot_with_head(&self) -> Result<(State, u64, Hash)> {
         let tx = self.connection.unchecked_transaction()?;
         let (s, sequence, root) = load(&tx, &self.configuration, self.journal_identity, None)?;
         self.check_recovery_expected_v3(sequence, root)?;
         tx.commit()?;
-        Ok(s)
+        Ok((s, sequence, root))
     }
     fn update<T>(&mut self, make: impl FnOnce(&State) -> Result<Update<T>>) -> Result<T> {
         let expected = self.recovery_expected_v3;
@@ -879,6 +898,7 @@ impl NativeGenerationStoreV2 {
         s.check()?;
         let id = s.id()?;
         let journal = self.journal_identity;
+        let configuration = self.configuration.clone();
         self.update(|state| {
             if let Some(r) = state.records.get(&id) {
                 require(r.statement == s, "GENERATION_STATEMENT_REPLAY")?;
@@ -886,8 +906,12 @@ impl NativeGenerationStoreV2 {
                 return Ok(Update::Replay(id));
             }
             let (anchor, clock, funding) = observe_task(owner, &s, false)?;
-            // This durable fence is deliberately committed first. If this
-            // journal append fails, only this same retained journal may retry.
+            // Validate under this same journal write lock before the durable
+            // owner claim. A deterministic local refusal must not strand a
+            // fresh task in a journal that cannot admit its prepare event.
+            state.check_prepare(anchor, &clock, &s, &funding, &configuration)?;
+            // The owner fence still precedes the journal write. If storage
+            // fails after this point, only this same retained journal may retry.
             owner.claim_generation_task(&s, journal)?;
             Ok(Update::append(
                 Event::Prepare {
@@ -1094,7 +1118,7 @@ impl NativeGenerationStoreV2 {
         owner: &mut impl NativeFundingOwnerV1,
         id: Hash,
     ) -> Result<NativePaymentObservationV1> {
-        let mut state = self.snapshot()?;
+        let (mut state, sequence, root) = self.snapshot_with_head()?;
         let r = state.record(id)?.clone();
         let original = r.payment.as_ref().ok_or(NativeBudgetErrorV1::Invalid(
             "GENERATION_PAYMENT_UNRECORDED",
@@ -1112,6 +1136,15 @@ impl NativeGenerationStoreV2 {
         require(
             observed.operation == original.operation,
             "GENERATION_PAYMENT_REOBSERVATION",
+        )?;
+        // The owner callback may overlap an append through another connection.
+        // Read a new SQLite snapshot after leaving the original one: even an
+        // append at the same native generation makes this observation stale.
+        // This is a readback fence, not a durable anchor update or a new payment.
+        let (_, current_sequence, current_root) = self.snapshot_with_head()?;
+        require(
+            (current_sequence, current_root) == (sequence, root),
+            "GENERATION_PAYMENT_JOURNAL_CHANGED",
         )?;
         Ok(observed)
     }

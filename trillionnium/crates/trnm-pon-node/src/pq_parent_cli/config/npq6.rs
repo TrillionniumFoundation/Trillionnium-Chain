@@ -115,6 +115,8 @@ pub(super) fn decode(
         ca_certificate_sha256: selected.ca_certificate_sha256,
         server_name: selected.server_name,
         witness: selected.witness,
+        // This schema retains the original loopback transport selection.
+        endpoint: None,
     };
     // The caller still compares all three context digests and builds the
     // original pinned transport and owner before opening either listener.

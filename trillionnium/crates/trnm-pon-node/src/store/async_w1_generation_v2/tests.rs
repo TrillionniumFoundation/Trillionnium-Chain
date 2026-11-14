@@ -108,13 +108,16 @@ fn reject(n: &mut Node, parent: Hash, transaction: Vec<u8>) {
     }
 }
 fn reserve(s: &crate::Settings) -> (Hash, Vec<u8>) {
+    reserve_nonce(s, 1)
+}
+fn reserve_nonce(s: &crate::Settings, nonce: u64) -> (Hash, Vec<u8>) {
     let task = hash(
         b"task-instance-v3",
         &[
             &s.network(),
             &s.parameters(),
             &public(0),
-            &1u64.to_le_bytes(),
+            &nonce.to_le_bytes(),
             &public(1),
             &1000u64.to_le_bytes(),
             &20u64.to_le_bytes(),
@@ -124,7 +127,7 @@ fn reserve(s: &crate::Settings) -> (Hash, Vec<u8>) {
     payload.extend(public(1));
     payload.extend(1000u64.to_le_bytes());
     payload.extend(20u64.to_le_bytes());
-    (task, signed(s, 0, 1, 2, payload))
+    (task, signed(s, 0, nonce, 2, payload))
 }
 fn balance(n: &Node, who: Hash) -> u64 {
     if n.state_backend == StateBackend::PermanentAccountGrowthV2 {
@@ -513,6 +516,61 @@ fn real_node_task_owner_assignment_survives_cold_reopen_and_refuses_another_gene
     assert!(!first.readback(id).unwrap().dispatch_intent);
     assert!(second.readback(id).is_err());
 }
+#[test]
+fn real_node_full_generation_journal_rejection_does_not_claim_task_across_cold_reopen() {
+    for backend in [
+        StateBackend::Legacy,
+        StateBackend::AuthenticatedV1,
+        StateBackend::PermanentAccountGrowthV2,
+    ] {
+        let d = tempfile::tempdir().unwrap();
+        let node_path = d.path().join("node");
+        let journal = d.path().join("full.sqlite");
+        let mut n = open(&node_path, backend);
+        let settings = n.settings.clone();
+        let (first_task, first_wire) = reserve_nonce(&settings, 1);
+        let (second_task, second_wire) = reserve_nonce(&settings, 2);
+        mine(&mut n, settings.genesis(), vec![first_wire, second_wire]);
+        let first_statement = statement(first_task);
+        let mut second_statement = statement(second_task);
+        second_statement.provider_operation = [23; 32];
+        let mut config = configuration(&n);
+        config.max_records = 1;
+        let mut full = NativeGenerationStoreV2::open(&journal, config.clone()).unwrap();
+        let mut runtime = TestRuntime {
+            corrupt_profile: false,
+            cancel_after_receipt: false,
+        };
+        let first_id = {
+            let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
+            let id = full.prepare(&mut owner, first_statement.clone()).unwrap();
+            assert!(matches!(
+                full.prepare(&mut owner, second_statement.clone()),
+                Err(NativeBudgetErrorV1::Invalid("GENERATION_TASK_REPLAY"))
+            ));
+            id
+        };
+        let before = full.readback(first_id).unwrap();
+        drop(full);
+        drop(n);
+        let mut n = open(&node_path, backend);
+        let full = NativeGenerationStoreV2::open(&journal, config).unwrap();
+        assert_eq!(full.readback(first_id).unwrap(), before);
+        assert!(full.readback(second_statement.id().unwrap()).is_err());
+        let mut available =
+            NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), configuration(&n))
+                .unwrap();
+        let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
+        assert!(available.prepare(&mut owner, first_statement).is_err());
+        assert_eq!(
+            available
+                .prepare(&mut owner, second_statement.clone())
+                .unwrap(),
+            second_statement.id().unwrap()
+        );
+    }
+}
+
 #[test]
 fn real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent() {
     let d = tempfile::tempdir().unwrap();

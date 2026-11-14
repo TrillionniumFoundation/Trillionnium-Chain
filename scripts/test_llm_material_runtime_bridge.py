@@ -17,7 +17,7 @@ FIXTURES = Path(__file__).resolve().parents[1] / 'tests/fixtures/llm_material_ru
 PLAN_SHA = '01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165'
 TARGET_SHA = 'ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852'
 CONTRACT = 'c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f'
-CURRENT = 'ac6b1d9058610907a7dd3486c663c1ee6ad40135a34c63770daa5f556e5879cc'
+CURRENT = '13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7'
 
 
 def changed(value):
@@ -49,11 +49,11 @@ class MaterialRuntimeBridgeTests(unittest.TestCase):
         # Independently retained exact source/formula analysis, not values
         # obtained from the helper under test.
         self.current_target['tokenizer']['behavior_contract'] = (
-            '5bd0bfea568f544a784a11cc9f162cb401d1c23b44e5951ff38388ef9fca441a')
+            '882d9c90a3fb05cc56012a4122f6c43d49f95ccfda67a5b767991c7a399235c0')
         self.current_target['numeric']['operator_contract'] = (
-            '42707d81b3af6343388afe865307522c13e56edebf8ce4e6c7ec25ac4dbd73c8')
+            'e4aff215aa8e74f481c39253326e6c2abdc10e56a1e6eb9f283c5cc4143de576')
         self.current_target['registration']['target_admission'] = (
-            '5293fb3ad4d607c34089b6c2a1f14f6fa902db48df4501830bc36fc27630b6e8')
+            '685812fd2084828870b11a8a07b2a685612d76ed4c82d21ef703ccc548370a9f')
 
     def prepare(self, **changes):
         values = dict(profile=worker.MATERIAL_BRIDGE_PROFILE_V1,
@@ -88,7 +88,9 @@ class MaterialRuntimeBridgeTests(unittest.TestCase):
                     self.prepare(**arguments)
 
     def test_historical_or_arbitrary_runtime_cannot_be_reported_as_current(self):
-        for runtime_source in [self.historical_plan['runtime_source'], '0' * 64, CURRENT + '.']:
+        for runtime_source in [self.historical_plan['runtime_source'],
+                               'ac6b1d9058610907a7dd3486c663c1ee6ad40135a34c63770daa5f556e5879cc',
+                               '0' * 64, CURRENT + '.']:
             with self.subTest(source=runtime_source):
                 with self.assertRaisesRegex(ValueError, 'NEURAL_BRIDGE_CURRENT_PLAN'):
                     self.prepare(current_plan=dict(self.current_plan, runtime_source=runtime_source))

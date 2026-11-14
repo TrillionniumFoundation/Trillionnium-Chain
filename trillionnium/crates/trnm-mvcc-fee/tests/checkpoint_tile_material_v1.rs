@@ -339,3 +339,149 @@ fn actual_hashed_stream_header_must_equal_the_parsed_header() {
         "CHECKPOINT_CHANGED"
     );
 }
+
+#[test]
+fn typed_progress_retains_legacy_bytes_and_original_descriptor() {
+    let f = fixture();
+    let mut legacy_events = Vec::new();
+    let legacy = derive_checkpoint_tile_material_v1(
+        &mut Cursor::new(&f.checkpoint),
+        &f.activation,
+        &f.a,
+        &f.b,
+        &f.ctx,
+        |bytes| {
+            legacy_events.push(bytes);
+            Ok(())
+        },
+    )
+    .unwrap();
+    let header = u64::from_le_bytes(f.checkpoint[..8].try_into().unwrap()) + 8;
+    assert_eq!(legacy_events, [header, header + f.ctx.checkpoint_bytes]);
+    let mut phases = Vec::new();
+    let checked = derive_checkpoint_tile_material_v1_with_progress(
+        &mut Cursor::new(&f.checkpoint),
+        &f.activation,
+        &f.a,
+        &f.b,
+        &f.ctx,
+        |event| {
+            phases.push(event.phase);
+            Ok(())
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        checked.canonical_descriptor(),
+        legacy.canonical_descriptor()
+    );
+    assert_eq!(checked.descriptor_id(), legacy.descriptor_id());
+    assert_eq!(
+        checked.checkpoint_bytes_read(),
+        legacy.checkpoint_bytes_read()
+    );
+    for phase in [
+        MaterialPhase::ActivationJson,
+        MaterialPhase::ActivationHex,
+        MaterialPhase::HeaderJson,
+        MaterialPhase::CheckpointScan,
+        MaterialPhase::WeightQuantization,
+        MaterialPhase::ActivationNonfinite,
+        MaterialPhase::ActivationQuantization,
+        MaterialPhase::TaskHash,
+        MaterialPhase::DescriptorEncoding,
+        MaterialPhase::DescriptorHash,
+    ] {
+        assert!(phases.contains(&phase), "missing {phase:?}");
+    }
+}
+
+#[test]
+fn every_interior_numeric_and_hash_stage_preserves_first_owner_abort() {
+    let f = fixture();
+    for (phase, threshold) in [
+        (MaterialPhase::ActivationHex, 512),
+        (MaterialPhase::CheckpointScan, 65_536),
+        (MaterialPhase::WeightQuantization, 256),
+        (MaterialPhase::ActivationNonfinite, 256),
+        (MaterialPhase::ActivationQuantization, 16),
+        (MaterialPhase::TaskHash, 2 * 4096 + 256),
+        (MaterialPhase::DescriptorEncoding, 256),
+    ] {
+        let mut stopped = false;
+        let result = derive_checkpoint_tile_material_v1_with_progress(
+            &mut Cursor::new(&f.checkpoint),
+            &f.activation,
+            &f.a,
+            &f.b,
+            &f.ctx,
+            |event| {
+                assert!(!stopped, "callback continued after the first error");
+                if event.phase == phase && event.completed >= threshold {
+                    stopped = true;
+                    Err("ORIGINAL_OWNER_CANCELLED")
+                } else {
+                    Ok(())
+                }
+            },
+        );
+        assert!(stopped, "not reached: {phase:?}");
+        assert_eq!(result.unwrap_err(), "ORIGINAL_OWNER_CANCELLED", "{phase:?}");
+    }
+}
+
+#[test]
+fn long_json_string_is_interruptible_before_visitor_or_field_validation() {
+    let mut f = fixture();
+    change_activation(&mut f, |a| a["scope"] = json!("x".repeat(131_072)));
+    let mut stopped = false;
+    let result = derive_checkpoint_tile_material_v1_with_progress(
+        &mut Cursor::new(&f.checkpoint),
+        &f.activation,
+        &f.a,
+        &f.b,
+        &f.ctx,
+        |event| {
+            assert!(!stopped);
+            if event.phase == MaterialPhase::ActivationJson && event.completed == 65_536 {
+                stopped = true;
+                Err("ORIGINAL_OWNER_EXPIRED")
+            } else {
+                Ok(())
+            }
+        },
+    );
+    assert!(stopped);
+    assert_eq!(result.unwrap_err(), "ORIGINAL_OWNER_EXPIRED");
+    // Without cancellation, the original material profile still rejects it.
+    assert_eq!(derive(&f).unwrap_err(), "ACTIVATION_PROFILE");
+}
+
+#[test]
+fn task_hash_progress_keeps_original_bytes_and_field_refusals() {
+    let a = (0..4096).map(|i| i as u32).collect::<Vec<_>>();
+    let b = (0..4096).map(|i| (4096 - i) as u32).collect::<Vec<_>>();
+    let expected = pon_work::task_id(&a, &b).unwrap();
+    assert_eq!(
+        pon_work::task_id_with_progress(&a, &b, &mut |_| Ok::<_, &'static str>(())).unwrap(),
+        expected
+    );
+    assert_eq!(
+        pon_work::task_id_with_progress(&a, &b, &mut |n| {
+            if n > 8192 {
+                Err("TASK_OWNER_STOP")
+            } else {
+                Ok(())
+            }
+        }),
+        Err(pon_work::VerificationError::Cancelled("TASK_OWNER_STOP"))
+    );
+    let mut bad = b;
+    bad[1000] = u32::MAX;
+    assert_eq!(
+        pon_work::task_id_with_progress(&a, &bad, &mut |_| Ok::<_, &'static str>(())),
+        Err(pon_work::VerificationError::Relation(
+            pon_work::WorkError::Field
+        ))
+    );
+}

@@ -62,12 +62,12 @@ impl PqTlsPins {
 
 impl PolicyRecord {
     pub(super) fn validate_transport(&self) -> Result<()> {
-        match &self.tls {
-            None => ensure(
+        match (&self.tls, &self.endpoint) {
+            (None, None) => ensure(
                 self.schema == PROFILE && self.transport_confidentiality == TRANSPORT_MODE,
                 "PQ_NETWORK_POLICY_RECORD",
             ),
-            Some(pins) => {
+            (Some(pins), None) => {
                 ensure(
                     self.schema == TLS_PROFILE
                         && self.transport_confidentiality == TLS_TRANSPORT_MODE
@@ -76,6 +76,17 @@ impl PolicyRecord {
                 )?;
                 pins.validate()
             }
+            (Some(pins), Some(endpoint)) => {
+                ensure(
+                    self.schema == TLS_ENDPOINT_PROFILE
+                        && self.transport_confidentiality == TLS_ENDPOINT_TRANSPORT_MODE
+                        && self.ingress_connection_limit == TLS_HANDSHAKE_LIMIT,
+                    "PQ_NETWORK_POLICY_RECORD",
+                )?;
+                pins.validate()?;
+                endpoint.validate()
+            }
+            (None, Some(_)) => Err("PQ_NETWORK_POLICY_RECORD".into()),
         }
     }
 }
@@ -125,35 +136,45 @@ impl PqNetworkPolicy {
             .ok_or_else(|| "PQ_TLS_POLICY_REQUIRED".into())
     }
     pub(super) fn request_magic(&self) -> &'static [u8; 4] {
-        if self.transport_requires_tls() {
+        if self.tls_endpoint_pins().is_some() {
+            b"PQE1"
+        } else if self.transport_requires_tls() {
             b"PQT1"
         } else {
             REQUEST_MAGIC
         }
     }
     pub(super) fn response_magic(&self) -> &'static [u8; 4] {
-        if self.transport_requires_tls() {
+        if self.tls_endpoint_pins().is_some() {
+            b"PQR1"
+        } else if self.transport_requires_tls() {
             b"PQS1"
         } else {
             RESPONSE_MAGIC
         }
     }
     pub(super) fn response_schema(&self) -> &'static str {
-        if self.transport_requires_tls() {
+        if self.tls_endpoint_pins().is_some() {
+            "native-pq-network-tls13-endpoint-response-v1"
+        } else if self.transport_requires_tls() {
             "native-pq-network-tls13-response-v1"
         } else {
             RESPONSE_SCHEMA
         }
     }
     pub(super) fn context_domain(&self) -> &'static [u8] {
-        if self.transport_requires_tls() {
+        if self.tls_endpoint_pins().is_some() {
+            tls_endpoint::CONTEXT_DOMAIN
+        } else if self.transport_requires_tls() {
             TLS_CONTEXT_DOMAIN
         } else {
             PEER_CONTEXT_DOMAIN
         }
     }
     pub(super) fn operation_domain(&self) -> &'static [u8] {
-        if self.transport_requires_tls() {
+        if self.tls_endpoint_pins().is_some() {
+            tls_endpoint::OPERATION_DOMAIN
+        } else if self.transport_requires_tls() {
             TLS_OPERATION_DOMAIN
         } else {
             OPERATION_DOMAIN
@@ -161,7 +182,9 @@ impl PqNetworkPolicy {
     }
     pub(crate) fn response_digest(&self, response: &[u8]) -> Hash {
         hash(
-            if self.transport_requires_tls() {
+            if self.tls_endpoint_pins().is_some() {
+                tls_endpoint::RESPONSE_DOMAIN
+            } else if self.transport_requires_tls() {
                 TLS_RESPONSE_DOMAIN
             } else {
                 RESPONSE_BYTES_DOMAIN

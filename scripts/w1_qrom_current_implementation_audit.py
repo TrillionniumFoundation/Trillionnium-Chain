@@ -20,14 +20,15 @@ from types import ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = 'config/pon/w1-qrom-implementation-current-v2.json'
-CONTRACT_SHA256 = '6884d8edf7415f0141a6bacd991d49cfb672692ab24d9ba88b031ddd135038ef'
-SOURCE = 'd98067e973e2d00ec577dfe0a9dc478b81e895e4'
+CONTRACT_SHA256 = '77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5'
+SOURCE = '5c04c60e463462d9df8884786e0d5bb32af08a64'
 LEGACY_READER = 'scripts/w1_qrom_implementation_audit.py'
 LEGACY_READER_SHA256 = 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354'
 MAX_BYTES = 2 * 1024 * 1024
 CHANGED = frozenset({
     'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
     'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
     'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
 })
 

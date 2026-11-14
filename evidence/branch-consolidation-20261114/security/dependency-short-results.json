@@ -1,0 +1,507 @@
+{
+  "database": {
+    "head": "4ef2df8e806a65e2f1ecc14f56f51249062b23d6",
+    "tree": "58b68ec97e88bade3fd2bc664c949d1d45a82eb7",
+    "commit_time": "2026-11-13T13:33:03+01:00",
+    "origin": "https://github.com/RustSec/advisory-db.git",
+    "status": ""
+  },
+  "graphs": [
+    {
+      "index": 0,
+      "paths": [
+        "trillionnium/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 30,
+      "warning_ids": []
+    },
+    {
+      "index": 1,
+      "paths": [
+        "evidence/pon-w1-batch-guest-msrv-20261028-r8/before-guest-Cargo.lock",
+        "evidence/pon-w1-batch-ruint-security-20261028-r8/restore-fixed-lock/restored-fixed-guest-Cargo.lock",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 99,
+      "warning_ids": [
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 2,
+      "paths": [
+        "formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 4,
+      "warning_ids": []
+    },
+    {
+      "index": 3,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_batch/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2023-0071",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 194,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 4,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 101,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 5,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 7,
+      "warning_ids": []
+    },
+    {
+      "index": 6,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 61,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0436",
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 7,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 48,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 8,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/source_inputs/w1_Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 47,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 9,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 104,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 10,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2023-0071",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 196,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 11,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0137",
+        "RUSTSEC-2026-0220",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 103,
+      "warning_ids": [
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 12,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0137",
+        "RUSTSEC-2026-0220",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 103,
+      "warning_ids": [
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 13,
+      "paths": [
+        "evidence/heplcp03-interop-20261111/isolated-Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 10,
+      "warning_ids": []
+    },
+    {
+      "index": 14,
+      "paths": [
+        "evidence/heplcp04-interop-20261111/isolated-Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 10,
+      "warning_ids": []
+    },
+    {
+      "index": 15,
+      "paths": [
+        "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/sources/trillionnium/Cargo.lock",
+        "evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merged-native/original/attempt-02/sources/trillionnium/Cargo.lock",
+        "evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/trillionnium/Cargo.lock",
+        "evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/sources/trillionnium/Cargo.lock",
+        "evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/sources/trillionnium/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2026-0459"
+      ],
+      "registry_check_timeout_errors": 29,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 16,
+      "paths": [
+        "evidence/pon-w1-batch-guest-msrv-20261028-r8/after-guest-Cargo.lock",
+        "evidence/pon-w1-batch-ruint-security-20261028-r8/restore-fixed-lock/rejected-guest-Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2025-0137",
+        "RUSTSEC-2026-0220",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 99,
+      "warning_ids": [
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 17,
+      "paths": [
+        "evidence/pon-w1-batch-guest-msrv-20261028-r8/unchanged-native-Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2023-0071",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 194,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 18,
+      "paths": [
+        "evidence/pon-w1-closure-current-source-20261110/precommit-preparation/old-zkvm-Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2023-0071",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 196,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 19,
+      "paths": [
+        "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2023-0071",
+        "RUSTSEC-2025-0055"
+      ],
+      "registry_check_timeout_errors": 194,
+      "warning_ids": [
+        "RUSTSEC-2025-0141",
+        "RUSTSEC-2024-0388",
+        "RUSTSEC-2024-0436"
+      ]
+    },
+    {
+      "index": 20,
+      "paths": [
+        "evidence/pon-w1-nonblocking-cache-20261101b/host-module-harness/Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2026-0459"
+      ],
+      "registry_check_timeout_errors": 20,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 21,
+      "paths": [
+        "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 6,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 22,
+      "paths": [
+        "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 0,
+      "warning_ids": []
+    },
+    {
+      "index": 23,
+      "paths": [
+        "evidence/pon-w1-work-security-20261101/trial-1/harness/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 7,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 24,
+      "paths": [
+        "evidence/pon-work-security-eight-samples-20261101/cache-benchmark/baseline-Cargo.lock",
+        "evidence/pon-work-security-eight-samples-20261101/cache-benchmark/candidate-Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 6,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 25,
+      "paths": [
+        "evidence/pon-work-security-eight-samples-20261101/cache-benchmark/source-workspace-Cargo.lock"
+      ],
+      "exit": 1,
+      "vulnerability_ids": [
+        "RUSTSEC-2026-0459"
+      ],
+      "registry_check_timeout_errors": 29,
+      "warning_ids": [
+        "RUSTSEC-2026-0486"
+      ]
+    },
+    {
+      "index": 26,
+      "paths": [
+        "qualification/pq-local-canonical-cell-recovery-20261111/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 4,
+      "warning_ids": []
+    },
+    {
+      "index": 27,
+      "paths": [
+        "tests/fuzz/Cargo.lock"
+      ],
+      "exit": 0,
+      "vulnerability_ids": [],
+      "registry_check_timeout_errors": 29,
+      "warning_ids": []
+    }
+  ],
+  "vulnerabilities": {
+    "RUSTSEC-2025-0055": {
+      "title": "Logging user input may result in poisoning logs with ANSI escape sequences",
+      "package": "tracing-subscriber",
+      "version": "0.2.25",
+      "url": "https://github.com/tokio-rs/tracing/pull/3368",
+      "versions": {
+        "patched": [
+          ">=0.3.20"
+        ],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2023-0071": {
+      "title": "Marvin Attack: potential key recovery through timing sidechannels",
+      "package": "rsa",
+      "version": "0.9.10",
+      "url": "https://github.com/RustCrypto/RSA/issues/626",
+      "versions": {
+        "patched": [
+          ">=0.10.0"
+        ],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2025-0137": {
+      "title": "Unsoundness of safe `reciprocal_mg10`",
+      "package": "ruint",
+      "version": "1.15.0",
+      "url": "https://github.com/recmo/uint/issues/550",
+      "versions": {
+        "patched": [
+          ">=1.17.1"
+        ],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2026-0220": {
+      "title": "Uint shift operations: incorrect overflow flags and truncated shift amounts",
+      "package": "ruint",
+      "version": "1.15.0",
+      "url": "https://github.com/alloy-rs/ruint/pull/603",
+      "versions": {
+        "patched": [
+          ">=1.20.0"
+        ],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2026-0459": {
+      "title": "`libsqlite3-sys` via C SQLite CVE-2026-119375",
+      "package": "libsqlite3-sys",
+      "version": "0.37.0",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-119375",
+      "versions": {
+        "patched": [
+          ">=0.39.0"
+        ],
+        "unaffected": [
+          "<0.6.0"
+        ]
+      }
+    }
+  },
+  "warnings": {
+    "RUSTSEC-2024-0388": {
+      "kind": "unmaintained",
+      "title": "`derivative` is unmaintained; consider using an alternative",
+      "package": "derivative",
+      "versions": {
+        "patched": [],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2024-0436": {
+      "kind": "unmaintained",
+      "title": "paste - no longer maintained",
+      "package": "paste",
+      "versions": {
+        "patched": [],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2025-0141": {
+      "kind": "unmaintained",
+      "title": "Bincode is unmaintained",
+      "package": "bincode",
+      "versions": {
+        "patched": [],
+        "unaffected": []
+      }
+    },
+    "RUSTSEC-2026-0486": {
+      "kind": "unsound",
+      "title": "xattr functions mark unwritten bytes as initialized when given a zero-length buffer",
+      "package": "rustix",
+      "versions": {
+        "patched": [
+          ">=1.1.6"
+        ],
+        "unaffected": [
+          "<1.0.0"
+        ]
+      }
+    }
+  },
+  "yank_registry_incomplete": true
+}

@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 import run_w1_rank_batch_v5 as runner
+import public_host_ci_observation as host_observation
 capture = runner.capture
 
 
@@ -82,6 +83,173 @@ class CaptureTests(unittest.TestCase):
             with patch.object(runner.shutil, "which", return_value=None):
                 with self.assertRaises(ValueError):
                     runner.discover_tool("rustc")
+
+
+@unittest.skipUnless(sys.platform == "linux", "Linux cgroup observation controls")
+class CurrentCgroupObservationTests(unittest.TestCase):
+    """Synthetic namespace files test observations, never Host authority."""
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        self.mount = self.root / "cgroup"
+        self.leaf = self.mount / "a/b"
+        self.leaf.mkdir(parents=True)
+        self.proc = self.root / "proc"
+        self.proc.mkdir()
+        for path in (self.mount, self.mount / "a", self.leaf):
+            for name in host_observation._CURRENT_LIMITS:
+                (path / name).write_text("max\n")
+        device = self.mount.stat().st_dev
+        self.device = f"{os.major(device)}:{os.minor(device)}"
+        self.membership = self.proc / "cgroup"
+        self.mountinfo = self.proc / "mountinfo"
+        self.membership.write_text("0::/a/b\n")
+        self.mountinfo.write_text(self.mount_row())
+
+    def mount_row(self, root="/", filesystem="cgroup2", device=None, point=None, identifier=51):
+        encoded = str(point or self.mount).replace("\\", "\\134").replace(" ", "\\040")
+        return f"{identifier} 25 {device or self.device} {root} {encoded} rw - {filesystem} cgroup rw\n"
+
+    def observe(self, *, drift=False):
+        actual_read = host_observation._current_cgroup_text
+        member_reads = 0
+        def redirect(path, limit, errors, device=None):
+            nonlocal member_reads
+            if path == Path("/proc/self/cgroup"):
+                path = self.membership
+                member_reads += 1
+                if drift and member_reads == 2:
+                    path.write_text("0::/a\n")
+            elif path == Path("/proc/self/mountinfo"):
+                path = self.mountinfo
+            return actual_read(path, limit, errors, device)
+        with patch.object(host_observation, "_current_cgroup_text", side_effect=redirect):
+            return host_observation.current_cgroup_observation()
+
+    def assert_unknown_authority(self, observed):
+        for key in ("atomic_snapshot", "effective_quota_established",
+                    "namespace_external_ancestors_observed", "native_child_membership_verified",
+                    "consensus_or_model_authority"):
+            self.assertIs(observed[key], False)
+
+    def test_nonroot_membership_observes_actual_leaf_and_each_visible_ancestor(self):
+        observed = self.observe()
+        self.assertTrue(observed["membership_resolved"])
+        self.assertTrue(observed["visible_limits_complete"])
+        self.assertEqual(observed["resolved_path"], str(self.leaf))
+        self.assertEqual([row["cgroup_path"] for row in observed["visible_ancestors"]],
+                         ["/a/b", "/a", "/"])
+        self.assertEqual(observed["membership_raw"], "0::/a/b\n")
+        self.assert_unknown_authority(observed)
+
+    def test_root_view_cannot_substitute_for_missing_actual_nonroot_group(self):
+        for child in self.leaf.iterdir():
+            child.unlink()
+        self.leaf.rmdir()
+        observed = self.observe()
+        self.assertFalse(observed["membership_resolved"])
+        self.assertFalse(observed["visible_limits_complete"])
+        self.assertEqual(observed["visible_ancestors"], [])
+        self.assertIn("mapping_error", observed)
+        self.assert_unknown_authority(observed)
+
+    def test_subtree_mount_does_not_claim_namespace_external_ancestors(self):
+        self.membership.write_text("0::/outer/a/b\n")
+        self.mountinfo.write_text(self.mount_row(root="/outer"))
+        observed = self.observe()
+        self.assertTrue(observed["membership_resolved"])
+        self.assertEqual([row["cgroup_path"] for row in observed["visible_ancestors"]],
+                         ["/outer/a/b", "/outer/a", "/outer"])
+        self.assertEqual(observed["resolved_path"], str(self.leaf))
+        self.assert_unknown_authority(observed)
+
+    def test_wrong_unrelated_ambiguous_or_shadowed_mount_cannot_resolve_membership(self):
+        minor = os.minor(self.mount.stat().st_dev) ^ 1
+        cases = [
+            self.mount_row(filesystem="tmpfs"), self.mount_row(root="/unrelated"),
+            self.mount_row(device=f"{os.major(self.mount.stat().st_dev)}:{minor}"),
+            self.mount_row() + self.mount_row(identifier=52),
+            self.mount_row() + self.mount_row(filesystem="tmpfs", identifier=52),
+            self.mount_row() + self.mount_row(root="/unrelated", identifier=52),
+            self.mount_row() + self.mount_row(filesystem="tmpfs", point=self.leaf, identifier=52),
+            self.mount_row() + self.mount_row(filesystem="tmpfs", point=self.leaf / "cpu.max", identifier=52),
+        ]
+        for raw in cases:
+            with self.subTest(raw=raw):
+                self.mountinfo.write_text(raw)
+                observed = self.observe()
+                self.assertFalse(observed["membership_resolved"])
+                self.assertFalse(observed["visible_limits_complete"])
+                self.assertIn("mapping_error", observed)
+                self.assert_unknown_authority(observed)
+
+    def test_noncanonical_overdepth_and_oversized_paths_stay_unresolved(self):
+        cases = ["/a/../b", "//a/b", "/a/./b",
+                 "/" + "/".join(["x"] * (host_observation._CGROUP_DEPTH_LIMIT + 1)),
+                 "/" + "x" * host_observation._CGROUP_PATH_LIMIT,
+                 "/" + "x" * host_observation._CGROUP_PROC_LIMIT]
+        for path in cases:
+            with self.subTest(path_length=len(path)):
+                self.membership.write_text("0::" + path + "\n")
+                observed = self.observe()
+                self.assertFalse(observed["membership_resolved"])
+                self.assertFalse(observed["visible_limits_complete"])
+                self.assert_unknown_authority(observed)
+        self.membership.write_text("0::/a/b\n")
+        self.mountinfo.write_text("x" * (host_observation._CGROUP_MOUNT_LIMIT + 1))
+        observed = self.observe()
+        self.assertFalse(observed["membership_resolved"])
+        self.assertTrue(observed["read_errors"])
+
+    def test_failed_limit_read_and_membership_drift_cannot_become_complete(self):
+        (self.leaf / "cpu.max").unlink()
+        observed = self.observe()
+        self.assertTrue(observed["membership_resolved"])
+        self.assertFalse(observed["visible_limits_complete"])
+        self.assertEqual(observed["status"], "PARTIAL_OBSERVATION")
+        self.assertIsNone(observed["visible_ancestors"][0]["limits"]["cpu.max"])
+        self.assertTrue(observed["read_errors"])
+        self.assert_unknown_authority(observed)
+        (self.leaf / "cpu.max").write_text("max\n")
+        drifted = self.observe(drift=True)
+        self.assertFalse(drifted["membership_resolved"])
+        self.assertFalse(drifted["visible_limits_complete"])
+        self.assertIn("CONTEXT_CHANGED", drifted["mapping_error"])
+        self.assert_unknown_authority(drifted)
+
+    def test_escaped_mount_and_trailing_space_membership_preserve_exact_path(self):
+        renamed = self.mount.with_name("cgroup view")
+        self.mount.rename(renamed)
+        self.mount = renamed
+        self.leaf = self.mount / "a/b "
+        self.leaf.mkdir()
+        for name in host_observation._CURRENT_LIMITS:
+            (self.leaf / name).write_text("max\n")
+        self.membership.write_text("0::/a/b \n")
+        self.mountinfo.write_text(self.mount_row())
+        observed = self.observe()
+        self.assertTrue(observed["membership_resolved"])
+        self.assertEqual(observed["resolved_path"], str(self.leaf))
+        self.assertEqual(observed["membership_path"], "/a/b ")
+        self.assert_unknown_authority(observed)
+
+    def test_fifo_read_refuses_with_a_bounded_real_child(self):
+        # Regression to a blocking FIFO open times out this child, never the suite.
+        import json
+        import subprocess
+        fifo = self.root / "limit-fifo"
+        os.mkfifo(fifo)
+        code = ("import json,sys; from pathlib import Path; "
+                "sys.path.insert(0,sys.argv[1]); import public_host_ci_observation as h; "
+                "errors={}; value=h._current_cgroup_text(Path(sys.argv[2]),128,errors); "
+                "print(json.dumps({'value':value,'errors':errors}))")
+        child = subprocess.run(
+            [sys.executable, "-c", code, str(Path(host_observation.__file__).parent), str(fifo)],
+            capture_output=True, text=True, timeout=2, check=True)
+        observed = json.loads(child.stdout)
+        self.assertIsNone(observed["value"])
+        self.assertIn("REGULAR_KERNEL_FILE_REQUIRED", observed["errors"][str(fifo)])
 
 
 if __name__ == "__main__":

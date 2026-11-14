@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
-`c82c6eabe8f27e2b918de850d237f6b0b06444bb`. The
+`332d7f723d71707d88a2cffa52b3754579a46926`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,37 +18,28 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current discovery fixture source continuation, 2026-11-14
+## Current combined-source binding, 2026-11-13
 
-The reviewed source checkpoint is `c82c6eabe8f27e2b918de850d237f6b0b06444bb`, tree
-`c841f924d57dac58f3c74a74479e73ee532134d7`. All 44 declared regular Git blobs were
-independently read and hashed at that immutable checkpoint. The canonical lock is
-`f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a`.
+The reviewed source checkpoint is `332d7f723d71707d88a2cffa52b3754579a46926`, tree
+`c93086b354d75827ca96a42c7eaa3f8be8954311`. All 44 selected regular Git
+blobs were read from that checkpoint and matched to the isolated checkout.
+The canonical revision-plus-file lock is
+`a4a74df247995dcfe7aa48bc0d7c8ff9969088c8acb665d0d8041310cce5dac4`.
 
-The earlier map still matches all 44 paths at
-`93171bbdb67a6da4c93765fccadf52e68fda9b1c`. Only
-`trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs`
-changes in the subsequent source history, in commit
-`04ee65c3f3d6d5b46461a9b72bcdea469d1b8a2e`, from SHA-256
-`e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554` to
-`db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3`. That complete change and its current
-test-only include and readiness consumer were reviewed. The fixture waits for
-its existing server's readiness notification within the original ten-second
-setup allowance. It adds no TCP readiness probe, request, signature or retained
-record, and changes no production authentication or admission rule. The original
-request timeout and resource limits remain. Its existing synchronous teardown
-join is not a bounded cancellation guarantee, and readiness does not promise
-later scheduling progress.
+Only `trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs`
+changes within this selected set from the preceding `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`
+mapping: SHA-256 `e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554` becomes
+`db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3`. The fixture waits for the actual rendezvous
+accept-loop readiness signal within its original finite setup allowance,
+and its new control holds real initialization before starting a request.
+It does not add a TCP probe, signature, retained record or relaxed request budget.
 
-The retained source-AI CI run `43531685339` failed both head and prospective
-repository-truth checks with 33 failures and 3 errors across 18 tests. The stale
-digest above was the first mismatch and also preempted later negative checks.
-Those failures remain historical failures. This continuation updates that one
-digest, the fixed checkpoint and canonical lock; the previous checkpoint is an
-additional explicit refusal case. The other 43 digests, all seven route records,
-all existing refusal controls and every false qualification field stay fixed.
-This source binding does not transfer historical executions to the current
-revision or establish complete call-graph or runtime coverage.
+The other 43 pins, all seven routes, exact effect scopes, original negative
+controls and every false qualification field remain unchanged. The preceding
+revision and discovery-source digest are explicit refusal controls. Before
+this rebind, the original reader refused these actual bytes; that outcome
+remains a failure of the previous mapping. This source consistency repair
+does not execute native tests or establish whole-chain PQ qualification.
 
 ## Retained typed weak-key source continuation, 2026-11-13
 
@@ -608,3 +599,25 @@ cannot be supplied as acceptance fields in this schema. Actual integration,
 fresh authorization, recovery, external effects and whole-chain security remain
 separate obligations; `native_tests_executed`, `call_graph_proved` and
 `runtime_reachability_proved` all remain false in the checker result.
+
+## Concurrent reviewed source lineage, 2026-11-14
+
+The consolidation preserves commits e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5, 493f7fce6e517211a8cabccc15ba099965ea7c2a, d98067e973e2d00ec577dfe0a9dc478b81e895e4 and 73d5a17b9b7fb5f67040554f22ff37d20725e548 as real merge ancestors. The first commit binds the same discovery readiness fixture to checkpoint c82c6eabe8f27e2b918de850d237f6b0b06444bb with canonical lock f2d96bf8495b1116c569fe24619f7e5973d1134291f2cbf3af03c13f3e72d95a. That retained checkpoint is not the final consolidated source identity. Its preceding-revision refusal remains present, and the stale c82 checkpoint is now also an explicit refusal.
+
+The incoming sealed-material fixture contains three corrected fixed expected contract hashes for its exact source pair. The current combination additionally contains the reviewed read-only trial-ledger reconciliation command, changing llm_runtime_pilot.py to SHA-256 13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7. The first integration attempt refused this real producer difference before changing the repository. The final merge rebinds the neural reader and explicit research preparation entry to that exact current pilot and independently derived complete contract. Both original test suites retain their fixed positive identities and all refusal assertions; the prior pilot is an additional explicit refusal. Historical material plan, target and original runtime identities retain their bytes. Both standalone lock blobs already exactly match the reviewed root. Final combined source mappings remain pending; neither this rebind nor preserved historical executions confer native, model, installation or security qualification.
+
+## Consolidated current source review, 2026-11-14
+
+Current source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
+selected paths. Seven selected files changed from the preceding 332d7f72
+review: Cell fetch ordering and controlled cache restoration, the per-call PQ
+account configuration and its controls, Node advisory/store integration, and
+the explicit THP2 fresh-time comparator plus its controls. Each full path and
+Git identity was compared before this new lock was formed.
+
+Canonical source-lock SHA-256: 3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528. The strict reader and independent
+test literals select this checkpoint explicitly. Prior revision and hash
+refusals, exact route fields, bounded regular-file reads and all false
+qualification flags remain. These 44 paths are a curated inventory; source
+consistency supplies no complete call graph, runtime reachability or whole-chain
+security result. Earlier dated review records retain their original identities.

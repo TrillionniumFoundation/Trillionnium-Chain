@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-decentralization-policy-v1",
+  "registry_schema": "trnm-control-registry-v1",
+  "audit_schema": "trnm-decentralization-audit-v1",
+  "report_schema": "trnm-decentralization-report-v1",
+  "max_input_bytes": 4194304,
+  "max_rows_per_inventory": 4096,
+  "axes": [
+    "work_production",
+    "data_distribution",
+    "evaluation",
+    "authority",
+    "resources"
+  ],
+  "work_facets": [
+    "work_rule",
+    "task_admission",
+    "network_service",
+    "resource_access"
+  ],
+  "required_authority_roles": [
+    "root",
+    "release",
+    "upgrade",
+    "recovery",
+    "witness"
+  ],
+  "evidence_scope": "declared references only; external authentication remains required",
+  "common_control": "transitive parents, aliases and shared key fingerprints; stale edges retained",
+  "unknown_control": "never contributes a controller group or an independence floor",
+  "resource_scope": "one declared unit and one fixed denominator per resource and audit window",
+  "independent_administration_verified": false,
+  "permissionless_utility_accepted": false,
+  "public_network_ready": false,
+  "production_activation": false
+}

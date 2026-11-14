@@ -1,0 +1,89 @@
+{
+  "schema": "final-object-delta-review-delivery-v1",
+  "status": "complete_read_only_evidence",
+  "source_binding_commit": "b84568a714e24070d9554008660f1382e2c1b1b5",
+  "source_binding_tree": "96197879781b8f77e53a9f044129fc938edb0a9e",
+  "explicit_following_merge_commit": "96643a2dd8a90cded0059216cae15e2cd620c77b",
+  "explicit_following_merge_tree": "b3adb2552cf47b7dbd6956b3b23cdac3f588c4cb",
+  "initial_baseline": {
+    "objects": 186433,
+    "blobs": 74256,
+    "raw_blob_bytes": 7939757665,
+    "inventory_sha256": "ec74ecf3a402fdc790d4649a2829e7f4995b724ad157b849e73d4ff94aab0648",
+    "original_regex_available": false,
+    "original_category_results": "Four token categories zero; three private-key-header markers, separately triaged as Python marker-only strings."
+  },
+  "frozen_delta": {
+    "enumerated_objects": 187538,
+    "new_objects": 1105,
+    "new_blob_count": 411,
+    "raw_new_blob_bytes": 130927248,
+    "new_tree_count": 631,
+    "new_commit_count": 63,
+    "all_previous_oids_present_and_metadata_unchanged": true,
+    "all_new_blob_content_addresses_verified": true,
+    "all_new_blob_bytes_scanned": true,
+    "pattern_match_counts": {
+      "aws_access_key_id": 0,
+      "github_classic_token": 0,
+      "github_fine_grained_token": 0,
+      "private_key_header": 0,
+      "slack_token": 0
+    },
+    "summary_sha256": "7463d544084176dc4f0bfd941e99ab65f7dc9a3a9a69bcf575af06c675f18fd7",
+    "inventory_sha256": "8e5cb690e10984dd8dd1b413e638f16387f2a78a0f40a5bd6b01497a3d83c0fd"
+  },
+  "explicit_after_enumeration_merge_appendix": {
+    "blob_count": 2,
+    "raw_blob_bytes": 1006072,
+    "all_content_addresses_verified": true,
+    "match_counts": {
+      "github_classic_token": 0,
+      "github_fine_grained_token": 0,
+      "aws_access_key_id": 0,
+      "slack_token": 0,
+      "private_key_header": 0
+    },
+    "receipt_sha256": "4595b8b20754e7c70d68b0eab385fc344aa351873dee737b420964263f69b354",
+    "initial_delta_not_rewritten": true
+  },
+  "fsck": {
+    "first_exit": 2,
+    "first_log_sha256": "9f010c02a5e7de8878cdcfcf2c0e3a1f4b5f2f0db3bb9470e8f900670239f449",
+    "first_refs_changed": true,
+    "reported_missing_count": 10,
+    "all_missing_oids_absent_frozen_enumeration": true,
+    "all_missing_oids_now_readable": true,
+    "all_missing_oids_reachable_from_exact_following_merge": true,
+    "stable_exit": 0,
+    "stable_seconds": 21.30567937500018,
+    "stable_refs_unchanged": true,
+    "stable_log_sha256": "70054ab95653001db2bc24b06c3bb556f330f7b60de0844eaf5cba8dae24bc9b",
+    "stable_dangling_counts": {
+      "tree": 41,
+      "commit": 1,
+      "blob": 13
+    },
+    "stable_summary_sha256": "935e08dcf7e956261c769a4530cbcf3b907e0313406ed49836a955690a813b63",
+    "original_failure_retained": true,
+    "repair_fetch_prune_performed": false,
+    "interpretation": "First fsck overlapped coordinator Git writes and read a non-atomic object/ref view. Ten reported missing objects were created after the initial enumeration and are present in the following exact merge. A read-only recheck while coordinator writes were paused passed with unchanged refs; no repair was performed."
+  },
+  "patterns": {
+    "explicit_new_regex": true,
+    "definition_sha256": "33cdf0d872006fd692c72388443f0e8a47e804cfe679b28c6e612074ef5cf479",
+    "same_as_original_scanner_claimed": false,
+    "raw_match_values_disclosed": false,
+    "recursive_archive_decompression": false,
+    "all_secret_types_excluded": false
+  },
+  "scope_limits": [
+    "Only the frozen 411 new blobs plus the separately enumerated two immutable merge blobs received these new regex scans.",
+    "Earlier 74256 blobs are covered by the preserved earlier result, whose exact regex driver is unavailable; they were not rescanned here.",
+    "Future report/evidence/docs/archive objects and any objects outside these explicitly enumerated sets are excluded and require separate execution receipts.",
+    "Full fsck success does not imply all credentials absent or all repository behavior correct."
+  ],
+  "read_only_git": true,
+  "remote_write": false,
+  "checkout_or_refs_modified": false
+}

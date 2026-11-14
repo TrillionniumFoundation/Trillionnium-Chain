@@ -5,9 +5,37 @@ sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLA
 It does not replace the historical implementation contract, its test roster,
 its failed workflow results or its unknown cryptographic obligations.
 
-## Reviewed source change
+## Current independent-lock review, 2026-11-14
 
-The current reviewed source is Chain
+The active mapping now binds source `d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`.
+The independent native and V2 verifier locks previously failed full
+`cargo metadata --locked` because their shared crypto dependency now requires
+Ed25519 3.0 and Curve25519 5.0. The same manifest constraints were resolved;
+no guest lock or historical proof material was rewritten.
+
+Within this selected mapping, exactly one of 16 project inputs and one of
+140 local-closure inputs changes: `w1_v2_verifier/Cargo.lock`, now 46,018 bytes,
+SHA-256 `93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b`.
+All unchanged-version registry checksums and RISC Zero 3.0.6 package identities
+are retained. Relative to the historical V1 project roster, the reviewed
+difference set now contains the verifier entry, funded-service wire source and
+this lock.
+
+Both standalone crates passed complete `--locked --offline` dependency graphs,
+their original release tests (including the three named V2 saved-proof controls),
+formatting, strict Clippy and release builds on Rust 1.95.0 macOS arm64.
+These separate native observations do not change this mapping reader's scope.
+The prior pin refusals remain recorded. The eight literal inputs, proof/image
+identity, historical V1 reader and contract, 15 unresolved obligations and
+upstream current-use withdrawal remain unchanged.
+
+The profile-binding and upstream-security descriptors reference the same updated
+mapping bytes; the route registry rebinds only that mapping and V2 lock.
+No route, receipt format, approved profile, qualification flag or budget changes.
+
+## Earlier source reviews
+
+The earlier source review described Chain
 `39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency mapping
 reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9`; its observations remain
 historical. The retained V1 implementation contract is based on
@@ -154,3 +182,62 @@ after a further ENOSPC refusal. This is not an independent executor. No native R
 test or new native executable was produced by this continuation. Applying the
 patch to another combined candidate requires checking all fixed inputs again;
 another branch's passing record cannot substitute for that execution.
+
+## Consolidated current source review, 2026-11-14
+
+Current mapping checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 enumerates 145 inputs across the same six
+Cargo-reachable crates. Nine prior inputs changed and five Rust files were
+added. The new paths are the explicit root cost example, low_rank_prefix.rs,
+the test-only statement_boundaries.rs, task_product_facts.rs and its tests.
+All 131 other prior closure inputs and the eight literal includes keep their
+bytes. The SP27 example is in trnm-research-protocol, outside this closure.
+
+Only pon_work.rs changes among the 16 selected project paths compared with
+the preceding current mapping. The historical-V1 difference set contains four
+paths. Saved proof assets, guest lock/image, historical reader and contract,
+helpers, proof parameters and all 15 unresolved obligations remain unchanged.
+The original historical refusal still names the V2 verifier src/main.rs
+byte bound. Current contract: 50313 bytes, SHA-256 77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5.
+
+The real Cargo edges and complete Rust directory inventory within these roots
+were enumerated from fixed Git bytes. External Rust #[path] imports and
+third-party implementations remain outside this selected inventory. Independent
+controls require every new source and reject missing or changed bytes. Source
+mapping performs no native verification and grants no current proof-use approval
+or security qualification.
+
+### Current CI consumer correspondence
+
+The current named roster retains its preceding 75 controls and adds the two
+independent consolidated-source controls, for 77 exact names. The supplemental
+roster retains the original eight historical names unchanged and carries the
+same 16 current mapping controls, for 24 names. Both runners still require the
+complete registered, started and successful identities with no skips.
+
+The historical-on-current diagnostic binds the four reviewed differences in
+project-file order: verifier source, verifier lock, current PoN work source, and
+protocol wire source. Missing, duplicate, substituted-digest and mutually edited
+map/report difference sets are refused. This updates current CI correspondence;
+the fixed historical job, original historical roster, saved reports and
+cryptographic qualification are unchanged.
+
+### Exact current semantics correspondence
+
+The frozen 2026-11-07 semantics report and the 2026-11-09 observation retain
+their original SHA-256 values and bytes. The current correspondence reader
+uses the explicit TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3 namespace. It
+checks the V2 verifier lock and the zkVM lock against independently reviewed
+current digests, then permits only provenance lock-check SHA fields 0 and 2
+to differ from the original historical report. Guest lock field 1, every other
+report property, and all qualification values must match exactly. This does
+not assert that the full dependency graphs are equivalent.
+
+The original named-runner controls select the fixed historical job by its
+exact boundaries and unchanged hash. Relocated report and budget mutations
+execute the actual current supplemental_report_scopes step; final-status
+controls call the current verifier CLI named by the exact workflow command.
+Its independent 14-stage roster, current receipt namespace, original drift
+stdout/stderr, and nested supplemental receipts are all checked. Reused step
+names cannot route current controls to a historical consumer that ignores them.
+The original Mac compiler refusal is retained; its eight native C controls
+subsequently pass with installed GCC 15 and the original OpenMP and warning flags.

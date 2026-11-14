@@ -13,9 +13,49 @@ use std::sync::{
     Arc, Mutex,
 };
 use std::time::{Duration, Instant};
+use trnm_protocol::pon_wire::Hash;
 
 // A local overload rule, not a renewable timeout or an identity entitlement.
 pub(super) const UNPAID_PRESSURE_IDLE_MS: u64 = 250;
+// Two active paid mutation grants per authenticated caller, matching the
+// original mutation-worker count. Distinct/Sybil callers still share the same
+// global limits; this is no entitlement to service under arbitrary saturation.
+pub(super) const MAX_CALLER_MUTATION_GRANTS: usize = 2;
+
+#[derive(Default)]
+struct CallerMutationGrants {
+    entries: BTreeMap<Hash, usize>,
+    unavailable: bool,
+}
+impl CallerMutationGrants {
+    fn capacity(&self, caller: Hash) -> Result<()> {
+        ensure(!self.unavailable, "PUBLIC_CALLER_MUTATION_UNAVAILABLE")?;
+        ensure(
+            self.entries.get(&caller).copied().unwrap_or(0) < MAX_CALLER_MUTATION_GRANTS
+                && (self.entries.contains_key(&caller) || self.entries.len() < MAX_CONNECTIONS),
+            "PUBLIC_CALLER_MUTATION_CAPACITY",
+        )
+    }
+}
+pub(super) struct CallerMutationPermit {
+    registry: Arc<Mutex<CallerMutationGrants>>,
+    caller: Hash,
+}
+impl Drop for CallerMutationPermit {
+    fn drop(&mut self) {
+        if let Ok(mut grants) = self.registry.lock() {
+            match grants.entries.get_mut(&self.caller) {
+                Some(count) if *count > 0 => {
+                    *count -= 1;
+                    if *count == 0 {
+                        grants.entries.remove(&self.caller);
+                    }
+                }
+                _ => grants.unavailable = true,
+            }
+        }
+    }
+}
 
 pub(super) struct ListenerIntake {
     pub(super) pq_authentication: super::pq_identity::AuthenticationBudget,
@@ -28,6 +68,7 @@ pub(super) struct ListenerIntake {
     pub(super) output_pool: Arc<Mutex<usize>>,
     pub(super) mutating_grants: Arc<Mutex<usize>>,
     pub(super) read_grants: Arc<Mutex<usize>>,
+    caller_mutation_grants: Arc<Mutex<CallerMutationGrants>>,
     challenges: Mutex<ChallengeBudget>,
     leases: Arc<Mutex<ConnectionLeases>>,
 }
@@ -108,6 +149,7 @@ impl ListenerIntake {
             output_pool: Arc::new(Mutex::new(0)),
             mutating_grants: Arc::new(Mutex::new(0)),
             read_grants: Arc::new(Mutex::new(0)),
+            caller_mutation_grants: Arc::new(Mutex::new(CallerMutationGrants::default())),
             challenges: Mutex::new(ChallengeBudget {
                 tokens,
                 fractional: 0,
@@ -115,6 +157,38 @@ impl ListenerIntake {
             }),
             leases: Arc::new(Mutex::new(ConnectionLeases::default())),
         }
+    }
+    // Called only by the private post-signature WaitGrant stage. This read
+    // allocates no caller row and prevents an already-capped FIFO head from
+    // waiting for a global/body slot that it cannot use.
+    pub(super) fn caller_mutation_capacity(&self, caller: Hash) -> Result<()> {
+        self.caller_mutation_grants
+            .lock()
+            .map_err(|_| "PUBLIC_CALLER_MUTATION_UNAVAILABLE")?
+            .capacity(caller)
+    }
+    // Global lane and body permits already exist. Repeat the limit under the
+    // same lock used for insertion, since another listener may grant meanwhile.
+    pub(super) fn reserve_caller_mutation(&self, caller: Hash) -> Result<CallerMutationPermit> {
+        let mut grants = self
+            .caller_mutation_grants
+            .lock()
+            .map_err(|_| "PUBLIC_CALLER_MUTATION_UNAVAILABLE")?;
+        grants.capacity(caller)?;
+        *grants.entries.entry(caller).or_default() += 1;
+        Ok(CallerMutationPermit {
+            registry: self.caller_mutation_grants.clone(),
+            caller,
+        })
+    }
+    #[cfg(all(test, target_os = "linux"))]
+    pub(super) fn caller_mutation_usage(&self) -> Result<BTreeMap<Hash, usize>> {
+        let grants = self
+            .caller_mutation_grants
+            .lock()
+            .map_err(|_| "PUBLIC_CALLER_MUTATION_UNAVAILABLE")?;
+        ensure(!grants.unavailable, "PUBLIC_CALLER_MUTATION_UNAVAILABLE")?;
+        Ok(grants.entries.clone())
     }
     // Metadata follows one already acquired original slot. This creates no
     // socket, queue, worker, CPU balance or independently refundable permit.

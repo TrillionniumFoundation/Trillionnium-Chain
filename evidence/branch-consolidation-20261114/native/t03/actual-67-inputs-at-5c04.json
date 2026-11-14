@@ -1,0 +1,1215 @@
+{
+  "schema": "t03-merged-root-selected-input-readback-v1",
+  "linux_summary": {
+    "path": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/linux-v2-imported/summary.json",
+    "sha256": "a8f65e0f0cce76685ce7fbd2cf601b1528e4e08cf239c5795a6dbfdefa8de215"
+  },
+  "root_source": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "source_commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+  "actual_absolute_source_input_count": 67,
+  "rows": [
+    {
+      "path": "scripts/test_llm_runtime_pilot.py",
+      "linux": {
+        "bytes": 13931,
+        "sha256": "f43765a6dee70926980d307263b867a73af32080d386dea1650b2c217456dfb2",
+        "git_blob": "7d3c6699e5f536b1e7ff0ff562a721fd91ee2516"
+      },
+      "root": {
+        "bytes": 13931,
+        "sha256": "f43765a6dee70926980d307263b867a73af32080d386dea1650b2c217456dfb2",
+        "git_blob": "7d3c6699e5f536b1e7ff0ff562a721fd91ee2516"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_pilot.py",
+      "linux": {
+        "bytes": 126071,
+        "sha256": "13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7",
+        "git_blob": "f3f70c555508eecb7ad234a66eea149824622a42"
+      },
+      "root": {
+        "bytes": 126071,
+        "sha256": "13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7",
+        "git_blob": "f3f70c555508eecb7ad234a66eea149824622a42"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_rss_owner.py",
+      "linux": {
+        "bytes": 57604,
+        "sha256": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173",
+        "git_blob": "d70e5a2d9ba249aabbcc30a4842a3e079e4c261a"
+      },
+      "root": {
+        "bytes": 57604,
+        "sha256": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173",
+        "git_blob": "d70e5a2d9ba249aabbcc30a4842a3e079e4c261a"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_observation.py",
+      "linux": {
+        "bytes": 28782,
+        "sha256": "ba05aae19a7fdab880d437ecb047cc9c0009eaf535af582c0ddafd18db52fa4a",
+        "git_blob": "e46cb4d2ffd65020c36bf0c9b39a55ef5bb19c1c"
+      },
+      "root": {
+        "bytes": 28782,
+        "sha256": "ba05aae19a7fdab880d437ecb047cc9c0009eaf535af582c0ddafd18db52fa4a",
+        "git_blob": "e46cb4d2ffd65020c36bf0c9b39a55ef5bb19c1c"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_exit_observation.py",
+      "linux": {
+        "bytes": 10742,
+        "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+        "git_blob": "6773513937f5d9b9f60f53acc8aee086b64292da"
+      },
+      "root": {
+        "bytes": 10742,
+        "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+        "git_blob": "6773513937f5d9b9f60f53acc8aee086b64292da"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_subset_observation.py",
+      "linux": {
+        "bytes": 17014,
+        "sha256": "f012c477e5a1dd20b1992a9c4324701a5f9327c028ab4ce9a89b0dee6ac925c1",
+        "git_blob": "1d81aef60a3239aa6b0f76f4979fa07abfc37f7a"
+      },
+      "root": {
+        "bytes": 17014,
+        "sha256": "f012c477e5a1dd20b1992a9c4324701a5f9327c028ab4ce9a89b0dee6ac925c1",
+        "git_blob": "1d81aef60a3239aa6b0f76f4979fa07abfc37f7a"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_exit_subset_observation.py",
+      "linux": {
+        "bytes": 6327,
+        "sha256": "c24af5385011acdf898a9b899f73f64c660c30dae0fadcda6e6957f80f501aff",
+        "git_blob": "de783721d327904e3166f857505e912ed7bda9f0"
+      },
+      "root": {
+        "bytes": 6327,
+        "sha256": "c24af5385011acdf898a9b899f73f64c660c30dae0fadcda6e6957f80f501aff",
+        "git_blob": "de783721d327904e3166f857505e912ed7bda9f0"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_worker_observation.py",
+      "linux": {
+        "bytes": 36371,
+        "sha256": "ce3de68711afc5e780e8c2ef86a9b3900cf43e97b95d4e0e078fe37b3657ce59",
+        "git_blob": "50ce81d8375c42c48640c58a54c4e90db223f1b8"
+      },
+      "root": {
+        "bytes": 36371,
+        "sha256": "ce3de68711afc5e780e8c2ef86a9b3900cf43e97b95d4e0e078fe37b3657ce59",
+        "git_blob": "50ce81d8375c42c48640c58a54c4e90db223f1b8"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_exit_worker_observation.py",
+      "linux": {
+        "bytes": 39590,
+        "sha256": "1ef1155708871370a3ec9e11d67ff0a1bee2c7ee205af9c47e61ad5747bf8c7b",
+        "git_blob": "29a44edcc86580167e3c0db4e65cbfc1cb94eff4"
+      },
+      "root": {
+        "bytes": 39590,
+        "sha256": "1ef1155708871370a3ec9e11d67ff0a1bee2c7ee205af9c47e61ad5747bf8c7b",
+        "git_blob": "29a44edcc86580167e3c0db4e65cbfc1cb94eff4"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_worker_wait4.py",
+      "linux": {
+        "bytes": 7751,
+        "sha256": "9ae3e1c4e721d073deb7777111f89fdda3eeb3391ee61172a93096e0d8b3ec2d",
+        "git_blob": "f13c24ea6b045bd1c816b2c1c3334b169d189cd9"
+      },
+      "root": {
+        "bytes": 7751,
+        "sha256": "9ae3e1c4e721d073deb7777111f89fdda3eeb3391ee61172a93096e0d8b3ec2d",
+        "git_blob": "f13c24ea6b045bd1c816b2c1c3334b169d189cd9"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_worker_frontier.py",
+      "linux": {
+        "bytes": 14457,
+        "sha256": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+        "git_blob": "82c197f3770e48500b387b2349e2d00fc0cf5b00"
+      },
+      "root": {
+        "bytes": 14457,
+        "sha256": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+        "git_blob": "82c197f3770e48500b387b2349e2d00fc0cf5b00"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_initial_pending.py",
+      "linux": {
+        "bytes": 29304,
+        "sha256": "d5dffeef8b6925700c28f154e31ffad547d69cbb4396e89af96bd94c60a91ecf",
+        "git_blob": "d8b193743c0505e3d894eb0d8af617b5f257226b"
+      },
+      "root": {
+        "bytes": 29304,
+        "sha256": "d5dffeef8b6925700c28f154e31ffad547d69cbb4396e89af96bd94c60a91ecf",
+        "git_blob": "d8b193743c0505e3d894eb0d8af617b5f257226b"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_binding_pending.py",
+      "linux": {
+        "bytes": 21165,
+        "sha256": "c82a042c3d8251c28e3b21d22b2cead2c58330f8d8442c200564dfecd4e7f90a",
+        "git_blob": "797fecc6919fadf594bca8a271b595e2dbc10d41"
+      },
+      "root": {
+        "bytes": 21165,
+        "sha256": "c82a042c3d8251c28e3b21d22b2cead2c58330f8d8442c200564dfecd4e7f90a",
+        "git_blob": "797fecc6919fadf594bca8a271b595e2dbc10d41"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+      "linux": {
+        "bytes": 26164,
+        "sha256": "b76dd2cff7d4971638aa1079726ba4e765b1fbdd62a0f4ee4dc6eb515d4928a7",
+        "git_blob": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b"
+      },
+      "root": {
+        "bytes": 26164,
+        "sha256": "b76dd2cff7d4971638aa1079726ba4e765b1fbdd62a0f4ee4dc6eb515d4928a7",
+        "git_blob": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_kernel_owned.py",
+      "linux": {
+        "bytes": 23356,
+        "sha256": "8063149433eb36716c2c9dd36b4c238539ef41a4ee9570694fb9bdd06b0a3332",
+        "git_blob": "ead4d4725fff75e1852924bec1dd13229fb5da54"
+      },
+      "root": {
+        "bytes": 23356,
+        "sha256": "8063149433eb36716c2c9dd36b4c238539ef41a4ee9570694fb9bdd06b0a3332",
+        "git_blob": "ead4d4725fff75e1852924bec1dd13229fb5da54"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_owned.py",
+      "linux": {
+        "bytes": 22269,
+        "sha256": "5c046187dc1c28c25fbf475e1961bc7e09dcf0ab196b454a830fd95ed2bf8387",
+        "git_blob": "bf6a14c7c8dc6db954a3b185aa3e46f350e7401b"
+      },
+      "root": {
+        "bytes": 22269,
+        "sha256": "5c046187dc1c28c25fbf475e1961bc7e09dcf0ab196b454a830fd95ed2bf8387",
+        "git_blob": "bf6a14c7c8dc6db954a3b185aa3e46f350e7401b"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_kernel_close.py",
+      "linux": {
+        "bytes": 20188,
+        "sha256": "96d9e2e0e10d27cab58dda51a21226752b20a109e31c2e3adbf964531527b624",
+        "git_blob": "7572852401b3536d191ee5e1fbbe58984fff3a6a"
+      },
+      "root": {
+        "bytes": 20188,
+        "sha256": "96d9e2e0e10d27cab58dda51a21226752b20a109e31c2e3adbf964531527b624",
+        "git_blob": "7572852401b3536d191ee5e1fbbe58984fff3a6a"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_kernel_aggregate.py",
+      "linux": {
+        "bytes": 30959,
+        "sha256": "d99e90234229cee3ea6f6a3ba0c908a79c4787d9ebf89d92c512da3380cd52f1",
+        "git_blob": "fa0e3c22f48b50e8796f4ca7f8a8d6ddecaa88b3"
+      },
+      "root": {
+        "bytes": 30959,
+        "sha256": "d99e90234229cee3ea6f6a3ba0c908a79c4787d9ebf89d92c512da3380cd52f1",
+        "git_blob": "fa0e3c22f48b50e8796f4ca7f8a8d6ddecaa88b3"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_aggregate.py",
+      "linux": {
+        "bytes": 20654,
+        "sha256": "6fb401bd45a76702c94ae0e3c1efa85e19bbf3ff97b4ff784b6ddeb64c4a6c30",
+        "git_blob": "31df5f4ed42019649c9d7b68ae27a7dfd16211e1"
+      },
+      "root": {
+        "bytes": 20654,
+        "sha256": "6fb401bd45a76702c94ae0e3c1efa85e19bbf3ff97b4ff784b6ddeb64c4a6c30",
+        "git_blob": "31df5f4ed42019649c9d7b68ae27a7dfd16211e1"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_kernel_counters.py",
+      "linux": {
+        "bytes": 8658,
+        "sha256": "a389f6db8fd41fb6ac65ddea9ee04aece2219ab674ac4b1089713f58da081ff3",
+        "git_blob": "32fc53f1c40c177bccc1e9afaf5dffc59996e5c2"
+      },
+      "root": {
+        "bytes": 8658,
+        "sha256": "a389f6db8fd41fb6ac65ddea9ee04aece2219ab674ac4b1089713f58da081ff3",
+        "git_blob": "32fc53f1c40c177bccc1e9afaf5dffc59996e5c2"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_kernel_diagnostic.py",
+      "linux": {
+        "bytes": 7071,
+        "sha256": "57def672def51492f4fa1d5b125365984c2e4deb0572f0411a292e455c44ffcd",
+        "git_blob": "e44913e8bd1bb14cf89485ca315a067c790646a8"
+      },
+      "root": {
+        "bytes": 7071,
+        "sha256": "57def672def51492f4fa1d5b125365984c2e4deb0572f0411a292e455c44ffcd",
+        "git_blob": "e44913e8bd1bb14cf89485ca315a067c790646a8"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_evidence_pipe.py",
+      "linux": {
+        "bytes": 15272,
+        "sha256": "20b34e3550385e5315c8756e2d5bdd3e3ca93139a55bbe4c71fc73b73a0e6cf7",
+        "git_blob": "2fbe121e53cd88ddee11e6ecb9d024cf76f77546"
+      },
+      "root": {
+        "bytes": 15272,
+        "sha256": "20b34e3550385e5315c8756e2d5bdd3e3ca93139a55bbe4c71fc73b73a0e6cf7",
+        "git_blob": "2fbe121e53cd88ddee11e6ecb9d024cf76f77546"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_evidence_frames.py",
+      "linux": {
+        "bytes": 24023,
+        "sha256": "4f1ca6972a63ed5173eff81455d3e686e57f8d9e228a6eedfaa3082fd0171d6e",
+        "git_blob": "3f0b48fd8637048ba6a3494b0aee1a491b60e54a"
+      },
+      "root": {
+        "bytes": 24023,
+        "sha256": "4f1ca6972a63ed5173eff81455d3e686e57f8d9e228a6eedfaa3082fd0171d6e",
+        "git_blob": "3f0b48fd8637048ba6a3494b0aee1a491b60e54a"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_frames.py",
+      "linux": {
+        "bytes": 11704,
+        "sha256": "8f291b3e413275d32f175c0a2a7d98210d279b83f5f3a65e24bcca9c57cb9449",
+        "git_blob": "c073014e2ff2dd9ac2d9dd1c87b56e65ef886991"
+      },
+      "root": {
+        "bytes": 11704,
+        "sha256": "8f291b3e413275d32f175c0a2a7d98210d279b83f5f3a65e24bcca9c57cb9449",
+        "git_blob": "c073014e2ff2dd9ac2d9dd1c87b56e65ef886991"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_evidence_transport.py",
+      "linux": {
+        "bytes": 14690,
+        "sha256": "c19ae24bace78c03b952491c83459ce19e33c4cf04d20cc04991b58f9da9596d",
+        "git_blob": "85a2189a1c2d9e401d672a530f7e46a10380f63f"
+      },
+      "root": {
+        "bytes": 14690,
+        "sha256": "c19ae24bace78c03b952491c83459ce19e33c4cf04d20cc04991b58f9da9596d",
+        "git_blob": "85a2189a1c2d9e401d672a530f7e46a10380f63f"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_pipe.py",
+      "linux": {
+        "bytes": 9540,
+        "sha256": "f91c14223f7128dc307e82c580ff0d09b57ef7521badb5796f37ec4827a3bed5",
+        "git_blob": "32a4c0cadceaa40bda10da3ba44ac8a3a3d7671e"
+      },
+      "root": {
+        "bytes": 9540,
+        "sha256": "f91c14223f7128dc307e82c580ff0d09b57ef7521badb5796f37ec4827a3bed5",
+        "git_blob": "32a4c0cadceaa40bda10da3ba44ac8a3a3d7671e"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_decode.py",
+      "linux": {
+        "bytes": 12240,
+        "sha256": "c81071202df3d10633c40269e9cdb8ccf8f5d7c4f3e0e96e8acdd48c1a912674",
+        "git_blob": "81ec3c85272569d14ae8666d83e928a29153de7d"
+      },
+      "root": {
+        "bytes": 12240,
+        "sha256": "c81071202df3d10633c40269e9cdb8ccf8f5d7c4f3e0e96e8acdd48c1a912674",
+        "git_blob": "81ec3c85272569d14ae8666d83e928a29153de7d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "linux": {
+        "bytes": 27789,
+        "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+        "git_blob": "02691b70446440bb7804aed84413a0e7662ae378"
+      },
+      "root": {
+        "bytes": 27789,
+        "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+        "git_blob": "02691b70446440bb7804aed84413a0e7662ae378"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "linux": {
+        "bytes": 8924,
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+        "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+      },
+      "root": {
+        "bytes": 8924,
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+        "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "linux": {
+        "bytes": 7793,
+        "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+        "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+      },
+      "root": {
+        "bytes": 7793,
+        "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+        "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "linux": {
+        "bytes": 1596,
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+        "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+      },
+      "root": {
+        "bytes": 1596,
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+        "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "linux": {
+        "bytes": 1383,
+        "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+        "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+      },
+      "root": {
+        "bytes": 1383,
+        "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+        "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "linux": {
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790"
+      },
+      "root": {
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_llm_adapter_contract.py",
+      "linux": {
+        "bytes": 23304,
+        "sha256": "a1e9ca018f5e37b4e2e94d6ea2861f25bcc0304be17e47df1776597c97320219",
+        "git_blob": "f264baee5ff3fd8345064121d1956a53a3a0aa0d"
+      },
+      "root": {
+        "bytes": 23304,
+        "sha256": "a1e9ca018f5e37b4e2e94d6ea2861f25bcc0304be17e47df1776597c97320219",
+        "git_blob": "f264baee5ff3fd8345064121d1956a53a3a0aa0d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_artifact_loading.py",
+      "linux": {
+        "bytes": 19654,
+        "sha256": "a64f6a6f6f1d5a751abaa0fd2a92fe6c66e661e925c55ac3ad9201865f4f8312",
+        "git_blob": "c17acbd11ba46bdf9b74f858edacbde4c44fc3f2"
+      },
+      "root": {
+        "bytes": 19654,
+        "sha256": "a64f6a6f6f1d5a751abaa0fd2a92fe6c66e661e925c55ac3ad9201865f4f8312",
+        "git_blob": "c17acbd11ba46bdf9b74f858edacbde4c44fc3f2"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_artifact_loading_torch.py",
+      "linux": {
+        "bytes": 18421,
+        "sha256": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+        "git_blob": "9aed534e90f78ea4d165207bec3f699afe0180fe"
+      },
+      "root": {
+        "bytes": 18421,
+        "sha256": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+        "git_blob": "9aed534e90f78ea4d165207bec3f699afe0180fe"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_base_material.py",
+      "linux": {
+        "bytes": 7833,
+        "sha256": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+        "git_blob": "ec8839d778495b52bc26d83734d88aa59aec8225"
+      },
+      "root": {
+        "bytes": 7833,
+        "sha256": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+        "git_blob": "ec8839d778495b52bc26d83734d88aa59aec8225"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_base_material.py",
+      "linux": {
+        "bytes": 10405,
+        "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+        "git_blob": "bbb954b3fb9341543af26fc6e65e68a20f6fc94f"
+      },
+      "root": {
+        "bytes": 10405,
+        "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+        "git_blob": "bbb954b3fb9341543af26fc6e65e68a20f6fc94f"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_base_material_torch.py",
+      "linux": {
+        "bytes": 13121,
+        "sha256": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+        "git_blob": "10f4e8ccd4d7b377efa2c57442d7c822f90f1c6d"
+      },
+      "root": {
+        "bytes": 13121,
+        "sha256": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+        "git_blob": "10f4e8ccd4d7b377efa2c57442d7c822f90f1c6d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_base_source_closure.py",
+      "linux": {
+        "bytes": 12777,
+        "sha256": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c",
+        "git_blob": "f478fe4201c82b59393f5ae78a27e47d99f8c55d"
+      },
+      "root": {
+        "bytes": 12777,
+        "sha256": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c",
+        "git_blob": "f478fe4201c82b59393f5ae78a27e47d99f8c55d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_cell_host_handoff.py",
+      "linux": {
+        "bytes": 22349,
+        "sha256": "c025aa16593f67e6949cbfaf61d4bfb999e8e9460bf011445a37ea1e82ca942e",
+        "git_blob": "ba245691983091df938d538d4095c9dcfc8c6989"
+      },
+      "root": {
+        "bytes": 22349,
+        "sha256": "c025aa16593f67e6949cbfaf61d4bfb999e8e9460bf011445a37ea1e82ca942e",
+        "git_blob": "ba245691983091df938d538d4095c9dcfc8c6989"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/cell_dependency_closure.py",
+      "linux": {
+        "bytes": 10024,
+        "sha256": "81441a134b94308367229c914193c47ede472897830aae101b1ce5237ef0298e",
+        "git_blob": "044c75367f701ece67fdd070c797ada3b38aba96"
+      },
+      "root": {
+        "bytes": 10024,
+        "sha256": "81441a134b94308367229c914193c47ede472897830aae101b1ce5237ef0298e",
+        "git_blob": "044c75367f701ece67fdd070c797ada3b38aba96"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    },
+    {
+      "path": "scripts/llm_cell_release.py",
+      "linux": {
+        "bytes": 12530,
+        "sha256": "3846fc7e03e1edee09b53d3ab0a09bfcff45a9190d793b09a73ad43e2d911bfb",
+        "git_blob": "bf1fa79be98000ccbeb9a4c3aa512cd02df7e0cd"
+      },
+      "root": {
+        "bytes": 12530,
+        "sha256": "3846fc7e03e1edee09b53d3ab0a09bfcff45a9190d793b09a73ad43e2d911bfb",
+        "git_blob": "bf1fa79be98000ccbeb9a4c3aa512cd02df7e0cd"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_parent_material.py",
+      "linux": {
+        "bytes": 8041,
+        "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+        "git_blob": "f8169dddce53778d08fc4c5ee4d2872890d4c62f"
+      },
+      "root": {
+        "bytes": 8041,
+        "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+        "git_blob": "f8169dddce53778d08fc4c5ee4d2872890d4c62f"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_inherited_runtime.py",
+      "linux": {
+        "bytes": 16320,
+        "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+        "git_blob": "c3e577ef34f7406d4083b08bc72bba4c86d3c03d"
+      },
+      "root": {
+        "bytes": 16320,
+        "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+        "git_blob": "c3e577ef34f7406d4083b08bc72bba4c86d3c03d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_initial_trainable_setup_v2.py",
+      "linux": {
+        "bytes": 12681,
+        "sha256": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+        "git_blob": "6c5c9e241d9ece2abdc89e631064cec4a306ce6d"
+      },
+      "root": {
+        "bytes": 12681,
+        "sha256": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+        "git_blob": "6c5c9e241d9ece2abdc89e631064cec4a306ce6d"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_parent_step.py",
+      "linux": {
+        "bytes": 25575,
+        "sha256": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+        "git_blob": "4798f2be0cdbe0f243ed9b298f5c28c9c9bfac75"
+      },
+      "root": {
+        "bytes": 25575,
+        "sha256": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+        "git_blob": "4798f2be0cdbe0f243ed9b298f5c28c9c9bfac75"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "linux": {
+        "bytes": 24515,
+        "sha256": "bd332677a78cf63d217f06b7f8acf38d69e7ba753dbcc3585006cbbb376f8f72",
+        "git_blob": "1202a123c4fe8b63ccab27b4884da84ab2dbf2d7"
+      },
+      "root": {
+        "bytes": 24515,
+        "sha256": "bd332677a78cf63d217f06b7f8acf38d69e7ba753dbcc3585006cbbb376f8f72",
+        "git_blob": "1202a123c4fe8b63ccab27b4884da84ab2dbf2d7"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_candidate_observation_v1.py",
+      "linux": {
+        "bytes": 18390,
+        "sha256": "89c5036a885bda61ff1c11f2e721225325849c0faa4cba9c95ae9ea2f599d07b",
+        "git_blob": "e55901e0dff3a58d587594a5244bbf95a0ac61d4"
+      },
+      "root": {
+        "bytes": 18390,
+        "sha256": "89c5036a885bda61ff1c11f2e721225325849c0faa4cba9c95ae9ea2f599d07b",
+        "git_blob": "e55901e0dff3a58d587594a5244bbf95a0ac61d4"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_parent_step_v2.py",
+      "linux": {
+        "bytes": 32446,
+        "sha256": "78bfeb03de547088fa74de0d85c6138f759653534a34715d1bd8f98410edcef9",
+        "git_blob": "e9c85feed960cf38ba7619f493cc445f8570301e"
+      },
+      "root": {
+        "bytes": 32446,
+        "sha256": "78bfeb03de547088fa74de0d85c6138f759653534a34715d1bd8f98410edcef9",
+        "git_blob": "e9c85feed960cf38ba7619f493cc445f8570301e"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_answer_eos_research_v3.py",
+      "linux": {
+        "bytes": 8531,
+        "sha256": "e46d01776cfbdb77f8b5bd51422dc45dfa3360483b9050ae1fb3ae9482d680d0",
+        "git_blob": "4a736e084b6938d1fbd1a7c21bf24072c940ede3"
+      },
+      "root": {
+        "bytes": 8531,
+        "sha256": "e46d01776cfbdb77f8b5bd51422dc45dfa3360483b9050ae1fb3ae9482d680d0",
+        "git_blob": "4a736e084b6938d1fbd1a7c21bf24072c940ede3"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_answer_eos_task_research_v4.py",
+      "linux": {
+        "bytes": 3554,
+        "sha256": "029a95bcf86864bed51765f22745a463c13c37115d58039e6befbc2489f953a9",
+        "git_blob": "1c304731176937b225efc65d16d392817617806a"
+      },
+      "root": {
+        "bytes": 3554,
+        "sha256": "029a95bcf86864bed51765f22745a463c13c37115d58039e6befbc2489f953a9",
+        "git_blob": "1c304731176937b225efc65d16d392817617806a"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_observed_execution_v1.py",
+      "linux": {
+        "bytes": 4512,
+        "sha256": "c8df782befe0cfda7197d9c8c999188e616a73c103c9b24603d706bbd07f0856",
+        "git_blob": "36108670cae70a9460a204b7a7eb7ea62770d2e3"
+      },
+      "root": {
+        "bytes": 4512,
+        "sha256": "c8df782befe0cfda7197d9c8c999188e616a73c103c9b24603d706bbd07f0856",
+        "git_blob": "36108670cae70a9460a204b7a7eb7ea62770d2e3"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_binary_answer_observed_v2.py",
+      "linux": {
+        "bytes": 22400,
+        "sha256": "6e588493c7c956b5fb55f6b5875dab3fb951b964783c1dc8366caa9178e827fc",
+        "git_blob": "ccc1a96d423fc5a6ce41873d7370abf483641708"
+      },
+      "root": {
+        "bytes": 22400,
+        "sha256": "6e588493c7c956b5fb55f6b5875dab3fb951b964783c1dc8366caa9178e827fc",
+        "git_blob": "ccc1a96d423fc5a6ce41873d7370abf483641708"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_binary_diverse60_observed_v3.py",
+      "linux": {
+        "bytes": 31523,
+        "sha256": "3527247303c4929e568523354c1536b2b7f64f9510873bfef7998b9999663b65",
+        "git_blob": "c6fcd4f3e03e6424f9f08fb356771bc495785b78"
+      },
+      "root": {
+        "bytes": 31523,
+        "sha256": "3527247303c4929e568523354c1536b2b7f64f9510873bfef7998b9999663b65",
+        "git_blob": "c6fcd4f3e03e6424f9f08fb356771bc495785b78"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_inherited_runtime.py",
+      "linux": {
+        "bytes": 4868,
+        "sha256": "206606fc19a05a9cd7bbfb2741a9ee3c1a0534ccfd3f8055d4b7428201c21728",
+        "git_blob": "fb31ef77d1040635275cf8004b7f12b8757913dc"
+      },
+      "root": {
+        "bytes": 4868,
+        "sha256": "206606fc19a05a9cd7bbfb2741a9ee3c1a0534ccfd3f8055d4b7428201c21728",
+        "git_blob": "fb31ef77d1040635275cf8004b7f12b8757913dc"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_parent_step.py",
+      "linux": {
+        "bytes": 21904,
+        "sha256": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+        "git_blob": "04fd3e3209020725601a114a1a06969b6ab51e07"
+      },
+      "root": {
+        "bytes": 21904,
+        "sha256": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+        "git_blob": "04fd3e3209020725601a114a1a06969b6ab51e07"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_parent_material.py",
+      "linux": {
+        "bytes": 12298,
+        "sha256": "8624e0871e5256c9c1e70488121d8902bf88f430683c0b6153c8361a993ac1dd",
+        "git_blob": "6907ecea9bfcd0cdfbe0baeb6a3713ffe2721eb4"
+      },
+      "root": {
+        "bytes": 12298,
+        "sha256": "8624e0871e5256c9c1e70488121d8902bf88f430683c0b6153c8361a993ac1dd",
+        "git_blob": "6907ecea9bfcd0cdfbe0baeb6a3713ffe2721eb4"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_parent_step_v2.py",
+      "linux": {
+        "bytes": 12346,
+        "sha256": "ae96225d38287f6ed7a249bbd673b0b1cd97bf829361e4932bef5e2cb717e187",
+        "git_blob": "96734604cf194c205c06af375bacfccb2e879d08"
+      },
+      "root": {
+        "bytes": 12346,
+        "sha256": "ae96225d38287f6ed7a249bbd673b0b1cd97bf829361e4932bef5e2cb717e187",
+        "git_blob": "96734604cf194c205c06af375bacfccb2e879d08"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_assessment.py",
+      "linux": {
+        "bytes": 26750,
+        "sha256": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+        "git_blob": "805a52be4340aeb3660d62ac6f902112d3709153"
+      },
+      "root": {
+        "bytes": 26750,
+        "sha256": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+        "git_blob": "805a52be4340aeb3660d62ac6f902112d3709153"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_assessment.py",
+      "linux": {
+        "bytes": 19645,
+        "sha256": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+        "git_blob": "5709d7ef4ffbc8f04f3026bb4a49fbc979fe890e"
+      },
+      "root": {
+        "bytes": 19645,
+        "sha256": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+        "git_blob": "5709d7ef4ffbc8f04f3026bb4a49fbc979fe890e"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_trial_ledger.py",
+      "linux": {
+        "bytes": 23669,
+        "sha256": "732efa3b92fdef41142370cdc9f61fe9c209543afd6e43e283f13faf8b4fae0c",
+        "git_blob": "f8d72c2bcc77a7f5babd6fdda6b9f6eccaa07b48"
+      },
+      "root": {
+        "bytes": 23669,
+        "sha256": "732efa3b92fdef41142370cdc9f61fe9c209543afd6e43e283f13faf8b4fae0c",
+        "git_blob": "f8d72c2bcc77a7f5babd6fdda6b9f6eccaa07b48"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_trial_ledger.py",
+      "linux": {
+        "bytes": 54149,
+        "sha256": "56d04adad59a365ba832e4297e25b39d667dbd54b6bb9e356e62e077c6507d83",
+        "git_blob": "f9da0e41310616867270d6ceee7deb39e79818e6"
+      },
+      "root": {
+        "bytes": 54149,
+        "sha256": "56d04adad59a365ba832e4297e25b39d667dbd54b6bb9e356e62e077c6507d83",
+        "git_blob": "f9da0e41310616867270d6ceee7deb39e79818e6"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_trial_review.py",
+      "linux": {
+        "bytes": 10849,
+        "sha256": "b38807379e878b9a818798837b5b6cd408822716d93c65bfc3ba34338af80848",
+        "git_blob": "e1e8d2ad2a0f455fe8d6756ba134827583a4a7a8"
+      },
+      "root": {
+        "bytes": 10849,
+        "sha256": "b38807379e878b9a818798837b5b6cd408822716d93c65bfc3ba34338af80848",
+        "git_blob": "e1e8d2ad2a0f455fe8d6756ba134827583a4a7a8"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_trial_replay.py",
+      "linux": {
+        "bytes": 28617,
+        "sha256": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb",
+        "git_blob": "cf123f5d2295dc6f10ef02d55bfb8d27d89da1e9"
+      },
+      "root": {
+        "bytes": 28617,
+        "sha256": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb",
+        "git_blob": "cf123f5d2295dc6f10ef02d55bfb8d27d89da1e9"
+      },
+      "equal": true,
+      "loaded_before": true,
+      "loaded_after": true
+    },
+    {
+      "path": "scripts/llm_runtime_rss_diagnostics.py",
+      "linux": {
+        "bytes": 6867,
+        "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+        "git_blob": "06c7add733a7ac8ecd208a1f88b0ed41f6abd931"
+      },
+      "root": {
+        "bytes": 6867,
+        "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+        "git_blob": "06c7add733a7ac8ecd208a1f88b0ed41f6abd931"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": true
+    },
+    {
+      "path": "config/pon/model-family-smollm2-135m-v1.json",
+      "linux": {
+        "bytes": 5293,
+        "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+        "git_blob": "125fabd9e147a7e9057ca7960e87f519124a8b68"
+      },
+      "root": {
+        "bytes": 5293,
+        "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+        "git_blob": "125fabd9e147a7e9057ca7960e87f519124a8b68"
+      },
+      "equal": true,
+      "loaded_before": false,
+      "loaded_after": false
+    }
+  ],
+  "loaded_project_modules_before": [
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+    "formal/pon-nakamoto-v1/test_llm_adapter_contract.py",
+    "scripts/llm_answer_eos_research_v3.py",
+    "scripts/llm_answer_eos_task_research_v4.py",
+    "scripts/llm_base_material.py",
+    "scripts/llm_binary_answer_observed_v2.py",
+    "scripts/llm_binary_diverse60_observed_v3.py",
+    "scripts/llm_cell_host_handoff.py",
+    "scripts/llm_cell_release.py",
+    "scripts/llm_inherited_runtime.py",
+    "scripts/llm_initial_trainable_setup_v2.py",
+    "scripts/llm_neural_read_worker.py",
+    "scripts/llm_parent_material.py",
+    "scripts/llm_runtime_assessment.py",
+    "scripts/llm_runtime_candidate_observation_v1.py",
+    "scripts/llm_runtime_evidence_frames.py",
+    "scripts/llm_runtime_evidence_pipe.py",
+    "scripts/llm_runtime_exit_observation.py",
+    "scripts/llm_runtime_exit_subset_observation.py",
+    "scripts/llm_runtime_exit_worker_observation.py",
+    "scripts/llm_runtime_kernel_aggregate.py",
+    "scripts/llm_runtime_kernel_owned.py",
+    "scripts/llm_runtime_observed_execution_v1.py",
+    "scripts/llm_runtime_parent_step.py",
+    "scripts/llm_runtime_parent_step_v2.py",
+    "scripts/llm_runtime_pilot.py",
+    "scripts/llm_runtime_trial_ledger.py",
+    "scripts/test_llm_base_material.py",
+    "scripts/test_llm_base_material_torch.py",
+    "scripts/test_llm_base_source_closure.py",
+    "scripts/test_llm_inherited_runtime.py",
+    "scripts/test_llm_parent_material.py",
+    "scripts/test_llm_runtime_artifact_loading.py",
+    "scripts/test_llm_runtime_artifact_loading_torch.py",
+    "scripts/test_llm_runtime_assessment.py",
+    "scripts/test_llm_runtime_decode.py",
+    "scripts/test_llm_runtime_evidence_frames.py",
+    "scripts/test_llm_runtime_evidence_pipe.py",
+    "scripts/test_llm_runtime_evidence_transport.py",
+    "scripts/test_llm_runtime_exit_binding_pending.py",
+    "scripts/test_llm_runtime_exit_initial_pending.py",
+    "scripts/test_llm_runtime_exit_observation.py",
+    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+    "scripts/test_llm_runtime_exit_subset_observation.py",
+    "scripts/test_llm_runtime_exit_worker_frontier.py",
+    "scripts/test_llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_exit_worker_wait4.py",
+    "scripts/test_llm_runtime_kernel_aggregate.py",
+    "scripts/test_llm_runtime_kernel_close.py",
+    "scripts/test_llm_runtime_kernel_counters.py",
+    "scripts/test_llm_runtime_kernel_diagnostic.py",
+    "scripts/test_llm_runtime_kernel_owned.py",
+    "scripts/test_llm_runtime_parent_step.py",
+    "scripts/test_llm_runtime_parent_step_v2.py",
+    "scripts/test_llm_runtime_pilot.py",
+    "scripts/test_llm_runtime_rss_owner.py",
+    "scripts/test_llm_runtime_trial_ledger.py",
+    "scripts/test_llm_runtime_trial_replay.py",
+    "scripts/test_llm_runtime_trial_review.py"
+  ],
+  "loaded_project_modules_after": [
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+    "formal/pon-nakamoto-v1/test_llm_adapter_contract.py",
+    "scripts/llm_answer_eos_research_v3.py",
+    "scripts/llm_answer_eos_task_research_v4.py",
+    "scripts/llm_base_material.py",
+    "scripts/llm_binary_answer_observed_v2.py",
+    "scripts/llm_binary_diverse60_observed_v3.py",
+    "scripts/llm_cell_host_handoff.py",
+    "scripts/llm_cell_release.py",
+    "scripts/llm_inherited_runtime.py",
+    "scripts/llm_initial_trainable_setup_v2.py",
+    "scripts/llm_neural_read_worker.py",
+    "scripts/llm_parent_material.py",
+    "scripts/llm_runtime_assessment.py",
+    "scripts/llm_runtime_candidate_observation_v1.py",
+    "scripts/llm_runtime_evidence_frames.py",
+    "scripts/llm_runtime_evidence_pipe.py",
+    "scripts/llm_runtime_exit_observation.py",
+    "scripts/llm_runtime_exit_subset_observation.py",
+    "scripts/llm_runtime_exit_worker_observation.py",
+    "scripts/llm_runtime_kernel_aggregate.py",
+    "scripts/llm_runtime_kernel_owned.py",
+    "scripts/llm_runtime_observed_execution_v1.py",
+    "scripts/llm_runtime_parent_step.py",
+    "scripts/llm_runtime_parent_step_v2.py",
+    "scripts/llm_runtime_pilot.py",
+    "scripts/llm_runtime_rss_diagnostics.py",
+    "scripts/llm_runtime_trial_ledger.py",
+    "scripts/test_llm_base_material.py",
+    "scripts/test_llm_base_material_torch.py",
+    "scripts/test_llm_base_source_closure.py",
+    "scripts/test_llm_inherited_runtime.py",
+    "scripts/test_llm_parent_material.py",
+    "scripts/test_llm_runtime_artifact_loading.py",
+    "scripts/test_llm_runtime_artifact_loading_torch.py",
+    "scripts/test_llm_runtime_assessment.py",
+    "scripts/test_llm_runtime_decode.py",
+    "scripts/test_llm_runtime_evidence_frames.py",
+    "scripts/test_llm_runtime_evidence_pipe.py",
+    "scripts/test_llm_runtime_evidence_transport.py",
+    "scripts/test_llm_runtime_exit_binding_pending.py",
+    "scripts/test_llm_runtime_exit_initial_pending.py",
+    "scripts/test_llm_runtime_exit_observation.py",
+    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+    "scripts/test_llm_runtime_exit_subset_observation.py",
+    "scripts/test_llm_runtime_exit_worker_frontier.py",
+    "scripts/test_llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_exit_worker_wait4.py",
+    "scripts/test_llm_runtime_kernel_aggregate.py",
+    "scripts/test_llm_runtime_kernel_close.py",
+    "scripts/test_llm_runtime_kernel_counters.py",
+    "scripts/test_llm_runtime_kernel_diagnostic.py",
+    "scripts/test_llm_runtime_kernel_owned.py",
+    "scripts/test_llm_runtime_parent_step.py",
+    "scripts/test_llm_runtime_parent_step_v2.py",
+    "scripts/test_llm_runtime_pilot.py",
+    "scripts/test_llm_runtime_rss_owner.py",
+    "scripts/test_llm_runtime_trial_ledger.py",
+    "scripts/test_llm_runtime_trial_replay.py",
+    "scripts/test_llm_runtime_trial_review.py"
+  ],
+  "differences": [],
+  "all_file_access_coverage_claimed": false,
+  "whole_checkout_reproduction_claimed": false,
+  "unresolved_relative_open_event_count": 7331,
+  "tests_rerun": false,
+  "model_or_campaign_qualification": false
+}

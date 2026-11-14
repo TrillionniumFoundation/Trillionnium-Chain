@@ -181,6 +181,17 @@ pub(in crate::store) struct Snapshot {
 }
 impl Snapshot {
     pub(in crate::store) fn create(path: &Path, snapshot_byte_limit: u64) -> Result<Self> {
+        Self::create_with_preflight(path, snapshot_byte_limit, || Ok(()))
+    }
+
+    /// Run the selected caller's admission check under the original source
+    /// owner lock, before private-file allocation or database copying. This
+    /// closes the pathname-check/adoption race without changing old callers.
+    pub(in crate::store) fn create_with_preflight(
+        path: &Path,
+        snapshot_byte_limit: u64,
+        preflight: impl FnOnce() -> Result<()>,
+    ) -> Result<Self> {
         ensure(
             path.join("native.sqlite").is_file(),
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
@@ -204,6 +215,7 @@ impl Snapshot {
             .map_err(|_| Error::from("WRITER_BUSY"))?;
         check_directory(&source_directory, &source_path)?;
         source_owner.check()?;
+        preflight()?;
         no_recovery_files(&source_path)?;
         let source_database = Input::open(&source_path.join("native.sqlite"))?;
         ensure(

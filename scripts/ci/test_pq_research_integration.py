@@ -163,6 +163,275 @@ class CorpusGateTests(unittest.TestCase):
         q.parent.mkdir(parents=True, exist_ok=True)
         q.write_text(json.dumps(self.manifest))
 
+    def test_typed_pending_worker_requires_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "scripts/llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_exit_initial_pending.py",
+            "scripts/test_llm_runtime_exit_binding_pending.py",
+            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+            "scripts/test_llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_pilot.py",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_typed_pending_worker_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "scripts/llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_exit_initial_pending.py",
+            "scripts/test_llm_runtime_exit_binding_pending.py",
+            "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+            "scripts/test_llm_runtime_exit_worker_observation.py",
+            "scripts/test_llm_runtime_pilot.py",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected typed pending worker source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_throughput_cost_coverage_requires_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "scripts/ci/throughput_cost_coverage.py",
+            "scripts/ci/test_throughput_cost_coverage.py",
+            "scripts/ci/read_native_cache_observation.py",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_throughput_cost_coverage_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "scripts/ci/throughput_cost_coverage.py",
+            "scripts/ci/test_throughput_cost_coverage.py",
+            "scripts/ci/read_native_cache_observation.py",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected read-only throughput cost source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_npq6_parallel_original_sources_require_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_npq6_parallel_original_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected original NPQ6 parallel control source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_relay_preflight_sources_require_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "trillionnium/crates/trnm-types/Cargo.toml",
+            "trillionnium/crates/trnm-types/src/lib.rs",
+            "trillionnium/crates/trnm-types/src/relay.rs",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_relay_preflight_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "trillionnium/crates/trnm-types/Cargo.toml",
+            "trillionnium/crates/trnm-types/src/lib.rs",
+            "trillionnium/crates/trnm-types/src/relay.rs",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected relay preflight source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_thp2_fresh_time_sources_require_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+            "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_thp2_fresh_time_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+            "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected THP2 fresh-time source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_wan_control_sources_require_each_path_and_pin(self):
+        paths = (
+            'config/pon/decentralization-audit-v1.json',
+            'docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md',
+            'scripts/ci/fixtures/pon_decentralization_v1.json',
+            'scripts/ci/test_pon_decentralization_audit.py',
+            'scripts/ci/test_pon_wan_control_domains.py',
+            'scripts/ci/test_pon_wan_evidence.py',
+            'scripts/pon_decentralization_audit.py',
+            'scripts/pon_wan_evidence.py',
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_wan_control_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            'config/pon/decentralization-audit-v1.json',
+            'docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md',
+            'scripts/ci/fixtures/pon_decentralization_v1.json',
+            'scripts/ci/test_pon_decentralization_audit.py',
+            'scripts/ci/test_pon_wan_control_domains.py',
+            'scripts/ci/test_pon_wan_evidence.py',
+            'scripts/pon_decentralization_audit.py',
+            'scripts/pon_wan_evidence.py',
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected WAN control")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def test_valid_offline_fixture_is_still_hold(self):
         result = check(self.root)
         self.assertEqual(result["status"], "HOLD_NO_GO")
@@ -170,10 +439,25 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["node_activated"])
 
     def test_consolidation_controls_require_each_path_and_pin(self):
-        # Independent literals preserve the selected five-path review scope.
+        # Independent literals preserve the selected review scope.
         paths = (
+            "scripts/read_failed_native_campaign_zip.py",
+            "scripts/ci/test_read_failed_native_campaign_zip.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
+            "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+            "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
+            "scripts/llm_runtime_trial_ledger.py",
+            "scripts/test_llm_runtime_trial_ledger.py",
+            "formal/pon-native-fullpath-v1/collect_native.py",
+            "formal/pon-native-fullpath-v1/test_collect_native.py",
+            "formal/release-finality-v2/control_domains.py",
+            "formal/release-finality-v2/test_control_domains.py",
+            "formal/release-finality-v2/campaign_gate.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
@@ -195,8 +479,23 @@ class CorpusGateTests(unittest.TestCase):
 
     def test_consolidation_control_bytes_are_bound_without_qualification(self):
         paths = (
+            "scripts/read_failed_native_campaign_zip.py",
+            "scripts/ci/test_read_failed_native_campaign_zip.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
+            "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+            "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
+            "scripts/llm_runtime_trial_ledger.py",
+            "scripts/test_llm_runtime_trial_ledger.py",
+            "formal/pon-native-fullpath-v1/collect_native.py",
+            "formal/pon-native-fullpath-v1/test_collect_native.py",
+            "formal/release-finality-v2/control_domains.py",
+            "formal/release-finality-v2/test_control_domains.py",
+            "formal/release-finality-v2/campaign_gate.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
@@ -249,6 +548,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertEqual(result["status"], "HOLD_NO_GO")
         self.assertIs(result["cryptographic_acceptance"], False)
         self.assertIs(result["node_activated"], False)
+
+    def test_native_observation_guards_cannot_omit_pins_or_change_bytes(self):
+        # Independent names keep the retained archive, native completion and
+        # synthetic-clock reader dependencies mandatory even if a roster drifts.
+        dependencies = (
+            "scripts/ci/prepare_artifact_upload.py",
+            "scripts/ci/test_prepare_artifact_upload.py",
+            "scripts/ci/w1_native_controls.py",
+            "scripts/ci/test_w1_factorial_native_gate.py",
+            "scripts/ci/check_w1_native_roster.py",
+            "scripts/ci/test_w1_native_roster.py",
+            "scripts/ci/w1_native_rosters_v1.json",
+            "scripts/pon_fresh_rejection_report.py",
+            "scripts/ci/test_fresh_rejection_report.py",
+        )
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            retained = source.read_bytes()
+            try:
+                source.write_bytes(retained + b"changed native observation guard")
+                with self.subTest(path=name, mutation="bytes"), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(retained)
+        self.assertFalse(check(self.root)["node_activated"])
 
     def test_deep_event_and_sampler_inputs_cannot_omit_pins_or_change_bytes(self):
         # Independent literals: neither helper declarations nor the checker's
@@ -550,6 +888,49 @@ class CorpusGateTests(unittest.TestCase):
         self.save()
         with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
             check(self.root)
+
+    def test_reviewed_endpoint_and_library_closure_cannot_drop_source_or_pin(self):
+        # Independent literal roster: deleting the implementation constant must fail.
+        dependencies = (
+            'config/pon/pq-native-tls-endpoint-required-tests-v1.json',
+            'docs/security/PQ_TLS_PINNED_ENDPOINT_V1.md',
+            'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs',
+            'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
 
     def test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins(self):
         original = list(self.manifest["required_paths"])
@@ -1111,6 +1492,1201 @@ class CorpusGateTests(unittest.TestCase):
                     source.write_bytes(original)
         self.assertFalse(check(self.root)["cryptographic_acceptance"])
 
+
+
+    def test_reviewed_library_ports_cannot_omit_or_mutate_source(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/store.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/reservation_v2_tests.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs',
+            'trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_sp27_research_selectors_cannot_omit_or_mutate_source(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'scripts/ci/run_from_zero_host.py',
+            'scripts/ci/run_from_zero_native.py',
+            'scripts/ci/run_sp27_receiver_controls.py',
+            'scripts/ci/run_sp27_strata_controls.py',
+            'scripts/ci/test_run_from_zero_native.py',
+            'scripts/ci/test_sp27_receiver_controls.py',
+            'scripts/ci/test_sp27_strata_controls.py',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed SP27 research source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_snapshot_and_admission_bridge_cannot_omit_or_mutate_source(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'docs/security/SP27_03_RESEARCH_BRIDGE_RETAINED_V1.md',
+            'trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs',
+            'trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed snapshot or admission bridge")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
+    def test_material_progress_and_native_debt_cannot_omit_or_mutate_source(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs',
+            'trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_paid_cpu_debt_recovery.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_rollback_oracle_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'scripts/ci/pq_external_rollback_oracle.py',
+            'scripts/ci/test_pq_external_rollback_oracle.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_immutable_key_and_legal_producer_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs',
+            'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
+            'trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs',
+            'docs/security/PQ_ROOT_SIGNATURE_COST_V1.md',
+            'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs',
+            'trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs',
+            'scripts/ci/run_pq_root_native_v3.py',
+            'scripts/ci/test_run_pq_root_native_v3.py',
+            'scripts/ci/pq_root_dependency_register.py',
+            'docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md',
+            'docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_cheap_cache_and_crossclaim_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_original_bounded_log_and_no_gain_controls_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-worker-agent/src/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_peer_prewrite_sources_cannot_omit_source_or_pin(self):
+        # Independent review roster; simultaneous manifest deletion must fail.
+        dependencies = (
+            "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+            "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+
+    def test_peer_prewrite_sources_cannot_mutate_reviewed_bytes(self):
+        dependencies = (
+            "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+            "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+            "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+        )
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed peer pre-write owner")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_final_artifact_seal_and_q4_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+            'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_q4_advisory_sources_cannot_omit_source_or_pin(self):
+        # Independent literal review scope, including actual native reentry.
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+
+    def test_q4_advisory_sources_cannot_mutate_reviewed_bytes(self):
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        )
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed Q4 advisory or reentry source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_final_reviewed_branch_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            '.github/workflows/pon-recent-batch-acceptance.yml',
+            'config/pon/applicability-v1.json',
+            'config/pon/public-resource-profile-vectors-v1.json',
+            'docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md',
+            'docs/security/PQ_DURABLE_OUTBOUND_V1.md',
+            'formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json',
+            'formal/pon-native-fullpath-v1/collect_native.py',
+            'formal/pon-native-fullpath-v1/test_collect_native.py',
+            'formal/release-finality-v2/campaign_gate.py',
+            'formal/release-finality-v2/control_domains.py',
+            'formal/release-finality-v2/test_control_domains.py',
+            'scripts/ci/test_pon_public_v3_policy_read.py',
+            'scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py',
+            'scripts/llm_neural_read_worker.py',
+            'scripts/llm_runtime_pilot.py',
+            'scripts/llm_runtime_trial_ledger.py',
+            'scripts/pon_public_v3_policy_read.py',
+            'scripts/pon_w1_false_trace_reuse_reader_v1.py',
+            'scripts/prepare_cell_sealed_research_v1.py',
+            'scripts/test_llm_cell_sealed_worker_v1.py',
+            'scripts/test_llm_material_runtime_bridge.py',
+            'scripts/test_llm_runtime_trial_ledger.py',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs',
+            'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-peer-lease/src/payload_body.rs',
+            'trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs',
+            'trillionnium/crates/trnm-peer-lease/src/unix.rs',
+            'trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs',
+            'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/error.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/lib.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs',
+            'trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs',
+            'trillionnium/crates/trnm-pon-node/tests/native_node.rs',
+            'trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs',
+            'trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
+    def test_cross_repository_inspection_sources_cannot_omit_or_mutate(self):
+        dependencies = (
+            'scripts/ci/check_cross_repo_candidate.py',
+            'scripts/ci/test_cross_repo_candidate.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed immutable source inspector')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
+    def test_final_python_boundaries_cannot_omit_or_mutate(self):
+        dependencies = (
+            'scripts/ci/ci_job.sh',
+            'scripts/ci/run_w1_fresh_service_v1.py',
+            'scripts/ci/test_ci_contract.py',
+            'scripts/ci/test_pon_public_v3_phase_read.py',
+            'scripts/ci/test_run_w1_fresh_service_v1.py',
+            'scripts/ci/test_w1_lifetime_ledger.py',
+            'scripts/pon_public_v3_phase_read.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed selected reader boundary')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+    def test_public_v3_reactor_sources_cannot_omit_or_mutate(self):
+        # Independently written literals keep both implementation and original
+        # read controls mandatory even if the checker roster is later changed.
+        dependencies = (
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed public reactor source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
+    def test_w1_receipt_clock_sources_cannot_omit_or_mutate(self):
+        dependencies = (
+            '.github/workflows/pon-w1-transparent-profile.yml',
+            'evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz',
+            'scripts/ci/check_ci_contract.py',
+            'scripts/ci/test_ci_contract.py',
+            'scripts/ci/test_w1_v2_controls_gate.py',
+            'scripts/ci/test_w1_v2_current_stage_gate.py',
+            'formal/pon-nakamoto-v1/experiments/w1_stage_measure.py',
+            'scripts/ci/w1_v2_controls_gate.py',
+            'scripts/w1_v2_receipt_controls.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed current W1 clock source')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
+    def test_native_ownership_boundaries_cannot_omit_or_mutate(self):
+        dependencies = (
+            'trillionnium/crates/trnm-data-availability/src/cell/archive.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed selected native ownership boundary')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+    def test_sqlite_requalification_reader_sources_cannot_omit_or_mutate(self):
+        # Independently written literals keep the selected reader and its original
+        # controls and actual caller mandatory even if the checker roster is later changed.
+        dependencies = (
+            'scripts/ci/check_sqlite_build_requalification.py',
+            'scripts/ci/test_sqlite_build_requalification.py',
+            '.github/workflows/pon-pq-system-continuation.yml',
+            'scripts/ci/ci_job.sh',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed SQLite qualification reader")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_current_cgroup_observation_sources_cannot_omit_or_mutate(self):
+        # Independently written literals keep the selected reader and its original
+        # controls and actual caller mandatory even if the checker roster is later changed.
+        dependencies = (
+            'scripts/ci/public_host_ci_observation.py',
+            'scripts/ci/run_w1_rank_batch_v5.py',
+            'scripts/ci/test_run_w1_rank_batch_v5.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed cgroup observation source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_original_large_state_profile_workflow_cannot_omit_or_mutate(self):
+        # Independently written literals keep the selected reader and its original
+        # controls and actual caller mandatory even if the checker roster is later changed.
+        dependencies = (
+            '.github/workflows/pon-original-large-state-cpu.yml',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed original native profile workflow")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_cell_acquisition_api_cannot_omit_or_mutate(self):
+        # Independently written literals keep the selected reader and its original
+        # controls and actual caller mandatory even if the checker roster is later changed.
+        dependencies = (
+            'scripts/run_llm_cell_native_handoff.py',
+            'scripts/ci/test_llm_cell_acquisition.py',
+            'scripts/ci/ci_job.sh',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed explicit Cell acquisition API")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
+    def test_partial_campaign_reader_cannot_omit_or_mutate(self):
+        # Independent literals: deriving this list from the checker would hide omissions.
+        dependencies = (
+            'scripts/ci/read_native_campaign_attempt.py',
+            'scripts/ci/test_read_native_campaign_attempt.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed partial campaign reader')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+    def test_original_statement_boundary_sources_cannot_omit_or_mutate(self):
+        # Literal paths are independent of the implementation's required roster.
+        dependencies = (
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+        )
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b"changed selected original control source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_rust_token_reader_sources_cannot_omit_or_mutate(self):
+        # Literal paths are independent of the implementation's required roster.
+        dependencies = (
+            'scripts/ci/rust_source_tokens.py',
+            'scripts/ci/test_rust_source_tokens.py',
+            'scripts/ci/ci_job.sh',
+        )
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b"changed selected original control source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+
+    def test_cell_peer_failure_order_cannot_omit_or_mutate(self):
+        # Independent literals pin the selected runtime and original/new controls.
+        dependencies = (
+            "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed bounded peer-failure ordering")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_authenticated_caller_v5_sources_cannot_omit_or_mutate(self):
+        # Independent literals: deriving this list from the checker would hide omissions.
+        dependencies = (
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
+            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+            'scripts/ci/test_pon_public_v3_phase_read.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed authenticated caller observation')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
+    def test_collected_unit_observer_sources_cannot_omit_or_mutate(self):
+        # Independent literals: deriving this list from the checker would hide omissions.
+        dependencies = (
+            'scripts/ci/check_collected_unit_empty_v1.py',
+            'scripts/ci/test_collected_unit_empty_v1.py',
+            '.github/workflows/pon-native-campaign-qualification.yml',
+            'formal/pon-nakamoto-v1/bounded_process.py',
+            'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/manifest.json',
+            'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-history-raw-joint.yml',
+            'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-native-campaign-qualification.yml',
+            'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-admission-daa-v2.yml',
+            'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-history-epoch-v1-native.yml',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed collected unit observation source')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
+    def test_codeql_diagnostic_reader_sources_cannot_omit_or_mutate(self):
+        # Independent literals: deriving this list from the checker would hide omissions.
+        dependencies = (
+            'scripts/ci/collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/read_codeql_semantic_observations_v1.py',
+            'scripts/ci/test_codeql_semantic_observations_v1.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed codeql diagnostic readback')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
+
+    def test_original_mining_timestamp_controls_cannot_omit_or_mutate(self):
+        name = "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs"
+        self.assertIn(name, NATIVE_REQUIRED_PATHS)
+        original = copy.deepcopy(self.manifest)
+        for omission in ("required", "pin", "required-and-pin"):
+            with self.subTest(omission=omission):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        source = self.root / name
+        before = source.read_bytes()
+        try:
+            source.write_bytes(before + b"changed original wall-clock controls")
+            with self.assertRaisesRegex(IntegrityError, "changed source"):
+                check(self.root)
+        finally:
+            source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
 
 
 if __name__ == "__main__":

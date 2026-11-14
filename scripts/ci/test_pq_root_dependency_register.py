@@ -27,6 +27,7 @@ EXPECTED_DOMAINS = {"signature", "commitment", "proof", "ledger", "transport",
                     "recovery", "release", "application"}
 NATIVE_CRYPTO = "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
 NATIVE_OWNER = "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs"
+COST_EXAMPLE = "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs"
 
 
 PREVIOUS_REVIEW_BASE = "225ab38e1e5f7e0852a28372bd8dd769eec1084b"
@@ -48,6 +49,27 @@ PREVIOUS_SOURCE_PINS = {
         "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461",
     "trillionnium/crates/trnm-protocol/src/lib.rs":
         "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs":
+        "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs":
+        "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs":
+        "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
+}
+
+
+# Exact preceding 975af9eb values; preserve its 45-input canonical identity.
+PREVIOUS_CURRENT_SOURCE_PINS = {
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":
+        "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs":
+        "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs":
+        "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs":
+        "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs":
+        "dc673c063229c4a2ce66174199d07f885f28203167b34410d1d0463e2cf99910",
 }
 
 
@@ -508,6 +530,10 @@ class ReviewedSourceTests(ContractCase):
         self.assertEqual(report["source_binding_scope"], "declared-root-component-files-only")
         self.assertEqual(report["source_files_sha256"], self.data["source_files_sha256"])
         self.assertIn(NATIVE_CRYPTO, report["source_files_sha256"])
+        self.assertEqual(len(report["source_files_sha256"]), 46)
+        self.assertEqual(report["review_base_revision"], "5c04c60e463462d9df8884786e0d5bb32af08a64")
+        self.assertEqual(report["declared_source_snapshot_sha256"],
+                         "c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec")
         self.assertIn(NATIVE_OWNER, report["source_files_sha256"])
         self.assertIn("formal/pon-nakamoto-v1/pq_root_effect_readback_v2.py", report["source_files_sha256"])
         self.remains_unqualified(report)
@@ -523,6 +549,41 @@ class ReviewedSourceTests(ContractCase):
         self.data["source_files_sha256"][NATIVE_CRYPTO] = hashlib.sha256(path.read_bytes()).hexdigest()
         self.write()
         self.inspect_refuses("frozen reviewed snapshot")
+
+
+    def test_preceding_forty_five_input_snapshot_keeps_its_original_identity(self):
+        previous = deepcopy(self.data)
+        previous["review_base_revision"] = "975af9eb4a7f15b405de602552fa05021a176c11"
+        previous["source_files_sha256"].pop(COST_EXAMPLE)
+        previous["source_files_sha256"].update(PREVIOUS_CURRENT_SOURCE_PINS)
+        canonical = json.dumps({
+            "review_base_revision": previous["review_base_revision"],
+            "source_files_sha256": previous["source_files_sha256"],
+        }, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual(len(previous["source_files_sha256"]), 45)
+        self.assertEqual(hashlib.sha256(canonical).hexdigest(),
+                         "8cfc6a3d9a0347cb8bd7e6c41f5286523d85bba48b3b392922ad8aae8c8d2435")
+        self.data = previous
+        self.write()
+        self.inspect_refuses("review_base_revision")
+
+    def test_cost_observation_source_is_required_and_cannot_repin_its_own_review(self):
+        path = self.root / COST_EXAMPLE
+        original = path.read_bytes()
+        self.assertEqual(len(original), 21222)
+        self.assertEqual(hashlib.sha256(original).hexdigest(),
+                         "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb")
+        path.unlink()
+        self.inspect_refuses("missing source")
+        path.write_bytes(original + b"\n")
+        self.inspect_refuses("source hash mismatch")
+        self.data["source_files_sha256"][COST_EXAMPLE] = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.write()
+        self.inspect_refuses("frozen reviewed snapshot")
+        path.write_bytes(original)
+        del self.data["source_files_sha256"][COST_EXAMPLE]
+        self.write()
+        self.inspect_refuses("source_files_sha256")
 
     def test_reverted_lock_dependency_is_refused_even_with_rewritten_manifest_hash(self):
         # Reproduce the dependency changed by this reviewed source continuation.
@@ -546,6 +607,8 @@ class ReviewedSourceTests(ContractCase):
     def test_previous_review_identity_is_preserved_as_a_refused_input(self):
         previous = deepcopy(self.data)
         previous["review_base_revision"] = PREVIOUS_REVIEW_BASE
+        # The separately added cost example was absent from the original review.
+        previous["source_files_sha256"].pop(COST_EXAMPLE)
         previous["source_files_sha256"].update(PREVIOUS_SOURCE_PINS)
         canonical = json.dumps({
             "review_base_revision": previous["review_base_revision"],

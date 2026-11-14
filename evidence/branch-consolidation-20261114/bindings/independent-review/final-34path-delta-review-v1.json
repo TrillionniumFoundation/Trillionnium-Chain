@@ -1,0 +1,411 @@
+{
+  "all_33_nonself_corpus_pins_match": [
+    {
+      "bytes": 3683,
+      "git_blob": "15454b5322f118b52458adebf54cf00652107240",
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582"
+    },
+    {
+      "bytes": 14196,
+      "git_blob": "128fabbf8ccb038c26636f5689fe239a90ac663f",
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "sha256": "88c5dbdacee7c2193a05b7b7a974a62d95057c4f6baa122c9544523f01791eba"
+    },
+    {
+      "bytes": 2378,
+      "git_blob": "7714b037c3a752bdf11c7baf55723d27d90c8e8e",
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+    },
+    {
+      "bytes": 54959,
+      "git_blob": "1e59559f598ed1935432b81eb00419f604341dba",
+      "path": "config/pon/pq-root-dependency-register-v3.json",
+      "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+    },
+    {
+      "bytes": 6997,
+      "git_blob": "7424efa09f64f8359e0b144a99478b41ce7913d2",
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "sha256": "bd22f0db32c479dd7d42ae541eeed0ad0c1115d40b88b01d07acefd25930fbb7"
+    },
+    {
+      "bytes": 10175,
+      "git_blob": "04c4439af4dce19d87746beb6bb0a5f45e9d57bd",
+      "path": "config/pon/w1-qrom-current-required-tests-v1.json",
+      "sha256": "88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363"
+    },
+    {
+      "bytes": 50313,
+      "git_blob": "f7842c7a89cec7c34630ba8edd0a57ab59e8b369",
+      "path": "config/pon/w1-qrom-implementation-current-v2.json",
+      "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+    },
+    {
+      "bytes": 3970,
+      "git_blob": "a6391e1a1c17ecbf19673c0e3b57526f4e9a581d",
+      "path": "config/pon/w1-qrom-supplemental-tests-v1.json",
+      "sha256": "fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307"
+    },
+    {
+      "bytes": 25703,
+      "git_blob": "00366cd6b07dcbec4de0d8151e29c19e4d1d70b2",
+      "path": "config/pon/w1-stark-route-registry-v1.json",
+      "sha256": "0164cb7b3f6bfcf31e7efd29cc3264cab729249759ea3729cd132065d94a47fd"
+    },
+    {
+      "bytes": 1366,
+      "git_blob": "2214bbab51f7c03ad80726d01857c4c8e2d4d9c2",
+      "path": "config/pon/w1-upstream-security-v1.json",
+      "sha256": "fa5c44d2f3a63154adcf743d3454434ee75b06db83aee89d5590d4336933e9c5"
+    },
+    {
+      "bytes": 1136032,
+      "git_blob": "029f5c4cadc8cdd7910b01457800b746a4a646af",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "7a07ab37d1983a3e8f97426f7445bbd039453e59da821bd854c1b869f719b271"
+    },
+    {
+      "bytes": 39183,
+      "git_blob": "1b5ccd314220d3af5396cbd6f391380dc137f7ef",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "sha256": "d7fa73f7bb0ec6f8b12f7186cd8d5805b460521cb9d473f6eb71b2c838bdeef4"
+    },
+    {
+      "bytes": 9888,
+      "git_blob": "dc9ab3677b72dc0ce5fc25041aed3858f2121efe",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "sha256": "9ed2d36c06b947caf6e74e96474182bf8560e6c2f22eec67577a8e2caee5aa54"
+    },
+    {
+      "bytes": 32146,
+      "git_blob": "bec280754766e6caeb8a5f20d4960fc4814b37a1",
+      "path": "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+      "sha256": "74fefeb35fddf6f0351cbb83f195a4529a6ffda7f981f0a566bfa4522d58f99d"
+    },
+    {
+      "bytes": 7324,
+      "git_blob": "bbf1200e2d410ff439dfb7367cee193902a91394",
+      "path": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "sha256": "20fdb9358fe360d05fc674339fcd2134eabc55ffe852b009e5be3a798ae0d783"
+    },
+    {
+      "bytes": 14693,
+      "git_blob": "743e78003615ae49863ada81ae369a9807896154",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "sha256": "40effdfbb8fdfda1c5abf74a301f64a859d5f12d410aee8603824172ca54db87"
+    },
+    {
+      "bytes": 11127,
+      "git_blob": "1c1b4dc0d4ef44f3c4e7a8bc5629058be09910b6",
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "sha256": "3cf1b6a46a4a7d11127cd8524fa2a11886943277fb8c429db7c37606c9840a8e"
+    },
+    {
+      "bytes": 25957,
+      "git_blob": "34b793d911762e9564dfd58e417fc47de1f97f31",
+      "path": "scripts/ci/pq_root_dependency_register.py",
+      "sha256": "db0bc9a3910cf67bbc8b9cbb372eb3a1baeed7f227b133b05ee11c7a5ba6a13c"
+    },
+    {
+      "bytes": 16302,
+      "git_blob": "d6e3ae6e2fcb16ceec62924c9407307feb8cd75d",
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "sha256": "fedf6595bdb51b188e65a1c8a7c3b1f4942ddcbd170d4cdfee189d5ccfb7efbb"
+    },
+    {
+      "bytes": 22261,
+      "git_blob": "5e7550720e94e80005612137b4270cf85ec71eb7",
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "sha256": "cd0f00ab19244f36cc112282fa0743a60eac5cefa8e81156188ed0d6455d5e84"
+    },
+    {
+      "bytes": 40427,
+      "git_blob": "928d33061719e3545a95f63d0bba3dddc2ce941d",
+      "path": "scripts/ci/test_pq_root_dependency_register.py",
+      "sha256": "74e5a644f0b52d7045f23a249d9da92de0a0326a374ecc2f5cd3fb47661fccf2"
+    },
+    {
+      "bytes": 10621,
+      "git_blob": "9e6989095794564623e9b56e58ab97af3cc42517",
+      "path": "scripts/ci/test_w1_lifetime_current_observation.py",
+      "sha256": "8e4f8e6f3131da630ff00849465a8f0bc356173464347ca6b44b6ad14e99b982"
+    },
+    {
+      "bytes": 31742,
+      "git_blob": "79898f0dd2e44a433f6bd4e4a039893bab7cb819",
+      "path": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "sha256": "4105a7a2e5e0102c25f0cf17d76632bef78fdf1f8bd940d861dfba272a355283"
+    },
+    {
+      "bytes": 19687,
+      "git_blob": "ce9a6fd1bd05fea67ade25fdf5fa7c7eb6264e0f",
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "sha256": "82e752078e462aa1b9f1c803bbd6928081a3d6bd53da79790455cdbd38e878fe"
+    },
+    {
+      "bytes": 12439,
+      "git_blob": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda",
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+      "sha256": "f63e88533619880f4ceb0bbfdd165c3a58b8edbf3f14c5aa987bda14a758b92c"
+    },
+    {
+      "bytes": 20104,
+      "git_blob": "5339b28b50fae5c58f0d1de8f1111c6b8ad02af7",
+      "path": "scripts/ci/test_w1_qrom_semantics_audit.py",
+      "sha256": "b5ab498400ac5bf2af0e3db4b854b94c4b73788cb270c411c84700dbc166e234"
+    },
+    {
+      "bytes": 27055,
+      "git_blob": "f5c6fc24e4d2f0752fd272f88f0049e2aa01c8e4",
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "sha256": "02e5f802f4ce8681daa7b4437b81deca1e5b64694e4dc4be8afed325b8dfd32c"
+    },
+    {
+      "bytes": 14367,
+      "git_blob": "3d2938a93e3ce52401dff1cd7b5a95a5b810bcbb",
+      "path": "scripts/ci/w1_qrom_closure_current_controls.py",
+      "sha256": "92994b799069282b9aa0b1531e91bd8105650c1a61aed72260377b9125478148"
+    },
+    {
+      "bytes": 24631,
+      "git_blob": "4b26cf53c7278145bb8ad134e99f24c0ea594b7a",
+      "path": "scripts/ci/w1_qrom_current_ci.py",
+      "sha256": "b171ff84df6472e29738425c038e5830dab17e09dc276c3a4c59bd2e08d833d8"
+    },
+    {
+      "bytes": 10275,
+      "git_blob": "97b344e65dc5ec91b15b9a99289099e752dab2e8",
+      "path": "scripts/ci/w1_qrom_supplemental_controls.py",
+      "sha256": "e9edfd3d9cbf8b854f43317523c6c22e1dfd68dd6b037ae27820fbf0581598e1"
+    },
+    {
+      "bytes": 9216,
+      "git_blob": "e98f81f5e7b057e39f6d7c534276c37fc9b9dbc0",
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "sha256": "c8ef691c15a8c2381b6135d0107dd1ba26c12185daac08cc882a8a02bb7b1d05"
+    },
+    {
+      "bytes": 17150,
+      "git_blob": "88b619db34314c1d5a212dba99e6105d4bfca14e",
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "sha256": "55d3e0da144675614004b4dcd93617dccdf02a92f8468bf17ff42052d65c74a1"
+    },
+    {
+      "bytes": 35047,
+      "git_blob": "a567715c001cdca7aabe408a090e912cfa8834e7",
+      "path": "scripts/w1_stark_route_audit.py",
+      "sha256": "9e2f251b118a7ad0da8ba0f4c7111ca9882aeaa01ed53285d49fdd58797319dc"
+    }
+  ],
+  "base": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "current77_supplemental24_ast_exact": true,
+  "execution_validation_owner": "architecture/root",
+  "focused_patch": {
+    "bytes": 18803,
+    "sha256": "20218ab0e973bd851a082037166271cfa88265c6d0b64ad8d7d718a6f575edcf"
+  },
+  "native_or_project_test_suites_rerun_by_reviewer": false,
+  "new_or_further_edited_files": [
+    {
+      "bytes": 27055,
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "sha256": "02e5f802f4ce8681daa7b4437b81deca1e5b64694e4dc4be8afed325b8dfd32c"
+    },
+    {
+      "bytes": 14367,
+      "path": "scripts/ci/w1_qrom_closure_current_controls.py",
+      "sha256": "92994b799069282b9aa0b1531e91bd8105650c1a61aed72260377b9125478148"
+    },
+    {
+      "bytes": 31742,
+      "path": "scripts/ci/test_w1_qrom_closure_current_controls.py",
+      "sha256": "4105a7a2e5e0102c25f0cf17d76632bef78fdf1f8bd940d861dfba272a355283"
+    },
+    {
+      "bytes": 20104,
+      "path": "scripts/ci/test_w1_qrom_semantics_audit.py",
+      "sha256": "b5ab498400ac5bf2af0e3db4b854b94c4b73788cb270c411c84700dbc166e234"
+    },
+    {
+      "bytes": 19687,
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "sha256": "82e752078e462aa1b9f1c803bbd6928081a3d6bd53da79790455cdbd38e878fe"
+    },
+    {
+      "bytes": 14693,
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "sha256": "40effdfbb8fdfda1c5abf74a301f64a859d5f12d410aee8603824172ca54db87"
+    }
+  ],
+  "no_Rust_source_changes": true,
+  "original_test_method_rosters": [
+    {
+      "current_method_count": 14,
+      "exact_name_set_unchanged": true,
+      "method_names": [
+        "WorkflowGateTests.test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate",
+        "WorkflowGateTests.test_hypothetical_report_rejects_inexact_fraction_input",
+        "WorkflowGateTests.test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans",
+        "WorkflowGateTests.test_hypothetical_report_requires_nonnull_component_results",
+        "WorkflowGateTests.test_named_import_system_exit_zero_is_rejected",
+        "WorkflowGateTests.test_named_load_tests_system_exit_zero_is_rejected",
+        "WorkflowGateTests.test_named_missing_duplicate_and_skipped_controls_are_rejected",
+        "WorkflowGateTests.test_named_roster_executes_exactly_once_without_recursing_into_real_suites",
+        "WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero",
+        "WorkflowGateTests.test_status_independently_rechecks_named_ids_and_boolean_scope",
+        "WorkflowGateTests.test_status_rejects_exit_zero_without_named_completion",
+        "WorkflowGateTests.test_status_requires_every_step_outcome_and_conclusion",
+        "WorkflowGateTests.test_unknown_report_cannot_infer_derived_values_or_comparisons",
+        "WorkflowGateTests.test_unknown_report_requires_all_input_and_component_names"
+      ],
+      "original_method_count": 14,
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py"
+    },
+    {
+      "current_method_count": 31,
+      "exact_name_set_unchanged": true,
+      "method_names": [
+        "CurrentClosureControlsTests.test_boolean_test_count_is_refused",
+        "CurrentClosureControlsTests.test_complete_actual_named_test_accepted_without_qualification",
+        "CurrentClosureControlsTests.test_completion_overwrite_is_refused",
+        "CurrentClosureControlsTests.test_duplicate_and_nonfinite_json_are_refused",
+        "CurrentClosureControlsTests.test_duplicate_success_cannot_replace_missing_started_id",
+        "CurrentClosureControlsTests.test_empty_completion_suites_are_refused",
+        "CurrentClosureControlsTests.test_expected_failure_actual_test_is_refused",
+        "CurrentClosureControlsTests.test_extra_unreviewed_actual_test_is_refused",
+        "CurrentClosureControlsTests.test_missing_completion_after_zero_exit_is_refused",
+        "CurrentClosureControlsTests.test_real_load_tests_system_exit_zero_is_refused",
+        "CurrentClosureControlsTests.test_roster_drift_is_refused_before_execution",
+        "CurrentClosureControlsTests.test_scope_upgrade_is_refused",
+        "CurrentClosureControlsTests.test_skipped_actual_test_is_refused",
+        "CurrentClosureControlsTests.test_unregistered_required_test_is_refused",
+        "CurrentClosureWorkflowCompletionTests.test_current_lifetime_or_refusal_scope_drift_cannot_pass_completion",
+        "CurrentClosureWorkflowCompletionTests.test_current_roster_digest_matches_workflow_and_preserves_distinct_namespace",
+        "CurrentClosureWorkflowCompletionTests.test_current_workflow_keeps_historical_fixed_source_and_original_roster",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_final_status_cannot_overwrite_an_old_completion",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_malformed_consumed_json_is_refused",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_matching_record_cannot_mask_failed_or_missing_stage",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_real_fixture_completion_retains_unqualified_scope",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_reserves_a_fresh_directory_without_reuse",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_source_identity_remains_strict_under_optimization",
+        "CurrentClosureWorkflowCompletionTests.test_workflow_zero_exit_without_named_completion_is_refused",
+        "CurrentSemanticsCorrespondenceTests.test_actual_report_has_only_the_reviewed_lock_provenance_delta",
+        "CurrentSemanticsCorrespondenceTests.test_any_other_report_field_change_is_refused",
+        "CurrentSemanticsCorrespondenceTests.test_changed_current_lock_bytes_cannot_be_relabelled_in_report",
+        "CurrentSemanticsCorrespondenceTests.test_changed_other_lock_sha_is_refused",
+        "CurrentSemanticsCorrespondenceTests.test_historical_report_bytes_are_frozen_even_for_json_whitespace",
+        "CurrentSemanticsCorrespondenceTests.test_missing_or_relabelled_reviewed_lock_entry_is_refused",
+        "CurrentSemanticsCorrespondenceTests.test_real_cli_accepts_actual_observation_and_rejects_scope_change"
+      ],
+      "original_method_count": 31,
+      "path": "scripts/ci/test_w1_qrom_closure_current_controls.py"
+    },
+    {
+      "current_method_count": 22,
+      "exact_name_set_unchanged": true,
+      "method_names": [
+        "W1SemanticsAuditTests.test_air_bound_responds_to_higher_degree_operation_mutation",
+        "W1SemanticsAuditTests.test_air_conditional_mix_includes_condition_degree",
+        "W1SemanticsAuditTests.test_air_public_and_extension_constants_are_fixed_coefficients",
+        "W1SemanticsAuditTests.test_air_returns_selected_constraint_bound_not_unused_field_maximum",
+        "W1SemanticsAuditTests.test_air_unknown_operations_forward_refs_and_wrong_input_banks_rejected",
+        "W1SemanticsAuditTests.test_complete_crate_archive_tamper_rejected_before_member_reads",
+        "W1SemanticsAuditTests.test_elf_rejects_truncated_tables_segments_and_address_overflow",
+        "W1SemanticsAuditTests.test_elf_rejects_wrong_class_endian_machine_and_entry",
+        "W1SemanticsAuditTests.test_elf_resource_limit_rejects_unbounded_memory_expansion",
+        "W1SemanticsAuditTests.test_fixed_generated_air_dag_degree_and_register_counts",
+        "W1SemanticsAuditTests.test_fixed_r0bf_reconstructs_exact_v2_image_and_memory_root",
+        "W1SemanticsAuditTests.test_later_segments_and_user_memory_override_in_source_order",
+        "W1SemanticsAuditTests.test_loaded_instruction_byte_changes_recomputed_image",
+        "W1SemanticsAuditTests.test_memory_pair_rejects_malformed_or_noncanonical_field_words",
+        "W1SemanticsAuditTests.test_nonloaded_elf_byte_changes_file_hash_but_preserves_image_inputs",
+        "W1SemanticsAuditTests.test_page_word_byte_order_and_child_order_are_observable",
+        "W1SemanticsAuditTests.test_partial_words_and_bss_follow_little_endian_source_loop",
+        "W1SemanticsAuditTests.test_r0bf_embedded_kernel_matches_complete_locked_release_archive",
+        "W1SemanticsAuditTests.test_r0bf_rejects_bad_magic_version_header_and_lengths",
+        "W1SemanticsAuditTests.test_reconstruction_does_not_promote_compiler_trace_or_qrom_claims",
+        "W1SemanticsAuditTests.test_shared_poseidon_input_vector_exposes_missing_independence_premise",
+        "W1SemanticsAuditTests.test_upstream_memory_known_answers_include_nonzero_kernel_image"
+      ],
+      "original_method_count": 22,
+      "path": "scripts/ci/test_w1_qrom_semantics_audit.py"
+    },
+    {
+      "current_method_count": 13,
+      "exact_name_set_unchanged": true,
+      "method_names": [
+        "CurrentCiTests.test_actual_current_mapping_and_original_refusal_are_separate",
+        "CurrentCiTests.test_drift_rejects_missing_changes_and_unrelated_process_failures",
+        "CurrentCiTests.test_duplicate_and_nonfinite_json_are_refused",
+        "CurrentCiTests.test_existing_observation_is_never_replaced",
+        "CurrentCiTests.test_final_gate_accepts_complete_current_scope_without_qualifying_security",
+        "CurrentCiTests.test_final_gate_refuses_missing_completion_and_changed_original_output",
+        "CurrentCiTests.test_final_gate_retains_every_failed_or_skipped_stage",
+        "CurrentCiTests.test_mapping_rejects_scope_escalation_and_unknown_budget_changes",
+        "CurrentCiTests.test_named_completion_rechecks_ids_counts_and_boolean_types",
+        "CurrentCiTests.test_named_import_exit_zero_is_not_completion",
+        "CurrentCiTests.test_named_runner_records_every_real_start_and_success",
+        "CurrentCiTests.test_named_runner_refuses_missing_duplicate_and_skipped_cases",
+        "CurrentCiTests.test_source_checks_keep_candidate_and_historical_identities_separate"
+      ],
+      "original_method_count": 13,
+      "path": "scripts/ci/test_w1_qrom_current_ci.py"
+    }
+  ],
+  "paths_count": 34,
+  "preserved_frozen_files": [
+    {
+      "bytes": 76729,
+      "path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+      "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221",
+      "unchanged_from_base": true
+    },
+    {
+      "bytes": 76729,
+      "path": "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+      "sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe",
+      "unchanged_from_base": true
+    },
+    {
+      "bytes": 70342,
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "sha256": "8863db7c7c997cf8f5aa2cfc382bc27ac4b97ba31f56e7c1b1a6b10cbab7d38a",
+      "unchanged_from_base": true
+    },
+    {
+      "bytes": 22579,
+      "path": ".github/workflows/pon-w1-qrom-closure.yml",
+      "sha256": "6e101deb0b31ea1d0b79fcffd3133fbcb0f30efb38edd79a623ed012bbf77921",
+      "unchanged_from_base": true
+    },
+    {
+      "bytes": 15482,
+      "path": "config/pon/w1-qrom-closure-current-required-tests-v2.json",
+      "sha256": "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed",
+      "unchanged_from_base": true
+    }
+  ],
+  "reviewed_lock_changes": [
+    [
+      0,
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+      "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b"
+    ],
+    [
+      2,
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f",
+      "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+    ]
+  ],
+  "same_reviewed_232_sources": true,
+  "schema": "independent-final-bindings-34path-delta-review-v1",
+  "source_code_assessment": "Accepted: three concrete review items addressed; original qualification, report scope, and historical namespaces retained.",
+  "working_patch": {
+    "bytes": 118615,
+    "sha256": "be46d5212a83ec230cbc225d4eabcdaa51573a0a25b0720b1870549f35fd3648"
+  }
+}

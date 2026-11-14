@@ -111,6 +111,14 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "docs/security/PQ_CONTINUOUS_STARTUP_V3.md",
     "trillionnium/crates/trnm-pon-node/Cargo.toml",
     "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "config/pon/local-resource-owner-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/store/packet_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/observer.rs",
+    "trillionnium/crates/trnm-pon-node/tests/native_packet_observer.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli/owned.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
@@ -1162,14 +1170,55 @@ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.js
  'scripts/w1_p3_sampling_audit.py',
  'scripts/w1_risc0_deep_event_audit.py'))
 
-# Explicitly retain the five reviewed consolidation controls.
+# Explicitly retain the reviewed consolidation controls.
 # These source pins do not grant runtime or production qualification.
 CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
+    "scripts/read_failed_native_campaign_zip.py",
+    "scripts/ci/test_read_failed_native_campaign_zip.py",
+    "scripts/pon_public_v3_phase_read.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    'config/pon/decentralization-audit-v1.json',
+    'docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md',
+    'scripts/ci/fixtures/pon_decentralization_v1.json',
+    'scripts/ci/test_pon_decentralization_audit.py',
+    'scripts/ci/test_pon_wan_control_domains.py',
+    'scripts/ci/test_pon_wan_evidence.py',
+    'scripts/pon_decentralization_audit.py',
+    'scripts/pon_wan_evidence.py',
     "scripts/ci/chain_system_security.py",
     "scripts/ci/test_chain_system_security.py",
+    "scripts/ci/pq_external_rollback_oracle.py",
+    "scripts/ci/test_pq_external_rollback_oracle.py",
+    "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+    "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py",
+    "scripts/llm_runtime_trial_ledger.py",
+    "scripts/test_llm_runtime_trial_ledger.py",
+    "formal/pon-native-fullpath-v1/collect_native.py",
+    "formal/pon-native-fullpath-v1/test_collect_native.py",
+    "formal/release-finality-v2/control_domains.py",
+    "formal/release-finality-v2/test_control_domains.py",
+    "formal/release-finality-v2/campaign_gate.py",
     "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
+    "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
     "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
+))
+# Bind the reviewed peer owner pre-write and occupied-endpoint controls.
+# These source requirements do not activate the local service or qualify PQ.
+CONSOLIDATION_CONTROL_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+))
+# Retain Q4 advisory source and its original native reentry control.
+# Source coverage neither signs a renewal nor grants admission authority.
+CONSOLIDATION_CONTROL_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
 ))
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
@@ -1207,6 +1256,73 @@ CELL_REVIEWED_PAGED_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CELL_REVIEWED_PAGED_REQUIRED_PATHS
 
+# Lossless retention, named native completion, and fresh rejection readers
+# are required source dependencies. Pins do not authenticate reported clocks
+# or grant native execution, resource-cost, or security qualification.
+NATIVE_OBSERVATION_REQUIRED_PATHS = frozenset((
+    "scripts/ci/prepare_artifact_upload.py",
+    "scripts/ci/test_prepare_artifact_upload.py",
+    "scripts/ci/w1_native_controls.py",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "scripts/ci/check_w1_native_roster.py",
+    "scripts/ci/test_w1_native_roster.py",
+    "scripts/ci/w1_native_rosters_v1.json",
+    "scripts/pon_fresh_rejection_report.py",
+    "scripts/ci/test_fresh_rejection_report.py",
+))
+NATIVE_REQUIRED_PATHS |= NATIVE_OBSERVATION_REQUIRED_PATHS
+
+# Public-fixture admission research remains separate from current owner/effect
+# authority. Preserve the exact reusable bridge and its original-control map.
+SP27_03_RESEARCH_REQUIRED_PATHS = frozenset((
+    "docs/security/SP27_03_RESEARCH_BRIDGE_RETAINED_V1.md",
+    "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
+))
+NATIVE_REQUIRED_PATHS |= SP27_03_RESEARCH_REQUIRED_PATHS
+
+
+# Partial campaign readback retains every planned slot without certifying a run.
+PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/read_native_campaign_attempt.py',
+    'scripts/ci/test_read_native_campaign_attempt.py',
+))
+NATIVE_REQUIRED_PATHS |= PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS
+
+
+
+# Authenticated-caller observation is explicitly v5; the default v4 remains unchanged.
+AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+    'scripts/ci/test_pon_public_v3_phase_read.py',
+))
+NATIVE_REQUIRED_PATHS |= AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS
+
+
+# Bounded current observation plus exact inactive historical trap inputs.
+COLLECTED_UNIT_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_collected_unit_empty_v1.py',
+    'scripts/ci/test_collected_unit_empty_v1.py',
+    '.github/workflows/pon-native-campaign-qualification.yml',
+    'formal/pon-nakamoto-v1/bounded_process.py',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/manifest.json',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-history-raw-joint.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-native-campaign-qualification.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-admission-daa-v2.yml',
+    'scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-history-epoch-v1-native.yml',
+))
+NATIVE_REQUIRED_PATHS |= COLLECTED_UNIT_READER_REQUIRED_PATHS
+
+
+# Original bounded metadata and pure semantic readback grant no scan qualification.
+CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/collect_pinned_codeql_metadata_v1.py',
+    'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+    'scripts/ci/read_codeql_semantic_observations_v1.py',
+    'scripts/ci/test_codeql_semantic_observations_v1.py',
+))
+NATIVE_REQUIRED_PATHS |= CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
@@ -1214,6 +1330,379 @@ def is_pq_source(parts: tuple[str, ...]) -> bool:
         or re.search(r"(?:^|_)pq(?:[0-9]+)?(?:_|$)", Path(part).stem)
         for part in parts
     )
+
+# Explicit closure for the reviewed endpoint and library ports. Presence is
+# source integrity only; it grants no cryptographic or network qualification.
+CONSOLIDATED_ENDPOINT_REQUIRED_PATHS = frozenset((
+    'config/pon/pq-native-tls-endpoint-required-tests-v1.json',
+    'docs/security/PQ_TLS_PINNED_ENDPOINT_V1.md',
+    'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs',
+    'trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs',
+    'trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs',
+))
+NATIVE_REQUIRED_PATHS |= CONSOLIDATED_ENDPOINT_REQUIRED_PATHS
+
+
+# Reviewed opt-in positive-product facts, prior SQLite growth reservations,
+# and bounded runtime cache assembly retain their exact source closure.
+# Source coverage does not select these APIs or certify runtime authority.
+CONSOLIDATED_LIBRARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/store.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/reservation_v2_tests.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs',
+))
+NATIVE_REQUIRED_PATHS |= CONSOLIDATED_LIBRARY_REQUIRED_PATHS
+
+
+# Explicit SP27 research selectors retain the original Host, phase windows,
+# named controls and complete failure denominators. Source presence is never
+# collection success, business confirmation, or a qualification decision.
+SP27_RESEARCH_REQUIRED_PATHS = frozenset((
+    'scripts/ci/run_from_zero_host.py',
+    'scripts/ci/run_from_zero_native.py',
+    'scripts/ci/run_sp27_receiver_controls.py',
+    'scripts/ci/run_sp27_strata_controls.py',
+    'scripts/ci/test_run_from_zero_native.py',
+    'scripts/ci/test_sp27_receiver_controls.py',
+    'scripts/ci/test_sp27_strata_controls.py',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs',
+))
+NATIVE_REQUIRED_PATHS |= SP27_RESEARCH_REQUIRED_PATHS
+
+
+
+# Audited reusable components; source integrity never implies activation.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs',
+    'trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_paid_cpu_debt_recovery.rs',
+))
+
+
+# Audited reusable components; source integrity never implies activation.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'scripts/ci/pq_external_rollback_oracle.py',
+    'scripts/ci/test_pq_external_rollback_oracle.py',
+))
+
+# Immutable expansion and independent legal producer closure.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs',
+    'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
+    'trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs',
+    'docs/security/PQ_ROOT_SIGNATURE_COST_V1.md',
+    'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs',
+    'trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs',
+    'scripts/ci/run_pq_root_native_v3.py',
+    'scripts/ci/test_run_pq_root_native_v3.py',
+    'scripts/ci/pq_root_dependency_register.py',
+    'docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md',
+    'docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md',
+))
+
+# Native cheap refusal and cross-claim journal readback remain required.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
+))
+
+
+# Original bounded journal and native no-gain payment controls remain required.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-worker-agent/src/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs',
+))
+
+# The independent outbound journal preserves original wire/deadline ownership.
+# Source inclusion is not whole-node or physical rollback qualification.
+DURABLE_PQ_OUTBOUND_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs',
+    'docs/security/PQ_DURABLE_OUTBOUND_V1.md',
+))
+NATIVE_REQUIRED_PATHS |= DURABLE_PQ_OUTBOUND_REQUIRED_PATHS
+
+
+# Explicit final artifact, sealed descriptor and Q4 source controls.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+    'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+    'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+    'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+))
+
+# Independently reviewed final merge capabilities retain exact source coverage.
+# Exact immutable source inspector; passing its original fixtures confers no native acceptance.
+CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_cross_repo_candidate.py',
+    'scripts/ci/test_cross_repo_candidate.py',
+))
+NATIVE_REQUIRED_PATHS |= CROSS_REPOSITORY_INSPECTION_REQUIRED_PATHS
+
+# Selected reader and receipt-boundary controls; no native acceptance is inferred.
+FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'scripts/ci/ci_job.sh',
+    'scripts/ci/run_w1_fresh_service_v1.py',
+    'scripts/ci/test_ci_contract.py',
+    'scripts/ci/test_pon_public_v3_phase_read.py',
+    'scripts/ci/test_run_w1_fresh_service_v1.py',
+    'scripts/ci/test_w1_lifetime_ledger.py',
+    'scripts/pon_public_v3_phase_read.py',
+))
+NATIVE_REQUIRED_PATHS |= FINAL_PYTHON_BOUNDARY_REQUIRED_PATHS
+
+# Versioned W1 observations retain their original shared time budget.
+W1_RECEIPT_CLOCK_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-w1-transparent-profile.yml',
+    'evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz',
+    'scripts/ci/check_ci_contract.py',
+    'scripts/ci/test_ci_contract.py',
+    'scripts/ci/test_w1_v2_controls_gate.py',
+    'scripts/ci/test_w1_v2_current_stage_gate.py',
+    'formal/pon-nakamoto-v1/experiments/w1_stage_measure.py',
+    'scripts/ci/w1_v2_controls_gate.py',
+    'scripts/w1_v2_receipt_controls.py',
+))
+NATIVE_REQUIRED_PATHS |= W1_RECEIPT_CLOCK_REQUIRED_PATHS
+
+# Native ownership checks bind their active callers and original boundary controls.
+NATIVE_OWNERSHIP_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-data-availability/src/cell/archive.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs',
+))
+NATIVE_REQUIRED_PATHS |= NATIVE_OWNERSHIP_BOUNDARY_REQUIRED_PATHS
+
+FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-recent-batch-acceptance.yml',
+    'config/pon/applicability-v1.json',
+    'config/pon/public-resource-profile-vectors-v1.json',
+    'docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md',
+    'docs/security/PQ_DURABLE_OUTBOUND_V1.md',
+    'formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json',
+    'formal/pon-native-fullpath-v1/collect_native.py',
+    'formal/pon-native-fullpath-v1/test_collect_native.py',
+    'formal/release-finality-v2/campaign_gate.py',
+    'formal/release-finality-v2/control_domains.py',
+    'formal/release-finality-v2/test_control_domains.py',
+    'scripts/ci/test_pon_public_v3_policy_read.py',
+    'scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py',
+    'scripts/llm_neural_read_worker.py',
+    'scripts/llm_runtime_pilot.py',
+    'scripts/llm_runtime_trial_ledger.py',
+    'scripts/pon_public_v3_policy_read.py',
+    'scripts/pon_w1_false_trace_reuse_reader_v1.py',
+    'scripts/prepare_cell_sealed_research_v1.py',
+    'scripts/test_llm_cell_sealed_worker_v1.py',
+    'scripts/test_llm_material_runtime_bridge.py',
+    'scripts/test_llm_runtime_trial_ledger.py',
+    'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+    'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs',
+    'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+    'trillionnium/crates/trnm-peer-lease/src/payload_body.rs',
+    'trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs',
+    'trillionnium/crates/trnm-peer-lease/src/unix.rs',
+    'trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs',
+    'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/error.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/lib.rs',
+    'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs',
+    'trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs',
+    'trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs',
+    'trillionnium/crates/trnm-pon-node/tests/native_node.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs',
+    'trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs',
+    'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+    'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+))
+NATIVE_REQUIRED_PATHS |= FINAL_REVIEWED_BRANCH_REQUIRED_PATHS
+
+# Relay source integrity binds the actual module entry and callback verifier.
+# It establishes no cryptographic trust root, production caller or PQ wire.
+RELAY_PREFLIGHT_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-types/Cargo.toml",
+    "trillionnium/crates/trnm-types/src/lib.rs",
+    "trillionnium/crates/trnm-types/src/relay.rs",
+))
+NATIVE_REQUIRED_PATHS |= RELAY_PREFLIGHT_REQUIRED_PATHS
+
+
+# Reviewed scheduling preserves existing absolute deadlines and r20 authority.
+# These two paths are source identities, not a confirmation-latency claim.
+PUBLIC_V3_REACTOR_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs',
+))
+NATIVE_REQUIRED_PATHS |= PUBLIC_V3_REACTOR_REQUIRED_PATHS
+
+
+# Original NPQ6 parallel controls bind both module registrations and the real fixtures.
+# Source integrity is not a throughput, public-node or production qualification.
+NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS
+
+
+# Preserve the three partial-observation stages and their existing pilot entry.
+# Source identity never closes wait4, replenishes a hold, or qualifies a model.
+TYPED_PENDING_WORKER_REQUIRED_PATHS = frozenset((
+    "scripts/llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_exit_initial_pending.py",
+    "scripts/test_llm_runtime_exit_binding_pending.py",
+    "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+    "scripts/test_llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_pilot.py",
+))
+NATIVE_REQUIRED_PATHS |= TYPED_PENDING_WORKER_REQUIRED_PATHS
+
+# Selected read-only cost coverage includes its bounded, duplicate-refusing input reader.
+# Exact source identity provides no execution authority or throughput qualification.
+THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS = frozenset((
+    "scripts/ci/throughput_cost_coverage.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "scripts/ci/read_native_cache_observation.py",
+))
+NATIVE_REQUIRED_PATHS |= THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS
+
+# Exact SQLite qualification reader and actual caller; controls alone grant no qualification.
+SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/check_sqlite_build_requalification.py',
+    'scripts/ci/test_sqlite_build_requalification.py',
+    '.github/workflows/pon-pq-system-continuation.yml',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= SQLITE_REQUALIFICATION_READER_REQUIRED_PATHS
+
+
+# A non-atomic cgroup observation is not a Host capability or an effective quota proof.
+CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'scripts/ci/public_host_ci_observation.py',
+    'scripts/ci/run_w1_rank_batch_v5.py',
+    'scripts/ci/test_run_w1_rank_batch_v5.py',
+))
+NATIVE_REQUIRED_PATHS |= CURRENT_CGROUP_OBSERVATION_REQUIRED_PATHS
+
+
+# Original test and supplementary release profiles retain separate native receipts.
+ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS = frozenset((
+    '.github/workflows/pon-original-large-state-cpu.yml',
+))
+NATIVE_REQUIRED_PATHS |= ORIGINAL_LARGE_STATE_PROFILE_REQUIRED_PATHS
+
+
+# Explicit acquisition keeps the current actual-ready and single absolute deadline.
+CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
+    'scripts/run_llm_cell_native_handoff.py',
+    'scripts/ci/test_llm_cell_acquisition.py',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
+
+
+# Independently selected original controls remain source-bound without qualification.
+ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+))
+NATIVE_REQUIRED_PATHS |= ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS
+
+# Independently selected original controls remain source-bound without qualification.
+RUST_TOKEN_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/rust_source_tokens.py',
+    'scripts/ci/test_rust_source_tokens.py',
+    'scripts/ci/ci_job.sh',
+))
+NATIVE_REQUIRED_PATHS |= RUST_TOKEN_READER_REQUIRED_PATHS
+
+# Ordinary peer-failure hints retain the original bounded Cell session owner.
+# Source identity does not certify faster completion or release qualification.
+CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= CELL_PEER_FAILURE_ORDER_REQUIRED_PATHS
+
+# These original wall-clock controls use current Registered task material.
+MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
+))
+NATIVE_REQUIRED_PATHS |= MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS
+
 
 class IntegrityError(ValueError):
     pass

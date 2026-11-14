@@ -1,0 +1,152 @@
+[
+  {
+    "label": "partial-campaign-readback-preflight",
+    "exit": 0,
+    "seconds": 0.049,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "partial-campaign-readback-merge",
+    "exit": 1,
+    "seconds": 0.167,
+    "sha256": "d54d703305c967ab739a7baba1f2c04144ad71c278c23de5c4a00a2df3614cfe"
+  },
+  {
+    "label": "partial-campaign-readback-stage-resolved",
+    "exit": 0,
+    "seconds": 0.028,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "partial-campaign-readback-partial-controls",
+    "exit": 0,
+    "seconds": 0.163,
+    "sha256": "5cfd4316d17fb54cf011a0abb6cd50d97640d2162502475831ab13148a650fdb"
+  },
+  {
+    "label": "partial-campaign-readback-current-phase",
+    "exit": 0,
+    "seconds": 0.286,
+    "sha256": "b1d40010924918cbe3e3bad89cd0344e33b169658119a7018f5bfac7508e5056"
+  },
+  {
+    "label": "partial-campaign-readback-complete-zip",
+    "exit": 0,
+    "seconds": 0.182,
+    "sha256": "bca471182b45a9118949623ee3e030fb1939077e1163594d36ef7773dae013fe"
+  },
+  {
+    "label": "partial-campaign-readback-source-guard",
+    "exit": 0,
+    "seconds": 1.031,
+    "sha256": "a7622d47cab3de6dc7808dd79465d0a86fa6610247a4227fd25ac37dbcede48e"
+  },
+  {
+    "label": "partial-campaign-readback-ci-command",
+    "exit": 0,
+    "seconds": 0.313,
+    "sha256": "83c369bec11d2219c761c7b8f715b77a0a0e0e73e9d13b102eeb8dccb2ffd0fd"
+  },
+  {
+    "label": "partial-campaign-readback-ci-contract",
+    "exit": 0,
+    "seconds": 0.066,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "partial-campaign-readback-corpus",
+    "exit": 0,
+    "seconds": 0.48,
+    "sha256": "bf9767bd006bcf931afed36069e140172026cc65cfcc17d6741e0f937c85b822"
+  },
+  {
+    "label": "partial-campaign-readback-diff",
+    "exit": 0,
+    "seconds": 0.049,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "partial-campaign-readback-precommit",
+    "exit": 0,
+    "seconds": 0.049,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "partial-campaign-readback-stage",
+    "exit": 0,
+    "seconds": 0.037,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "partial-campaign-readback-commit",
+    "exit": 0,
+    "seconds": 0.061,
+    "sha256": "8236ec931050524e446952238747123d941e413cef613d3038dde0f01dc9da47"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-preflight",
+    "exit": 0,
+    "seconds": 0.046,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-merge",
+    "exit": 1,
+    "seconds": 0.189,
+    "sha256": "83e55f77b774edfcb2927667e930866a415bea91a858fe5208330e0252ab1c25"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-stage-resolved",
+    "exit": 0,
+    "seconds": 0.037,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-historical-controls",
+    "exit": 0,
+    "seconds": 0.428,
+    "sha256": "196fef6e57f203dddf08a7102a438ac6f0c9ab196e0b91d7e9fe9eafea1eee25"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-fmt",
+    "exit": 0,
+    "seconds": 5.407,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-ci-contract",
+    "exit": 0,
+    "seconds": 0.065,
+    "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-corpus",
+    "exit": 0,
+    "seconds": 0.375,
+    "sha256": "bf9767bd006bcf931afed36069e140172026cc65cfcc17d6741e0f937c85b822"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-diff",
+    "exit": 0,
+    "seconds": 0.048,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-precommit",
+    "exit": 0,
+    "seconds": 0.045,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-stage",
+    "exit": 0,
+    "seconds": 0.027,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "test-fixture-identity-and-clippy-commit",
+    "exit": 0,
+    "seconds": 0.056,
+    "sha256": "f1ed44367b53b4bff95150b5a03149815e51e79a62c4d03644bce302f1eb10ab"
+  }
+]

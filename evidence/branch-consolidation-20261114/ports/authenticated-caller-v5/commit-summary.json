@@ -1,0 +1,152 @@
+{
+  "component": "T01 authenticated caller explicit V5 observation",
+  "commit": "eb3a02048eb219558697dffa710e41de8e471899",
+  "tree": "a7ae467fcca7265fc238d167abcd0085045db6a4",
+  "parent": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+  ],
+  "patch": {
+    "path": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/commit.patch",
+    "bytes": 24190,
+    "sha256": "6630d0996b46330c0250b531ec50f5d75aaf1c5e18060dfa16a9db409db25f08"
+  },
+  "original_controls": [
+    {
+      "method": "authenticated_caller_requires_explicit_v4_and_single_binding",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "original_exact_body_sha256": "75ac2188d6bb7ae74d85dcfe10c7401cc92a1ff94d0fcea6df2f1e053122d7c7",
+      "selected_formatted_sha256": "2d1fe189f3a602eb63992332efaa443edb31ba93e88244578dfafe844b8cd7fd",
+      "only_declared_schema_literals_plus_rustfmt_changed": true
+    },
+    {
+      "method": "authenticated_caller_observation_requires_real_signature_on_tcp",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "original_exact_body_sha256": "646d439f21ebde0bed868c16599a442d551d403fc0d819de78185d811aa4b53a",
+      "selected_formatted_sha256": "cd8429ee50960d6de2d001ddff40067fa471f9df521f1e204f8f2467a0dced8c",
+      "only_declared_schema_literals_plus_rustfmt_changed": true
+    }
+  ],
+  "current_python_phase_tests_passed": 96,
+  "literal_source_guard_paths": 3,
+  "validation": [
+    {
+      "label": "rustfmt-request_observation.rs",
+      "args": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/rustfmt-request_observation.rs.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    },
+    {
+      "label": "rustfmt-public_v3.rs",
+      "args": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/rustfmt-public_v3.rs.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    },
+    {
+      "label": "phase-reader-all",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_phase_read.py"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/phase-reader-all.log",
+      "sha256": "7ffae84d18cbd57991034c7b8e06f133dace0be592855a72ead497514e5efad0",
+      "tail": "................................................................................................\n----------------------------------------------------------------------\nRan 96 tests in 0.218s\n\nOK\n"
+    },
+    {
+      "label": "literal-source-omission-and-mutation",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-k",
+        "authenticated_caller_v5",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/literal-source-omission-and-mutation.log",
+      "sha256": "8954a469f19ee06226f47e7d30d183442f32f7cf31a5d4080c31cf7ae241516f",
+      "tail": "test_authenticated_caller_v5_sources_cannot_omit_or_mutate (test_pq_research_integration.CorpusGateTests.test_authenticated_caller_v5_sources_cannot_omit_or_mutate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.373s\n\nOK\n"
+    },
+    {
+      "label": "current-ci-contract",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/current-ci-contract.log",
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d",
+      "tail": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 26, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"pq_release_authority_controls\": {\"complete_release\": 55, \"groups\": {\"cch1_content_binding\": 3, \"initial_root_material\": 6, \"original_release\": 37, \"quorum_preflight\": 9}, \"platform_scope\": \"unix\", \"python_test_doubles\": 18, \"tests_executed\": false}, \"pq_system_controls\": {\"retained_meaningful_controls\": 52, \"selected_meaningful_controls\": 63, \"supplemental_meaningful_controls\": 11, \"tests_executed\": false}, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n"
+    },
+    {
+      "label": "current-corpus",
+      "args": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/current-corpus.log",
+      "sha256": "6d0b62cd0ae72f94235b5affbcacaa14235d42bebf9fb112060321b519931169",
+      "tail": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 2582, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n"
+    },
+    {
+      "label": "diff-check",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/private/tmp/chain-ci-finite-tail-T01-T04-review-20261114/T01-implementation/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    }
+  ],
+  "native_tests_executed_here": false,
+  "native_pending_methods": [
+    "authenticated_caller_requires_explicit_v4_and_single_binding",
+    "authenticated_caller_observation_requires_real_signature_on_tcp",
+    "default_observer_preserves_complete_v4_serialization"
+  ],
+  "default_v4_consumers_unchanged": true,
+  "authority_granted": false,
+  "failure_records": [
+    "key042 editing assertion before any writes; replaced exact insertion anchor, no source override"
+  ],
+  "qualification_granted": false,
+  "worktree_clean": true
+}

@@ -78,12 +78,12 @@ class ProofProfileBindingTests(unittest.TestCase):
             self.assertIs(result[key], False)
 
     def test_composed_current_mapping_has_one_fixed_identity_and_no_approval(self):
-        # Fixed review values from the AM standalone-lock source review, independent of
+        # Fixed review values from the 5c04c60e consolidated source review, independent of
         # constants or pin values supplied by the implementation under test.
         expected = {
             'path': 'config/pon/w1-qrom-implementation-current-v2.json',
-            'bytes': 47960,
-            'sha256': '6884d8edf7415f0141a6bacd991d49cfb672692ab24d9ba88b031ddd135038ef',
+            'bytes': 50313,
+            'sha256': '77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5',
         }
         security = json.loads((ROOT / binding.upstream.DEFAULT_MANIFEST).read_bytes())
         self.assertEqual(self.contract['mapping_contract'], expected)
@@ -160,7 +160,7 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
         result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
-                                 'd915eab9971289b08ed21615058dd26a2b71d878baa027c6896480dc81b13976')
+                                 '8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1')
         for row in self.mapping['audit_helpers']:
             self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
         self.assertEqual(result['selected_input_observation_count'], len(self.paths))
@@ -375,6 +375,7 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_wrong_candidate_profile_descriptor_is_refused(self):
         for digest in ('0' * 64,
+                       '9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad',
                        'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c',
                        '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69'):
             with self.subTest(digest=digest), self.assertRaisesRegex(

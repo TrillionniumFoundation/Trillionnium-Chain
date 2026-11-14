@@ -7,6 +7,16 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
+    # Immutable dependency inspection keeps all native and production claims false.
+    python3 scripts/ci/test_cross_repo_candidate.py -v
+    # Synthetic launcher/cache reader controls do not execute or qualify SQLite.
+    python3 scripts/ci/test_sqlite_build_requalification.py -v
+    # Synthetic acquisition controls retain the current ready and absolute-deadline contract.
+    python3 scripts/ci/test_llm_cell_acquisition.py -v
+    # Explicit synthetic WAN accounting retains all external qualification flags false.
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
@@ -174,6 +184,10 @@ PY
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
     python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    python3 -B scripts/ci/test_w1_factorial_native_gate.py
+    python3 -B scripts/ci/test_prepare_artifact_upload.py
+    python3 -B scripts/ci/test_cell_storage_convergence_ci.py
+    python3 -B scripts/ci/test_fresh_rejection_report.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
@@ -182,7 +196,13 @@ PY
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_read_failed_native_campaign_zip.py
+    python3 scripts/ci/test_read_native_campaign_attempt.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_throughput_cost_coverage.py
+    python3 scripts/ci/test_rust_source_tokens.py
+    python3 scripts/ci/test_collected_unit_empty_v1.py
+    python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py
+    python3 scripts/ci/test_codeql_semantic_observations_v1.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
     python3 scripts/ci/test_w1_lifecycle_cost_v4.py
@@ -363,6 +383,9 @@ PY
     (
       trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
       mkdir -p "$trnm_model_receipt_root"
+      # Export the selected fallback as well as an explicit caller destination.
+      # Native fixtures retain full failure reports through this child environment.
+      export TRNM_CI_RECEIPT_DIR="$trnm_model_receipt_root"
       export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
       test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
       test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"

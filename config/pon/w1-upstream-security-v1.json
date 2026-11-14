@@ -40,8 +40,8 @@
   "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "mapping_contract": {
     "path": "config/pon/w1-qrom-implementation-current-v2.json",
-    "bytes": 47960,
-    "sha256": "6884d8edf7415f0141a6bacd991d49cfb672692ab24d9ba88b031ddd135038ef"
+    "bytes": 50313,
+    "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
   },
   "approved_current_profile_ids": []
 }

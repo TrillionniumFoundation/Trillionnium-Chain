@@ -1,0 +1,15 @@
+Updating b8ca952d6..319be2400
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          | 22 +++++----
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  6 +++
+ scripts/ci/check_ci_contract.py                    |  1 +
+ scripts/ci/check_pq_research_integration.py        | 12 +++++
+ scripts/ci/ci_job.sh                               |  3 ++
+ scripts/ci/run_w1_fresh_service_v1.py              |  8 +--
+ scripts/ci/test_ci_contract.py                     | 45 +++++++++++++++++
+ scripts/ci/test_pon_public_v3_phase_read.py        | 57 ++++++++++++++++++++++
+ scripts/ci/test_pq_research_integration.py         | 40 +++++++++++++++
+ scripts/ci/test_run_w1_fresh_service_v1.py         | 26 ++++++++--
+ scripts/ci/test_w1_lifetime_ledger.py              |  3 +-
+ scripts/pon_public_v3_phase_read.py                | 21 +++++---
+ 12 files changed, 221 insertions(+), 23 deletions(-)

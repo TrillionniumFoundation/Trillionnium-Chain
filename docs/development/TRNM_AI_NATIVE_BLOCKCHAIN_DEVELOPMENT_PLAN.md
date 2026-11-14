@@ -14330,3 +14330,824 @@ continues to report HOLD_NO_GO, unknown security bits and no production
 activation. Original failed CI records remain valid observations of their
 original source. This binding supplies no new native execution, complete
 callgraph review, authenticated history or cryptographic qualification.
+
+### 2026-11-14 consolidation: cooperative paged restore owner contract
+
+This compatible port preserves the controlled restore capability from
+21c218cf552c6a10d1abca5d79844a02baab7123 on the frozen integration source
+332d7f723d71707d88a2cffa52b3754579a46926. The original caller supplies one
+cooperative cancellation/resource checkpoint through provider reads, bounded
+RS verification/reconstruction/re-encoding, CAS publication, complete content
+readback and final plan validation. It does not preempt a blocking operation
+or grant execution, funding, custody settlement or production authority.
+
+A checkpoint refusal or original deadline expiry permanently stops the same
+non-cloneable paged-restore reservation. Compatibility entry points cannot
+reopen it. Ordinary data/provider failure may use only the remaining original
+allowance. A final checkpoint after an operation error observes cancellation
+without replacing that original error; admitted counters and already committed
+valid cache bytes remain spent/retained. Lower-level controlled codec and content
+APIs propagate the checkpoint; their caller owns cancellation across calls.
+
+The current from_verified_chunk_with_shards helper, retained-plan batch writes,
+original identities and newer public Cell exports remain present. This is an
+additive in-memory control contract: signed domains and stored formats are
+unchanged. It does not enable the old DHT lookup/example or qualify Native FinalUse.
+
+The original five finite owner controls passed 5/5 on the fresh Mac combined
+source after the separate portable FIFO fixture fix (3.62 seconds, no ignored
+tests). The eight controlled-restore Rust blobs were byte-identical before and
+after that run. The FIFO control passed 1/1 separately. These local observations
+do not qualify Linux, Native FinalUse or a release; isolated Linux verification
+and the final combined repository gates remain pending. No historical pass is
+represented as a current run.
+The first Mac offline preparation lacked sqlite-wasm-rs. The subsequent locked
+build fetched the fixed dependencies but exposed the pre-existing Unix FIFO
+fixture using rustix::fs::mkfifoat, which rustix 1.1.6 excludes on Apple targets.
+That platform fixture requires a separate change, not a skipped negative test.
+
+
+### 2026-11-14 portability: Unix FIFO refusal fixture
+
+The locked rustix 1.1.6 API excludes Apple targets from mkfifoat and mknodat.
+The existing cfg(unix) snapshot-policy test now creates its private FIFO with
+the POSIX mkfifo utility through std::process::Command (no shell), checks the
+exit status and verifies is_fifo before exercising the unchanged refusal.
+This keeps the Unix negative test and crate-wide forbid(unsafe_code), adds no
+dependency, and changes no production storage behavior. The exact named FIFO
+test passed 1/1 on aarch64-apple-darwin; the restored five owner controls passed
+5/5 on the combined source. Linux and final integration gates remain separate.
+
+
+### 2026-11-14 consolidation: explicit pinned TLS endpoint component
+
+Preserve the bounded endpoint capability from e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959 under its new signed/stored namespace and mandatory PqWitnessV4 boundary. Adapt the newer absolute-deadline client and shared-owner listeners to the same exact address and 64-connection cap. Preserve current complete-SPKI checks, retained-reply APIs, original deadlines, witness state and legacy loopback bytes. The 16 KiB charged ciphertext buffer and redacted refusal diagnostics retain original limits and errors. The original six library/three CLI controls plus two current integration controls are explicit in the required roster. See [the component contract](../security/PQ_TLS_PINNED_ENDPOINT_V1.md). This source integration is not a successful runtime observation, WAN acceptance or production activation; the audit records the exact subsequent validation outcome. All existing qualification flags remain false.
+
+
+### 2026-11-14: preserve the BB3 local resource owner
+
+Branch audit found that `bb3f13ed78edd367381275a3ae4752f1f4da4c22` supplied an
+explicit local resource journal and an owned packet observer that were absent
+from the fixed integration candidate `332d7f723d71707d88a2cffa52b3754579a46926`.
+This port restores only that capability and its original controls. Current
+generation owners, root recovery, research schedules, Cell services and exports
+remain in place.
+
+The journal binds the canonical original Node directory and fixed profile.
+Opening or retrying never initializes, replenishes or redispatches an account.
+Reservation includes execution and cleanup principal before dispatch; claim is
+once-only across processes. Drop, cancellation, timeout, unknown child status
+and incomplete cleanup keep the original hold. A measured overrun remains debt
+and fences admission. Conservative settlement consumes the full reservation.
+The observer freezes its absolute deadline before admission and retains the
+original parent-state, packet, context and parameter bindings through native
+readback, authoritative child wait, pipe joins and private-directory cleanup.
+
+The original 23 resource-owner controls and five added native observer controls
+are retained, including real process exit without destructors and competing
+process claims. This is a trusted local owner component; its journal is not an
+external rollback anchor and its CPU/I/O units are declared principal. The
+adapter still reports no physical-resource or honest-service qualification.
+Provisioning remains explicit and development-gated. Existing stores without
+this journal retain their prior observer path; an adopted store cannot fall
+back to the unowned path. Production activation and whole-entry qualification
+remain false. Current source pins are refreshed without changing historical
+source-revision locks or treating source identity as execution acceptance.
+
+
+Fresh validation of the fixed Linux base plus this selected ten-path source
+patch passed all 23 owner controls and the complete 15-test native packet
+observer suite (ten existing and five owner-specific controls), with no ignored
+tests. Node library and CLI strict Clippy also passed. The current corpus
+checker, repository checker, formatting check and all 67 corpus negative
+controls passed. These are the named current component results; they do not
+promote historical campaigns, whole-workspace acceptance, macOS native observer
+coverage, physical resource bounds or production activation.
+
+## 2026-11-14 reviewed explicit library continuations
+
+- Reuse the reviewed positive matrix-product fact cache (e1a996703a7a1ff9734c9cbeb562dee054c77a0d). It binds the complete operands and retains fresh challenge, target, transcript and cancellation checks on every verification; no Node or verifier default is changed.
+- Reuse the explicit reservation-v2 SQLite owner (f2339e75647b816c9884c5b2758de186ed5f0b91) under its new namespace and original logical/inode caps. Existing v1 owners retain their original serialization and defaults; successful I/O cannot retroactively authorize an unreserved growth.
+- Reuse the explicit bounded runtime-root assembly API (14c6021cb9186e69d8101837c4a4b228f104489d), preserving the original 2 GiB host and 512 MiB disposable-cache limits, pinned complete bytes, absolute deadline and durable reservation after every outcome.
+- Keep the reviewed publication fix (f71a99cca1489ecb19b116301f47ee62a2dd8412): an expired final rename/directory-fsync path reports failure while retaining published bytes and spent reservation. Failure never grants a refund or claims absence of partial publication.
+- Add an independent thirteen-path omission/pin/mutation control and refresh the generated source inventory. Agent validation covered the original nine cache controls, 23 Linux I/O controls and seven runtime controls; the additional publication control has a separate pending Linux result. These receipts are source-specific and are not relabeled as a final combined run.
+- Current proof/source descriptions will be rebound explicitly after all reviewed additions. Historical proof inputs, deployed profiles and qualification decisions remain immutable; source inclusion grants no production, network or proof qualification.
+
+## 2026-11-14 SP27 explicit research selector preservation
+
+The reviewed eleven-path continuation from 8da34affb9fe77fbb14da75d331746a17fdd6816 is preserved through 6cfd867096d301fbe55cb0e6bee8c2a6acecaf0d. Seven new files retain their original bytes. Existing Host dispatch and format-copy closure recognize the explicit selectors without changing any normal selector, Host authority reader, original four-second phase, worker cap, retry cap or resource allowance.
+
+The health and balanced-strata collectors stop on the original health/Host/coverage failures and retain unknown, panic, unstarted and incomplete denominators. Two ignored native campaigns require explicit selection and have not been run as part of this port. Collection status remains separate from business confirmation, causal attribution and publication qualification. Original branch-only automated workflows and historical attachments are not reinstated as current execution evidence.
+
+The original 36 Python selector controls passed on the isolated port. Linux verifies its current native reader/Host controls and four pure Rust classification controls separately. This merge adds an independent eleven-path omission/pin/mutation source guard and refreshes the complete source inventory; every activation and qualification assertion remains false.
+
+## 2026-11-14 fixed-checkpoint snapshot and SP27-03 research bridge
+
+The account aggregate observation now reads checkpoint, authenticated root and every child through one deferred SQLite read transaction (c28b6005d9d0bb9e94e275296f2adef8f85b0da9). Cancellation and errors release the snapshot. Existing content-hash checks and later-call corruption/unavailability refusals remain active; a retained observation never asserts latest authority. A real second WAL connection reproduced the missing-snapshot failure before the change; the three added Linux controls and eleven original active integration controls then passed, with the original large-state ignored control left explicitly ignored.
+
+The separate SP27-03 bridge (0df2ed65e25436a5bce77cd2e686e9275860d648) retains the original bounded public-fixture example and its source/control map. It introduces no Node caller, effect dispatcher, private credential, FinalUse or deployment job. Its locked isolated validation passed 49 original active Rust controls and the eleven fixed-source companion controls; one original Rust control remains ignored. Those companion experiments do not become Chain production APIs or current end-to-end execution evidence.
+
+Independent omission/pin/mutation guards cover the snapshot test and bridge sources. The generated source inventory is refreshed from the complete combined tree. Mac growth-reservation platform build failures and initial absent offline registry cache remain separately recorded; no failed or skipped run is promoted to a pass.
+
+### 2026-11-14 branch consolidation: material progress and native debt control
+
+Reviewed and integrated c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4 and ba8a5e1fad3ea0cc2012da329667792684802db2. Cooperative material parsing, hashing and numeric checkpoints retain the first owner cancellation, original canonical material bytes, and legacy callback entry points. The original nonignored CPU-debt recovery test retains its actual verifier charge, shared meter, 2-second request budget, bounded preload/attack/recovery windows, nine blocks and independent transaction confirmation. Linux observed all nine material controls and the single original debt test with zero failures or ignored tests; target strict Clippy passed. These component observations do not qualify resource fairness, production activation or permissionless attacker depletion. Source omission, pin deletion and byte mutation are independently rejected.
+
+### 2026-11-14 branch consolidation: rollback assumption counterexamples
+
+Integrated 2f2dec9de8bd464c83d5c7769abf2f76a2ca950a: original negative controls show that co-restored witness state can answer a fresh challenge and that a reused challenge permits an old authentic receipt. Authentication alone is not independent anti-rollback authority. Existing four-selector root execution and recovery-floor source controls remain intact; both oracle reference and tests are explicit required sources. No security qualification or activation is inferred.
+
+### 2026-11-14 branch consolidation: immutable expansion and independent legal producers
+
+Ported the exact reviewed c36d9568 ML-DSA-87 roster cache, three unit controls, full-quorum warm-cache native control and bounded observation example. The cache stores immutable public-key expansion only; clones share it, decode starts cold, all message/signature checks and original irreversible budgets remain. The current native runner retains its original four suites and adds the explicit cached-key suite. No observation benchmark was executed or performance gain claimed. Current register source binding is refreshed only by the separate final reviewed snapshot.
+
+Retained the exact d08ff108 low-rank-prefix producer independently of its nonselected PurePoN/transparent-admission protocol. Its four controls check exact reduction, scalar/paired products, complete upstream transcript equality and unsupported-input refusal. Retained 55c6f15f exact two-rank-one preparation and five controls, plus the sole frozen-V5 label seam. Every challenge still runs the complete transcript; no VerifiedWork or authority is manufactured and no default producer or verifier changes. The generalized rank-bounded constructor remains distinct, including its explicit dense fallback. Original current dependency versions are preserved.
+
+### 2026-11-14 branch consolidation: cheap refusal and cross-claim payment readback
+
+Integrated e180c52b881955c3da054b59e6025d9292a4a4d3 and 056071f364e02efb71f787d6603f144244e46123. Current native task/target checks precede the optional full-proof rejection-cache digest, and only the same invocation's checked inputs reach the private verifier continuation. No accepted verdict or dynamic authority is cached; current observation, cancellation and nonblocking lock semantics remain. Original cache controls and strict Clippy were observed by the port owner. The original cross-claim cold-reopen control preserves historical payment generation while refusing stale anchors; current journal fences are unchanged. Component tests and source consistency grant no qualification.
+
+## 2026-11-14: original bounded-journal and native no-gain controls
+
+Retain the independent control from 1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf against the current typed worker journal: both original 64-MiB limits map to the same 64-MiB worker_journal limit. The control checks the exact malformed-record and byte-capacity refusals, so an unrelated file or permission error cannot stand in for its claim. No reader or lock is downgraded to the old implementation.
+
+Retain the complete 3e44c471187fc6c883693c836cdae6adae4bdafb no-gain control across Legacy, AuthenticatedV1 and PermanentAccountGrowthV2, with both contribution and evaluation fees. It preserves actual reserve/effect/payment, source aliases, duplicate-budget and unsigned-payment refusal, fee/escrow conservation, idempotence, unchanged chainwork, and history retained after reorganization and cold reopen.
+
+Exact native execution on Linux passed both controls (one test each, zero ignored). The bounded-journal control also passed on macOS. Earlier wrong Cargo target/toolchain invocations and the macOS Node compilation failure remain recorded; the latter includes the existing Linux-only test support and growth-reservation platform type errors and is not a successful Node run. Two other candidate groups were proved already retained: complete decoder Result parity from 38fda50 and the original delayed-ready rendezvous control from e62eb3 with the stronger actual accept-loop ready signal. They are not duplicated.
+
+An independent literal source roster and omission/pin/mutation controls cover both retained test files. This is source and native-control closure only; it grants no production, operator-independence, long-campaign or cryptographic qualification.
+
+
+## 2026-11-14: retain the once-call PQ-account CheckedConfig boundary (042e)
+
+Source review compares incoming 042e3d4a22a444c028074ddd21561a6153205370
+against its actual base 7e044b65454f4c9ea505591727332acffb33e7e5 and the
+fixed consolidation source 11bdc4cce16fc7d550d361f5cc863b061204f61b. The
+two selected M06 PQ-account implementation/test files at the fixed source
+are byte-identical to that original base. This port takes both complete
+original files without changing their hashes.
+
+The private CheckedConfig borrows one immutable Config and Profile for
+one invocation. A complete current configuration check precedes reuse
+inside the batch; the borrow is never persisted or cached across calls.
+Current authority resolution, account state reads, every actual ML-DSA
+verification and its fee debit, complete parent validation, ordered error
+precedence, parallel worker joins, and cancellation checks remain present.
+No signed profile, protocol identifier, stored schema, native activation,
+default route, budget threshold, or qualification flag changes.
+
+Native validation on the independent macOS worktree used the fixed lock
+graph with Rust 1.95.0: all 11 PQ-account tests passed, including all four
+original config_check controls and the seven retained current controls.
+No tests were ignored. Strict release M06 library/test Clippy with
+-D warnings passed. Source hashes were compared with the incoming Git
+blobs again after formatting and tests. These are PQ-account controls,
+not a claim about the separate legacy FromZero/W1 four-second deadline:
+that failing workload uses the classic account route and native_pq_v2=None,
+so this optimization does not enter its execution path.
+
+Only the existing current corpus pins for these two reviewed files and
+this plan appendix are refreshed. Historical proofs, source revisions,
+profile contracts, and all HOLD/false qualification state remain unchanged.
+
+### 2026-11-14 root review: checked-config
+
+Integrated reviewed commit 757b8829fb5477c133326aac4f93a34897ce6a2e. Immutable per-call M06 checked configuration; original eleven macOS controls and strict M06 Clippy passed. No cross-call verdict cache or Classic-W1 pressure claim. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+### 2026-11-14 BBDB durable outbound compatibility preservation
+
+Preserve the independently selected Linux loopback durable outbound library from `bbdb1af203674fec3923c522a49b3dcc6bbca6bc`, adapted on fixed current `11bdc4cce16fc7d550d361f5cc863b061204f61b`. The current verifier and TLS endpoint/deadline owner remain authoritative. The original two SQLite namespaces retain signed wire, boot deadline, cancellation and spent attempts; only a sealed verified terminal can advance a sequence. No automatic recovery, CLI/default startup, physical rollback claim or activation is added.
+
+The [outbound contract](../security/PQ_DURABLE_OUTBOUND_V1.md) preserves original failed observations and records exact component validation: original nine Linux native controls, one sealed-response compile-fail doctest and Node library/CLI strict Clippy passed on the hash-bound four-file port. Current source inclusion and these finite results leave all existing research/HOLD and qualification flags unchanged.
+
+### 2026-11-14 root review: durable-outbound
+
+Integrated reviewed commit f66df9b7324daaf7171d6e9f940f562c1a244633. Exact signed-request durable loopback outbound owner; original nine Linux controls, sealed-reply type refusal and strict Node library/CLI Clippy passed. Original budgets, retained cancellation, unknown outcome and rollback limitations remain. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: readonly-audit-tools
+
+Integrated reviewed commit 6159b8ef0d334230e2b34071104ba94f9e835f5a. Cost coverage preserves missing costs as unknown; anchored trial reconciliation authorizes no retry/refund; collector retains exact raw-source snapshots and failed attempts. Original finite Python suites passed on the recorded platform; no native campaign or qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: caller-and-native-controls
+
+Integrated reviewed commit 09f9303b834d41b4446b13dda64ddb2ead81e244. r20 authenticated caller grants preserve the full r19 contract suffix and historical vectors. Original signed caller controls, batch-preserving lazy ancestry spool, Go Q4 codec/signature vector, client CPU observations and fixed-tip internal history control passed on exact recorded Linux component sources. Internal16 and external singleton limits remain distinct; no four-second performance qualification. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+## 2026-11-14 peer lease owner pre-write checks retained from 871ade83
+
+The consolidation port restores the bounded peer-lease checks from
+871ade83cd0bf43adbbefc397a88b187bf7bbd5d at the four reviewed seams.
+Payload append revalidates every bound endpoint immediately before the write;
+head-lag repair and ACK persistence repeat owner/endpoint validation before
+their durable writes. Existing post-write checks, poisoning and original
+absolute deadlines remain in force. The ordinary Unix daemon refuses any
+occupied socket path before opening the authority journal and never silently
+unlinks an existing endpoint.
+
+The current recovery daemon already rejects zero timeout before configuration
+or owner access, and decoded tokens already use validated reconstruction.
+Those stronger current controls remain unchanged. The original occupied-path
+control is retained. The isolated Linux source passed all 90 peer-lease tests
+and strict Clippy for all targets; the Mac source passed 89 platform-selected
+tests and strict Clippy. The sole non-semantic source adaptation is rustfmt on
+one test call. The subsequent, separate Q4 integration fixture failure in the
+combined Linux job is preserved and is not a peer-lease pass claim.
+
+This is a local compatibility port. It does not grant runtime activation,
+external authority, deployment, physical resource or security qualification.
+
+### 2026-11-14 root review: peer-prewrite
+
+Integrated reviewed commit 50759539544c78a16aa66c2b1a6d8a51acdeace1. Original payload, repair and ACK prewrite identity fences plus occupied socket refusal are retained. All ninety Linux and eighty-nine platform-selected macOS peer controls and strict all-target Clippy passed. Original zero-timeout checks are already stronger and remain retained. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 root review: four-domain-review
+
+Integrated reviewed commit 0d584032b2727a52105efbeb1407d7a92abbad18. The original bounded four-domain material reader retains V1 controls and signed V3 parent/NoUpdate checks. All140 original conformance controls passed under the exact locked Python dependencies. Missing environment/closure failures remain recorded. Material review does not establish actual operator independence or execution/installation authority. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+## 2026-11-14 final audit artifact, sealed handoff and Q4 controls
+
+The audit query now reads both export and index through a fresh held Unix descriptor with NOFOLLOW, NONBLOCK and CLOEXEC. It requires a single-link locally owned regular file without group/other writes, a nonblocking shared lock, full named/held identity before and after the bounded read, at most 64 MiB, valid UTF-8 and at most 1 MiB per line. A descriptor-bound MAX+1 stream limit also rejects growth after stat. Pretty JSON and the original missing-file error are preserved. This applies the old 871ade83 bounds to the current audit seam without replacing typed worker journals or granting execution authority.
+
+The original 360556e9 sealed-object change publishes an O_RDONLY description by dup3 onto the originally reserved descriptor number with CLOEXEC. Every subsequent recheck retains exact device/inode/size/uid/mode/mtime/ctime, all existing seals and the read-only access-mode check. Current metadata-only refusal controls remain unchanged; a rejected write cannot silently refresh the identity.
+
+The complete original all-32-slot lifecycle control and three finite native continuity/reorganization controls from 462306a2 are retained. Two original long maintenance campaigns remain explicitly ignored and were not executed or counted. The independent signed maintenance reentry/forecast integration is owned by its separate reviewed port.
+
+Exact Linux execution passed 23 controls: eight audit artifact controls, all eleven sealed-object controls, the all-32-slot control and three native continuity controls (zero ignored in those executions). Worker and Node all-target/all-feature strict Clippy and fmt passed with the locked graph. macOS passed the seven applicable artifact controls, the 32-slot control and strict worker Clippy. The Linux tested source was b6e4eb38 plus the separately verified two bounded-log/no-gain test files and these six exact files; source bytes were unchanged after every command. No full final-candidate or long-campaign claim is made.
+
+Original patch-context and driver-print failures are retained. The first Linux driver stopped before patch application because serialized git-diff bytes differed; the next run verified both prior full-file SHA-256 values and the exact dirty-path whitelist before applying the fixed patch. No failed run was relabeled. Independent literal omission/pin/mutation controls cover all six files. Production and cryptographic qualification remain false.
+
+### 2026-11-14 root review: final-file-and-q4-controls
+
+Integrated reviewed commit a0fa27a8160a339fbcf9315beabc5e4f6d2c17d8. The bounded artifact reader, readonly sealed handoff and original Q4/32-slot native controls passed all23 selected Linux controls, strict worker/Node Clippy and original format gate. Eight applicable macOS controls passed. Two original ignored long campaigns were not run or counted. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+## 2026-11-14 Q4 renewal advice and authenticated reentry controls
+
+The selected port retains the original Q4RenewalPhase/Q4RenewalForecast
+time-window advice and forecast_q4_renewal_window from 0f062607, plus the
+actual-parent forecast_q4_renewal_from_active wrapper from 84a0c697/beca4408.
+The advice checks immutable lease context, exactly one revision, signed
+overlap, bounds and original expiry. The wrapper reads the current owner and
+checks the actual parent/generation again. Existing typed Classical/Pq lease
+edges and current storage owners remain intact. Advice neither signs nor
+dispatches a renewal and cannot revive an expired or revoked lease.
+
+The complete beca4408 maintenance reentry integration control is retained:
+actual owner-signed revoke/open/register transactions, real new-task W1 work,
+authenticated/native agreement, independent packet replay, the installed
+depth/work confirmation checks and cold reopen. The original fixture failed
+TASK_WINDOW because it opened a lease with not_before=1 in height 2. The old
+and current open guards are identical. Only that fixture's fresh lease
+not_before is changed to 2, with its ID and signatures recomputed through the
+same original owners; production admission checks and every original control
+assertion remain unchanged. The initial failure and exact source are retained.
+
+Linux passed all six lease controls and both authenticated continuity
+integration controls, plus strict release native Node library/CLI Clippy.
+Mac Node compilation remains blocked by the separately recorded pre-existing
+growth_reservation_io dev/mode type mismatch; no Mac Node pass is claimed.
+These are bounded local controls. Consensus, independent operation, physical
+capacity, public WAN, production and cryptographic qualification remain false.
+
+### 2026-11-14 root review: q4-advisory
+
+Integrated reviewed commit 83612992abd90de344be699e8cf1a90e609480f5. The original pure Q4 renewal forecast and actual-parent wrapper retain current lease/generation authority. Six lease controls and both original signed native maintenance integrations passed on Linux; the old illegal height2/not_before1 fixture failure is retained and corrected only to not_before2. Original Node strict native library/CLI Clippy passed. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+### 2026-11-14 final reviewed branch source roster
+
+An independent literal omission/pin/mutation roster now covers the complete reviewed source/configuration/test paths of the eight selected component merges, including r20 caller grants, exact PQ outbound, four-domain and collector/reconciliation readers, peer prewrite fences, Q4 advice and native controls. These are source-preservation controls, not a claim that archived branches all share one protocol or that component execution qualifies the final candidate. Historical variants and unselected contracts retain distinct dispositions. Final exact-source CI and the original confirmation budget remain mandatory.
+
+### 2026-11-14 root review: business-cohort-reader
+
+Integrated reviewed commit 3e9fc12e724a40d1d6c880706a9c2bd3eccb0eb5. Original scheduled1/5/9-second business cohort accounting retains the single30-second deadline, missing/failed denominators and all false authority fields. V1/V2/V3 historical derivations stay explicit; the failed ZIP consumer independently replays either V3 or V4. All154 selected original and new controls passed, with initial compatibility failures retained. No native campaign or four-second budget was changed. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+### 2026-11-14 selected WAN V3/V4 read-only control-domain port
+
+The all-branch source review selected the additive WAN V3/V4 accounting reader
+from 058a729a274b431ed1617efee2725cad8471d966 (actual old base
+513e92dfc27044ef3e0c9d62e7ae504fa5bea38f) and its immutable control-registry
+dependency. On fixed consolidation source 11bdc4cce16fc7d550d361f5cc863b061204f61b,
+the retained V1/V2 reader exactly matched that base; all six imported source,
+test, policy and fixture files preserve the original tip bytes. The independent
+evidence-file materializer is not a required dependency and remains historical.
+
+The new schemas explicitly bind operator/control context, preserve original
+typed results, schedule/window/failure-cost denominators and add V4 joint
+control/failure-domain matching. All original V1/V2, control-registry and V3/V4
+synthetic test suites passed on the fixed imported source. The existing
+repository-truth lane now runs all three suites explicitly. Independent
+negative lane controls reject omitted, duplicated, skipped, moved or swallowed
+commands; independent source controls bind the complete eight-path observation
+scope. These checks do not authenticate physical WAN operation, operators or
+receipts and do not confer native execution, protocol, PQ, release or production
+authority. Every original qualification flag remains false and WAN stays
+NOT RUN / HOLD_NO_GO.
+
+### 2026-11-14 root review: wan-control-reader
+
+Integrated reviewed commit 43633f6e7f4cb03aae02c1d7f2a6c76d2a70cf07. Original V3/V4 WAN and five-axis declaration readers retain V1/V2 typed/windowed costs and denominators, transitive common-control exclusion and simultaneous group/failure-domain matching. All125 original reader controls, eight-path omission/mutation controls and50 related CI controls passed. External independence, production and runtime authority remain false; no materializer or old workflow is restored. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+The combined CI contract initially refused the retained public_v3_multiprocess whole-file guard after reviewed commit bc5f9d4 added the opt-in full-client CPU observation and original controls. The prior f7991a5c126ee364d5d135b974b14a2b18b2a2ae blob is exactly the b6e4 source; the reviewed current blob is 1f4dd178a9493b71340a8684a9338a7782e0760d. Only that existing workflow literal is refreshed; no command, native budget or result is changed. Preserve the original refusal log.
+
+### 2026-11-14 concurrent publication history and exact material source pair
+
+Integrated reviewed shared commit 73d5a17b9b7fb5f67040554f22ff37d20725e548 and all four concurrent ancestors. The current runtime pilot differs only by the selected reconciliation CLI, so its exact source pair and three canonical loaded-contract values are rebound across the neural reader, research preparation and both original test suites. Historical material bytes and all refusal assertions remain; the prior runtime and authority checkpoints are explicit stale-source refusals. Both standalone locks already match root. Root current-source mappings remain selected pending final composition rebind. No inference algorithm, native protocol budget or qualification flag changes. Original protected CI failures and the initial pre-write source-pair refusal remain retained.
+
+### 2026-11-14 immutable cross-repository dependency source inspector
+
+Preserve the exact checker and all23 original controls from 4be50aa40ed537b8a06475984a8da4141e44cf77 (actual parent 9eda0ada15be1702269e08e527917568c710f4d3), blobs aa0e0e9e1575e60fc9f5aa5e876a7832c6a68b3e and 4b14ca5cb85b92a2a723581a9f5e5d82a1167bc1. The explicit read-only command compares immutable Chain/Hepta commits, declared Cargo aliases/target/build/dev/patch/replace paths, all checked-in locks and overrides, both query and fragment revisions, exact Bazel28 rules_rs namespace/strip-prefix/package roster, and Chain package identities. Missing or different versions refuse instead of broadening the accepted consumer schema. Required repository-truth executes its original temporary-Git conformance suite exactly once; independent omission/mutation controls bind both files. No actual Hepta repository is inspected or changed by this integration.
+
+This is source dependency alignment only. It neither resolves the effective build environment nor authenticates remote repository membership, working-tree bytes, binaries, model material or native execution; every qualification/activation field remains false. The4MiB object size check precedes each object read, while the16MiB Git command output check occurs after capture and is not a streaming peak-memory bound. The synthetic controls do not prove resource cost or a complete system candidate. No deployed state, source namespace or original Host/protocol budget changes.
+
+
+### 2026-11-14 — THP2 explicit post-verification time contract from historical 95939e13
+
+Selected source: historical `95939e1380f21dcf3209acaee70e29fcf0141d6c` over
+`1c5899a663037689d26bf7c31472a70d26971a8b`; current implementation base:
+`692f2454620faad648850f9421f2f11467ba046e`.
+The current THP2 library now exposes explicit context-verification and decode
+entrypoints that check a caller-provided fresh time after exactly one successful
+ML-DSA verification. Cheap chain/owner/generation/time checks still run first.
+A clock rollback fails; admission expiry remains inclusive, while authority-pin
+expiry and revocation retain their existing exclusive boundary. The original
+strict bounded THP2 parser, external SPKI pins and immutable owner context remain
+the selected contract. The old embedded-key CBOR wire is not restored.
+
+The original six current controls are retained, with three adapted historical
+controls and one additional pin-expiry/revocation control. All ten passed on
+macOS aarch64 with the exact locked offline dependency graph; strict library and
+integration-test Clippy and whole-workspace formatting also passed. Independent
+literal source guards cover omission of either required path or pin and mutation
+of either source. Source-integrity success does not grant cryptographic,
+production, final-use, rollback-resistance or WAN qualification.
+
+This remains an opt-in research library API with no production Node or CLI caller
+found in the reviewed source. It validates one point in time; a later effect must
+still recheck its current withdrawal/journal/owner context. Current final-source
+bindings and combined candidate qualification remain separate integration gates.
+
+### 2026-11-14 root review: THP2 fresh-time research API
+
+Integrated reviewed 6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc with current THP2 wire, external SPKI pins and immutable expected owner. Exactly one existing ML-DSA verification precedes the trusted-clock reread, rollback refusal and original admission/pin time boundaries. The six current controls, three adapted historical controls and one pin-boundary control all passed in the reviewed native receipt. No production caller is added; final-use owner context and exact combined protected CI remain separate gates. The original fixed-budget confirmation failure is retained.
+
+### 2026-11-14 retained reader clocks, real failure categories and receipt inheritance
+
+Selected the independent optional u64 CPU/u128 wall-clock guards and two original controls from 20844dab61a2f4c6a9dc17444ad2bc6552361120 without its alternate resource-policy identities. Preserved the current V4 reader and historical derivation entrypoints. Retained 552d5816/ae377113/e49b191d's original distinction between an unexecuted or unbound process, a timeout and a real nonzero native test; all remain refusals. Retained e6549a19's receipt-root export and original real-shell control, including explicit/fallback paths with spaces and unchanged exit 101. Extended the existing historical lifetime source mutation and missing-source controls from three selected pins to every frozen historical pin; no historical source identity is rebound. These are parser, diagnostic and source-integrity controls, not a successful native campaign or original four-second gate.
+
+The original historical lifetime control currently refuses in setUpClass before any test executes: its frozen 1f2b0187 source map is still read from the current physical checkout, and Cargo.toml differs. This failed Ran0 receipt is preserved. The historical pins and reports remain unchanged; final integration must explicitly reproduce the old source fixture separately from the current-source namespace before claiming this control passed.
+
+
+### 2026-11-14 — Relay cheap refusal and explicit post-signature clock
+
+Selected historical changes `f8f9aa0031bbff61e65478d0b42cc97ed2fe2ad7`,
+`90f83f7c3ede27f019ebebf81b30a89bb72683b9` and
+`ffe9b22fade6af3e6fd0f1e732e2d181f80a99e1` are composed in the active
+`trnm-types/src/relay.rs` on current source `692f2454620faad648850f9421f2f11467ba046e`.
+The actual `mod relay;` entry and crate manifest are included in the reviewed
+source set. The old split `relay/verifier.rs` remains unwired and is not used
+as evidence of the active contract.
+
+Shape, original-time, sequence, nonce and capacity refusal now precede payload
+hashing and the caller's signature callback. The explicit fresh-time API samples
+the trusted caller clock only after signature success; rollback or expiry refuses
+before either in-memory replay map changes. The single-time compatibility API
+keeps its documented limitation. Chain binding, disabled legacy compatibility,
+sequence-one start, finite fail-closed capacity and original namespace remain.
+
+The existing 25 active controls, all four selected original controls and two
+composition controls passed on macOS aarch64 with the locked offline graph.
+The two additions check both capacity maps before a forged large-payload digest
+and preserve the current 512-byte deserialize/256-byte verifier signature bounds
+plus unknown-field refusal. Strict library/tests Clippy and whole-workspace
+formatting passed. These synthetic callback controls prove ordering and
+in-memory replay behavior; they do not prove cryptographic authentication.
+
+The separate `f5ffba9072485d7e2d7e19ba0059b7887c61ea87` opt-in ML-DSA wire
+constructor is not selected: its 6,618-character signature format conflicts
+with the current bounded decoder. Its original source/control remains historical.
+No signature limit, Node/CLI caller, durable replay owner or qualification is
+added. Production caller search found only the active implementation/re-export,
+unit tests and the unwired old split definition. Source guards independently
+require and bind all three selected module/manifest paths; every qualification
+flag remains false.
+
+### 2026-11-14 root composition: relay-fresh-time
+
+Relay retains current decoder and wire limits. Shape, time, replay and capacity reject before digest and callback. Exactly one successful callback precedes fresh clock rollback/expiry checks and replay-map commit. The original 25 controls, four adapted original controls and two composition controls passed on Mac. There is no new production caller, durable replay qualification or unselected ML-DSA wire expansion.
+
+
+### 2026-11-14 PublicV3 bounded worker and actual-progress scheduling
+
+The multiple-base branch review selected the bounded worker receive from
+347f7f087ca2413fc6f78f425905a62ed3584cf8 and actual-progress reactor wakeups from
+44b10ed1a4568209d18e617533ec8fa0d0b8a029 on reviewed source
+692f2454620faad648850f9421f2f11467ba046e. Workers retain the FIFO queue mutex,
+one-millisecond stop polling, original cancellation and absolute deadlines.
+The reactor parks only when its actual stage, byte/cursor, accepted/removed
+connection or completed-work state makes no progress; completed workers wake it.
+Admission, 64-KiB quantum, per-pass limits, r20 identity and accounting are unchanged.
+
+The direct reusable-Vec implementation of read_available was already retained.
+The 3e062b3a6f9f94a7a89283f666820025409de779 port therefore only restores its three
+original complete reader controls and an impl Read private test seam; it is not
+a new copy-elimination result. One additional control rejects waiting metadata
+and same-size content as progress while accepting real byte/cursor/stage changes.
+
+On an independently owned Linux source and target, the complete input_decode_tests
+module passed 10/10 with zero ignored, and Node library all-features strict Clippy
+passed. Both Rust source hashes were checked before and after execution; the
+component receipt preserves the previous tested state and exact 692f base.
+Independent literal source controls reject omission, missing pins and mutation
+of either reviewed path. Existing source inventories remain applicable.
+These component results do not establish a latency improvement, independent
+operation, production or PQ qualification. The original four-second confirmation
+failure remains unresolved pending final exact-source protected CI.
+
+
+### 2026-11-14 current claim JSON underflow refusal
+
+The old b2bbcc95 and 9fcd3fef strict numeric controls identified a concrete
+current parser gap: a nonzero exponent could silently deserialize as signed
+zero. The selected current whole-chain claim reader now rejects that collapse
+using an exact decimal zero check after its existing finite-number check.
+Both exact signed zeros, ordinary finite values and representable subnormal
+values remain readable. Existing duplicate-key, nonfinite, exact-boolean,
+reserved-claim and descriptor-bound source controls are unchanged.
+
+The original rejection cases were adapted to all five current claim documents,
+and the original finite cases retain their meanings with signed-zero controls.
+The two controls first reproduced the current underflow acceptance; the full
+current claim test suite then passed with the minimal parser change.
+This is parser consistency hardening, not evidence of an activation bypass.
+The retired fixed 17-file/RISC0 claim gate is not reintroduced. Current HOLD,
+source identities, ownership and every qualification flag remain unchanged.
+
+### 2026-11-14 root composition: public-v3-reactor-json
+
+PublicV3 uses bounded blocking worker receipt and parks an idle reactor based on actual state/cursor/accept/remove/completion progress; completed workers unpark it. Existing direct-buffer reads, wire limits, work deadlines and cancellation are preserved. Original three read controls and one progress control passed with six current controls and strict Linux Clippy. This is not evidence of meeting the original four-second confirmation gate. Strict claim JSON additionally rejects nonzero float underflow while retaining signed exact zero and valid subnormal values; all 57 controls passed on the reviewed candidate.
+
+### 2026-11-14 W1 current receipt clock composition
+
+Ported d34f2d2b's finite positive stage clocks, exact remaining-time arithmetic, original 120-second shared deadline and completion-within-summary checks into the current v3 CLI validator. Current cancellation fields and all ten current-stage CLI controls remain; the original 23 historical report controls remain byte-for-byte. Eight original controls are retained, with the legacy-replay control adapted to the existing explicit current-schema API and recorded-path identity checks. The historical read-only default is preserved. CI now requires all 31 named report controls and the separate ten current-stage controls; the exact historical hosted archive and its original failed gate outcome remain unchanged. Mac validation covers read-only replay and source/CI contracts; all actual process/cancellation controls require Linux before qualification. The exact 264080-byte retained archive was absent from the selected tree and is copied from the fixed original Git blob 7f2ef519a6dbe09424fd1719f91ba8a58a43c025; its 474 regular-file/directory entries have 9304670 expanded bytes and no links or traversal. No deadline, proof claim or production authority is expanded.
+
+### 2026-11-14 root composition: native ownership and current-read fences
+
+Integrated reviewed efb2997a, 022b3dcd, cf444991 and 687141e7 with all original controls. Generation preparation checks deterministic capacity/anchor/funding/replay constraints under the same journal lock before durable task ownership; real write failure ownership and same-journal retry remain. Host child descriptors require nofollow, nonblocking regular files with original EOF bounds. Every full check freshly opens and validates boot, parent identity/permissions, membership and all five limits plus the final path fence. A sample borrows only its own initial check's directory and drops it before the final fresh full check. No descriptor or verdict survives across calls.
+
+Live retirement successors must match the same M12 journal's completed physical effect, funding, receipt, window and current native anchor in addition to their M09 bytes. An already retired operation can replay its old readback after physical slot reuse without inventing new custody. Strict, pin and pinned account queries retain the original TransactionScope through success and errors, reject commit/rollback/savepoint ABA and implicit rollback, clear derived candidates on callback writes, preserve typed cancellation causes and never claim to undo another connection's commit.
+
+The only overlapping source was store.rs. Its existing endpoint-witness refusal, lazy reverse replay and active-root Q4 forecast are preserved byte-for-byte alongside the independent account-query change. The reviewed inline workflow pin follows the resulting source. Sixteen literal active paths each have independent omitted-path, omitted-pin and changed-byte controls. Existing required workspace --all-targets --all-features runs register these ordinary tests. Mac format and source/CI contracts are checked here; original Linux M12/Host/successor/ABA and combined PublicV3/W1 process validation remain pending on this exact composition. The original Mac invalid-UTF8 SQLite and Darwin integer-width failures and the fixed-budget hosted confirmation failures are retained; no native or four-second qualification is granted by this merge.
+
+
+## 2026-11-14 — Retain original current-NPQ6 parallel execution controls
+
+Select the five test-source seams from
+`516382d87bbfdba85fbf34b6aa7b62edbc5759bb` (original parent
+`0bca28ebf59058b6aba9db5eb956c4479556e9ee`). Both new test modules retain
+their complete original bytes. The existing modules only register these tests
+and expose the already used signing fixture to its sibling test module.
+The current CheckedConfig, canonical NPQ6 wire, TLS, deadline and admission
+owners remain the source of all runtime behavior.
+
+Three M06 controls cover real 1/2/4/8-worker rendezvous and joins, canonical
+dependency ordering despite reversed completion, an early canonical state
+error before a late bad real signature, cancelled/panicked/partial workers,
+and the original 64/65 verification budget. The Node control independently
+compares every row of seven durable SQLite tables after serial and parallel
+admission, then checks cold reopen and the real PNQ2 socket replay journal.
+ACK is not business confirmation, and these controls confer no public-PQ
+deployment, throughput, CPU-cost or production qualification.
+
+All three original M06 controls passed on macOS aarch64 and Linux; the
+original Node control passed on Linux without ignored tests or changed
+assertions. The Mac M06 library/tests strict Clippy check passed. Linux
+library/tests strict Clippy exposed two existing Node test issues: duplicate
+TLS-fixture module loading and PublicClientMetrics field reassignment after
+Default. Their failure is retained for a separate minimal repair; this entry
+does not claim that the combined tests Clippy gate passed. Sparse-checkout
+compile inputs were materialized only from the same exact Git objects, and
+the initial missing-input failures remain in the audit record.
+
+Independent literal source controls require each of the five selected paths
+and its exact blob, and reject altered bytes. Both new modules join the
+distributed source inventory. The existing workspace all-target/all-feature
+CI command discovers these non-ignored tests without another workload.
+Historical source identities and all qualification flags remain unchanged;
+the actual source-corpus reader still reports HOLD_NO_GO.
+
+### 2026-11-14 root composition: original NPQ6 parallel controls
+
+Reviewed and integrated all five source seams from 4e0943b7. Both original 516382d8 test modules are byte-identical, and only test registrations and sibling fixture visibility change in existing Rust files. Actual 1/2/4/8-worker lifetimes, reverse signature completion versus canonical state errors, partial spawn/panic/cancel joins, original 64/65 budget, all seven durable tables, cold reopen and PNQ2 loopback replay remain asserted. Three M06 controls passed on Mac/Linux and the Node control passed on Linux with no skips; strict production libraries passed. Known pre-existing test Clippy errors retain their original failure record and await a separately reviewed fixture/default-initialization repair. No production executor, workload, deadline, budget or acceptance claim changes in this merge.
+
+## N11 retained read-only throughput and cost coverage (2026-11-14)
+
+The selected reader and its complete original control file come from
+e6549a193d60a6b0fefd2377432aee4e910c6bb2 (direct parent
+630cd5ee1dc3db345d0c85c5a41c427013451fb3). The 543-line production reader
+is retained byte for byte. It binds a fixed source receipt before and after
+the observation, deduplicates business identities, retains the original three
+rounds and 30-second phase window, accounts for failed and unknown observations,
+and keeps nested CPU scopes and point RSS observations separate. It does not
+turn ACKs, unknown costs, or local source consistency into completion or
+production qualification.
+
+The current strict phase reader remains unchanged. Of the original 26 test
+methods, 25 remain byte identical. One unknown/ACK-only method now directly
+exercises the same finite_business_observation helper that production
+analyze calls; all original assertions are retained. A new full-analyzer
+control requires rejection for the four incomplete claimed-confirmation
+variants. The initial original-suite failure is retained in the audit evidence:
+the old whole-reader successful-unknown expectation is not asserted against
+the stricter current V4 namespace. The resulting 27 controls pass.
+
+The repository-truth lane executes this control file exactly once. Its
+independent command inventory checks omission, duplication, stubbing, comments
+and lane movement. An independent literal source roster binds both selected
+files and the unchanged bounded JSON reader; omission and byte-mutation
+counterexamples preserve the current HOLD state. No native or operator
+authority, hardware observation, throughput capacity claim, approved profile,
+cryptographic acceptance, or node activation is added.
+
+### 2026-11-14 root composition: N11 throughput and cost evidence
+
+Integrated the selected read-only reader at 09e5ab31. Its 543-line runtime is byte-identical to e6549a19. Twenty-five original methods are unchanged; one preserves all original unknown/no-credit assertions on the actual production helper, and the additional full-analyzer control rejects the four incomplete claimed-confirmation forms under the unchanged current V4 phase contract. Both selected files and their existing bounded JSON dependency are independently required and pinned; the repository-truth command is required once. Initial old-fixture failures remain retained. These synthetic reader controls make no throughput capacity, native execution, installed Host or production qualification claim.
+
+### 2026-11-14 concurrent candidate increment e40d7071
+
+The remote candidate advanced from 73d5a17b to e40d7071 while the audit was running. Its five-path delta was independently reviewed and merged without replacing concurrent work. The complete 41-name History roster (40 passing tests plus the original subprocess fixture) was already present in the integrated source and is byte-identical to the new remote roster. The current workflow retains the separately reviewed complete W1 result parser, all original native selectors and budgets. The remote diagnostic helper is retained byte-identically. Its complete new detached-diagnostic success/refusal method, exact current-source roster assertions and 38-pass stale-count refusal are preserved on the actual current gate; a further control prevents the retained helper borrowing another named test or suite summary's outcome. Full named results and failure records remain required. No original native workload, deadline, expected ignore or qualification state is changed.
+
+The first combined gate run correctly refused stale expected rosters: five already integrated rank-one kernel controls and one fixed-tip History admission control were missing from the named list. Its original failed log is retained. Current closed literal rosters now require all 19 kernel controls and all 42 History entries (41 passing controls and the original child fixture); no existing name or ignore reason was removed. Independent source-name checks and old 14/40-count false-success counterexamples bind this expansion. The remote's 41-entry roster remains preserved in its original commit, and its full diagnostic method and helper remain byte-identical. A separate fixed-source Linux replay runs the two complete native selectors; this does not run or qualify the original four-second confirmation campaign.
+
+### 2026-11-14 selected SQLite cache requalification reader
+
+The ea909124 launcher identity and foreign-loader controls are retained on the
+current canonical-toolchain loader seed. The installed rustup must select the
+caller's exact pinned cargo/rustc; all three executable identities are recorded
+before and after. Four original cache transitions retain their own denominator,
+and two additional foreign-loader refusal/restoration phases use the same fresh
+target. Original failures and subsequent attempts remain recorded.
+
+The current canonical rustc/lib path validation and LD_LIBRARY_PATH seed are
+preserved. Inherited loader input and the intentionally selected canonical seed
+are reported separately; only the extra refusal phase adds the foreign directory,
+then the original selected seed is restored. The ten original reader controls
+include this current-seed adaptation and run in repository-truth. The actual
+workflow passes its installed rustup explicitly. These are synthetic orchestration
+and source-preservation controls, not a new real Cargo requalification, SQLite
+operation, dependency provenance or public-service result. All qualification
+flags remain false; exact hosted native execution remains separately required.
+
+### 2026-11-14 current-process cgroup observation
+
+The 9f77f433 read-only observation and all original fourteen controls are retained.
+The current three source files exactly matched the original parent; all imported
+tip bytes remain exact, including six existing process-accounting tests and eight
+new cgroup controls. The rank reader records the calling process's unique visible
+cgroup2 mount, actual leaf and every visible ancestor, with bounded nonblocking
+regular-file reads and before/after membership and mount-table comparison.
+
+Ambiguous or shadowed mounts, noncanonical/overlong paths, missing values,
+device/identity changes, FIFO inputs and membership drift cannot become a complete
+observation. Root-view limits remain explicitly separate. Atomicity, effective
+quota, external namespace ancestry, child placement and consensus/model authority
+remain false. The original Linux controls run only synthetic namespace files and
+owned finite child processes; no rank campaign, Host provisioning, native service
+qualification or performance gate is executed by this port.
+
+### 2026-11-14 original large-state profile matrix
+
+The 41742ba4 workflow is retained exactly: each x64/arm64 and head/prospective-merge
+combination has independent test and release jobs. The four original native
+selectors and their complete command/error-propagation block are byte-identical.
+The original sixty-minute bound, fail-fast=false, retained failures, source
+before/after checks and read-only permissions remain. Test mode retains Node
+opt-level 3 with debug/overflow checks and M06 opt-level 1 with the same checks;
+release retains its distinct optimized profiles and supplementary denominator.
+
+Ten synthetic cases exercise the actual embedded profile verifiers: both
+declared profiles accept, while omitted/duplicated or substituted M06, lost Node
+checks, extra features, ambient overrides and unknown profiles refuse. The current
+Cargo profile declarations match the required metadata. No native acceptance
+result is supplied by these synthetic or source-preservation checks. Both exact
+hosted native profiles remain required; release does not replace test.
+
+### 2026-11-14 explicit current Cell acquisition API
+
+The 75600213 reusable acquisition boundary and its five original controls are
+retained by extracting the current acquisition body. The immutable closure input
+carries the already checked path, generation, context and authentication arguments.
+The current bounded 4096-byte provider-event reader, explicit accept-loop ready
+event, one original 35-second acquisition deadline, retry/connection/byte limits,
+cache-only materialization and provider-exit checks are preserved. The wrapper
+continues to require the current runtime snapshot and its digest.
+
+A sixth control proves ready waiting cannot renew the original transfer deadline.
+The original five assertion sets remain unchanged; synthetic providers use real
+owned pipes to exercise the current bounded event reader. Linux passes six
+acquisition, six provider-ready, five deadline and three existing installed-policy
+controls. No native acquisition campaign or protected installed ELF deployment
+is claimed. The separate Mac installed-policy platform failure and its five
+pre-existing deployment skips remain recorded without weakening a test or policy.
+Repository-truth invokes the synthetic acquisition controls; all qualification,
+use-authority and installation-authority assertions retain their existing meaning.
+
+### 2026-11-14 root composition: current SQLite, Host observation, profiles and Cell acquisition
+
+Integrated the four independently reviewed ports f631c890, ce28801d, 2a29b228 and 3eb2cfdd. Their selected runtime/test blobs are unchanged in composition. SQLite launcher provenance binds installed rustup plus before/after executable hashes; the read-only cgroup observer records bounded visible ancestry without conferring Host placement or effective-quota authority. The original large-state workflow retains both original test and release profiles on both architectures and exact/prospective inputs. Cell acquisition extracts the current ready-aware body with one original 35-second transfer deadline and cache-only materialization; it preserves the current runtime snapshot and provider cleanup. Original controls and independent source/command refusal checks remain. Six-phase real SQLite qualification, eight-profile native acceptance, native model acquisition and the original confirmation campaign are not supplied by the synthetic controls.
+
+### 2026-11-14 root composition: partial-campaign-readback
+
+Preserved all 27 original test method ASTs from 4be50aa4 and added the current observation/clock/identity refusal control. Synthetic fixtures supply the unchanged current confirmation relation. The only production-reader adaptation repeats its original necessary positive-phase condition before the current strict phase analyzer, preserving accepted inputs and original rejection priority. All three attempts, 27 planned slots and 189 packet exposures remain visible when work is missing, rejected or failed; this reader grants neither complete-artifact validity nor native or four-second qualification. Initial fixture and error-priority failures remain retained. Its actual repository-truth command and independent omission, duplication, movement and failure-swallowing controls are composed with the current readers.
+
+## Node test module and metric initialization repair (2026-11-14)
+
+The original NPQ6 test build exposed two pre-existing strict Clippy failures.
+The PQ network and TLS unit suites now reference one unchanged TLS fixture
+module instead of compiling the same file twice in the Node test crate. Its
+test-only configuration retains the original TLS suite's non-Linux visibility;
+Fixture::new still creates independent per-call settings and identities. The
+duplicate module's dead-code allowance is removed, with no new allowance.
+Two PublicV3 metric fixtures use equivalent structure-literal initialization,
+retaining the same measured value and all other initial fields. No production
+body, fixture cryptography, request bound, deadline or assertion is changed.
+The original lint failure is retained. Combined Linux all-target strict Clippy
+is a separate required validation after these source changes are integrated.
+
+## Frozen lifetime report reproduction fixture (2026-11-14)
+
+The historical lifetime ledger retains SOURCE_BASE
+1f2b0187d4522b5248294ddab318f34a63bdc5a3 and all twenty original SHA-256 pins.
+Its test setup now reads those exact existing Git objects, checks the unchanged
+source survey, and materializes an isolated temporary source root. The original
+report test passes that root to the unchanged make_report implementation instead
+of silently treating today's working files as historical reproduction. No Git
+fetch, replacement object, current-source fallback, old report rewrite, or
+historical pin refresh is introduced.
+
+All twenty source identities were independently checked against the frozen Git
+tree, and the original report was reproduced byte for byte before this test
+repair. The existing full-roster missing and changed-source controls, real
+earlier Git-input refusals, symlink refusal and historical report comparisons
+remain. The separate current lifetime observer still checks its own explicit
+current twenty-source contract and retains all security qualifications false.
+
+The separate seven-difference historical-report control now names its original
+cdd984808a088e6c2e13b1e1ae6630a94d500c89 Git report explicitly. Its original
+8ee20462 digest and the retained b050b861 successor digest remain unchanged.
+The working-tree report already used the different 622c402c source survey in
+332d7f72; this test repair does not overwrite that later evidence lineage.
+The initial full run's 19 passing controls and one report-namespace failure
+are retained rather than counted as a successful full run.
+
+### 2026-11-14 root composition: test-fixture-identity-and-clippy
+
+The two equivalent metric structure initializers and single unchanged TLS fixture module retain every production and assertion body; no warning allowance was added. Historical lifetime reproduction now reads its exact existing SOURCE_BASE Git objects and the original cdd98480 report lineage, with replacement refs and lazy fetch disabled. All twenty historical source pins, seven explicit report differences and both expected report hashes are unchanged. The later working-tree report and current twenty-source observer remain separate. Initial failed fixture and strict-Clippy records remain retained; combined Linux all-target strict Clippy is still a distinct pending check.
+
+### 2026-11-14 retained original statement-boundary controls
+
+Selected the three independent 1d11f875 statement-boundary controls. They exercise original scalar error priority before cache callbacks, complete false-transcript replay for each fresh challenge, and the sixty-fifth exact challenge evicting a 64-entry fact without turning eviction into a rejection fact. They call the current original arithmetic/cache APIs and retain every original assertion and progress observation. Only the test module and its registration are introduced; production arithmetic, signed namespaces, work profile, cache capacity and native budgets remain the current owners. Both module and registration are independently source-bound. Linux native execution is recorded separately from format/source checks and is pending at this commit.
+
+### 2026-11-14 retained literal-aware Rust token reader
+
+Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
+
+### Cell ordinary peer-failure ordering preservation, 2026-11-14
+
+The selected bounded Cell fetch session retains ordinary unavailable and transport
+failure observations by actual SocketAddr, with at most eight saturating counters.
+Each request takes one stable score snapshot. Failure score orders peers first;
+existing availability preference and cyclic ties remain stable within equal scores.
+An ordinary miss only reduces priority and never removes a fallback peer or creates
+corrupt-peer quarantine. Original connection, request, byte, absolute deadline,
+cancellation and retry owners remain unchanged.
+
+The original seven-connection complete-release control and three combination
+controls are retained. Fixed-source Linux execution passed 19 release, 13
+availability, 8 network budget and 4 cancellation controls with zero ignored tests,
+plus strict all-target Clippy. The first Mac availability suite had 12 passes and
+one existing probe-count failure; that observation remains preserved. An isolated
+baseline run and an isolated patched run each passed that unchanged control;
+neither is evidence that the first failure was reproduced or explained. Ordinary
+miss ordering is a selected behavior policy, not a claim of improvement for every
+peer arrangement, a four-second confirmation result, activation or release
+qualification.
+
+Root integration retained the exact three Cell runtime/test blobs from
+283981a062158f3b41eea42d52f56eaee457ba97 on the e8241969 composition.
+Only independent source-guard and plan conflicts were composed. The selected
+44-control Linux receipt is component evidence and does not replace protected
+exact-head/prospective-merge confirmation or remove the prior Mac failure.
+
+## 2026-11-14 — Explicit authenticated-caller observation V5
+
+The current default PublicRequestObserver::new retains the complete V4 observation schema and all existing cost, wait, lifecycle, error and timing fields. The separately selected new_with_authenticated_callers constructor emits V5 and records a caller only after the real signature check succeeds. Claimed Hello identities and invalid signatures do not bind this field. A second binding retains the first value and records a measurement failure.
+
+This is local observation only. It changes no signed request domain, admission result, r20 resource account, expiry, fresh Host check or production qualification. Existing V4 readers continue to reject V5. The original two branch controls retain their substantive assertions with the explicit schema literals adapted to the current V4/V5 namespace; an exact default V4 serialization control and a V4-reader rejection control cover the compatibility boundary. Native controls require actual Linux execution; source integrity alone does not certify them.
+
+Root integration retained the exact T01 V5 observer, authenticating TCP hook
+and V4-consumer refusal control from eb3a02048eb219558697dffa710e41de8e471899.
+Default V4 output and the existing r20 authorization remain selected. The new
+V5 local observation is opt-in; pending native control execution is not replaced
+by source pins or by the earlier V4 272-control observation.
+
+## 2026-11-14 — Read-only collected-unit observation
+
+Retain the bounded, local-only collected-unit absence reader and its 20 standalone original read/child controls. UNKNOWN, permission/I/O failure, a nonzero query status, retained cgroup/unit paths, invalid manager output or a final manager failure remain failures. The observer neither stops nor deletes a service and grants no cleanup ownership. The current single native-campaign EXIT trap observes collection, preserves an existing native failure, and propagates an observation failure when the native command succeeded. Existing service limits, cancellation traps and native budgets remain unchanged.
+
+The old 21st control is retained against four exact b23c0ef8 workflow fixtures outside the active workflow directory. Its six historical traps and 36 synthetic exit cases do not restore retired jobs or certify current execution. A separate current-source control checks the one selected active trap, its six exit cases and unchanged owner limits. No host systemd service, cgroup, native campaign or provisioner is run by these controls.
+
+Root composed T04 on the current Cell/V5 source. The original observer and all 21 original method ASTs were independently compared to b23c0ef8; four historical workflow fixtures match exact Git blobs. Only the one current cleanup trap changes, and no system service or native campaign is created by the 23 synthetic/read-child controls.
+
+## 2026-11-14 — Bounded CodeQL diagnostics and pure semantic observations
+
+Retain the original b23c0ef8 bounded metadata collector and its 26 original controls byte for byte. It copies only the declared retained-file inventory, preserves missing/refused/oversized/error rows, bounds original JSON/SARIF and log tails separately, and never infers a scan result, complete process stream, finding count or security qualification. Existing output is never overwritten.
+
+Retain only require, source_uri and semantic_extraction_observations plus their three original bounds/marker constants in a separate pure readback module. The four original semantic controls preserve their ASTs: informational and unlocated failures remain failures, a retained-row cap does not erase counts, and even empty logs grant no semantic/security qualification. Neither component imports or restores the retired CodeQL runner, query packs, toolchain installer or scanning workflow. Their two control commands execute exactly once in repository-truth, with independent command and source omission/mutation guards. Synthetic fixture results are not native scan evidence.
+
+Root retained exact original metadata collector/test blobs and independently compared the three pure semantic functions, three constant ASTs, and four original semantic method ASTs. The 30 controls use retained/synthetic input only. Current official CodeQL action, exporter, toolchain and security authority remain selected.
+
+### Original wall-clock MTP controls, 2026-11-14
+
+Two complete historical wall-clock controls now exercise the current Registered
+bootstrap task material and make_with_registered_material interface. Only their
+fixture adapter changes; original statements, exact event timestamp equality,
+explicit full W1 verification, persisted packet byte equality, pool-state checks
+and diagnostic records remain. The successful branch retains 4,096 search
+attempts and a two-second runtime. The future-median refusal retains its original
+150-millisecond runtime and zero-search/zero-work assertions. Existing
+pool_mining controls and all production mining, consensus and admission owners
+remain unchanged. These local controls do not establish hosted four-second
+confirmation, activation or production qualification.
+
+Root retained the two complete original wall-clock mining controls through the reviewed Registered-material adapter. Both original test bodies preserve all diagnostic string literals and non-whitespace statements except the explicit Settings argument for the ancestor adapter. The original 4096 attempts and 2-second/150-millisecond bounds remain; the selected component Linux receipt contains two passes without ignored controls.
+
+### 2026-11-14 retained three-stage typed pending worker observations
+
+Selected the complete 147bae52, 91e4a5e9 and c1650714 lineage for the existing
+explicit worker-pidfd V4 observer. Initial incomplete task observation, held-task
+ENOENT during partial binding, and post-binding ESRCH retain distinct pending
+records. The last case requires every original worker binding, the same held
+worker pidfd with its exact terminal event, unchanged owner/namespace/birth
+identity, and one proved roster loss. Previously observed invalid fields, new or
+reappearing tasks, a second unproved loss and unknown reads remain sticky refusals.
+
+Pending records neither claim zero RSS nor complete/release/refill a reservation.
+The existing pilot lifecycle, default profile, source-pair and trial-reconcile
+behavior remain byte-identical. Completion still requires the original same-owner
+wait4 with valid resource usage within both the whole operation deadline and the
+original missing-sample-plus-100ms bound. No Host/model campaign is activated.
+
+The original fourteen initial, ten binding and twelve post-binding controls enter
+the existing protocol-contract pilot command once. Only the two whole-pilot test
+fixture digests bind the already reviewed consolidated CLI body; original V2/V3
+pins, old observer-profile refusals and all original control assertions remain.
+Independent literal source and registration mutations refuse omission or bypass.
+Linux child/pidfd/proc/wait4 observations and controlled proc field views are
+recorded separately; they grant no model, production or campaign qualification.
+
+The old Diverse60 recipe deliberately retains its aae68f92 observer pin. It now
+refuses the changed observer at DIVERSE_V3_CURRENT_OBSERVER; neither its historical
+source namespace nor its old experimental receipts are refreshed or qualified.
+
+The selected Linux run completed all 59 original methods: 36 pending controls
+and 23 existing worker controls, with zero failures, errors or skips. The actual
+pilot discovery registered each of the 36 once. Sixty-seven absolute project
+inputs and the actual loaded project modules were source-bound before/after;
+unresolved dir_fd-relative audit events are separately counted, without claiming
+complete file-access coverage. The first external driver misinterpreted relative
+proc paths and produced 240 subtest errors; that failed run and its once-guard
+refusal remain retained. Correcting only this driver produced the passing run.
+Six independent CI/source negative controls and the actual CI/corpus readers
+also passed. These observations preserve all qualification flags as false.
+
+Root integration retained the exact T03 worker from c16507147b65285ea94dead22d3b93c5db7295af
+and all 36 original pending controls (only two reviewed whole-pilot fixture digest
+adapters), together with the 23 existing worker controls and their explicitly
+reviewed pending-observation fixtures. Linux executed 59 methods with zero
+failures, errors or skips; its 7,331 unresolved dir_fd-relative audit events are
+not claimed as verified project-file accesses. The original instrumentation
+errors and the duplicate-start once-guard refusal remain evidence. Production
+pilot/V2/V3 bytes, original 100ms limit, historical Diverse60 refusal and all
+qualification flags remain unchanged. No hosted confirmation target is granted.
+
+### Final consolidated current source bindings — 2026-11-14
+
+Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 separately rebinds the existing authority44,
+current-lifetime20, six-crate QROM145 and root-dependency46 inventories.
+The selected source union contains 232 distinct paths; each fixed Git blob
+and physical source byte matched the preceding reviewed dba81d56 inputs.
+Current reader constants, paired profile/upstream/route descriptors, independent
+test expectations and corpus pins move together. Historical 7150/1f2b/0f9
+namespaces, original proofs and guest identity, all limits, prior refusal
+records and false/null qualification fields remain. No Rust source is changed.
+
+T03's original Linux 59-control run also has a separate post-merge readback:
+all 67 actually observed absolute project inputs match this checkpoint, with
+60 modules loaded before and 61 afterward. This selected-input comparison
+does not claim a complete checkout or resolve the 7,331 relative open events.
+
+### 2026-11-14 complete branch-disposition audit and integration record
+
+The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records all 908 frozen branch names, 892 distinct tips, 296 terminal dispositions and the selected current implementation. Its evidence index preserves original successful and failed controls, source identities, dependency findings and unselected historical alternatives. The original hosted four-second confirmation gate, protected main requirements and legacy deletion protection remain independent conditions. This audit does not activate a production profile or declare the one-branch remote result before a verified protected merge and reference cleanup. This file remains the sole development plan.

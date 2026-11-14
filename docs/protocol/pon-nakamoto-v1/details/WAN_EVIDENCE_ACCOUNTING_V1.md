@@ -230,3 +230,54 @@ authorized WAN deployment/monitoring environments. It has not run 72 hours
 and cannot acquire that evidence by accelerating a clock, replaying rows or
 renaming local processes. Work package 5 is **NOT RUN / HOLD_NO_GO**. The
 reader makes missing evidence visible; it does not supply it.
+
+
+## Explicit V3/V4 control-domain accounting
+
+The consolidation retains the additive reader from source
+058a729a274b431ed1617efee2725cad8471d966, whose actual old base is
+513e92dfc27044ef3e0c9d62e7ae504fa5bea38f. V1 and V2 remain explicit
+schema choices with their original typed results, fixed windows, schedule
+denominators, late/missing observations and all-attempt resource accounting.
+
+V3 requires trnm-wan-preregistration-v3. It binds the complete operator
+roster to a canonical control registry, its subject roster digest and the
+eight source, binary, profile, network, genesis and parameter context hashes.
+The immutable ControlMap collapses declared parent links, aliases and
+reused key fingerprints. Unknown or stale control receives no independence
+credit; a stale alias cannot erase a known common-control relationship.
+Retrieval excludes aliases of forbidden origins, and repair retains both
+the administrator and failure-domain floors.
+
+V4 requires trnm-wan-preregistration-v4. In addition to every V3 and V2
+condition, it computes a bounded maximum matching between declared control
+groups and failure domains. A large count on each separate axis is not
+evidence that enough independent pairs exist. The global operator floor
+and each repair result are checked separately; duplicate edges add no
+credit. This is arithmetic on caller declarations, not physical replication
+or external operator authentication.
+
+The shared [control registry reader](../../../../scripts/pon_decentralization_audit.py)
+also retains its original five-axis, read-only declaration report and
+[fixed policy](../../../../config/pon/decentralization-audit-v1.json).
+Its report remains HOLD, including when all synthetic arithmetic controls
+pass. The independent historical evidence-file materializer is outside this
+selected WAN dependency port.
+
+The existing CLI dispatches by the exact manifest schema. Run the retained
+controls explicitly:
+
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
+
+These controls include all 512 small bipartite graphs against an independent
+exhaustive matching oracle, the V3 marginal-count counterexample rejected by
+V4, foreign-context and roster substitution, immutable snapshots, stale
+aliases, unknown owners, and unchanged failure-cost and missing-row
+denominators. Their synthetic inputs establish no WAN duration, signatures,
+funding, physical storage, network readiness or operator authority.
+The fields external_independence_verified, independent_accepted, pn5_accepted,
+public_network_ready, production_activation and all other acceptance
+flags remain **false**. The current execution boundary above remains
+**NOT RUN / HOLD_NO_GO**.

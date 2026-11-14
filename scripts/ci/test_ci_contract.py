@@ -39,6 +39,7 @@ from check_ci_contract import (check_pq_release_authority_controls, check_cell_c
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
                                PQ_SYSTEM_SUPPLEMENTAL_STEP, PQ_CHECKPOINT_OWNERSHIP_STEP)
+from check_ci_contract import check_typed_pending_worker_controls
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -81,6 +82,93 @@ synthetic_growth_v2_native() {
   printf '%s\n' 'running 1 test' 'test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
 }
 '''
+
+
+
+class TypedPendingWorkerWiringTests(unittest.TestCase):
+    # Deliberately independent of the checker's reviewed module/method roster.
+    GROUPS = (
+        ('test_llm_runtime_exit_initial_pending', 'InitialTerminalPendingTests', 14),
+        ('test_llm_runtime_exit_binding_pending', 'BindingTerminalPendingTests', 10),
+        ('test_llm_runtime_exit_post_binding_retirement', 'PostBindingRetirementTests', 12),
+    )
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='trnm-typed-pending-wiring-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve(strict=True)
+        (self.root / 'scripts').mkdir()
+        for path in ['scripts/test_llm_runtime_pilot.py'] + [
+                'scripts/' + module + '.py' for module, _, _ in self.GROUPS]:
+            (self.root / path).write_bytes((ROOT / path).read_bytes())
+
+    def test_actual_pilot_registers_all_36_original_controls_once(self):
+        result = check_typed_pending_worker_controls(self.root)
+        self.assertEqual(result['selected_original_controls'], 36)
+        self.assertEqual(result['original_controls'],
+                         {module: count for module, _, count in self.GROUPS})
+        self.assertIs(result['tests_executed'], False)
+
+    def test_each_original_import_must_be_present_unconditional_and_unique(self):
+        check_typed_pending_worker_controls(self.root)
+        target = self.root / 'scripts/test_llm_runtime_pilot.py'
+        original = target.read_text()
+        for module, class_name, _ in self.GROUPS:
+            line = 'from ' + module + ' import ' + class_name + '\n'
+            self.assertEqual(original.count(line), 1)
+            for label, replacement in (
+                    ('missing', ''), ('duplicate', line + line),
+                    ('conditional', 'if False:\n    ' + line),
+                    ('alias', 'from ' + module + ' import ' + class_name + ' as omitted\n')):
+                try:
+                    target.write_text(original.replace(line, replacement, 1))
+                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
+                        check_typed_pending_worker_controls(self.root)
+                finally:
+                    target.write_text(original)
+
+    def test_each_original_module_refuses_missing_renamed_duplicate_skipped_or_stubbed_controls(self):
+        check_typed_pending_worker_controls(self.root)
+        for module, class_name, _ in self.GROUPS:
+            target = self.root / 'scripts' / (module + '.py')
+            original = target.read_text()
+            tree = ast.parse(original)
+            cls = next(node for node in tree.body
+                       if isinstance(node, ast.ClassDef) and node.name == class_name)
+            method = next(node for node in cls.body
+                          if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
+            lines = original.splitlines(keepends=True)
+            exact = ''.join(lines[method.lineno - 1:method.end_lineno])
+            for label, replacement in (
+                    ('missing', ''), ('duplicate', exact + exact),
+                    ('renamed', exact.replace(method.name, 'omitted_' + method.name, 1)),
+                    ('skipped', '    @unittest.skip("explicit negative fixture")\n' + exact),
+                    ('stubbed', '    def ' + method.name + '(self):\n        pass\n')):
+                try:
+                    changed = original.replace(exact, replacement, 1)
+                    self.assertNotEqual(changed, original)
+                    target.write_text(changed)
+                    with self.subTest(module=module, mutation=label), self.assertRaises(ValueError):
+                        check_typed_pending_worker_controls(self.root)
+                finally:
+                    target.write_text(original)
+
+    def test_existing_pilot_ci_command_cannot_be_removed_duplicated_hidden_or_moved(self):
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                    'rust-baseline', 'external-evidence-contract'}
+        check_independent_conformance(script, required)
+        command = '    python3 scripts/test_llm_runtime_pilot.py\n'
+        self.assertEqual(script.count(command), 1)
+        for label, changed in (
+                ('missing', script.replace(command, '', 1)),
+                ('duplicate', script.replace(command, command + command, 1)),
+                ('commented', script.replace(command, '    # ' + command.strip() + '\n', 1)),
+                ('hidden', script.replace(command, '    if false; then\n' + command + '    fi\n', 1)),
+                ('moved', script.replace(command, '', 1).replace(
+                    '  repository-truth)\n', '  repository-truth)\n' + command, 1))):
+            with self.subTest(mutation=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, required)
 
 
 class ManualResearchWorkflowTests(unittest.TestCase):
@@ -192,6 +280,51 @@ class ManualResearchWorkflowTests(unittest.TestCase):
         check_manual_research_workflows(self.root)
 
 
+class RustBaselineReceiptRetentionTests(unittest.TestCase):
+    def test_fallback_receipt_root_reaches_child_and_preserves_original_failure(self):
+        # Real shell and child environment, synthetic Cargo exit only. This is
+        # not a native service or workspace-runtime acceptance observation.
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        lane = script.split('  rust-baseline)\n', 1)[1]
+        prefix = lane.split('    (\n', 1)[1].split(
+            '      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT\n', 1)[0]
+        prelude = """set -euo pipefail
+cargo() {
+  test "$1" = test
+  command python3 - <<'PY_RECEIPT_CONTROL'
+import json
+import os
+from pathlib import Path
+root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+value = {'receipt_root': str(root), 'scope': 'synthetic shell export control only'}
+(root / 'synthetic-retention-control.json').write_text(json.dumps(value))
+print(json.dumps(value))
+PY_RECEIPT_CONTROL
+  return 101
+}
+"""
+        for explicit in (False, True):
+            with self.subTest(explicit=explicit), tempfile.TemporaryDirectory(
+                    prefix='trnm-receipt-retention-') as directory:
+                root = Path(directory)
+                env = dict(os.environ, RUNNER_TEMP=str(root / 'runner temp with spaces'))
+                env.pop('TRNM_CI_RECEIPT_DIR', None)
+                if explicit:
+                    env['TRNM_CI_RECEIPT_DIR'] = str(root / 'explicit receipts with spaces')
+                result = subprocess.run(['bash', '-c', prelude + prefix +
+                    'touch "$trnm_model_receipt_root/incorrect-success"\n'],
+                    cwd=ROOT, env=env, capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 101, result.stderr)
+                receipts = (Path(env['TRNM_CI_RECEIPT_DIR']) if explicit else
+                            next((root / 'runner temp with spaces').glob('trnm-ci-*')))
+                retained = json.loads((receipts / 'synthetic-retention-control.json').read_text())
+                self.assertEqual(retained['receipt_root'], str(receipts))
+                self.assertTrue((receipts / 'workspace-tests.log').is_file())
+                self.assertIn(str(receipts), (receipts / 'workspace-tests.log').read_text())
+                self.assertFalse((receipts / 'incorrect-success').exists())
+
+
+
 class InlineSourcePinTests(unittest.TestCase):
     def test_actual_workflow_guards_bind_current_bytes(self):
         self.assertGreater(check_inline_source_pins(ROOT), 0)
@@ -283,6 +416,32 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
         self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
                       'rust-baseline', 'external-evidence-contract'}
+
+    def test_wan_accounting_controls_cannot_disappear_duplicate_skip_swallow_or_move(self):
+        # Independent literal scope; synthetic checks grant no WAN qualification.
+        commands = (
+            '    python3 scripts/ci/test_cross_repo_candidate.py -v\n',
+            '    python3 scripts/ci/test_pon_wan_evidence.py -v\n',
+            '    python3 scripts/ci/test_pon_decentralization_audit.py -v\n',
+            '    python3 scripts/ci/test_pon_wan_control_domains.py -v\n',
+        )
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'conditional skip': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+                'early success': self.script.replace(command, '    exit 0\n' + command),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'zero-match discovery': self.script.replace(command,
+                    "    python3 -m unittest discover -s scripts/ci -p 'missing_wan_test.py' -v\n"),
+            }
+            for change, candidate in changes.items():
+                with self.subTest(command=command, change=change), self.assertRaises(ValueError):
+                    check_independent_conformance(candidate, self.lanes)
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
@@ -637,6 +796,11 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         # must not silently remove that command's negative coverage as well.
         paths = (
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
+            'scripts/ci/test_throughput_cost_coverage.py',
+            'scripts/ci/test_rust_source_tokens.py',
+            'scripts/ci/test_collected_unit_empty_v1.py',
+            'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/test_codeql_semantic_observations_v1.py',
             'scripts/ci/test_read_validated_business_goodput.py',
             'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
             'scripts/ci/test_run_w1_reused_cost_v3.py',
@@ -2474,15 +2638,32 @@ cargo() {
                         self.assertEqual((output / 'native-account-verification-cost.log').exists(),
                                          len(expected_calls) == 4)
 
+    def current_model_observation_block(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        marker = '    (\n      trnm_model_receipt_root='
+        self.assertEqual(original.count(marker), 1)
+        start = original.index(marker)
+        end = original.index('    )\n', start) + len('    )\n')
+        block = original[start:end]
+        # Keep actual comments in the moved fixture while checking every command.
+        commands = ''.join(line for line in block.splitlines(keepends=True)
+                           if not line.lstrip().startswith('#'))
+        self.assertEqual(commands, MODEL_OBSERVATION_BLOCK)
+        return block
+
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
-        changed = original.replace(MODEL_OBSERVATION_BLOCK, '').replace('  fuzz-smoke)\n',
-                                                                              '  fuzz-smoke)\n' + MODEL_OBSERVATION_BLOCK)
+        block = self.current_model_observation_block()
+        changed = original.replace(block, '', 1).replace('  fuzz-smoke)\n',
+                                                        '  fuzz-smoke)\n' + block, 1)
+        self.assertEqual(changed.count(block), 1)
+        self.assertEqual(sorted(changed.splitlines()), sorted(original.splitlines()))
         self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_model_oracles_must_precede_documentation_tests(self):
-        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK + RUST_DOCS,
-                      RUST_DOCS + MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
+        block = self.current_model_observation_block()
+        self.rejected('scripts/ci/ci_job.sh', block + NATIVE_RELEASE_BLOCK + RUST_DOCS,
+                      RUST_DOCS + block + NATIVE_RELEASE_BLOCK)
 
     def test_model_exports_cannot_leak_into_doc_or_clippy_commands(self):
         self.rejected('scripts/ci/ci_job.sh', '    )\n' + RUST_DOCS, RUST_DOCS + '    )\n')
@@ -2791,6 +2972,7 @@ class W1PostwinLaneTests(unittest.TestCase):
             ("  contents: read", "  contents: write"),
             ("  cancel-in-progress: false", "  cancel-in-progress: true"),
             ("      - evidence/pon-w1-full-v2-20261105/**\n", ""),
+            ("      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz\n", ""),
             ("      - evidence/pon-w1-fresh-runtime-20261107/**\n", ""),
             ("      - scripts/audit_w1_deployment_comparison.py\n", ""),
             ("      - scripts/w1_owned_process_collector_v1.py\n", ""),
@@ -2815,7 +2997,7 @@ class W1PostwinLaneTests(unittest.TestCase):
     def test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced(self):
         for name, count, command in (
             ('mapper_tests', 15, 'test_w1_profile_source_map.py'),
-            ('v2_gate_tests', 23, 'test_w1_v2_controls_gate.py'),
+            ('v2_gate_tests', 31, 'test_w1_v2_controls_gate.py'),
         ):
             block = self.step(name)
             mutations = (
@@ -2978,6 +3160,14 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_ci_observation_process.py\n',
             '    python3 scripts/ci/test_authenticated_suite_count.py\n',
         ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
+        'native_observation_guards': ('repository-truth',
+            '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n', (
+                '    python3 -B scripts/ci/test_w1_factorial_native_gate.py\n',
+                '    python3 -B scripts/ci/test_prepare_artifact_upload.py\n',
+                '    python3 -B scripts/ci/test_cell_storage_convergence_ci.py\n',
+                '    python3 -B scripts/ci/test_fresh_rejection_report.py\n',
+            ), '    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.\n'
+            '    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'),
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
@@ -3016,6 +3206,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
                 '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
                 '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+                '    python3 scripts/ci/test_read_native_campaign_attempt.py\n',
             ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
@@ -3105,6 +3296,13 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('pq_effect_root')
+
+    def test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('native_observation_guards')
+
+
+    def test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure(self):
+        self.reject_command_mutations('failed_campaign_diagnostics')
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')

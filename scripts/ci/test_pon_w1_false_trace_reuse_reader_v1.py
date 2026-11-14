@@ -125,6 +125,77 @@ class FalseTraceReuseReaderTests(unittest.TestCase):
                 self.assertEqual(item["verification"][path]["cpu_ns"], 6400)
                 self.assertEqual(item["receiver_rejection_cpu_over_full_attacker_cpu"][path], 6400 / 12000)
 
+    def test_campaign_material_setup_is_retained_once_without_class_allocation(self):
+        records = self.records()
+        records[0]["material_setup"] = {"cpu_ns": 19001, "wall_ns": 29003}
+        report = self.analyze(records)
+        cost = report["cost_coverage"]
+        self.assertEqual(cost["schema"], reader.COST_COVERAGE_SCHEMA)
+        self.assertEqual(cost["material_setup"], records[0]["material_setup"])
+        self.assertEqual(cost["material_setup_charged_calls"], 1)
+        self.assertIs(cost["material_setup_allocated_to_classes"], False)
+        self.assertEqual(cost["all_attacker_cohorts"], stamp(72 * 1500))
+        self.assertEqual(cost["observed_attacker_subtotal"],
+                         {"cpu_ns": 72 * 1500 + 19001, "wall_ns": 72 * 1500 + 29003})
+        for path in reader.PATHS:
+            self.assertEqual(cost["native_verification"][path]["measured_total"], stamp(288 * 200))
+            self.assertEqual(cost["receiver_rejection_cpu_over_observed_attacker_subtotal"][path],
+                             288 * 200 / (72 * 1500 + 19001))
+        for item in report["actual_reuse_cohorts"]:
+            self.assertEqual(item["full_attacker_cohort_total"], stamp(8 * 1500))
+            self.assertIn("excludes-campaign-material-setup", item["ratio_scope"])
+
+    def test_complete_cost_stays_unknown_and_every_miss_remains_in_coverage(self):
+        report = self.analyze(self.original)
+        cost = report["cost_coverage"]
+        attempts = sum(len(row["attempts"]) for row in self.original if row["kind"] == "search")
+        self.assertEqual(cost["attempts"], attempts)
+        self.assertEqual(cost["searches"], 288)
+        self.assertEqual(cost["target_hits"], 288)
+        self.assertEqual(cost["misses"], attempts - 288)
+        self.assertGreater(cost["misses"], 0)
+        for role in ("attacker", "receiver"):
+            self.assertEqual(cost["complete_" + role + "_total"], {"cpu_ns": None, "wall_ns": None})
+        self.assertIs(cost["complete_attack_cost_measured"], False)
+        self.assertIs(cost["public_attack_amplification_measured"], False)
+        self.assertEqual(set(cost["unmeasured_costs"]), {
+            "task_id_binding_outside_timed_intervals", "buffer_destruction",
+            "evidence_serialization_and_output", "sender_signatures_and_transport",
+            "receiver_signatures_admission_queues_and_storage", "network_io_and_fanout"})
+        self.assertTrue(all(value == {"cpu_ns": None, "wall_ns": None}
+                            for value in cost["unmeasured_costs"].values()))
+
+    def test_failed_verifier_cost_remains_charged_and_withholds_aggregate_rejection_ratio(self):
+        records = self.records()
+        failed = self.first(records, "verifier", path="production")
+        failed["outcome"] = "Accepted"
+        failed["timing"] = stamp(9301)
+        report = self.analyze(records)
+        cost = report["cost_coverage"]
+        self.assertEqual(cost["native_verification"]["production"]["calls"], 288)
+        self.assertEqual(cost["native_verification"]["production"]["measured_total"], stamp(287 * 200 + 9301))
+        self.assertEqual(cost["native_verification"]["production"]["by_outcome"]["Accepted"],
+                         {"calls": 1, **stamp(9301)})
+        self.assertIsNone(cost["receiver_rejection_cpu_over_observed_attacker_subtotal"]["production"])
+        self.assertIsNotNone(cost["receiver_rejection_cpu_over_observed_attacker_subtotal"]["reference"])
+
+    def test_exhausted_search_cost_is_included_without_fabricating_a_candidate(self):
+        # Exercise the accounting projection with a synthetic exhausted search;
+        # normal parsing separately enforces the complete real hash-trial stream.
+        records = reader.Records()
+        for record in self.original:
+            records.add(copy.deepcopy(record))
+        first = records.cohorts[reader.CLASSES[0], 0]["searches"][0]
+        first.update(status="exhausted", attempt_count=reader.ATTEMPT_BUDGET,
+                     proof=None, candidate=None, verifiers=[])
+        cost = reader.cost_coverage(records)
+        self.assertEqual(cost["exhausted_searches"], 1)
+        self.assertEqual(cost["target_hits"], 287)
+        self.assertEqual(cost["all_attacker_cohorts"], stamp(72 * 1500))
+        self.assertEqual(cost["observed_attacker_subtotal"], stamp(72 * 1500 + 1000))
+        self.assertEqual(cost["native_verification"]["production"]["calls"], 287)
+        self.assertEqual(cost["misses"], cost["attempts"] - 287)
+
     def test_empty_grid_and_deleted_cohort_do_not_reduce_denominators(self):
         self.fails([self.original[0], row("end", material_count=0, cohort_count=0, search_count=0,
             candidate_count=0, verifier_count=0, complete=True)], "grid incomplete")

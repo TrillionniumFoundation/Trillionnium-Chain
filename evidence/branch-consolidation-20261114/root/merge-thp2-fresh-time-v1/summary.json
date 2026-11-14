@@ -1,0 +1,96 @@
+{
+  "prior": "c65b607d2b24864ee14657c118d1ae7450f4acf3",
+  "target": "6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc",
+  "base": "692f2454620faad648850f9421f2f11467ba046e",
+  "head": "b8ca952d6bf2e86b05a3039cbc683ad17be01eb7",
+  "tree": "cc79d37a7ec6dbc25a375427a7f29ff7e177daf6",
+  "exact_source_blobs": {
+    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "f6e24fba99f1b23008ba6a96f812964d53a2a1a0",
+    "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs": "418129fbe1530b61bfe2acb9b61d70a7375da9d7"
+  },
+  "resolved_metadata": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/test_pq_research_integration.py",
+    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+    "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs"
+  ],
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.052,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.208,
+      "sha256": "cee64e99a6416cd5e0937aaac96488b391ab28d561045f45753cc93e29174b79"
+    },
+    {
+      "label": "inventory",
+      "exit": 0,
+      "seconds": 0.046,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.036,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "thp2-source-guards",
+      "exit": 0,
+      "seconds": 1.001,
+      "sha256": "9d6c5c112748410c5f7dafb4c3d9afc28fb0bf525ac662fc871d01d566182a8d"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.561,
+      "sha256": "93f438e5197f7019052429efcdb431d86a7f11a7d53502943faaa63f45b6cfad"
+    },
+    {
+      "label": "repository-static",
+      "exit": 0,
+      "seconds": 8.419,
+      "sha256": "27952abaf2894174edc1f6d9a2d74498a23e7e0cc676b199b1fede7fe6643bec"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.395,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.015,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.058,
+      "sha256": "15f273c66f84bdcf0b923cb62bf2fb3e32dc04e5e4172b0da2b4be5a686a1315"
+    }
+  ]
+}

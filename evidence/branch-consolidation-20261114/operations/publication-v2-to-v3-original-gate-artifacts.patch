@@ -1,0 +1,55 @@
+--- publish_candidate_and_archive_v2.py
++++ publish_candidate_and_archive_v3.py
+@@ -182,6 +182,9 @@
+ 
+ def main():
+     require_unoptimized()
++    publisher_path = ROOT / "publish_candidate_and_archive_v3.py"
++    require(pathlib.Path(__file__).resolve(strict=True) == publisher_path, "unexpected publisher path")
++    publisher_source = regular_bytes(publisher_path)
+     parser = argparse.ArgumentParser()
+     parser.add_argument("--spec", required=True)
+     parser.add_argument("--spec-sha256", required=True)
+@@ -285,6 +288,42 @@
+             "No main merge, branch deletion, production activation, or hosted qualification is represented by this tag. "
+             "The candidate's committed audit report contains the complete disposition ledger and evidence index.\n").encode()
+     }
++    # Retain the already-validated gate's original bytes, not only paths into /tmp.
++    require(regular_bytes(pathlib.Path(spec["local_gate_receipt"])) == gate_raw
++            and sha(gate_raw) == spec["local_gate_receipt_sha256"],
++            "gate receipt changed before archiving")
++    archived_gate_artifacts = []
++    def archive_gate_file(name, path, expected_bytes, expected_sha):
++        require(name not in files and "/" not in name, "duplicate/non-flat gate archive name")
++        raw = regular_bytes(pathlib.Path(path))
++        require(len(raw) == expected_bytes and sha(raw) == expected_sha,
++                "gate artifact changed before archiving: " + name)
++        files[name] = raw
++        archived_gate_artifacts.append({"archive_name": name, "original_path": str(path),
++                                        "bytes": len(raw), "sha256": sha(raw)})
++    for step in gate["steps"]:
++        for channel in ("stdout", "stderr"):
++            archive_gate_file("gate-" + step["label"] + "." + channel,
++                              step[channel + "_path"], step[channel + "_bytes"],
++                              step[channel + "_sha256"])
++    for phase in ("before", "after"):
++        entry = gate["source_observations"][phase]
++        archive_gate_file("gate-source-" + phase + ".json", entry["path"],
++                          entry["bytes"], entry["sha256"])
++    producer_path = ROOT / "run_final_prepublication_gates_v1.py"
++    producer_source = regular_bytes(producer_path)
++    require(sha(producer_source) == GATE_PRODUCER_SHA256 == gate["producer"]["sha256"],
++            "gate producer changed before archiving")
++    archive_gate_file("gate-producer.py", producer_path, len(producer_source), GATE_PRODUCER_SHA256)
++    require(regular_bytes(publisher_path) == publisher_source,
++            "publisher source changed before archiving")
++    archive_gate_file("publisher-script.py", publisher_path, len(publisher_source), sha(publisher_source))
++    files["gate-evidence-index.json"] = (json.dumps({
++        "schema": "trnm-archived-source-gate-artifacts-v1",
++        "gate_receipt_sha256": sha(gate_raw),
++        "artifacts": archived_gate_artifacts,
++        "qualification_granted": False,
++    }, indent=2) + "\n").encode()
+     tree_lines = []
+     for name, raw in sorted(files.items()):
+         oid = run("archive-blob-" + name.replace(".", "-"), ["git", "hash-object", "-w", "--stdin"], data=raw).stdout.decode().strip()

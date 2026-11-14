@@ -418,6 +418,16 @@ impl PayloadReplayBodyStoreV1 {
         if new_file_len > PAYLOAD_REPLAY_MAX_BODY_STORE_BYTES_V1 {
             return Err(PayloadReplayErrorV1::TooLarge);
         }
+        // Frame validation and the size/index preview above can yield to a
+        // same-UID pathname replacement.  Recheck every bound endpoint
+        // immediately before appending so the descriptor cannot commit body
+        // bytes to an authority inode that is no longer reachable through
+        // the authenticated journal path.  The post-append fence below
+        // remains necessary for races during the write itself.
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
+        }
         if let Err(error) = self.file.write_all(&record) {
             self.poisoned = true;
             return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(

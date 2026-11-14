@@ -41,10 +41,23 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
     MAX_RECORDS, MAX_WIRE,
 };
 
+pub mod outbound;
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
+mod tls_endpoint;
+pub(crate) use tls_endpoint::policy_record_requires_endpoint_witness;
+pub use tls_endpoint::{
+    PqTlsEndpointPins, TLS_ENDPOINT_ACCEPT_LIMIT, TLS_ENDPOINT_PROFILE, TLS_ENDPOINT_TRANSPORT_MODE,
+};
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
+
+#[cfg(all(test, feature = "pq-native-openssl"))]
+use tls::{PqTlsClient, PqTlsIdentity, PqTlsServer};
+#[cfg(all(test, feature = "pq-native-openssl"))]
+// One fixture module serves both the TLS suites and sibling PQ network controls.
+#[path = "pq_network/tls/fixtures.rs"]
+mod tls_fixtures;
 
 mod shared;
 pub use shared::serve_pq_authenticated_shared;
@@ -76,6 +89,8 @@ struct PolicyRecord {
     transport_confidentiality: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     tls: Option<PqTlsPins>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    endpoint: Option<PqTlsEndpointPins>,
 }
 
 /// Operator-supplied pins. No key from an incoming frame can enter this roster.
@@ -154,6 +169,7 @@ impl PqNetworkPolicy {
             inbound_verification_limit: MAX_INBOUND_VERIFICATIONS,
             transport_confidentiality: TRANSPORT_MODE.into(),
             tls: None,
+            endpoint: None,
         };
         let bytes = serde_json::to_vec(&record)?;
         let id = hash(POLICY_DOMAIN, &[&bytes]);
@@ -522,6 +538,42 @@ pub struct PqResponse {
     pub value: Value,
 }
 
+/// A live signature-checked reply bound to one exact prepared request wire.
+/// Private fields and the absence of a deserializer prevent public response
+/// JSON from retiring a durable outbound operation. This seal establishes no
+/// account authorization, block finality or current recovery permission.
+#[derive(Debug)]
+pub struct VerifiedPqReply {
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    operation: Hash,
+    request_wire_digest: Hash,
+    wire: Vec<u8>,
+    response: PqResponse,
+}
+impl VerifiedPqReply {
+    pub fn response(&self) -> &PqResponse {
+        &self.response
+    }
+    pub fn wire(&self) -> &[u8] {
+        &self.wire
+    }
+    pub fn operation_id(&self) -> Hash {
+        self.operation
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn into_response(self) -> PqResponse {
+        self.response
+    }
+}
+
+fn outbound_request_digest(wire: &[u8]) -> Hash {
+    hash(b"TRNM/PQNetwork/outbound-exact-request/v1\0", &[wire])
+}
+
 pub struct PreparedPqRequest {
     verified: VerifiedRequest,
 }
@@ -725,6 +777,57 @@ impl PqClient {
         let response = self.finish_response_until(&wire, prepared, deadline)?;
         Ok(PqResponseEvidence { response, wire })
     }
+    /// Return a sealed reply for the explicitly selected durable outbound owner.
+    /// Existing public-response and recovery-evidence methods remain separate.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        self.check_send(address, prepared, budget)?;
+        let deadline = Instant::now() + budget;
+        self.send_verified_until(address, prepared, deadline)
+    }
+    fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        self.check_send_until(address, prepared, deadline)?;
+        let connect_budget = deadline
+            .checked_duration_since(Instant::now())
+            .filter(|value| !value.is_zero())
+            .ok_or_else(|| Error::new(ErrorCode::PqNetworkDeadline))?;
+        let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
+        super::write_frame_deadline(&mut stream, prepared.wire(), deadline)?;
+        let wire = super::read_frame_deadline(&mut stream, deadline)?;
+        self.finish_verified_response(&wire, prepared, deadline)
+    }
+    fn finish_verified_response(
+        &self,
+        wire: &[u8],
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let response = self.finish_response_until(wire, prepared, deadline)?;
+        let reply = VerifiedPqReply {
+            policy: self.policy.id(),
+            peer: prepared.verified.peer,
+            sequence: prepared.verified.sequence,
+            operation: prepared.verified.operation,
+            request_wire_digest: outbound_request_digest(prepared.wire()),
+            wire: wire.to_vec(),
+            response,
+        };
+        // Hashing/copying the retained bounded bytes spends the same original
+        // interval. A verified fact that materializes late is no timely ACK.
+        check_live_request(deadline, Some(prepared.expires_at()))?;
+        Ok(reply)
+    }
     // Absolute-deadline recovery needs a typed, exclusively local expiry
     // observation. Preserve the legacy methods and their diagnostic strings.
     fn check_send_until(
@@ -746,7 +849,7 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
-        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        self.policy.check_network_target(address)?;
         check_live_request(deadline, Some(prepared.expires_at()))
     }
     fn finish_response_until(
@@ -787,11 +890,9 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
-        // PNQ2 is authenticated plaintext for explicitly local development.
-        // The server already refuses non-loopback listeners; the public client
-        // must enforce the same boundary before a signed payload reaches a
-        // caller-selected remote TCP endpoint (or leaks across a public route).
-        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        // Existing profiles remain loopback-only. The separately selected TLS
+        // endpoint profile checks its exact pinned IP and port before TCP.
+        self.policy.check_network_target(address)?;
         // Preparation checked its original expiry, but caller queueing may
         // outlive the signed lease. Refuse a stale packet before TCP; the
         // receiving node independently checks expiry at the live boundary.
@@ -1159,3 +1260,6 @@ pub(crate) mod canonical_tests;
 
 #[cfg(test)]
 mod live_admission_tests;
+
+#[cfg(test)]
+mod parallel_execution_tests;

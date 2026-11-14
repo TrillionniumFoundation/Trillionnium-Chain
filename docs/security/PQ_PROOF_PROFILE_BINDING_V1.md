@@ -61,7 +61,7 @@ extracted identity, selected project and saved-fixture hashes, and upstream
 snapshot identity. For these reference inputs its SHA-256 is:
 
 ```text
-b86f7f122f8295418abb20ebd71132d1719a37770499b01293fa1d018f47a06e
+9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad
 ```
 
 The preceding dependency continuation produced descriptor
@@ -116,11 +116,17 @@ revisions while running offline.
 
 ## Candidate integration
 
-Use the candidate lock's separately reviewed descriptor value:
+The 2026-11-14 independent-lock review binds source
+`d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`. Its V2 lock is now
+consistent with the selected shared crypto graph. The composed profile and
+upstream-security register both reference mapping SHA-256
+`5c53b9aba5255a163256bb9865448ea44e5b5f2f45079adf682ea4ace662a2fb`.
+The selected proof/image, unresolved obligations and current-use withdrawal
+are unchanged. The descriptor fixes this reviewed input set:
 
 ```sh
 python3 scripts/ci/pq_proof_profile_binding.py \
-  --expected-profile-descriptor-sha256 b86f7f122f8295418abb20ebd71132d1719a37770499b01293fa1d018f47a06e
+  --expected-profile-descriptor-sha256 9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad
 python3 scripts/ci/test_pq_proof_profile_binding.py -v
 ```
 
@@ -140,7 +146,7 @@ again before returning. These observations do not constitute continuous
 immutability, authentication of the reviewer or executor, full dependency
 closure, a fresh proof verification or a deployed-binary observation.
 
-An exit-zero `PROFILE_BOUND_SECURITY_HOLD` means only that these declarations
+An exit-zero `PROFILE_BOUND_UPSTREAM_REVOKED_HOLD` means only that these declarations
 and selected byte identities are consistent. The output always retains:
 
 ```text
@@ -150,3 +156,19 @@ whole_chain_hash_query_scope_closed = false
 whole_chain_pq_qualified = false
 production_activation = false
 ```
+
+## Consolidated current source review, 2026-11-14
+
+The explicit current mapping now binds source 5c04c60e463462d9df8884786e0d5bb32af08a64 and its 145-input local
+inventory. Its descriptor SHA-256 is 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1. The mapping,
+profile descriptor, upstream-policy mapping pin and route-source pin are
+updated together; the candidate workflow and independent controls require the
+same descriptor. The preceding 9e5766a7 descriptor remains a rejected current
+identity.
+
+The selected SDK, guest image, control root, verifier parameters, fixed proof
+assets and all 15 open obligations retain their original identities. The
+upstream policy remains the dated 2026-11-11 observation, with an empty current
+approval list. No new upstream advisory check or reinstatement is claimed.
+The diagnostic status remains PROFILE_BOUND_UPSTREAM_REVOKED_HOLD and
+--require-current continues to refuse.

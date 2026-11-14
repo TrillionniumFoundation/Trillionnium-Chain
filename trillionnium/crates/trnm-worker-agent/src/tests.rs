@@ -6008,3 +6008,49 @@ fn normalized_provenance_label_rejects_embedded_control_characters() {
         "embedded control chars should fail-closed for provenance labels"
     );
 }
+
+#[test]
+fn bounded_state_log_loaders_reject_oversized_and_malformed_input() {
+    let base = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-bounded-state-{}-{}",
+        std::process::id(),
+        now_ms()
+    ));
+    let ack_log = base.with_extension("ack.jsonl");
+    let ingress_log = base.with_extension("ingress.jsonl");
+
+    std::fs::write(&ack_log, b"{\"malformed\":true}\n").expect("write malformed ack");
+    assert_eq!(
+        load_acked(&ack_log).unwrap_err().to_string(),
+        "invalid worker journal record",
+        "malformed ack must reach its exact current refusal"
+    );
+    std::fs::write(&ingress_log, b"{\"malformed\":true}\n").expect("write malformed ingress");
+    assert_eq!(
+        load_ingress_records(&ingress_log).unwrap_err().to_string(),
+        "invalid worker journal record",
+        "malformed ingress must reach its exact current refusal"
+    );
+
+    let ack_file = std::fs::File::create(&ack_log).expect("create oversized ack");
+    ack_file
+        .set_len(worker_journal::MAX_LOG_BYTES + 1)
+        .expect("size oversized ack");
+    assert_eq!(
+        load_acked(&ack_log).unwrap_err().to_string(),
+        "worker journal byte capacity",
+        "oversized ack must reach its exact current refusal"
+    );
+    let ingress_file = std::fs::File::create(&ingress_log).expect("create oversized ingress");
+    ingress_file
+        .set_len(worker_journal::MAX_LOG_BYTES + 1)
+        .expect("size oversized ingress");
+    assert_eq!(
+        load_ingress_records(&ingress_log).unwrap_err().to_string(),
+        "worker journal byte capacity",
+        "oversized ingress must reach its exact current refusal"
+    );
+
+    let _ = std::fs::remove_file(ack_log);
+    let _ = std::fs::remove_file(ingress_log);
+}

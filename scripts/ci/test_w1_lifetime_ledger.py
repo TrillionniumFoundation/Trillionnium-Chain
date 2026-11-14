@@ -53,15 +53,19 @@ def hypothetical():
 
 class HistoricalLifetimeFixturesTests(unittest.TestCase):
     def test_account_boundary_successor_preserves_the_fixed_historical_report(self):
-        historical = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        # This comparison names the exact original report lineage. The same
+        # working-tree filename later acquired a distinct current-source survey.
+        historical = git_blob(
+            "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+            "evidence/pon-w1-lifetime-current-20261109/project-report.json")
         successor = ROOT / "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json"
-        self.assertEqual(hashlib.sha256(historical.read_bytes()).hexdigest(),
+        self.assertEqual(hashlib.sha256(historical).hexdigest(),
                          "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0")
         self.assertEqual(hashlib.sha256(successor.read_bytes()).hexdigest(),
                          "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390")
         # Retain the exact seven reviewed differences from cdd984808. Values
         # are independent of the implementation's current SOURCE_BASE/PINS.
-        expected = json.loads(historical.read_bytes())
+        expected = json.loads(historical)
         survey = expected["selected_source_survey"]
         survey["base_commit"] = "077ac4f33206de00a178553d9a0c729a20685088"
         survey["observations"]["cumulative_weight"]["anchor_line"] = "5157"
@@ -80,14 +84,23 @@ class HistoricalLifetimeFixturesTests(unittest.TestCase):
 class LifetimeLedgerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.sources = {path: (ROOT / path).read_bytes() for path in ledger.SOURCE_PINS}
+        # Reproduce this frozen historical ledger from its exact Git objects.
+        # Current-source observation has its own contract and refusal controls.
+        cls.sources = {path: git_blob(ledger.SOURCE_BASE, path) for path in ledger.SOURCE_PINS}
         cls.survey = ledger.source_survey(cls.sources)
+        source_directory = tempfile.TemporaryDirectory(prefix="trnm-w1-historical-source-")
+        cls.addClassCleanup(source_directory.cleanup)
+        cls.source_root = Path(source_directory.name).resolve(strict=True)
+        for path, source in cls.sources.items():
+            target = cls.source_root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(source)
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
         input_path = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-input.json"
         raw = ledger.strict_json(input_path.read_bytes())
         self.assertEqual(raw, ledger.template())
-        result = ledger.make_report(raw, ROOT)
+        result = ledger.make_report(raw, self.source_root)
         fixture = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-report.json"
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
@@ -321,7 +334,8 @@ class LifetimeLedgerTests(unittest.TestCase):
         key = "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
         lock = "trillionnium/Cargo.lock"
         store = "trillionnium/crates/trnm-pon-node/src/store.rs"
-        for changed in (key, lock, store):
+        # Exercise every frozen historical pin; current-source pins are a separate namespace.
+        for changed in ledger.SOURCE_PINS:
             sources = dict(self.sources)
             sources[changed] += b"\n"
             with self.subTest(changed=changed), self.assertRaisesRegex(

@@ -1613,3 +1613,82 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     assert_eq!(final_value["result"]["replayed_responses"], 0);
     assert_eq!(final_value["result"]["authenticated_requests"], 3);
 }
+
+#[test]
+fn test_historical_state_memory_and_spilled_paths_recheck_actual_deltas() {
+    for authenticated in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = Settings::development(None).unwrap();
+        let mut node = if authenticated {
+            Node::open_with_authenticated_state(temp.path(), settings.clone(), 2).unwrap()
+        } else {
+            Node::open(temp.path(), settings.clone(), 2).unwrap()
+        };
+        let mut tip = settings.genesis();
+        let mut retained = Vec::new();
+        for height in 1..=130 {
+            tip = extend(
+                &mut node,
+                tip,
+                settings.genesis_time() + height * 10,
+                0,
+                true,
+            )
+            .id()
+            .unwrap();
+            if [1, 127, 128, 129].contains(&height) {
+                // Capture actual active KV state before it becomes historical.
+                retained.push((height, tip, node.state_at(tip).unwrap()));
+            }
+        }
+        let active = node.active().unwrap();
+        let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
+        // Retained snapshots are accelerators: Legacy creates one at height
+        // 128, Authenticated retains recent ones. Remove only this disposable
+        // fixture's non-genesis accelerators to force both actual replay paths.
+        assert!(
+            db.execute(
+                "DELETE FROM snapshots WHERE block<>?",
+                [settings.genesis().as_slice()],
+            )
+            .unwrap()
+                > 0
+        );
+        assert_eq!(
+            db.query_row("SELECT COUNT(*) FROM snapshots", [], |row| row
+                .get::<_, u64>(0))
+                .unwrap(),
+            1,
+            "all historical paths must reach the actual genesis snapshot"
+        );
+        for (height, id, expected) in &retained {
+            assert_eq!(
+                &node.state_at(*id).unwrap(),
+                expected,
+                "{authenticated}/{height}"
+            );
+        }
+        let (_, id, expected) = retained.last().unwrap();
+        let (key, before): (String, Vec<u8>) = db
+            .query_row(
+                "SELECT key,before FROM deltas WHERE block=? AND before IS NOT NULL ORDER BY key LIMIT 1",
+                [id.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        assert_ne!(before, b"null");
+        db.execute(
+            "UPDATE deltas SET before=? WHERE block=? AND key=?",
+            rusqlite::params![b"null".as_slice(), id.as_slice(), key],
+        )
+        .unwrap();
+        assert_eq!(node.state_at(*id).unwrap_err().to_string(), "UNDO_ROOT");
+        db.execute(
+            "UPDATE deltas SET before=? WHERE block=? AND key=?",
+            rusqlite::params![before, id.as_slice(), key],
+        )
+        .unwrap();
+        assert_eq!(&node.state_at(*id).unwrap(), expected);
+        assert_eq!(node.active().unwrap(), active);
+    }
+}

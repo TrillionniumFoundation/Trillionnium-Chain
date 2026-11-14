@@ -1,0 +1,29 @@
+{
+  "archive_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-f8c24bd894abc19a5e7c016929246c9e733e988bcde7385072daa8e039281661/output.log",
+  "available_end": 6149,
+  "chunk_sha256": "30be3d1b7c19ab96ea56cc9963590d4f2a72a8267b8d204541e9b00afa197d1e",
+  "host": "rog",
+  "next_offset": 6149,
+  "offset": 5654,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-f8c24bd894abc19a5e7c016929246c9e733e988bcde7385072daa8e039281661",
+  "status": {
+    "boot": "fcdd2477-a952-4ef2-9bdc-2237255080f1",
+    "bytes_seen": 6149,
+    "bytes_stored": 6149,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794631101380,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 1505342,
+    "pid": 1505343,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "{\"label\": \"fmt\", \"argv\": [\"cargo\", \"+1.95.0\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"exit\": 0, \"seconds\": 7.693, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"log\": \"/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/fmt.log\", \"tests\": []}\r\n{\"completed\": true, \"summary\": \"/home/qian-qi/chain-final-consolidation-20261114-root/native-final-rust-composition-dba-v1/summary.json\"}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

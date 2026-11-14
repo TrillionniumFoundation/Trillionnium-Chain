@@ -485,12 +485,21 @@ class FreshRefusalControls(unittest.TestCase):
             root = Path(directory)
             log, report = root / 'test.log', root / 'missing.json'
             log.write_text(passing_log(fresh.FRESH))
-            for change in (dict(executed=False), dict(exit_code=1), dict(process_exit_code=1),
-                           dict(timed_out=True), dict(source_verified=False)):
+            for change in (dict(executed=False), dict(source_verified=False)):
                 bad = process()
                 bad.update(change)
                 with self.subTest(change=change), self.assertRaisesRegex(ValueError, 'PROCESS_REQUIRED'):
                     fresh.validate_execution(bad, log, fresh.FRESH, report)
+            for change in (dict(exit_code=101, process_exit_code=101),
+                           dict(exit_code=1), dict(process_exit_code=1)):
+                bad = process()
+                bad.update(change)
+                with self.subTest(change=change), self.assertRaisesRegex(ValueError, 'NATIVE_TEST_FAILED'):
+                    fresh.validate_execution(bad, log, fresh.FRESH, report)
+            bad = process()
+            bad.update(timed_out=True)
+            with self.assertRaisesRegex(ValueError, 'NATIVE_TEST_TIMEOUT'):
+                fresh.validate_execution(bad, log, fresh.FRESH, report)
             log.write_text('running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n')
             with self.assertRaises(ValueError):
                 fresh.validate_execution(process(), log, fresh.FRESH, report)
@@ -584,6 +593,15 @@ class FreshFailureDiagnostics(unittest.TestCase):
             path = Path(directory) / 'report.json'
             path.write_text(json.dumps(doc))
             return fresh.failure_diagnostic(observed or process(), fresh.FRESH, path)
+
+    def test_executed_nonzero_native_exit_is_not_misreported_as_missing_process(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log, report = root / 'test.log', root / 'report.json'
+            log.write_text('running 1 test\ntest ' + fresh.FRESH + ' ... FAILED\n')
+            observed = dict(process(), exit_code=101, process_exit_code=101)
+            with self.assertRaisesRegex(ValueError, 'FRESH_NATIVE_TEST_FAILED'):
+                fresh.validate_execution(observed, log, fresh.FRESH, report)
 
     def test_only_bounded_metadata_and_actual_child_returncode_are_retained(self):
         doc = self.report()
@@ -737,11 +755,11 @@ class FreshFailureDiagnostics(unittest.TestCase):
                 self.assertTrue(result['execution_finished'])
                 self.assertEqual(result['requested_window_ns'], 4_000_000_000)
                 self.assertEqual(result['attack_workers'], 16)
-                self.assertEqual(result['failures'], [selector + ': FRESH_NATIVE_PROCESS_REQUIRED'
+                self.assertEqual(result['failures'], [selector + ': FRESH_NATIVE_TEST_FAILED'
                                                      for selector in fresh.SELECTORS])
                 for row in result['runs']:
                     self.assertFalse(row['passed'])
-                    self.assertEqual(row['failure'], 'FRESH_NATIVE_PROCESS_REQUIRED')
+                    self.assertEqual(row['failure'], 'FRESH_NATIVE_TEST_FAILED')
                     diagnostic = row['failure_diagnostic']
                     self.assertEqual(diagnostic['native_returncode'], 101)
                     self.assertFalse(diagnostic['acceptance_authority'])

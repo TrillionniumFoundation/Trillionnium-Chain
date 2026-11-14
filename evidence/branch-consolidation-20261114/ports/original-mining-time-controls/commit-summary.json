@@ -1,0 +1,56 @@
+{
+  "schema": "original-wall-clock-mining-controls-selected-port-v1",
+  "commit": "d81418ff49c3290c1abdb0e0fa0dec3ebe22aeb4",
+  "tree": "3aea02c9f55dfbfce418ddf6bd66aa789e5ef5fb",
+  "parent": "283981a062158f3b41eea42d52f56eaee457ba97",
+  "original_tip": "2a69a989046489c212619dd337ee74a083f101de",
+  "original_blob": "6bbd401d2bbd0a8db6e416ca163b35f2d8ef20f9",
+  "original_sha256": "f6de6597d1dee46b6e480dd75dc88e531f96a20610f8c9a43d8bbdb59433a620",
+  "paths": {
+    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs": {
+      "blob": "6567b922649750fb7388e25ea6544d2898f5fbca",
+      "sha256": "fc783a165547bbdd602a4c5d7ca9077d065062468573fe3a2e1c76824f81d81a"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "blob": "0a4459727ff2d316b7cd99a4685d30a7e71a9b54",
+      "sha256": "1cd45d03678ff2bea3980de6248065ec1747f55f84921887e9f9357c7d819f3b"
+    },
+    "scripts/ci/test_pq_research_integration.py": {
+      "blob": "0be18a592ba14e5d06400515076aaaa66db98071",
+      "sha256": "da155592faf08f357915c89677f816b0eb7e25a2a866b1c422cca2d36896e9ce"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "blob": "94f9ffef5bf0b244048eb6d3f5e5149045ed9c61",
+      "sha256": "943744ad19a2cef0496f1c32ee6a75aa8ec6e1cebb87014efc3bf35e4913f288"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "blob": "e4d8ba71432c0f4eb50c48dbd9a730eccda83325",
+      "sha256": "5558cff13c89bf6f050801d8f0a430b819ba7fe1f5f51dc83d6e21b57ad8174a"
+    }
+  },
+  "adapter_patch_sha256": "38d058768f0a810cddfbaedd090ff135560e357ac7eef770e393def316b67735",
+  "complete_patch_sha256": "a038d6c6491a4e38c043296e6928b1e463c60d3a115707dd9aac4d50c18ad34c",
+  "complete_patch_bytes": 16436,
+  "original_test_bodies_preserved_except_explicit_settings_argument": [
+    "valid_future_tip_does_not_suppress_real_wall_clock_successor",
+    "future_median_still_waits_without_advancing_the_mining_clock"
+  ],
+  "original_limits": {
+    "search_attempts": 4096,
+    "success_runtime_seconds": 2,
+    "waiting_runtime_ms": 150
+  },
+  "linux_job": "1a1d8458deb-392-d39",
+  "linux_summary_original_sha256": "c204fdea35e80cb6a2474f1071c4e754c4a6cdc042486c8061a6241b1af4d65d",
+  "native_passed": 2,
+  "native_failed": 0,
+  "native_ignored": 0,
+  "selected_test_strict_clippy_passed": true,
+  "current_pool_mining_rs_unchanged_blob": "e7baaf7db720766420f17fd42e88a944e1c6068a",
+  "current_mtp_runtime_already_present": true,
+  "new_runtime_vulnerability_claimed": false,
+  "production_runtime_changed": false,
+  "qualification_granted": false,
+  "four_second_gate_passed": false,
+  "worktree_clean": true
+}

@@ -1,0 +1,1434 @@
+{
+  "schema": "chain-six-head-post-baseline-validation-overlay-v1",
+  "base_ledger": {
+    "path": "/private/tmp/chain-ci-multi-base6-review-20261114/six-head-semantic-dispositions-v1.json",
+    "sha256": "fe6c81d8bebf2d3e5e7ae291e5c85c907c801f8786fe6c3bf149e536325f1cab"
+  },
+  "scope": {
+    "heads": 6,
+    "exclusive_commits": 63,
+    "path_occurrences": 335,
+    "substantive_families": 34,
+    "semantic_decisions_changed": false,
+    "no_new_unreviewed_family_added": true
+  },
+  "root_combined_native_validation": {
+    "summary": {
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/summary.json",
+      "sha256": "9bf4d7e7a91bb77e17e974a75c024ba639db3eb231f62984acebcdabbd6fc758",
+      "bytes": 7296,
+      "copied_path": "/private/tmp/chain-ci-multi-base6-review-20261114/post-baseline-validation-evidence-v1/root-linux-1897-summary.json"
+    },
+    "runtime_job": "1a1d8170633-392-c59",
+    "authoritative_status": "succeeded",
+    "exit_code": 0,
+    "record": {
+      "identity": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "steps": [
+        {
+          "label": "preflight-before",
+          "exit": 0,
+          "seconds": 0.038,
+          "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/preflight-before.log"
+        },
+        {
+          "label": "bundle-verify",
+          "exit": 0,
+          "seconds": 0.01,
+          "sha256": "26b7b5a6b640b56b2935dedffbcbebaa6bd3686485a387e51deab886ab0a9f93",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/bundle-verify.log"
+        },
+        {
+          "label": "bundle-fetch",
+          "exit": 0,
+          "seconds": 0.395,
+          "sha256": "892c6e0c65ff272a3940c792534298e324eb4705ab53bc6aff9b4c46a7129432",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/bundle-fetch.log"
+        },
+        {
+          "label": "fast-forward",
+          "exit": 0,
+          "seconds": 0.084,
+          "sha256": "e38adefdedf83c81d678fced8aef1ccd5a850885b6b68c0f98d185e314a100e4",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/fast-forward.log"
+        },
+        {
+          "label": "preflight-combined",
+          "exit": 0,
+          "seconds": 0.036,
+          "sha256": "29aaae57601cc357c22f2d3185d722d324b12d45289c05be50872b794b1a9640",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/preflight-combined.log"
+        },
+        {
+          "label": "w1-report-original31",
+          "exit": 0,
+          "seconds": 1.377,
+          "sha256": "97016ad70daa6b4ae84b8b1b47abbc0aebf365bf64170a3c85b56de8d91f90e0",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/w1-report-original31.log",
+          "python_tests": 31
+        },
+        {
+          "label": "w1-current-stage-original10",
+          "exit": 0,
+          "seconds": 0.182,
+          "sha256": "69ae91ba3fa05a1c306c25244c0a0646ef7b3929365719c9cec3bd1f728f65e4",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/w1-current-stage-original10.log",
+          "python_tests": 10
+        },
+        {
+          "label": "generation-ledger-original18",
+          "exit": 0,
+          "seconds": 11.186,
+          "sha256": "b47e2320b0e5496f686a2cfd6494b00b00780fc8bfcd3dfa848120f23d6c150b",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/generation-ledger-original18.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 18,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "host-current-and-original-boundaries",
+          "exit": 0,
+          "seconds": 212.132,
+          "sha256": "254d0c4bffc40232b9b55adef95a7019d17bb5b58f6007346597200a967ca5b9",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/host-current-and-original-boundaries.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 44,
+              "failed": 0,
+              "ignored": 1
+            }
+          ]
+        },
+        {
+          "label": "generation-node-original-three-backends",
+          "exit": 0,
+          "seconds": 0.893,
+          "sha256": "3b1c361913989176e48bebb32646469b6356f9e06eeaa1efe52e267180e9f987",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/generation-node-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "successor-effect-original-three-backends",
+          "exit": 0,
+          "seconds": 1.575,
+          "sha256": "482e89484c9925d8705f50f8da2e4b0f5cc48602e70a652601ff32bfdef43246",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/successor-effect-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "release-successor-original-three-backends",
+          "exit": 0,
+          "seconds": 3.352,
+          "sha256": "ac0e50e16af0db2c48e8013dc39647d7b99e689df2785f4e3c30e6a628182c88",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/release-successor-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "account-query-all-current-and-original-aba",
+          "exit": 0,
+          "seconds": 2.548,
+          "sha256": "9e4f48002f308d068df3a924759642a490fc1a457d1dd1d9cc57d3aa79213b97",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/account-query-all-current-and-original-aba.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 10,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "public-v3-full-composition272",
+          "exit": 0,
+          "seconds": 49.437,
+          "sha256": "e5c4fb13f0999ab32db970557a8a14b9ba83aa33c4d7bf8a02cb8c26fd86a756",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/public-v3-full-composition272.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 272,
+              "failed": 0,
+              "ignored": 2
+            }
+          ]
+        },
+        {
+          "label": "relay-current-and-original31",
+          "exit": 0,
+          "seconds": 5.845,
+          "sha256": "26e1d1af5f2cf9eada38bc7e07a149bf7be880bee2268d89c15c91230e2d20ef",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/relay-current-and-original31.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 31,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "thp2-fresh-time-original10",
+          "exit": 0,
+          "seconds": 6.916,
+          "sha256": "5c7ab2eaad82939f420ca70dfa327525e359ffc51bf9860a7e86886041db3363",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/thp2-fresh-time-original10.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 10,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        }
+      ],
+      "source_manifest_sha256": "4cb07ef37de2bea5313e8d61cbaad0b9bb4eebd2055912d21930c3a63370b44f",
+      "provider_sha256": "f956c01f912fc3211836ed5086d16755dc605a5458b29ee2ae8bf9c7a353142d",
+      "raw_sources_unchanged_after_tests": true,
+      "all_selected_native_controls_passed": true,
+      "strict_test_clippy": "pending reviewed fixes to pre-existing duplicate TLS test module and two default-field reassignments",
+      "host_provisioning_started": false,
+      "original_four_second_campaign_started": false,
+      "qualification_granted": false
+    },
+    "total_passed_methods": 429,
+    "receipt_zip": {
+      "host": "rog",
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-1897-receipts-v1.zip",
+      "bytes": 183777,
+      "sha256": "92d40e3b2932c78cdebc23f1f03118a6cf2eb7cc656a821cd6a9c729adad411e"
+    }
+  },
+  "family_updates": [
+    {
+      "family": "S01",
+      "selected_commit": "efb2997a71574f7e2cc3541b211dc2eb6d25ce02",
+      "state": "selected-port-native-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "native_evidence": [
+        {
+          "label": "generation-ledger-original18",
+          "exit": 0,
+          "seconds": 11.186,
+          "sha256": "b47e2320b0e5496f686a2cfd6494b00b00780fc8bfcd3dfa848120f23d6c150b",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/generation-ledger-original18.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 18,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "generation-node-original-three-backends",
+          "exit": 0,
+          "seconds": 0.893,
+          "sha256": "3b1c361913989176e48bebb32646469b6356f9e06eeaa1efe52e267180e9f987",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/generation-node-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        }
+      ],
+      "ancestor_of_tested_candidate": true,
+      "original_mac_failures_or_platform_limits_preserved": true,
+      "qualification_granted": false
+    },
+    {
+      "family": "S02",
+      "selected_commit": "022b3dcd2f9bc553a847135cae27b81dfcfd327f",
+      "state": "selected-port-native-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "native_evidence": [
+        {
+          "label": "host-current-and-original-boundaries",
+          "exit": 0,
+          "seconds": 212.132,
+          "sha256": "254d0c4bffc40232b9b55adef95a7019d17bb5b58f6007346597200a967ca5b9",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/host-current-and-original-boundaries.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 44,
+              "failed": 0,
+              "ignored": 1
+            }
+          ]
+        }
+      ],
+      "ancestor_of_tested_candidate": true,
+      "original_mac_failures_or_platform_limits_preserved": true,
+      "qualification_granted": false,
+      "host_child_coverage": {
+        "outer_tests_passed": 44,
+        "outer_ignored_helper": 1,
+        "explicit_original_child_cases": 20,
+        "basis": "The passed bounded-parent method executes the original 20 cases with the exact ignored child selector; no zero-test execution is counted as acceptance. Root confirmed actual native child execution.",
+        "raw_log": {
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/host-current-and-original-boundaries.log",
+          "sha256": "254d0c4bffc40232b9b55adef95a7019d17bb5b58f6007346597200a967ca5b9",
+          "bytes": 21018,
+          "copied_path": "/private/tmp/chain-ci-multi-base6-review-20261114/post-baseline-validation-evidence-v1/root-linux-1897-host-boundaries.log"
+        }
+      }
+    },
+    {
+      "family": "N01",
+      "selected_commit": "022b3dcd2f9bc553a847135cae27b81dfcfd327f",
+      "state": "selected-port-native-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "native_evidence": [
+        {
+          "label": "host-current-and-original-boundaries",
+          "exit": 0,
+          "seconds": 212.132,
+          "sha256": "254d0c4bffc40232b9b55adef95a7019d17bb5b58f6007346597200a967ca5b9",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/host-current-and-original-boundaries.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 44,
+              "failed": 0,
+              "ignored": 1
+            }
+          ]
+        }
+      ],
+      "ancestor_of_tested_candidate": true,
+      "original_mac_failures_or_platform_limits_preserved": true,
+      "qualification_granted": false,
+      "host_child_coverage": {
+        "outer_tests_passed": 44,
+        "outer_ignored_helper": 1,
+        "explicit_original_child_cases": 20,
+        "basis": "The passed bounded-parent method executes the original 20 cases with the exact ignored child selector; no zero-test execution is counted as acceptance. Root confirmed actual native child execution.",
+        "raw_log": {
+          "path": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/host-current-and-original-boundaries.log",
+          "sha256": "254d0c4bffc40232b9b55adef95a7019d17bb5b58f6007346597200a967ca5b9",
+          "bytes": 21018,
+          "copied_path": "/private/tmp/chain-ci-multi-base6-review-20261114/post-baseline-validation-evidence-v1/root-linux-1897-host-boundaries.log"
+        }
+      }
+    },
+    {
+      "family": "N02",
+      "selected_commit": "cf4449916f7a9b0ea63e31c5974e1a3fbf7de157",
+      "state": "selected-port-native-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "native_evidence": [
+        {
+          "label": "successor-effect-original-three-backends",
+          "exit": 0,
+          "seconds": 1.575,
+          "sha256": "482e89484c9925d8705f50f8da2e4b0f5cc48602e70a652601ff32bfdef43246",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/successor-effect-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        },
+        {
+          "label": "release-successor-original-three-backends",
+          "exit": 0,
+          "seconds": 3.352,
+          "sha256": "ac0e50e16af0db2c48e8013dc39647d7b99e689df2785f4e3c30e6a628182c88",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/release-successor-original-three-backends.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 1,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        }
+      ],
+      "ancestor_of_tested_candidate": true,
+      "original_mac_failures_or_platform_limits_preserved": true,
+      "qualification_granted": false
+    },
+    {
+      "family": "N03",
+      "selected_commit": "687141e74aca9249ac8bec79d2b4116999683cae",
+      "state": "selected-port-native-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "native_evidence": [
+        {
+          "label": "account-query-all-current-and-original-aba",
+          "exit": 0,
+          "seconds": 2.548,
+          "sha256": "9e4f48002f308d068df3a924759642a490fc1a457d1dd1d9cc57d3aa79213b97",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/account-query-all-current-and-original-aba.log",
+          "tests": [
+            {
+              "result": "ok",
+              "passed": 10,
+              "failed": 0,
+              "ignored": 0
+            }
+          ]
+        }
+      ],
+      "ancestor_of_tested_candidate": true,
+      "original_mac_failures_or_platform_limits_preserved": true,
+      "qualification_granted": false
+    },
+    {
+      "family": "S03",
+      "state": "selected-four-clock-controls-passed-on-fixed-combination",
+      "tested_candidate": {
+        "head": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+        "tree": "aa10c40f1ad352d1a3d3f13edfa48d1734d3a2a4",
+        "verified_paths": 2214,
+        "verified_bytes": 41088858,
+        "all_raw_blobs_match_index": true,
+        "changed_since_prior_native_source": 44
+      },
+      "evidence": [
+        {
+          "label": "w1-report-original31",
+          "exit": 0,
+          "seconds": 1.377,
+          "sha256": "97016ad70daa6b4ae84b8b1b47abbc0aebf365bf64170a3c85b56de8d91f90e0",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/w1-report-original31.log",
+          "python_tests": 31
+        },
+        {
+          "label": "w1-current-stage-original10",
+          "exit": 0,
+          "seconds": 0.182,
+          "sha256": "69ae91ba3fa05a1c306c25244c0a0646ef7b3929365719c9cec3bd1f728f65e4",
+          "log": "/home/qian-qi/chain-final-consolidation-20261114-root/native-ownership-composition-1897-v1/w1-current-stage-original10.log",
+          "python_tests": 10
+        }
+      ],
+      "qualification_granted": false
+    },
+    {
+      "family": "S04",
+      "state": "selected-additive-partial-reader-committed-and-controls-passed",
+      "selected_commit": "1c038785ddfe0a4ea174de2f1fac55f7c3dd60be",
+      "selected_tree": "cdae96c1e727d7e371d52a8f7ecadf2d9f1cdee4",
+      "evidence": {
+        "path": "/private/tmp/chain-ci-native-selected-evidence-20261114/partial-campaign-reader/commit-summary.json",
+        "sha256": "0928f08581f6e1733fec68f083509ed23078cd536cc619bc4fd5d9521e1426eb",
+        "bytes": 18048,
+        "record": {
+          "schema": "chain-ci-s04-partial-campaign-reader-port-v1",
+          "commit": "1c038785ddfe0a4ea174de2f1fac55f7c3dd60be",
+          "tree": "cdae96c1e727d7e371d52a8f7ecadf2d9f1cdee4",
+          "parent": "687141e74aca9249ac8bec79d2b4116999683cae",
+          "branch": "fix/chain-ci-binding-repair-20261114",
+          "worktree_clean": true,
+          "original_tip": "4be50aa40ed537b8a06475984a8da4141e44cf77",
+          "original_parent": "9eda0ada15be1702269e08e527917568c710f4d3",
+          "paths": {
+            "config/pon/pq-cross-branch-corpus-v1.json": {
+              "blob": "8be16d6dce5d35a763a4bae741ec2b6adfeb4487",
+              "bytes": 502435,
+              "sha256": "9ddfcb7fcb02ec1e2e837d8f38cd53db65b2f779796144e588ad82325a68da00"
+            },
+            "scripts/ci/check_ci_contract.py": {
+              "blob": "415033a71097ee9badda10932759b93f5ed6e67b",
+              "bytes": 191222,
+              "sha256": "81d353db74701921b57b72ab698894b7330312e6a78f3070c42537d69e2048c1"
+            },
+            "scripts/ci/check_pq_research_integration.py": {
+              "blob": "0f49ffe0af0457a80a15da760ba7a8c2367cf191",
+              "bytes": 89807,
+              "sha256": "40ac1164ca3b93ec6e73c4ced29689ce718b8619f7578b0176a2a2c5b28e0d95"
+            },
+            "scripts/ci/ci_job.sh": {
+              "blob": "9d11113509f384e8dbdf9380f1e2abdc42dd77e5",
+              "bytes": 45344,
+              "sha256": "d49ad8d0bcb2ea3c86cc64bb59674754f899d0727c4edfc683c5cb3a371f2ebf"
+            },
+            "scripts/ci/read_native_campaign_attempt.py": {
+              "blob": "5bc0a8368bf02993496a60abdd2236585b20d6db",
+              "bytes": 27075,
+              "sha256": "16d751228e22336ec38d8014a5958e227d549e75e045b67a75ed6668ee7854f1"
+            },
+            "scripts/ci/test_ci_contract.py": {
+              "blob": "dbfe0e8f1e0132cf833264125e56cd5a598c13bc",
+              "bytes": 236869,
+              "sha256": "ae2cc9a525ec761695d8361278893c47cbe4cf256e257b398cfae771fac19782"
+            },
+            "scripts/ci/test_pq_research_integration.py": {
+              "blob": "724176e835c4a498c4c8676975a4564de94ccfd3",
+              "bytes": 67404,
+              "sha256": "6602bbf99f49ccd34b49fc728b188696fe02fd9257c4038786b3615a45d6c3e4"
+            },
+            "scripts/ci/test_read_native_campaign_attempt.py": {
+              "blob": "1e70e4b050a521f0fb4c7694caa0a2ee333ce5ff",
+              "bytes": 24063,
+              "sha256": "c7a9bdd200673696fbfa9ae6f08eaa4b248a8f50986c54f6367faec0b6039819"
+            }
+          },
+          "patch": {
+            "path": "/private/tmp/chain-ci-native-selected-evidence-20261114/partial-campaign-reader/commit.patch",
+            "bytes": 63831,
+            "sha256": "ee7cda14289566262b975a0482d39cb35dd31beb6390c55e1e06f4ef94350b3c"
+          },
+          "original_reader_sha256": "ec5125b079f59187164ad87313d4047c272f728665adce3deb332c00882119db",
+          "original_test_sha256": "593f209372f5a9171afbc11a3978c8af77f7c8cd0825feeb16e1db72b16fc815",
+          "original_method_roster": [
+            "test_three_failed_runs_keep_all_27_slots_and_unknown_costs",
+            "test_declared_failure_without_originals_is_status_only",
+            "test_declared_success_without_originals_is_unknown_never_pass",
+            "test_consistent_complete_reports_are_only_observed",
+            "test_positive_summaries_cannot_hide_missing_original_confirmation_slots",
+            "test_positive_campaign_cannot_hide_a_failed_phase_or_incomplete_economics",
+            "test_missing_report_preserves_planned_slots_and_does_not_claim_success",
+            "test_build_failure_has_zero_attempts_and_full_unknown_denominator",
+            "test_unknown_process_outcome_is_not_an_exit_zero_or_failure",
+            "test_late_30_second_confirmation_cannot_become_four_second_success",
+            "test_missing_attempts_are_not_replaced_by_next_runs_or_retries",
+            "test_expected_source_and_embedded_source_must_both_match",
+            "test_hash_mutation_is_rejected_even_for_reported_failure",
+            "test_independently_pinned_manifest_rejects_rebound_report",
+            "test_result_cannot_shrink_or_change_workload_and_resource_budget",
+            "test_failure_cannot_be_overridden_by_complete_success_flag",
+            "test_type_confusion_bool_exit_and_integer_success_are_refused",
+            "test_bound_but_malformed_report_preserves_failure_and_unknown_slots",
+            "test_duplicate_round_and_malformed_clocks_cannot_be_counted",
+            "test_raw_phase_order_and_boolean_promotion_are_refused",
+            "test_summary_criteria_cannot_replace_raw_criteria",
+            "test_startup_failure_without_result_hash_uses_only_pinned_manifest",
+            "test_duplicate_nonfinite_and_oversized_result_refused",
+            "test_symlinks_and_nonregular_files_are_not_read",
+            "test_symlinked_parent_directory_is_not_followed",
+            "test_manifest_cannot_traverse_duplicate_omit_or_rebind_result",
+            "test_cli_distinguishes_failed_observation_from_rejected_input"
+          ],
+          "all_27_original_method_asts_unchanged": true,
+          "fixture_adapter": "Use current synthetic business_round to supply declared transaction/block/tip, six-depth observation, work relation and original clocks; no parser relaxation.",
+          "reader_compatibility": {
+            "added_lines": 8,
+            "original_lines_removed": 0,
+            "necessary_condition": "If finite_phase_criteria_met is true, all_signed_rounds_confirmed_in_window must be true and exactly three rows must all carry true in-window flags.",
+            "equivalence": "For a phase accepted by the current analyzer, observed count equals row count and confirmed count equals true flags; its distinct 0..2 round validation makes the precondition equivalent to the existing positive-phase postcondition. The original postcondition and entire current phase analysis remain. Thus accepted inputs are unchanged, while incomplete positive summaries keep the original reader error before the newer phase error.",
+            "new_refusal_cases": [
+              "missing observation",
+              "missing start",
+              "missing end",
+              "not confirmed",
+              "finality promoted",
+              "authority promoted",
+              "insufficient depth",
+              "transaction rebound",
+              "invalid required work",
+              "original deadline reached"
+            ]
+          },
+          "preserved_initial_failures": {
+            "exact_original_fixture": {
+              "methods": 27,
+              "failures": 15,
+              "cause": "missing current six-depth observation",
+              "stderr_sha256": "a630802cfd33452766c782ebc692ffbb7113c19d176f3296e4a90fb98377ed3c"
+            },
+            "current_fixture_before_rejection_order_adapter": {
+              "methods": 28,
+              "failures": 1,
+              "cause": "earlier current phase rejection changed original error reason",
+              "stderr_sha256": "816e7850929ddc5dd360335d0b5f017370c4be9eb1859d804641d192aa69d0ed"
+            }
+          },
+          "verification_original_round": [
+            {
+              "label": "partial-reader-controls",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_read_native_campaign_attempt.py",
+                "-v"
+              ],
+              "exit_code": 1,
+              "seconds": 0.149,
+              "test_count": 28,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "816e7850929ddc5dd360335d0b5f017370c4be9eb1859d804641d192aa69d0ed",
+              "summary_tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 28 tests in 0.068s",
+                "",
+                "FAILED (failures=1)"
+              ]
+            },
+            {
+              "label": "current-phase-controls",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_pon_public_v3_phase_read.py",
+                "-v"
+              ],
+              "exit_code": 0,
+              "seconds": 0.279,
+              "test_count": 93,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "8edf2185fe7acc536d83de311e145d9e6966f977f9fd59497a3322e5393752d8",
+              "summary_tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 93 tests in 0.211s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "complete-zip-reader-controls",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_read_failed_native_campaign_zip.py",
+                "-v"
+              ],
+              "exit_code": 0,
+              "seconds": 0.183,
+              "test_count": 30,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "c0a3b50e43c4e48314295229122afbc07348e63c3c6e7e15cab0f542dcad1f6e",
+              "summary_tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 30 tests in 0.120s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "source-guard-controls",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_pq_research_integration.py",
+                "-v"
+              ],
+              "exit_code": 0,
+              "seconds": 266.87,
+              "test_count": 69,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "ad2ea18ab22b8c809ef3558ec5f54edad32fdd4a2bacf730b275d7ecb2cbe943",
+              "summary_tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 69 tests in 266.810s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "ci-lane-controls",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_ci_contract.py",
+                "MergedQualificationLaneTests",
+                "-v"
+              ],
+              "exit_code": 0,
+              "seconds": 8.409,
+              "test_count": 21,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "09f769a3aef9c7f0d8d3cf2fb911f96c6daa75a1813534a24956e445b2d10d8f",
+              "summary_tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 21 tests in 8.341s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "actual-ci-contract",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/check_ci_contract.py"
+              ],
+              "exit_code": 1,
+              "seconds": 0.05,
+              "test_count": null,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "57282fcb38887ca5ad78a009ef612c40ff58fb2d9cc326fe3218041c56063f7d",
+              "summary_tail": [
+                "            f'expected {expected}, observed {actual}')",
+                "            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+                "  File \"/private/tmp/chain-ci-binding-repair-20261114/scripts/ci/check_ci_contract.py\", line 1730, in require",
+                "    raise ValueError('CI contract: ' + message)",
+                "ValueError: CI contract: inline source pin differs: .github/workflows/pon-recent-batch-acceptance.yml:81: trillionnium/crates/trnm-pon-node/src/store.rs: expected a1b349768df8c6867f0926622ad2a90cf1104099, observed 0bd8db70f8ef5710f06bd6417a906ed8b6e59800"
+              ]
+            },
+            {
+              "label": "actual-source-corpus",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/check_pq_research_integration.py"
+              ],
+              "exit_code": 1,
+              "seconds": 0.578,
+              "test_count": null,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "8250cd595f3271249184c0c6575c97409ed59927f82066c311e1e0e04cee5191",
+              "summary_tail": [
+                "HOLD_NO_GO: changed source: trillionnium/crates/trnm-data-availability/src/cell/archive.rs"
+              ]
+            },
+            {
+              "label": "preflight-after",
+              "command": [
+                "bash",
+                "scripts/project-preflight.sh"
+              ],
+              "exit_code": 0,
+              "seconds": 0.053,
+              "test_count": null,
+              "stdout_sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c",
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "summary_tail": []
+            },
+            {
+              "label": "diff-check",
+              "command": [
+                "git",
+                "diff",
+                "--cached",
+                "--check"
+              ],
+              "exit_code": 0,
+              "seconds": 0.012,
+              "test_count": null,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "summary_tail": []
+            }
+          ],
+          "verification_final_reader": [
+            {
+              "label": "partial-reader-controls-v2",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_read_native_campaign_attempt.py",
+                "-v"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "7427780bee5d8a4e7b0ff4fc6e161d95a0c7033b0034e393467734de8f28c5d0",
+              "stderr_last_lines": [
+                "test_symlinked_parent_directory_is_not_followed (__main__.CampaignAttemptTests.test_symlinked_parent_directory_is_not_followed) ... ok",
+                "test_symlinks_and_nonregular_files_are_not_read (__main__.CampaignAttemptTests.test_symlinks_and_nonregular_files_are_not_read) ... ok",
+                "test_three_failed_runs_keep_all_27_slots_and_unknown_costs (__main__.CampaignAttemptTests.test_three_failed_runs_keep_all_27_slots_and_unknown_costs) ... ok",
+                "test_type_confusion_bool_exit_and_integer_success_are_refused (__main__.CampaignAttemptTests.test_type_confusion_bool_exit_and_integer_success_are_refused) ... ok",
+                "test_unknown_process_outcome_is_not_an_exit_zero_or_failure (__main__.CampaignAttemptTests.test_unknown_process_outcome_is_not_an_exit_zero_or_failure) ... ok",
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 28 tests in 0.084s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "diff-check-v2",
+              "command": [
+                "git",
+                "diff",
+                "--cached",
+                "--check"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_last_lines": []
+            },
+            {
+              "label": "actual-source-corpus-v2",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/check_pq_research_integration.py"
+              ],
+              "exit_code": 1,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "8250cd595f3271249184c0c6575c97409ed59927f82066c311e1e0e04cee5191",
+              "stderr_last_lines": [
+                "HOLD_NO_GO: changed source: trillionnium/crates/trnm-data-availability/src/cell/archive.rs"
+              ]
+            }
+          ],
+          "verification_final_guards": [
+            {
+              "label": "source-guard-final-targeted",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_pq_research_integration.py",
+                "CorpusGateTests.test_partial_campaign_reader_cannot_omit_or_mutate",
+                "-v"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "342f4577594a7697efdb5c5e906b6c38005eb92c0871af4ed7ac808a65361c67",
+              "tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 1 test in 0.827s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "ci-final-targeted",
+              "command": [
+                "/opt/homebrew/bin/python3",
+                "-B",
+                "scripts/ci/test_ci_contract.py",
+                "MergedQualificationLaneTests.test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure",
+                "-v"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "dbf8e8dc2bb2fe628faa704ded3c7eab4b444cb66135fa970b1b8e9ac23f54a4",
+              "tail": [
+                "",
+                "----------------------------------------------------------------------",
+                "Ran 1 test in 0.234s",
+                "",
+                "OK"
+              ]
+            },
+            {
+              "label": "preflight-final",
+              "command": [
+                "bash",
+                "scripts/project-preflight.sh"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c",
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "tail": []
+            },
+            {
+              "label": "diff-check-final",
+              "command": [
+                "git",
+                "diff",
+                "--cached",
+                "--check"
+              ],
+              "exit_code": 0,
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "tail": []
+            }
+          ],
+          "passed_control_methods_by_suite": {
+            "partial_reader": 28,
+            "current_phase": 93,
+            "complete_failed_zip": 30,
+            "source_guard": 69,
+            "ci_lane": 21
+          },
+          "unique_passed_control_methods": 241,
+          "actual_global_gate_failures": {
+            "archive_corpus_pin": "7749eafe3e8ec128090f44b609ec1789b521d65d",
+            "archive_at_parent": "64bc789f33737d2ab14f476bc473b2aad3a477ef",
+            "store_at_parent": "0bd8db70f8ef5710f06bd6417a906ed8b6e59800",
+            "inline_store_expected": "a1b349768df8c6867f0926622ad2a90cf1104099",
+            "unmodified_by_this_change": [
+              "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+              "trillionnium/crates/trnm-pon-node/src/store.rs",
+              ".github/workflows/pon-recent-batch-acceptance.yml"
+            ],
+            "root_combination_already_updates_native_pins": "1897d0fb17f167c33f2e30c6e154ec43a1a5753c",
+            "final_combined_head_must_still_run_actual_corpus_and_ci_contract": true
+          },
+          "strict_preserved_boundaries": {
+            "planned_runs": 3,
+            "confirmation_slots": 27,
+            "business_packet_exposures": 189,
+            "build_timeout_seconds": 1800,
+            "run_timeout_seconds": 600,
+            "phase_deadline_seconds": 30,
+            "native_campaign_executed": false,
+            "source_host_or_crypto_authenticated": false,
+            "native_qualification": false,
+            "four_second_slo_qualified": false,
+            "production_activation": false
+          },
+          "metadata": "Only the seven selected current source pins and two new required paths change. All other source pins, historical evidence, full ZIP validator, current phase reader and production/native driver remain unchanged.",
+          "qualification_granted": false
+        }
+      },
+      "qualification_granted": false
+    },
+    {
+      "family": "N05",
+      "state": "selected-original-controls-committed-and-linux-passed",
+      "selected_commit": "4e0943b7168640f1ea7355eade92d172c29fa9c9",
+      "evidence": {
+        "path": "/private/tmp/chain-npq6-original-controls-evidence-20261114/N05-semantic-disposition-v1.json",
+        "sha256": "1ceca144830048e3801f88becc213e3eeb82c1c56728adef5414ef56d742215a",
+        "bytes": 2626,
+        "record": {
+          "component": "N05-current-NPQ6-original-parallel-controls",
+          "original_head": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+          "original_parent": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "decision": "minimal-compatible-test-port-on-current-owners",
+          "port_commit": "4e0943b7168640f1ea7355eade92d172c29fa9c9",
+          "current_base": "3a0f3c6da82890be8bf134d688fc41f387fee75d",
+          "selected_sources": [
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+              "bytes": 42956,
+              "sha256": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413",
+              "blob": "19c3253dcd512da295a7de1a57b22d328daca6ca",
+              "before_blob": "258c85a0be0ea5541d7c0b4919e5ad929503f727"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+              "bytes": 18162,
+              "sha256": "ad8b6160b61a031e1cc79c7145172d2f3a2ac50637da85e25a6dfc150d7c426d",
+              "blob": "8602eabb2a06af9fee7c72a5ce2d195f2c1c3532",
+              "before_blob": null
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+              "bytes": 46828,
+              "sha256": "4f35633c019674dc31c6e71b52156152c6fb5e5744e86251ad21b48fbe363c5e",
+              "blob": "69decf69b748af5f98db0dd32590fe2044615446",
+              "before_blob": "ae554bdbece3abf2e3a40a3923ab0d6dc4db7dd1"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+              "bytes": 37442,
+              "sha256": "d0eb7b8612d3dd9ca71593fd79ea33d53954c2aff4a0ae38d4831fc47bbc3676",
+              "blob": "044ef318226d5f871815590e87dab6743de5ca95",
+              "before_blob": "37455ab6980e73e86b753fc871e7830abb263379"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+              "bytes": 10834,
+              "sha256": "12b4d25879893ebb739f8067bcd08d4bc7a883a2f6231efd335c3a9fde5cd368",
+              "blob": "26fa5400efb2040321cf801e96219cf69b78663b",
+              "before_blob": null
+            }
+          ],
+          "original_control_counts": {
+            "m06": 3,
+            "node": 1
+          },
+          "controls_executed": true,
+          "control_assertions_changed": false,
+          "source_only_tests_not_whole_node_qualification": true,
+          "unselected_scope": "Historical PqNode/workflows and unrelated incoming source are not restored.",
+          "test_clippy_limit": [
+            "existing duplicate tls/fixtures.rs module",
+            "existing PublicClientMetrics field reassignment after default",
+            "sparse #[path] input subsequently materialized from exact Git blob"
+          ],
+          "summary": "/private/tmp/chain-npq6-original-controls-evidence-20261114/commit-v2/commit-summary.json"
+        }
+      },
+      "qualification_granted": false
+    },
+    {
+      "family": "N11",
+      "state": "selected-readonly-cost-reader-committed-and-controls-passed",
+      "selected_commit": "09e5ab311f31db1f3371bd4b207856f7b18bb83f",
+      "selected_tree": "d2340a3221ca461b44af4e97eb561851dd9d160c",
+      "evidence": {
+        "path": "/private/tmp/chain-throughput-cost-coverage-evidence-20261114/N11-semantic-disposition-v1.json",
+        "sha256": "1a3b59a348c630522b5d3f82257793d06ac1ad93773cf0640463046827e66fd5",
+        "bytes": 2134,
+        "record": {
+          "schema": "chain-n11-readonly-semantic-disposition-v1",
+          "historical_tip": "e6549a193d60a6b0fefd2377432aee4e910c6bb2",
+          "historical_direct_parent": "630cd5ee1dc3db345d0c85c5a41c427013451fb3",
+          "selected_commit": "09e5ab311f31db1f3371bd4b207856f7b18bb83f",
+          "selected_tree": "d2340a3221ca461b44af4e97eb561851dd9d160c",
+          "disposition": "complete selected read-only reader retained unchanged; original controls retained with explicit current strict-namespace adaptation",
+          "source_body_reviewed": "complete original 543-line reader and complete original 514-line control file; current bounded-reader dependency relevant functions; complete adaptation and metadata diffs",
+          "original_controls": {
+            "unchanged_methods": 25,
+            "adapted_method": "test_missing_transaction_or_independent_confirmation_is_unknown_not_ack_credit",
+            "original_assertion_ast_retained": true,
+            "stricter_full_analyzer_rejections_added": 4,
+            "total_current_test_methods": 27
+          },
+          "sources": [
+            {
+              "path": "scripts/ci/throughput_cost_coverage.py",
+              "original_bytes": 32315,
+              "original_sha256": "7511d967fe7f38ebc7e83005b8274b5de0382bcaa426649f57ef337a71d1cc03",
+              "original_blob": "4aa91a62595b5771a09cfe017395af652f93a0aa",
+              "current_bytes": 32315,
+              "current_sha256": "7511d967fe7f38ebc7e83005b8274b5de0382bcaa426649f57ef337a71d1cc03"
+            },
+            {
+              "path": "scripts/ci/test_throughput_cost_coverage.py",
+              "original_bytes": 29421,
+              "original_sha256": "08ab14b4072ca02b1025fa4b2037fb417be9defbd2276c7707bc1b24cfb2ed6e",
+              "original_blob": "686ac05bd7b4507c9449ebd5f85c13e59e9f4e64",
+              "current_bytes": 30842,
+              "current_sha256": "2348b7df4ca60558720a5855b190d76084f67e7d0cef25d6efcffe0a1cb43321"
+            }
+          ],
+          "explicit_nonclaims": [
+            "No original whole-reader acceptance claimed for incomplete V4 confirmed observations",
+            "No execution or operator authority",
+            "No new hardware throughput observation",
+            "No production qualification or node activation"
+          ],
+          "evidence": "/private/tmp/chain-throughput-cost-coverage-evidence-20261114/commit-v1/commit-summary.json"
+        }
+      },
+      "qualification_granted": false
+    },
+    {
+      "family": "N13",
+      "state": "current-acquisition-body-extracted-and-original-controls-passed",
+      "selected_commit": "3eb2cfdd9c123a2418c138e4c18940bcc584d878",
+      "selected_tree": "1255d15341975db30e85fda8f7df06151d6dd815",
+      "evidence": {
+        "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-n13-current-acquisition-api-port-v1/commit-summary.json",
+        "sha256": "3335b7b84458ff62d4ba4928235d2f2c3052f6ae79d00d8c44cef686f37814de",
+        "bytes": 4720,
+        "record": {
+          "schema": "prci-selected-n13-port-v1",
+          "commit": "3eb2cfdd9c123a2418c138e4c18940bcc584d878",
+          "tree": "1255d15341975db30e85fda8f7df06151d6dd815",
+          "parent": "2a29b228aea13dc6486f616c18d0ff128bab3c9f",
+          "original_tip": "75600213d6b0e92af33043669063f6e0f08cf12e",
+          "paths": {
+            "scripts/run_llm_cell_native_handoff.py": {
+              "blob": "a498861a8709cfa8bb300b59380c3cff0705b216",
+              "sha256": "d27d71f9910ac7b913a2e3aa95c64c42660edc6b4b438f0e293b7746039d55cf",
+              "bytes": 28107
+            },
+            "scripts/ci/test_llm_cell_acquisition.py": {
+              "blob": "49ac94d24e75f66080b6912f63a4d3fb303fec95",
+              "sha256": "ad67799ab9f0fd38038660490f3a5d7c4feebfad772c9df12b994cab08a2f963",
+              "bytes": 10274
+            },
+            "scripts/ci/ci_job.sh": {
+              "blob": "ffeafeb0078b66c61492b928e77717bef40246f9",
+              "sha256": "ded73794f55626e15ab1fe9eecd0d516b3b6eb5084aa1dc8f8f12170cf6c717b",
+              "bytes": 45835
+            },
+            "scripts/ci/check_ci_contract.py": {
+              "blob": "1f5a449291bf65e5bbadcc7f741e95e104549198",
+              "sha256": "47e7c9b46a189e6e68dffccd342ebcd6b572d1a15613e734634f9f1592575473",
+              "bytes": 192728
+            },
+            "scripts/ci/check_pq_research_integration.py": {
+              "blob": "48c192a69ab97ca1b7b8bd25b0c7d93e81440e25",
+              "sha256": "efadba5e49d681c10e0a38cbbc73a8a87b3c9509b052d868db55b29ff38b1c7f",
+              "bytes": 104673
+            },
+            "scripts/ci/test_pq_research_integration.py": {
+              "blob": "5ea414a4984894740ae2908001c085772fc6767d",
+              "sha256": "6522ea427d24210f8717a305472903010b9e98cf3526c26579f9f821aa3b864b",
+              "bytes": 110067
+            },
+            "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+              "blob": "1c7448ff586399dff41cdd5aad7a8d8a273d7fbd",
+              "sha256": "da52223e63309431c8989a1bbd7e844709919da91fe35d74b1d48ab16aee7ba0",
+              "bytes": 1098259
+            },
+            "config/pon/pq-cross-branch-corpus-v1.json": {
+              "blob": "04f9d59c98238e6373fe6dbf82c6bfdf54398e02",
+              "sha256": "474813bda78228f0cf5f38d68730f1694b193acb356d6e5ceced7e86b10d3279",
+              "bytes": 515171
+            }
+          },
+          "patch_sha256": "fa8d7eba3261fde1d0aa99b692048be7990d185c7ef18048f0933522c98dcf86",
+          "patch_bytes": 50825,
+          "linux_summary_sha256": "2d1d4feefb2a0de6d6ff5ad6769d9f52ba245532083bf0d761d4fe19556c6d6c",
+          "linux_job": "1a1d81a06c9-392-c74",
+          "linux_controls": {
+            "acquisition": 6,
+            "provider_ready": 6,
+            "handoff_deadline": 5,
+            "installed_policy": 3,
+            "skipped": 0
+          },
+          "mac_test_counts": {
+            "test_llm_cell_provider_ready.log": {
+              "ran": 6,
+              "tail": "listener_is_rejected (__main__.ProviderReadyTests.test_ready_for_another_listener_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.056s\n\nOK\n"
+            },
+            "original-five-plus-ready-deadline-controls.log": {
+              "ran": 6,
+              "tail": "quisitionTests.test_wrong_generation_or_asserted_use_authority_cannot_materialize_or_fallback) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.017s\n\nOK\n"
+            },
+            "test_llm_cell_installed_host.log": {
+              "ran": 8,
+              "tail": " not match \"native executable FD handoff is unavailable on this platform\"\n\n----------------------------------------------------------------------\nRan 8 tests in 0.003s\n\nFAILED (failures=3, skipped=5)\n"
+            },
+            "test_llm_cell_handoff_deadline.log": {
+              "ran": 5,
+              "tail": "main__.CellHandoffDeadlineTests.test_remaining_window_is_floored_and_request_never_exceeds_it) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.084s\n\nOK\n"
+            },
+            "ci-contract-controls.log": {
+              "ran": 219,
+              "tail": "__main__.W1ReuseV3LaneTests.test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells) ... ok\n\n----------------------------------------------------------------------\nRan 219 tests in 57.061s\n\nOK\n"
+            },
+            "test_llm_cell_host_handoff.log": {
+              "ran": 14,
+              "tail": "... skipped 'requires exact freshly built TRNM_CELL_BIN; no native evidence without it'\n\n----------------------------------------------------------------------\nRan 14 tests in 0.040s\n\nOK (skipped=10)\n"
+            },
+            "cell-acquisition-source-negative-controls.log": {
+              "ran": 1,
+              "tail": "annot_omit_or_mutate (__main__.CorpusGateTests.test_cell_acquisition_api_cannot_omit_or_mutate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.844s\n\nOK\n"
+            }
+          },
+          "limits": {
+            "native_acquisition_run": false,
+            "protected_installed_elf_deployment_run": false,
+            "qualification": false,
+            "mac_original_platform_failure_preserved": true
+          },
+          "worktree_clean": true
+        }
+      },
+      "qualification_granted": false
+    }
+  ],
+  "prior_completed_component_receipts": {
+    "N06": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-n06-sqlite-requalification-port-v1/commit-summary.json",
+      "sha256": "49b8789e0f16db8021316ae264aa4a752ffc84b371c71f110d42e6d124880cee",
+      "bytes": 4591,
+      "record": {
+        "base": "a06fab1ec850e103ead9fee7ed7bc42cb4267165",
+        "original": "ea909124cc460f364bd17b009073306014133f48",
+        "original_control_names": [
+          "test_zero_exit_without_actual_witness_cannot_qualify",
+          "test_foreign_path_requires_that_path_and_a_loader_rejection",
+          "test_cache_transition_must_emit_a_fresh_output",
+          "test_restore_preserves_absent_empty_and_existing_loader_values",
+          "test_original_four_and_foreign_refusal_restore_have_separate_denominators",
+          "test_original_failure_remains_failure_and_later_attempts_are_retained",
+          "test_silent_filtering_of_foreign_loader_is_a_failed_control",
+          "test_restore_requires_actual_qualified_witness",
+          "test_wrong_cargo_selection_is_retained_before_execution",
+          "test_probe_timeout_is_retained_and_cannot_qualify"
+        ],
+        "current_control_names": [
+          "test_zero_exit_without_actual_witness_cannot_qualify",
+          "test_foreign_path_requires_that_path_and_a_loader_rejection",
+          "test_cache_transition_must_emit_a_fresh_output",
+          "test_restore_preserves_absent_empty_and_existing_loader_values",
+          "test_original_four_and_foreign_refusal_restore_have_separate_denominators",
+          "test_original_failure_remains_failure_and_later_attempts_are_retained",
+          "test_silent_filtering_of_foreign_loader_is_a_failed_control",
+          "test_restore_requires_actual_qualified_witness",
+          "test_wrong_cargo_selection_is_retained_before_execution",
+          "test_probe_timeout_is_retained_and_cannot_qualify"
+        ],
+        "canonical_environment_block_preserved": true,
+        "scope": [
+          "scripts/ci/check_sqlite_build_requalification.py",
+          "scripts/ci/test_sqlite_build_requalification.py",
+          ".github/workflows/pon-pq-system-continuation.yml",
+          "scripts/ci/ci_job.sh",
+          "scripts/ci/check_pq_research_integration.py",
+          "scripts/ci/test_pq_research_integration.py",
+          "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "config/pon/pq-cross-branch-corpus-v1.json",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "real_cargo_qualification_run": false,
+        "head": "f631c8908898090fe941a438b039939c18a097ee",
+        "tree": "d79457b07abb5c0e5bb7c2476cf26c31fd37c6ea",
+        "test_scope": {
+          "synthetic_reader_controls": 10,
+          "source_omission_pin_mutation": 1,
+          "reader_lane_negatives": 4,
+          "actual_corpus": true,
+          "workflow_contract": true,
+          "existing_ci_contract_suite": true
+        },
+        "patch_sha256": "5a6684c367c7ac54ac2cb68da7cd8b3e745623d2766f2fdd6d4f431b23f0ddef",
+        "files": {
+          "scripts/ci/check_sqlite_build_requalification.py": {
+            "git_blob": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+            "sha256": "0f1b2ca9b49938868075d922dbea63f727f2a136b5de319af87479242f1a29ac"
+          },
+          "scripts/ci/test_sqlite_build_requalification.py": {
+            "git_blob": "8be908906b3aebc7db4c9d345d7292e4b35cc6c9",
+            "sha256": "ceddd25fa5a01544c249768cc7f0c7c69e3ba3f2c39de6b4a29026a47bfecebb"
+          },
+          ".github/workflows/pon-pq-system-continuation.yml": {
+            "git_blob": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
+            "sha256": "80fe3c87a0018e3df86236c1c2f997861b3a6a4c26bb6c7816fd114a8b2e0c32"
+          },
+          "scripts/ci/ci_job.sh": {
+            "git_blob": "5ef5deae2acb8237b28417f5eea915b7000821fe",
+            "sha256": "d16a4f167d13928a51df343442bec4f81ac9197475f32d12e39ef3761d3509c7"
+          },
+          "scripts/ci/check_pq_research_integration.py": {
+            "git_blob": "4fb1d1266506c34bc4afdbc9aba2e68edf6f548b",
+            "sha256": "8f226831cbbbebf58e9ef31d8348493ffa15933727921f6f3e0fcaa96e2ec218"
+          },
+          "scripts/ci/test_pq_research_integration.py": {
+            "git_blob": "8abbc689c4d6ef108c3570cc71243c417a8fe431",
+            "sha256": "8dc94d83ad7a4c9f339a36682978609cbfad93f4addbdaa493a9af50ad4e2801"
+          },
+          "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+            "git_blob": "00e4036f689b6aa5b7c01ea6074c337a6446a7cf",
+            "sha256": "84458f69566d3dc925aaef30450c782bca42a614ccb2715fae3b621bae13634b"
+          },
+          "config/pon/pq-cross-branch-corpus-v1.json": {
+            "git_blob": "d447f4d882090f3803308a81d18cdb3856e2c023",
+            "sha256": "0bd957f13bb5dc4ac3e84ab1d7121a4bbc8ba05185e2ed2accb8609a8e0cd446"
+          },
+          "scripts/ci/check_ci_contract.py": {
+            "git_blob": "517028cdd55348abd4d5a00ec528b68cc7d5ccc4",
+            "sha256": "d523e2809a7b3f4669e16a4e4db38b1a3d4b12eab43d7b750f774770bba885fe"
+          }
+        },
+        "initial_failures_retained": [
+          "actual-corpus.log: stale plan pin corrected",
+          "workflow-ci-contract.log: exact lane did not yet list added reader; both independent literal sequences extended"
+        ],
+        "native_qualification": false,
+        "remote_mutations": false
+      }
+    },
+    "N10": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-n10-current-cgroup-port-v1/commit-summary.json",
+      "sha256": "87177cb4f8eede80c4763782656899316f61cd455c35c372b10ce58385ca56dd",
+      "bytes": 3063,
+      "record": {
+        "original": "9f77f4334a365387d7389735d5b67c37f12a02a0",
+        "parent": "a3e9002cd12ef90d62f8b252cad570e72dab6fa3",
+        "paths": [
+          {
+            "path": "scripts/ci/public_host_ci_observation.py",
+            "current_equals_original_parent": true,
+            "before_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+            "selected_sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3",
+            "selected_blob": "160c489693f3ec600e2e015c30773d66cff3bcdf",
+            "original_functions_modified": []
+          },
+          {
+            "path": "scripts/ci/run_w1_rank_batch_v5.py",
+            "current_equals_original_parent": true,
+            "before_sha256": "9fcbb715ddd95874f17940f8e9902e93f6e1e0527bb5ce215c741df2740114fb",
+            "selected_sha256": "71a39e734e5e866404c5402475bf7d4152d38595b5130e3492e0da1139c32879",
+            "selected_blob": "75e994cdd74842b543bba65273628deb834ac73a",
+            "original_functions_modified": [
+              "host"
+            ]
+          },
+          {
+            "path": "scripts/ci/test_run_w1_rank_batch_v5.py",
+            "current_equals_original_parent": true,
+            "before_sha256": "89422b11ca9213dcd10238e7ed7d7818d2c9ebef7032b809c904512a1fb7b71a",
+            "selected_sha256": "03eeb26071a75148881c865d6fb175f54bc9275100d660d273899b92e0ddc7e6",
+            "selected_blob": "dea36b78f492f86c8d43614f95961fe25b2b70be",
+            "original_functions_modified": []
+          }
+        ],
+        "tests": 14,
+        "new_controls": 8,
+        "original_controls": 6,
+        "closure_paths": [
+          "formal/pon-nakamoto-v1/bounded_process.py",
+          "scripts/ci/check_cross_arch_cost.py",
+          "scripts/ci/check_maintenance_cost.py",
+          "scripts/ci/check_one_zero_locality_cost.py",
+          "scripts/ci/check_zero_locality_cost.py",
+          "scripts/ci/ci_observation.py",
+          "scripts/ci/public_host_ci_observation.py",
+          "scripts/ci/run_cross_arch_cost.py",
+          "scripts/ci/run_w1_rank_batch_v5.py",
+          "scripts/ci/test_run_w1_rank_batch_v5.py",
+          "scripts/ci/verify_ci_source.py",
+          "scripts/pon_w1_cost_matrix_reader.py",
+          "scripts/pon_w1_preparation_strategy_reader_v4.py",
+          "scripts/pon_w1_rank_batch_reader_v5.py"
+        ],
+        "component_parent": "f631c8908898090fe941a438b039939c18a097ee",
+        "scope": [
+          "scripts/ci/public_host_ci_observation.py",
+          "scripts/ci/run_w1_rank_batch_v5.py",
+          "scripts/ci/test_run_w1_rank_batch_v5.py",
+          "scripts/ci/check_pq_research_integration.py",
+          "scripts/ci/test_pq_research_integration.py",
+          "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "head": "ce28801d9499f0c1befe733d9a604ea8473cf191",
+        "tree": "df8af4126ec436aee218c7708d5a8739f008c1cb",
+        "linux_job_id": "1a1d8133c47-392-c49",
+        "linux_source_summary_sha256": "af558b7d4a728fdd90e873cb465fd7fe5caa8c910b4a8142b6d219a3b145d01e",
+        "linux_controls_passed": 14,
+        "linux_skipped": 0,
+        "source_omission_pin_mutation_passed": true,
+        "patch_sha256": "fc1b0396c6b9cb5eced86f7b67f25d4cf0bddd9a6096b37be5bc29479026dbd1",
+        "native_rank_campaign_run": false,
+        "host_qualification": false,
+        "remote_mutations": false
+      }
+    },
+    "N12": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/selected-n12-original-profile-matrix-port-v1/commit-summary.json",
+      "sha256": "3d5b9da26362a28177fc42a667e73ed15391af4bd951889603f71287adbc2258",
+      "bytes": 1475,
+      "record": {
+        "head": "2a29b228aea13dc6486f616c18d0ff128bab3c9f",
+        "tree": "2e68f1fe7ca70f4ca505ac6cf20a04caaf40c5e7",
+        "parent": "ce28801d9499f0c1befe733d9a604ea8473cf191",
+        "original_tip": "41742ba49ed25add9a136cff25b03d5fb4cea869",
+        "original_parent": "9117e78a764b8c0565e890da583ae80226babe26",
+        "scope": [
+          ".github/workflows/pon-original-large-state-cpu.yml",
+          "scripts/ci/check_pq_research_integration.py",
+          "scripts/ci/test_pq_research_integration.py",
+          "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "workflow_blob": "b304444ad20e6341fae8f977fac8536da78c7eca",
+        "original_full_native_command_block_equal": true,
+        "selectors": [
+          "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+        ],
+        "test_and_release_separate": true,
+        "matrix_cases": 8,
+        "inline_synthetic_controls": 10,
+        "source_guard_passed": true,
+        "actual_corpus_passed": true,
+        "ci_contract_passed": true,
+        "native_acceptance_run": false,
+        "patch_sha256": "3d7a4592cb6105fe506b568b6b586fc84d1bc46185e0f97592960c7fcc8dd734",
+        "remote_mutations": false
+      }
+    }
+  },
+  "root_python_component_receipt": {
+    "commit": "319be2400b1a77a827614d6a876ec273db32103d",
+    "tree": "5d465af575c2ca75980bd96a6074e3448882b668",
+    "summary": "/private/tmp/chain-consolidation-20261114-root/final-python-boundary-controls-v5/summary.json",
+    "N07": "95 current phase controls passed",
+    "N08": "complete fresh-reader controls passed in v2",
+    "N09": "actual exit-101 fallback receipt with space-containing path passed; literal guard retained",
+    "O05": "20 historical-pin loop retained; initial fixture setup Ran0 and failed; awaiting exact historical fixture closure, not recorded as passed"
+  },
+  "remaining_required_validation": [
+    {
+      "gate": "final combined actual corpus and complete CI contract",
+      "state": "root-integration-pending",
+      "reason": "S04 isolated branch intentionally retains earlier native source-pin mismatches; root1897 already refreshed the native pins, and the final S04/N11/N13 union needs exact-head readback."
+    },
+    {
+      "gate": "historical O05 fixture",
+      "state": "explicit-initial-failure-preserved",
+      "reason": "No current physical source is substituted under a historical pin; architecture owner is completing the distinct historical fixture."
+    },
+    {
+      "gate": "strict test Clippy on complete native combination",
+      "state": "pending reviewed fixes to pre-existing duplicate TLS test module and two default-field reassignments",
+      "reason": "Root is merging separately reviewed pre-existing fixture/default-field fixes."
+    },
+    {
+      "gate": "original required 4-second/16-worker confirmation campaign",
+      "state": "original-hosted-CI-failure-remains-blocking",
+      "reason": "No local Host provisioning/campaign executed; fresh boot/membership/five limits/current-thread checks and original deadlines remain. No unit/control result establishes this timing gate."
+    }
+  ],
+  "qualification_granted": false,
+  "no_remote_mutation_performed_by_this_reviewer": true,
+  "runtime_port_scope_complete_for_these_six_heads": true
+}

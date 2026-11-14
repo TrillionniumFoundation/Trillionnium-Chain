@@ -77,8 +77,8 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
           # The whole-file pin covers the opt-in owner census, integrated
           # admission/readback refinements, retained legacy replay-prefix cache,
-          # CMH2 module export and the shared current-parent clock guard.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 6ef5f01142a33eace66256dd6ecc81d34681d194
+          # CMH2 module export, current-parent clock guard and Q4 renewal advice.
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = d596dc6bab16698cd18bcc15bcbbe1fafedf603e
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
@@ -96,7 +96,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 27b6342619ee051c57944de88b4bbab33ff4627c
           # Retain R10 and the subsequent bounded 30-second client-import
           # observation under the original budgets, with an exact whole-file pin.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = f7991a5c126ee364d5d135b974b14a2b18b2a2ae
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 1f4dd178a9493b71340a8684a9338a7782e0760d
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash

@@ -32,6 +32,7 @@ FALSE_FLAGS = dict.fromkeys(("valid_proof_acquisition_used", "hardness_accepted"
 SETUP_SCOPE = "one-public-prefix-four-independent-false-trace-searches"
 ATTACK_SCOPE = "actual-prefix-setup-and-all-searches-including-challenge-hashes-trial-retention-and-winner-clone"
 VERIFY_SCOPE = "native-full-verification-call-only-no-fact-cache"
+COST_COVERAGE_SCHEMA = "pon-w1-false-trace-cost-coverage-v1"
 FIELDS = {
     "campaign": "selector samples searches_per_setup attempt_budget seed target paths classes clock material_setup setup_reuse attacker_timing_scope verifier_timing_scope " + " ".join(FALSE_FLAGS),
     "material": "class source task a_hex b_hex",
@@ -246,12 +247,62 @@ def summary(records):
             "setup": {axis: sum(cohort["setup"][axis] for cohort in cohorts) for axis in totals},
             "search": {axis: sum(search["timing"][axis] for search in searches) for axis in totals},
             "full_attacker_cohort_total": totals, "verification": verification,
+            "ratio_scope": "native-verifier-over-inclusive-cohort-only-excludes-campaign-material-setup",
             "receiver_rejection_cpu_over_full_attacker_cpu": {
                 path: verification[path]["cpu_ns"] / totals["cpu_ns"]
                 if wins and all(v["outcome"] == "Transcript" for v in values) else None
                 for path, values in verifiers.items()},
             "outcome_counts": {path: dict(Counter(v["outcome"] for v in values)) for path, values in verifiers.items()}})
     return rows
+
+
+def cost_coverage(records):
+    """Retain measured setup once and keep unavailable end-to-end costs unknown.
+
+    The material timer covers all classes together, so it cannot be assigned to
+    individual classes without inventing an allocation. This is a sum of
+    recorded intervals, not a complete process or network attacker cost.
+    """
+    axes = ("cpu_ns", "wall_ns")
+    cohorts = list(records.cohorts.values())
+    searches = [search for cohort in cohorts for search in cohort["searches"]]
+    setup = {axis: records.campaign["material_setup"][axis] for axis in axes}
+    totals = {axis: sum(cohort["total"][axis] for cohort in cohorts) for axis in axes}
+    subtotal = {axis: setup[axis] + totals[axis] for axis in axes}
+    wins = sum(search["status"] == "target-hit-unverified" for search in searches)
+    attempts = sum(search["attempt_count"] for search in searches)
+    verification, ratios = {}, {}
+    for path in records.paths:
+        calls = [call for search in searches for call in search["verifiers"] if call["path"] == path]
+        by_outcome = {}
+        for call in calls:
+            outcome = by_outcome.setdefault(call["outcome"], {"calls": 0, **dict.fromkeys(axes, 0)})
+            outcome["calls"] += 1
+            for axis in axes:
+                outcome[axis] += call["timing"][axis]
+        measured_total = {axis: sum(call["timing"][axis] for call in calls) for axis in axes}
+        verification[path] = {"calls": len(calls), "measured_total": measured_total,
+                              "by_outcome": by_outcome}
+        ratios[path] = (measured_total["cpu_ns"] / subtotal["cpu_ns"]
+                       if calls and all(call["outcome"] == "Transcript" for call in calls) else None)
+    return {"schema": COST_COVERAGE_SCHEMA,
+        "scope": "sum-of-recorded-disjoint-intervals-not-complete-process-or-network-cost",
+        "material_setup": setup, "material_setup_charged_calls": 1,
+        "material_setup_allocated_to_classes": False,
+        "all_attacker_cohorts": totals, "observed_attacker_subtotal": subtotal,
+        "searches": len(searches), "target_hits": wins,
+        "exhausted_searches": len(searches) - wins,
+        "attempts": attempts, "misses": attempts - wins,
+        "native_verification": verification,
+        "receiver_rejection_cpu_over_observed_attacker_subtotal": ratios,
+        "unmeasured_costs": {name: {"cpu_ns": None, "wall_ns": None} for name in (
+            "task_id_binding_outside_timed_intervals", "buffer_destruction",
+            "evidence_serialization_and_output", "sender_signatures_and_transport",
+            "receiver_signatures_admission_queues_and_storage", "network_io_and_fanout")},
+        "complete_attacker_total": dict.fromkeys(axes),
+        "complete_receiver_total": dict.fromkeys(axes),
+        "complete_attack_cost_measured": False,
+        "public_attack_amplification_measured": False}
 
 
 def analyze(path, *, full_limb=False):
@@ -276,6 +327,7 @@ def analyze(path, *, full_limb=False):
     return {"schema": "pon-w1-full-limb-reuse-observation-report-v1" if full_limb else "pon-w1-false-trace-reuse-observation-report-v1", "record_consistency": "PASS",
         "input_sha256": digest.hexdigest(), "input_bytes": size, "record_counts": dict(records.counts),
         "semantic_alerts": records.alerts, "actual_reuse_cohorts": summary(records),
+        "cost_coverage": cost_coverage(records),
         "modeled_setup_division_used": False, "complete_attack_bytes_reconstructed": True,
         "w1_transcript_replayed": False, "source_applicability_verified": False,
         "independent_verification": False, "fresh_measurement": False,
@@ -283,7 +335,8 @@ def analyze(path, *, full_limb=False):
         "limitations": ["Native source, execution, clocks and verdicts need separate provenance.",
             "These are actual four-search cohorts, with setup, misses and winning-buffer clone charged in full.",
             "Trial hex/retention overhead is included but is not a necessary cost of a network attacker.",
-            "The interval excludes separate material generation, later buffer destruction, JSONL evidence output and network sending.",
+            "Class ratios exclude campaign material setup; cost_coverage retains it once across the complete campaign without assigning it to classes.",
+            "The recorded subtotal still excludes untimed task binding, later buffer destruction, JSONL evidence output, signatures and network sending.",
             "Hash midstate reuse, different horizons and adversarial implementations/hardware may cost less.",
             "Microbenchmark challenges do not certify live parent/lease/beneficiary binding or public admission.",
             "No service queues, signed transport, storage, network fanout or model utility are measured.",

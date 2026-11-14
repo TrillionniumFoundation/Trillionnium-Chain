@@ -1,0 +1,15 @@
+{
+  "native_rerun_by_reviewer": false,
+  "new_evidence_reported_by": "architecture",
+  "observed_failed_subtests": 26,
+  "observed_original_workflow_method_count": 14,
+  "reason": "Selecting all original test gates from the fixed historical job leaves added current/supplemental evidence mutations unconsumed; the passing namespace and byte checks do not establish those gate behaviors.",
+  "required_fix": "Bind every preserved negative case to its actual historical/current consumer. Keep original14 methods,all26 failing mutations,and both workflow job bytes. Review actual new routing before final approval.",
+  "retained_valid_scope": "34-path static bytes, fixed historical files,232 source identities,canonical pins and method rosters; dual-lock source design andsame4 controls reviewed.",
+  "schema": "independent-bindings-workflow-consumer-correction-v1",
+  "supersedes_only_general_consumer_closure_claim_in": {
+    "file": "final-34path-delta-review-v1.json",
+    "sha256": "b9053c2570ef1b7a2d7f9a814e1999f80aef0e829f1b667afd8b6003ef6420b5"
+  },
+  "workflow_consumer_closed": false
+}

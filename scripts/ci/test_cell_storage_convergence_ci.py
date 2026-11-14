@@ -18,6 +18,7 @@ EXAMPLE_STEP = "Retain release Cell component observations"
 SOURCE_BEFORE_STEP = "Verify exact source and ordered prospective merge"
 SOURCE_AFTER_STEP = "Reverify the complete measured source after all attempts"
 OUTCOMES_STEP = "Retain stage outcomes and artifact digests"
+MAPPING_STEP = "Map every observation to a safe upload path"
 UPLOAD_STEP = "Retain logs and failed or partial observations"
 PYTHON_GUARD = "        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}"
 NATIVE_GUARD = "        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}"
@@ -33,6 +34,7 @@ PYTHON_RUN_BODY = """\
           bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
           bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
           bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
+          bash "$OUT/run-command.sh" artifact-map-controls python3 -B scripts/ci/test_prepare_artifact_upload.py || status=1
           exit "$status"
 """
 NODE_RUN_BODY = """\
@@ -308,8 +310,25 @@ def validate(text: str) -> None:
     require(outcomes.index("          if not storage_components_passed or not sealed_python_passed:")
             > outcomes.index('          (root / "sha256sums.txt").write_text'),
             "new stage failures must retain summaries and hashes before rejection")
+    mapping = step(text, MAPPING_STEP)
+    expected_mapping = (
+        "        id: artifact_map\n"
+        "        if: ${{ always() && steps.reserve.outcome == 'success' }}\n"
+        "        shell: bash\n"
+        "        run: |\n"
+        "          set -euo pipefail\n"
+        '          python3 -B scripts/ci/prepare_artifact_upload.py --source "$OUT" --output "$OUT-upload"\n'
+    )
+    require(mapping == expected_mapping, "lossless mapping and its failure propagation changed")
+    require(text.index("      - name: " + OUTCOMES_STEP)
+            < text.index("      - name: " + MAPPING_STEP)
+            < text.index("      - name: " + UPLOAD_STEP),
+            "map all final observations before upload")
     upload = step(text, UPLOAD_STEP)
     exact_line(upload, "        if: always()")
+    exact_line(upload, '            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-upload/')
+    exact_line(upload, '            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/members.json')
+    exact_line(upload, '            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/raw-observations.tar.gz')
     exact_line(upload, "          if-no-files-found: error")
     exact_line(upload, "          retention-days: 30")
 
@@ -397,6 +416,24 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
             changed = original.replace(old, new, 1)
             with self.subTest(old=old):
                 self.rejected(self.text.replace(original.rstrip("\n"), changed.rstrip("\n"), 1))
+
+    def test_lossless_mapping_cannot_skip_failures_or_upload_unsafe_original_names(self) -> None:
+        mapping = step(self.text, MAPPING_STEP)
+        mutations = (
+            mapping.replace("always()", "success()"),
+            mapping.replace("set -euo pipefail", "set +e"),
+            mapping.replace('--output "$OUT-upload"', '--output "$OUT"'),
+            mapping.replace(' --source "$OUT"', ' --source "$OUT/subset"'),
+            mapping.replace(' --output "$OUT-upload"', ' --output "$OUT-upload" || true'),
+        )
+        for changed in mutations:
+            self.rejected(self.text.replace(mapping, changed, 1))
+        self.rejected(self.text.replace("      - name: " + MAPPING_STEP + "\n" + mapping, "", 1))
+        self.rejected(self.text.replace("${{ github.run_attempt }}-upload/", "${{ github.run_attempt }}/", 1))
+        control = ('          bash "$OUT/run-command.sh" artifact-map-controls python3 -B '
+                   'scripts/ci/test_prepare_artifact_upload.py || status=1\n')
+        self.rejected(self.text.replace(control, "", 1))
+
 
     def test_new_commands_cannot_be_omitted_moved_duplicated_or_stubbed(self) -> None:
         blocks = (step(self.text, PYTHON_STEP), step(self.text, NODE_STEP))

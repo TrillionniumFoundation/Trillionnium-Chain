@@ -1,8 +1,9 @@
-//! Explicit hybrid-TLS transport for the actual native PQ owner. This loopback
-//! integration neither enables the public-history reactor nor declares private
-//! task/WAN/PKI/custody/production qualification.
+//! Explicit hybrid-TLS transport for the actual native PQ owner. The original
+//! loopback profile and the separately pinned endpoint development profile do
+//! not enable the public-history reactor or qualify WAN/PKI/custody/production.
 use super::*;
 mod context;
+mod diagnostics;
 mod io;
 pub use context::PqTlsIdentity;
 
@@ -78,12 +79,39 @@ impl PqTlsClient {
             .finish_response_until(&wire, prepared, deadline)?;
         Ok(PqResponseEvidence { response, wire })
     }
+    /// Preserve the exact request binding for the independent outbound journal.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send(address, prepared, budget)?;
+        let deadline = Instant::now() + budget;
+        self.send_verified_until(address, prepared, deadline)
+    }
+    pub(super) fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send_until(address, prepared, deadline)?;
+        let wire = self.exchange(address, prepared.wire(), deadline)?;
+        self.inner
+            .finish_verified_response(&wire, prepared, deadline)
+    }
     fn exchange(&self, address: SocketAddr, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
         let budget = deadline
             .checked_duration_since(Instant::now())
             .filter(|d| !d.is_zero())
             .ok_or("PQ_NETWORK_DEADLINE")?;
         let stream = TcpStream::connect_timeout(&address, budget)?;
+        self.inner
+            .policy
+            .check_tls_client_ip(stream.local_addr()?)?;
         let mut channel = io::Channel::connect(stream, deadline, &self.context)?;
         channel.write_frame(wire)?;
         channel.read_frame()
@@ -93,6 +121,7 @@ impl PqTlsClient {
 pub struct PqTlsServer {
     inner: PqServer,
     context: context::TlsContext,
+    refusal_records: std::sync::atomic::AtomicUsize,
 }
 impl PqTlsServer {
     pub fn new(
@@ -105,6 +134,7 @@ impl PqTlsServer {
         Ok(Self {
             inner: PqServer::new(policy, signer)?,
             context,
+            refusal_records: std::sync::atomic::AtomicUsize::new(0),
         })
     }
     pub(super) fn selected_policy(&self) -> &PqNetworkPolicy {
@@ -116,22 +146,43 @@ impl PqTlsServer {
         node: &Mutex<Node>,
         deadline: Instant,
     ) -> Result<()> {
-        self.inner.charge_connection(node, deadline)?;
-        let mut channel =
-            io::Channel::accept(stream, deadline, &self.context, node, &self.inner.policy)?;
-        let wire = self
-            .inner
-            .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
-        let response = self
-            .inner
-            .handle_admitted(node, &wire, deadline, channel.admission())?;
-        channel.write_frame(&response)
+        let observation = diagnostics::Observation::new();
+        let result = (|| {
+            // The actual kernel peer address is checked before any Node/witness
+            // observation or handshake debit. An IP pin grants no signer authority.
+            self.inner.policy.check_tls_client_ip(stream.peer_addr()?)?;
+            observation.stage("ingress_admission");
+            self.inner.charge_connection(node, deadline)?;
+            observation.stage("tls_handshake");
+            let mut channel = io::Channel::accept_observed(
+                stream,
+                deadline,
+                &self.context,
+                node,
+                &self.inner.policy,
+                &observation,
+            )?;
+            observation.stage("request_read");
+            let wire = self
+                .inner
+                .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
+            observation.stage("request_dispatch");
+            let response =
+                self.inner
+                    .handle_admitted(node, &wire, deadline, channel.admission())?;
+            observation.stage("response_write");
+            channel.write_frame(&response)
+        })();
+        if let Err(error) = &result {
+            observation.emit(error, deadline, &self.refusal_records);
+        }
+        result
     }
 }
 
-/// Real Node listener, intentionally loopback only. TLS carries the same
-/// bounded Request and enters the existing metered admission, replay, work
-/// checking, execution and durable receipt path. No signature supplies work.
+/// Real Node listener. Existing profiles remain loopback-only; the explicit
+/// endpoint profile binds one exact address and requires the witness backend.
+/// Both enter the same metered admission, replay, work and durable receipt path.
 pub fn serve_pq_tls13(
     listener: TcpListener,
     node: Node,
@@ -140,10 +191,10 @@ pub fn serve_pq_tls13(
     server: PqTlsServer,
 ) -> Result<PqNetworkMetrics> {
     server.inner.policy.tls_pins()?;
-    ensure(
-        listener.local_addr()?.ip().is_loopback(),
-        "PQ_NETWORK_LOOPBACK_ONLY",
-    )?;
+    server
+        .inner
+        .policy
+        .check_tls_listener(listener.local_addr()?)?;
     ensure(
         !lifetime.is_zero() && lifetime <= Duration::from_secs(3600),
         "PQ_NETWORK_SERVER_BUDGET",
@@ -153,7 +204,15 @@ pub fn serve_pq_tls13(
     let owner = Mutex::new(node);
     let end = Instant::now() + lifetime;
     let mut metrics = PqNetworkMetrics::default();
-    while !stop.load(Ordering::Acquire) && Instant::now() < end {
+    let accept_limit = server
+        .inner
+        .policy
+        .tls_endpoint_pins()
+        .map(|_| TLS_ENDPOINT_ACCEPT_LIMIT);
+    while !stop.load(Ordering::Acquire)
+        && Instant::now() < end
+        && accept_limit.is_none_or(|limit| metrics.accepted + metrics.refused < limit)
+    {
         match listener.accept() {
             Ok((stream, _)) => {
                 let deadline = end.min(Instant::now() + Duration::from_secs(10));
@@ -174,4 +233,10 @@ pub fn serve_pq_tls13(
 }
 
 #[cfg(test)]
+use super::tls_fixtures as fixtures;
+
+#[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod endpoint_tests;

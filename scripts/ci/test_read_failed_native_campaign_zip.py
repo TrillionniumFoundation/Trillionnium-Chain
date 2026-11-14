@@ -91,7 +91,9 @@ def fixtures():
                    "independent_operators", "wan_qualified", "production_candidate", "release_ready")})
         raw_name = f"run-{n}-raw/report.json"
         files[raw_name] = encoded(raw)
-        readback = reader.original.phase_reader.analyze(raw)
+        # This fixture deliberately preserves the historical v3 derivation.
+        readback = reader.original.phase_reader.analyze_for_retained_schema(
+            raw, "pon-public-v3-multiprocess-phase-derivation-v3")
         readback["input"] = {"sha256": digest(files[raw_name]), "bytes": len(files[raw_name]),
                              "report": f"/fixture/pon-native-campaign-{RUN}-1/{raw_name}"}
         files[f"run-{n}-phase-readback.json"] = encoded(readback)
@@ -164,6 +166,25 @@ def repin_report(files, n, mutate):
     files[name] = encoded(readback)
 
 
+def v4_fixtures():
+    files = fixtures()
+    for number in range(1, 4):
+        def scheduled_clocks(report):
+            for phase in report["phases"]:
+                for row in phase["confirmations"]:
+                    scheduled = (1_000_000_000, 5_000_000_000, 9_000_000_000)[row["round"]]
+                    row.update(started_ns=scheduled, ended_ns=scheduled + 10_000_000)
+        repin_report(files, number, scheduled_clocks)
+        raw = json.loads(files[f"run-{number}-raw/report.json"])
+        name = f"run-{number}-phase-readback.json"
+        original_input = json.loads(files[name])["input"]
+        value = reader.original.phase_reader.analyze_for_retained_schema(
+            raw, "pon-public-v3-multiprocess-phase-derivation-v4")
+        value["input"] = original_input
+        files[name] = encoded(value)
+    return files
+
+
 class ArtifactReadbackControls(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -202,6 +223,46 @@ class ArtifactReadbackControls(unittest.TestCase):
         self.assertEqual([a["native_process_returncode"] for a in report["attempts"]], [101] * 3)
         self.assertEqual([a["original_positive_step_reader_refusal"] for a in report["attempts"]],
                          ["original step did not complete successfully inside its budget"] * 3)
+
+    def test_current_v4_derivation_retains_failed_campaign_scope(self):
+        files = v4_fixtures()
+        value = json.loads(files["run-1-phase-readback.json"])
+        cohort = value["phases"][0]["honest_business_completion"]
+        # The old partial confirmation fixture has no complete identity/work
+        # evidence. Its native flag remains separate from v4 readback evidence.
+        self.assertEqual(cohort["native_reported_in_window_rounds"], 1)
+        self.assertEqual(cohort["readback_confirmed_in_window_rounds"], 0)
+        self.assertEqual(cohort["completion_fraction"], {"numerator": 0, "denominator": 3})
+        self.assertFalse(cohort["all_scheduled_rounds_latency_ns"]["complete_observation"])
+        report = self.read(*self.archive(files))
+        self.assertTrue(report["evidence_read_success"])
+        self.assertFalse(report["native_campaign_complete_success"])
+        self.assertFalse(report["qualification_granted"])
+        self.assertEqual(report["totals"], {
+            "scheduled_confirmation_rounds": 27, "observed_confirmation_rounds": 12,
+            "confirmed_rounds": 3, "unobserved_scheduled_rounds": 15})
+
+    def test_v4_readback_cannot_omit_change_or_relabel_business_cohort(self):
+        mutations = (
+            ("missing", lambda value: value["phases"][0].pop("honest_business_completion"),
+             "ORIGINAL_PHASE_DERIVATION_MISMATCH"),
+            ("changed", lambda value: value["phases"][0]["honest_business_completion"][
+                "completion_fraction"].update(numerator=3), "ORIGINAL_PHASE_DERIVATION_MISMATCH"),
+            ("relabeled", lambda value: value.update(
+                schema="pon-public-v3-multiprocess-phase-derivation-v3"),
+             "ORIGINAL_PHASE_DERIVATION_MISMATCH"),
+            ("unknown", lambda value: value.update(
+                schema="pon-public-v3-multiprocess-phase-derivation-v5"),
+             "ORIGINAL_READBACK_INPUT_MISMATCH"),
+        )
+        for name, mutate, refusal in mutations:
+            with self.subTest(name=name):
+                files = v4_fixtures()
+                value = json.loads(files["run-1-phase-readback.json"])
+                mutate(value)
+                files["run-1-phase-readback.json"] = encoded(value)
+                with self.assertRaisesRegex(reader.EvidenceError, refusal):
+                    self.read(*self.archive(files))
 
     def test_archive_identity_required(self):
         path, _ = self.archive()
