@@ -15039,3 +15039,11 @@ Retain the bounded, local-only collected-unit absence reader and its 20 standalo
 The old 21st control is retained against four exact b23c0ef8 workflow fixtures outside the active workflow directory. Its six historical traps and 36 synthetic exit cases do not restore retired jobs or certify current execution. A separate current-source control checks the one selected active trap, its six exit cases and unchanged owner limits. No host systemd service, cgroup, native campaign or provisioner is run by these controls.
 
 Root composed T04 on the current Cell/V5 source. The original observer and all 21 original method ASTs were independently compared to b23c0ef8; four historical workflow fixtures match exact Git blobs. Only the one current cleanup trap changes, and no system service or native campaign is created by the 23 synthetic/read-child controls.
+
+## 2026-11-14 — Bounded CodeQL diagnostics and pure semantic observations
+
+Retain the original b23c0ef8 bounded metadata collector and its 26 original controls byte for byte. It copies only the declared retained-file inventory, preserves missing/refused/oversized/error rows, bounds original JSON/SARIF and log tails separately, and never infers a scan result, complete process stream, finding count or security qualification. Existing output is never overwritten.
+
+Retain only require, source_uri and semantic_extraction_observations plus their three original bounds/marker constants in a separate pure readback module. The four original semantic controls preserve their ASTs: informational and unlocated failures remain failures, a retained-row cap does not erase counts, and even empty logs grant no semantic/security qualification. Neither component imports or restores the retired CodeQL runner, query packs, toolchain installer or scanning workflow. Their two control commands execute exactly once in repository-truth, with independent command and source omission/mutation guards. Synthetic fixture results are not native scan evidence.
+
+Root retained exact original metadata collector/test blobs and independently compared the three pure semantic functions, three constant ASTs, and four original semantic method ASTs. The 30 controls use retained/synthetic input only. Current official CodeQL action, exporter, toolchain and security authority remain selected.

@@ -201,6 +201,8 @@ PY
     python3 scripts/ci/test_throughput_cost_coverage.py
     python3 scripts/ci/test_rust_source_tokens.py
     python3 scripts/ci/test_collected_unit_empty_v1.py
+    python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py
+    python3 scripts/ci/test_codeql_semantic_observations_v1.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
     python3 scripts/ci/test_w1_lifecycle_cost_v4.py

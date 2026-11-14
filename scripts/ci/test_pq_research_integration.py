@@ -2572,5 +2572,43 @@ class CorpusGateTests(unittest.TestCase):
 
 
 
+    def test_codeql_diagnostic_reader_sources_cannot_omit_or_mutate(self):
+        # Independent literals: deriving this list from the checker would hide omissions.
+        dependencies = (
+            'scripts/ci/collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/read_codeql_semantic_observations_v1.py',
+            'scripts/ci/test_codeql_semantic_observations_v1.py',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed codeql diagnostic readback')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
+
 if __name__ == "__main__":
     unittest.main()
