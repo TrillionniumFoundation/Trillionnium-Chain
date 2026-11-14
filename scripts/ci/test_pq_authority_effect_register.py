@@ -149,6 +149,7 @@ class AuthorityEffectTests(unittest.TestCase):
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', 'c82c6eabe8f27e2b918de850d237f6b0b06444bb'),
                              ('source_revision', '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550'),
                              ('source_revision', '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8'),
                              ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),

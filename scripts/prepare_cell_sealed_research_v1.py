@@ -100,7 +100,7 @@ def main():
             'ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852'
             and parent['contract'] == 'c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f'
             and environment[profile.MODULES['llm_runtime_pilot']]['sha256'] ==
-            'ac6b1d9058610907a7dd3486c663c1ee6ad40135a34c63770daa5f556e5879cc',
+            '13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7',
             'PREPARATION_ORIGINAL_CLOSED_BRIDGE_PAIR')
     else:
         profile.require(args.material_plan is None and args.material_plan_sha256 is None,
