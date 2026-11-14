@@ -52,11 +52,10 @@ pub use tls_endpoint::{
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
 
-#[cfg(all(test, feature = "pq-native-openssl", target_os = "linux"))]
+#[cfg(all(test, feature = "pq-native-openssl"))]
 use tls::{PqTlsClient, PqTlsIdentity, PqTlsServer};
-#[cfg(all(test, feature = "pq-native-openssl", target_os = "linux"))]
-// This shared fixture also contains cases exercised by the existing TLS suites.
-#[allow(dead_code)]
+#[cfg(all(test, feature = "pq-native-openssl"))]
+// One fixture module serves both the TLS suites and sibling PQ network controls.
 #[path = "pq_network/tls/fixtures.rs"]
 mod tls_fixtures;
 

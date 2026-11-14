@@ -233,7 +233,7 @@ pub fn serve_pq_tls13(
 }
 
 #[cfg(test)]
-mod fixtures;
+use super::tls_fixtures as fixtures;
 
 #[cfg(test)]
 mod tests;

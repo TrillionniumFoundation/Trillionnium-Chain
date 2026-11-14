@@ -14940,3 +14940,47 @@ Integrated the four independently reviewed ports f631c890, ce28801d, 2a29b228 an
 ### 2026-11-14 root composition: partial-campaign-readback
 
 Preserved all 27 original test method ASTs from 4be50aa4 and added the current observation/clock/identity refusal control. Synthetic fixtures supply the unchanged current confirmation relation. The only production-reader adaptation repeats its original necessary positive-phase condition before the current strict phase analyzer, preserving accepted inputs and original rejection priority. All three attempts, 27 planned slots and 189 packet exposures remain visible when work is missing, rejected or failed; this reader grants neither complete-artifact validity nor native or four-second qualification. Initial fixture and error-priority failures remain retained. Its actual repository-truth command and independent omission, duplication, movement and failure-swallowing controls are composed with the current readers.
+
+## Node test module and metric initialization repair (2026-11-14)
+
+The original NPQ6 test build exposed two pre-existing strict Clippy failures.
+The PQ network and TLS unit suites now reference one unchanged TLS fixture
+module instead of compiling the same file twice in the Node test crate. Its
+test-only configuration retains the original TLS suite's non-Linux visibility;
+Fixture::new still creates independent per-call settings and identities. The
+duplicate module's dead-code allowance is removed, with no new allowance.
+Two PublicV3 metric fixtures use equivalent structure-literal initialization,
+retaining the same measured value and all other initial fields. No production
+body, fixture cryptography, request bound, deadline or assertion is changed.
+The original lint failure is retained. Combined Linux all-target strict Clippy
+is a separate required validation after these source changes are integrated.
+
+## Frozen lifetime report reproduction fixture (2026-11-14)
+
+The historical lifetime ledger retains SOURCE_BASE
+1f2b0187d4522b5248294ddab318f34a63bdc5a3 and all twenty original SHA-256 pins.
+Its test setup now reads those exact existing Git objects, checks the unchanged
+source survey, and materializes an isolated temporary source root. The original
+report test passes that root to the unchanged make_report implementation instead
+of silently treating today's working files as historical reproduction. No Git
+fetch, replacement object, current-source fallback, old report rewrite, or
+historical pin refresh is introduced.
+
+All twenty source identities were independently checked against the frozen Git
+tree, and the original report was reproduced byte for byte before this test
+repair. The existing full-roster missing and changed-source controls, real
+earlier Git-input refusals, symlink refusal and historical report comparisons
+remain. The separate current lifetime observer still checks its own explicit
+current twenty-source contract and retains all security qualifications false.
+
+The separate seven-difference historical-report control now names its original
+cdd984808a088e6c2e13b1e1ae6630a94d500c89 Git report explicitly. Its original
+8ee20462 digest and the retained b050b861 successor digest remain unchanged.
+The working-tree report already used the different 622c402c source survey in
+332d7f72; this test repair does not overwrite that later evidence lineage.
+The initial full run's 19 passing controls and one report-namespace failure
+are retained rather than counted as a successful full run.
+
+### 2026-11-14 root composition: test-fixture-identity-and-clippy
+
+The two equivalent metric structure initializers and single unchanged TLS fixture module retain every production and assertion body; no warning allowance was added. Historical lifetime reproduction now reads its exact existing SOURCE_BASE Git objects and the original cdd98480 report lineage, with replacement refs and lazy fetch disabled. All twenty historical source pins, seven explicit report differences and both expected report hashes are unchanged. The later working-tree report and current twenty-source observer remain separate. Initial failed fixture and strict-Clippy records remain retained; combined Linux all-target strict Clippy is still a distinct pending check.
