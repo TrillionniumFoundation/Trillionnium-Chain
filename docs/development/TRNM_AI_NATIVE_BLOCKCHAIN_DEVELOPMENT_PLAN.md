@@ -14403,3 +14403,12 @@ checker, repository checker, formatting check and all 67 corpus negative
 controls passed. These are the named current component results; they do not
 promote historical campaigns, whole-workspace acceptance, macOS native observer
 coverage, physical resource bounds or production activation.
+
+## 2026-11-14 reviewed explicit library continuations
+
+- Reuse the reviewed positive matrix-product fact cache (e1a996703a7a1ff9734c9cbeb562dee054c77a0d). It binds the complete operands and retains fresh challenge, target, transcript and cancellation checks on every verification; no Node or verifier default is changed.
+- Reuse the explicit reservation-v2 SQLite owner (f2339e75647b816c9884c5b2758de186ed5f0b91) under its new namespace and original logical/inode caps. Existing v1 owners retain their original serialization and defaults; successful I/O cannot retroactively authorize an unreserved growth.
+- Reuse the explicit bounded runtime-root assembly API (14c6021cb9186e69d8101837c4a4b228f104489d), preserving the original 2 GiB host and 512 MiB disposable-cache limits, pinned complete bytes, absolute deadline and durable reservation after every outcome.
+- Keep the reviewed publication fix (f71a99cca1489ecb19b116301f47ee62a2dd8412): an expired final rename/directory-fsync path reports failure while retaining published bytes and spent reservation. Failure never grants a refund or claims absence of partial publication.
+- Add an independent thirteen-path omission/pin/mutation control and refresh the generated source inventory. Agent validation covered the original nine cache controls, 23 Linux I/O controls and seven runtime controls; the additional publication control has a separate pending Linux result. These receipts are source-specific and are not relabeled as a final combined run.
+- Current proof/source descriptions will be rebound explicitly after all reviewed additions. Historical proof inputs, deployed profiles and qualification decisions remain immutable; source inclusion grants no production, network or proof qualification.

@@ -1,5 +1,5 @@
-use crate::ledger::{Code, Identity, Ledger, RootReceipt};
-use crate::{BoundaryError, Result, DOMAIN, FILE_BYTES, OBJECTS_PER_ROOT, ROOT_COUNT};
+use crate::ledger::{Code, GrowthPolicy, Identity, Ledger, RootReceipt};
+use crate::{BoundaryError, Result, FILE_BYTES, OBJECTS_PER_ROOT, ROOT_COUNT};
 use rusqlite::ffi;
 use std::ffi::{CStr, CString, OsStr, OsString};
 use std::fs::File;
@@ -54,7 +54,7 @@ impl NativeIoOwner {
             paths
                 .into_iter()
                 .enumerate()
-                .map(|(index, path)| Root::create(&path, index)),
+                .map(|(index, path)| Root::create(&path, index, GrowthPolicy::ExactV1)),
         )
     }
     /// Create seven fresh roots relative to consumed parent directory handles.
@@ -69,7 +69,32 @@ impl NativeIoOwner {
             parents
                 .into_iter()
                 .enumerate()
-                .map(|(index, (parent, name))| Root::create_at(parent, &name, index)),
+                .map(|(index, (parent, name))| {
+                    Root::create_at(parent, &name, index, GrowthPolicy::ExactV1)
+                }),
+        )
+    }
+    /// Create the separate V2 domain with fixed 64-KiB logical reservations.
+    /// Original byte/object/evidence limits and the process-wide one-owner
+    /// claim are unchanged. Reservations are upper bounds, not physical usage.
+    pub fn create_with_reservation_v2(paths: [PathBuf; ROOT_COUNT]) -> Result<Self> {
+        Self::create_roots(
+            paths
+                .into_iter()
+                .enumerate()
+                .map(|(index, path)| Root::create(&path, index, GrowthPolicy::Reserve64KiBV2)),
+        )
+    }
+    /// Held-directory form of the same fixed V2 policy. A failure consumes the
+    /// same original one-owner claim; this is not a second independent budget.
+    pub fn create_at_with_reservation_v2(parents: [(File, OsString); ROOT_COUNT]) -> Result<Self> {
+        Self::create_roots(
+            parents
+                .into_iter()
+                .enumerate()
+                .map(|(index, (parent, name))| {
+                    Root::create_at(parent, &name, index, GrowthPolicy::Reserve64KiBV2)
+                }),
         )
     }
     fn create_roots(pending: impl IntoIterator<Item = Result<Root>>) -> Result<Self> {
@@ -147,7 +172,7 @@ pub(crate) fn code_error(code: i32) -> BoundaryError {
 }
 
 impl Root {
-    fn create(path: &Path, index: usize) -> Result<Self> {
+    fn create(path: &Path, index: usize, policy: GrowthPolicy) -> Result<Self> {
         if !path.is_absolute() {
             return Err(BoundaryError("absolute fresh root required".into()));
         }
@@ -158,9 +183,14 @@ impl Root {
             .file_name()
             .ok_or_else(|| BoundaryError("root basename".into()))?;
         let parent_fd = walk_directory(parent)?;
-        Self::create_at(parent_fd, leaf, index)
+        Self::create_at(parent_fd, leaf, index, policy)
     }
-    fn create_at(parent_fd: File, leaf: &OsStr, index: usize) -> Result<Self> {
+    fn create_at(
+        parent_fd: File,
+        leaf: &OsStr,
+        index: usize,
+        policy: GrowthPolicy,
+    ) -> Result<Self> {
         // Inspect the actual consumed handle before any namespace mutation.
         // Holding this File, rather than its former pathname, anchors both
         // operations to the same directory even after a rename/replacement.
@@ -216,7 +246,10 @@ impl Root {
             pid: std::process::id(),
             uid,
             prefix: CString::new(format!("/proc/self/fd/{fd}")).expect("numeric path"),
-            ledger: Mutex::new(Ledger::new()),
+            ledger: Mutex::new(match policy {
+                GrowthPolicy::ExactV1 => Ledger::new(),
+                GrowthPolicy::Reserve64KiBV2 => Ledger::with_policy(policy),
+            }),
             reentrant_fault: AtomicBool::new(false),
             callback_panic_fault: AtomicBool::new(false),
             quarantined: std::array::from_fn(|_| QuarantineSlot {
@@ -376,7 +409,7 @@ impl Root {
             }
         }
         Ok(RootReceipt {
-            schema: DOMAIN,
+            schema: ledger.policy().domain(),
             owner_pid: self.pid,
             root_device: self.identity.dev,
             root_inode: self.identity.ino,
@@ -412,6 +445,7 @@ impl Root {
             quarantined_actual_states: quarantined,
             quarantined_sqlite_codes,
             quarantine_entries_complete,
+            growth_reservation_quantum_bytes: ledger.policy().quantum(),
         })
     }
     pub fn quarantine(

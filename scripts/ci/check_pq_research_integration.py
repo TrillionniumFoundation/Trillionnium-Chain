@@ -1267,6 +1267,27 @@ CONSOLIDATED_ENDPOINT_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CONSOLIDATED_ENDPOINT_REQUIRED_PATHS
 
 
+# Reviewed opt-in positive-product facts, prior SQLite growth reservations,
+# and bounded runtime cache assembly retain their exact source closure.
+# Source coverage does not select these APIs or certify runtime authority.
+CONSOLIDATED_LIBRARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/store.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/reservation_v2_tests.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs',
+    'trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs',
+))
+NATIVE_REQUIRED_PATHS |= CONSOLIDATED_LIBRARY_REQUIRED_PATHS
+
+
 class IntegrityError(ValueError):
     pass
 
